@@ -125,10 +125,11 @@ public class BscScanBinanceApplication {
                 int time = SLEEP_MINISECONDS_INIT;
                 Date start_time = Calendar.getInstance().getTime();
                 while (index_crypto < total) {
+                    CandidateCoin coin = token_list.get(index_crypto);
+
                     try {
-                        CandidateCoin coin = token_list.get(index_crypto);
-                        binance_service.checkChart_WDHM(coin.getGeckoid(), coin.getSymbol());
                         check_15m(binance_service, cryto_list_15m, forex_list_15m);
+                        check_FutureCoin(binance_service, coin);
 
                         if (Utils.isBusinessTime()) {
                             if (index_crypto % 30 == 0) {
@@ -148,7 +149,6 @@ public class BscScanBinanceApplication {
                             }
                             // ----------------------------------------------
                             {
-
                                 init_Crypto_4h(binance_service, coin, index_crypto, total);
                                 check_Crypto_15m(binance_service, coin.getSymbol());
                             }
@@ -231,6 +231,34 @@ public class BscScanBinanceApplication {
                 }
             }
         }
+    }
+
+    private static void check_FutureCoin(BinanceService binance_service, CandidateCoin coin) {
+        if (!binance_service.isFutureCoin(coin.getGeckoid())) {
+            return;
+        }
+
+        String key = Utils.getStringValue(coin.getGeckoid()) + "_";
+        key += Utils.getStringValue(coin.getSymbol()) + "_";
+        key += Utils.getCurrentYyyyMmDd_HH_Blog4h();
+
+        boolean reload = false;
+        if (keys_dict.containsKey(key)) {
+            if (!Objects.equals(key, keys_dict.get(key))) {
+                keys_dict.put(key, key);
+
+                reload = true;
+            }
+        } else {
+            keys_dict.put(key, key);
+            reload = true;
+        }
+
+        if (reload) {
+            binance_service.initCrypto(coin.getGeckoid(), coin.getSymbol());
+        }
+
+        binance_service.checkChart_WDHM(coin.getGeckoid(), coin.getSymbol());
     }
 
     private static void init_Forex_4h(BinanceService binance_service, String EPIC, int idx, int size) {

@@ -356,6 +356,18 @@ public class BinanceServiceImpl implements BinanceService {
                                     : "")
                     + " order by                                                                                    \n"
                     + "     coalesce(can.priority, 3) ASC                                                           \n"
+                    // -----------------------------------------------------------------------------
+                    + "   , (case when can.symbol = (                                                                                        \n"
+                    + " SELECT DISTINCT ON (symbol) symbol FROM funding_history main                                     \n"
+                    + " WHERE                                                                                                                                                  \n"
+                    + " note = 'Long'                                                                                                                                          \n"
+                    + " and symbol = can.symbol                                                                                                                                \n"
+                    + " and symbol= (SELECT symbol FROM funding_history WHERE event_time = 'DH4H1_D_TREND_CRYPTO' and symbol = main.symbol)                                    \n"
+                    + " and symbol= (SELECT symbol FROM funding_history WHERE event_time = 'DH4H1_STR_H4_CRYPTO' and symbol = main.symbol)                                     \n"
+                    + " and symbol= (SELECT symbol FROM funding_history WHERE event_time = 'DH4H1_STR_15M_CRYPTO' and symbol = main.symbol)                                    \n"
+                    + " and symbol= (SELECT symbol FROM funding_history WHERE event_time = 'DH4H1_STR_05M_CRYPTO' and symbol = main.symbol)                                    \n"
+                    + ") then 1 else 0 end) DESC                                                                                                                              \n"
+                    // -----------------------------------------------------------------------------
                     + "   , (case when (macd.futures LIKE '%Futures%' AND macd.futures LIKE '%_Position%') then 10 when (macd.futures LIKE '%Futures%' AND macd.futures LIKE '%Long_4h%') then 11 when (macd.futures LIKE '%Futures%' AND macd.futures LIKE '%move↑%') then 15 when macd.futures LIKE '%Futures%' then 19 \n"
                     + "           when (macd.futures LIKE '%Spot%'    AND macd.futures LIKE '%_Position%') then 30 when (macd.futures LIKE '%Spot%'    AND macd.futures LIKE '%Long_4h%') then 31 when (macd.futures LIKE '%Spot%'    AND macd.futures LIKE '%move↑%') then 35 when macd.futures LIKE '%Spot%'    then 39 \n"
                     + "       else 100 end) ASC \n"
@@ -2794,18 +2806,24 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     @Override
+    public boolean isFutureCoin(String gecko_id) {
+        if (binanceFuturesRepository.existsById(gecko_id)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     @Transactional
     public String checkChart_WDHM(String gecko_id, String symbol) {
         if ("_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
             sendMsgKillLongShort(gecko_id, symbol, "");
         }
 
-        if (binanceFuturesRepository.existsById(gecko_id)) {
-            String trend_d = getTrend(EVENT_DH4H1_D_CRYPTO, symbol);
-            String trend_h4 = getTrend(EVENT_DH4H1_H4_CRYPTO, symbol);
-            if (Objects.equals(Utils.TREND_LONG, trend_d) && Objects.equals(Utils.TREND_LONG, trend_h4)) {
-                checkPositionLong5m(symbol);
-            }
+        String trend_d = getTrend(EVENT_DH4H1_D_CRYPTO, symbol);
+        String trend_h4 = getTrend(EVENT_DH4H1_H4_CRYPTO, symbol);
+        if (Objects.equals(Utils.TREND_LONG, trend_d) && Objects.equals(Utils.TREND_LONG, trend_h4)) {
+            checkPositionLong5m(symbol);
         }
 
         return "";
@@ -2813,8 +2831,10 @@ public class BinanceServiceImpl implements BinanceService {
 
     private void checkPositionLong5m(String symbol) {
         List<BtcFutures> list_5m = Utils.loadData(symbol, TIME_5m, 50);
-        String trend_15m = createTrendByMa50(EVENT_DH4H1_15M_CRYPTO, list_5m, symbol);
-        if (Objects.equals(Utils.TREND_LONG, trend_15m)) {
+        if (Utils.isUptrendByMaIndex(list_5m, 50)) {
+
+            createTrendByMa50(EVENT_DH4H1_15M_CRYPTO, list_5m, symbol);
+
             if (Objects.equals(Utils.TREND_LONG, Utils.switchTrend(list_5m))) {
                 String chartname = "(H4)to(5M)";
                 String msg = "(Long)" + chartname + symbol;

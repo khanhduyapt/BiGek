@@ -775,8 +775,8 @@ public class Utils {
 
     public static void sendToMyTelegram(String text) {
         String msg = text.replaceAll("↑", "^").replaceAll("↓", "v").replaceAll(" ", "");
+        System.out.println();
         System.out.println(msg + " 💰 ");
-
         if (isAllowSendMsgSetting()) {
             sendToChatId(Utils.chatId_duydk, msg + " 💰 ");
         }

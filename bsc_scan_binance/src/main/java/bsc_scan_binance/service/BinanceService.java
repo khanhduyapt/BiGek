@@ -51,4 +51,6 @@ public interface BinanceService {
     public List<ForexHistoryResponse> getForexSamePhaseList();
 
     public List<ForexHistoryResponse> getCryptoSamePhaseList();
+
+    boolean isFutureCoin(String gecko_id);
 }
