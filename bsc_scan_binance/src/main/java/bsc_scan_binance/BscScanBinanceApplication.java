@@ -143,6 +143,10 @@ public class BscScanBinanceApplication {
                                 init_Crypto_4h(binance_service, coin, index_crypto, total);
                                 check_Crypto_15m(binance_service, coin.getSymbol());
                             }
+                        } else {
+                            System.out.print(".");
+                            if (index_crypto == total + 1)
+                                System.out.println();
                         }
 
                         // ----------------------------------------------
@@ -184,15 +188,15 @@ public class BscScanBinanceApplication {
             binance_service.checkSamePhaseForex15m("DXY");
 
             System.out.println(Utils.getTimeHHmm() + "Check BTC(15m)");
-            binance_service.getChartWD("bitcoin", "BTC");
+            binance_service.checkChart_WDHM("bitcoin", "BTC");
             wait(SLEEP_MINISECONDS);
 
             System.out.println(Utils.getTimeHHmm() + "Check ETH(15m)");
-            binance_service.getChartWD("ethereum", "ETH");
+            binance_service.checkChart_WDHM("ethereum", "ETH");
             wait(SLEEP_MINISECONDS);
 
             System.out.println(Utils.getTimeHHmm() + "Check BNB(15m)");
-            binance_service.getChartWD("binancecoin", "BNB");
+            binance_service.checkChart_WDHM("binancecoin", "BNB");
             wait(SLEEP_MINISECONDS);
 
             if (Utils.isBusinessTime()) {
@@ -209,7 +213,7 @@ public class BscScanBinanceApplication {
                         check_Forex_15m(binance_service, forex_list.get(index).getEpic());
                     }
 
-                    wait(SLEEP_MINISECONDS_INIT);
+                    wait(SLEEP_MINISECONDS);
                 }
             }
         }
