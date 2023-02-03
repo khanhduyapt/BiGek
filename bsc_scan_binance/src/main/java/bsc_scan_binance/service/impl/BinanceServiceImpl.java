@@ -2777,7 +2777,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (Objects.equals(trend_h, find_trend) && Objects.equals(find_trend, find_trend2)) {
                     createNewTrendCycle(EVENT_DH4H1_5M_FX, list_5m, EPIC, trend_h);
-                    sendScapMsg(list_5m, EPIC, find_trend, "");
+                    sendScapMsg(list_5m, EPIC, trend_h, "_________(H4)to(5m)_______");
                 }
 
             } else {
@@ -2787,6 +2787,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (Objects.equals(trend_h, find_trend) && Objects.equals(find_trend, find_trend2)) {
                     createNewTrendCycle(EVENT_DH4H1_5M_FX, list_5m, EPIC, trend_h);
+                    sendScapMsg(list_5m, EPIC, trend_h, "__________Test__________");
                 }
             }
 

@@ -108,7 +108,7 @@ public class BscScanBinanceApplication {
             if (app_flag != Utils.const_app_flag_webonly) {
                 List<CandidateCoin> token_list = gecko_service.getList(callFormBinance);
                 List<ForexHistoryResponse> forex_list_15m = binance_service.getForexSamePhaseList();
-                List<ForexHistoryResponse> crypto_list_15m = binance_service.getCryptoSamePhaseList();
+                List<ForexHistoryResponse> cryto_list_15m = binance_service.getCryptoSamePhaseList();
 
                 int total = token_list.size();
 
@@ -119,12 +119,12 @@ public class BscScanBinanceApplication {
                 Date start_time = Calendar.getInstance().getTime();
                 while (index_crypto < total) {
                     try {
-                        check_15m(binance_service, crypto_list_15m, forex_list_15m);
+                        check_15m(binance_service, cryto_list_15m, forex_list_15m);
 
                         if (Utils.isBusinessTime()) {
-                            if (index_crypto % 30 == 20) {
+                            if (index_crypto % 30 == 0) {
                                 forex_list_15m = binance_service.getForexSamePhaseList();
-                                crypto_list_15m = binance_service.getCryptoSamePhaseList();
+                                cryto_list_15m = binance_service.getCryptoSamePhaseList();
                             }
                             // ----------------------------------------------
                             if (index_forex < forex_size) {
@@ -145,7 +145,7 @@ public class BscScanBinanceApplication {
                             }
                         } else {
                             System.out.print(".");
-                            if (index_crypto == total + 1)
+                            if (Objects.equals(index_crypto, total - 1))
                                 System.out.println();
                         }
 
