@@ -77,8 +77,6 @@ public class Utils {
     public static final String TREND_STOP_LONG = "Stop:Long";
 
     public static final String CHAR_MONEY = "💰";
-    public static final String CHAR_LONG = "L";
-    public static final String CHAR_SHORT = "S";
 
     public static final int MA_FAST = 6;
     public static final int MA_INDEX_H1_START_LONG = 50;
@@ -141,18 +139,18 @@ public class Utils {
             + "    SELECT                                                                               \n"
             + "        str_h.symbol as epic,                                                            \n"
             + "        (select str_d.note from funding_history str_d where event_time = 'DH4H1_D_TREND_CRYPTO' and str_d.gecko_id = str_h.gecko_id) as trend_d,   \n"
-            + "        str_h.note   as trend_h                                                         \n"
+            + "        str_h.note   as trend_h                                                          \n"
             + "    FROM funding_history str_h                                                           \n"
-            + "    WHERE str_h.event_time = 'DH4H1_STR_H_CRYPTO'                                            \n"
+            + "    WHERE str_h.event_time = 'DH4H1_STR_H4_CRYPTO'                                       \n"
             + ") tmp                                                                                    \n"
-            + "WHERE (tmp.trend_h is not null) and (tmp.trend_d = tmp.trend_h) and (tmp.trend_d = 'L')  \n"
+            + "WHERE (tmp.trend_d = 'Long') and (tmp.trend_d = tmp.trend_h)                             \n"
             + "ORDER BY tmp.epic                                                                        \n";
 
     public static String sql_ForexHistoryResponse = " "
             + "SELECT DISTINCT ON (epic)                                                                \n"
             + "    tmp.epic,                                                                            \n"
             + "    tmp.trend_d  as d,                                                                   \n"
-            + "    tmp.trend_h as h,                                                                   \n"
+            + "    tmp.trend_h as h,                                                                    \n"
             + "    (case when tmp.trend_d  = 'L' then '(D)Long'  when tmp.trend_d = 'S' then '(D)Short' when tmp.trend_d = 'o' then '(D)Sideway' else '' end)            as trend_d,    \n"
             + "    (case when tmp.trend_h = 'L' then '(H1)Long' when tmp.trend_h = 'S' then '(H1)Short' else '' end)                                                     as trend_h,    \n"
             + "    (select append.note from funding_history append where append.event_time = concat('1W1D_FX_', append.gecko_id) and append.gecko_id = tmp.epic limit 1) as note        \n"
@@ -163,7 +161,7 @@ public class Utils {
             + "        (select str_d.note from funding_history str_d where event_time = 'DH4H1_D_TREND_FX' and str_d.gecko_id = str_h.gecko_id limit 1) as trend_d,   \n"
             + "        str_h.note   as trend_h                                                         \n"
             + "    FROM funding_history str_h                                                           \n"
-            + "    WHERE str_h.event_time = 'DH4H1_STR_H_FX'                                           \n"
+            + "    WHERE str_h.event_time = 'DH4H1_STR_H4_FX'                                           \n"
             + ") tmp                                                                                    \n"
             // + " WHERE (tmp.trend_h is not null) and (tmp.trend_d = tmp.trend_h)                       \n"
             + "ORDER BY tmp.epic                                                                        \n";
@@ -787,6 +785,15 @@ public class Utils {
             sendToChatId(Utils.chatId_duydk, msg);
             sendToChatId(Utils.chatId_linkdk, msg);
         }
+    }
+
+    public static boolean isWorkingTime() {
+        int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
+        if ((9 <= hh && hh <= 18)) {
+            return true;
+        }
+
+        return false;
     }
 
     public static boolean isBusinessTime() {
@@ -2465,7 +2472,7 @@ public class Utils {
         BigDecimal HI = low_heigh.get(1);
 
         String result = "";
-        if (trend.contains(TREND_LONG) || Objects.equals(Utils.CHAR_LONG, trend)) {
+        if (trend.contains(TREND_LONG)) {
             buf = roundDefault(low_heigh_SL.get(0).subtract(range));
             result += "Buf:" + getPercentToEntry(LO, buf, true);
             result += ",Lo:" + getPercentToEntry(entry, LO, true);
@@ -2543,57 +2550,108 @@ public class Utils {
         return false;
     }
 
-    public static String check3CuttingXforH1(List<BtcFutures> list, int maSlowIndex) {
-        if (list.size() < maSlowIndex) {
+    private static String checkXCutUpY(BigDecimal maX_1, BigDecimal maX_2, BigDecimal maY_1, BigDecimal maY_2) {
+        if ((maX_1.compareTo(maX_2) > 0) && (maX_1.compareTo(maY_1) > 0) && (maY_2.compareTo(maX_2) > 0)) {
+            return TREND_LONG;
+        }
+
+        return "";
+    }
+
+    public static String checkMaXCuttingUpY(List<BtcFutures> list, int maFast, int maSlow) {
+        if (list.size() < maSlow) {
             return "";
         }
 
-        BigDecimal ma_X_c = calcMA(list, maSlowIndex, 1);
-        BigDecimal ma3_1 = calcMA(list, MA_FAST, 1); // list.get(1).getPrice_open_candle();
-        BigDecimal ma3_2 = calcMA(list, MA_FAST, 2); // list.get(2).getPrice_open_candle();
+        int str = 1;
+        int end = 5;
+        BigDecimal ma3_1 = calcMA(list, maFast, str);
+        BigDecimal ma3_2 = calcMA(list, maFast, end);
 
-        if (maSlowIndex < 20) {
-            boolean isAboveMa50 = Utils.isAboveMALine(list, 50, 1);
-            boolean isAboveMa10 = Utils.isAboveMALine(list, 10, 1);
+        BigDecimal ma50_1 = calcMA(list, maSlow, str);
+        BigDecimal ma50_2 = calcMA(list, maSlow, end);
 
-            if (!isAboveMa50 && !isAboveMa10 && (ma3_1.compareTo(ma3_2) > 0) && (ma3_1.compareTo(ma_X_c) > 0)
-                    && (ma_X_c.compareTo(ma3_2) > 0)) {
-                return TREND_LONG;
-            }
+        if ((ma3_1.compareTo(ma3_2) > 0) && (ma3_1.compareTo(ma50_1) > 0) && (ma50_2.compareTo(ma3_2) > 0)) {
+            return TREND_LONG;
+        }
 
-            if (isAboveMa50 && isAboveMa10 && (ma3_1.compareTo(ma3_2) < 0) && (ma3_1.compareTo(ma_X_c) < 0)
-                    && (ma_X_c.compareTo(ma3_2) < 0)) {
-                return TREND_SHORT;
-            }
+        return "";
+    }
 
-        } else if (maSlowIndex < 50) {
-            boolean m15IsAboveMa50 = Utils.isAboveMALine(list, 50, 1);
+    private static String checkXCutDownY(BigDecimal maX_1, BigDecimal maX_2, BigDecimal maY_1, BigDecimal maY_2) {
+        if ((maX_1.compareTo(maX_2) < 0) && (maX_1.compareTo(maY_1) < 0) && (maY_2.compareTo(maX_2) < 0)) {
+            return TREND_SHORT;
+        }
+        return "";
+    }
 
-            if (!m15IsAboveMa50 && (ma3_1.compareTo(ma3_2) > 0) && (ma3_1.compareTo(ma_X_c) > 0)
-                    && (ma_X_c.compareTo(ma3_2) > 0)) {
-                return TREND_LONG;
-            }
+    public static String checkMaXCuttingDownY(List<BtcFutures> list, int maFast, int maSlow) {
+        if (list.size() < maSlow) {
+            return "";
+        }
 
-            if (m15IsAboveMa50 && (ma3_1.compareTo(ma3_2) < 0) && (ma3_1.compareTo(ma_X_c) < 0)
-                    && (ma_X_c.compareTo(ma3_2) < 0)) {
-                return TREND_SHORT;
-            }
-        } else {
-            if ((ma3_1.compareTo(ma3_2) > 0) && (ma3_1.compareTo(ma_X_c) > 0) && (ma_X_c.compareTo(ma3_2) > 0)) {
-                return TREND_LONG;
-            }
+        int str = 1;
+        int end = 5;
+        BigDecimal ma3_1 = calcMA(list, maFast, str);
+        BigDecimal ma3_2 = calcMA(list, maFast, end);
 
-            if (ma3_1.compareTo(ma_X_c) < 0) {
-                BigDecimal close1 = list.get(1).getPrice_close_candle();
-                BigDecimal close2 = list.get(2).getPrice_close_candle();
-                if ((close1.compareTo(ma_X_c) > 0) && (ma_X_c.compareTo(close2) > 0)) {
-                    return TREND_LONG;
-                }
-            }
+        BigDecimal ma50_1 = calcMA(list, maSlow, str);
+        BigDecimal ma50_2 = calcMA(list, maSlow, end);
 
-            if ((ma3_1.compareTo(ma3_2) < 0) && (ma3_1.compareTo(ma_X_c) < 0) && (ma_X_c.compareTo(ma3_2) < 0)) {
-                return TREND_SHORT;
-            }
+        if ((ma3_1.compareTo(ma3_2) < 0) && (ma3_1.compareTo(ma50_1) < 0) && (ma50_2.compareTo(ma3_2) < 0)) {
+            return TREND_SHORT;
+        }
+
+        return "";
+    }
+
+    public static String switchTrend(List<BtcFutures> list) {
+        if (CollectionUtils.isEmpty(list)) {
+            return "";
+        }
+
+        int str = 1;
+        int end = 5;
+        BigDecimal ma3_1 = calcMA(list, 3, str);
+        BigDecimal ma3_2 = calcMA(list, 3, end);
+
+        BigDecimal ma10_1 = calcMA(list, 10, str);
+        BigDecimal ma10_2 = calcMA(list, 10, end);
+
+        BigDecimal ma20_1 = calcMA(list, 20, str);
+        BigDecimal ma20_2 = calcMA(list, 20, end);
+
+        BigDecimal ma50_1 = calcMA(list, 50, str);
+        BigDecimal ma50_2 = calcMA(list, 50, end);
+
+        String l_m3x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
+        String l_m3x20 = Utils.checkXCutUpY(ma3_1, ma3_2, ma20_1, ma20_2);
+        String l_m3x50 = Utils.checkXCutUpY(ma3_1, ma3_2, ma50_1, ma50_2);
+        String l_m10x20 = Utils.checkXCutUpY(ma10_1, ma10_2, ma20_1, ma20_2);
+        String l_m10x50 = Utils.checkXCutUpY(ma10_1, ma10_2, ma50_1, ma50_2);
+        String l_m20x50 = Utils.checkXCutUpY(ma20_1, ma20_2, ma50_1, ma50_2);
+        String trend_L = l_m3x10 + "_" + l_m3x20 + "_" + l_m3x50 + "_" + l_m10x20 + "_" + l_m10x50 + "_" + l_m20x50;
+
+        String s_m3x10 = Utils.checkXCutDownY(ma3_1, ma3_2, ma10_1, ma10_2);
+        String s_m3x20 = Utils.checkXCutDownY(ma3_1, ma3_2, ma20_1, ma20_2);
+        String s_m3x50 = Utils.checkXCutDownY(ma3_1, ma3_2, ma50_1, ma50_2);
+        String s_m10x20 = Utils.checkXCutDownY(ma10_1, ma10_2, ma20_1, ma20_2);
+        String s_m10x50 = Utils.checkXCutDownY(ma10_1, ma10_2, ma50_1, ma50_2);
+        String s_m20x50 = Utils.checkXCutDownY(ma20_1, ma20_2, ma50_1, ma50_2);
+        String trend_S = s_m3x10 + "_" + s_m3x20 + "_" + s_m3x50 + "_" + s_m10x20 + "_" + s_m10x50 + "_" + s_m20x50;
+
+        String trend = trend_L + "_" + trend_S;
+
+        if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHORT)) {
+            return "";
+        }
+
+        if (trend.contains(Utils.TREND_LONG)) {
+            return Utils.TREND_LONG;
+        }
+
+        if (trend.contains(Utils.TREND_SHORT)) {
+            return Utils.TREND_SHORT;
         }
 
         return "";
@@ -2621,8 +2679,8 @@ public class Utils {
     }
 
     public static boolean isUptrendByMaIndex(List<BtcFutures> list, int maIndex) {
-        BigDecimal ma_c = calcMA(list, maIndex, 0);
-        BigDecimal ma_p = calcMA(list, maIndex, 1);
+        BigDecimal ma_c = calcMA(list, maIndex, 1);
+        BigDecimal ma_p = calcMA(list, maIndex, 5);
         if (ma_c.compareTo(ma_p) > 0) {
             return true;
         }
@@ -2689,7 +2747,7 @@ public class Utils {
     }
 
     public static String getTrendPrifix(String trend, int maFast, int maSlow) {
-        String check = Objects.equals(trend, Utils.TREND_LONG) || Objects.equals(trend, Utils.CHAR_LONG)
+        String check = Objects.equals(trend, Utils.TREND_LONG)
                 ? maFast + TREND_LONG_UP + maSlow + " 💹"
                 : maFast + TREND_SHORT_DN + maSlow + " 📉";
 
