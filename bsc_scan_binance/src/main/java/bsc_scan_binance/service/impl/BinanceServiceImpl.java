@@ -2580,7 +2580,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     private String sendMsgKillLongShort(String gecko_id, String symbol, String append) {
         if (!Utils.isBusinessTime()) {
-            return "";
+            // return "";
         }
 
         String msg = "";
