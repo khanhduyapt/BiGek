@@ -71,7 +71,7 @@ public class BscScanBinanceApplication {
                 app_flag = Utils.const_app_flag_all_coin;
             }
             // Debug:
-            //app_flag = Utils.const_app_flag_all_and_msg;
+            // app_flag = Utils.const_app_flag_all_and_msg;
 
             System.out.println("app_flag:" + app_flag + " (1: msg_on; 2: msg_off; 3: web only; 4: all coin)");
             // --------------------Init--------------------
@@ -123,9 +123,8 @@ public class BscScanBinanceApplication {
                     }
 
                     try {
-                        if (Utils.isBusinessTime()) {
-                            check_15m(binance_service, crypto_list_15m, forex_list_15m);
-                        }
+                        check_15m(binance_service, crypto_list_15m, forex_list_15m);
+
                         // ----------------------------------------------
                         if (index_forex < forex_size) {
                             String EPIC = capital_list.get(index_forex);
@@ -184,6 +183,9 @@ public class BscScanBinanceApplication {
         if (pre_blog15minute != cur_blog15minute) {
             pre_blog15minute = cur_blog15minute;
 
+            System.out.println(Utils.getTimeHHmm() + "Check DXY(15m)");
+            binance_service.checkSamePhaseForex15m("DXY");
+
             System.out.println(Utils.getTimeHHmm() + "Check BTC(15m)");
             binance_service.getChartWD("bitcoin", "BTC");
             wait(SLEEP_MINISECONDS);
@@ -196,20 +198,24 @@ public class BscScanBinanceApplication {
             binance_service.getChartWD("binancecoin", "BNB");
             wait(SLEEP_MINISECONDS);
 
-            int crypto_size = crypto_list.size();
-            int forex_size = forex_list.size();
-            int max = crypto_size > forex_size ? crypto_size : forex_size;
+            if (Utils.isBusinessTime()) {
 
-            for (int index = 0; index < max; index++) {
-                if (index < crypto_size) {
-                    check_Crypto_15m(binance_service, crypto_list.get(index).getEpic());
+                int crypto_size = crypto_list.size();
+                int forex_size = forex_list.size();
+                int max = crypto_size > forex_size ? crypto_size : forex_size;
+
+                for (int index = 0; index < max; index++) {
+                    if (index < crypto_size) {
+                        check_Crypto_15m(binance_service, crypto_list.get(index).getEpic());
+                    }
+
+                    if (index < forex_size) {
+                        check_Forex_15m(binance_service, forex_list.get(index).getEpic());
+                    }
+
+                    wait(SLEEP_MINISECONDS_INIT);
                 }
 
-                if (index < forex_size) {
-                    check_Forex_15m(binance_service, forex_list.get(index).getEpic());
-                }
-
-                wait(SLEEP_MINISECONDS_INIT);
             }
         }
     }

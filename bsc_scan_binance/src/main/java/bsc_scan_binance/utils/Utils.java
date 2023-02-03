@@ -118,12 +118,16 @@ public class Utils {
 
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("AUDHKD", "AUDPLN", "AUDZAR", "CADCNH",
             "CADHKD", "CADMXN", "CADNOK", "CADPLN", "CADTRY", "CADZAR", "CHFCNH", "CHFCZK", "CHFDKK", "CHFMXN",
-            "CHFNOK", "CHFPLN", "CHFSEK", "CHFTRY", "CHFZAR", "DKKJPY", "EURCZK", "EURILS", "EURPLN",
-            "EURRON", "EURSGD", "GBPCNH", "GBPCZK", "GBPDKK", "GBPHKD", "GBPHUF", "GBPNOK", "GBPPLN", "GBPSEK",
-            "GBPSGD", "GBPTRY", "GBPZAR", "HKDMXN", "HKDTRY", "NOKSEK", "NOKTRY", "NZDCNH", "NZDHKD", "NZDMXN",
-            "NZDPLN", "NZDSEK", "NZDTRY", "PLNSEK", "PLNTRY", "SEKMXN", "SEKTRY", "SGDHKD", "SGDMXN", "TRYJPY",
-            "USDCZK", "USDDKK", "USDHKD", "USDILS", "USDRON", "USDTRY"
-    //, "EURDKK"
+            "CHFNOK", "CHFPLN", "CHFSEK", "CHFTRY", "CHFZAR", "DKKJPY", "EURCZK", "EURILS", "EURPLN", "EURRON",
+            "EURSGD", "GBPCNH", "GBPCZK", "GBPDKK", "GBPHUF", "GBPNOK", "GBPPLN", "GBPSEK", "GBPSGD", "GBPZAR",
+            "HKDMXN", "HKDTRY", "NOKSEK", "NOKTRY", "NZDHKD", "NZDMXN", "NZDPLN", "NZDSEK", "PLNSEK", "PLNTRY",
+            "SEKMXN", "SGDHKD", "SGDMXN", "TRYJPY", "USDCZK", "USDDKK", "USDHKD", "USDILS", "USDRON"
+    // , "EURDKK", "USDTRY"
+    // , "GBPHKD"
+    // , "GBPTRY"
+    // , "NZDCNH"
+    // , "SEKTRY"
+    // , "NZDTRY"
     );
 
     public static String sql_CryptoHistoryResponse = " "
@@ -163,7 +167,7 @@ public class Utils {
             + "    FROM funding_history str_h                                                           \n"
             + "    WHERE str_h.event_time = 'DH4H1_STR_H4_FX'                                           \n"
             + ") tmp                                                                                    \n"
-            // + " WHERE (tmp.trend_h is not null) and (tmp.trend_d = tmp.trend_h)                       \n"
+            // + " WHERE (tmp.trend_h is not null) and (tmp.trend_d = tmp.trend_h) \n"
             + "ORDER BY tmp.epic                                                                        \n";
 
     public static String sql_OrdersProfitResponse = ""
@@ -2610,8 +2614,26 @@ public class Utils {
             return "";
         }
 
-        int str = 1;
-        int end = 5;
+        String trend_1_5 = checkTrendSideway(list, 1, 5);
+        String trend_5_10 = checkTrendSideway(list, 5, 10);
+        String trend = trend_1_5 + trend_5_10;
+
+        if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHORT)) {
+            return "";
+        }
+
+        if (trend.contains(Utils.TREND_LONG)) {
+            return Utils.TREND_LONG;
+        }
+
+        if (trend.contains(Utils.TREND_SHORT)) {
+            return Utils.TREND_SHORT;
+        }
+
+        return "";
+    }
+
+    private static String checkTrendSideway(List<BtcFutures> list, int str, int end) {
         BigDecimal ma3_1 = calcMA(list, 3, str);
         BigDecimal ma3_2 = calcMA(list, 3, end);
 
@@ -2642,19 +2664,7 @@ public class Utils {
 
         String trend = trend_L + "_" + trend_S;
 
-        if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHORT)) {
-            return "";
-        }
-
-        if (trend.contains(Utils.TREND_LONG)) {
-            return Utils.TREND_LONG;
-        }
-
-        if (trend.contains(Utils.TREND_SHORT)) {
-            return Utils.TREND_SHORT;
-        }
-
-        return "";
+        return trend;
     }
 
     public static boolean checkClosePriceAndMa_StartFindLong(List<BtcFutures> list) {
@@ -2688,7 +2698,7 @@ public class Utils {
         return false;
     }
 
-    public static String checkTrendByMa10_20_50(List<BtcFutures> list, int fastIndex, String trend) {
+    private static String checkTrendByMa10_20_50(List<BtcFutures> list, int fastIndex, String trend) {
         String resutl = "";
 
         if (Objects.equals(Utils.TREND_LONG, trend)) {
@@ -2746,12 +2756,16 @@ public class Utils {
         return "";
     }
 
-    public static String getTrendPrifix(String trend, int maFast, int maSlow) {
-        String check = Objects.equals(trend, Utils.TREND_LONG)
-                ? maFast + TREND_LONG_UP + maSlow + " 💹"
-                : maFast + TREND_SHORT_DN + maSlow + " 📉";
+    public static String getTrendPrifix(String trend) {
+        String check = Objects.equals(trend, Utils.TREND_LONG) ? " 💹" + TREND_LONG_UP : " 📉" + TREND_SHORT_DN;
 
         return "(" + check + " )";
     }
 
+    public static String getTrendPrifix(String trend, int maFast, int maSlow) {
+        String check = Objects.equals(trend, Utils.TREND_LONG) ? maFast + TREND_LONG_UP + maSlow + " 💹"
+                : maFast + TREND_SHORT_DN + maSlow + " 📉";
+
+        return "(" + check + " )";
+    }
 }
