@@ -76,6 +76,21 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class BinanceServiceImpl implements BinanceService {
+    // ********************************************************************************
+    private static final String EVENT_1W1D_FX = "1W1D_FX";
+    private static final String EVENT_1W1D_CRYPTO = "1W1D_CRYPTO";
+
+    private static final String EVENT_DH4H1_D_FX = "DH4H1_D_TREND_FX";
+    private static final String EVENT_DH4H1_H4_FX = "DH4H1_STR_H4_FX";
+    private static final String EVENT_DH4H1_15M_FX = "DH4H1_STR_15M_FX";
+    private static final String EVENT_DH4H1_5M_FX = "DH4H1_STR_05M_FX";
+
+    private static final String EVENT_DH4H1_D_CRYPTO = "DH4H1_D_TREND_CRYPTO";
+    private static final String EVENT_DH4H1_H4_CRYPTO = "DH4H1_STR_H4_CRYPTO";
+    private static final String EVENT_DH4H1_15M_CRYPTO = "DH4H1_STR_15M_CRYPTO";
+    private static final String EVENT_DH4H1_5M_CRYPTO = "DH4H1_STR_05M_CRYPTO";
+    // ********************************************************************************
+
     @PersistenceContext
     private final EntityManager entityManager;
 
@@ -133,22 +148,6 @@ public class BinanceServiceImpl implements BinanceService {
 
     private static final String EVENT_DANGER_CZ_KILL_LONG = "CZ_KILL_LONG";
     private static final String EVENT_BTC_RANGE = "BTC_RANGE";
-
-    // ********************************************************************************
-    private static final String EVENT_1W1D_FX = "1W1D_FX";
-    private static final String EVENT_1W1D_CRYPTO = "1W1D_CRYPTO";
-
-    private static final String EVENT_DH4H1_D_FX = "DH4H1_D_TREND_FX";
-    private static final String EVENT_DH4H1_D_CRYPTO = "DH4H1_D_TREND_CRYPTO";
-
-    // private static final String EVENT_DH4H1_15M_FX = "DH4H1_STR_15M_FX";
-    private static final String EVENT_DH4H1_5M_FX = "DH4H1_STR_05M_FX";
-    private static final String EVENT_DH4H1_15M_FX = "DH4H1_STR_15M_FX";
-    private static final String EVENT_DH4H1_H4_FX = "DH4H1_STR_H4_FX";
-
-    private static final String EVENT_DH4H1_5M_CRYPTO = "DH4H1_STR_05M_CRYPTO";
-    private static final String EVENT_DH4H1_H4_CRYPTO = "DH4H1_STR_H4_CRYPTO";
-    // ********************************************************************************
 
     private static final String EVENT_PUMP = "Pump_";
     private static final String EVENT_MSG_PER_HOUR = "MSG_PER_HOUR";
@@ -2698,7 +2697,7 @@ public class BinanceServiceImpl implements BinanceService {
         return "";
     }
 
-    public String createTrend_D(String event_dh4h1_d_trend_xxxx, List<BtcFutures> list_h4, String key_or_symbol) {
+    public String createTrendByMa50(String event_dh4h1_d_trend_xxxx, List<BtcFutures> list_h4, String key_or_symbol) {
         String trend_d = Utils.TREND_SHORT;
         Boolean isUptrendByMa50 = Utils.isUptrendByMaIndex(list_h4, 50);
         if (isUptrendByMa50) {
@@ -2732,7 +2731,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<BtcFutures> list_h4 = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4, 55);
 
         if (!CollectionUtils.isEmpty(list_h4)) {
-            String trend_d = createTrend_D(EVENT_DH4H1_D_FX, list_h4, EPIC);
+            String trend_d = createTrendByMa50(EVENT_DH4H1_D_FX, list_h4, EPIC);
             String trend_h4 = createNewTrendCycle(EVENT_DH4H1_H4_FX, list_h4, EPIC, trend_d);
 
             if (Utils.isNotBlank(trend_h4)) {
@@ -2801,10 +2800,12 @@ public class BinanceServiceImpl implements BinanceService {
             sendMsgKillLongShort(gecko_id, symbol, "");
         }
 
-        String trend_d = getTrend(EVENT_DH4H1_D_CRYPTO, symbol);
-        String trend_h4 = getTrend(EVENT_DH4H1_H4_CRYPTO, symbol);
-        if (Objects.equals(Utils.TREND_LONG, trend_d) && Objects.equals(Utils.TREND_LONG, trend_h4)) {
-            checkPositionLong5m(symbol);
+        if (binanceFuturesRepository.existsById(gecko_id)) {
+            String trend_d = getTrend(EVENT_DH4H1_D_CRYPTO, symbol);
+            String trend_h4 = getTrend(EVENT_DH4H1_H4_CRYPTO, symbol);
+            if (Objects.equals(Utils.TREND_LONG, trend_d) && Objects.equals(Utils.TREND_LONG, trend_h4)) {
+                checkPositionLong5m(symbol);
+            }
         }
 
         return "";
@@ -2812,7 +2813,8 @@ public class BinanceServiceImpl implements BinanceService {
 
     private void checkPositionLong5m(String symbol) {
         List<BtcFutures> list_5m = Utils.loadData(symbol, TIME_5m, 50);
-        if (Utils.isUptrendByMaIndex(list_5m, 50)) {
+        String trend_15m = createTrendByMa50(EVENT_DH4H1_15M_CRYPTO, list_5m, symbol);
+        if (Objects.equals(Utils.TREND_LONG, trend_15m)) {
             if (Objects.equals(Utils.TREND_LONG, Utils.switchTrend(list_5m))) {
                 String chartname = "(H4)to(5M)";
                 String msg = "(Long)" + chartname + symbol;
@@ -2852,7 +2854,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // -----------------------------------------------------------------
-        String trend_d1 = createTrend_D(EVENT_DH4H1_D_CRYPTO, list_h4, symbol);
+        String trend_d1 = createTrendByMa50(EVENT_DH4H1_D_CRYPTO, list_h4, symbol);
         String trend_h4 = createNewTrendCycle(EVENT_DH4H1_H4_CRYPTO, list_h4, symbol, trend_d1);
         if (Utils.isNotBlank(trend_h4)) {
             init_trend_result = "initCrypto(H4: " + trend_h4 + ")";

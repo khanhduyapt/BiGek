@@ -37,6 +37,10 @@ public class BscScanBinanceApplication {
     private static int pre_blog15minute = -1;
     private static int cur_blog15minute = -1;
 
+    public static ApplicationContext applicationContext;
+    public static WandaBot wandaBot;
+    public static TelegramBotsApi telegramBotsApi;
+
     public static void main(String[] args) {
         try {
             initForex_naming_dict();
@@ -75,17 +79,20 @@ public class BscScanBinanceApplication {
 
             System.out.println("app_flag:" + app_flag + " (1: msg_on; 2: msg_off; 3: web only; 4: all coin)");
             // --------------------Init--------------------
-            ApplicationContext applicationContext = SpringApplication.run(BscScanBinanceApplication.class, args);
+            applicationContext = SpringApplication.run(BscScanBinanceApplication.class, args);
             CoinGeckoService gecko_service = applicationContext.getBean(CoinGeckoService.class);
             BinanceService binance_service = applicationContext.getBean(BinanceService.class);
 
             if (app_flag == Utils.const_app_flag_msg_on || app_flag == Utils.const_app_flag_all_and_msg) {
-                WandaBot wandaBot = applicationContext.getBean(WandaBot.class);
 
                 try {
-
+                    wandaBot = applicationContext.getBean(WandaBot.class);
                     TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
+                    // https://github.com/PauloGaldo/telegram-bot
+                    // https://stackoverflow.com/questions/68059105/register-webhook-tg-bot-using-spring-boot
+                    // telegramBotsApi.registerBot(bot, setWebhook);
                     telegramBotsApi.registerBot(wandaBot);
+                    initTelegramBotsApi();
 
                     binance_service.clearTrash();
                 } catch (TelegramApiException e) {
@@ -119,6 +126,8 @@ public class BscScanBinanceApplication {
                 Date start_time = Calendar.getInstance().getTime();
                 while (index_crypto < total) {
                     try {
+                        CandidateCoin coin = token_list.get(index_crypto);
+                        binance_service.checkChart_WDHM(coin.getGeckoid(), coin.getSymbol());
                         check_15m(binance_service, cryto_list_15m, forex_list_15m);
 
                         if (Utils.isBusinessTime()) {
@@ -139,14 +148,12 @@ public class BscScanBinanceApplication {
                             }
                             // ----------------------------------------------
                             {
-                                CandidateCoin coin = token_list.get(index_crypto);
+
                                 init_Crypto_4h(binance_service, coin, index_crypto, total);
                                 check_Crypto_15m(binance_service, coin.getSymbol());
                             }
                         } else {
                             System.out.print(".");
-                            if (Objects.equals(index_crypto, total - 1))
-                                System.out.println();
                         }
 
                         // ----------------------------------------------
@@ -173,8 +180,14 @@ public class BscScanBinanceApplication {
                 }
             }
         } catch (Exception e) {
+            initTelegramBotsApi();
+            System.out.println("Duydk:" + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public static void initTelegramBotsApi() {
+        System.out.println("____________________initTelegramBotsApi" + Utils.getTimeHHmm() + "____________________");
     }
 
     private static void check_15m(BinanceService binance_service, List<ForexHistoryResponse> crypto_list,
@@ -184,6 +197,7 @@ public class BscScanBinanceApplication {
         if (pre_blog15minute != cur_blog15minute) {
             pre_blog15minute = cur_blog15minute;
 
+            System.out.println();
             System.out.println(Utils.getTimeHHmm() + "Check DXY(15m)");
             binance_service.checkSamePhaseForex15m("DXY");
 
