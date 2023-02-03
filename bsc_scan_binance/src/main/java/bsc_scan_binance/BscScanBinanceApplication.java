@@ -96,13 +96,14 @@ public class BscScanBinanceApplication {
             // --------------------Debug--------------------
 
             List<String> capital_list = new ArrayList<String>();
+            capital_list.addAll(Utils.EPICS_FOREX_SCAPS);
             capital_list.addAll(Utils.EPICS_INDEXS);
             capital_list.addAll(Utils.EPICS_FOREX_EUR);
             capital_list.addAll(Utils.EPICS_FOREX_AUD);
             capital_list.addAll(Utils.EPICS_FOREX_GBP);
             capital_list.addAll(Utils.EPICS_FOREX_CAD);
             capital_list.addAll(Utils.EPICS_FOREX_DOLLAR);
-            capital_list.addAll(Utils.EPICS_FOREX_OTHERS);
+            // capital_list.addAll(Utils.EPICS_FOREX_OTHERS);
 
             if (app_flag != Utils.const_app_flag_webonly) {
                 List<CandidateCoin> token_list = gecko_service.getList(callFormBinance);
@@ -117,39 +118,35 @@ public class BscScanBinanceApplication {
                 int time = SLEEP_MINISECONDS_INIT;
                 Date start_time = Calendar.getInstance().getTime();
                 while (index_crypto < total) {
-                    if (index_crypto % 30 == 20) {
-                        forex_list_15m = binance_service.getForexSamePhaseList();
-                        crypto_list_15m = binance_service.getCryptoSamePhaseList();
-                    }
-
                     try {
                         check_15m(binance_service, crypto_list_15m, forex_list_15m);
 
-                        // ----------------------------------------------
-                        if (index_forex < forex_size) {
-                            String EPIC = capital_list.get(index_forex);
-                            init_Forex_4h(binance_service, EPIC, index_forex, forex_size);
-                            if (Utils.isBusinessTime()) {
-                                check_Forex_15m(binance_service, EPIC);
+                        if (Utils.isBusinessTime()) {
+                            if (index_crypto % 30 == 20) {
+                                forex_list_15m = binance_service.getForexSamePhaseList();
+                                crypto_list_15m = binance_service.getCryptoSamePhaseList();
                             }
+                            // ----------------------------------------------
+                            if (index_forex < forex_size) {
+                                String EPIC = capital_list.get(index_forex);
+                                init_Forex_4h(binance_service, EPIC, index_forex, forex_size);
 
-                            index_forex += 1;
-                        } else {
-                            index_forex = 0;
-                        }
-                        // ----------------------------------------------
-                        {
-                            CandidateCoin coin = token_list.get(index_crypto);
-                            init_Crypto_4h(binance_service, coin, index_crypto, total);
-                            if (Utils.isBusinessTime()) {
+                                check_Forex_15m(binance_service, EPIC);
+
+                                index_forex += 1;
+                            } else {
+                                index_forex = 0;
+                            }
+                            // ----------------------------------------------
+                            {
+                                CandidateCoin coin = token_list.get(index_crypto);
+                                init_Crypto_4h(binance_service, coin, index_crypto, total);
                                 check_Crypto_15m(binance_service, coin.getSymbol());
                             }
                         }
 
                         // ----------------------------------------------
-
                         wait(time);
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -199,7 +196,6 @@ public class BscScanBinanceApplication {
             wait(SLEEP_MINISECONDS);
 
             if (Utils.isBusinessTime()) {
-
                 int crypto_size = crypto_list.size();
                 int forex_size = forex_list.size();
                 int max = crypto_size > forex_size ? crypto_size : forex_size;
@@ -215,7 +211,6 @@ public class BscScanBinanceApplication {
 
                     wait(SLEEP_MINISECONDS_INIT);
                 }
-
             }
         }
     }

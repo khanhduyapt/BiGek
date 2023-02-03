@@ -98,8 +98,10 @@ public class Utils {
     public static final String CAPITAL_TIME_DAY = "DAY";
     public static final String CAPITAL_TIME_WEEK = "WEEK";
 
-    public static final List<String> EPICS_INDEXS = Arrays.asList("DXY", "GOLD", "OIL_CRUDE", "US30", "US500", "UK100",
-            "HK50", "FR40");
+    public static final List<String> EPICS_FOREX_SCAPS = Arrays.asList("DXY", "GOLD", "US30", "GBPAUD", "USDCAD",
+            "EURJPY");
+
+    public static final List<String> EPICS_INDEXS = Arrays.asList("OIL_CRUDE", "US500", "UK100", "HK50", "FR40");
 
     public static final List<String> EPICS_FOREX_EUR = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY",
             "EURMXN", "EURNZD", "EURUSD");
@@ -131,14 +133,14 @@ public class Utils {
     );
 
     public static String sql_CryptoHistoryResponse = " "
-            + "SELECT DISTINCT ON (epic)                                                                \n"
+            + " SELECT DISTINCT ON (epic)                                                                \n"
             + "    tmp.epic,                                                                            \n"
-            + "    tmp.trend_d  as d,                                                                   \n"
-            + "    tmp.trend_h as h,                                                                   \n"
-            + "    (case when tmp.trend_d  = 'L' then '(D)Long'  when tmp.trend_d = 'S' then '(D)Short' when tmp.trend_d = 'o' then '(D)Sideway' else '' end)    as trend_d,    \n"
-            + "    (case when tmp.trend_h = 'L' then '(H1)Long' when tmp.trend_h = 'S' then '(H1)Short' else '' end)                                             as trend_h,    \n"
+            + "    tmp.trend_d      as d,                                                               \n"
+            + "    tmp.trend_h      as h,                                                               \n"
+            + "    ''               as m15,                                                             \n"
+            + "    ''               as m5,                                                              \n"
             + "    (select append.note from funding_history append where append.event_time = concat('1W1D_FX_', append.gecko_id) and append.gecko_id = tmp.epic) as note        \n"
-            + "FROM                                                                                     \n"
+            + " FROM                                                                                     \n"
             + "(                                                                                        \n"
             + "    SELECT                                                                               \n"
             + "        str_h.symbol as epic,                                                            \n"
@@ -146,29 +148,32 @@ public class Utils {
             + "        str_h.note   as trend_h                                                          \n"
             + "    FROM funding_history str_h                                                           \n"
             + "    WHERE str_h.event_time = 'DH4H1_STR_H4_CRYPTO'                                       \n"
-            + ") tmp                                                                                    \n"
-            + "WHERE (tmp.trend_d = 'Long') and (tmp.trend_d = tmp.trend_h)                             \n"
-            + "ORDER BY tmp.epic                                                                        \n";
+            + " ) tmp                                                                                    \n"
+            + " WHERE (tmp.trend_d = 'Long') and (tmp.trend_d = tmp.trend_h)                             \n"
+            + " ORDER BY tmp.epic                                                                        \n";
 
     public static String sql_ForexHistoryResponse = " "
-            + "SELECT DISTINCT ON (epic)                                                                \n"
+            + " SELECT DISTINCT ON (epic)                                                                \n"
             + "    tmp.epic,                                                                            \n"
-            + "    tmp.trend_d  as d,                                                                   \n"
-            + "    tmp.trend_h as h,                                                                    \n"
-            + "    (case when tmp.trend_d  = 'L' then '(D)Long'  when tmp.trend_d = 'S' then '(D)Short' when tmp.trend_d = 'o' then '(D)Sideway' else '' end)            as trend_d,    \n"
-            + "    (case when tmp.trend_h = 'L' then '(H1)Long' when tmp.trend_h = 'S' then '(H1)Short' else '' end)                                                     as trend_h,    \n"
+            + "    tmp.trend_d      as d,                                                               \n"
+            + "    tmp.trend_h      as h,                                                               \n"
+            + "    COALESCE(tmp.trend_15m,'') as m15,                                                   \n"
+            + "    COALESCE(tmp.trend_5m, '') as m5,                                                    \n"
             + "    (select append.note from funding_history append where append.event_time = concat('1W1D_FX_', append.gecko_id) and append.gecko_id = tmp.epic limit 1) as note        \n"
-            + "FROM                                                                                     \n"
-            + "(                                                                                        \n"
+            + " FROM                                                                                     \n"
+            + " (                                                                                        \n"
             + "    SELECT                                                                               \n"
             + "        str_h.symbol as epic,                                                            \n"
             + "        (select str_d.note from funding_history str_d where event_time = 'DH4H1_D_TREND_FX' and str_d.gecko_id = str_h.gecko_id limit 1) as trend_d,   \n"
+            + "        (select str_d.note from funding_history str_d where event_time = 'DH4H1_STR_15M_FX' and str_d.gecko_id = str_h.gecko_id limit 1) as trend_15m,   \n"
+            + "        (select str_d.note from funding_history str_d where event_time = 'DH4H1_STR_05M_FX' and str_d.gecko_id = str_h.gecko_id limit 1) as trend_5m,   \n"
             + "        str_h.note   as trend_h                                                         \n"
             + "    FROM funding_history str_h                                                           \n"
             + "    WHERE str_h.event_time = 'DH4H1_STR_H4_FX'                                           \n"
-            + ") tmp                                                                                    \n"
-            // + " WHERE (tmp.trend_h is not null) and (tmp.trend_d = tmp.trend_h) \n"
-            + "ORDER BY tmp.epic                                                                        \n";
+            + " ) tmp                                                                                    \n"
+            + " WHERE (tmp.trend_h is not null) and (tmp.trend_d = tmp.trend_h)                          \n"
+            + "   AND ((COALESCE(tmp.trend_15m,'') <> '' and COALESCE(tmp.trend_15m,'') = tmp.trend_h) or (COALESCE(tmp.trend_5m,'') <> '' and COALESCE(tmp.trend_5m,'') = tmp.trend_h))   \n"
+            + " ORDER BY tmp.epic                                                                        \n";
 
     public static String sql_OrdersProfitResponse = ""
             + " SELECT * from (                                                                             \n"
@@ -802,7 +807,7 @@ public class Utils {
 
     public static boolean isBusinessTime() {
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-        if ((23 <= hh || hh <= 7)) {
+        if ((22 <= hh || hh <= 8)) {
             return false;
         }
 
@@ -2698,68 +2703,73 @@ public class Utils {
         return false;
     }
 
-    private static String checkTrendByMa10_20_50(List<BtcFutures> list, int fastIndex, String trend) {
-        String resutl = "";
-
-        if (Objects.equals(Utils.TREND_LONG, trend)) {
-            BigDecimal ma3_1 = Utils.calcMA(list, 3, 1);
-            BigDecimal ma50_1 = Utils.calcMA(list, 50, 1);
-            if (ma3_1.compareTo(ma50_1) > 0) {
-                return "";
-            }
-        }
-
-        if (Objects.equals(Utils.TREND_SHORT, trend)) {
-            BigDecimal ma3_1 = Utils.calcMA(list, 3, 1);
-            BigDecimal ma50_1 = Utils.calcMA(list, 50, 1);
-            if (ma3_1.compareTo(ma50_1) < 0) {
-                return "";
-            }
-        }
-
-        resutl += Utils.checkTrendByIndex(list, fastIndex, 10, trend);
-        resutl += Utils.checkTrendByIndex(list, fastIndex, 20, trend);
-        resutl += Utils.checkTrendByIndex(list, fastIndex, 50, trend);
-
-        return resutl;
-    }
-
-    private static String checkTrendByIndex(List<BtcFutures> list, int fastIndex, int slowIndex, String trend) {
-        if (CollectionUtils.isEmpty(list)) {
-            return "";
-        }
-        String val = list.get(0).getPrice_close_candle().toString();
-        if (val.contains("E")) {
-            return "";
-        }
-
-        int str = 1;
-        int end = 2;
-        BigDecimal ma3_1 = calcMA(list, fastIndex, str);
-        BigDecimal ma3_2 = calcMA(list, fastIndex, end);
-
-        BigDecimal ma10_1 = calcMA(list, slowIndex, str);
-        BigDecimal ma10_2 = calcMA(list, slowIndex, end);
-
-        if (isBlank(trend) || Objects.equals(trend, TREND_LONG)) {
-            if ((ma3_1.compareTo(ma3_2) > 0) && (ma3_1.compareTo(ma10_1) > 0) && (ma10_2.compareTo(ma3_2) > 0)) {
-                return getTrendPrifix(TREND_LONG, fastIndex, slowIndex);
-            }
-        }
-
-        if (isBlank(trend) || Objects.equals(trend, TREND_SHORT)) {
-            if ((ma3_1.compareTo(ma3_2) < 0) && (ma3_1.compareTo(ma10_1) < 0) && (ma10_2.compareTo(ma3_2) < 0)) {
-                return getTrendPrifix(TREND_SHORT, fastIndex, slowIndex);
-            }
-        }
-
-        return "";
-    }
+    // private static String checkTrendByMa10_20_50(List<BtcFutures> list, int
+    // fastIndex, String trend) {
+    // String resutl = "";
+    //
+    // if (Objects.equals(Utils.TREND_LONG, trend)) {
+    // BigDecimal ma3_1 = Utils.calcMA(list, 3, 1);
+    // BigDecimal ma50_1 = Utils.calcMA(list, 50, 1);
+    // if (ma3_1.compareTo(ma50_1) > 0) {
+    // return "";
+    // }
+    // }
+    //
+    // if (Objects.equals(Utils.TREND_SHORT, trend)) {
+    // BigDecimal ma3_1 = Utils.calcMA(list, 3, 1);
+    // BigDecimal ma50_1 = Utils.calcMA(list, 50, 1);
+    // if (ma3_1.compareTo(ma50_1) < 0) {
+    // return "";
+    // }
+    // }
+    //
+    // resutl += Utils.checkTrendByIndex(list, fastIndex, 10, trend);
+    // resutl += Utils.checkTrendByIndex(list, fastIndex, 20, trend);
+    // resutl += Utils.checkTrendByIndex(list, fastIndex, 50, trend);
+    //
+    // return resutl;
+    // }
+    //
+    // private static String checkTrendByIndex(List<BtcFutures> list, int fastIndex,
+    // int slowIndex, String trend) {
+    // if (CollectionUtils.isEmpty(list)) {
+    // return "";
+    // }
+    // String val = list.get(0).getPrice_close_candle().toString();
+    // if (val.contains("E")) {
+    // return "";
+    // }
+    //
+    // int str = 1;
+    // int end = 2;
+    // BigDecimal ma3_1 = calcMA(list, fastIndex, str);
+    // BigDecimal ma3_2 = calcMA(list, fastIndex, end);
+    //
+    // BigDecimal ma10_1 = calcMA(list, slowIndex, str);
+    // BigDecimal ma10_2 = calcMA(list, slowIndex, end);
+    //
+    // if (isBlank(trend) || Objects.equals(trend, TREND_LONG)) {
+    // if ((ma3_1.compareTo(ma3_2) > 0) && (ma3_1.compareTo(ma10_1) > 0) &&
+    // (ma10_2.compareTo(ma3_2) > 0)) {
+    // return getTrendPrifix(TREND_LONG, fastIndex, slowIndex);
+    // }
+    // }
+    //
+    // if (isBlank(trend) || Objects.equals(trend, TREND_SHORT)) {
+    // if ((ma3_1.compareTo(ma3_2) < 0) && (ma3_1.compareTo(ma10_1) < 0) &&
+    // (ma10_2.compareTo(ma3_2) < 0)) {
+    // return getTrendPrifix(TREND_SHORT, fastIndex, slowIndex);
+    // }
+    // }
+    //
+    // return "";
+    // }
 
     public static String getTrendPrifix(String trend) {
-        String check = Objects.equals(trend, Utils.TREND_LONG) ? " 💹" + TREND_LONG_UP : " 📉" + TREND_SHORT_DN;
+        String check = Objects.equals(trend, Utils.TREND_LONG) ? " 💹(" + TREND_LONG_UP + ")"
+                : "  📉 (" + TREND_SHORT_DN + ")";
 
-        return "(" + check + " )";
+        return check;
     }
 
     public static String getTrendPrifix(String trend, int maFast, int maSlow) {
