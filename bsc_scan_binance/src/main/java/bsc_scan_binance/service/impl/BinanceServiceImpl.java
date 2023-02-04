@@ -2833,78 +2833,78 @@ public class BinanceServiceImpl implements BinanceService {
         // EPIC = "CHFSGD";
         String result = ".";
         String trend_d = getTrend(EVENT_DH4H1_D_FX, EPIC);
-        String trend_h = getTrend(EVENT_DH4H1_H4_FX, EPIC);
+        String trend_h4 = getTrend(EVENT_DH4H1_H4_FX, EPIC);
 
         if (Objects.equals("DXY", EPIC)) {
-            List<BtcFutures> list_15m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 60);
-            if (!CollectionUtils.isEmpty(list_15m)) {
-                String trend_switch = Utils.switchTrend(list_15m);
 
-                if (Utils.isNotBlank(trend_switch)) {
-                    String chartname = Utils.getChartName(list_15m);
-                    String trend = Utils.getTrendPrifix(trend_switch);
-                    String msg = trend + EPIC + chartname;
-                    result = msg;
-                    String EVENT_ID = EVENT_PUMP + EPIC + chartname + Utils.getCurrentYyyyMmDdHHByChart(list_15m);
-                    sendMsgPerHour(EVENT_ID, msg, true);
+            result = checkPosition_Forex15m(EPIC, "");
 
-                    createNewTrendCycle(EVENT_DH4H1_15M_FX, list_15m, trend_switch, EPIC, EPIC);
+        } else if (Utils.isNotBlank(trend_h4) && Objects.equals(trend_d, trend_h4)) {
 
-                    Utils.writelnLogFooter();
-                    String curr_price = "(" + Utils.removeLastZero(list_15m.get(0).getCurrPrice()) + ")";
-                    Utils.writeLog("Forex(" + trend + ")" + Utils.getChartName(list_15m) + EPIC + curr_price);
-                    Utils.writelnLogFooter();
-                    Utils.writelnLogFooter();
-                }
-            }
-        } else if (Utils.isNotBlank(trend_h)) {
-            List<BtcFutures> list_5m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5, 60);
+            result = checkPosition_Forex15m(EPIC, trend_h4);
 
-            String trend_m5_byMa = Utils.isUptrendByMaIndex(list_5m, 50) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-            String trend_switch = Utils.switchTrend(list_5m);
-
-            String main_trend = "";
-            if (Objects.equals(trend_d, trend_m5_byMa) && Objects.equals(trend_d, trend_switch)) {
-                main_trend = trend_d;
-            }
-            if (Objects.equals(trend_h, trend_m5_byMa) && Objects.equals(trend_h, trend_switch)) {
-                main_trend = trend_h;
-            }
-            if (Utils.isNotBlank(main_trend)) {
-                createNewTrendCycle(EVENT_DH4H1_5M_FX, list_5m, main_trend, EPIC, EPIC);
-
-                List<BtcFutures> list_15m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 60);
-                String trend_15m = Utils.switchTrend(list_15m);
-
-                if (Objects.equals(main_trend, trend_15m)) {
-                    String append = "";
-                    if (Utils.EPICS_FOREX_SCAPS.contains(EPIC)) {
-                        append = "________(5m.15m)________";
-                    } else {
-                        append = "______Test(5m.15m)______";
-                    }
-                    sendScapMsg(list_5m, EPIC, main_trend, append);
-
-                    createNewTrendCycle(EVENT_DH4H1_15M_FX, list_15m, main_trend, EPIC, EPIC);
-                    result = "(" + main_trend + ")" + EPIC;
-                    {
-                        String ma3 = Utils.removeLastZero(Utils.calcMA(list_15m, 3, 0));
-                        String ma10 = Utils.removeLastZero(Utils.calcMA(list_15m, 10, 0));
-                        String ma20 = Utils.removeLastZero(Utils.calcMA(list_15m, 20, 0));
-
-                        String curr_price = "(" + Utils.removeLastZero(list_5m.get(0).getCurrPrice()) + ")";
-                        Utils.writeLog("Forex(" + main_trend + ")" + Utils.getChartName(list_15m) + EPIC + curr_price
-                                + append.replace("_", ""));
-                        Utils.writelnLog("Ma3:" + ma3 + ", Ma10:" + ma10 + ", Ma20:" + ma20);
-                        Utils.writelnLog("https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + EPIC);
-                        Utils.writelnLogFooter();
-                    }
-                }
-            }
         }
 
         return result;
     }
+
+    private String checkPosition_Forex15m(String EPIC, String trend_h4) {
+        String result = "";
+        List<BtcFutures> list_5m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5, 60);
+
+        String trend_switch = Utils.switchTrend(list_5m);
+        String trend_m5_byMa = Utils.isUptrendByMaIndex(list_5m, 50) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+
+        boolean checkCondition = false;
+        if (Utils.isNotBlank(trend_h4) && Objects.equals(trend_h4, trend_m5_byMa)
+                && Objects.equals(trend_h4, trend_switch)) {
+            checkCondition = true;
+        }
+        if (Utils.isBlank(trend_h4) && Objects.equals(trend_switch, trend_m5_byMa)) {
+            checkCondition = true;
+        }
+
+        if (checkCondition) {
+            createNewTrendCycle(EVENT_DH4H1_5M_FX, list_5m, trend_switch, EPIC, EPIC);
+
+            List<BtcFutures> list_15m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 60);
+            String trend_15m = Utils.switchTrend(list_15m);
+            String trend_15m_byMa = Utils.isUptrendByMaIndex(list_5m, 50) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+
+            if (Objects.equals(trend_m5_byMa, trend_15m_byMa) && Objects.equals(trend_m5_byMa, trend_15m)) {
+                String append = "";
+                if (Utils.EPICS_FOREX_SCAPS.contains(EPIC)) {
+                    append = "________(5m.15m)________";
+                } else {
+                    append = "______Test(5m.15m)______";
+                }
+                sendScapMsg(list_5m, EPIC, trend_m5_byMa, append);
+
+                createNewTrendCycle(EVENT_DH4H1_15M_FX, list_15m, trend_15m_byMa, EPIC, EPIC);
+                result = trend_m5_byMa;
+
+                {
+                    String ma3 = Utils.removeLastZero(Utils.calcMA(list_15m, 3, 0));
+                    String ma10 = Utils.removeLastZero(Utils.calcMA(list_15m, 10, 0));
+                    String ma20 = Utils.removeLastZero(Utils.calcMA(list_15m, 20, 0));
+
+                    String curr_price = "(" + Utils.removeLastZero(list_5m.get(0).getCurrPrice()) + ")";
+                    Utils.writeLog("Forex(" + trend_15m_byMa + ")" + Utils.getChartName(list_15m) + EPIC + curr_price
+                            + append.replace("_", ""));
+                    Utils.writelnLog("Ma3:" + ma3 + ", Ma10:" + ma10 + ", Ma20:" + ma20);
+                    Utils.writelnLog(Utils.getCapitalLink(EPIC));
+                    Utils.writelnLogFooter();
+                }
+            }
+        }
+        return result;
+    }
+
+    // --------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------
 
     @Override
     public boolean isFutureCoin(String gecko_id) {
