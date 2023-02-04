@@ -395,6 +395,9 @@ public class WandaBot extends TelegramLongPollingBot {
                 }
             }
         } catch (TelegramApiException e) {
+            System.out.println("___________________________WandaBot_Row_398___________________________");
+            System.out.println("___________________________WandaBot_Row_398___________________________");
+            System.out.println("___________________________WandaBot_Row_398___________________________");
             e.printStackTrace();
         }
     }
@@ -424,7 +427,8 @@ public class WandaBot extends TelegramLongPollingBot {
             return;
         }
 
-        String msg = binance_service.checkChart_WDHM(list.get(0).getGeckoid(), list.get(0).getSymbol().toUpperCase());
+        String msg = binance_service.checkChart_m15_follow_H4(list.get(0).getGeckoid(),
+                list.get(0).getSymbol().toUpperCase());
 
         message.setText(msg);
         execute(message);

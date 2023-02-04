@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ForexHistoryResponse {
-    private String epic = "";
+    private String geckoid_or_epic = "";
+    private String symbol_or_epic = "";
     private String d = "";
     private String h = "";
     private String m15 = "";

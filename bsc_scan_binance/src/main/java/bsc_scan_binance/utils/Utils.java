@@ -136,49 +136,53 @@ public class Utils {
     );
 
     public static String sql_CryptoHistoryResponse = " "
-            + "   SELECT DISTINCT ON (epic)                                                               \n"
-            + "     tmp.epic,                                                                             \n"
+            + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                   \n"
+            + "     tmp.geckoid_or_epic,                                                                 \n"
+            + "     tmp.symbol_or_epic,                                                                   \n"
             + "     tmp.trend_d      as d,                                                                \n"
             + "     tmp.trend_h      as h,                                                                \n"
             + "     COALESCE(tmp.trend_15m,'') as m15,                                                    \n"
             + "     COALESCE(tmp.trend_5m, '') as m5,                                                     \n"
-            + "     (select append.note from funding_history append where append.event_time = concat('1W1D_FX_', append.gecko_id) and append.gecko_id = tmp.epic) as note         \n"
+            + "     (select append.note from funding_history append where append.event_time = concat('1W1D_FX_', append.gecko_id) and append.gecko_id = tmp.geckoid_or_epic) as note         \n"
             + "  FROM                                                                                     \n"
             + " (                                                                                         \n"
             + "     SELECT                                                                                \n"
-            + "         str_h.symbol as epic,                                                             \n"
-            + "         (select str_d.note from funding_history str_d where event_time = 'DH4H1_D_TREND_CRYPTO' and str_d.gecko_id = str_h.gecko_id) as trend_d,  \n"
-            + "         (select str_d.note from funding_history str_d where event_time = 'DH4H1_STR_15M_CRYPTO' and str_d.gecko_id = str_h.gecko_id limit 1) as trend_15m, \n"
-            + "         (select str_d.note from funding_history str_d where event_time = 'DH4H1_STR_05M_CRYPTO' and str_d.gecko_id = str_h.gecko_id limit 1) as trend_5m, \n"
-            + "         str_h.note   as trend_h                                                           \n"
+            + "        str_h.gecko_id  as geckoid_or_epic,                                              \n"
+            + "        str_h.symbol    as symbol_or_epic,                                               \n"
+            + "        (select str_d.note from funding_history str_d where event_time = 'DH4H1_D_TREND_CRYPTO' and str_d.gecko_id = str_h.gecko_id) as trend_d,  \n"
+            + "        (select str_d.note from funding_history str_d where event_time = 'DH4H1_STR_15M_CRYPTO' and str_d.gecko_id = str_h.gecko_id limit 1) as trend_15m, \n"
+            + "        (select str_d.note from funding_history str_d where event_time = 'DH4H1_STR_05M_CRYPTO' and str_d.gecko_id = str_h.gecko_id limit 1) as trend_5m, \n"
+            + "        str_h.note   as trend_h                                                           \n"
             + "     FROM funding_history str_h                                                            \n"
             + "     WHERE str_h.event_time = 'DH4H1_STR_H4_CRYPTO'                                        \n"
             + "  ) tmp                                                                                    \n"
             + "  WHERE (tmp.trend_d = 'Long') and (tmp.trend_d = tmp.trend_h)  and (tmp.trend_d = tmp.trend_15m)   \n"
-            + "  ORDER BY tmp.epic                                                                        \n";
+            + "  ORDER BY tmp.symbol_or_epic                                                          \n";
 
     public static String sql_ForexHistoryResponse = " "
-            + " SELECT DISTINCT ON (epic)                                                                \n"
-            + "    tmp.epic,                                                                            \n"
+            + " SELECT DISTINCT ON (tmp.symbol_or_epic)                                                    \n"
+            + "    tmp.geckoid_or_epic,                                                                 \n"
+            + "    tmp.symbol_or_epic,                                                                   \n"
             + "    tmp.trend_d      as d,                                                               \n"
             + "    tmp.trend_h      as h,                                                               \n"
             + "    COALESCE(tmp.trend_15m,'') as m15,                                                   \n"
             + "    COALESCE(tmp.trend_5m, '') as m5,                                                    \n"
-            + "    (select append.note from funding_history append where append.event_time = concat('1W1D_FX_', append.gecko_id) and append.gecko_id = tmp.epic limit 1) as note        \n"
-            + " FROM                                                                                     \n"
-            + " (                                                                                        \n"
+            + "    (select append.note from funding_history append where append.event_time = concat('1W1D_FX_', append.gecko_id) and append.gecko_id = tmp.geckoid_or_epic limit 1) as note        \n"
+            + " FROM                                                                                    \n"
+            + " (                                                                                       \n"
             + "    SELECT                                                                               \n"
-            + "        str_h.symbol as epic,                                                            \n"
+            + "        str_h.gecko_id  as geckoid_or_epic,                                              \n"
+            + "        str_h.symbol    as symbol_or_epic,                                               \n"
             + "        (select str_d.note from funding_history str_d where event_time = 'DH4H1_D_TREND_FX' and str_d.gecko_id = str_h.gecko_id limit 1) as trend_d,   \n"
             + "        (select str_d.note from funding_history str_d where event_time = 'DH4H1_STR_15M_FX' and str_d.gecko_id = str_h.gecko_id limit 1) as trend_15m,   \n"
             + "        (select str_d.note from funding_history str_d where event_time = 'DH4H1_STR_05M_FX' and str_d.gecko_id = str_h.gecko_id limit 1) as trend_5m,   \n"
-            + "        str_h.note   as trend_h                                                         \n"
+            + "        str_h.note   as trend_h                                                          \n"
             + "    FROM funding_history str_h                                                           \n"
             + "    WHERE str_h.event_time = 'DH4H1_STR_H4_FX'                                           \n"
-            + " ) tmp                                                                                    \n"
-            + " WHERE (tmp.trend_h is not null) and (tmp.trend_d = tmp.trend_h)                          \n"
+            + " ) tmp                                                                                   \n"
+            + " WHERE (tmp.trend_h is not null) and (tmp.trend_d = tmp.trend_h)                         \n"
             + "   AND ((COALESCE(tmp.trend_15m,'') <> '' and COALESCE(tmp.trend_15m,'') = tmp.trend_h) or (COALESCE(tmp.trend_5m,'') <> '' and COALESCE(tmp.trend_5m,'') = tmp.trend_h))   \n"
-            + " ORDER BY tmp.epic                                                                        \n";
+            + " ORDER BY tmp.symbol_or_epic                                                             \n";
 
     public static String sql_OrdersProfitResponse = ""
             + " SELECT * from (                                                                             \n"
@@ -801,6 +805,15 @@ public class Utils {
         }
     }
 
+    public static boolean isWeekend() {
+        LocalDate today = LocalDate.now();
+        DayOfWeek day = DayOfWeek.of(today.get(ChronoField.DAY_OF_WEEK));
+        boolean value = day == DayOfWeek.SUNDAY || day == DayOfWeek.SATURDAY;
+
+        // TODO: return value;
+        return false;
+    }
+
     public static boolean isWorkingTime() {
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if ((9 <= hh && hh <= 18)) {
@@ -852,7 +865,9 @@ public class Utils {
                 e.printStackTrace();
             }
         } catch (Exception e) {
+            System.out.println("____________________sendToChatId.ERROR____________________");
             e.printStackTrace();
+            System.exit(0);
         }
     }
 
@@ -1018,12 +1033,6 @@ public class Utils {
         }
 
         return result;
-    }
-
-    public static boolean isWeekend() {
-        LocalDate today = LocalDate.now();
-        DayOfWeek day = DayOfWeek.of(today.get(ChronoField.DAY_OF_WEEK));
-        return day == DayOfWeek.SUNDAY || day == DayOfWeek.SATURDAY;
     }
 
     public static String getCurrentYyyyMmDd_HH() {
@@ -2632,6 +2641,12 @@ public class Utils {
     }
 
     private static String checkTrendSideway(List<BtcFutures> list, int str, int end) {
+        Boolean isSmallTimeFrame = false;
+        String symbol = list.get(0).getId();
+        if (symbol.contains("_15m_") || symbol.contains("_5m_") || symbol.contains("_1m_")) {
+            isSmallTimeFrame = true;
+        }
+
         BigDecimal ma3_1 = calcMA(list, 3, str);
         BigDecimal ma3_2 = calcMA(list, 3, end);
 
@@ -2644,17 +2659,27 @@ public class Utils {
         BigDecimal ma50_1 = calcMA(list, 50, str);
         BigDecimal ma50_2 = calcMA(list, 50, end);
 
-        String l_m3x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
-        String l_m3x20 = Utils.checkXCutUpY(ma3_1, ma3_2, ma20_1, ma20_2);
-        String l_m3x50 = Utils.checkXCutUpY(ma3_1, ma3_2, ma50_1, ma50_2);
+        String l_m3x10 = "";
+        String l_m3x20 = "";
+        String l_m3x50 = "";
+        if (isSmallTimeFrame) {
+            l_m3x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
+        }
+        l_m3x20 = Utils.checkXCutUpY(ma3_1, ma3_2, ma20_1, ma20_2);
+        l_m3x50 = Utils.checkXCutUpY(ma3_1, ma3_2, ma50_1, ma50_2);
         String l_m10x20 = Utils.checkXCutUpY(ma10_1, ma10_2, ma20_1, ma20_2);
         String l_m10x50 = Utils.checkXCutUpY(ma10_1, ma10_2, ma50_1, ma50_2);
         String l_m20x50 = Utils.checkXCutUpY(ma20_1, ma20_2, ma50_1, ma50_2);
         String trend_L = l_m3x10 + "_" + l_m3x20 + "_" + l_m3x50 + "_" + l_m10x20 + "_" + l_m10x50 + "_" + l_m20x50;
 
-        String s_m3x10 = Utils.checkXCutDownY(ma3_1, ma3_2, ma10_1, ma10_2);
-        String s_m3x20 = Utils.checkXCutDownY(ma3_1, ma3_2, ma20_1, ma20_2);
-        String s_m3x50 = Utils.checkXCutDownY(ma3_1, ma3_2, ma50_1, ma50_2);
+        String s_m3x10 = "";
+        String s_m3x20 = "";
+        String s_m3x50 = "";
+        if (isSmallTimeFrame) {
+            s_m3x10 = Utils.checkXCutDownY(ma3_1, ma3_2, ma10_1, ma10_2);
+        }
+        s_m3x20 = Utils.checkXCutDownY(ma3_1, ma3_2, ma20_1, ma20_2);
+        s_m3x50 = Utils.checkXCutDownY(ma3_1, ma3_2, ma50_1, ma50_2);
         String s_m10x20 = Utils.checkXCutDownY(ma10_1, ma10_2, ma20_1, ma20_2);
         String s_m10x50 = Utils.checkXCutDownY(ma10_1, ma10_2, ma50_1, ma50_2);
         String s_m20x50 = Utils.checkXCutDownY(ma20_1, ma20_2, ma50_1, ma50_2);

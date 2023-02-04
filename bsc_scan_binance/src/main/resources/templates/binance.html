@@ -272,10 +272,10 @@ p {
           <!-- Details -->
           <td style="max-width: 80px !important;" th:switch="${token.symbol}">
             <a th:case="'BTC'" th:target="_blank" th:href="${'/' + token.symbol}" th:classappend="${#strings.isEmpty(token.gecko_id) ? 'hide': ''}" >
-              <span th:text="${token.symbol}"></span>
+              <span th:text="${token.dot_symbol}"></span>
             </a>
             <a th:case="*" th:target="_blank" th:href="${'/' + token.symbol}" th:classappend="${#strings.isEmpty(token.gecko_id) ? 'hide': ''}" >
-              <span th:text="${token.symbol}"></span>
+              <span th:text="${token.dot_symbol}"></span>
             </a>
           </td>
 

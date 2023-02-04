@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class CandidateTokenCssResponse {
     private String gecko_id = "";
     private String symbol = "";
+    private String dot_symbol = "";
     private String name = "";
 
     private BigDecimal low_price_24h;
