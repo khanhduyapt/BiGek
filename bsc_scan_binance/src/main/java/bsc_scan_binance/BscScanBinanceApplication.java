@@ -129,7 +129,7 @@ public class BscScanBinanceApplication {
                         check_FutureCoin(binance_service, coin);
 
                         if (Utils.isBusinessTime()) {
-                            if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "SAME_PHASE_LIST")) {
+                            if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "SAME_PHASE")) {
                                 forex_list_15m = binance_service.getForexSamePhaseList();
                                 cryto_list_15m = binance_service.getCryptoSamePhaseList();
                             }
@@ -137,7 +137,6 @@ public class BscScanBinanceApplication {
                             if (index_forex < forex_size) {
                                 String EPIC = capital_list.get(index_forex);
                                 init_Forex_4h(binance_service, EPIC, index_forex, forex_size);
-
                                 check_Forex_15m(binance_service, EPIC);
 
                                 index_forex += 1;
@@ -173,7 +172,6 @@ public class BscScanBinanceApplication {
                     } else {
                         index_crypto += 1;
                     }
-
                 }
             }
         } catch (Exception e) {

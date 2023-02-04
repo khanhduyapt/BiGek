@@ -2737,6 +2737,15 @@ public class BinanceServiceImpl implements BinanceService {
         return result;
     }
 
+    @Transactional
+    public void resetTrendSycle(String event_dh_str, String key_or_symbol) {
+        FundingHistoryKey id = new FundingHistoryKey(event_dh_str, key_or_symbol);
+        FundingHistory entity = fundingHistoryRepository.findById(id).orElse(null);
+        if (!Objects.equals(null, entity)) {
+            fundingHistoryRepository.deleteById(id);
+        }
+    }
+
     @Override
     @Transactional
     public String initForex(String EPIC) {
@@ -2780,28 +2789,34 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
         } else if (Utils.isNotBlank(trend_h) && Objects.equals(trend_d, trend_h)) {
+            List<BtcFutures> list_15m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 50);
 
-            if (Utils.EPICS_FOREX_SCAPS.contains(EPIC)) {
+            String trend_15m = Utils.switchTrend(list_15m);
+            String trend_m15_byMa20 = Utils.isUptrendByMaIndex(list_15m, 20) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+
+            if (Objects.equals(trend_15m, trend_m15_byMa20) || Objects.equals(trend_h, trend_15m)) {
+                createNewTrendCycle(EVENT_DH4H1_15M_FX, list_15m, EPIC, trend_h);
+                String msg_5m = "";
+
                 List<BtcFutures> list_5m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5, 50);
-                String find_trend = Utils.isUptrendByMaIndex(list_5m, 50) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-                String find_trend2 = Utils.switchTrend(list_5m);
+                String trend_m5_byMa20 = Utils.isUptrendByMaIndex(list_5m, 20) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+                String trend_switch = Utils.switchTrend(list_5m);
 
-                if (Objects.equals(trend_h, find_trend) && Objects.equals(find_trend, find_trend2)) {
-                    createNewTrendCycle(EVENT_DH4H1_5M_FX, list_5m, EPIC, trend_h);
-                    sendScapMsg(list_5m, EPIC, trend_h, "_________(H4)to(5m)_______");
+                if (Objects.equals(trend_15m, trend_m5_byMa20) && Objects.equals(trend_15m, trend_switch)) {
+
+                    if (Utils.EPICS_FOREX_SCAPS.contains(EPIC)) {
+                        msg_5m = "________(H4)to(5m)________";
+                    } else {
+                        msg_5m = "______Test(H4)to(5m)______";
+                    }
+
+                    createNewTrendCycle(EVENT_DH4H1_5M_FX, list_5m, EPIC, trend_switch);
                 }
 
-            } else {
-                List<BtcFutures> list_5m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5, 50);
-                String find_trend = Utils.isUptrendByMaIndex(list_5m, 50) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-                String find_trend2 = Utils.switchTrend(list_5m);
-
-                if (Objects.equals(trend_h, find_trend) && Objects.equals(find_trend, find_trend2)) {
-                    createNewTrendCycle(EVENT_DH4H1_5M_FX, list_5m, EPIC, trend_h);
-                    sendScapMsg(list_5m, EPIC, trend_h, "__________Test__________");
+                if (Utils.isNotBlank(msg_5m)) {
+                    sendScapMsg(list_5m, EPIC, trend_h, msg_5m);
                 }
             }
-
         }
     }
 
@@ -2831,36 +2846,30 @@ public class BinanceServiceImpl implements BinanceService {
 
     private void checkPositionLong15m(String symbol) {
         List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 50);
+        String trend_15m = Utils.switchTrend(list_15m);
 
-        if (Utils.isUptrendByMaIndex(list_15m, 50)) {
-            String trend_15m = createTrendByMa50(EVENT_DH4H1_15M_CRYPTO, list_15m, symbol);
+        if (Utils.isUptrendByMaIndex(list_15m, 50) || Objects.equals(Utils.TREND_LONG, trend_15m)) {
+            createNewTrendCycle(EVENT_DH4H1_15M_CRYPTO, list_15m, symbol, Utils.TREND_LONG);
 
-            if (Objects.equals(Utils.TREND_LONG, trend_15m)) {
-                String str_trend_15m = Utils.switchTrend(list_15m);
+            List<BtcFutures> list_5m = Utils.loadData(symbol, TIME_5m, 50);
+            String str_trend_5m = Utils.switchTrend(list_5m);
 
-                List<BtcFutures> list_5m = Utils.loadData(symbol, TIME_5m, 50);
-                String str_trend_5m = Utils.switchTrend(list_5m);
-
-                String chartname = "";
-                if (Utils.isUptrendByMaIndex(list_15m, 20) && Objects.equals(Utils.TREND_LONG, str_trend_15m)) {
-                    chartname = "(H4)to(15M)";
-                    createNewTrendCycle(EVENT_DH4H1_15M_CRYPTO, list_15m, symbol, Utils.TREND_LONG);
-                }
-                if (Utils.isUptrendByMaIndex(list_5m, 20) && Objects.equals(Utils.TREND_LONG, str_trend_5m)) {
-                    chartname = "(H4)to(5M)";
-                    createNewTrendCycle(EVENT_DH4H1_5M_CRYPTO, list_5m, symbol, Utils.TREND_LONG);
-                }
-
-                if (Utils.isNotBlank(chartname)) {
-                    String msg = "(Long)" + chartname + symbol;
-                    msg += "(" + Utils.removeLastZero(list_5m.get(0).getCurrPrice()) + ")";
-
-                    String EVENT_ID = EVENT_PUMP + symbol + chartname + Utils.getCurrentYyyyMmDd_HH();
-                    sendMsgPerHour(EVENT_ID, msg, true);
-
-                }
-
+            String chartname = "";
+            if (Utils.isUptrendByMaIndex(list_5m, 20) && Objects.equals(Utils.TREND_LONG, str_trend_5m)) {
+                chartname = "(H4)to(5M)";
+                createNewTrendCycle(EVENT_DH4H1_5M_CRYPTO, list_5m, symbol, Utils.TREND_LONG);
+            } else {
+                resetTrendSycle(EVENT_DH4H1_5M_CRYPTO, symbol);
             }
+
+            if (Utils.isNotBlank(chartname)) {
+                String msg = "(Long)" + chartname + symbol;
+                msg += "(" + Utils.removeLastZero(list_5m.get(0).getCurrPrice()) + ")";
+
+                String EVENT_ID = EVENT_PUMP + symbol + chartname + Utils.getCurrentYyyyMmDd_HH();
+                sendMsgPerHour(EVENT_ID, msg, true);
+            }
+
         }
     }
 
