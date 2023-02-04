@@ -2261,7 +2261,7 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        List<BtcFutures> btc1hs = Utils.loadData(symbol, TIME_1h, 50);
+        List<BtcFutures> btc1hs = Utils.loadData(symbol, TIME_1h, 60);
         if (CollectionUtils.isEmpty(btc1hs)) {
             return "";
         }
@@ -2617,7 +2617,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     private String sendMsgKillLongShort(String gecko_id, String symbol, String append) {
         String msg = "";
-        List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 50);
+        List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 60);
 
         if (Objects.equals("BTC", symbol)) {
             String trend_15m = Utils.switchTrend(list_15m);
@@ -2693,7 +2693,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean allowSendMsg, String append, boolean isCompareWithBtc) {
         String trend = "";
         String CURRENCY = isCompareWithBtc ? "BTC" : "USDT";
-        List<BtcFutures> list_compare_btc = Utils.loadData(symbol, TIME, 50, CURRENCY);
+        List<BtcFutures> list_compare_btc = Utils.loadData(symbol, TIME, 60, CURRENCY);
         BigDecimal current_price = isCompareWithBtc ? ref_price : list_compare_btc.get(0).getCurrPrice();
 
         if (!CollectionUtils.isEmpty(list_compare_btc)) {
@@ -2758,24 +2758,24 @@ public class BinanceServiceImpl implements BinanceService {
         return trend_d;
     }
 
-    public String createTrendByMa3_10_20(String event_dh4h1_h4_xxxx, List<BtcFutures> list_h4, String geckoid_or_epic,
+    public String createTrendByMa3_10_20(String event_dh4h1_tm_xxxx, List<BtcFutures> list, String geckoid_or_epic,
             String symbol_or_epic) {
-        String trend_h4 = "";
+        String trend = "";
 
-        Boolean isUptrendByMa3 = Utils.isUptrendByMaIndex(list_h4, 3);
-        Boolean isUptrendByMa10 = Utils.isUptrendByMaIndex(list_h4, 10);
-        Boolean isUptrendByMa20 = Utils.isUptrendByMaIndex(list_h4, 20);
+        Boolean isUptrendByMa3 = Utils.isUptrendByMaIndex(list, 3);
+        Boolean isUptrendByMa10 = Utils.isUptrendByMaIndex(list, 10);
+        Boolean isUptrendByMa20 = Utils.isUptrendByMaIndex(list, 20);
 
         if ((isUptrendByMa3 == isUptrendByMa10) && (isUptrendByMa10 == isUptrendByMa20)) {
-            trend_h4 = isUptrendByMa20 ? Utils.TREND_LONG : Utils.TREND_SHORT;
+            trend = isUptrendByMa20 ? Utils.TREND_LONG : Utils.TREND_SHORT;
         } else {
-            trend_h4 = Utils.switchTrend(list_h4);
+            trend = Utils.switchTrend(list);
         }
 
         fundingHistoryRepository
-                .save(createPumpDumpEntity(event_dh4h1_h4_xxxx, geckoid_or_epic, symbol_or_epic, trend_h4, true));
+                .save(createPumpDumpEntity(event_dh4h1_tm_xxxx, geckoid_or_epic, symbol_or_epic, trend, true));
 
-        return trend_h4;
+        return trend;
     }
 
     public String createNewTrendCycle(String event_dh_str, List<BtcFutures> list, String trend, String geckoid_or_epic,
@@ -2806,7 +2806,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initForex(String EPIC) {
-        List<BtcFutures> list_h4 = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4, 55);
+        List<BtcFutures> list_h4 = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4, 60);
 
         if (!CollectionUtils.isEmpty(list_h4)) {
             String trend_d = createTrendByMa50(EVENT_DH4H1_D_FX, list_h4, EPIC, EPIC);
@@ -2836,7 +2836,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_h = getTrend(EVENT_DH4H1_H4_FX, EPIC);
 
         if (Objects.equals("DXY", EPIC)) {
-            List<BtcFutures> list_15m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 50);
+            List<BtcFutures> list_15m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 60);
             if (!CollectionUtils.isEmpty(list_15m)) {
                 String trend_switch = Utils.switchTrend(list_15m);
 
@@ -2858,7 +2858,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
         } else if (Utils.isNotBlank(trend_h)) {
-            List<BtcFutures> list_5m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5, 50);
+            List<BtcFutures> list_5m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5, 60);
 
             String trend_m5_byMa = Utils.isUptrendByMaIndex(list_5m, 50) ? Utils.TREND_LONG : Utils.TREND_SHORT;
             String trend_switch = Utils.switchTrend(list_5m);
@@ -2873,7 +2873,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isNotBlank(main_trend)) {
                 createNewTrendCycle(EVENT_DH4H1_5M_FX, list_5m, main_trend, EPIC, EPIC);
 
-                List<BtcFutures> list_15m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 50);
+                List<BtcFutures> list_15m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 60);
                 String trend_15m = Utils.switchTrend(list_15m);
 
                 if (Objects.equals(main_trend, trend_15m)) {
@@ -3086,23 +3086,24 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private void checkPositionBTC_15m(String gecko_id, String symbol) {
-        List<BtcFutures> list_5m = Utils.loadData(symbol, TIME_5m, 50);
-        String trend_m5 = Utils.switchTrend(list_5m);
-        String trend_5m_ma50 = Utils.isUptrendByMaIndex(list_5m, 50) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+        List<BtcFutures> list_5m = Utils.loadData(symbol, TIME_5m, 60);
 
-        if (Objects.equals(trend_m5, trend_5m_ma50)) {
+        String trend_m5 = Utils.switchTrend(list_5m);
+        String trend_5m_by_ma = Utils.isUptrendByMaIndex(list_5m, 50) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+
+        if (Objects.equals(trend_m5, trend_5m_by_ma)) {
             createTrendByMa3_10_20(EVENT_DH4H1_5M_CRYPTO, list_5m, gecko_id, symbol);
 
             Utils.writelnLog(Utils.getMmDD_TimeHHmm() + "(5m) " + symbol
                     + (Objects.equals(Utils.TREND_LONG, trend_m5) ? " Up " : " Down ") + Utils.getCurrentPrice(list_5m)
                     + ". " + Utils.getCryptoLink_Future(symbol));
 
-            List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 50);
-            String trend_15m = Utils.switchTrend(list_15m);
-            String trend_15m_ma20 = Utils.isUptrendByMaIndex(list_5m, 50) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+            List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 60);
+            String swithc_trend_15m = Utils.switchTrend(list_15m);
+            String trend_15m_ma20 = Utils.isUptrendByMaIndex(list_15m, 20) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
-            if (Objects.equals(trend_m5, trend_15m) && Objects.equals(trend_15m, trend_15m_ma20)) {
-                String msg = "(" + trend_15m + ")(5m.15m)" + symbol + Utils.getCurrentPrice(list_15m)
+            if (Objects.equals(trend_m5, swithc_trend_15m) && Objects.equals(swithc_trend_15m, trend_15m_ma20)) {
+                String msg = "(" + swithc_trend_15m + ")(5m.15m)" + symbol + Utils.getCurrentPrice(list_15m)
                         + getVolMc(gecko_id);
                 String EVENT_ID = EVENT_PUMP + symbol + "_15_" + Utils.getCurrentYyyyMmDd_HH();
                 sendMsgPerHour(EVENT_ID, msg, true);
@@ -3128,7 +3129,7 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private void checkPositionCrypto15m(String gecko_id, String symbol) {
-        List<BtcFutures> list_5m = Utils.loadData(symbol, TIME_5m, 50);
+        List<BtcFutures> list_5m = Utils.loadData(symbol, TIME_5m, 60);
         String str_trend_5m = Utils.switchTrend(list_5m);
         boolean uptrenByMa = Utils.isUptrendByMaIndex(list_5m, 50);
         if (uptrenByMa && Objects.equals(Utils.TREND_LONG, str_trend_5m)) {
@@ -3136,7 +3137,7 @@ public class BinanceServiceImpl implements BinanceService {
             String curr_price = "(" + Utils.removeLastZero(list_5m.get(0).getCurrPrice()) + ")";
             createNewTrendCycle(EVENT_DH4H1_5M_CRYPTO, list_5m, Utils.TREND_LONG, gecko_id, symbol);
 
-            List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 50);
+            List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 60);
             String trend_15m = Utils.switchTrend(list_15m);
 
             if (Objects.equals(Utils.TREND_LONG, trend_15m)) {
