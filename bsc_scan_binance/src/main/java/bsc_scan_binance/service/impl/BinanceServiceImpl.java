@@ -2612,8 +2612,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Objects.equals(Utils.TREND_SHORT, trend_15m)) {
-                String EVENT_STOP_LONG_ID = "BTC_" + Utils.TEXT_STOP_LONG
-                        + Utils.getCurrentYyyyMmDdHHByChart(list_15m);
+                String EVENT_STOP_LONG_ID = "BTC_" + Utils.TEXT_STOP_LONG + Utils.getCurrentYyyyMmDdHHByChart(list_15m);
 
                 String msg_stop = "";
                 msg_stop += "******************************" + Utils.new_line_from_service;
@@ -2802,10 +2801,6 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public void checkSamePhaseForex15m(String EPIC) {
-        if (Objects.equals(Utils.TREND_SHORT, BTC_TREND_M15)) {
-            return;
-        }
-
         String trend_d = getTrend(EVENT_DH4H1_D_FX, EPIC);
         String trend_h = getTrend(EVENT_DH4H1_H4_FX, EPIC);
 
@@ -2871,6 +2866,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.equals(Utils.TREND_SHORT, BTC_TREND_M15)) {
             resetTrendSycle(EVENT_DH4H1_5M_CRYPTO, symbol);
             resetTrendSycle(EVENT_DH4H1_15M_CRYPTO, symbol);
+            System.out.print(".");
             return "";
         }
 
@@ -3066,6 +3062,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.equals(Utils.TREND_SHORT, BTC_TREND_M15)) {
             resetTrendSycle(EVENT_DH4H1_5M_CRYPTO, symbol);
             resetTrendSycle(EVENT_DH4H1_15M_CRYPTO, symbol);
+            System.out.print(".");
             return;
         }
 
