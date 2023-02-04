@@ -3036,10 +3036,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_h4 = getTrend(EVENT_DH4H1_H4_CRYPTO, gecko_id);
 
         if (Objects.equals(Utils.TREND_LONG, trend_d) && Objects.equals(Utils.TREND_LONG, trend_h4)) {
-            List<CandidateCoin> coins = candidateCoinRepository.searchBySymbol(symbol);
-            if (!CollectionUtils.isEmpty(coins)) {
-                checkPositionCrypto15m(coins.get(0).getGeckoid(), symbol);
-            }
+            checkPositionCrypto15m(gecko_id, symbol);
         }
     }
 
