@@ -34,9 +34,6 @@ public class BscScanBinanceApplication {
     private static Hashtable<String, String> keys_dict = new Hashtable<String, String>();
     public static Hashtable<String, String> forex_naming_dict = new Hashtable<String, String>();
 
-    private static int pre_blog15minute = -1;
-    private static int cur_blog15minute = -1;
-
     public static ApplicationContext applicationContext;
     public static WandaBot wandaBot;
     public static TelegramBotsApi telegramBotsApi;
@@ -132,7 +129,7 @@ public class BscScanBinanceApplication {
                         check_FutureCoin(binance_service, coin);
 
                         if (Utils.isBusinessTime()) {
-                            if (index_crypto % 30 == 0) {
+                            if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "SAME_PHASE_LIST")) {
                                 forex_list_15m = binance_service.getForexSamePhaseList();
                                 cryto_list_15m = binance_service.getCryptoSamePhaseList();
                             }
@@ -192,43 +189,41 @@ public class BscScanBinanceApplication {
 
     private static void check_15m(BinanceService binance_service, List<ForexHistoryResponse> crypto_list,
             List<ForexHistoryResponse> forex_list) {
+        if (!isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "DXY_BTC_ETH_BNB")) {
+            return;
+        }
 
-        cur_blog15minute = Utils.getCurrentMinute_Blog15minutes();
-        if (pre_blog15minute != cur_blog15minute) {
-            pre_blog15minute = cur_blog15minute;
+        System.out.println();
+        System.out.println(Utils.getTimeHHmm() + "Check DXY(15m)");
+        binance_service.checkSamePhaseForex15m("DXY");
 
-            System.out.println();
-            System.out.println(Utils.getTimeHHmm() + "Check DXY(15m)");
-            binance_service.checkSamePhaseForex15m("DXY");
+        System.out.println(Utils.getTimeHHmm() + "Check BTC(15m)");
+        binance_service.checkChart_WDHM("bitcoin", "BTC");
+        wait(SLEEP_MINISECONDS);
 
-            System.out.println(Utils.getTimeHHmm() + "Check BTC(15m)");
-            binance_service.checkChart_WDHM("bitcoin", "BTC");
-            wait(SLEEP_MINISECONDS);
+        System.out.println(Utils.getTimeHHmm() + "Check ETH(15m)");
+        binance_service.checkChart_WDHM("ethereum", "ETH");
+        wait(SLEEP_MINISECONDS);
 
-            System.out.println(Utils.getTimeHHmm() + "Check ETH(15m)");
-            binance_service.checkChart_WDHM("ethereum", "ETH");
-            wait(SLEEP_MINISECONDS);
+        System.out.println(Utils.getTimeHHmm() + "Check BNB(15m)");
+        binance_service.checkChart_WDHM("binancecoin", "BNB");
+        wait(SLEEP_MINISECONDS);
 
-            System.out.println(Utils.getTimeHHmm() + "Check BNB(15m)");
-            binance_service.checkChart_WDHM("binancecoin", "BNB");
-            wait(SLEEP_MINISECONDS);
+        if (Utils.isBusinessTime()) {
+            int crypto_size = crypto_list.size();
+            int forex_size = forex_list.size();
+            int max = crypto_size > forex_size ? crypto_size : forex_size;
 
-            if (Utils.isBusinessTime()) {
-                int crypto_size = crypto_list.size();
-                int forex_size = forex_list.size();
-                int max = crypto_size > forex_size ? crypto_size : forex_size;
-
-                for (int index = 0; index < max; index++) {
-                    if (index < crypto_size) {
-                        check_Crypto_15m(binance_service, crypto_list.get(index).getEpic());
-                    }
-
-                    if (index < forex_size) {
-                        check_Forex_15m(binance_service, forex_list.get(index).getEpic());
-                    }
-
-                    wait(SLEEP_MINISECONDS);
+            for (int index = 0; index < max; index++) {
+                if (index < crypto_size) {
+                    check_Crypto_15m(binance_service, crypto_list.get(index).getEpic());
                 }
+
+                if (index < forex_size) {
+                    check_Forex_15m(binance_service, forex_list.get(index).getEpic());
+                }
+
+                wait(SLEEP_MINISECONDS);
             }
         }
     }

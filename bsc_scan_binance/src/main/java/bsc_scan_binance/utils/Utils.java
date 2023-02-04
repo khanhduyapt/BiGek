@@ -2623,11 +2623,10 @@ public class Utils {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
-
-        String trend_main = checkTrendSideway(list, 0, 5);
-        String trend_confirm = checkTrendSideway(list, 5, 10);
-
         String result = "";
+        String trend_main = checkTrendSideway(list, 0, 3);
+        String trend_confirm = checkTrendSideway(list, 3, 8);
+
         if (trend_main.contains(Utils.TREND_LONG) && trend_main.contains(Utils.TREND_SHORT)) {
             return "";
         }
