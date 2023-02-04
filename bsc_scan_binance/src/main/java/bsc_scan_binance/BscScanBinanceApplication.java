@@ -196,25 +196,36 @@ public class BscScanBinanceApplication {
 
     private static void check_15m(BinanceService binance_service, List<ForexHistoryResponse> crypto_list,
             List<ForexHistoryResponse> forex_list) {
+
+        System.out.print(".");
         if (!isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "DXY_BTC_ETH_BNB")) {
             return;
         }
 
         System.out.println();
-        System.out.println(Utils.getTimeHHmm() + "Check DXY(15m)");
-        binance_service.checkSamePhase_H4M_Forex15m("DXY");
 
-        System.out.println(Utils.getTimeHHmm() + "Check BTC(15m)");
-        binance_service.checkChart_m15_follow_H4("bitcoin", "BTC");
-        wait(SLEEP_MINISECONDS);
+        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "DXY")) {
+            System.out.println(Utils.getTimeHHmm() + "Check DXY(15m)");
+            binance_service.checkSamePhase_H4M_Forex15m("DXY");
+        }
 
-        System.out.println(Utils.getTimeHHmm() + "Check ETH(15m)");
-        binance_service.checkChart_m15_follow_H4("ethereum", "ETH");
-        wait(SLEEP_MINISECONDS);
+        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "BTC")) {
+            System.out.println(Utils.getTimeHHmm() + "Check BTC(15m)");
+            binance_service.checkChart_m15_follow_H4("bitcoin", "BTC");
+            wait(SLEEP_MINISECONDS);
+        }
 
-        System.out.println(Utils.getTimeHHmm() + "Check BNB(15m)");
-        binance_service.checkChart_m15_follow_H4("binancecoin", "BNB");
-        wait(SLEEP_MINISECONDS);
+        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "ETH")) {
+            System.out.println(Utils.getTimeHHmm() + "Check ETH(15m)");
+            binance_service.checkChart_m15_follow_H4("ethereum", "ETH");
+            wait(SLEEP_MINISECONDS);
+        }
+
+        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "BNB")) {
+            System.out.println(Utils.getTimeHHmm() + "Check BNB(15m)");
+            binance_service.checkChart_m15_follow_H4("binancecoin", "BNB");
+            wait(SLEEP_MINISECONDS);
+        }
 
         if (Utils.isBusinessTime()) {
             int crypto_size = crypto_list.size();

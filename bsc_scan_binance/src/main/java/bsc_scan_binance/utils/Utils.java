@@ -47,7 +47,9 @@ import bsc_scan_binance.response.CandidateTokenCssResponse;
 import bsc_scan_binance.response.DepthResponse;
 import bsc_scan_binance.response.FundingResponse;
 import bsc_scan_binance.response.OrdersProfitResponse;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class Utils {
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -784,6 +786,8 @@ public class Utils {
     }
 
     public static void sendToMyTelegram(String text) {
+        log.info(Utils.getMmDD_TimeHHmm() + text);
+
         String msg = text.replaceAll("↑", "^").replaceAll("↓", "v").replaceAll(" ", "");
         System.out.println();
         System.out.println(msg + " 💰 ");
@@ -793,6 +797,8 @@ public class Utils {
     }
 
     public static void sendToTelegram(String text) {
+        log.info(Utils.getMmDD_TimeHHmm() + text);
+
         String msg = text.replaceAll("↑", "^").replaceAll("↓", "v").replaceAll(" ", "");
         System.out.println(msg);
 

@@ -3056,6 +3056,20 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private void checkPositionCrypto15m(String gecko_id, String symbol) {
+        CandidateCoin coinmarketcap = candidateCoinRepository.findById(gecko_id).orElse(null);
+        if (Objects.equals(null, coinmarketcap)) {
+            return;
+        }
+        String append = "";
+        if (!"_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
+            BigDecimal vol = Utils.getBigDecimal(coinmarketcap.getVolumnDivMarketcap())
+                    .multiply(BigDecimal.valueOf(100));
+            if (vol.compareTo(BigDecimal.valueOf(20)) < 0) {
+                return;
+            }
+            append = "Vol:Mc:" + vol + "%";
+        }
+
         List<BtcFutures> list_5m = Utils.loadData(symbol, TIME_5m, 50);
         String str_trend_5m = Utils.switchTrend(list_5m);
         boolean uptrenByMa = Utils.isUptrendByMaIndex(list_5m, 10);
