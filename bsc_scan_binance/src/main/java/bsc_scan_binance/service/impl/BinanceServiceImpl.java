@@ -2866,9 +2866,6 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.equals(Utils.TREND_SHORT, BTC_TREND_M15)) {
             resetTrendSycle(EVENT_DH4H1_5M_CRYPTO, symbol);
             resetTrendSycle(EVENT_DH4H1_15M_CRYPTO, symbol);
-            if (!"_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
-                System.out.print(".");
-            }
             return "";
         }
 
@@ -3063,10 +3060,6 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.equals(Utils.TREND_SHORT, BTC_TREND_M15)) {
             resetTrendSycle(EVENT_DH4H1_5M_CRYPTO, symbol);
             resetTrendSycle(EVENT_DH4H1_15M_CRYPTO, symbol);
-
-            if (!"_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
-                System.out.print(".");
-            }
             return;
         }
 
