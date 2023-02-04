@@ -280,7 +280,7 @@ public class BscScanBinanceApplication {
         if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog4h(), EPIC)) {
             String init = binance_service.initForex(EPIC);
 
-            String msg = "(" + (idx + 1) + "/" + size + ")" + Utils.getTimeHHmm() + EPIC + init;
+            String msg = "(" + (idx + 1) + "/" + size + ")" + Utils.getTimeHHmm() + EPIC + " " + init;
             System.out.println(msg);
         }
     }
@@ -299,7 +299,7 @@ public class BscScanBinanceApplication {
         if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog4h(), coin.getGeckoid())) {
             String init = binance_service.initCrypto(coin.getGeckoid(), coin.getSymbol());
 
-            String msg = "(" + (idx + 1) + "/" + size + ")" + Utils.getTimeHHmm() + coin.getSymbol() + init;
+            String msg = "(" + (idx + 1) + "/" + size + ")" + Utils.getTimeHHmm() + coin.getSymbol() + " " + init;
             System.out.println(msg);
         }
     }
