@@ -2866,6 +2866,10 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isNotBlank(main_trend)) {
                 createNewTrendCycle(EVENT_DH4H1_5M_FX, list_5m, main_trend, EPIC, EPIC);
 
+                Utils.writeLog("(" + main_trend + ") Check" + Utils.getChartName(list_5m) + EPIC);
+                Utils.writelnLog("https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + EPIC);
+                Utils.writelnLogFooter();
+
                 List<BtcFutures> list_15m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 50);
                 String trend_15m = Utils.switchTrend(list_15m);
 
@@ -2879,6 +2883,10 @@ public class BinanceServiceImpl implements BinanceService {
                     sendScapMsg(list_5m, EPIC, main_trend, append);
 
                     createNewTrendCycle(EVENT_DH4H1_15M_FX, list_15m, main_trend, EPIC, EPIC);
+
+                    Utils.writeLog("(" + main_trend + ") Check" + Utils.getChartName(list_15m) + EPIC);
+                    Utils.writelnLog("https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + EPIC);
+                    Utils.writelnLogFooter();
                 }
             }
         }
@@ -3075,15 +3083,20 @@ public class BinanceServiceImpl implements BinanceService {
         boolean uptrenByMa = Utils.isUptrendByMaIndex(list_5m, 10);
         if (uptrenByMa && Objects.equals(Utils.TREND_LONG, str_trend_5m)) {
 
+            String curr_price = "(" + Utils.removeLastZero(list_5m.get(0).getCurrPrice()) + ")";
+
             createNewTrendCycle(EVENT_DH4H1_5M_CRYPTO, list_5m, Utils.TREND_LONG, gecko_id, symbol);
+
+            Utils.writeLog("(Long) Check" + Utils.getChartName(list_5m) + symbol + curr_price);
+            Utils.writelnLog("https://vn.tradingview.com/chart/?symbol=BINANCE%3A" + symbol + "USDTPERP");
+            Utils.writelnLogFooter();
 
             List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 50);
             String trend_15m = Utils.switchTrend(list_15m);
 
             if (Objects.equals(Utils.TREND_LONG, trend_15m)) {
                 String chartname = "(5m.15m)";
-                String msg = "(Long)" + chartname + symbol;
-                msg += "(" + Utils.removeLastZero(list_15m.get(0).getCurrPrice()) + ")";
+                String msg = "(Long)" + chartname + symbol + curr_price;
                 if (!Objects.equals(Utils.TREND_LONG, BTC_TREND_M15)) {
                     msg += Utils.new_line_from_service + "___(Remark).Btc.Down.Trend___";
                 }
@@ -3091,6 +3104,9 @@ public class BinanceServiceImpl implements BinanceService {
                 String EVENT_ID = EVENT_PUMP + symbol + chartname + Utils.getCurrentYyyyMmDd_HH_Blog2h();
                 sendMsgPerHour(EVENT_ID, msg, true);
 
+                Utils.writeLog("(Long) Check" + Utils.getChartName(list_15m) + symbol + curr_price);
+                Utils.writelnLog("https://vn.tradingview.com/chart/?symbol=BINANCE%3A" + symbol + "USDTPERP");
+                Utils.writelnLogFooter();
                 // -----------------------------------------------
 
                 String EVENT_1W1D_ID = EVENT_1W1D_CRYPTO + "_" + symbol;

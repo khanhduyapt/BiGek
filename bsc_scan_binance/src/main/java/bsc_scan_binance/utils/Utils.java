@@ -1,11 +1,14 @@
 package bsc_scan_binance.utils;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -49,7 +52,7 @@ import bsc_scan_binance.response.FundingResponse;
 import bsc_scan_binance.response.OrdersProfitResponse;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+//@Slf4j
 public class Utils {
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -777,6 +780,18 @@ public class Utils {
     }
 
     public static boolean isAllowSendMsgSetting() {
+        String cty = "PC";
+        String home = "DESKTOP-L4M1JU2";
+        String hostname;
+        try {
+            hostname = InetAddress.getLocalHost().getHostName();
+            if (Objects.equals(cty, hostname) || Objects.equals(home, hostname)) {
+                return true;
+            }
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
         if ((BscScanBinanceApplication.app_flag == const_app_flag_msg_on)
                 || (BscScanBinanceApplication.app_flag == const_app_flag_all_and_msg)) {
             return true;
@@ -785,8 +800,48 @@ public class Utils {
         return false;
     }
 
+    public static void writeLog(String text) {
+        try {
+            String filename = "crypto_forex_result/scan_result.log";
+            FileWriter fw = new FileWriter(filename, true); // the true will append the new data
+            fw.write("------------------------------------------\n");
+            fw.write("\n");
+            fw.write(Utils.getMmDD_TimeHHmm());
+            fw.write("\n");
+            fw.write(text.replace(Utils.new_line_from_service, "\n"));
+            fw.write("\n");
+            fw.close();
+        } catch (IOException ioe) {
+            System.err.println("IOException: " + ioe.getMessage());
+        }
+    }
+
+    public static void writelnLog(String text) {
+        try {
+            String filename = "crypto_forex_result/scan_result.log";
+            FileWriter fw = new FileWriter(filename, true); // the true will append the new data
+            fw.write(text.replace(Utils.new_line_from_service, "\n"));
+            fw.write("\n");
+            fw.close();
+        } catch (IOException ioe) {
+            System.err.println("IOException: " + ioe.getMessage());
+        }
+    }
+
+    public static void writelnLogFooter() {
+        try {
+            String filename = "crypto_forex_result/scan_result.log";
+            FileWriter fw = new FileWriter(filename, true); // the true will append the new data
+            fw.write("------------------------------------------\n");
+            fw.close();
+        } catch (IOException ioe) {
+            System.err.println("IOException: " + ioe.getMessage());
+        }
+    }
+
     public static void sendToMyTelegram(String text) {
-        log.info(Utils.getMmDD_TimeHHmm() + text);
+        // log.info(Utils.getMmDD_TimeHHmm() + text);
+        writeLog(text);
 
         String msg = text.replaceAll("↑", "^").replaceAll("↓", "v").replaceAll(" ", "");
         System.out.println();
@@ -797,8 +852,8 @@ public class Utils {
     }
 
     public static void sendToTelegram(String text) {
-        log.info(Utils.getMmDD_TimeHHmm() + text);
-
+        writeLog(text);
+        // log.info(Utils.getMmDD_TimeHHmm() + text);
         String msg = text.replaceAll("↑", "^").replaceAll("↓", "v").replaceAll(" ", "");
         System.out.println(msg);
 

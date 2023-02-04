@@ -60,30 +60,17 @@ public class BscScanBinanceApplication {
             String cty = "PC";
             String home = "DESKTOP-L4M1JU2";
             // app_flag = Utils.const_app_flag_msg_on;
-            if (Objects.equals(cty, hostname) || Objects.equals(home, hostname)) {
-                if (Utils.isWorkingTime() && Objects.equals(cty, hostname)) {
-                    app_flag = Utils.const_app_flag_all_and_msg;
-                }
-
-                if (!Utils.isWorkingTime() && Objects.equals(home, hostname)) {
-                    app_flag = Utils.const_app_flag_all_and_msg;
-                }
-
-                if (Utils.isWeekend() || Objects.equals(home, hostname)) {
-                    app_flag = Utils.const_app_flag_all_and_msg;
-                }
-
-            } else {
-                app_flag = Utils.const_app_flag_all_coin;
-            }
-            // Debug:
-            // app_flag = Utils.const_app_flag_all_and_msg;
+            // app_flag = Utils.const_app_flag_all_and_msg; // Debug
+            app_flag = Utils.const_app_flag_all_coin;
 
             System.out.println("app_flag:" + app_flag + " (1: msg_on; 2: msg_off; 3: web only; 4: all coin)");
             // --------------------Init--------------------
             applicationContext = SpringApplication.run(BscScanBinanceApplication.class, args);
             CoinGeckoService gecko_service = applicationContext.getBean(CoinGeckoService.class);
             BinanceService binance_service = applicationContext.getBean(BinanceService.class);
+
+            Utils.writeLog("________________________Start" + Utils.getToday_YyyyMMdd() + Utils.getTimeHHmm()
+                    + "________________________");
 
             if (app_flag == Utils.const_app_flag_msg_on || app_flag == Utils.const_app_flag_all_and_msg) {
 
@@ -119,7 +106,6 @@ public class BscScanBinanceApplication {
                 List<CandidateCoin> token_list = gecko_service.getList(callFormBinance);
                 List<ForexHistoryResponse> forex_list_15m = binance_service.getForexSamePhaseList();
                 List<ForexHistoryResponse> cryto_list_15m = binance_service.getCryptoSamePhaseList();
-
                 int total = token_list.size();
 
                 int index_forex = 0;
