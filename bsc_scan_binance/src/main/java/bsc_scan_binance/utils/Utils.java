@@ -804,8 +804,6 @@ public class Utils {
         try {
             String filename = "crypto_forex_result/scan_result.log";
             FileWriter fw = new FileWriter(filename, true); // the true will append the new data
-            fw.write("------------------------------------------\n");
-            fw.write("\n");
             fw.write(Utils.getMmDD_TimeHHmm());
             fw.write("\n");
             fw.write(text.replace(Utils.new_line_from_service, "\n"));
