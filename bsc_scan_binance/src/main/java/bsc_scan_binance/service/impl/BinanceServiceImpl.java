@@ -366,7 +366,7 @@ public class BinanceServiceImpl implements BinanceService {
                     + " and symbol= (SELECT symbol FROM funding_history WHERE event_time = 'DH4H1_STR_H4_CRYPTO' and symbol = main.symbol)                                     \n"
                     + " and symbol= (SELECT symbol FROM funding_history WHERE event_time = 'DH4H1_STR_15M_CRYPTO' and symbol = main.symbol)                                    \n"
                     + " and symbol= (SELECT symbol FROM funding_history WHERE event_time = 'DH4H1_STR_05M_CRYPTO' and symbol = main.symbol)                                    \n"
-                    + ") then 1 else 0 end) DESC                                                                                                                              \n"
+                    + ") then 1 else 0 end) DESC                                                                                                                               \n"
                     // -----------------------------------------------------------------------------
                     + "   , (case when (macd.futures LIKE '%Futures%' AND macd.futures LIKE '%_Position%') then 10 when (macd.futures LIKE '%Futures%' AND macd.futures LIKE '%Long_4h%') then 11 when (macd.futures LIKE '%Futures%' AND macd.futures LIKE '%move↑%') then 15 when macd.futures LIKE '%Futures%' then 19 \n"
                     + "           when (macd.futures LIKE '%Spot%'    AND macd.futures LIKE '%_Position%') then 30 when (macd.futures LIKE '%Spot%'    AND macd.futures LIKE '%Long_4h%') then 31 when (macd.futures LIKE '%Spot%'    AND macd.futures LIKE '%move↑%') then 35 when macd.futures LIKE '%Spot%'    then 39 \n"
@@ -999,14 +999,19 @@ public class BinanceServiceImpl implements BinanceService {
                             css.setRange_position_css(CSS_PRICE_SUCCESS + " bg-success");
                         }
                         if (futu.contains("_PositionD1")) {
-
                             futu = futu.replace("_PositionD1", "");
 
                             css.setRange_position("Long(D1)");
                             css.setRange_position_css(CSS_PRICE_SUCCESS + " bg-success");
                         }
 
-                        futu = futu.replace("_PositionBTC15m", "").replace("_PositionBTC4h", "");
+                        if (futu.contains("_Position_DHM5")) {
+                            css.setRange_position("Long(M5)");
+                            css.setRange_position_css(CSS_PRICE_WARNING + " bg-success");
+                        }
+
+                        futu = futu.replace("_PositionBTC15m", "").replace("_PositionBTC4h", "")
+                                .replace("_Position_DHM5", "");
 
                         css.setRange_wdh_css("text-primary");
                         css.setStop_loss_css("text-white bg-success rounded-lg px-1");
@@ -2838,13 +2843,13 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_d = getTrend(EVENT_DH4H1_D_CRYPTO, symbol);
         String trend_h4 = getTrend(EVENT_DH4H1_H4_CRYPTO, symbol);
         if (Objects.equals(Utils.TREND_LONG, trend_d) && Objects.equals(Utils.TREND_LONG, trend_h4)) {
-            checkPositionLong15m(symbol);
+            checkPositionLong15m(gecko_id, symbol);
         }
 
         return "";
     }
 
-    private void checkPositionLong15m(String symbol) {
+    private void checkPositionLong15m(String gecko_id, String symbol) {
         List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 50);
         String trend_15m = Utils.switchTrend(list_15m);
 
@@ -2863,9 +2868,19 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isNotBlank(chartname)) {
+                String EVENT_1W1D_ID = EVENT_1W1D_CRYPTO + "_" + symbol;
+                FundingHistory coin = fundingHistoryRepository.findById(new FundingHistoryKey(EVENT_1W1D_ID, gecko_id))
+                        .orElse(null);
+                if (!Objects.equals(null, coin)) {
+                    String note = Utils.getStringValue(coin.getNote());
+                    note += "_Position_DHM5";
+                    coin.setNote(note);
+
+                    fundingHistoryRepository.save(coin);
+                }
+
                 String msg = "(Long)" + chartname + symbol;
                 msg += "(" + Utils.removeLastZero(list_5m.get(0).getCurrPrice()) + ")";
-
                 String EVENT_ID = EVENT_PUMP + symbol + chartname + Utils.getCurrentYyyyMmDd_HH();
                 sendMsgPerHour(EVENT_ID, msg, true);
             }
@@ -2906,7 +2921,6 @@ public class BinanceServiceImpl implements BinanceService {
         }
         // -------------------------- INIT WEBSITE --------------------------
 
-        String EVENT_ID = EVENT_1W1D_CRYPTO + "_" + symbol;
         BigDecimal current_price = list_days.get(0).getCurrPrice();
 
         String type = "";
@@ -3004,6 +3018,7 @@ public class BinanceServiceImpl implements BinanceService {
         // ---------------------------------------------------------
 
         String web_result = note + type + m2ma + ma7 + sl2ma + taker;
+        String EVENT_ID = EVENT_1W1D_CRYPTO + "_" + symbol;
         fundingHistoryRepository.save(createPumpDumpEntity(EVENT_ID, gecko_id, symbol, web_result, true));
 
         initWebBinance(gecko_id, symbol, list_days, list_h1, web_result);
@@ -3017,7 +3032,11 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_h = getTrend(EVENT_DH4H1_H4_CRYPTO, symbol);
 
         if (Objects.equals(Utils.TREND_LONG, trend_d) && Objects.equals(Utils.TREND_LONG, trend_h)) {
-            checkPositionLong15m(symbol);
+
+            List<CandidateCoin> coins = candidateCoinRepository.searchBySymbol(symbol);
+            if (!CollectionUtils.isEmpty(coins)) {
+                checkPositionLong15m(coins.get(0).getGeckoid(), symbol);
+            }
         }
     }
 
