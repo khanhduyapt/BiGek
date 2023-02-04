@@ -2945,14 +2945,6 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        // -----------------------------------------------------------------
-        String trend_d1 = createTrendByMa50(EVENT_DH4H1_D_CRYPTO, list_h4, gecko_id, symbol);
-        String trend_h4 = createTrendByMa3_10_20(EVENT_DH4H1_H4_CRYPTO, list_h4, gecko_id, symbol);
-        if (Utils.isNotBlank(trend_h4)) {
-            init_trend_result = "initCrypto(D:" + trend_d1 + ", H4: " + trend_h4 + ")";
-        }
-        // -------------------------- INIT WEBSITE --------------------------
-
         BigDecimal current_price = list_days.get(0).getCurrPrice();
 
         String type = "";
@@ -2966,22 +2958,18 @@ public class BinanceServiceImpl implements BinanceService {
         String taker = Utils.analysisTakerVolume(list_days, list_h4);
         type = type + Utils.analysisVolume(list_days);
 
-        String volmc = getVolMc(gecko_id);
-        if (Objects.equals(Utils.TREND_LONG, Utils.switchTrend(list_h1))) {
-            String msgs = "(Long)" + Utils.getChartName(list_h1) + symbol + Utils.getCurrentPrice(list_h1) + taker
-                    + volmc;
-            Utils.writeBlogCrypto(symbol, msgs, isFuturesCoin);
-        }
-        if (Objects.equals(Utils.TREND_LONG, Utils.switchTrend(list_h4))) {
-            String msgs = "(Long)" + Utils.getChartName(list_h4) + symbol + Utils.getCurrentPrice(list_h4) + taker
-                    + volmc;
-            Utils.writeBlogCrypto(symbol, msgs, isFuturesCoin);
+        // -----------------------------------------------------------------
+        String trend_d1 = createTrendByMa50(EVENT_DH4H1_D_CRYPTO, list_h4, gecko_id, symbol);
+        String trend_h4 = createTrendByMa3_10_20(EVENT_DH4H1_H4_CRYPTO, list_h4, gecko_id, symbol);
+        if (Utils.isNotBlank(trend_h4)) {
+            init_trend_result = "initCrypto(D:" + trend_d1 + ", H4: " + trend_h4 + ")";
         }
         if (Objects.equals(Utils.TREND_LONG, Utils.switchTrend(list_days))) {
             String msgs = "(Long)" + Utils.getChartName(list_days) + symbol + Utils.getCurrentPrice(list_days) + taker
-                    + volmc;
+                    + getVolMc(gecko_id) + type.replace("volma{", "").replace("}volma", "");
             Utils.writeBlogCrypto(symbol, msgs, isFuturesCoin);
         }
+        // -------------------------- INIT WEBSITE --------------------------
 
         Boolean allow_long_d1 = Utils.checkClosePriceAndMa_StartFindLong(list_days);
         String scapLongH4 = Utils.getScapLong(list_h4, list_days, 10, allow_long_d1);

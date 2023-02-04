@@ -841,14 +841,14 @@ public class Utils {
     }
 
     public static void writeBlogCrypto(String symbol, String long_short_content, boolean isFuturesCoin) {
-        writelnLog("***************************************************************\n");
+        writelnLog("***************************************************************");
         Utils.writeLog(long_short_content);
         if (isFuturesCoin) {
             Utils.writelnLog(Utils.getCryptoLink_Future(symbol));
         } else {
             Utils.writelnLog(Utils.getCryptoLink_Spot(symbol));
         }
-        writelnLog("***************************************************************\n");
+        writelnLog("***************************************************************");
     }
 
     public static void writeLog(String text) {
