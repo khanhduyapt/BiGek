@@ -120,7 +120,6 @@ public class BscScanBinanceApplication {
 
                     try {
                         check_15m(binance_service, cryto_list_15m, forex_list_15m);
-                        check_FutureCoin(binance_service, coin);
 
                         if (Utils.isBusinessTime()) {
                             // ----------------------------------------------
@@ -254,20 +253,6 @@ public class BscScanBinanceApplication {
         return reload;
     }
 
-    private static void check_FutureCoin(BinanceService binance_service, CandidateCoin coin) {
-        if (!binance_service.isFutureCoin(coin.getGeckoid())) {
-            return;
-        }
-
-        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog4h(), coin.getGeckoid())) {
-            binance_service.initCrypto(coin.getGeckoid(), coin.getSymbol());
-        }
-
-        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), coin.getGeckoid())) {
-            binance_service.checkSamePhase_DHM_Crypto15m(coin.getGeckoid(), coin.getSymbol());
-        }
-    }
-
     private static void init_Forex_4h(BinanceService binance_service, String EPIC, int idx, int size) {
         if (Utils.isWeekend()) {
             return;
@@ -302,7 +287,11 @@ public class BscScanBinanceApplication {
 
     private static void check_Crypto_15m(BinanceService binance_service, String gecko_id, String symbol) {
         if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), symbol)) {
-            binance_service.checkChart_m15_follow_H4(gecko_id, symbol);
+            if (binance_service.isFutureCoin(gecko_id)) {
+                binance_service.checkChart_m15_follow_H4(gecko_id, symbol);
+            } else {
+                binance_service.checkSamePhase_DHM_Crypto15m(gecko_id, symbol);
+            }
         }
     }
 

@@ -2829,8 +2829,9 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     @Override
-    public void checkSamePhase_H4M_Forex15m(String EPIC) {
+    public String checkSamePhase_H4M_Forex15m(String EPIC) {
         // EPIC = "CHFSGD";
+        String result = ".";
         String trend_d = getTrend(EVENT_DH4H1_D_FX, EPIC);
         String trend_h = getTrend(EVENT_DH4H1_H4_FX, EPIC);
 
@@ -2843,6 +2844,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String chartname = Utils.getChartName(list_15m);
                     String trend = Utils.getTrendPrifix(trend_switch);
                     String msg = trend + EPIC + chartname;
+                    result = msg;
                     String EVENT_ID = EVENT_PUMP + EPIC + chartname + Utils.getCurrentYyyyMmDdHHByChart(list_15m);
                     sendMsgPerHour(EVENT_ID, msg, true);
 
@@ -2884,7 +2886,7 @@ public class BinanceServiceImpl implements BinanceService {
                     sendScapMsg(list_5m, EPIC, main_trend, append);
 
                     createNewTrendCycle(EVENT_DH4H1_15M_FX, list_15m, main_trend, EPIC, EPIC);
-
+                    result = "(" + main_trend + ")" + EPIC;
                     {
                         String ma3 = Utils.removeLastZero(Utils.calcMA(list_15m, 3, 0));
                         String ma10 = Utils.removeLastZero(Utils.calcMA(list_15m, 10, 0));
@@ -2900,6 +2902,8 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
         }
+
+        return result;
     }
 
     @Override
@@ -3054,13 +3058,15 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     @Override
-    public void checkSamePhase_DHM_Crypto15m(String gecko_id, String symbol) {
+    public String checkSamePhase_DHM_Crypto15m(String gecko_id, String symbol) {
         String trend_d = getTrend(EVENT_DH4H1_D_CRYPTO, gecko_id);
         String trend_h4 = getTrend(EVENT_DH4H1_H4_CRYPTO, gecko_id);
 
         if (Objects.equals(Utils.TREND_LONG, trend_d) && Objects.equals(Utils.TREND_LONG, trend_h4)) {
             checkPositionCrypto15m(gecko_id, symbol);
         }
+
+        return "";
     }
 
     @Override
@@ -3124,7 +3130,7 @@ public class BinanceServiceImpl implements BinanceService {
     private void checkPositionCrypto15m(String gecko_id, String symbol) {
         List<BtcFutures> list_5m = Utils.loadData(symbol, TIME_5m, 50);
         String str_trend_5m = Utils.switchTrend(list_5m);
-        boolean uptrenByMa = Utils.isUptrendByMaIndex(list_5m, 10);
+        boolean uptrenByMa = Utils.isUptrendByMaIndex(list_5m, 50);
         if (uptrenByMa && Objects.equals(Utils.TREND_LONG, str_trend_5m)) {
 
             String curr_price = "(" + Utils.removeLastZero(list_5m.get(0).getCurrPrice()) + ")";

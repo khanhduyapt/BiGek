@@ -36,13 +36,7 @@ public interface BinanceService {
 
     public String getBitfinexLongShortBtc();
 
-    public String checkChart_m15_follow_H4(String gecko_id, String symbol);
-
     public void clearTrash();
-
-    public void checkSamePhase_H4M_Forex15m(String EPIC);
-
-    public void checkSamePhase_DHM_Crypto15m(String gecko_id, String symbol);
 
     public String initForex(String EPIC);
 
@@ -53,4 +47,10 @@ public interface BinanceService {
     public List<ForexHistoryResponse> getCryptoSamePhaseList();
 
     boolean isFutureCoin(String gecko_id);
+
+    public String checkSamePhase_H4M_Forex15m(String EPIC);
+
+    public String checkSamePhase_DHM_Crypto15m(String gecko_id, String symbol);
+
+    public String checkChart_m15_follow_H4(String gecko_id, String symbol);
 }
