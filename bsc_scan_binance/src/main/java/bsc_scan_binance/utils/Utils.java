@@ -64,7 +64,7 @@ public class Utils {
     public static final String new_line_from_service = "%0A";
 
     public static final int const_app_flag_msg_on = 1; // 1: msg_on; 2: msg_off; 3: web only; 4: all coin
-    public static final int const_app_flag_msg_off = 2;
+    public static final int const_app_flag_Future_msg_off = 2;
     public static final int const_app_flag_webonly = 3;
     public static final int const_app_flag_all_coin = 4;
     public static final int const_app_flag_all_and_msg = 5;

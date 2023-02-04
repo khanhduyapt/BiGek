@@ -61,7 +61,8 @@ public class BscScanBinanceApplication {
             String home = "DESKTOP-L4M1JU2";
             // app_flag = Utils.const_app_flag_msg_on;
             // app_flag = Utils.const_app_flag_all_and_msg; // Debug
-            app_flag = Utils.const_app_flag_all_coin;
+            // app_flag = Utils.const_app_flag_all_coin;
+            app_flag = Utils.const_app_flag_Future_msg_off;
 
             System.out.println("app_flag:" + app_flag + " (1: msg_on; 2: msg_off; 3: web only; 4: all coin)");
             // --------------------Init--------------------
@@ -73,21 +74,22 @@ public class BscScanBinanceApplication {
                     + "____________________");
 
             if (app_flag == Utils.const_app_flag_msg_on || app_flag == Utils.const_app_flag_all_and_msg) {
-
-                try {
-                    wandaBot = applicationContext.getBean(WandaBot.class);
-                    TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-                    // https://github.com/PauloGaldo/telegram-bot
-                    // https://stackoverflow.com/questions/68059105/register-webhook-tg-bot-using-spring-boot
-                    // telegramBotsApi.registerBot(bot, setWebhook);
-                    telegramBotsApi.registerBot(wandaBot);
-                    initTelegramBotsApi();
-
-                    binance_service.clearTrash();
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                    System.exit(0);
-                }
+                // try {
+                // wandaBot = applicationContext.getBean(WandaBot.class);
+                // TelegramBotsApi telegramBotsApi = new
+                // TelegramBotsApi(DefaultBotSession.class);
+                // // https://github.com/PauloGaldo/telegram-bot
+                // //
+                // https://stackoverflow.com/questions/68059105/register-webhook-tg-bot-using-spring-boot
+                // // telegramBotsApi.registerBot(bot, setWebhook);
+                // telegramBotsApi.registerBot(wandaBot);
+                // initTelegramBotsApi();
+                //
+                // binance_service.clearTrash();
+                // } catch (TelegramApiException e) {
+                // e.printStackTrace();
+                // System.exit(0);
+                // }
             }
 
             // --------------------Debug--------------------

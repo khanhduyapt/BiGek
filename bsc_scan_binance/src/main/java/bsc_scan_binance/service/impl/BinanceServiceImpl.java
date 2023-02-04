@@ -2632,9 +2632,8 @@ public class BinanceServiceImpl implements BinanceService {
                 String EVENT_STOP_LONG_ID = "BTC_" + Utils.TEXT_STOP_LONG + Utils.getCurrentYyyyMmDdHHByChart(list_15m);
 
                 String msg_stop = "";
-                msg_stop += "******************************" + Utils.new_line_from_service;
-                msg_stop += Utils.getTrendPrifix(Utils.TREND_SHORT) + Utils.TEXT_STOP_LONG;
-                msg_stop += "******************************" + Utils.new_line_from_service;
+                msg_stop += Utils.getTrendPrifix(Utils.TREND_SHORT) + "(" + Utils.TEXT_STOP_LONG + ")" + symbol
+                        + Utils.getCurrentPrice(list_15m);
                 sendMsgPerHour(EVENT_STOP_LONG_ID, msg_stop, true);
             }
         }
@@ -3096,9 +3095,9 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.isNotBlank(trend_m5)) {
             createTrendByMa3_10_20(EVENT_DH4H1_5M_CRYPTO, list_5m, gecko_id, symbol);
 
-            Utils.writelnLog(Utils.getMmDD_TimeHHmm() + "(5m)"
-                    + (Objects.equals(Utils.TREND_LONG, trend_m5) ? "Up" : "Down") + " " + symbol + " "
-                    + Utils.getCurrentPrice(list_5m) + ". " + Utils.getCryptoLink_Future(symbol));
+            Utils.writelnLog(Utils.getMmDD_TimeHHmm() + "(5m) " + symbol
+                    + (Objects.equals(Utils.TREND_LONG, trend_m5) ? " Up " : " Down ") + Utils.getCurrentPrice(list_5m)
+                    + ". " + Utils.getCryptoLink_Future(symbol));
 
             List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 50);
             String trend_15m = Utils.switchTrend(list_15m);
