@@ -2881,7 +2881,9 @@ public class BinanceServiceImpl implements BinanceService {
 
                     createNewTrendCycle(EVENT_DH4H1_15M_FX, list_15m, main_trend, EPIC, EPIC);
 
-                    Utils.writeLog("(" + main_trend + ") Check" + Utils.getChartName(list_15m) + EPIC);
+                    String curr_price = "(" + Utils.removeLastZero(list_5m.get(0).getCurrPrice()) + ")";
+                    Utils.writeLog("Forex(" + main_trend + ")" + Utils.getChartName(list_15m) + EPIC + curr_price
+                            + append.replace("_", ""));
                     Utils.writelnLog("https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + EPIC);
                     Utils.writelnLogFooter();
                 }
@@ -3070,7 +3072,7 @@ public class BinanceServiceImpl implements BinanceService {
             BigDecimal vol = Utils.getBigDecimal(coinmarketcap.getVolumnDivMarketcap())
                     .multiply(BigDecimal.valueOf(100));
             if (vol.compareTo(BigDecimal.valueOf(20)) < 0) {
-                return;
+                // return;
             }
             append = "Vol:Mc:" + vol + "%";
         }
@@ -3088,19 +3090,20 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.equals(Utils.TREND_LONG, trend_15m)) {
                 String chartname = "(5m.15m)";
-                String msg = "(Long)" + chartname + symbol + curr_price;
+                String msg = "(Long)" + chartname + symbol + curr_price + append;
+                String append_btc = "";
                 if (!Objects.equals(Utils.TREND_LONG, BTC_TREND_M15)) {
-                    msg += Utils.new_line_from_service + "___(Remark).Btc.Down.Trend___";
+                    append_btc = Utils.new_line_from_service + "___(Remark).Btc.Down.Trend___";
                 }
-
+                msg += append_btc;
                 String EVENT_ID = EVENT_PUMP + symbol + chartname + Utils.getCurrentYyyyMmDd_HH_Blog2h();
                 sendMsgPerHour(EVENT_ID, msg, true);
 
-                Utils.writeLog("(Long) Check" + Utils.getChartName(list_15m) + symbol + curr_price);
+                Utils.writeLog("Crypto(Long)" + Utils.getChartName(list_15m) + symbol + curr_price + append_btc);
                 Utils.writelnLog("https://vn.tradingview.com/chart/?symbol=BINANCE%3A" + symbol + "USDTPERP");
                 Utils.writelnLogFooter();
-                // -----------------------------------------------
 
+                // -----------------------------------------------
                 String EVENT_1W1D_ID = EVENT_1W1D_CRYPTO + "_" + symbol;
                 FundingHistory coin = fundingHistoryRepository.findById(new FundingHistoryKey(EVENT_1W1D_ID, gecko_id))
                         .orElse(null);

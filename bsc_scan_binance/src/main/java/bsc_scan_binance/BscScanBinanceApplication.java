@@ -182,13 +182,10 @@ public class BscScanBinanceApplication {
 
     private static void check_15m(BinanceService binance_service, List<ForexHistoryResponse> crypto_list,
             List<ForexHistoryResponse> forex_list) {
-
-        System.out.print(".");
+        System.out.println(".");
         if (!isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "DXY_BTC_ETH_BNB")) {
             return;
         }
-
-        System.out.println();
 
         if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "DXY")) {
             System.out.println(Utils.getTimeHHmm() + "Check DXY(15m)");
