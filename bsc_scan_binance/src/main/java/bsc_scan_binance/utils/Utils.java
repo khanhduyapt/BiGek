@@ -2619,23 +2619,29 @@ public class Utils {
             return "";
         }
 
-        String trend_1_5 = checkTrendSideway(list, 1, 5);
-        String trend_5_10 = checkTrendSideway(list, 5, 10);
-        String trend = trend_1_5 + trend_5_10;
+        String trend_main = checkTrendSideway(list, 1, 5);
+        String trend_confirm = checkTrendSideway(list, 5, 10);
 
-        if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHORT)) {
-            return "";
+        String result = "";
+        if (trend_main.contains(Utils.TREND_LONG) && trend_main.contains(Utils.TREND_SHORT)) {
+            result = "";
         }
 
-        if (trend.contains(Utils.TREND_LONG)) {
-            return Utils.TREND_LONG;
+        if (trend_main.contains(Utils.TREND_LONG)) {
+            result = Utils.TREND_LONG;
+            if (trend_confirm.contains(Utils.TREND_SHORT)) {
+                result = "";
+            }
         }
 
-        if (trend.contains(Utils.TREND_SHORT)) {
-            return Utils.TREND_SHORT;
+        if (trend_main.contains(Utils.TREND_SHORT)) {
+            result = Utils.TREND_SHORT;
+            if (trend_confirm.contains(Utils.TREND_LONG)) {
+                result = "";
+            }
         }
 
-        return "";
+        return result;
     }
 
     private static String checkTrendSideway(List<BtcFutures> list, int str, int end) {
