@@ -3095,8 +3095,9 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (Utils.isNotBlank(trend_m5)) {
             createTrendByMa3_10_20(EVENT_DH4H1_5M_CRYPTO, list_5m, gecko_id, symbol);
-            Utils.writelnLog("(5m)" + trend_m5 + " BTC " + Utils.getCurrentPrice(list_5m) + ". "
-                    + Utils.getCryptoLink_Future(symbol));
+            Utils.writelnLog("(5m)" + (Objects.equals(Utils.TREND_LONG, trend_m5) ? "Up" : "Down") + " " + symbol + " "
+                    + Utils.getCurrentPrice(list_5m) + ". " + Utils.getCryptoLink_Future(symbol));
+
             List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 50);
             String trend_15m = Utils.switchTrend(list_15m);
 
