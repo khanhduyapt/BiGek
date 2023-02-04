@@ -102,7 +102,7 @@ public class Utils {
     public static final String CAPITAL_TIME_WEEK = "WEEK";
 
     public static final List<String> EPICS_FOREX_SCAPS = Arrays.asList("DXY", "GOLD", "US30", "GBPAUD", "USDCAD",
-            "EURJPY");
+            "EURJPY", "USDCHF", "USDCNH");
 
     public static final List<String> EPICS_INDEXS = Arrays.asList("OIL_CRUDE", "US500", "UK100", "HK50", "FR40");
 
@@ -119,7 +119,7 @@ public class Utils {
             "CHFSGD", "CNHHKD", "CNHJPY");
 
     public static final List<String> EPICS_FOREX_DOLLAR = Arrays.asList("NZDCAD", "NZDCHF", "NZDJPY", "NZDSGD",
-            "NZDUSD", "USDCAD", "USDCHF", "USDCNH", "USDJPY");
+            "NZDUSD", "USDCAD", "USDJPY");
 
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("AUDHKD", "AUDPLN", "AUDZAR", "CADCNH",
             "CADHKD", "CADMXN", "CADNOK", "CADPLN", "CADTRY", "CADZAR", "CHFCNH", "CHFCZK", "CHFDKK", "CHFMXN",
