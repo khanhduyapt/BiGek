@@ -71,6 +71,7 @@ import bsc_scan_binance.response.GeckoVolumeUpPre4hResponse;
 import bsc_scan_binance.response.OrdersProfitResponse;
 import bsc_scan_binance.service.BinanceService;
 import bsc_scan_binance.utils.Utils;
+import javassist.compiler.ast.Symbol;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -138,6 +139,8 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Autowired
     private FundingHistoryRepository fundingHistoryRepository;
+
+    private String BTC_TREND_M15 = Utils.TREND_SHORT;
 
     private static final String TIME_5m = "5m";
     private static final String TIME_15m = "15m";
@@ -2602,6 +2605,17 @@ public class BinanceServiceImpl implements BinanceService {
 
         String msg = "";
         List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 50);
+
+        if (Objects.equals("BTC", symbol)) {
+            String trend_15m = Utils.switchTrend(list_15m);
+            boolean isUptrend_byMa = Utils.isUptrendByMaIndex(list_15m, 50);
+            if (isUptrend_byMa || Objects.equals(Utils.TREND_LONG, trend_15m)) {
+                BTC_TREND_M15 = Utils.TREND_LONG;
+            } else {
+                BTC_TREND_M15 = Utils.TREND_SHORT;
+            }
+        }
+
         String chartname = Utils.getChartName(list_15m);
         BtcFutures ido = list_15m.get(0);
         boolean isShort = Utils.isAboveMALine(list_15m, 50, 0);
@@ -2778,6 +2792,10 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public void checkSamePhaseForex15m(String EPIC) {
+        if (Objects.equals(Utils.TREND_SHORT, BTC_TREND_M15)) {
+            return;
+        }
+
         String trend_d = getTrend(EVENT_DH4H1_D_FX, EPIC);
         String trend_h = getTrend(EVENT_DH4H1_H4_FX, EPIC);
 
@@ -2840,16 +2858,23 @@ public class BinanceServiceImpl implements BinanceService {
             sendMsgKillLongShort(gecko_id, symbol, "");
         }
 
+        if (Objects.equals(Utils.TREND_SHORT, BTC_TREND_M15)) {
+            resetTrendSycle(EVENT_DH4H1_5M_CRYPTO, symbol);
+            resetTrendSycle(EVENT_DH4H1_15M_CRYPTO, symbol);
+            return "";
+        }
+
         String trend_d = getTrend(EVENT_DH4H1_D_CRYPTO, symbol);
         String trend_h4 = getTrend(EVENT_DH4H1_H4_CRYPTO, symbol);
         if (Objects.equals(Utils.TREND_LONG, trend_d) && Objects.equals(Utils.TREND_LONG, trend_h4)) {
-            checkPositionLong15m(gecko_id, symbol);
+            checkPositionCrypto15m(gecko_id, symbol);
         }
 
         return "";
     }
 
-    private void checkPositionLong15m(String gecko_id, String symbol) {
+    private void checkPositionCrypto15m(String gecko_id, String symbol) {
+
         List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 50);
         String trend_15m = Utils.switchTrend(list_15m);
 
@@ -3028,14 +3053,18 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public void checkSamePhaseCrypto15m(String symbol) {
+        if (Objects.equals(Utils.TREND_SHORT, BTC_TREND_M15)) {
+            resetTrendSycle(EVENT_DH4H1_5M_CRYPTO, symbol);
+            resetTrendSycle(EVENT_DH4H1_15M_CRYPTO, symbol);
+            return;
+        }
+
         String trend_d = getTrend(EVENT_DH4H1_D_CRYPTO, symbol);
         String trend_h = getTrend(EVENT_DH4H1_H4_CRYPTO, symbol);
-
         if (Objects.equals(Utils.TREND_LONG, trend_d) && Objects.equals(Utils.TREND_LONG, trend_h)) {
-
             List<CandidateCoin> coins = candidateCoinRepository.searchBySymbol(symbol);
             if (!CollectionUtils.isEmpty(coins)) {
-                checkPositionLong15m(coins.get(0).getGeckoid(), symbol);
+                checkPositionCrypto15m(coins.get(0).getGeckoid(), symbol);
             }
         }
     }
