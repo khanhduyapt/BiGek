@@ -9,7 +9,10 @@ import java.net.URLConnection;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -918,34 +921,6 @@ public class Utils {
                     + ")";
         }
 
-        // int count = 0;
-        // for (DepthResponse res : bidsOrAsksList) {
-        // if (Objects.equals("BTC", res.getSymbol())) {
-        // if (res.getVal_million_dolas().compareTo(BigDecimal.valueOf(2.9)) > 0) {
-        // next_price += " > " + res.getPrice() + "(" + getPercentStr(res.getPrice(),
-        // price_at_binance) + ")("
-        // + res.getVal_million_dolas() + "m$" + ")";
-        //
-        // count += 1;
-        // }
-        // } else if (Utils.isNotBlank(res.getSymbol())) {
-        // BigDecimal percent = Utils.getPercent(res.getPrice(), price_at_binance);
-        //
-        // if (percent.compareTo(BigDecimal.valueOf(-3)) > 0 &&
-        // percent.compareTo(BigDecimal.valueOf(3)) < 0) {
-        // next_price += " > " + res.getPrice() + "(" + getPercentStr(res.getPrice(),
-        // price_at_binance) + ")("
-        // + res.getVal_million_dolas() + "k)";
-        //
-        // count += 1;
-        // }
-        // }
-        //
-        // if (count > 15) {
-        // break;
-        // }
-        // }
-
         return next_price;
     }
 
@@ -1043,6 +1018,12 @@ public class Utils {
         }
 
         return result;
+    }
+
+    public static boolean isWeekend() {
+        LocalDate today = LocalDate.now();
+        DayOfWeek day = DayOfWeek.of(today.get(ChronoField.DAY_OF_WEEK));
+        return day == DayOfWeek.SUNDAY || day == DayOfWeek.SATURDAY;
     }
 
     public static String getCurrentYyyyMmDd_HH() {

@@ -68,6 +68,11 @@ public class BscScanBinanceApplication {
                 if (!Utils.isWorkingTime() && Objects.equals(home, hostname)) {
                     app_flag = Utils.const_app_flag_all_and_msg;
                 }
+
+                if (Utils.isWeekend() || Objects.equals(home, hostname)) {
+                    app_flag = Utils.const_app_flag_all_and_msg;
+                }
+
             } else {
                 app_flag = Utils.const_app_flag_all_coin;
             }
