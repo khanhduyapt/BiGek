@@ -3100,12 +3100,12 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_15m = Utils.switchTrend(list_15m);
 
             if (Objects.equals(trend_m5, trend_15m)) {
-                String msg = "(Long)(5m.15m)" + symbol + Utils.getCurrentPrice(list_15m) + getVolMc(gecko_id);
+                String msg = "(" + trend_15m + ")(5m.15m)" + symbol + Utils.getCurrentPrice(list_15m)
+                        + getVolMc(gecko_id);
                 String EVENT_ID = EVENT_PUMP + symbol + "_15_" + Utils.getCurrentYyyyMmDd_HH();
                 sendMsgPerHour(EVENT_ID, msg, true);
 
                 Utils.writeBlogCrypto(symbol, msg, true);
-
                 createTrendByMa3_10_20(EVENT_DH4H1_15M_CRYPTO, list_15m, gecko_id, symbol);
             }
         }
