@@ -2823,27 +2823,37 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_d = getTrend(EVENT_DH4H1_D_CRYPTO, symbol);
         String trend_h4 = getTrend(EVENT_DH4H1_H4_CRYPTO, symbol);
         if (Objects.equals(Utils.TREND_LONG, trend_d) && Objects.equals(Utils.TREND_LONG, trend_h4)) {
-            checkPositionLong5m(symbol);
+            checkPositionLong15m(symbol);
         }
 
         return "";
     }
 
-    private void checkPositionLong5m(String symbol) {
-        List<BtcFutures> list_5m = Utils.loadData(symbol, TIME_5m, 50);
-        if (Utils.isUptrendByMaIndex(list_5m, 50)) {
+    private void checkPositionLong15m(String symbol) {
+        List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 50);
 
-            createTrendByMa50(EVENT_DH4H1_15M_CRYPTO, list_5m, symbol);
+        if (Utils.isUptrendByMaIndex(list_15m, 50)) {
+            String trend_15m = createTrendByMa50(EVENT_DH4H1_15M_CRYPTO, list_15m, symbol);
 
-            if (Objects.equals(Utils.TREND_LONG, Utils.switchTrend(list_5m))) {
-                String chartname = "(H4)to(5M)";
-                String msg = "(Long)" + chartname + symbol;
-                msg += "(" + Utils.removeLastZero(list_5m.get(0).getCurrPrice()) + ")";
+            if (Objects.equals(Utils.TREND_LONG, trend_15m)) {
+                String str_trend_15m = Utils.switchTrend(list_15m);
 
-                String EVENT_ID = EVENT_PUMP + symbol + chartname + Utils.getCurrentYyyyMmDd_HH();
-                sendMsgPerHour(EVENT_ID, msg, true);
+                List<BtcFutures> list_5m = Utils.loadData(symbol, TIME_5m, 50);
+                String trend_5m = createTrendByMa50(EVENT_DH4H1_5M_CRYPTO, list_5m, symbol);
+                String str_trend_5m = Utils.switchTrend(list_5m);
 
-                createNewTrendCycle(EVENT_DH4H1_5M_CRYPTO, list_5m, symbol, Utils.TREND_LONG);
+                if (Objects.equals(Utils.TREND_LONG, str_trend_15m) || (Objects.equals(Utils.TREND_LONG, trend_5m)
+                        && Objects.equals(Utils.TREND_LONG, str_trend_5m))) {
+                    String chartname = "(H4)to(5M)";
+                    String msg = "(Long)" + chartname + symbol;
+                    msg += "(" + Utils.removeLastZero(list_5m.get(0).getCurrPrice()) + ")";
+
+                    String EVENT_ID = EVENT_PUMP + symbol + chartname + Utils.getCurrentYyyyMmDd_HH();
+                    sendMsgPerHour(EVENT_ID, msg, true);
+
+                    createNewTrendCycle(EVENT_DH4H1_5M_CRYPTO, list_5m, symbol, Utils.TREND_LONG);
+                }
+
             }
         }
     }
@@ -2887,9 +2897,6 @@ public class BinanceServiceImpl implements BinanceService {
         String type = "";
         if (binanceFuturesRepository.existsById(gecko_id)) {
             type = " (Futures) ";
-            if (Objects.equals(Utils.TREND_LONG, trend_d1) && Objects.equals(Utils.TREND_LONG, trend_h4)) {
-                checkPositionLong5m(symbol);
-            }
         } else {
             type = " (Spot) ";
         }
@@ -2995,7 +3002,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_h = getTrend(EVENT_DH4H1_H4_CRYPTO, symbol);
 
         if (Objects.equals(Utils.TREND_LONG, trend_d) && Objects.equals(Utils.TREND_LONG, trend_h)) {
-            checkPositionLong5m(symbol);
+            checkPositionLong15m(symbol);
         }
     }
 
