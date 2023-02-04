@@ -824,10 +824,13 @@ public class Utils {
         return false;
     }
 
+    private static String getLogFileName() {
+        return "crypto_forex_result/scan_result_" + getYyyyMmDdHH_ChangeDailyChart() + ".log";
+    }
+
     public static void writeLog(String text) {
         try {
-            String filename = "crypto_forex_result/scan_result.log";
-            FileWriter fw = new FileWriter(filename, true); // the true will append the new data
+            FileWriter fw = new FileWriter(getLogFileName(), true);
             fw.write(Utils.getMmDD_TimeHHmm());
             fw.write("\n");
             fw.write(text.replace(Utils.new_line_from_service, "\n"));
@@ -840,8 +843,7 @@ public class Utils {
 
     public static void writelnLog(String text) {
         try {
-            String filename = "crypto_forex_result/scan_result.log";
-            FileWriter fw = new FileWriter(filename, true); // the true will append the new data
+            FileWriter fw = new FileWriter(getLogFileName(), true);
             fw.write(text.replace(Utils.new_line_from_service, "\n"));
             fw.write("\n");
             fw.close();
@@ -852,8 +854,7 @@ public class Utils {
 
     public static void writelnLogFooter() {
         try {
-            String filename = "crypto_forex_result/scan_result.log";
-            FileWriter fw = new FileWriter(filename, true); // the true will append the new data
+            FileWriter fw = new FileWriter(getLogFileName(), true);
             fw.write("------------------------------------------\n");
             fw.close();
         } catch (IOException ioe) {
@@ -2814,68 +2815,6 @@ public class Utils {
 
         return false;
     }
-
-    // private static String checkTrendByMa10_20_50(List<BtcFutures> list, int
-    // fastIndex, String trend) {
-    // String resutl = "";
-    //
-    // if (Objects.equals(Utils.TREND_LONG, trend)) {
-    // BigDecimal ma3_1 = Utils.calcMA(list, 3, 1);
-    // BigDecimal ma50_1 = Utils.calcMA(list, 50, 1);
-    // if (ma3_1.compareTo(ma50_1) > 0) {
-    // return "";
-    // }
-    // }
-    //
-    // if (Objects.equals(Utils.TREND_SHORT, trend)) {
-    // BigDecimal ma3_1 = Utils.calcMA(list, 3, 1);
-    // BigDecimal ma50_1 = Utils.calcMA(list, 50, 1);
-    // if (ma3_1.compareTo(ma50_1) < 0) {
-    // return "";
-    // }
-    // }
-    //
-    // resutl += Utils.checkTrendByIndex(list, fastIndex, 10, trend);
-    // resutl += Utils.checkTrendByIndex(list, fastIndex, 20, trend);
-    // resutl += Utils.checkTrendByIndex(list, fastIndex, 50, trend);
-    //
-    // return resutl;
-    // }
-    //
-    // private static String checkTrendByIndex(List<BtcFutures> list, int fastIndex,
-    // int slowIndex, String trend) {
-    // if (CollectionUtils.isEmpty(list)) {
-    // return "";
-    // }
-    // String val = list.get(0).getPrice_close_candle().toString();
-    // if (val.contains("E")) {
-    // return "";
-    // }
-    //
-    // int str = 1;
-    // int end = 2;
-    // BigDecimal ma3_1 = calcMA(list, fastIndex, str);
-    // BigDecimal ma3_2 = calcMA(list, fastIndex, end);
-    //
-    // BigDecimal ma10_1 = calcMA(list, slowIndex, str);
-    // BigDecimal ma10_2 = calcMA(list, slowIndex, end);
-    //
-    // if (isBlank(trend) || Objects.equals(trend, TREND_LONG)) {
-    // if ((ma3_1.compareTo(ma3_2) > 0) && (ma3_1.compareTo(ma10_1) > 0) &&
-    // (ma10_2.compareTo(ma3_2) > 0)) {
-    // return getTrendPrifix(TREND_LONG, fastIndex, slowIndex);
-    // }
-    // }
-    //
-    // if (isBlank(trend) || Objects.equals(trend, TREND_SHORT)) {
-    // if ((ma3_1.compareTo(ma3_2) < 0) && (ma3_1.compareTo(ma10_1) < 0) &&
-    // (ma10_2.compareTo(ma3_2) < 0)) {
-    // return getTrendPrifix(TREND_SHORT, fastIndex, slowIndex);
-    // }
-    // }
-    //
-    // return "";
-    // }
 
     public static String getTrendPrifix(String trend) {
         String check = Objects.equals(trend, Utils.TREND_LONG) ? " 💹(" + CHAR_LONG_UP + ")"
