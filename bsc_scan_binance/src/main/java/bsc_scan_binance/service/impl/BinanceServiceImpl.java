@@ -2866,7 +2866,9 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.equals(Utils.TREND_SHORT, BTC_TREND_M15)) {
             resetTrendSycle(EVENT_DH4H1_5M_CRYPTO, symbol);
             resetTrendSycle(EVENT_DH4H1_15M_CRYPTO, symbol);
-            System.out.print(".");
+            if (!"_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
+                System.out.print(".");
+            }
             return "";
         }
 
@@ -2880,7 +2882,6 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private void checkPositionCrypto15m(String gecko_id, String symbol) {
-
         List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 50);
         String trend_15m = Utils.switchTrend(list_15m);
 
@@ -3062,7 +3063,10 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.equals(Utils.TREND_SHORT, BTC_TREND_M15)) {
             resetTrendSycle(EVENT_DH4H1_5M_CRYPTO, symbol);
             resetTrendSycle(EVENT_DH4H1_15M_CRYPTO, symbol);
-            System.out.print(".");
+
+            if (!"_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
+                System.out.print(".");
+            }
             return;
         }
 
