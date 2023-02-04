@@ -2966,7 +2966,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
         if (Objects.equals(Utils.TREND_LONG, Utils.switchTrend(list_days))) {
             String msgs = "(Long)" + Utils.getChartName(list_days) + symbol + Utils.getCurrentPrice(list_days) + taker
-                    + getVolMc(gecko_id) + type.replace("volma{", "").replace("}volma", "");
+                    + ", " + getVolMc(gecko_id) + type.replace("volma{", "").replace("}volma", "");
             Utils.writeBlogCrypto(symbol, msgs, isFuturesCoin);
         }
         // -------------------------- INIT WEBSITE --------------------------
@@ -3091,20 +3091,22 @@ public class BinanceServiceImpl implements BinanceService {
 
     private void checkPositionBTC_15m(String gecko_id, String symbol) {
         List<BtcFutures> list_5m = Utils.loadData(symbol, TIME_5m, 50);
+        String trend_m5 = Utils.switchTrend(list_5m);
 
-        String trend_m5 = createTrendByMa3_10_20(EVENT_DH4H1_5M_CRYPTO, list_5m, gecko_id, symbol);
         if (Utils.isNotBlank(trend_m5)) {
+            createTrendByMa3_10_20(EVENT_DH4H1_5M_CRYPTO, list_5m, gecko_id, symbol);
 
             List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 50);
-            String trend_15m = createTrendByMa3_10_20(EVENT_DH4H1_15M_CRYPTO, list_15m, gecko_id, symbol);
+            String trend_15m = Utils.switchTrend(list_15m);
 
             if (Objects.equals(trend_m5, trend_15m)) {
                 String msg = "(Long)(5m.15m)" + symbol + Utils.getCurrentPrice(list_15m) + getVolMc(gecko_id);
-
                 String EVENT_ID = EVENT_PUMP + symbol + "_15_" + Utils.getCurrentYyyyMmDd_HH();
                 sendMsgPerHour(EVENT_ID, msg, true);
 
                 Utils.writeBlogCrypto(symbol, msg, true);
+
+                createTrendByMa3_10_20(EVENT_DH4H1_15M_CRYPTO, list_15m, gecko_id, symbol);
             }
         }
     }

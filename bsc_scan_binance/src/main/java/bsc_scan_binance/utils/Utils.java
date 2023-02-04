@@ -841,7 +841,6 @@ public class Utils {
     }
 
     public static void writeBlogCrypto(String symbol, String long_short_content, boolean isFuturesCoin) {
-        writelnLog("_______________________________________________________________");
         Utils.writeLog(long_short_content);
         if (isFuturesCoin) {
             Utils.writelnLog(Utils.getCryptoLink_Future(symbol));
