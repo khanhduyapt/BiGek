@@ -2869,7 +2869,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             List<BtcFutures> list_15m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 60);
             String trend_15m = Utils.switchTrend(list_15m);
-            String trend_15m_byMa = Utils.isUptrendByMaIndex(list_5m, 50) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+            String trend_15m_byMa = Utils.isUptrendByMaIndex(list_5m, 30) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
             if (Objects.equals(trend_m5_byMa, trend_15m_byMa) && Objects.equals(trend_m5_byMa, trend_15m)) {
                 String append = "";
@@ -3099,11 +3099,11 @@ public class BinanceServiceImpl implements BinanceService {
                     + ". " + Utils.getCryptoLink_Future(symbol));
 
             List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 60);
-            String swithc_trend_15m = Utils.switchTrend(list_15m);
+            String swith_trend_15m = Utils.switchTrend(list_15m);
             String trend_15m_ma20 = Utils.isUptrendByMaIndex(list_15m, 20) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
-            if (Objects.equals(trend_m5, swithc_trend_15m) && Objects.equals(swithc_trend_15m, trend_15m_ma20)) {
-                String msg = "(" + swithc_trend_15m + ")(5m.15m)" + symbol + Utils.getCurrentPrice(list_15m)
+            if (Objects.equals(trend_m5, swith_trend_15m) && Objects.equals(swith_trend_15m, trend_15m_ma20)) {
+                String msg = "(" + swith_trend_15m + ")(5m.15m)" + symbol + Utils.getCurrentPrice(list_15m)
                         + getVolMc(gecko_id);
                 String EVENT_ID = EVENT_PUMP + symbol + "_15_" + Utils.getCurrentYyyyMmDd_HH();
                 sendMsgPerHour(EVENT_ID, msg, true);
