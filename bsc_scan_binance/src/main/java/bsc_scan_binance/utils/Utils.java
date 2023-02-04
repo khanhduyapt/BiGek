@@ -67,16 +67,16 @@ public class Utils {
     public static final String PREPARE_ORDERS_DATA_TYPE_MIN14D = "4";
     public static final String PREPARE_ORDERS_DATA_TYPE_MAX14D = "5";
 
-    public static final String TREND_LONG_UP = "Up";
-    public static final String TREND_SHORT_DN = "Dn";
     public static final String TREND_LONG = "Long";
     public static final String TREND_SHORT = "Short";
-    public static final String TREND_DANGER = "(Danger)";
-    public static final String TREND_OPPOSITE = "Opposite";
-    public static final String TREND_START_LONG = "Start:Long";
-    public static final String TREND_STOP_LONG = "Stop:Long";
+
+    public static final String TEXT_DANGER = "(Danger)";
+    public static final String TEXT_START_LONG = "Start:Long";
+    public static final String TEXT_STOP_LONG = "Stop:Long";
 
     public static final String CHAR_MONEY = "💰";
+    public static final String CHAR_LONG_UP = "Up";
+    public static final String CHAR_SHORT_DN = "Dn";
 
     public static final int MA_FAST = 6;
     public static final int MA_INDEX_H1_START_LONG = 50;
@@ -2776,15 +2776,15 @@ public class Utils {
     // }
 
     public static String getTrendPrifix(String trend) {
-        String check = Objects.equals(trend, Utils.TREND_LONG) ? " 💹(" + TREND_LONG_UP + ")"
-                : "  📉 (" + TREND_SHORT_DN + ")";
+        String check = Objects.equals(trend, Utils.TREND_LONG) ? " 💹(" + CHAR_LONG_UP + ")"
+                : "  📉 (" + CHAR_SHORT_DN + ")";
 
         return check;
     }
 
     public static String getTrendPrifix(String trend, int maFast, int maSlow) {
-        String check = Objects.equals(trend, Utils.TREND_LONG) ? maFast + TREND_LONG_UP + maSlow + " 💹"
-                : maFast + TREND_SHORT_DN + maSlow + " 📉";
+        String check = Objects.equals(trend, Utils.TREND_LONG) ? maFast + CHAR_LONG_UP + maSlow + " 💹"
+                : maFast + CHAR_SHORT_DN + maSlow + " 📉";
 
         return "(" + check + " )";
     }

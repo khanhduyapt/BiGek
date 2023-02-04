@@ -395,7 +395,7 @@ public class BinanceServiceImpl implements BinanceService {
                     cutUp += 1;
                 }
 
-                if (futu.contains(Utils.TREND_STOP_LONG) || futu.contains(Utils.TREND_DANGER)) {
+                if (futu.contains(Utils.TEXT_STOP_LONG) || futu.contains(Utils.TEXT_DANGER)) {
                     count_stop_long += 1;
                 }
             }
@@ -896,10 +896,10 @@ public class BinanceServiceImpl implements BinanceService {
                                 css.setOco_opportunity(ma7.replace(SEPARATE_D1_AND_H1, ""));
                             }
 
-                            if (ma7.contains(Utils.TREND_DANGER)) {
+                            if (ma7.contains(Utils.TEXT_DANGER)) {
                                 // css.setDt_range_css("text-danger");
                             }
-                            if (ma7.contains(Utils.TREND_STOP_LONG)) {
+                            if (ma7.contains(Utils.TEXT_STOP_LONG)) {
                                 // css.setDt_range_css("text-danger");
                             }
                         } catch (Exception e) {
@@ -948,7 +948,7 @@ public class BinanceServiceImpl implements BinanceService {
                                 css.setRange_take_profit(sl_e_tp[2]);
                                 css.setRange_volume(sl_e_tp[3]);
 
-                                if (sl_e_tp[3].contains(Utils.TREND_DANGER)) {
+                                if (sl_e_tp[3].contains(Utils.TEXT_DANGER)) {
                                     // css.setRange_volume_css("text-danger");
                                 }
 
@@ -2609,6 +2609,17 @@ public class BinanceServiceImpl implements BinanceService {
                 BTC_TREND_M15 = Utils.TREND_LONG;
             } else {
                 BTC_TREND_M15 = Utils.TREND_SHORT;
+            }
+
+            if (Objects.equals(Utils.TREND_SHORT, trend_15m)) {
+                String EVENT_STOP_LONG_ID = "BTC_" + Utils.TEXT_STOP_LONG
+                        + Utils.getCurrentYyyyMmDdHHByChart(list_15m);
+
+                String msg_stop = "";
+                msg_stop += "******************************" + Utils.new_line_from_service;
+                msg_stop += Utils.getTrendPrifix(Utils.TREND_SHORT) + Utils.TEXT_STOP_LONG;
+                msg_stop += "******************************" + Utils.new_line_from_service;
+                sendMsgPerHour(EVENT_STOP_LONG_ID, msg_stop, true);
             }
         }
 
