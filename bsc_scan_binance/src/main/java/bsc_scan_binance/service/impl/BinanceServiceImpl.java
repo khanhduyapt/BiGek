@@ -2355,6 +2355,16 @@ public class BinanceServiceImpl implements BinanceService {
         // }
     }
 
+    private String getVolMc(String gecko_id) {
+        CandidateCoin coinmarketcap = candidateCoinRepository.findById(gecko_id).orElse(null);
+        if (Objects.equals(null, coinmarketcap)) {
+            return "";
+        }
+        BigDecimal vol = Utils.getBigDecimal(coinmarketcap.getVolumnDivMarketcap()).multiply(BigDecimal.valueOf(100));
+
+        return "Vol.Mc:" + Utils.removeLastZero(vol) + "%";
+    }
+
     @Override
     public List<EntryCssResponse> findAllScalpingToday() {
         List<EntryCssResponse> results = new ArrayList<EntryCssResponse>();
@@ -2946,15 +2956,32 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal current_price = list_days.get(0).getCurrPrice();
 
         String type = "";
+        boolean isFuturesCoin = false;
         if (binanceFuturesRepository.existsById(gecko_id)) {
             type = " (Futures) ";
+            isFuturesCoin = true;
         } else {
             type = " (Spot) ";
         }
-
         String taker = Utils.analysisTakerVolume(list_days, list_h4);
-
         type = type + Utils.analysisVolume(list_days);
+
+        String volmc = getVolMc(gecko_id);
+        if (Objects.equals(Utils.TREND_LONG, Utils.switchTrend(list_h1))) {
+            String msgs = "(Long)" + Utils.getChartName(list_h1) + symbol + Utils.getCurrentPrice(list_h1) + taker
+                    + volmc;
+            Utils.writeBlogCrypto(symbol, msgs, isFuturesCoin);
+        }
+        if (Objects.equals(Utils.TREND_LONG, Utils.switchTrend(list_h4))) {
+            String msgs = "(Long)" + Utils.getChartName(list_h4) + symbol + Utils.getCurrentPrice(list_h4) + taker
+                    + volmc;
+            Utils.writeBlogCrypto(symbol, msgs, isFuturesCoin);
+        }
+        if (Objects.equals(Utils.TREND_LONG, Utils.switchTrend(list_days))) {
+            String msgs = "(Long)" + Utils.getChartName(list_days) + symbol + Utils.getCurrentPrice(list_days) + taker
+                    + volmc;
+            Utils.writeBlogCrypto(symbol, msgs, isFuturesCoin);
+        }
 
         Boolean allow_long_d1 = Utils.checkClosePriceAndMa_StartFindLong(list_days);
         String scapLongH4 = Utils.getScapLong(list_h4, list_days, 10, allow_long_d1);
@@ -3063,31 +3090,18 @@ public class BinanceServiceImpl implements BinanceService {
     public String checkChart_m15_follow_H4(String gecko_id, String symbol) {
         if ("_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
             sendMsgKillLongShort(gecko_id, symbol, "");
-        }
-
-        String trend_h4 = getTrend(EVENT_DH4H1_H4_CRYPTO, gecko_id);
-        if (Objects.equals(Utils.TREND_LONG, trend_h4)) {
             checkPositionCrypto15m(gecko_id, symbol);
+        } else {
+            String trend_h4 = getTrend(EVENT_DH4H1_H4_CRYPTO, gecko_id);
+            if (Objects.equals(Utils.TREND_LONG, trend_h4)) {
+                checkPositionCrypto15m(gecko_id, symbol);
+            }
         }
 
         return "";
     }
 
     private void checkPositionCrypto15m(String gecko_id, String symbol) {
-        CandidateCoin coinmarketcap = candidateCoinRepository.findById(gecko_id).orElse(null);
-        if (Objects.equals(null, coinmarketcap)) {
-            return;
-        }
-        String append = "";
-        if (!"_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
-            BigDecimal vol = Utils.getBigDecimal(coinmarketcap.getVolumnDivMarketcap())
-                    .multiply(BigDecimal.valueOf(100));
-            if (vol.compareTo(BigDecimal.valueOf(20)) < 0) {
-                // return;
-            }
-            append = "Vol.Mc:" + Utils.removeLastZero(vol) + "%";
-        }
-
         List<BtcFutures> list_5m = Utils.loadData(symbol, TIME_5m, 50);
         String str_trend_5m = Utils.switchTrend(list_5m);
         boolean uptrenByMa = Utils.isUptrendByMaIndex(list_5m, 10);
@@ -3101,7 +3115,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.equals(Utils.TREND_LONG, trend_15m)) {
                 String chartname = "(5m.15m)";
-                String msg = "(Long)" + chartname + symbol + curr_price + append;
+                String msg = "(Long)" + chartname + symbol + curr_price + getVolMc(gecko_id);
                 String append_btc = "";
                 if (!Objects.equals(Utils.TREND_LONG, BTC_TREND_M15)) {
                     append_btc = Utils.new_line_from_service + "___(Remark).Btc.Down.Trend___";

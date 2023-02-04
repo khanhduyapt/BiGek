@@ -840,6 +840,17 @@ public class Utils {
         return "crypto_forex_result/scan_result_" + getYyyyMmDdHH_ChangeDailyChart() + ".log";
     }
 
+    public static void writeBlogCrypto(String symbol, String long_short_content, boolean isFuturesCoin) {
+        writelnLog("***************************************************************\n");
+        Utils.writeLog(long_short_content);
+        if (isFuturesCoin) {
+            Utils.writelnLog(Utils.getCryptoLink_Future(symbol));
+        } else {
+            Utils.writelnLog(Utils.getCryptoLink_Spot(symbol));
+        }
+        writelnLog("***************************************************************\n");
+    }
+
     public static void writeLog(String text) {
         try {
             FileWriter fw = new FileWriter(getLogFileName(), true);
@@ -867,7 +878,7 @@ public class Utils {
     public static void writelnLogFooter() {
         try {
             FileWriter fw = new FileWriter(getLogFileName(), true);
-            fw.write("------------------------------------------\n");
+            fw.write("---------------------------------------------------------------\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -1854,6 +1865,10 @@ public class Utils {
         }
 
         return true;
+    }
+
+    public static String getCurrentPrice(List<BtcFutures> list) {
+        return "(" + Utils.removeLastZero(list.get(0).getCurrPrice()) + ")";
     }
 
     public static String getChartName(List<BtcFutures> list) {
