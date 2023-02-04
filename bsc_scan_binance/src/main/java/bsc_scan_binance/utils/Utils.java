@@ -2624,20 +2624,20 @@ public class Utils {
 
         String result = "";
         if (trend_main.contains(Utils.TREND_LONG) && trend_main.contains(Utils.TREND_SHORT)) {
-            result = "";
+            return "";
         }
 
         if (trend_main.contains(Utils.TREND_LONG)) {
             result = Utils.TREND_LONG;
             if (trend_confirm.contains(Utils.TREND_SHORT)) {
-                result = "";
+                return "";
             }
         }
 
         if (trend_main.contains(Utils.TREND_SHORT)) {
             result = Utils.TREND_SHORT;
             if (trend_confirm.contains(Utils.TREND_LONG)) {
-                result = "";
+                return "";
             }
         }
 
