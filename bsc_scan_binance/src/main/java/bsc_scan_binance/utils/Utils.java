@@ -824,6 +824,18 @@ public class Utils {
         return false;
     }
 
+    public static String getCryptoLink_Spot(String symbol) {
+        return "https://vn.tradingview.com/chart/?symbol=BINANCE%3A" + symbol + "USDT";
+    }
+
+    public static String getCryptoLink_Future(String symbol) {
+        return "https://vn.tradingview.com/chart/?symbol=BINANCE%3A" + symbol + "USDTPERP";
+    }
+
+    public static String getCapitalLink(String epic) {
+        return "https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + epic;
+    }
+
     private static String getLogFileName() {
         return "crypto_forex_result/scan_result_" + getYyyyMmDdHH_ChangeDailyChart() + ".log";
     }

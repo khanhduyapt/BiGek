@@ -439,11 +439,9 @@ public class BinanceServiceImpl implements BinanceService {
                 BigDecimal gecko_total_volume = Utils.getBigDecimal(dto.getGecko_total_volume());
 
                 if (css.getName().toUpperCase().contains("FUTURES")) {
-                    css.setTrading_view("https://vn.tradingview.com/chart/?symbol=BINANCE%3A"
-                            + dto.getSymbol().toUpperCase() + "USDTPERP");
+                    css.setTrading_view(Utils.getCryptoLink_Future(dto.getSymbol()));
                 } else {
-                    css.setTrading_view("https://vn.tradingview.com/chart/?symbol=BINANCE%3A"
-                            + dto.getSymbol().toUpperCase() + "USDT");
+                    css.setTrading_view(Utils.getCryptoLink_Spot(dto.getSymbol()));
                 }
 
                 if ((market_cap.compareTo(BigDecimal.valueOf(36000001)) < 0)
@@ -2881,11 +2879,18 @@ public class BinanceServiceImpl implements BinanceService {
 
                     createNewTrendCycle(EVENT_DH4H1_15M_FX, list_15m, main_trend, EPIC, EPIC);
 
-                    String curr_price = "(" + Utils.removeLastZero(list_5m.get(0).getCurrPrice()) + ")";
-                    Utils.writeLog("Forex(" + main_trend + ")" + Utils.getChartName(list_15m) + EPIC + curr_price
-                            + append.replace("_", ""));
-                    Utils.writelnLog("https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + EPIC);
-                    Utils.writelnLogFooter();
+                    {
+                        String ma3 = Utils.removeLastZero(Utils.calcMA(list_15m, 3, 0));
+                        String ma10 = Utils.removeLastZero(Utils.calcMA(list_15m, 10, 0));
+                        String ma20 = Utils.removeLastZero(Utils.calcMA(list_15m, 20, 0));
+
+                        String curr_price = "(" + Utils.removeLastZero(list_5m.get(0).getCurrPrice()) + ")";
+                        Utils.writeLog("Forex(" + main_trend + ")" + Utils.getChartName(list_15m) + EPIC + curr_price
+                                + append.replace("_", ""));
+                        Utils.writelnLog("Ma3:" + ma3 + ", Ma10:" + ma10 + ", Ma20:" + ma20);
+                        Utils.writelnLog("https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + EPIC);
+                        Utils.writelnLogFooter();
+                    }
                 }
             }
         }
@@ -3074,7 +3079,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (vol.compareTo(BigDecimal.valueOf(20)) < 0) {
                 // return;
             }
-            append = "Vol:Mc:" + vol + "%";
+            append = "Vol.Mc:" + Utils.removeLastZero(vol) + "%";
         }
 
         List<BtcFutures> list_5m = Utils.loadData(symbol, TIME_5m, 50);
@@ -3099,9 +3104,15 @@ public class BinanceServiceImpl implements BinanceService {
                 String EVENT_ID = EVENT_PUMP + symbol + chartname + Utils.getCurrentYyyyMmDd_HH_Blog2h();
                 sendMsgPerHour(EVENT_ID, msg, true);
 
-                Utils.writeLog("Crypto(Long)" + Utils.getChartName(list_15m) + symbol + curr_price + append_btc);
-                Utils.writelnLog("https://vn.tradingview.com/chart/?symbol=BINANCE%3A" + symbol + "USDTPERP");
-                Utils.writelnLogFooter();
+                {
+                    Utils.writeLog("Crypto(Long)" + Utils.getChartName(list_15m) + symbol + curr_price + append_btc);
+                    if (binanceFuturesRepository.existsById(gecko_id)) {
+                        Utils.writelnLog(Utils.getCryptoLink_Future(symbol));
+                    } else {
+                        Utils.writelnLog(Utils.getCryptoLink_Spot(symbol));
+                    }
+                    Utils.writelnLogFooter();
+                }
 
                 // -----------------------------------------------
                 String EVENT_1W1D_ID = EVENT_1W1D_CRYPTO + "_" + symbol;
