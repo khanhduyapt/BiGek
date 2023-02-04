@@ -2795,7 +2795,7 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     @Transactional
-    public void resetTrendSycle_222222(String event_dh4h1_time_type, String geckoid_or_epic) {
+    public void resetTrendSycle(String event_dh4h1_time_type, String geckoid_or_epic) {
         FundingHistoryKey id = new FundingHistoryKey(event_dh4h1_time_type, geckoid_or_epic);
         FundingHistory entity = fundingHistoryRepository.findById(id).orElse(null);
         if (!Objects.equals(null, entity)) {
@@ -2847,6 +2847,12 @@ public class BinanceServiceImpl implements BinanceService {
                     sendMsgPerHour(EVENT_ID, msg, true);
 
                     createNewTrendCycle(EVENT_DH4H1_15M_FX, list_15m, trend_switch, EPIC, EPIC);
+
+                    Utils.writelnLogFooter();
+                    String curr_price = "(" + Utils.removeLastZero(list_15m.get(0).getCurrPrice()) + ")";
+                    Utils.writeLog("Forex(" + trend + ")" + Utils.getChartName(list_15m) + EPIC + curr_price);
+                    Utils.writelnLogFooter();
+                    Utils.writelnLogFooter();
                 }
             }
         } else if (Utils.isNotBlank(trend_h)) {
