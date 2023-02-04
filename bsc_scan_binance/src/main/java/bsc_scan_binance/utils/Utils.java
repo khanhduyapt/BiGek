@@ -180,7 +180,8 @@ public class Utils {
             + "    FROM funding_history str_h                                                           \n"
             + "    WHERE str_h.event_time = 'DH4H1_STR_H4_FX'                                           \n"
             + " ) tmp                                                                                   \n"
-            + " WHERE (tmp.trend_h is not null) and (tmp.trend_d = tmp.trend_h)                         \n"
+            // and (tmp.trend_d = tmp.trend_h)
+            + " WHERE (tmp.trend_h is not null)                                                         \n"
             + "   AND ((COALESCE(tmp.trend_15m,'') <> '' and COALESCE(tmp.trend_15m,'') = tmp.trend_h) or (COALESCE(tmp.trend_5m,'') <> '' and COALESCE(tmp.trend_5m,'') = tmp.trend_h))   \n"
             + " ORDER BY tmp.symbol_or_epic                                                             \n";
 
@@ -844,15 +845,15 @@ public class Utils {
             // Telegram token
             String apiToken = "5349894943:AAE_0-ZnbikN9m1aRoyCI2nkT2vgLnFBA-8";
 
-            // String urlSetWebhook = "https://api.telegram.org/bot%s/setWebhook";
-            // urlSetWebhook = String.format(urlSetWebhook, apiToken);
+            String urlSetWebhook = "https://api.telegram.org/bot%s/setWebhook";
+            urlSetWebhook = String.format(urlSetWebhook, apiToken);
 
             String urlString = "https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=";
             urlString = String.format(urlString, apiToken, chat_id) + text;
             try {
-                // URL url = new URL(urlSetWebhook);
-                // URLConnection conn = url.openConnection();
-                // conn.getInputStream();
+                URL url = new URL(urlSetWebhook);
+                URLConnection conn = url.openConnection();
+                conn.getInputStream();
 
                 URL url2 = new URL(urlString);
                 URLConnection conn2 = url2.openConnection();
