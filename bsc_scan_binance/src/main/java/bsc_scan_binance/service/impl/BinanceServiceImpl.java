@@ -2832,6 +2832,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public void checkSamePhase_H4M_Forex15m(String EPIC) {
+        // EPIC = "CHFSGD";
         String trend_d = getTrend(EVENT_DH4H1_D_FX, EPIC);
         String trend_h = getTrend(EVENT_DH4H1_H4_FX, EPIC);
 
@@ -2865,10 +2866,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
             if (Utils.isNotBlank(main_trend)) {
                 createNewTrendCycle(EVENT_DH4H1_5M_FX, list_5m, main_trend, EPIC, EPIC);
-
-                Utils.writeLog("(" + main_trend + ") Check" + Utils.getChartName(list_5m) + EPIC);
-                Utils.writelnLog("https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + EPIC);
-                Utils.writelnLogFooter();
 
                 List<BtcFutures> list_15m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 50);
                 String trend_15m = Utils.switchTrend(list_15m);
@@ -3084,12 +3081,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (uptrenByMa && Objects.equals(Utils.TREND_LONG, str_trend_5m)) {
 
             String curr_price = "(" + Utils.removeLastZero(list_5m.get(0).getCurrPrice()) + ")";
-
             createNewTrendCycle(EVENT_DH4H1_5M_CRYPTO, list_5m, Utils.TREND_LONG, gecko_id, symbol);
-
-            Utils.writeLog("(Long) Check" + Utils.getChartName(list_5m) + symbol + curr_price);
-            Utils.writelnLog("https://vn.tradingview.com/chart/?symbol=BINANCE%3A" + symbol + "USDTPERP");
-            Utils.writelnLogFooter();
 
             List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 50);
             String trend_15m = Utils.switchTrend(list_15m);

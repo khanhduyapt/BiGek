@@ -462,12 +462,36 @@ public class Utils {
 
                     BigDecimal low_price = Utils
                             .formatPrice(Utils.getBigDecimal(((JSONObject) price.get("lowPrice")).get("ask")), 5);
+                    BigDecimal low_price_b = Utils
+                            .formatPrice(Utils.getBigDecimal(((JSONObject) price.get("lowPrice")).get("bid")), 5);
+                    low_price = low_price.add(low_price_b);
+                    low_price = low_price.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+
+                    // -------------------
+
                     BigDecimal hight_price = Utils
                             .formatPrice(Utils.getBigDecimal(((JSONObject) price.get("highPrice")).get("ask")), 5);
+                    BigDecimal hight_price_b = Utils
+                            .formatPrice(Utils.getBigDecimal(((JSONObject) price.get("highPrice")).get("ask")), 5);
+                    hight_price = hight_price.add(hight_price_b);
+                    hight_price = hight_price.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+                    // -------------------
+
                     BigDecimal open_price = Utils
                             .formatPrice(Utils.getBigDecimal(((JSONObject) price.get("openPrice")).get("ask")), 5);
+                    BigDecimal open_price_b = Utils
+                            .formatPrice(Utils.getBigDecimal(((JSONObject) price.get("openPrice")).get("ask")), 5);
+                    open_price = open_price.add(open_price_b);
+                    open_price = open_price.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+
+                    // -------------------
+
                     BigDecimal close_price = Utils
                             .formatPrice(Utils.getBigDecimal(((JSONObject) price.get("closePrice")).get("ask")), 5);
+                    BigDecimal close_price_b = Utils
+                            .formatPrice(Utils.getBigDecimal(((JSONObject) price.get("closePrice")).get("ask")), 5);
+                    close_price = close_price.add(close_price_b);
+                    close_price = close_price.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
 
                     // String snapshotTime = Utils.getStringValue(price.get("snapshotTime"));
 
@@ -838,9 +862,6 @@ public class Utils {
     }
 
     public static void sendToMyTelegram(String text) {
-        // log.info(Utils.getMmDD_TimeHHmm() + text);
-        writeLog(text);
-
         String msg = text.replaceAll("↑", "^").replaceAll("↓", "v").replaceAll(" ", "");
         System.out.println();
         System.out.println(msg + " 💰 ");
@@ -850,8 +871,6 @@ public class Utils {
     }
 
     public static void sendToTelegram(String text) {
-        writeLog(text);
-        // log.info(Utils.getMmDD_TimeHHmm() + text);
         String msg = text.replaceAll("↑", "^").replaceAll("↓", "v").replaceAll(" ", "");
         System.out.println(msg);
 
@@ -2671,12 +2690,27 @@ public class Utils {
         return "";
     }
 
+    public static String checkTrendByMa3_10_20(List<BtcFutures> list) {
+        Boolean isUptrendByMa3 = Utils.isUptrendByMaIndex(list, 3);
+        Boolean isUptrendByMa10 = Utils.isUptrendByMaIndex(list, 10);
+        Boolean isUptrendByMa20 = Utils.isUptrendByMaIndex(list, 20);
+
+        if (isUptrendByMa3 && isUptrendByMa10 && isUptrendByMa20) {
+            return TREND_LONG;
+        }
+        if (!isUptrendByMa3 && !isUptrendByMa10 && !isUptrendByMa20) {
+            return TREND_SHORT;
+        }
+
+        return "";
+    }
+
     public static String switchTrend(List<BtcFutures> list) {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
         String result = "";
-        String trend_main = checkTrendSideway(list, 0, 3);
+        String trend_main = checkTrendSideway(list, 1, 3);
         String trend_confirm = checkTrendSideway(list, 3, 8);
 
         if (trend_main.contains(Utils.TREND_LONG) && trend_main.contains(Utils.TREND_SHORT)) {
@@ -2703,7 +2737,9 @@ public class Utils {
     private static String checkTrendSideway(List<BtcFutures> list, int str, int end) {
         Boolean isSmallTimeFrame = false;
         String symbol = list.get(0).getId();
-        if (symbol.contains("_15m_") || symbol.contains("_5m_") || symbol.contains("_1m_")) {
+
+        // symbol.contains("_15m_") ||
+        if (symbol.contains("_5m_")) {
             isSmallTimeFrame = true;
         }
 
@@ -2721,12 +2757,11 @@ public class Utils {
 
         String l_m3x10 = "";
         String l_m3x20 = "";
-        String l_m3x50 = "";
-        if (isSmallTimeFrame) {
+        if (!isSmallTimeFrame) {
             l_m3x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
         }
         l_m3x20 = Utils.checkXCutUpY(ma3_1, ma3_2, ma20_1, ma20_2);
-        l_m3x50 = Utils.checkXCutUpY(ma3_1, ma3_2, ma50_1, ma50_2);
+        String l_m3x50 = Utils.checkXCutUpY(ma3_1, ma3_2, ma50_1, ma50_2);
         String l_m10x20 = Utils.checkXCutUpY(ma10_1, ma10_2, ma20_1, ma20_2);
         String l_m10x50 = Utils.checkXCutUpY(ma10_1, ma10_2, ma50_1, ma50_2);
         String l_m20x50 = Utils.checkXCutUpY(ma20_1, ma20_2, ma50_1, ma50_2);
@@ -2734,12 +2769,11 @@ public class Utils {
 
         String s_m3x10 = "";
         String s_m3x20 = "";
-        String s_m3x50 = "";
-        if (isSmallTimeFrame) {
+        if (!isSmallTimeFrame) {
             s_m3x10 = Utils.checkXCutDownY(ma3_1, ma3_2, ma10_1, ma10_2);
         }
         s_m3x20 = Utils.checkXCutDownY(ma3_1, ma3_2, ma20_1, ma20_2);
-        s_m3x50 = Utils.checkXCutDownY(ma3_1, ma3_2, ma50_1, ma50_2);
+        String s_m3x50 = Utils.checkXCutDownY(ma3_1, ma3_2, ma50_1, ma50_2);
         String s_m10x20 = Utils.checkXCutDownY(ma10_1, ma10_2, ma20_1, ma20_2);
         String s_m10x50 = Utils.checkXCutDownY(ma10_1, ma10_2, ma50_1, ma50_2);
         String s_m20x50 = Utils.checkXCutDownY(ma20_1, ma20_2, ma50_1, ma50_2);
