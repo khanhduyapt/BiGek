@@ -841,14 +841,14 @@ public class Utils {
     }
 
     public static void writeBlogCrypto(String symbol, String long_short_content, boolean isFuturesCoin) {
-        writelnLog("***************************************************************");
+        writelnLog("_______________________________________________________________");
         Utils.writeLog(long_short_content);
         if (isFuturesCoin) {
             Utils.writelnLog(Utils.getCryptoLink_Future(symbol));
         } else {
             Utils.writelnLog(Utils.getCryptoLink_Spot(symbol));
         }
-        writelnLog("***************************************************************");
+        writelnLog("_______________________________________________________________");
     }
 
     public static void writeLog(String text) {
@@ -914,7 +914,7 @@ public class Utils {
         boolean value = day == DayOfWeek.SUNDAY || day == DayOfWeek.SATURDAY;
 
         // TODO: return value;
-        return false;
+        return value;
     }
 
     public static boolean isWorkingTime() {
