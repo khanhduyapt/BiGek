@@ -2801,6 +2801,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public void checkSamePhaseForex15m(String EPIC) {
+        String result = "";
         String trend_d = getTrend(EVENT_DH4H1_D_FX, EPIC);
         String trend_h = getTrend(EVENT_DH4H1_H4_FX, EPIC);
 
@@ -2809,6 +2810,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (!CollectionUtils.isEmpty(list_15m)) {
                 String trend_m = createNewTrendCycle(EVENT_DH4H1_15M_FX, list_15m, EPIC, trend_h);
                 if (Utils.isNotBlank(trend_m)) {
+                    result = trend_m;
                     String chartname = Utils.getChartName(list_15m);
                     String trend = Utils.getTrendPrifix(trend_m);
                     String msg = trend + EPIC + chartname;
@@ -2827,10 +2829,10 @@ public class BinanceServiceImpl implements BinanceService {
                 String msg_5m = "";
 
                 List<BtcFutures> list_5m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5, 50);
-                String trend_m5_byMa20 = Utils.isUptrendByMaIndex(list_5m, 20) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+                String trend_m5 = Utils.isUptrendByMaIndex(list_5m, 20) ? Utils.TREND_LONG : Utils.TREND_SHORT;
                 String trend_switch = Utils.switchTrend(list_5m);
 
-                if (Objects.equals(trend_15m, trend_m5_byMa20) && Objects.equals(trend_15m, trend_switch)) {
+                if (Objects.equals(trend_15m, trend_m5) && Objects.equals(trend_15m, trend_switch)) {
 
                     if (Utils.EPICS_FOREX_SCAPS.contains(EPIC)) {
                         msg_5m = "________(H4)to(5m)________";
@@ -2842,9 +2844,14 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Utils.isNotBlank(msg_5m)) {
+                    result = trend_m5;
                     sendScapMsg(list_5m, EPIC, trend_h, msg_5m);
                 }
             }
+        }
+
+        if (Utils.isBlank(result)) {
+            System.out.print(".");
         }
     }
 
