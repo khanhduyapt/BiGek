@@ -2599,10 +2599,6 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private String sendMsgKillLongShort(String gecko_id, String symbol, String append) {
-        if (!Utils.isBusinessTime()) {
-            // return "";
-        }
-
         String msg = "";
         List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 50);
 
@@ -2640,6 +2636,9 @@ public class BinanceServiceImpl implements BinanceService {
             if (!fundingHistoryRepository.existsPumDump(gecko_id, EVENT_ID5)) {
                 fundingHistoryRepository.save(createPumpDumpEntity(EVENT_ID5, gecko_id, symbol, msg, true));
 
+                if (!Utils.isBusinessTime()) {
+                    // return msg;
+                }
                 Utils.sendToTelegram(msg);
             }
         }
