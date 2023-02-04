@@ -135,15 +135,18 @@ public class BscScanBinanceApplication {
 
                         if (Utils.isBusinessTime()) {
                             // ----------------------------------------------
-                            if (index_forex < forex_size) {
-                                String EPIC = capital_list.get(index_forex);
-                                init_Forex_4h(binance_service, EPIC, index_forex, forex_size);
-                                check_Forex_15m(binance_service, EPIC);
+                            if (!Utils.isWeekend()) {
+                                if (index_forex < forex_size) {
+                                    String EPIC = capital_list.get(index_forex);
+                                    init_Forex_4h(binance_service, EPIC, index_forex, forex_size);
+                                    check_Forex_15m(binance_service, EPIC);
 
-                                index_forex += 1;
-                            } else {
-                                index_forex = 0;
+                                    index_forex += 1;
+                                } else {
+                                    index_forex = 0;
+                                }
                             }
+
                             // ----------------------------------------------
                             {
                                 init_Crypto_4h(binance_service, coin, index_crypto, total);
@@ -214,6 +217,10 @@ public class BscScanBinanceApplication {
         if (Utils.isBusinessTime()) {
             int crypto_size = crypto_list.size();
             int forex_size = forex_list.size();
+            if (Utils.isWeekend()) {
+                forex_size = -1;
+            }
+
             int max = crypto_size > forex_size ? crypto_size : forex_size;
 
             for (int index = 0; index < max; index++) {
@@ -263,6 +270,10 @@ public class BscScanBinanceApplication {
     }
 
     private static void init_Forex_4h(BinanceService binance_service, String EPIC, int idx, int size) {
+        if (Utils.isWeekend()) {
+            return;
+        }
+
         if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog4h(), EPIC)) {
             String init = binance_service.initForex(EPIC);
 
@@ -273,6 +284,10 @@ public class BscScanBinanceApplication {
     }
 
     private static void check_Forex_15m(BinanceService binance_service, String EPIC) {
+        if (Utils.isWeekend()) {
+            return;
+        }
+
         if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), EPIC)) {
             binance_service.checkSamePhaseForex15m(EPIC);
         }

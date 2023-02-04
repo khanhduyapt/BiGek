@@ -2801,7 +2801,6 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public void checkSamePhaseForex15m(String EPIC) {
-        String result = "";
         String trend_d = getTrend(EVENT_DH4H1_D_FX, EPIC);
         String trend_h = getTrend(EVENT_DH4H1_H4_FX, EPIC);
 
@@ -2810,7 +2809,6 @@ public class BinanceServiceImpl implements BinanceService {
             if (!CollectionUtils.isEmpty(list_15m)) {
                 String trend_m = createNewTrendCycle(EVENT_DH4H1_15M_FX, list_15m, EPIC, trend_h);
                 if (Utils.isNotBlank(trend_m)) {
-                    result = trend_m;
                     String chartname = Utils.getChartName(list_15m);
                     String trend = Utils.getTrendPrifix(trend_m);
                     String msg = trend + EPIC + chartname;
@@ -2844,14 +2842,9 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Utils.isNotBlank(msg_5m)) {
-                    result = trend_m5;
                     sendScapMsg(list_5m, EPIC, trend_h, msg_5m);
                 }
             }
-        }
-
-        if (Utils.isBlank(result)) {
-            System.out.print(".");
         }
     }
 
