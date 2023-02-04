@@ -2850,8 +2850,6 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String EVENT_ID = EVENT_PUMP + symbol + chartname + Utils.getCurrentYyyyMmDd_HH();
                     sendMsgPerHour(EVENT_ID, msg, true);
-
-                    createNewTrendCycle(EVENT_DH4H1_5M_CRYPTO, list_5m, symbol, Utils.TREND_LONG);
                 }
 
             }

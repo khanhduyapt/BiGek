@@ -233,50 +233,40 @@ public class BscScanBinanceApplication {
         }
     }
 
+    private static boolean isReloadAfter(String blog, String geckoid_or_epic) {
+        String key = Utils.getStringValue(geckoid_or_epic) + "_";
+        key += blog;
+        boolean reload = false;
+        if (keys_dict.containsKey(key)) {
+            if (!Objects.equals(key, keys_dict.get(key))) {
+                keys_dict.put(key, key);
+
+                reload = true;
+            }
+        } else {
+            keys_dict.put(key, key);
+            reload = true;
+        }
+
+        return reload;
+    }
+
     private static void check_FutureCoin(BinanceService binance_service, CandidateCoin coin) {
         if (!binance_service.isFutureCoin(coin.getGeckoid())) {
             return;
         }
 
-        String key = Utils.getStringValue(coin.getGeckoid()) + "_";
-        key += Utils.getStringValue(coin.getSymbol()) + "_";
-        key += Utils.getCurrentYyyyMmDd_HH_Blog4h();
-
-        boolean reload = false;
-        if (keys_dict.containsKey(key)) {
-            if (!Objects.equals(key, keys_dict.get(key))) {
-                keys_dict.put(key, key);
-
-                reload = true;
-            }
-        } else {
-            keys_dict.put(key, key);
-            reload = true;
-        }
-
-        if (reload) {
+        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog4h(), coin.getGeckoid())) {
             binance_service.initCrypto(coin.getGeckoid(), coin.getSymbol());
         }
 
-        binance_service.checkChart_WDHM(coin.getGeckoid(), coin.getSymbol());
+        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), coin.getGeckoid())) {
+            binance_service.checkChart_WDHM(coin.getGeckoid(), coin.getSymbol());
+        }
     }
 
     private static void init_Forex_4h(BinanceService binance_service, String EPIC, int idx, int size) {
-        String key = Utils.getStringValue(EPIC) + "_";
-        key += Utils.getCurrentYyyyMmDd_HH_Blog4h();
-
-        boolean reload = false;
-        if (keys_dict.containsKey(key)) {
-            if (!Objects.equals(key, keys_dict.get(key))) {
-                keys_dict.put(key, key);
-
-                reload = true;
-            }
-        } else {
-            keys_dict.put(key, key);
-            reload = true;
-        }
-        if (reload) {
+        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog4h(), EPIC)) {
             String init = binance_service.initForex(EPIC);
 
             String msg = Utils.getTimeHHmm() + EPIC;
@@ -286,43 +276,13 @@ public class BscScanBinanceApplication {
     }
 
     private static void check_Forex_15m(BinanceService binance_service, String EPIC) {
-        String key = Utils.getStringValue(EPIC) + "_";
-        key += Utils.getCurrentYyyyMmDd_HH() + Utils.getCurrentMinute_Blog15minutes();
-
-        boolean reload = false;
-        if (keys_dict.containsKey(key)) {
-            if (!Objects.equals(key, keys_dict.get(key))) {
-                keys_dict.put(key, key);
-
-                reload = true;
-            }
-        } else {
-            keys_dict.put(key, key);
-            reload = true;
-        }
-        if (reload) {
+        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), EPIC)) {
             binance_service.checkSamePhaseForex15m(EPIC);
         }
     }
 
     private static void init_Crypto_4h(BinanceService binance_service, CandidateCoin coin, int idx, int size) {
-        String key = Utils.getStringValue(coin.getGeckoid()) + "_";
-        key += Utils.getStringValue(coin.getSymbol()) + "_";
-        key += Utils.getCurrentYyyyMmDd_HH_Blog4h();
-
-        boolean reload = false;
-        if (keys_dict.containsKey(key)) {
-            if (!Objects.equals(key, keys_dict.get(key))) {
-                keys_dict.put(key, key);
-
-                reload = true;
-            }
-        } else {
-            keys_dict.put(key, key);
-            reload = true;
-        }
-
-        if (reload) {
+        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog4h(), coin.getGeckoid())) {
             String init = binance_service.initCrypto(coin.getGeckoid(), coin.getSymbol());
 
             String msg = Utils.getTimeHHmm() + coin.getSymbol();
@@ -332,21 +292,7 @@ public class BscScanBinanceApplication {
     }
 
     private static void check_Crypto_15m(BinanceService binance_service, String symbol) {
-        String key = Utils.getStringValue(symbol) + "_";
-        key += Utils.getCurrentYyyyMmDd_HH() + Utils.getCurrentMinute_Blog15minutes();
-
-        boolean reload = false;
-        if (keys_dict.containsKey(key)) {
-            if (!Objects.equals(key, keys_dict.get(key))) {
-                keys_dict.put(key, key);
-
-                reload = true;
-            }
-        } else {
-            keys_dict.put(key, key);
-            reload = true;
-        }
-        if (reload) {
+        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), symbol)) {
             binance_service.checkSamePhaseCrypto15m(symbol);
         }
     }

@@ -1047,6 +1047,11 @@ public class Utils {
         return Utils.convertDateToString("yyyy.MM.dd_HH", Calendar.getInstance().getTime()) + "h";
     }
 
+    public static String getCurrentYyyyMmDd_HH_Blog15m() {
+        String result = getCurrentYyyyMmDd_HH() + "_" + getCurrentMinute_Blog15minutes();
+        return result;
+    }
+
     public static String getCurrentYyyyMmDd_HH_Blog2h() {
         String result = Utils.convertDateToString("yyyy.MM.dd_", Calendar.getInstance().getTime());
         int HH = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
@@ -2619,7 +2624,7 @@ public class Utils {
             return "";
         }
 
-        String trend_main = checkTrendSideway(list, 1, 5);
+        String trend_main = checkTrendSideway(list, 0, 5);
         String trend_confirm = checkTrendSideway(list, 5, 10);
 
         String result = "";
@@ -2700,7 +2705,7 @@ public class Utils {
     }
 
     public static boolean isUptrendByMaIndex(List<BtcFutures> list, int maIndex) {
-        BigDecimal ma_c = calcMA(list, maIndex, 1);
+        BigDecimal ma_c = calcMA(list, maIndex, 0);
         BigDecimal ma_p = calcMA(list, maIndex, 5);
         if (ma_c.compareTo(ma_p) > 0) {
             return true;
