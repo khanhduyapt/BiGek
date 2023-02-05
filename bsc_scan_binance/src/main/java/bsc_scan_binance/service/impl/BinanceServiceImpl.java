@@ -2597,13 +2597,21 @@ public class BinanceServiceImpl implements BinanceService {
         return result;
     }
 
-    private void sendCryptoMsgBySwitchTrend(List<BtcFutures> list, String gecko_id, String symbol,
-            String event_dh4h1_tm_crypto, String append) {
+    private void sendMsgOrLogCryptoBySwitchTrend(boolean allowSendMsg, boolean isOnlyLong, List<BtcFutures> list,
+            String gecko_id, String symbol, String event_dh4h1_tm_crypto, String append) {
+
         String trend = Utils.switchTrend(list);
 
-        String vmc = getVolMc(gecko_id);
-        String url = binanceFuturesRepository.existsById(gecko_id) ? Utils.getCryptoLink_Future(symbol)
-                : Utils.getCryptoLink_Spot(symbol);
+        if (isOnlyLong && !Objects.equals(Utils.TREND_LONG, trend)) {
+            return;
+        }
+
+        String vmc = "";
+        if (!"_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
+            vmc = getVolMc(gecko_id);
+        }
+        String url = ", " + (binanceFuturesRepository.existsById(gecko_id) ? Utils.getCryptoLink_Future(symbol)
+                : Utils.getCryptoLink_Spot(symbol));
         String append_btc = "";
         if (!Objects.equals(Utils.TREND_LONG, BTC_TREND_M15)) {
             append_btc = Utils.new_line_from_service + "___(Remark).Btc.Down.Trend___";
@@ -2613,10 +2621,14 @@ public class BinanceServiceImpl implements BinanceService {
         String curr_price = Utils.getCurrentPrice(list);
         String msg = "(" + trend + ")" + char_name + symbol + curr_price + append_btc + vmc;
 
-        String EVENT_ID = EVENT_PUMP + symbol + char_name + Utils.getCurrentYyyyMmDd_HH();
-        sendMsgPerHour(EVENT_ID, msg, true);
+        if (allowSendMsg) {
+            String EVENT_ID = EVENT_PUMP + symbol + char_name + Utils.getCurrentYyyyMmDd_HH();
+            sendMsgPerHour(EVENT_ID, msg, true);
+        }
 
-        createNewTrendCycle(event_dh4h1_tm_crypto, list, trend, gecko_id, symbol);
+        if (Utils.isNotBlank(event_dh4h1_tm_crypto)) {
+            createNewTrendCycle(event_dh4h1_tm_crypto, list, trend, gecko_id, symbol);
+        }
 
         Utils.logWritelnWithTime("Crypto(" + trend + ")" + char_name + symbol + Utils.getCurrentPrice(list)
                 + append_btc.replace("_", "") + vmc + url);
@@ -2646,12 +2658,11 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (Objects.equals("BTC", symbol)) {
             String trend_15m = Utils.switchTrend(list_15m);
-            boolean isUptrend_byMa = Utils.isUptrendByMaIndex(list_15m, 50);
-            if (isUptrend_byMa || Objects.equals(Utils.TREND_LONG, trend_15m)) {
-                BTC_TREND_M15 = Utils.TREND_LONG;
-            } else {
-                BTC_TREND_M15 = Utils.TREND_SHORT;
+            if (Utils.isBlank(trend_15m)) {
+                trend_15m = Utils.isUptrendByMaIndex(list_15m, 50) ? Utils.TREND_LONG : Utils.TREND_SHORT;
             }
+
+            BTC_TREND_M15 = trend_15m;
         }
 
         String chartname = Utils.getChartName(list_15m);
@@ -2976,16 +2987,17 @@ public class BinanceServiceImpl implements BinanceService {
         type = type + Utils.analysisVolume(list_days);
 
         // -----------------------------------------------------------------
+        String append_log = taker + ", " + getVolMc(gecko_id) + type.replace("volma{", "").replace("}volma", "");
+
         String trend_d1 = createTrendByMa50(EVENT_DH4H1_D_CRYPTO, list_h4, gecko_id, symbol);
         String trend_h4 = createTrendByMa3_10_20(EVENT_DH4H1_H4_CRYPTO, list_h4, gecko_id, symbol);
         if (Utils.isNotBlank(trend_h4)) {
             init_trend_result = "initCrypto(D:" + trend_d1 + ", H4: " + trend_h4 + ")";
         }
-        if (Objects.equals(Utils.TREND_LONG, Utils.switchTrend(list_days))) {
-            String msgs = "(Long)" + Utils.getChartName(list_days) + symbol + Utils.getCurrentPrice(list_days) + taker
-                    + ", " + getVolMc(gecko_id) + type.replace("volma{", "").replace("}volma", "");
-            // Utils.writeBlogCrypto(symbol, msgs, isFuturesCoin);
-        }
+        boolean isLongOnly = true;
+        sendMsgOrLogCryptoBySwitchTrend(false, isLongOnly, list_h1, gecko_id, symbol, "", append_log);
+        sendMsgOrLogCryptoBySwitchTrend(false, isLongOnly, list_h4, gecko_id, symbol, "", append_log);
+        sendMsgOrLogCryptoBySwitchTrend(false, isLongOnly, list_days, gecko_id, symbol, "", append_log);
         // -------------------------- INIT WEBSITE --------------------------
 
         Boolean allow_long_d1 = Utils.checkClosePriceAndMa_StartFindLong(list_days);
@@ -3109,26 +3121,25 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private void checkPositionCrypto15m(String gecko_id, String symbol) {
-        boolean allow_long_short = false;
+        boolean isOnlyLong = true;
         if (Objects.equals("BTC", symbol)) {
-            allow_long_short = true;
+            isOnlyLong = false;
         }
 
         // ---------------------------------------------------------
         List<BtcFutures> list_5m = Utils.loadData(symbol, TIME_5m, 60);
         String trend_5m = Utils.switchTrend(list_5m);
         if (Objects.equals(Utils.TREND_LONG, trend_5m)
-                || (allow_long_short && Objects.equals(Utils.TREND_SHORT, trend_5m))) {
-            sendCryptoMsgBySwitchTrend(list_5m, gecko_id, symbol, EVENT_DH4H1_5M_CRYPTO, "");
+                || (!isOnlyLong && Objects.equals(Utils.TREND_SHORT, trend_5m))) {
+            sendMsgOrLogCryptoBySwitchTrend(true, isOnlyLong, list_5m, gecko_id, symbol, EVENT_DH4H1_5M_CRYPTO, "");
         }
 
         // ---------------------------------------------------------
         List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 60);
         String trend_15m = Utils.switchTrend(list_15m);
-        if (Objects.equals(Utils.TREND_LONG, trend_15m)
-                || (allow_long_short && Objects.equals(Utils.TREND_SHORT, trend_15m))) {
+        if (Objects.equals(Utils.TREND_LONG, trend_15m)) {
 
-            sendCryptoMsgBySwitchTrend(list_15m, gecko_id, symbol, EVENT_DH4H1_15M_CRYPTO, "");
+            sendMsgOrLogCryptoBySwitchTrend(true, isOnlyLong, list_15m, gecko_id, symbol, EVENT_DH4H1_15M_CRYPTO, "");
         }
 
         // -----------------------------------------------
