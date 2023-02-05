@@ -2610,6 +2610,8 @@ public class BinanceServiceImpl implements BinanceService {
         if (!"_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
             vmc = getVolMc(gecko_id);
         }
+        vmc += Utils.getAtlAth(list);
+
         String url = ", " + (binanceFuturesRepository.existsById(gecko_id) ? Utils.getCryptoLink_Future(symbol)
                 : Utils.getCryptoLink_Spot(symbol));
         String append_btc = "";
