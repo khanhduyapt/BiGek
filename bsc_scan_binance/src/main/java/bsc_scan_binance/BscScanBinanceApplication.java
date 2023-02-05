@@ -274,11 +274,7 @@ public class BscScanBinanceApplication {
 
     private static void check_Crypto_15m(BinanceService binance_service, String gecko_id, String symbol) {
         if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), symbol)) {
-            if (binance_service.isFutureCoin(gecko_id)) {
-                binance_service.checkChart_m15_follow_H4(gecko_id, symbol);
-            } else {
-                binance_service.checkSamePhase_DHM_Crypto15m(gecko_id, symbol);
-            }
+            binance_service.checkChart_m15_follow_H4(gecko_id, symbol);
         }
     }
 

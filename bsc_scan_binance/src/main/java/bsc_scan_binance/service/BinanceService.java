@@ -50,7 +50,5 @@ public interface BinanceService {
 
     public String checkSamePhase_H4M_Forex15m(String EPIC);
 
-    public String checkSamePhase_DHM_Crypto15m(String gecko_id, String symbol);
-
     public String checkChart_m15_follow_H4(String gecko_id, String symbol);
 }
