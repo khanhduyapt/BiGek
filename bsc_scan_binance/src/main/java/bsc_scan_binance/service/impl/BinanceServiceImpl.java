@@ -3065,22 +3065,22 @@ public class BinanceServiceImpl implements BinanceService {
     private String checkPosition_Forex15m(String EPIC, String trend_h4) {
         List<BtcFutures> list_5m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5, 60);
         String trend_5m = Utils.switchTrend(list_5m);
-        if (Utils.isBlank(trend_h4) || (Utils.isNotBlank(trend_h4) && Objects.equals(trend_h4, trend_5m))) {
+        if (Utils.isNotBlank(trend_5m) && (Utils.isBlank(trend_h4) || Objects.equals(trend_h4, trend_5m))) {
 
             sendScapMsg(list_5m, EPIC, trend_5m, "");
             createNewTrendCycle(EVENT_DH4H1_5M_FX, list_5m, trend_5m, EPIC, EPIC);
 
             Utils.logWritelnWithTime(
-                    "Crypto(" + trend_5m + ")" + Utils.getChartName(list_5m) + EPIC + Utils.getCapitalLink(EPIC));
+                    "Forex(" + trend_5m + ")" + Utils.getChartName(list_5m) + EPIC + Utils.getCapitalLink(EPIC));
         } else {
             List<BtcFutures> list_15m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 60);
             String trend_15m = Utils.switchTrend(list_15m);
 
-            if (Utils.isBlank(trend_h4) || (Utils.isNotBlank(trend_h4) && Objects.equals(trend_h4, trend_15m))) {
+            if (Utils.isNotBlank(trend_5m) && (Utils.isBlank(trend_h4) || Objects.equals(trend_h4, trend_15m))) {
                 createNewTrendCycle(EVENT_DH4H1_15M_FX, list_15m, trend_15m, EPIC, EPIC);
 
                 Utils.logWritelnWithTime(
-                        "Crypto(" + trend_15m + ")" + Utils.getChartName(list_15m) + EPIC + Utils.getCapitalLink(EPIC));
+                        "Forex(" + trend_15m + ")" + Utils.getChartName(list_15m) + EPIC + Utils.getCapitalLink(EPIC));
             }
         }
 
