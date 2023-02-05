@@ -2901,12 +2901,17 @@ public class BinanceServiceImpl implements BinanceService {
             sendScapMsg(list_5m, EPIC, trend_5m, "");
             createNewTrendCycle(EVENT_DH4H1_5M_FX, list_5m, trend_5m, EPIC, EPIC);
 
+            Utils.logWritelnWithTime(
+                    "Crypto(" + trend_5m + ")" + Utils.getChartName(list_5m) + EPIC + Utils.getCapitalLink(EPIC));
         } else {
             List<BtcFutures> list_15m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 60);
             String trend_15m = Utils.switchTrend(list_15m);
 
             if (Utils.isBlank(trend_h4) || (Utils.isNotBlank(trend_h4) && Objects.equals(trend_h4, trend_15m))) {
                 createNewTrendCycle(EVENT_DH4H1_15M_FX, list_15m, trend_15m, EPIC, EPIC);
+
+                Utils.logWritelnWithTime(
+                        "Crypto(" + trend_15m + ")" + Utils.getChartName(list_15m) + EPIC + Utils.getCapitalLink(EPIC));
             }
         }
 

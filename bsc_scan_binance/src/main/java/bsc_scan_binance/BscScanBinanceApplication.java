@@ -121,25 +121,22 @@ public class BscScanBinanceApplication {
                     try {
                         check_15m(binance_service, cryto_list_15m, forex_list_15m);
 
-                        if (Utils.isBusinessTime() || true) {
-                            // ----------------------------------------------
-                            if (!Utils.isWeekend() || true) {
-                                if (index_forex < forex_size) {
-                                    String EPIC = capital_list.get(index_forex);
-                                    init_Forex_4h(binance_service, EPIC, index_forex, forex_size);
-                                    check_Forex_15m(binance_service, EPIC);
+                        // ----------------------------------------------
+                        if (Utils.isBusinessTime() && !Utils.isWeekend()) {
+                            if (index_forex < forex_size) {
+                                String EPIC = capital_list.get(index_forex);
+                                init_Forex_4h(binance_service, EPIC, index_forex, forex_size);
+                                check_Forex_15m(binance_service, EPIC);
 
-                                    index_forex += 1;
-                                } else {
-                                    index_forex = 0;
-                                }
+                                index_forex += 1;
+                            } else {
+                                index_forex = 0;
                             }
-
-                            // ----------------------------------------------
-                            {
-                                init_Crypto_4h(binance_service, coin, index_crypto, total);
-                                check_Crypto_15m(binance_service, coin.getGeckoid(), coin.getSymbol());
-                            }
+                        }
+                        // ----------------------------------------------
+                        {
+                            init_Crypto_4h(binance_service, coin, index_crypto, total);
+                            check_Crypto_15m(binance_service, coin.getGeckoid(), coin.getSymbol());
                         }
 
                         // ----------------------------------------------
@@ -208,28 +205,29 @@ public class BscScanBinanceApplication {
             wait(SLEEP_MINISECONDS);
         }
 
-        if (Utils.isBusinessTime()) {
-            int crypto_size = crypto_list.size();
-            int forex_size = forex_list.size();
-            if (Utils.isWeekend()) {
-                forex_size = -1;
-            }
-
-            int max = crypto_size > forex_size ? crypto_size : forex_size;
-
-            for (int index = 0; index < max; index++) {
-                if (index < crypto_size) {
-                    check_Crypto_15m(binance_service, crypto_list.get(index).getGeckoid_or_epic(),
-                            crypto_list.get(index).getSymbol_or_epic());
-                }
-
-                if (index < forex_size) {
-                    check_Forex_15m(binance_service, forex_list.get(index).getSymbol_or_epic());
-                }
-
-                wait(SLEEP_MINISECONDS);
-            }
-        }
+        // if (Utils.isBusinessTime()) {
+        // int crypto_size = crypto_list.size();
+        // int forex_size = forex_list.size();
+        // if (Utils.isWeekend()) {
+        // forex_size = -1;
+        // }
+        //
+        // int max = crypto_size > forex_size ? crypto_size : forex_size;
+        //
+        // for (int index = 0; index < max; index++) {
+        // if (index < crypto_size) {
+        // check_Crypto_15m(binance_service,
+        // crypto_list.get(index).getGeckoid_or_epic(),
+        // crypto_list.get(index).getSymbol_or_epic());
+        // }
+        //
+        // if (index < forex_size) {
+        // check_Forex_15m(binance_service, forex_list.get(index).getSymbol_or_epic());
+        // }
+        //
+        // wait(SLEEP_MINISECONDS);
+        // }
+        // }
     }
 
     private static boolean isReloadAfter(String blog, String geckoid_or_epic) {
@@ -251,10 +249,6 @@ public class BscScanBinanceApplication {
     }
 
     private static void init_Forex_4h(BinanceService binance_service, String EPIC, int idx, int size) {
-        if (Utils.isWeekend()) {
-            return;
-        }
-
         if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog4h(), EPIC)) {
             String init = binance_service.initForex(EPIC);
 
@@ -264,10 +258,6 @@ public class BscScanBinanceApplication {
     }
 
     private static void check_Forex_15m(BinanceService binance_service, String EPIC) {
-        if (Utils.isWeekend()) {
-            return;
-        }
-
         if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), EPIC)) {
             binance_service.checkSamePhase_H4M_Forex15m(EPIC);
         }
