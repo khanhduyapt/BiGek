@@ -2759,6 +2759,20 @@ public class Utils {
     }
 
     private static String checkTrendSideway(List<BtcFutures> list, int str, int end) {
+        String l_m03x10 = "";
+        String l_m03x20 = "";
+        String l_m03x50 = "";
+        String l_m10x20 = "";
+        String l_m10x50 = "";
+        String l_m20x50 = "";
+
+        String s_m03x10 = "";
+        String s_m03x20 = "";
+        String s_m03x50 = "";
+        String s_m10x20 = "";
+        String s_m10x50 = "";
+        String s_m20x50 = "";
+
         Boolean is_5m_TimeFrame = false;
         Boolean is_15m_TimeFrame = false;
         String symbol = list.get(0).getId();
@@ -2781,20 +2795,6 @@ public class Utils {
 
         BigDecimal ma50_1 = calcMA(list, 50, str);
         BigDecimal ma50_2 = calcMA(list, 50, end);
-
-        String l_m03x10 = "";
-        String l_m03x20 = "";
-        String l_m03x50 = "";
-        String l_m10x20 = "";
-        String l_m10x50 = "";
-        String l_m20x50 = "";
-
-        String s_m03x10 = "";
-        String s_m03x20 = "";
-        String s_m03x50 = "";
-        String s_m10x20 = "";
-        String s_m10x50 = "";
-        String s_m20x50 = "";
 
         s_m03x10 = Utils.checkXCutDownY(ma3_1, ma3_2, ma10_1, ma10_2);
         s_m03x20 = Utils.checkXCutDownY(ma3_1, ma3_2, ma20_1, ma20_2);
