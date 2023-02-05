@@ -2663,7 +2663,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h4 = getTrend(EVENT_DH4H1_H4_CRYPTO, gecko_id);
             String trend_15m = Utils.switchTrend(list_15m);
             if (!Objects.equals(trend_h4, trend_15m)) {
-                trend_15m = createTrendByMa3_10_20("", list_15m, gecko_id, symbol);
+                trend_15m = createTrendByMa10_20("", list_15m, gecko_id, symbol);
             }
             if (Utils.isBlank(trend_15m)) {
                 trend_15m = Utils.isUptrendByMaIndex(list_15m, 50) ? Utils.TREND_LONG : Utils.TREND_SHORT;
@@ -2801,18 +2801,15 @@ public class BinanceServiceImpl implements BinanceService {
         return trend_d;
     }
 
-    public String createTrendByMa3_10_20(String event_dh4h1_tm_xxxx, List<BtcFutures> list, String geckoid_or_epic,
+    public String createTrendByMa10_20(String event_dh4h1_tm_xxxx, List<BtcFutures> list, String geckoid_or_epic,
             String symbol_or_epic) {
 
         String trend = "";
         Boolean isUptrendByMa10 = Utils.isUptrendByMaIndex(list, 10);
         Boolean isUptrendByMa20 = Utils.isUptrendByMaIndex(list, 20);
-        if ((isUptrendByMa10 == isUptrendByMa20)) {
+        Boolean isUptrendByMa50 = Utils.isUptrendByMaIndex(list, 50);
+        if ((isUptrendByMa10 == isUptrendByMa20) && (isUptrendByMa20 == isUptrendByMa50)) {
             trend = isUptrendByMa20 ? Utils.TREND_LONG : Utils.TREND_SHORT;
-        }
-
-        if (Utils.isBlank(trend)) {
-            trend = Utils.switchTrend(list);
         }
 
         if (Utils.isNotBlank(event_dh4h1_tm_xxxx)) {
@@ -2855,7 +2852,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (!CollectionUtils.isEmpty(list_h4)) {
             String trend_d = createTrendByMa50(EVENT_DH4H1_D_FX, list_h4, EPIC, EPIC);
-            String trend_h4 = createTrendByMa3_10_20(EVENT_DH4H1_H4_FX, list_h4, EPIC, EPIC);
+            String trend_h4 = createTrendByMa10_20(EVENT_DH4H1_H4_FX, list_h4, EPIC, EPIC);
 
             if (Utils.isNotBlank(trend_h4)) {
                 String append_h = "";
@@ -2947,7 +2944,7 @@ public class BinanceServiceImpl implements BinanceService {
         String append_log = taker + ", " + getVolMc(gecko_id) + type.replace("volma{", "").replace("}volma", "");
 
         String trend_d1 = createTrendByMa50(EVENT_DH4H1_D_CRYPTO, list_h4, gecko_id, symbol);
-        String trend_h4 = createTrendByMa3_10_20(EVENT_DH4H1_H4_CRYPTO, list_h1, gecko_id, symbol);
+        String trend_h4 = createTrendByMa10_20(EVENT_DH4H1_H4_CRYPTO, list_h1, gecko_id, symbol);
         if (Utils.isNotBlank(trend_h4)) {
             init_trend_result = "initCrypto(D:" + trend_d1 + ", H4: " + trend_h4 + ")";
         }
