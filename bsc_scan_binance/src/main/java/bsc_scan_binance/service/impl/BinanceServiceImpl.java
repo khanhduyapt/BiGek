@@ -2976,10 +2976,8 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal current_price = list_days.get(0).getCurrPrice();
 
         String type = "";
-        boolean isFuturesCoin = false;
         if (binanceFuturesRepository.existsById(gecko_id)) {
             type = " (Futures) ";
-            isFuturesCoin = true;
         } else {
             type = " (Spot) ";
         }
@@ -3111,8 +3109,8 @@ public class BinanceServiceImpl implements BinanceService {
             sendMsgKillLongShort(gecko_id, symbol, "");
             checkPositionCrypto15m(gecko_id, symbol);
         } else {
-            String trend_h4 = getTrend(EVENT_DH4H1_H4_CRYPTO, gecko_id);
-            if (Objects.equals(Utils.TREND_LONG, trend_h4)) {
+            String trend = getTrend(EVENT_DH4H1_D_CRYPTO, gecko_id);
+            if (Objects.equals(Utils.TREND_LONG, trend)) {
                 checkPositionCrypto15m(gecko_id, symbol);
             }
         }
