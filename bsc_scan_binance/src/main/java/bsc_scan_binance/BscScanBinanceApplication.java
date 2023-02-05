@@ -70,8 +70,8 @@ public class BscScanBinanceApplication {
             CoinGeckoService gecko_service = applicationContext.getBean(CoinGeckoService.class);
             BinanceService binance_service = applicationContext.getBean(BinanceService.class);
 
-            Utils.writelnLog("____________________Start_" + Utils.getToday_YyyyMMdd() + Utils.getTimeHHmm()
-                    + "____________________");
+            Utils.logWriteln("____________________Start_" + Utils.getToday_YyyyMMdd() + Utils.getTimeHHmm()
+                    + "____________________", true);
 
             if (app_flag == Utils.const_app_flag_msg_on || app_flag == Utils.const_app_flag_all_and_msg) {
                 // try {
@@ -141,7 +141,7 @@ public class BscScanBinanceApplication {
                                 check_Crypto_15m(binance_service, coin.getGeckoid(), coin.getSymbol());
                             }
                         } else {
-                            System.out.print(".");
+                            System.out.print(Utils.getTimeHHmm());
                         }
 
                         // ----------------------------------------------
