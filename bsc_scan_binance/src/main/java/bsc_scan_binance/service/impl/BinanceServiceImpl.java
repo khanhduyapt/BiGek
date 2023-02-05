@@ -2610,7 +2610,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (!"_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
             vmc = getVolMc(gecko_id);
         }
-        vmc += Utils.getAtlAth(list);
+        vmc += Utils.new_line_from_service + Utils.getAtlAth(list);
 
         String url = ", " + (binanceFuturesRepository.existsById(gecko_id) ? Utils.getCryptoLink_Future(symbol)
                 : Utils.getCryptoLink_Spot(symbol));
@@ -2621,7 +2621,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         String char_name = Utils.getChartName(list);
         String curr_price = Utils.getCurrentPrice(list);
-        String msg = "(" + trend + ")" + char_name + symbol + curr_price + append_btc + vmc;
+        String msg = "(" + trend.replace(Utils.TREND_SHORT, Utils.TEXT_STOP_LONG) + ")" + char_name + symbol
+                + curr_price + append_btc + vmc;
 
         if (allowSendMsg) {
             String EVENT_ID = EVENT_PUMP + symbol + char_name + Utils.getCurrentYyyyMmDd_HH();
