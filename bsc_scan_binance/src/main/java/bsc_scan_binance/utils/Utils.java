@@ -2831,18 +2831,18 @@ public class Utils {
             // s_m10x50 = Utils.checkXCutDownY(ma10_1, ma10_2, ma50_1, ma50_2);
         } else {
             l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
-            l_m03x20 = Utils.checkXCutUpY(ma3_1, ma3_2, ma20_1, ma20_2);
-            l_m03x50 = Utils.checkXCutUpY(ma3_1, ma3_2, ma50_1, ma50_2);
-            l_m10x20 = Utils.checkXCutUpY(ma10_1, ma10_2, ma20_1, ma20_2);
-            l_m10x50 = Utils.checkXCutUpY(ma10_1, ma10_2, ma50_1, ma50_2);
-            l_m20x50 = Utils.checkXCutUpY(ma20_1, ma20_2, ma50_1, ma50_2);
+            // l_m03x20 = Utils.checkXCutUpY(ma3_1, ma3_2, ma20_1, ma20_2);
+            // l_m03x50 = Utils.checkXCutUpY(ma3_1, ma3_2, ma50_1, ma50_2);
+            // l_m10x20 = Utils.checkXCutUpY(ma10_1, ma10_2, ma20_1, ma20_2);
+            // l_m10x50 = Utils.checkXCutUpY(ma10_1, ma10_2, ma50_1, ma50_2);
+            // l_m20x50 = Utils.checkXCutUpY(ma20_1, ma20_2, ma50_1, ma50_2);
 
             s_m03x10 = Utils.checkXCutDownY(ma3_1, ma3_2, ma10_1, ma10_2);
-            s_m03x20 = Utils.checkXCutDownY(ma3_1, ma3_2, ma20_1, ma20_2);
-            s_m03x50 = Utils.checkXCutDownY(ma3_1, ma3_2, ma50_1, ma50_2);
-            s_m10x20 = Utils.checkXCutDownY(ma10_1, ma10_2, ma20_1, ma20_2);
-            s_m10x50 = Utils.checkXCutDownY(ma10_1, ma10_2, ma50_1, ma50_2);
-            s_m20x50 = Utils.checkXCutDownY(ma20_1, ma20_2, ma50_1, ma50_2);
+            // s_m03x20 = Utils.checkXCutDownY(ma3_1, ma3_2, ma20_1, ma20_2);
+            // s_m03x50 = Utils.checkXCutDownY(ma3_1, ma3_2, ma50_1, ma50_2);
+            // s_m10x20 = Utils.checkXCutDownY(ma10_1, ma10_2, ma20_1, ma20_2);
+            // s_m10x50 = Utils.checkXCutDownY(ma10_1, ma10_2, ma50_1, ma50_2);
+            // s_m20x50 = Utils.checkXCutDownY(ma20_1, ma20_2, ma50_1, ma50_2);
         }
 
         String trend_L = l_m03x10 + "_" + l_m03x20 + "_" + l_m03x50 + "_" + l_m10x20 + "_" + l_m10x50 + "_" + l_m20x50;
