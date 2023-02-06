@@ -1,5 +1,6 @@
 package bsc_scan_binance.utils;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -837,7 +838,14 @@ public class Utils {
     }
 
     private static String getLogFileName() {
-        return "crypto_forex_result/scan_result_" + getYyyyMmDdHH_ChangeDailyChart() + ".log";
+        String PATH = "crypto_forex_result/";
+        String fileName = "scan_result_" + getYyyyMmDdHH_ChangeDailyChart() + ".log";
+
+        File directory = new File(PATH);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+        return PATH + fileName;
     }
 
     public static void writeBlogCrypto(String symbol, String long_short_content, boolean isFuturesCoin) {
@@ -1864,7 +1872,7 @@ public class Utils {
     }
 
     public static String getCurrentPrice(List<BtcFutures> list) {
-        return "(" + Utils.removeLastZero(list.get(0).getCurrPrice()) + ")";
+        return " (" + Utils.removeLastZero(list.get(0).getCurrPrice()) + ")";
     }
 
     public static String getChartName(List<BtcFutures> list) {
@@ -2787,8 +2795,8 @@ public class Utils {
         BigDecimal ma3_1 = calcMA(list, 3, str);
         BigDecimal ma3_2 = calcMA(list, 3, end);
 
-        BigDecimal ma10_1 = calcMA(list, 10, str);
-        BigDecimal ma10_2 = calcMA(list, 10, end);
+        BigDecimal ma10_1 = calcMA(list, 13, str);
+        BigDecimal ma10_2 = calcMA(list, 13, end);
 
         BigDecimal ma20_1 = calcMA(list, 20, str);
         BigDecimal ma20_2 = calcMA(list, 20, end);
@@ -2804,19 +2812,23 @@ public class Utils {
         s_m20x50 = Utils.checkXCutDownY(ma20_1, ma20_2, ma50_1, ma50_2);
 
         if (is_5m_TimeFrame) {
-            l_m03x50 = Utils.checkXCutUpY(ma3_1, ma3_2, ma50_1, ma50_2);
-            l_m10x50 = Utils.checkXCutUpY(ma10_1, ma10_2, ma50_1, ma50_2);
+            // l_m03x50 = Utils.checkXCutUpY(ma3_1, ma3_2, ma50_1, ma50_2);
+            // l_m10x50 = Utils.checkXCutUpY(ma10_1, ma10_2, ma50_1, ma50_2);
+            l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
 
-            s_m03x50 = Utils.checkXCutDownY(ma3_1, ma3_2, ma50_1, ma50_2);
-            s_m10x50 = Utils.checkXCutDownY(ma10_1, ma10_2, ma50_1, ma50_2);
+            s_m03x10 = Utils.checkXCutDownY(ma3_1, ma3_2, ma10_1, ma10_2);
+            // s_m03x50 = Utils.checkXCutDownY(ma3_1, ma3_2, ma50_1, ma50_2);
+            // s_m10x50 = Utils.checkXCutDownY(ma10_1, ma10_2, ma50_1, ma50_2);
         } else if (is_15m_TimeFrame) {
-            l_m03x50 = Utils.checkXCutUpY(ma3_1, ma3_2, ma50_1, ma50_2);
-            l_m10x20 = Utils.checkXCutUpY(ma10_1, ma10_2, ma20_1, ma20_2);
-            l_m10x50 = Utils.checkXCutUpY(ma10_1, ma10_2, ma50_1, ma50_2);
+            // l_m03x50 = Utils.checkXCutUpY(ma3_1, ma3_2, ma50_1, ma50_2);
+            // l_m10x20 = Utils.checkXCutUpY(ma10_1, ma10_2, ma20_1, ma20_2);
+            // l_m10x50 = Utils.checkXCutUpY(ma10_1, ma10_2, ma50_1, ma50_2);
+            l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
 
-            s_m03x50 = Utils.checkXCutDownY(ma3_1, ma3_2, ma50_1, ma50_2);
-            s_m10x20 = Utils.checkXCutDownY(ma10_1, ma10_2, ma20_1, ma20_2);
-            s_m10x50 = Utils.checkXCutDownY(ma10_1, ma10_2, ma50_1, ma50_2);
+            s_m03x10 = Utils.checkXCutDownY(ma3_1, ma3_2, ma10_1, ma10_2);
+            // s_m03x50 = Utils.checkXCutDownY(ma3_1, ma3_2, ma50_1, ma50_2);
+            // s_m10x20 = Utils.checkXCutDownY(ma10_1, ma10_2, ma20_1, ma20_2);
+            // s_m10x50 = Utils.checkXCutDownY(ma10_1, ma10_2, ma50_1, ma50_2);
         } else {
             l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
             l_m03x20 = Utils.checkXCutUpY(ma3_1, ma3_2, ma20_1, ma20_2);

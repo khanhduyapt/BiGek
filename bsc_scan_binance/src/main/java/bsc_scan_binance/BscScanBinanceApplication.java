@@ -1,6 +1,5 @@
 package bsc_scan_binance;
 
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -13,11 +12,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import bsc_scan_binance.entity.CandidateCoin;
-import bsc_scan_binance.response.ForexHistoryResponse;
 import bsc_scan_binance.service.BinanceService;
 import bsc_scan_binance.service.CoinGeckoService;
 import bsc_scan_binance.service.impl.WandaBot;
@@ -54,11 +50,10 @@ public class BscScanBinanceApplication {
                 app_flag = Utils.const_app_flag_all_coin;
             }
 
-            String hostname = InetAddress.getLocalHost().getHostName();
-
             // Debug
-            String cty = "PC";
-            String home = "DESKTOP-L4M1JU2";
+            // String hostname = InetAddress.getLocalHost().getHostName();
+            // String cty = "PC";
+            // String home = "DESKTOP-L4M1JU2";
             // app_flag = Utils.const_app_flag_msg_on;
             // app_flag = Utils.const_app_flag_all_and_msg; // Debug
             // app_flag = Utils.const_app_flag_all_coin;
@@ -106,8 +101,6 @@ public class BscScanBinanceApplication {
 
             if (app_flag != Utils.const_app_flag_webonly) {
                 List<CandidateCoin> token_list = gecko_service.getList(callFormBinance);
-                List<ForexHistoryResponse> forex_list_15m = binance_service.getForexSamePhaseList();
-                List<ForexHistoryResponse> cryto_list_15m = binance_service.getCryptoSamePhaseList();
                 int total = token_list.size();
 
                 int index_forex = 0;
@@ -119,7 +112,7 @@ public class BscScanBinanceApplication {
                     CandidateCoin coin = token_list.get(index_crypto);
 
                     try {
-                        check_15m(binance_service, cryto_list_15m, forex_list_15m);
+                        check_BTC_DXY_15m(binance_service);
 
                         // ----------------------------------------------
                         if (Utils.isBusinessTime() && !Utils.isWeekend()) {
@@ -155,9 +148,6 @@ public class BscScanBinanceApplication {
 
                         time = SLEEP_MINISECONDS_INIT;
 
-                        forex_list_15m = binance_service.getForexSamePhaseList();
-                        cryto_list_15m = binance_service.getCryptoSamePhaseList();
-
                         index_crypto = 0;
                     } else {
                         index_crypto += 1;
@@ -176,8 +166,7 @@ public class BscScanBinanceApplication {
         System.out.println("____________________initTelegramBotsApi" + Utils.getTimeHHmm() + "____________________");
     }
 
-    private static void check_15m(BinanceService binance_service, List<ForexHistoryResponse> crypto_list,
-            List<ForexHistoryResponse> forex_list) {
+    private static void check_BTC_DXY_15m(BinanceService binance_service) {
         if (!isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "DXY_BTC_ETH_BNB")) {
             return;
         }
@@ -205,29 +194,6 @@ public class BscScanBinanceApplication {
             wait(SLEEP_MINISECONDS);
         }
 
-        // if (Utils.isBusinessTime()) {
-        // int crypto_size = crypto_list.size();
-        // int forex_size = forex_list.size();
-        // if (Utils.isWeekend()) {
-        // forex_size = -1;
-        // }
-        //
-        // int max = crypto_size > forex_size ? crypto_size : forex_size;
-        //
-        // for (int index = 0; index < max; index++) {
-        // if (index < crypto_size) {
-        // check_Crypto_15m(binance_service,
-        // crypto_list.get(index).getGeckoid_or_epic(),
-        // crypto_list.get(index).getSymbol_or_epic());
-        // }
-        //
-        // if (index < forex_size) {
-        // check_Forex_15m(binance_service, forex_list.get(index).getSymbol_or_epic());
-        // }
-        //
-        // wait(SLEEP_MINISECONDS);
-        // }
-        // }
     }
 
     private static boolean isReloadAfter(String blog, String geckoid_or_epic) {
