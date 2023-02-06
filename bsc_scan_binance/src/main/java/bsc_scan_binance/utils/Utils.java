@@ -2795,21 +2795,14 @@ public class Utils {
         BigDecimal ma3_1 = calcMA(list, 3, str);
         BigDecimal ma3_2 = calcMA(list, 3, end);
 
-        BigDecimal ma10_1 = calcMA(list, 13, str);
-        BigDecimal ma10_2 = calcMA(list, 13, end);
+        BigDecimal ma10_1 = calcMA(list, 10, str);
+        BigDecimal ma10_2 = calcMA(list, 10, end);
 
-        BigDecimal ma20_1 = calcMA(list, 20, str);
-        BigDecimal ma20_2 = calcMA(list, 20, end);
+        // BigDecimal ma20_1 = calcMA(list, 20, str);
+        // BigDecimal ma20_2 = calcMA(list, 20, end);
 
-        BigDecimal ma50_1 = calcMA(list, 50, str);
-        BigDecimal ma50_2 = calcMA(list, 50, end);
-
-        s_m03x10 = Utils.checkXCutDownY(ma3_1, ma3_2, ma10_1, ma10_2);
-        s_m03x20 = Utils.checkXCutDownY(ma3_1, ma3_2, ma20_1, ma20_2);
-        s_m03x50 = Utils.checkXCutDownY(ma3_1, ma3_2, ma50_1, ma50_2);
-        s_m10x20 = Utils.checkXCutDownY(ma10_1, ma10_2, ma20_1, ma20_2);
-        s_m10x50 = Utils.checkXCutDownY(ma10_1, ma10_2, ma50_1, ma50_2);
-        s_m20x50 = Utils.checkXCutDownY(ma20_1, ma20_2, ma50_1, ma50_2);
+        // BigDecimal ma50_1 = calcMA(list, 50, str);
+        // BigDecimal ma50_2 = calcMA(list, 50, end);
 
         if (is_5m_TimeFrame) {
             // l_m03x50 = Utils.checkXCutUpY(ma3_1, ma3_2, ma50_1, ma50_2);
