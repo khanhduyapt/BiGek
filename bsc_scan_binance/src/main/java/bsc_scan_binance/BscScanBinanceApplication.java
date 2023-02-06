@@ -120,7 +120,6 @@ public class BscScanBinanceApplication {
                                 String EPIC = capital_list.get(index_forex);
                                 init_Forex_4h(binance_service, EPIC, index_forex, forex_size);
                                 check_Forex_15m(binance_service, EPIC);
-
                                 index_forex += 1;
                             } else {
                                 index_forex = 0;
@@ -146,7 +145,7 @@ public class BscScanBinanceApplication {
                         System.out.println("reload: " + Utils.getMmDD_TimeHHmm() + ", spend:"
                                 + TimeUnit.MILLISECONDS.toMinutes(diff) + " Minutes.");
 
-                        time = SLEEP_MINISECONDS_INIT;
+                        time = SLEEP_MINISECONDS;
 
                         index_crypto = 0;
                     } else {

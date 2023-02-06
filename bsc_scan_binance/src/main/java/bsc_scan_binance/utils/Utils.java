@@ -859,7 +859,8 @@ public class Utils {
     public static void writelnLogFooter() {
         try {
             FileWriter fw = new FileWriter(getLogFileName(), true);
-            fw.write("---------------------------------------------------------------\n");
+            fw.write(
+                    "------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -2547,10 +2548,11 @@ public class Utils {
         BigDecimal entry = list.get(0).getCurrPrice();
         List<BigDecimal> low_heigh = getLowHeightCandle(list);
         String result = "";
-        result += " atl:" + getPercentToEntry(entry, low_heigh.get(0), true);
-        result += ", ath:" + getPercentToEntry(entry, low_heigh.get(1), true);
+        result += Utils.appendSpace(" atl:" + getPercentToEntry(entry, low_heigh.get(0), true), 20);
+        result += " ath:" + getPercentToEntry(entry, low_heigh.get(1), true);
         result += getChartName(list);
-        return result;
+
+        return Utils.appendSpace(result, 45);
     }
 
     public static String calc_BUF_LO_HI_BUF(List<BtcFutures> list, String trend) {
@@ -2791,7 +2793,7 @@ public class Utils {
 
     public static boolean isUptrendByMaIndex(List<BtcFutures> list, int maIndex) {
         BigDecimal ma_c = calcMA(list, maIndex, 1);
-        BigDecimal ma_p = calcMA(list, maIndex, 5);
+        BigDecimal ma_p = calcMA(list, maIndex, 3);
         if (ma_c.compareTo(ma_p) > 0) {
             return true;
         }

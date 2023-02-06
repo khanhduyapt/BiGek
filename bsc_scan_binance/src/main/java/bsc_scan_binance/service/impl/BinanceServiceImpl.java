@@ -2362,7 +2362,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
         BigDecimal vol = Utils.getBigDecimal(coinmarketcap.getVolumnDivMarketcap()).multiply(BigDecimal.valueOf(100));
 
-        return " Vol.Mc:" + Utils.removeLastZero(vol) + "%";
+        return Utils.appendSpace(" Vol.Mc:" + Utils.removeLastZero(vol) + "%", 15);
     }
 
     @Override
@@ -2612,7 +2612,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
         vmc += Utils.new_line_from_service + Utils.getAtlAth(list);
 
-        String url = ", " + (binanceFuturesRepository.existsById(gecko_id) ? Utils.getCryptoLink_Future(symbol)
+        String url = " " + (binanceFuturesRepository.existsById(gecko_id) ? Utils.getCryptoLink_Future(symbol)
                 : Utils.getCryptoLink_Spot(symbol));
         String append_btc = "";
         if (!Objects.equals(Utils.TREND_LONG, BTC_TREND_M15) && !Objects.equals("BTC", symbol)) {
@@ -2633,8 +2633,10 @@ public class BinanceServiceImpl implements BinanceService {
             createNewTrendCycle(event_dh4h1_tm_crypto, list, trend, gecko_id, symbol);
         }
 
-        Utils.logWritelnWithTime("Crypto(" + trend + ")" + char_name + symbol + Utils.getCurrentPrice(list)
-                + append_btc.replace("_", "") + vmc + url);
+        Utils.logWritelnWithTime(Utils.appendSpace(
+                Utils.appendSpace("Crypto(" + trend + ")" + char_name + symbol + Utils.getCurrentPrice(list), 35)
+                        + append_btc.replace("_", "") + vmc,
+                100) + url);
     }
 
     private void sendMsgPerHour(String EVENT_ID, String msg_content, boolean isOnlyMe) {
@@ -3009,10 +3011,10 @@ public class BinanceServiceImpl implements BinanceService {
 
             String new_trend = Utils.switchTrend(list_days);
             if (Utils.isNotBlank(new_trend)) {
-                Utils.writelnLogFooter();
-                Utils.logWritelnWithTime("Forex (" + new_trend + ")" + Utils.getChartName(list_days) + EPIC
-                        + Utils.getCurrentPrice(list_days) + Utils.getCapitalLink(EPIC));
-                Utils.writelnLogFooter();
+                Utils.logWritelnWithTime((Utils
+                        .appendSpace("Forex (" + new_trend + ")" + Utils.getChartName(list_days) + EPIC
+                                + Utils.getCurrentPrice(list_days), 45)
+                        .replace("  ", "--") + Utils.getCapitalLink(EPIC)));
             }
 
             fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_D_FX, EPIC, EPIC, trend_d, true));
