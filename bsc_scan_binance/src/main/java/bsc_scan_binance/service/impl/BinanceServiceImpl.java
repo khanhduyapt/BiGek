@@ -3001,32 +3001,30 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public String initForex(String EPIC) {
         // EPIC = "US30";
-        List<BtcFutures> list_h4 = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4, 50);
+        List<BtcFutures> list_days = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_DAY, 20);
 
-        if (!CollectionUtils.isEmpty(list_h4)) {
-            String trend_d = createTrendByMa50(EVENT_DH4H1_D_FX, list_h4, EPIC, EPIC);
-            String switch_trend_h4 = Utils.switchTrend(list_h4);
-            String trend_ma10 = Utils.isUptrendByMaIndex(list_h4, 10) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-            if (Utils.isNotBlank(switch_trend_h4)) {
-                fundingHistoryRepository
-                        .save(createPumpDumpEntity(EVENT_DH4H1_H4_FX, EPIC, EPIC, switch_trend_h4, true));
+        if (!CollectionUtils.isEmpty(list_days)) {
+            String trend_d = Utils.isUptrendByMaIndex(list_days, 10) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+            String trend_h4 = Utils.isUptrendByMaIndex(list_days, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
-                String atl = Utils.calc_BUF_LO_HI_BUF(list_h4, switch_trend_h4);
-                Utils.logWritelnWithTime(("Forex (" + switch_trend_h4 + ")" + Utils.getChartName(list_h4) + EPIC
-                        + Utils.getCurrentPrice(list_h4) + atl).replace(" ", "_") + Utils.getCapitalLink(EPIC));
-
-                String append_h = "";
-                append_h += Utils.getMmDD_TimeHHmm() + "(D:" + trend_d + ", H4:" + switch_trend_h4 + ")";
-                append_h += atl;
-
-                String EVENT_1W1D = EVENT_1W1D_FX + "_" + EPIC;
-                fundingHistoryRepository.save(createPumpDumpEntity(EVENT_1W1D, EPIC, EPIC, append_h, true));
-
-                String result = "initForex(D:" + trend_d + ", H4:" + switch_trend_h4 + ")";
-                return result;
-            } else {
-                fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_H4_FX, EPIC, EPIC, trend_ma10, true));
+            String new_trend = Utils.switchTrend(list_days);
+            if (Utils.isNotBlank(new_trend)) {
+                Utils.writelnLogFooter();
+                Utils.logWritelnWithTime("Forex (" + new_trend + ")" + Utils.getChartName(list_days) + EPIC
+                        + Utils.getCurrentPrice(list_days) + Utils.getCapitalLink(EPIC));
+                Utils.writelnLogFooter();
             }
+
+            fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_D_FX, EPIC, EPIC, trend_d, true));
+            fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_H4_FX, EPIC, EPIC, trend_h4, true));
+
+            String append_h = Utils.getMmDD_TimeHHmm() + "(D:" + trend_d + ", H4:" + trend_h4 + ")";
+
+            String EVENT_1W1D = EVENT_1W1D_FX + "_" + EPIC;
+            fundingHistoryRepository.save(createPumpDumpEntity(EVENT_1W1D, EPIC, EPIC, append_h, true));
+
+            String result = "initForex(D:" + trend_d + ", H4:" + trend_h4 + ")";
+            return result;
         }
 
         return "";
@@ -3035,14 +3033,20 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     public String checkSamePhase_H4M_Forex15m(String EPIC) {
         // EPIC = "CHFSGD";
-        String result = ".";
+        String result = "";
+        String trend_d = getTrend(EVENT_DH4H1_D_FX, EPIC);
         String trend_h4 = getTrend(EVENT_DH4H1_H4_FX, EPIC);
 
         if (Objects.equals("DXY", EPIC)) {
+
             result = checkPosition_Forex15m(EPIC, "");
-        } else {
+
+        } else if (Objects.equals(trend_d, trend_h4)) {
+
             result = checkPosition_Forex15m(EPIC, trend_h4);
+
         }
+
         return result;
     }
 
@@ -3055,9 +3059,9 @@ public class BinanceServiceImpl implements BinanceService {
 
             createNewTrendCycle(EVENT_DH4H1_15M_FX, list_1h, trend_1h, EPIC, EPIC);
 
-            Utils.logWritelnWithTime(
-                    ("Forex (" + trend_1h + ")" + Utils.getChartName(list_1h) + EPIC + Utils.getCurrentPrice(list_1h))
-                            .replace(" ", "_") + Utils.getCapitalLink(EPIC));
+            Utils.logWritelnWithTime(Utils.appendSpace(
+                    "Forex (" + trend_1h + ")" + Utils.getChartName(list_1h) + EPIC + Utils.getCurrentPrice(list_1h),
+                    45) + Utils.getCapitalLink(EPIC));
         }
 
         return "";

@@ -736,37 +736,14 @@ public class Utils {
     }
 
     public static String appendSpace(String value, int length) {
+        String result = value;
         int len = value.length();
-        if (len > length) {
-            return value + "..";
-        }
-
-        int target = length - len;
-        String val = value + "..";
-        for (int i = 0; i < target; i++) {
-            val += "..";
-        }
-
-        for (int i = 0; i < len; i++) {
-            String alpha = value.substring(i, i + 1);
-            if (Objects.equals(alpha, "I")) {
-                val += "..";
-            }
-
-            if (Objects.equals(alpha, "J")) {
-                val += "..";
-            }
-
-            if (Objects.equals(alpha, "M")) {
-                val = val.substring(0, val.length() - 1);
-            }
-
-            if (Objects.equals(alpha, "W")) {
-                val = val.substring(0, val.length() - 1);
+        if (len < length) {
+            for (int i = len; i <= length; i++) {
+                result += " ";
             }
         }
-
-        return val + ".";
+        return result;
     }
 
     public static BigDecimal getMidPrice(BigDecimal low_price, BigDecimal hight_price) {
