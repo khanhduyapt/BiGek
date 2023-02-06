@@ -473,7 +473,7 @@ public class Utils {
                     BigDecimal hight_price = Utils
                             .formatPrice(Utils.getBigDecimal(((JSONObject) price.get("highPrice")).get("ask")), 5);
                     BigDecimal hight_price_b = Utils
-                            .formatPrice(Utils.getBigDecimal(((JSONObject) price.get("highPrice")).get("ask")), 5);
+                            .formatPrice(Utils.getBigDecimal(((JSONObject) price.get("highPrice")).get("bid")), 5);
                     hight_price = hight_price.add(hight_price_b);
                     hight_price = hight_price.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
                     // -------------------
@@ -481,7 +481,7 @@ public class Utils {
                     BigDecimal open_price = Utils
                             .formatPrice(Utils.getBigDecimal(((JSONObject) price.get("openPrice")).get("ask")), 5);
                     BigDecimal open_price_b = Utils
-                            .formatPrice(Utils.getBigDecimal(((JSONObject) price.get("openPrice")).get("ask")), 5);
+                            .formatPrice(Utils.getBigDecimal(((JSONObject) price.get("openPrice")).get("bid")), 5);
                     open_price = open_price.add(open_price_b);
                     open_price = open_price.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
 
@@ -490,7 +490,7 @@ public class Utils {
                     BigDecimal close_price = Utils
                             .formatPrice(Utils.getBigDecimal(((JSONObject) price.get("closePrice")).get("ask")), 5);
                     BigDecimal close_price_b = Utils
-                            .formatPrice(Utils.getBigDecimal(((JSONObject) price.get("closePrice")).get("ask")), 5);
+                            .formatPrice(Utils.getBigDecimal(((JSONObject) price.get("closePrice")).get("bid")), 5);
                     close_price = close_price.add(close_price_b);
                     close_price = close_price.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
 
@@ -861,7 +861,7 @@ public class Utils {
     public static void logWritelnWithTime(String text) {
         try {
             FileWriter fw = new FileWriter(getLogFileName(), true);
-            fw.write(Utils.getMmDD_TimeHHmm() + " " + text.replace(Utils.new_line_from_service, " ") + "\n");
+            fw.write(Utils.getTimeHHmm() + " " + text.replace(Utils.new_line_from_service, " ") + "\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -2768,29 +2768,7 @@ public class Utils {
 
     private static String checkTrendSideway(List<BtcFutures> list, int str, int end) {
         String l_m03x10 = "";
-        String l_m03x20 = "";
-        String l_m03x50 = "";
-        String l_m10x20 = "";
-        String l_m10x50 = "";
-        String l_m20x50 = "";
-
         String s_m03x10 = "";
-        String s_m03x20 = "";
-        String s_m03x50 = "";
-        String s_m10x20 = "";
-        String s_m10x50 = "";
-        String s_m20x50 = "";
-
-        Boolean is_5m_TimeFrame = false;
-        Boolean is_15m_TimeFrame = false;
-        String symbol = list.get(0).getId();
-
-        if (symbol.contains("_5m_")) {
-            is_5m_TimeFrame = true;
-        }
-        if (symbol.contains("_15m_")) {
-            is_15m_TimeFrame = true;
-        }
 
         BigDecimal ma3_1 = calcMA(list, 3, str);
         BigDecimal ma3_2 = calcMA(list, 3, end);
@@ -2798,50 +2776,17 @@ public class Utils {
         BigDecimal ma10_1 = calcMA(list, 10, str);
         BigDecimal ma10_2 = calcMA(list, 10, end);
 
-        // BigDecimal ma20_1 = calcMA(list, 20, str);
-        // BigDecimal ma20_2 = calcMA(list, 20, end);
-
-        // BigDecimal ma50_1 = calcMA(list, 50, str);
-        // BigDecimal ma50_2 = calcMA(list, 50, end);
-
-        if (is_5m_TimeFrame) {
-            // l_m03x50 = Utils.checkXCutUpY(ma3_1, ma3_2, ma50_1, ma50_2);
-            // l_m10x50 = Utils.checkXCutUpY(ma10_1, ma10_2, ma50_1, ma50_2);
-            l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
-
-            s_m03x10 = Utils.checkXCutDownY(ma3_1, ma3_2, ma10_1, ma10_2);
-            // s_m03x50 = Utils.checkXCutDownY(ma3_1, ma3_2, ma50_1, ma50_2);
-            // s_m10x50 = Utils.checkXCutDownY(ma10_1, ma10_2, ma50_1, ma50_2);
-        } else if (is_15m_TimeFrame) {
-            // l_m03x50 = Utils.checkXCutUpY(ma3_1, ma3_2, ma50_1, ma50_2);
-            // l_m10x20 = Utils.checkXCutUpY(ma10_1, ma10_2, ma20_1, ma20_2);
-            // l_m10x50 = Utils.checkXCutUpY(ma10_1, ma10_2, ma50_1, ma50_2);
-            l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
-
-            s_m03x10 = Utils.checkXCutDownY(ma3_1, ma3_2, ma10_1, ma10_2);
-            // s_m03x50 = Utils.checkXCutDownY(ma3_1, ma3_2, ma50_1, ma50_2);
-            // s_m10x20 = Utils.checkXCutDownY(ma10_1, ma10_2, ma20_1, ma20_2);
-            // s_m10x50 = Utils.checkXCutDownY(ma10_1, ma10_2, ma50_1, ma50_2);
-        } else {
-            l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
-            // l_m03x20 = Utils.checkXCutUpY(ma3_1, ma3_2, ma20_1, ma20_2);
-            // l_m03x50 = Utils.checkXCutUpY(ma3_1, ma3_2, ma50_1, ma50_2);
-            // l_m10x20 = Utils.checkXCutUpY(ma10_1, ma10_2, ma20_1, ma20_2);
-            // l_m10x50 = Utils.checkXCutUpY(ma10_1, ma10_2, ma50_1, ma50_2);
-            // l_m20x50 = Utils.checkXCutUpY(ma20_1, ma20_2, ma50_1, ma50_2);
-
-            s_m03x10 = Utils.checkXCutDownY(ma3_1, ma3_2, ma10_1, ma10_2);
-            // s_m03x20 = Utils.checkXCutDownY(ma3_1, ma3_2, ma20_1, ma20_2);
-            // s_m03x50 = Utils.checkXCutDownY(ma3_1, ma3_2, ma50_1, ma50_2);
-            // s_m10x20 = Utils.checkXCutDownY(ma10_1, ma10_2, ma20_1, ma20_2);
-            // s_m10x50 = Utils.checkXCutDownY(ma10_1, ma10_2, ma50_1, ma50_2);
-            // s_m20x50 = Utils.checkXCutDownY(ma20_1, ma20_2, ma50_1, ma50_2);
+        l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
+        if (Utils.isNotBlank(l_m03x10) && !list.get(1).isUptrend()) {
+            l_m03x10 = "";
         }
 
-        String trend_L = l_m03x10 + "_" + l_m03x20 + "_" + l_m03x50 + "_" + l_m10x20 + "_" + l_m10x50 + "_" + l_m20x50;
-        String trend_S = s_m03x10 + "_" + s_m03x20 + "_" + s_m03x50 + "_" + s_m10x20 + "_" + s_m10x50 + "_" + s_m20x50;
+        s_m03x10 = Utils.checkXCutDownY(ma3_1, ma3_2, ma10_1, ma10_2);
+        if (Utils.isNotBlank(s_m03x10) && list.get(1).isUptrend()) {
+            s_m03x10 = "";
+        }
 
-        String trend = trend_L + "_" + trend_S;
+        String trend = l_m03x10 + "_" + s_m03x10;
 
         return trend;
     }
