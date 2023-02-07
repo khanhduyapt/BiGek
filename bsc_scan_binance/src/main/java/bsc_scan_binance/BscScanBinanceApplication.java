@@ -91,14 +91,14 @@ public class BscScanBinanceApplication {
 
             // --------------------Debug--------------------
 
-            List<String> capital_list = new ArrayList<String>();
-            capital_list.addAll(Utils.EPICS_FOREX_SCAPS);
-            capital_list.addAll(Utils.EPICS_INDEXS);
-            capital_list.addAll(Utils.EPICS_FOREX_EUR);
-            capital_list.addAll(Utils.EPICS_FOREX_AUD);
-            capital_list.addAll(Utils.EPICS_FOREX_GBP);
-            capital_list.addAll(Utils.EPICS_FOREX_CAD);
-            capital_list.addAll(Utils.EPICS_FOREX_DOLLAR);
+            List<String> capital_list = Utils.EPICS_FOREX;
+            // capital_list.addAll(Utils.EPICS_FOREX_SCAPS);
+            // capital_list.addAll(Utils.EPICS_INDEXS);
+            // capital_list.addAll(Utils.EPICS_FOREX_EUR);
+            // capital_list.addAll(Utils.EPICS_FOREX_AUD);
+            // capital_list.addAll(Utils.EPICS_FOREX_GBP);
+            // capital_list.addAll(Utils.EPICS_FOREX_CAD);
+            // capital_list.addAll(Utils.EPICS_FOREX_DOLLAR);
             // capital_list.addAll(Utils.EPICS_FOREX_OTHERS);
 
             if (app_flag != Utils.const_app_flag_webonly) {
@@ -110,6 +110,7 @@ public class BscScanBinanceApplication {
                 int forex_size = capital_list.size();
                 int time = SLEEP_MINISECONDS_INIT;
                 Date start_time = Calendar.getInstance().getTime();
+
                 while (index_crypto < total) {
                     CandidateCoin coin = token_list.get(index_crypto);
 
@@ -117,7 +118,7 @@ public class BscScanBinanceApplication {
                         check_BTC_DXY_15m(binance_service);
 
                         // ----------------------------------------------
-                        if (index_crypto % 3 == 1) {
+                        if (index_crypto % 10 == 1) {
                             if (!Utils.isWeekend()) {
                                 if (index_forex < forex_size) {
                                     String EPIC = capital_list.get(index_forex);
@@ -186,11 +187,6 @@ public class BscScanBinanceApplication {
     private static void check_BTC_DXY_15m(BinanceService binance_service) {
         if (!isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "DXY_BTC_ETH_BNB")) {
             return;
-        }
-
-        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "DXY")) {
-            System.out.println(Utils.getTimeHHmm() + "Check DXY(15m)");
-            binance_service.checkSamePhase_H4M_Forex15m("DXY");
         }
 
         if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "BTC")) {

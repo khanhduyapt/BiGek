@@ -3104,7 +3104,7 @@ public class BinanceServiceImpl implements BinanceService {
                         + Utils.getCapitalLink(EPIC));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            // e.printStackTrace();
         }
 
         return result;

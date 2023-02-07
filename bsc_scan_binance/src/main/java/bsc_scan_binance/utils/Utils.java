@@ -106,41 +106,58 @@ public class Utils {
     public static final String CAPITAL_TIME_DAY = "DAY";
     public static final String CAPITAL_TIME_WEEK = "WEEK";
 
-    public static final List<String> EPICS_FOREX_SCAPS = Arrays.asList("DXY", "GOLD", "US30", "GBPAUD", "USDCAD",
-            "EURJPY", "USDCHF", "USDCNH");
+    public static final List<String> EPICS_FOREX = Arrays.asList("DXY", "GOLD", "US30", "OIL_CRUDE", "US500", "EURUSD",
+            "USDJPY", "GBPUSD", "AUDUSD", "GBPJPY", "USDCAD", "USDCHF", "AUDJPY", "EURJPY", "EURGBP", "CADJPY",
+            "NZDUSD", "EURAUD", "EURCAD", "GBPAUD", "GBPCAD", "AUDCAD", "GBPCHF", "EURCHF");
 
-    public static final List<String> EPICS_INDEXS = Arrays.asList("OIL_CRUDE", "US500", "UK100", "HK50", "FR40");
-
-    public static final List<String> EPICS_FOREX_EUR = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY",
-            "EURMXN", "EURNZD", "EURUSD");
-
-    public static final List<String> EPICS_FOREX_AUD = Arrays.asList("AUDCAD", "AUDCHF", "AUDCNH", "AUDJPY", "AUDMXN",
-            "AUDNZD", "AUDSGD", "AUDUSD");
-
-    public static final List<String> EPICS_FOREX_GBP = Arrays.asList("GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPMXN",
-            "GBPNZD", "GBPUSD");
-
-    public static final List<String> EPICS_FOREX_CAD = Arrays.asList("CADCHF", "CADJPY", "CHFHKD", "CHFJPY", "CHFSGD",
-            "CNHHKD", "CNHJPY"
-    // "CADSGD",
-    );
-
-    public static final List<String> EPICS_FOREX_DOLLAR = Arrays.asList("NZDCAD", "NZDCHF", "NZDJPY", "NZDSGD",
-            "NZDUSD", "USDCAD", "USDJPY");
-
-    public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("AUDHKD", "AUDPLN", "AUDZAR", "CADCNH",
-            "CADHKD", "CADMXN", "CADNOK", "CADPLN", "CADTRY", "CADZAR", "CHFCNH", "CHFCZK", "CHFDKK", "CHFMXN",
-            "CHFNOK", "CHFPLN", "CHFSEK", "CHFTRY", "CHFZAR", "DKKJPY", "EURCZK", "EURILS", "EURPLN", "EURRON",
-            "EURSGD", "GBPCNH", "GBPCZK", "GBPDKK", "GBPHUF", "GBPNOK", "GBPPLN", "GBPSEK", "GBPSGD", "GBPZAR",
-            "HKDMXN", "HKDTRY", "NOKSEK", "NOKTRY", "NZDHKD", "NZDMXN", "NZDPLN", "NZDSEK", "PLNSEK", "PLNTRY",
-            "SEKMXN", "SGDHKD", "SGDMXN", "TRYJPY", "USDCZK", "USDDKK", "USDHKD", "USDILS", "USDRON"
-    // , "EURDKK", "USDTRY"
-    // , "GBPHKD"
-    // , "GBPTRY"
-    // , "NZDCNH"
-    // , "SEKTRY"
-    // , "NZDTRY"
-    );
+    // public static final List<String> EPICS_FOREX_SCAPS = Arrays.asList("DXY",
+    // "GOLD", "US30", "GBPAUD", "USDCAD",
+    // "EURJPY", "USDCHF", "USDCNH");
+    //
+    // public static final List<String> EPICS_INDEXS = Arrays.asList("OIL_CRUDE",
+    // "US500", "UK100", "HK50", "FR40");
+    //
+    // public static final List<String> EPICS_FOREX_EUR = Arrays.asList("EURAUD",
+    // "EURCAD", "EURCHF", "EURGBP", "EURJPY",
+    // "EURMXN", "EURNZD", "EURUSD");
+    //
+    // public static final List<String> EPICS_FOREX_AUD = Arrays.asList("AUDCAD",
+    // "AUDCHF", "AUDCNH", "AUDJPY", "AUDMXN",
+    // "AUDNZD", "AUDSGD", "AUDUSD");
+    //
+    // public static final List<String> EPICS_FOREX_GBP = Arrays.asList("GBPAUD",
+    // "GBPCAD", "GBPCHF", "GBPJPY", "GBPMXN",
+    // "GBPNZD", "GBPUSD");
+    //
+    // public static final List<String> EPICS_FOREX_CAD = Arrays.asList("CADCHF",
+    // "CADJPY", "CHFHKD", "CHFJPY", "CHFSGD",
+    // "CNHHKD", "CNHJPY"
+    //// "CADSGD",
+    // );
+    //
+    // public static final List<String> EPICS_FOREX_DOLLAR = Arrays.asList("NZDCAD",
+    // "NZDCHF", "NZDJPY", "NZDSGD",
+    // "NZDUSD", "USDCAD", "USDJPY");
+    //
+    // public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("AUDHKD",
+    // "AUDPLN", "AUDZAR", "CADCNH",
+    // "CADHKD", "CADMXN", "CADNOK", "CADPLN", "CADTRY", "CADZAR", "CHFCNH",
+    // "CHFCZK", "CHFDKK", "CHFMXN",
+    // "CHFNOK", "CHFPLN", "CHFSEK", "CHFTRY", "CHFZAR", "DKKJPY", "EURCZK",
+    // "EURILS", "EURPLN", "EURRON",
+    // "EURSGD", "GBPCNH", "GBPCZK", "GBPDKK", "GBPHUF", "GBPNOK", "GBPPLN",
+    // "GBPSEK", "GBPSGD", "GBPZAR",
+    // "HKDMXN", "HKDTRY", "NOKSEK", "NOKTRY", "NZDHKD", "NZDMXN", "NZDPLN",
+    // "NZDSEK", "PLNSEK", "PLNTRY",
+    // "SEKMXN", "SGDHKD", "SGDMXN", "TRYJPY", "USDCZK", "USDDKK", "USDHKD",
+    // "USDILS", "USDRON"
+    //// , "EURDKK", "USDTRY"
+    //// , "GBPHKD"
+    //// , "GBPTRY"
+    //// , "NZDCNH"
+    //// , "SEKTRY"
+    //// , "NZDTRY"
+    // );
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                   \n"
@@ -368,7 +385,7 @@ public class Utils {
         return new ArrayList<BtcFutures>();
     }
 
-    private static void initCapital() {
+    public static void initCapital() {
         String API = "G1fTHbEak0kDE5mg";
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> request;
@@ -431,7 +448,6 @@ public class Utils {
         List<BtcFutures> results = new ArrayList<BtcFutures>();
         try {
             initCapital();
-
             HttpHeaders headers = new HttpHeaders();
             HttpEntity<String> request;
             RestTemplate restTemplate = new RestTemplate();
@@ -519,7 +535,9 @@ public class Utils {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            if (e.getMessage().contains("Connection timed out")) {
+                initCapital();
+            }
         }
 
         return results;
