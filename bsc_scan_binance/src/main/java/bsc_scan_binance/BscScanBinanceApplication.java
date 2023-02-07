@@ -50,7 +50,7 @@ public class BscScanBinanceApplication {
                 app_flag = Utils.const_app_flag_all_coin;
             }
 
-            // Debug
+            // Debug3
             // String hostname = InetAddress.getLocalHost().getHostName();
             // String cty = "PC";
             // String home = "DESKTOP-L4M1JU2";
