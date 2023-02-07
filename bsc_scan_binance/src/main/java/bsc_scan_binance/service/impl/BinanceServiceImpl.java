@@ -3103,6 +3103,7 @@ public class BinanceServiceImpl implements BinanceService {
                                 + Utils.appendSpace(EPIC, 8) + Utils.getCurrentPrice(list_15m), 58)
                         + Utils.getCapitalLink(EPIC));
             }
+            System.out.println(Utils.getTimeHHmm() + "Forex: " + EPIC + ", size:" + list_15m.size());
         } catch (Exception e) {
             // e.printStackTrace();
         }

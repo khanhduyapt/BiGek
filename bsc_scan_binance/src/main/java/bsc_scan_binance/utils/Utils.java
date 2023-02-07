@@ -913,8 +913,6 @@ public class Utils {
         LocalDate today = LocalDate.now();
         DayOfWeek day = DayOfWeek.of(today.get(ChronoField.DAY_OF_WEEK));
         boolean value = day == DayOfWeek.SUNDAY || day == DayOfWeek.SATURDAY;
-
-        // TODO: return value;
         return value;
     }
 
@@ -2773,8 +2771,8 @@ public class Utils {
         BigDecimal ma3_1 = calcMA(list, 3, str);
         BigDecimal ma3_2 = calcMA(list, 3, end);
 
-        BigDecimal ma20_1 = calcMA(list, 20, str);
-        BigDecimal ma20_2 = calcMA(list, 20, end);
+        BigDecimal ma20_1 = calcMA(list, 10, str);
+        BigDecimal ma20_2 = calcMA(list, 10, end);
 
         l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma20_1, ma20_2);
         if (!isUptrendByMaIndex(list, 10)) {

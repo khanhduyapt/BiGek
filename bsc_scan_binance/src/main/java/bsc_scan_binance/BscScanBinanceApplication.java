@@ -119,7 +119,7 @@ public class BscScanBinanceApplication {
 
                         // ----------------------------------------------
                         if (index_crypto % 10 == 1) {
-                            if (!Utils.isWeekend()) {
+                            if (!Utils.isWeekend() && Utils.isBusinessTime()) {
                                 if (index_forex < forex_size) {
                                     String EPIC = capital_list.get(index_forex);
 
@@ -137,15 +137,8 @@ public class BscScanBinanceApplication {
                         // ----------------------------------------------
                         {
                             init_Crypto_4h(binance_service, coin, index_crypto, total);
-
                             if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), coin.getSymbol())) {
-
-                                binance_service.checkChart_m15_follow_H4(TIME_5m, coin.getGeckoid(), coin.getSymbol());
-
-                            } else if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), coin.getSymbol())) {
-
                                 binance_service.checkChart_m15_follow_H4(TIME_15m, coin.getGeckoid(), coin.getSymbol());
-
                             }
                         }
 
