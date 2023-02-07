@@ -2884,10 +2884,12 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_h1 = Utils.switchTrend(list_h1);
         if (Objects.equals(Utils.TREND_LONG, trend_h1)) {
             String star = (ma3_h1.compareTo(ma50_h1) < 0) ? "*5Star*" : "";
+
             Utils.logWritelnWithTime(Utils.appendSpace(Utils
                     .appendSpace(star + "Crypto(" + trend_h1 + ")" + Utils.getChartName(list_h1) + symbol
                             + Utils.getCurrentPrice(list_h1) + Utils.percentToMa(list_h1, current_price), 58)
-                    + getVolMc(gecko_id), 100) + url);
+                    + getVolMc(gecko_id) + Utils.getAtlAth(list_h1), 100) + url);
+
         }
         fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_H1_CRYPTO, gecko_id, symbol, trend_h1, true));
 
@@ -3013,7 +3015,7 @@ public class BinanceServiceImpl implements BinanceService {
                         Utils.appendSpace(Utils.appendSpace(
                                 star + "Crypto(" + trend_h1 + ")" + Utils.getChartName(list_h1) + symbol
                                         + Utils.getCurrentPrice(list_h1) + Utils.percentToMa(list_h1, current_price),
-                                58) + getVolMc(gecko_id), 100) + url);
+                                58) + getVolMc(gecko_id) + Utils.getAtlAth(list_h1), 100) + url);
             }
             fundingHistoryRepository
                     .save(createPumpDumpEntity(EVENT_DH4H1_H1_CRYPTO, gecko_id, symbol, trend_h1, true));
