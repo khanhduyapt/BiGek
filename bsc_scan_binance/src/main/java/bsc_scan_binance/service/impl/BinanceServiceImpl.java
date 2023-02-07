@@ -2634,11 +2634,9 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (Utils.isNotBlank(trend)) {
-            Utils.logWritelnWithTime(Utils.appendSpace(
-                    Utils.appendSpace(
-                            "Crypto(" + trend + ")" + char_name + Utils.appendSpace(symbol, 8) + curr_price + append,
-                            58) + append_btc.replace("_", "") + vmc,
-                    100) + url);
+            Utils.logWritelnWithTime(Utils.appendSpace(Utils.appendSpace(
+                    "Crypto(" + trend + ")" + char_name + Utils.appendSpace(symbol, 8) + curr_price + append, 58)
+                    + append_btc.replace("_", "") + vmc, 100) + url);
         }
     }
 
@@ -3013,11 +3011,8 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Utils.isNotBlank(trend_d)) {
 
                     Utils.logWritelnWithTime((Utils
-                            .appendSpace(
-                                    "Forex (" + trend_d + ")" + Utils.getChartName(list_days)
-                                            + Utils.appendSpace(EPIC, 8)
-                                            + Utils.getCurrentPrice(list_days),
-                                    58)
+                            .appendSpace("Forex (" + trend_d + ")" + Utils.getChartName(list_days)
+                                    + Utils.appendSpace(EPIC, 8) + Utils.getCurrentPrice(list_days), 58)
                             .replace("  ", "--") + Utils.getCapitalLink(EPIC)));
                 }
 
@@ -3055,42 +3050,28 @@ public class BinanceServiceImpl implements BinanceService {
         // EPIC = "CHFSGD";
         String result = "";
         String trend_h4 = getTrend(EVENT_DH4H1_H4_FX, EPIC);
+        try {
+            List<BtcFutures> list_15m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 20);
+            String trend_15m = Utils.switchTrend(list_15m);
+            if (Utils.isNotBlank(trend_15m)) {
 
-        if (BscScanBinanceApplication.isReloadAfter(Utils.getCurrentYyyyMmDd_HH(), EPIC)) {
-            List<BtcFutures> list = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR, 20);
+                if (Objects.equals("DXY", EPIC)) {
+                    sendScapMsg(list_15m, EPIC, trend_15m, "");
+                }
 
-            String trend_1h = Utils.switchTrend(list);
-            if (Utils.isNotBlank(trend_1h) && Objects.equals(trend_h4, trend_1h)) {
+                createNewTrendCycle(EVENT_DH4H1_15M_FX, list_15m, trend_15m, EPIC, EPIC);
 
-                createNewTrendCycle(EVENT_DH4H1_H1_FX, list, trend_1h, EPIC, EPIC);
-
-                Utils.logWritelnWithTime(Utils.appendSpace(
-                        "Forex (" + trend_1h + ")" + Utils.getChartName(list) + Utils.appendSpace(EPIC, 8)
-                                + Utils.getCurrentPrice(list),
-                        58) + Utils.getCapitalLink(EPIC));
+                Utils.logWritelnWithTime(Utils
+                        .appendSpace("Forex (" + trend_15m + ")" + Utils.getChartName(list_15m)
+                                + Utils.appendSpace(EPIC, 8) + Utils.getCurrentPrice(list_15m) + "(H4)" + trend_h4, 58)
+                        + Utils.getCapitalLink(EPIC));
             }
-        }
-
-        List<BtcFutures> list_15m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 20);
-        String trend_15m = Utils.switchTrend(list_15m);
-        if ((Utils.isNotBlank(trend_15m) && Objects.equals(trend_h4, trend_15m))
-                || (Objects.equals("DXY", EPIC) && Utils.isNotBlank(trend_15m))) {
-
-            if (Objects.equals("DXY", EPIC)) {
-                sendScapMsg(list_15m, EPIC, trend_15m, "");
-            }
-
-            createNewTrendCycle(EVENT_DH4H1_15M_FX, list_15m, trend_15m, EPIC, EPIC);
-
-            Utils.logWritelnWithTime(Utils.appendSpace(
-                    "Forex (" + trend_15m + ")" + Utils.getChartName(list_15m) + Utils.appendSpace(EPIC, 8)
-                            + Utils.getCurrentPrice(list_15m),
-                    58) + Utils.getCapitalLink(EPIC));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return result;
     }
-
 
     private void checkPositionCrypto15m(String gecko_id, String symbol) {
         String trend_ma3h4_ma10h1 = getTrend(EVENT_DH4H1_H1_CRYPTO, gecko_id);
