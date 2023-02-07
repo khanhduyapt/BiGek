@@ -2991,6 +2991,41 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     @Transactional
+    public String checkChartH1_Crypto(String gecko_id, String symbol) {
+        String trend_h1 = "";
+        try {
+            List<BtcFutures> list_h1 = Utils.loadData(symbol, TIME_1h, 50);
+            trend_h1 = Utils.switchTrend(list_h1);
+            BigDecimal ma3_h1 = Utils.calcMA(list_h1, 3, 1);
+            BigDecimal ma50_h1 = Utils.calcMA(list_h1, 50, 1);
+            BigDecimal current_price = list_h1.get(0).getCurrPrice();
+
+            if (Objects.equals(Utils.TREND_LONG, trend_h1)) {
+                String star = (ma3_h1.compareTo(ma50_h1) < 0) ? "*5Star*" : "";
+                String url = "";
+                if (binanceFuturesRepository.existsById(gecko_id)) {
+                    url = Utils.getCryptoLink_Future(symbol);
+                } else {
+                    url = Utils.getCryptoLink_Spot(symbol);
+                }
+
+                Utils.logWritelnWithTime(
+                        Utils.appendSpace(Utils.appendSpace(
+                                star + "Crypto(" + trend_h1 + ")" + Utils.getChartName(list_h1) + symbol
+                                        + Utils.getCurrentPrice(list_h1) + Utils.percentToMa(list_h1, current_price),
+                                58) + getVolMc(gecko_id), 100) + url);
+            }
+            fundingHistoryRepository
+                    .save(createPumpDumpEntity(EVENT_DH4H1_H1_CRYPTO, gecko_id, symbol, trend_h1, true));
+
+        } catch (Exception e) {
+        }
+
+        return trend_h1;
+    }
+
+    @Override
+    @Transactional
     public String checkChart_m15_follow_H4(String TIME, String gecko_id, String symbol) {
         String trend_ma3h4_ma10h1 = getTrend(EVENT_DH4H1_H1_CRYPTO, gecko_id);
 
@@ -3002,8 +3037,11 @@ public class BinanceServiceImpl implements BinanceService {
 
         BigDecimal ma3_1 = Utils.calcMA(list_15m, 3, 1);
         BigDecimal ma50_1 = Utils.calcMA(list_15m, 50, 1);
-        if (ma3_1.compareTo(ma50_1) > 0) {
-            return "";
+        boolean allow_send_msg = true;
+        String star = "";
+        if (ma3_1.compareTo(ma50_1) < 0) {
+            star = "*5Star*";
+            allow_send_msg = false;
         }
 
         String trend_15m = Utils.switchTrend(list_15m);
@@ -3011,14 +3049,15 @@ public class BinanceServiceImpl implements BinanceService {
             BTC_TREND_M15 = Utils.isUptrendByMaIndex(list_15m, 10) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
             sendMsgOrLogCryptoBySwitchTrend(Utils.isNotBlank(trend_15m), false, list_15m, gecko_id, symbol,
-                    EVENT_DH4H1_15M_CRYPTO, "");
+                    EVENT_DH4H1_15M_CRYPTO, star);
 
         } else if (Objects.equals(Utils.TREND_LONG, trend_15m)) {
             String append = "";
             if (!Objects.equals(Utils.TREND_LONG, trend_ma3h4_ma10h1)) {
                 append = "(H1)" + Utils.TREND_SHORT;
             }
-            sendMsgOrLogCryptoBySwitchTrend(true, true, list_15m, gecko_id, symbol, EVENT_DH4H1_15M_CRYPTO, append);
+            sendMsgOrLogCryptoBySwitchTrend(allow_send_msg, true, list_15m, gecko_id, symbol, EVENT_DH4H1_15M_CRYPTO,
+                    star + append);
         }
 
         // -----------------------------------------------

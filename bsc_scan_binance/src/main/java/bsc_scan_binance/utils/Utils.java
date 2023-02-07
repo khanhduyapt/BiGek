@@ -835,7 +835,8 @@ public class Utils {
 
     private static String getLogFileName() {
         String PATH = "crypto_forex_result/";
-        String fileName = "scan_result_" + getYyyyMmDdHH_ChangeDailyChart() + ".log";
+        String fileName = BscScanBinanceApplication.hostname + "_scan_result_" + getYyyyMmDdHH_ChangeDailyChart()
+                + ".log";
 
         File directory = new File(PATH);
         if (!directory.exists()) {

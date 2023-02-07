@@ -1,5 +1,6 @@
 package bsc_scan_binance;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,7 +32,7 @@ public class BscScanBinanceApplication {
     public static int SLEEP_MINISECONDS = 6000;
     private static Hashtable<String, String> keys_dict = new Hashtable<String, String>();
     public static Hashtable<String, String> forex_naming_dict = new Hashtable<String, String>();
-
+    public static String hostname = "_";
     public static ApplicationContext applicationContext;
     public static WandaBot wandaBot;
     public static TelegramBotsApi telegramBotsApi;
@@ -39,6 +40,7 @@ public class BscScanBinanceApplication {
     public static void main(String[] args) {
         try {
             initForex_naming_dict();
+            hostname = InetAddress.getLocalHost().getHostName();
 
             System.out.println("Start "
                     + Utils.convertDateToString("yyyy-MM-dd HH:mm:ss", Calendar.getInstance().getTime()) + " ---->");
@@ -53,7 +55,6 @@ public class BscScanBinanceApplication {
             }
 
             // Debug36
-            // String hostname = InetAddress.getLocalHost().getHostName();
             // String cty = "PC";
             // String home = "DESKTOP-L4M1JU2";
             // app_flag = Utils.const_app_flag_msg_on;
@@ -137,8 +138,15 @@ public class BscScanBinanceApplication {
                         // ----------------------------------------------
                         {
                             init_Crypto_4h(binance_service, coin, index_crypto, total);
+
                             if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), coin.getSymbol())) {
+
                                 binance_service.checkChart_m15_follow_H4(TIME_15m, coin.getGeckoid(), coin.getSymbol());
+
+                            } else if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH(), coin.getSymbol())) {
+
+                                binance_service.checkChartH1_Crypto(coin.getGeckoid(), coin.getSymbol());
+
                             }
                         }
 
