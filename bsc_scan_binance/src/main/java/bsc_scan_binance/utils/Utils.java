@@ -120,9 +120,9 @@ public class Utils {
     public static final List<String> EPICS_FOREX_GBP = Arrays.asList("GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPMXN",
             "GBPNZD", "GBPUSD");
 
-    public static final List<String> EPICS_FOREX_CAD = Arrays.asList("CADCHF", "CADJPY", "CHFHKD", "CHFJPY",
-            "CHFSGD", "CNHHKD", "CNHJPY"
-    //"CADSGD",
+    public static final List<String> EPICS_FOREX_CAD = Arrays.asList("CADCHF", "CADJPY", "CHFHKD", "CHFJPY", "CHFSGD",
+            "CNHHKD", "CNHJPY"
+    // "CADSGD",
     );
 
     public static final List<String> EPICS_FOREX_DOLLAR = Arrays.asList("NZDCAD", "NZDCHF", "NZDJPY", "NZDSGD",
@@ -2755,21 +2755,15 @@ public class Utils {
         BigDecimal ma3_1 = calcMA(list, 3, str);
         BigDecimal ma3_2 = calcMA(list, 3, end);
 
-        BigDecimal ma10_1 = calcMA(list, 10, str);
-        BigDecimal ma10_2 = calcMA(list, 10, end);
+        BigDecimal ma20_1 = calcMA(list, 20, str);
+        BigDecimal ma20_2 = calcMA(list, 20, end);
 
-        l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
-        if (Utils.isNotBlank(l_m03x10) && !list.get(1).isUptrend()) {
-            l_m03x10 = "";
-        }
+        l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma20_1, ma20_2);
         if (!isUptrendByMaIndex(list, 10)) {
             l_m03x10 = "";
         }
         // ----------------------------------------
-        s_m03x10 = Utils.checkXCutDownY(ma3_1, ma3_2, ma10_1, ma10_2);
-        if (Utils.isNotBlank(s_m03x10) && list.get(1).isUptrend()) {
-            s_m03x10 = "";
-        }
+        s_m03x10 = Utils.checkXCutDownY(ma3_1, ma3_2, ma20_1, ma20_2);
         if (isUptrendByMaIndex(list, 10)) {
             s_m03x10 = "";
         }
