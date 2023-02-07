@@ -82,13 +82,13 @@ public class BinanceServiceImpl implements BinanceService {
 
     private static final String EVENT_DH4H1_D_FX = "DH4H1_D_TREND_FX";
     private static final String EVENT_DH4H1_H4_FX = "DH4H1_STR_H4_FX";
+    private static final String EVENT_DH4H1_H1_FX = "DH4H1_STR_H1_FX";
     private static final String EVENT_DH4H1_15M_FX = "DH4H1_STR_15M_FX";
-    private static final String EVENT_DH4H1_5M_FX = "DH4H1_STR_05M_FX";
 
     private static final String EVENT_DH4H1_D_CRYPTO = "DH4H1_D_TREND_CRYPTO";
     private static final String EVENT_DH4H1_H4_CRYPTO = "DH4H1_STR_H4_CRYPTO";
+    private static final String EVENT_DH4H1_H1_CRYPTO = "DH4H1_STR_H1_CRYPTO";
     private static final String EVENT_DH4H1_15M_CRYPTO = "DH4H1_STR_15M_CRYPTO";
-    private static final String EVENT_DH4H1_5M_CRYPTO = "DH4H1_STR_05M_CRYPTO";
     // ********************************************************************************
 
     @PersistenceContext
@@ -2358,7 +2358,7 @@ public class BinanceServiceImpl implements BinanceService {
     private String getVolMc(String gecko_id) {
         CandidateCoin coinmarketcap = candidateCoinRepository.findById(gecko_id).orElse(null);
         if (Objects.equals(null, coinmarketcap)) {
-            return "";
+            return Utils.appendSpace("", 15);
         }
         BigDecimal vol = Utils.getBigDecimal(coinmarketcap.getVolumnDivMarketcap()).multiply(BigDecimal.valueOf(100));
 
@@ -2606,7 +2606,7 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        String vmc = "";
+        String vmc = Utils.appendSpace("", 15);
         if (!"_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
             vmc = getVolMc(gecko_id);
         }
@@ -2620,9 +2620,9 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String char_name = Utils.getChartName(list);
-        String curr_price = Utils.getCurrentPrice(list);
+        String curr_price = Utils.getCurrentPrice(list) + (Utils.isDangerRange(list) ? "(DANGER)" : "");
         String msg = "(" + trend.replace(Utils.TREND_SHORT, Utils.TEXT_STOP_LONG) + ")" + char_name + symbol
-                + curr_price + append_btc + vmc;
+                + curr_price + append_btc + vmc + append;
 
         if (allowSendMsg) {
             String EVENT_ID = EVENT_PUMP + symbol + char_name + Utils.getCurrentYyyyMmDd_HH();
@@ -2633,10 +2633,13 @@ public class BinanceServiceImpl implements BinanceService {
             createNewTrendCycle(event_dh4h1_tm_crypto, list, trend, gecko_id, symbol);
         }
 
-        Utils.logWritelnWithTime(Utils.appendSpace(
-                Utils.appendSpace("Crypto(" + trend + ")" + char_name + symbol + Utils.getCurrentPrice(list), 35)
-                        + append_btc.replace("_", "") + vmc,
-                100) + url);
+        if (Utils.isNotBlank(trend)) {
+            Utils.logWritelnWithTime(Utils.appendSpace(
+                    Utils.appendSpace(
+                            "Crypto(" + trend + ")" + char_name + Utils.appendSpace(symbol, 8) + curr_price + append,
+                            58) + append_btc.replace("_", "") + vmc,
+                    100) + url);
+        }
     }
 
     private void sendMsgPerHour(String EVENT_ID, String msg_content, boolean isOnlyMe) {
@@ -2782,10 +2785,10 @@ public class BinanceServiceImpl implements BinanceService {
         return "";
     }
 
-    public String createTrendByMa50(String event_dh4h1_d_trend_xxxx, List<BtcFutures> list_h4, String geckoid_or_epic,
+    public String createTrendByMa10(String event_dh4h1_d_trend_xxxx, List<BtcFutures> list_h4, String geckoid_or_epic,
             String symbol_or_epic) {
         String trend_d = Utils.TREND_SHORT;
-        Boolean isUptrendByMa50 = Utils.isUptrendByMaIndex(list_h4, 50);
+        Boolean isUptrendByMa50 = Utils.isUptrendByMaIndex(list_h4, 10);
         if (isUptrendByMa50) {
             trend_d = Utils.TREND_LONG;
         }
@@ -2873,22 +2876,23 @@ public class BinanceServiceImpl implements BinanceService {
 
         // -----------------------------------------------------------------
 
-        String trend_d1 = createTrendByMa50(EVENT_DH4H1_D_CRYPTO, list_h4, gecko_id, symbol);
-        String trend_h4 = Utils.switchTrend(list_h1);
+        String trend_d1 = createTrendByMa10(EVENT_DH4H1_D_CRYPTO, list_days, gecko_id, symbol);
+        String trend_h4 = createTrendByMa10(EVENT_DH4H1_H4_CRYPTO, list_h4, gecko_id, symbol);
+
+        String trend_h1 = "";
+        if (Utils.isUptrendByMaIndex(list_h4, 3) && Utils.isUptrendByMaIndex(list_h1, 10)) {
+            trend_h1 = Utils.TREND_LONG;
+        }
+        fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_H1_CRYPTO, gecko_id, symbol, trend_h1, true));
+
         if (Utils.isNotBlank(trend_h4)) {
-            init_trend_result = "initCrypto(D:" + trend_d1 + ", H4: " + trend_h4 + ")";
-            sendMsgOrLogCryptoBySwitchTrend(false, true, list_h1, gecko_id, symbol, EVENT_DH4H1_H4_CRYPTO, "");
+            init_trend_result = "initCrypto(D:" + trend_d1 + ", H4: " + trend_h4 + ", H1: " + trend_h1 + ")";
+
+            if (Objects.equals(Utils.TREND_LONG, trend_h1)) {
+                sendMsgOrLogCryptoBySwitchTrend(false, true, list_h1, gecko_id, symbol, EVENT_DH4H1_15M_CRYPTO, "");
+            }
         }
 
-        // boolean isLongOnly = true;
-        // String append_log = taker + ", " + getVolMc(gecko_id) +
-        // type.replace("volma{", "").replace("}volma", "");
-        // sendMsgOrLogCryptoBySwitchTrend(false, isLongOnly, list_h1, gecko_id, symbol,
-        // "", append_log);
-        // sendMsgOrLogCryptoBySwitchTrend(false, isLongOnly, list_h4, gecko_id, symbol,
-        // "", append_log);
-        // sendMsgOrLogCryptoBySwitchTrend(false, isLongOnly, list_days, gecko_id,
-        // symbol, "", append_log);
         // -------------------------- INIT WEBSITE --------------------------
 
         Boolean allow_long_d1 = Utils.checkClosePriceAndMa_StartFindLong(list_days);
@@ -2990,10 +2994,7 @@ public class BinanceServiceImpl implements BinanceService {
             sendMsgKillLongShort(gecko_id, symbol, "");
             checkPositionCrypto15m(gecko_id, symbol);
         } else {
-            String trend_h4 = getTrend(EVENT_DH4H1_H4_CRYPTO, gecko_id);
-            if (Objects.equals(Utils.TREND_LONG, trend_h4)) {
-                checkPositionCrypto15m(gecko_id, symbol);
-            }
+            checkPositionCrypto15m(gecko_id, symbol);
         }
 
         return "";
@@ -3003,73 +3004,97 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public String initForex(String EPIC) {
         // EPIC = "US30";
-        List<BtcFutures> list_days = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_DAY, 20);
+        if (BscScanBinanceApplication.isReloadAfter(Utils.getYyyyMmDdHH_ChangeDailyChart(), EPIC)) {
+            List<BtcFutures> list_days = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_DAY, 20);
+            String trend_ma10 = Utils.isUptrendByMaIndex(list_days, 10) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
-        if (!CollectionUtils.isEmpty(list_days)) {
-            String trend_d = Utils.isUptrendByMaIndex(list_days, 10) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-            String trend_h4 = Utils.isUptrendByMaIndex(list_days, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+            if (!CollectionUtils.isEmpty(list_days)) {
+                String trend_d = Utils.switchTrend(list_days);
+                if (Utils.isNotBlank(trend_d)) {
 
-            String new_trend = Utils.switchTrend(list_days);
-            if (Utils.isNotBlank(new_trend)) {
-                Utils.logWritelnWithTime((Utils
-                        .appendSpace("Forex (" + new_trend + ")" + Utils.getChartName(list_days) + EPIC
-                                + Utils.getCurrentPrice(list_days), 45)
-                        .replace("  ", "--") + Utils.getCapitalLink(EPIC)));
+                    Utils.logWritelnWithTime((Utils
+                            .appendSpace(
+                                    "Forex (" + trend_d + ")" + Utils.getChartName(list_days)
+                                            + Utils.appendSpace(EPIC, 8)
+                                            + Utils.getCurrentPrice(list_days),
+                                    58)
+                            .replace("  ", "--") + Utils.getCapitalLink(EPIC)));
+                }
+
+                fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_D_FX, EPIC, EPIC, trend_ma10, true));
             }
-
-            fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_D_FX, EPIC, EPIC, trend_d, true));
-            fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_H4_FX, EPIC, EPIC, trend_h4, true));
-
-            String append_h = Utils.getMmDD_TimeHHmm() + "(D:" + trend_d + ", H4:" + trend_h4 + ")";
-
-            String EVENT_1W1D = EVENT_1W1D_FX + "_" + EPIC;
-            fundingHistoryRepository.save(createPumpDumpEntity(EVENT_1W1D, EPIC, EPIC, append_h, true));
-
-            String result = "initForex(D:" + trend_d + ", H4:" + trend_h4 + ")";
-            return result;
         }
 
-        return "";
+        String result = "";
+        List<BtcFutures> list_h4 = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_DAY, 20);
+        if (!CollectionUtils.isEmpty(list_h4)) {
+            String trend_ma3 = Utils.isUptrendByMaIndex(list_h4, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+            String trend_ma10 = Utils.isUptrendByMaIndex(list_h4, 10) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+
+            if (Objects.equals(trend_ma3, trend_ma10)) {
+
+                String trend_d = getTrend(EVENT_DH4H1_D_FX, EPIC);
+                String append_h = Utils.getMmDD_TimeHHmm() + "(D:" + trend_d + ", H4:" + trend_ma10 + ")";
+
+                String EVENT_1W1D = EVENT_1W1D_FX + "_" + EPIC;
+                fundingHistoryRepository.save(createPumpDumpEntity(EVENT_1W1D, EPIC, EPIC, append_h, true));
+
+                result = "initForex(D:" + trend_d + ", H4:" + trend_ma10 + ")";
+
+                fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_H4_FX, EPIC, EPIC, trend_ma10, true));
+            } else {
+                resetTrendSycle(EVENT_DH4H1_H4_FX, EPIC);
+            }
+        }
+
+        return result;
     }
 
     @Override
     public String checkSamePhase_H4M_Forex15m(String EPIC) {
         // EPIC = "CHFSGD";
         String result = "";
-        String trend_d = getTrend(EVENT_DH4H1_D_FX, EPIC);
         String trend_h4 = getTrend(EVENT_DH4H1_H4_FX, EPIC);
 
-        if (Objects.equals("DXY", EPIC)) {
+        if (BscScanBinanceApplication.isReloadAfter(Utils.getCurrentYyyyMmDd_HH(), EPIC)) {
+            List<BtcFutures> list = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR, 20);
 
-            result = checkPosition_Forex15m(EPIC, "");
+            String trend_1h = Utils.switchTrend(list);
+            if (Utils.isNotBlank(trend_1h) && Objects.equals(trend_h4, trend_1h)) {
 
-        } else if (Objects.equals(trend_d, trend_h4)) {
+                createNewTrendCycle(EVENT_DH4H1_H1_FX, list, trend_1h, EPIC, EPIC);
 
-            result = checkPosition_Forex15m(EPIC, trend_h4);
+                Utils.logWritelnWithTime(Utils.appendSpace(
+                        "Forex (" + trend_1h + ")" + Utils.getChartName(list) + Utils.appendSpace(EPIC, 8)
+                                + Utils.getCurrentPrice(list),
+                        58) + Utils.getCapitalLink(EPIC));
+            }
+        }
 
+        List<BtcFutures> list_15m = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 20);
+        String trend_15m = Utils.switchTrend(list_15m);
+        if ((Utils.isNotBlank(trend_15m) && Objects.equals(trend_h4, trend_15m))
+                || (Objects.equals("DXY", EPIC) && Utils.isNotBlank(trend_15m))) {
+
+            if (Objects.equals("DXY", EPIC)) {
+                sendScapMsg(list_15m, EPIC, trend_15m, "");
+            }
+
+            createNewTrendCycle(EVENT_DH4H1_15M_FX, list_15m, trend_15m, EPIC, EPIC);
+
+            Utils.logWritelnWithTime(Utils.appendSpace(
+                    "Forex (" + trend_15m + ")" + Utils.getChartName(list_15m) + Utils.appendSpace(EPIC, 8)
+                            + Utils.getCurrentPrice(list_15m),
+                    58) + Utils.getCapitalLink(EPIC));
         }
 
         return result;
     }
 
-    private String checkPosition_Forex15m(String EPIC, String trend_h4) {
-        List<BtcFutures> list_1h = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR, 20);
-        String trend_1h = Utils.switchTrend(list_1h);
-        if (Utils.isNotBlank(trend_1h) && (Utils.isBlank(trend_h4) || Objects.equals(trend_h4, trend_1h))) {
-
-            sendScapMsg(list_1h, EPIC, trend_1h, "");
-
-            createNewTrendCycle(EVENT_DH4H1_15M_FX, list_1h, trend_1h, EPIC, EPIC);
-
-            Utils.logWritelnWithTime(Utils.appendSpace(
-                    "Forex (" + trend_1h + ")" + Utils.getChartName(list_1h) + EPIC + Utils.getCurrentPrice(list_1h),
-                    45) + Utils.getCapitalLink(EPIC));
-        }
-
-        return "";
-    }
 
     private void checkPositionCrypto15m(String gecko_id, String symbol) {
+        String trend_ma3h4_ma10h1 = getTrend(EVENT_DH4H1_H1_CRYPTO, gecko_id);
+
         List<BtcFutures> list_15m = Utils.loadData(symbol, TIME_15m, 20);
         String trend_15m = Utils.switchTrend(list_15m);
 
@@ -3079,8 +3104,11 @@ public class BinanceServiceImpl implements BinanceService {
             sendMsgOrLogCryptoBySwitchTrend(false, false, list_15m, gecko_id, symbol, EVENT_DH4H1_15M_CRYPTO, "");
 
         } else if (Objects.equals(Utils.TREND_LONG, trend_15m)) {
-
-            sendMsgOrLogCryptoBySwitchTrend(false, true, list_15m, gecko_id, symbol, EVENT_DH4H1_15M_CRYPTO, "");
+            String append = "";
+            if (!Objects.equals(Utils.TREND_LONG, trend_ma3h4_ma10h1)) {
+                append = "(H1)" + Utils.TREND_SHORT;
+            }
+            sendMsgOrLogCryptoBySwitchTrend(false, true, list_15m, gecko_id, symbol, EVENT_DH4H1_15M_CRYPTO, append);
 
         }
 

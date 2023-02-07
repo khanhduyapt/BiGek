@@ -51,7 +51,6 @@ import bsc_scan_binance.response.CandidateTokenCssResponse;
 import bsc_scan_binance.response.DepthResponse;
 import bsc_scan_binance.response.FundingResponse;
 import bsc_scan_binance.response.OrdersProfitResponse;
-import lombok.extern.slf4j.Slf4j;
 
 //@Slf4j
 public class Utils {
@@ -121,8 +120,10 @@ public class Utils {
     public static final List<String> EPICS_FOREX_GBP = Arrays.asList("GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPMXN",
             "GBPNZD", "GBPUSD");
 
-    public static final List<String> EPICS_FOREX_CAD = Arrays.asList("CADCHF", "CADJPY", "CADSGD", "CHFHKD", "CHFJPY",
-            "CHFSGD", "CNHHKD", "CNHJPY");
+    public static final List<String> EPICS_FOREX_CAD = Arrays.asList("CADCHF", "CADJPY", "CHFHKD", "CHFJPY",
+            "CHFSGD", "CNHHKD", "CNHJPY"
+    //"CADSGD",
+    );
 
     public static final List<String> EPICS_FOREX_DOLLAR = Arrays.asList("NZDCAD", "NZDCHF", "NZDJPY", "NZDSGD",
             "NZDUSD", "USDCAD", "USDJPY");
@@ -1850,31 +1851,33 @@ public class Utils {
     }
 
     public static String getCurrentPrice(List<BtcFutures> list) {
-        return " (" + Utils.removeLastZero(list.get(0).getCurrPrice()) + ")";
+        return Utils.appendSpace("(" + Utils.removeLastZero(list.get(0).getCurrPrice()) + ")", 12);
     }
 
     public static String getChartName(List<BtcFutures> list) {
+        String result = "";
         String symbol = list.get(0).getId().toLowerCase();
         if (symbol.contains("_1h_")) {
-            return "(H1)";
+            result = "(H1)";
         }
         if (symbol.contains("_2h_")) {
-            return "(H2)";
+            result = "(H2)";
         }
         if (symbol.contains("_4h_")) {
-            return "(H4)";
+            result = "(H4)";
         }
         if (symbol.contains("_1d_")) {
-            return "(D1)";
+            result = "(D1)";
         }
         if (symbol.contains("_1w_")) {
-            return "(W)";
+            result = "(W)";
         }
 
         symbol = symbol.replace("_00", "");
         symbol = symbol.substring(symbol.indexOf("_"), symbol.length()).replace("_", "");
+        result = "(" + symbol.replace("_00", "") + ")";
 
-        return "(" + symbol.replace("_00", "") + ")";
+        return Utils.appendSpace(result, 4);
     }
 
     public static List<BigDecimal> calcFiboTakeProfit(BigDecimal low_heigh, BigDecimal entry) {
@@ -2552,7 +2555,7 @@ public class Utils {
         result += " ath:" + getPercentToEntry(entry, low_heigh.get(1), true);
         result += getChartName(list);
 
-        return Utils.appendSpace(result, 45);
+        return Utils.appendSpace(result, 46);
     }
 
     public static String calc_BUF_LO_HI_BUF(List<BtcFutures> list, String trend) {
@@ -2721,7 +2724,7 @@ public class Utils {
             return "";
         }
         String result = "";
-        String trend_main = checkTrendSideway(list, 1, 3);
+        String trend_main = checkTrendSideway(list, 0, 2);
         String trend_confirm = checkTrendSideway(list, 3, 8);
 
         if (trend_main.contains(Utils.TREND_LONG) && trend_main.contains(Utils.TREND_SHORT)) {
@@ -2759,12 +2762,17 @@ public class Utils {
         if (Utils.isNotBlank(l_m03x10) && !list.get(1).isUptrend()) {
             l_m03x10 = "";
         }
-
+        if (!isUptrendByMaIndex(list, 10)) {
+            l_m03x10 = "";
+        }
+        // ----------------------------------------
         s_m03x10 = Utils.checkXCutDownY(ma3_1, ma3_2, ma10_1, ma10_2);
         if (Utils.isNotBlank(s_m03x10) && list.get(1).isUptrend()) {
             s_m03x10 = "";
         }
-
+        if (isUptrendByMaIndex(list, 10)) {
+            s_m03x10 = "";
+        }
         String trend = l_m03x10 + "_" + s_m03x10;
 
         return trend;

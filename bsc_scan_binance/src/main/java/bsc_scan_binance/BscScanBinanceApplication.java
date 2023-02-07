@@ -196,7 +196,7 @@ public class BscScanBinanceApplication {
 
     }
 
-    private static boolean isReloadAfter(String blog, String geckoid_or_epic) {
+    public static boolean isReloadAfter(String blog, String geckoid_or_epic) {
         String key = Utils.getStringValue(geckoid_or_epic) + "_";
         key += blog;
         boolean reload = false;
