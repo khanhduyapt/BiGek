@@ -2622,7 +2622,7 @@ public class BinanceServiceImpl implements BinanceService {
         String char_name = Utils.getChartName(list);
         String curr_price = Utils.getCurrentPrice(list) + (Utils.isDangerRange(list) ? "(DANGER)" : "");
         String msg = "(" + trend.replace(Utils.TREND_SHORT, Utils.TEXT_STOP_LONG) + ")" + char_name + symbol
-                + curr_price + append_btc + vmc + append;
+                + curr_price;
 
         if (allowSendMsg) {
             String EVENT_ID = EVENT_PUMP + symbol + char_name + Utils.getCurrentYyyyMmDd_HH();
@@ -2862,11 +2862,14 @@ public class BinanceServiceImpl implements BinanceService {
 
         BigDecimal current_price = list_days.get(0).getCurrPrice();
 
+        String url = "";
         String type = "";
         if (binanceFuturesRepository.existsById(gecko_id)) {
             type = " (Futures) ";
+            url = Utils.getCryptoLink_Future(symbol);
         } else {
             type = " (Spot) ";
+            url = Utils.getCryptoLink_Spot(symbol);
         }
         String taker = Utils.analysisTakerVolume(list_days, list_h4);
         type = type + Utils.analysisVolume(list_days);
@@ -2876,18 +2879,20 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_d1 = createTrendByMa10(EVENT_DH4H1_D_CRYPTO, list_days, gecko_id, symbol);
         String trend_h4 = createTrendByMa10(EVENT_DH4H1_H4_CRYPTO, list_h4, gecko_id, symbol);
 
-        String trend_h1 = "";
-        if (Utils.isUptrendByMaIndex(list_h4, 3) && Utils.isUptrendByMaIndex(list_h1, 10)) {
-            trend_h1 = Utils.TREND_LONG;
+        BigDecimal ma3_h1 = Utils.calcMA(list_h1, 3, 1);
+        BigDecimal ma50_h1 = Utils.calcMA(list_h1, 50, 1);
+        String trend_h1 = Utils.switchTrend(list_h1);
+        if (Objects.equals(Utils.TREND_LONG, trend_h1)) {
+            String star = (ma3_h1.compareTo(ma50_h1) < 0) ? "*5Star*" : "";
+            Utils.logWritelnWithTime(Utils.appendSpace(Utils
+                    .appendSpace(star + "Crypto(" + trend_h1 + ")" + Utils.getChartName(list_h1) + symbol
+                            + Utils.getCurrentPrice(list_h1) + Utils.percentToMa(list_h1, current_price), 58)
+                    + getVolMc(gecko_id), 100) + url);
         }
         fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_H1_CRYPTO, gecko_id, symbol, trend_h1, true));
 
         if (Utils.isNotBlank(trend_h4)) {
             init_trend_result = "initCrypto(D:" + trend_d1 + ", H4: " + trend_h4 + ", H1: " + trend_h1 + ")";
-
-            if (Objects.equals(Utils.TREND_LONG, trend_h1)) {
-                sendMsgOrLogCryptoBySwitchTrend(false, true, list_h1, gecko_id, symbol, EVENT_DH4H1_15M_CRYPTO, "");
-            }
         }
 
         // -------------------------- INIT WEBSITE --------------------------
@@ -3013,7 +3018,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (!Objects.equals(Utils.TREND_LONG, trend_ma3h4_ma10h1)) {
                 append = "(H1)" + Utils.TREND_SHORT;
             }
-            sendMsgOrLogCryptoBySwitchTrend(false, true, list_15m, gecko_id, symbol, EVENT_DH4H1_15M_CRYPTO, append);
+            sendMsgOrLogCryptoBySwitchTrend(true, true, list_15m, gecko_id, symbol, EVENT_DH4H1_15M_CRYPTO, append);
         }
 
         // -----------------------------------------------

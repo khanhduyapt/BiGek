@@ -58,8 +58,8 @@ public class BscScanBinanceApplication {
             // String home = "DESKTOP-L4M1JU2";
             // app_flag = Utils.const_app_flag_msg_on;
             // app_flag = Utils.const_app_flag_all_and_msg; // Debug
-            // app_flag = Utils.const_app_flag_all_coin;
-            app_flag = Utils.const_app_flag_Future_msg_off;
+            app_flag = Utils.const_app_flag_all_coin;
+            // app_flag = Utils.const_app_flag_Future_msg_off;
 
             System.out.println("app_flag:" + app_flag + " (1: msg_on; 2: msg_off; 3: web only; 4: all coin)");
             // --------------------Init--------------------
