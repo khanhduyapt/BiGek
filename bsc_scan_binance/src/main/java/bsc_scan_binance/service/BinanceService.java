@@ -38,7 +38,7 @@ public interface BinanceService {
 
     public void clearTrash();
 
-    public String initForex(String EPIC);
+    public String checkForex_4H(String EPIC);
 
     public String initCrypto(String gecko_id, String symbol);
 
@@ -47,8 +47,6 @@ public interface BinanceService {
     public List<ForexHistoryResponse> getCryptoSamePhaseList();
 
     boolean isFutureCoin(String gecko_id);
-
-    public String checkSamePhase_H4M_Forex15m(String EPIC);
 
     public String checkChart_m15_follow_H4(String TIME, String gecko_id, String symbol);
 

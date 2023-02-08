@@ -1,7 +1,6 @@
 package bsc_scan_binance;
 
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
@@ -120,15 +119,18 @@ public class BscScanBinanceApplication {
 
                         // ----------------------------------------------
                         if (index_crypto % 10 == 1) {
-                            if (!Utils.isWeekend() && Utils.isBusinessTime()) {
+                            if (!Utils.isWeekend()) {
                                 if (index_forex < forex_size) {
                                     String EPIC = capital_list.get(index_forex);
 
-                                    if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), EPIC)) {
-                                        binance_service.checkSamePhase_H4M_Forex15m(EPIC);
-                                    } else if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog4h(), EPIC)) {
-                                        // init_Forex_4h(binance_service, EPIC, index_forex, forex_size);
+                                    if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog4h(), EPIC)) {
+                                        String init = binance_service.checkForex_4H(EPIC);
+
+                                        String msg = "(" + (index_forex + 1) + "/" + forex_size + ")"
+                                                + Utils.getTimeHHmm() + EPIC + " " + init;
+                                        System.out.println(msg);
                                     }
+
                                     index_forex += 1;
                                 } else {
                                     index_forex = 0;
@@ -226,13 +228,6 @@ public class BscScanBinanceApplication {
         }
 
         return reload;
-    }
-
-    private static void init_Forex_4h(BinanceService binance_service, String EPIC, int idx, int size) {
-        String init = binance_service.initForex(EPIC);
-
-        String msg = "(" + (idx + 1) + "/" + size + ")" + Utils.getTimeHHmm() + EPIC + " " + init;
-        System.out.println(msg);
     }
 
     private static void init_Crypto_4h(BinanceService binance_service, CandidateCoin coin, int idx, int size) {
