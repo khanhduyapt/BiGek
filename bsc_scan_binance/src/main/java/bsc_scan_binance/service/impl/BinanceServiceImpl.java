@@ -3079,7 +3079,6 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public String checkForex_4H(String EPIC) {
         String result = "";
-
         try {
             String trend_switch = "";
             List<BtcFutures> list_h4 = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4, 15);
@@ -3094,17 +3093,19 @@ public class BinanceServiceImpl implements BinanceService {
                                     + Utils.appendSpace(EPIC, 8) + Utils.getCurrentPrice(list_h4), 58)
                             .replace("  ", "--") + Utils.getCapitalLink(EPIC)));
                 }
+
+                String trend_ma3 = Utils.isUptrendByMaIndex(list_h4, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+                String trend_ma10 = Utils.isUptrendByMaIndex(list_h4, 10) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+
+                result = "initForex(" + EPIC + ")(Size:" + list_h4.size() + ", D:" + trend_ma10
+                        + ", H4:" + trend_ma3 + ")--------------------------" + trend_switch;
+
+                fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_H4_FX, EPIC, EPIC, trend_ma3, true));
+                fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_D_FX, EPIC, EPIC, trend_ma10, true));
+            } else {
+                result = "initForex(" + EPIC + ")Size:" + list_h4.size();
+                Utils.logWritelnWithTime(result);
             }
-
-            String trend_ma3 = Utils.isUptrendByMaIndex(list_h4, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-            String trend_ma10 = Utils.isUptrendByMaIndex(list_h4, 10) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-
-            result = "initForex(" + EPIC + ")(Size:" + list_h4.size() + ", D:" + trend_ma10 + ", H4:" + trend_ma3 + ")";
-            result += "--------------------------" + trend_switch;
-
-            fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_H4_FX, EPIC, EPIC, trend_ma3, true));
-            fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_D_FX, EPIC, EPIC, trend_ma10, true));
-
         } catch (Exception e) {
             result = "initForex(" + EPIC + ")Error:" + e.getMessage();
             Utils.logWritelnWithTime(result);
