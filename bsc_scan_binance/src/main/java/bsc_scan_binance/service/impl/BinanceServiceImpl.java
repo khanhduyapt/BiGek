@@ -3099,7 +3099,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_ma3 = Utils.isUptrendByMaIndex(list_h4, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
             String trend_ma10 = Utils.isUptrendByMaIndex(list_h4, 10) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
-            result = "initForex(D:" + trend_ma10 + ", H4:" + trend_ma3 + ")";
+            result = "initForex(Size:" + list_h4.size() + ", D:" + trend_ma10 + ", H4:" + trend_ma3 + ")";
             result += "--------------------------" + trend_switch + "--------------------------";
 
             fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_H4_FX, EPIC, EPIC, trend_ma3, true));
