@@ -758,7 +758,7 @@ public class Utils {
         String result = value;
         int len = value.length();
         if (len < length) {
-            for (int i = len; i <= length; i++) {
+            for (int i = len; i < length; i++) {
                 result += " ";
             }
         }
