@@ -2998,12 +2998,16 @@ public class BinanceServiceImpl implements BinanceService {
         try {
             List<BtcFutures> list_h1 = Utils.loadData(symbol, TIME_1h, 50);
             trend_h1 = Utils.switchTrend(list_h1);
-            BigDecimal ma3_h1 = Utils.calcMA(list_h1, 3, 1);
-            BigDecimal ma50_h1 = Utils.calcMA(list_h1, 50, 1);
-            BigDecimal current_price = list_h1.get(0).getCurrPrice();
 
             if (Objects.equals(Utils.TREND_LONG, trend_h1)) {
-                String star = (ma3_h1.compareTo(ma50_h1) < 0) ? "*5Star*" : "";
+                BigDecimal ma10_1 = Utils.calcMA(list_h1, 10, 1);
+                BigDecimal ma50_1 = Utils.calcMA(list_h1, 50, 1);
+                BigDecimal current_price = list_h1.get(0).getCurrPrice();
+                String star = "";
+                if (ma50_1.compareTo(ma10_1) > 0) {
+                    star = "*5Star*";
+                }
+
                 String url = "";
                 if (binanceFuturesRepository.existsById(gecko_id)) {
                     url = Utils.getCryptoLink_Future(symbol);
@@ -3037,13 +3041,13 @@ public class BinanceServiceImpl implements BinanceService {
             sendMsgKillLongShort(list_15m, gecko_id, symbol, "");
         }
 
-        BigDecimal ma3_1 = Utils.calcMA(list_15m, 3, 1);
+        BigDecimal ma10_1 = Utils.calcMA(list_15m, 10, 1);
         BigDecimal ma50_1 = Utils.calcMA(list_15m, 50, 1);
-        boolean allow_send_msg = true;
+        boolean allow_send_msg = false;
         String star = "";
-        if (ma3_1.compareTo(ma50_1) < 0) {
+        if (ma50_1.compareTo(ma10_1) > 0) {
             star = "*5Star*";
-            allow_send_msg = false;
+            allow_send_msg = true;
         }
 
         String trend_15m = Utils.switchTrend(list_15m);
