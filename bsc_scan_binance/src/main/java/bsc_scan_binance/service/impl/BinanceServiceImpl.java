@@ -3011,6 +3011,7 @@ public class BinanceServiceImpl implements BinanceService {
             fundingHistoryRepository
                     .save(createPumpDumpEntity(EVENT_DH4H1_H1_CRYPTO, gecko_id, symbol, trend_h1, true));
 
+            System.out.println("checkChartCrypto: " + Utils.getChartName(list) + symbol);
         } catch (Exception e) {
         }
 
