@@ -2861,14 +2861,11 @@ public class BinanceServiceImpl implements BinanceService {
 
         BigDecimal current_price = list_days.get(0).getCurrPrice();
 
-        String url = "";
         String type = "";
         if (binanceFuturesRepository.existsById(gecko_id)) {
             type = " (Futures) ";
-            url = Utils.getCryptoLink_Future(symbol);
         } else {
             type = " (Spot) ";
-            url = Utils.getCryptoLink_Spot(symbol);
         }
         String taker = Utils.analysisTakerVolume(list_days, list_h4);
         type = type + Utils.analysisVolume(list_days);
@@ -2877,9 +2874,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String trend_d1 = createTrendByMa10(EVENT_DH4H1_D_CRYPTO, list_days, gecko_id, symbol);
         String trend_h4 = createTrendByMa10(EVENT_DH4H1_H4_CRYPTO, list_h4, gecko_id, symbol);
-
         String trend_h1 = checkChart_h1(list_h1, gecko_id, symbol);
-
         if (Utils.isNotBlank(trend_h4)) {
             init_trend_result = "initCrypto(D:" + trend_d1 + ", H4: " + trend_h4 + ", H1: " + trend_h1 + ")";
         }
@@ -3086,15 +3081,16 @@ public class BinanceServiceImpl implements BinanceService {
         String result = "";
 
         try {
+            String trend_switch = "";
             List<BtcFutures> list_h4 = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4, 15);
             if (!CollectionUtils.isEmpty(list_h4)) {
-                String trend_d = Utils.switchTrend(list_h4);
-                if (Utils.isNotBlank(trend_d)) {
+                trend_switch = Utils.switchTrend(list_h4);
+                if (Utils.isNotBlank(trend_switch)) {
 
-                    sendScapMsg(list_h4, EPIC, trend_d, "");
+                    sendScapMsg(list_h4, EPIC, trend_switch, "");
 
                     Utils.logWritelnWithTime((Utils
-                            .appendSpace("Forex (" + trend_d + ")" + Utils.getChartName(list_h4)
+                            .appendSpace("Forex (" + trend_switch + ")" + Utils.getChartName(list_h4)
                                     + Utils.appendSpace(EPIC, 8) + Utils.getCurrentPrice(list_h4), 58)
                             .replace("  ", "--") + Utils.getCapitalLink(EPIC)));
                 }
@@ -3104,6 +3100,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_ma10 = Utils.isUptrendByMaIndex(list_h4, 10) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
             result = "initForex(D:" + trend_ma10 + ", H4:" + trend_ma3 + ")";
+            result += "--------------------------" + trend_switch + "--------------------------";
 
             fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_H4_FX, EPIC, EPIC, trend_ma3, true));
             fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_D_FX, EPIC, EPIC, trend_ma10, true));

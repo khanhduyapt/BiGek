@@ -118,7 +118,7 @@ public class BscScanBinanceApplication {
                         check_BTC_DXY_15m(binance_service);
 
                         // ----------------------------------------------
-                        if (index_crypto % 10 == 1) {
+                        if (index_crypto % 3 == 1) {
                             if (!Utils.isWeekend()) {
                                 if (index_forex < forex_size) {
                                     String EPIC = capital_list.get(index_forex);
