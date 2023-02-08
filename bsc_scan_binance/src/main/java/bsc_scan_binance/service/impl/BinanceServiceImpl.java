@@ -2869,7 +2869,6 @@ public class BinanceServiceImpl implements BinanceService {
             type = " (Spot) ";
         }
         String taker = Utils.analysisTakerVolume(list_days, list_h4);
-        type = type + Utils.analysisVolume(list_days);
 
         // -----------------------------------------------------------------
         checkChartCrypto(list_weeks, gecko_id, symbol, false);
@@ -2966,8 +2965,7 @@ public class BinanceServiceImpl implements BinanceService {
             taker = " taker{" + taker + "}taker";
         }
         // ---------------------------------------------------------
-
-        String web_result = note + type + m2ma + ma7 + sl2ma + taker;
+        String web_result = note + type + Utils.analysisVolume(list_days) + m2ma + ma7 + sl2ma + taker;
         String EVENT_ID = EVENT_1W1D_CRYPTO + "_" + symbol;
         fundingHistoryRepository.save(createPumpDumpEntity(EVENT_ID, gecko_id, symbol, web_result, true));
 
