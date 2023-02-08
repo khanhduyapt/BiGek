@@ -2877,7 +2877,7 @@ public class BinanceServiceImpl implements BinanceService {
         checkChartCrypto(list_h4, gecko_id, symbol, false);
         String trend_d1 = createTrendByMa10(EVENT_DH4H1_D_CRYPTO, list_days, gecko_id, symbol);
         String trend_h4 = createTrendByMa10(EVENT_DH4H1_H4_CRYPTO, list_h4, gecko_id, symbol);
-        String trend_h1 = checkChartCrypto(list_h1, gecko_id, symbol, true);
+        String trend_h1 = checkChartCrypto(list_h1, gecko_id, symbol, false);
         if (Utils.isNotBlank(trend_h4)) {
             init_trend_result = "initCrypto(D:" + trend_d1 + ", H4: " + trend_h4 + ", H1: " + trend_h1 + ")";
         }

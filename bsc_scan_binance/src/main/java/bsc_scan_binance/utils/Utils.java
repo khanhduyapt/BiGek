@@ -210,7 +210,7 @@ public class Utils {
             + " ) tmp                                                                                   \n"
             // and (tmp.trend_d = tmp.trend_h)
             + " WHERE (tmp.trend_h is not null)                                                         \n"
-            + "   AND ((COALESCE(tmp.trend_15m,'') <> '' and COALESCE(tmp.trend_15m,'') = tmp.trend_h) or (COALESCE(tmp.trend_5m,'') <> '' and COALESCE(tmp.trend_5m,'') = tmp.trend_h))   \n"
+            + "   AND tmp.trend_h = tmp.trend_h    \n"
             + " ORDER BY tmp.symbol_or_epic                                                             \n";
 
     public static String sql_OrdersProfitResponse = ""
