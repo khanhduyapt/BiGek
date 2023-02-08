@@ -2871,10 +2871,12 @@ public class BinanceServiceImpl implements BinanceService {
         type = type + Utils.analysisVolume(list_days);
 
         // -----------------------------------------------------------------
-
+        checkChartCrypto(list_weeks, gecko_id, symbol);
+        checkChartCrypto(list_days, gecko_id, symbol);
+        checkChartCrypto(list_h4, gecko_id, symbol);
         String trend_d1 = createTrendByMa10(EVENT_DH4H1_D_CRYPTO, list_days, gecko_id, symbol);
         String trend_h4 = createTrendByMa10(EVENT_DH4H1_H4_CRYPTO, list_h4, gecko_id, symbol);
-        String trend_h1 = checkChart_h1(list_h1, gecko_id, symbol);
+        String trend_h1 = checkChartCrypto(list_h1, gecko_id, symbol);
         if (Utils.isNotBlank(trend_h4)) {
             init_trend_result = "initCrypto(D:" + trend_d1 + ", H4: " + trend_h4 + ", H1: " + trend_h1 + ")";
         }
@@ -2973,17 +2975,23 @@ public class BinanceServiceImpl implements BinanceService {
         return init_trend_result;
     }
 
-    private String checkChart_h1(List<BtcFutures> list_h1, String gecko_id, String symbol) {
+    private String checkChartCrypto(List<BtcFutures> list, String gecko_id, String symbol) {
         String trend_h1 = "";
         try {
-            trend_h1 = Utils.switchTrend(list_h1);
+            trend_h1 = Utils.switchTrend(list);
             if (Objects.equals(Utils.TREND_LONG, trend_h1)) {
-                BigDecimal ma10_1 = Utils.calcMA(list_h1, 10, 1);
-                BigDecimal ma50_1 = Utils.calcMA(list_h1, 50, 1);
-                BigDecimal current_price = list_h1.get(0).getCurrPrice();
                 String star = "";
-                if (ma50_1.compareTo(ma10_1) > 0) {
-                    star = "*5Star*";
+                BigDecimal current_price = list.get(0).getCurrPrice();
+
+                if (list.size() > 20) {
+                    BigDecimal ma10_1 = Utils.calcMA(list, 10, 1);
+                    BigDecimal ma50_1 = Utils.calcMA(list, 50, 1);
+
+                    if (ma50_1.compareTo(ma10_1) > 0) {
+                        star = "*5Star*";
+                    } else {
+                        return "";
+                    }
                 }
 
                 String url = "";
@@ -2995,10 +3003,10 @@ public class BinanceServiceImpl implements BinanceService {
 
                 Utils.logWritelnWithTime(
                         Utils.appendSpace(Utils.appendSpace(
-                                star + "Crypto(" + trend_h1 + ")" + Utils.getChartName(list_h1)
+                                star + "Crypto(" + trend_h1 + ")" + Utils.getChartName(list)
                                         + Utils.appendSpace(symbol, 8)
-                                        + Utils.getCurrentPrice(list_h1) + Utils.percentToMa(list_h1, current_price),
-                                58) + getVolMc(gecko_id) + Utils.getAtlAth(list_h1), 100) + url);
+                                        + Utils.getCurrentPrice(list) + Utils.percentToMa(list, current_price),
+                                58) + getVolMc(gecko_id) + Utils.getAtlAth(list), 100) + url);
             }
             fundingHistoryRepository
                     .save(createPumpDumpEntity(EVENT_DH4H1_H1_CRYPTO, gecko_id, symbol, trend_h1, true));
@@ -3014,7 +3022,7 @@ public class BinanceServiceImpl implements BinanceService {
     public String checkChartH1_Crypto(String gecko_id, String symbol) {
         try {
             List<BtcFutures> list_h1 = Utils.loadData(symbol, TIME_1h, 50);
-            return checkChart_h1(list_h1, gecko_id, symbol);
+            return checkChartCrypto(list_h1, gecko_id, symbol);
         } catch (Exception e) {
         }
 
@@ -3048,7 +3056,7 @@ public class BinanceServiceImpl implements BinanceService {
             sendMsgOrLogCryptoBySwitchTrend(Utils.isNotBlank(trend_15m), false, list_15m, gecko_id, symbol,
                     EVENT_DH4H1_15M_CRYPTO, star);
 
-        } else if (Objects.equals(Utils.TREND_LONG, trend_15m)) {
+        } else if (Objects.equals(Utils.TREND_LONG, trend_15m) && Utils.isNotBlank(star)) {
             String append = "";
             if (!Objects.equals(Utils.TREND_LONG, trend_ma3h4_ma10h1)) {
                 append = "(H1)" + Utils.TREND_SHORT;

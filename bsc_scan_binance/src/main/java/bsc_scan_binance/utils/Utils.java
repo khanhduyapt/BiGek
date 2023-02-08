@@ -106,9 +106,12 @@ public class Utils {
     public static final String CAPITAL_TIME_DAY = "DAY";
     public static final String CAPITAL_TIME_WEEK = "WEEK";
 
-    public static final List<String> EPICS_FOREX = Arrays.asList("DXY", "GOLD", "US30", "OIL_CRUDE", "US500", "EURUSD",
-            "USDJPY", "GBPUSD", "AUDUSD", "GBPJPY", "USDCAD", "USDCHF", "AUDJPY", "EURJPY", "EURGBP", "CADJPY",
-            "NZDUSD", "EURAUD", "EURCAD", "GBPAUD", "GBPCAD", "AUDCAD", "GBPCHF", "EURCHF");
+    public static final List<String> EPICS_FOREX = Arrays.asList(
+            "DXY", "GOLD", "OIL_CRUDE",
+            "US30", "US500", "UK100", "HK50", "FR40",
+            "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF",
+            "EURGBP", "EURAUD", "EURJPY", "EURCAD", "EURCHF", "AUDJPY", "CADJPY",
+            "GBPJPY", "GBPAUD", "GBPCAD", "GBPCHF", "AUDCAD");
 
     // public static final List<String> EPICS_FOREX_SCAPS = Arrays.asList("DXY",
     // "GOLD", "US30", "GBPAUD", "USDCAD",
