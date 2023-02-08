@@ -2871,12 +2871,12 @@ public class BinanceServiceImpl implements BinanceService {
         type = type + Utils.analysisVolume(list_days);
 
         // -----------------------------------------------------------------
-        checkChartCrypto(list_weeks, gecko_id, symbol);
-        checkChartCrypto(list_days, gecko_id, symbol);
-        checkChartCrypto(list_h4, gecko_id, symbol);
+        checkChartCrypto(list_weeks, gecko_id, symbol, false);
+        checkChartCrypto(list_days, gecko_id, symbol, false);
+        checkChartCrypto(list_h4, gecko_id, symbol, false);
         String trend_d1 = createTrendByMa10(EVENT_DH4H1_D_CRYPTO, list_days, gecko_id, symbol);
         String trend_h4 = createTrendByMa10(EVENT_DH4H1_H4_CRYPTO, list_h4, gecko_id, symbol);
-        String trend_h1 = checkChartCrypto(list_h1, gecko_id, symbol);
+        String trend_h1 = checkChartCrypto(list_h1, gecko_id, symbol, true);
         if (Utils.isNotBlank(trend_h4)) {
             init_trend_result = "initCrypto(D:" + trend_d1 + ", H4: " + trend_h4 + ", H1: " + trend_h1 + ")";
         }
@@ -2975,7 +2975,7 @@ public class BinanceServiceImpl implements BinanceService {
         return init_trend_result;
     }
 
-    private String checkChartCrypto(List<BtcFutures> list, String gecko_id, String symbol) {
+    private String checkChartCrypto(List<BtcFutures> list, String gecko_id, String symbol, boolean allowGreaterMa50) {
         String trend_h1 = "";
         try {
             trend_h1 = Utils.switchTrend(list);
@@ -2989,7 +2989,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (ma50_1.compareTo(ma10_1) > 0) {
                         star = "*5S* ";
-                    } else {
+                    } else if (!allowGreaterMa50) {
                         return "";
                     }
                 }
@@ -3022,7 +3022,7 @@ public class BinanceServiceImpl implements BinanceService {
     public String checkChartH1_Crypto(String gecko_id, String symbol) {
         try {
             List<BtcFutures> list_h1 = Utils.loadData(symbol, TIME_1h, 50);
-            return checkChartCrypto(list_h1, gecko_id, symbol);
+            return checkChartCrypto(list_h1, gecko_id, symbol, true);
         } catch (Exception e) {
         }
 
