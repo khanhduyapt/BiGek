@@ -3013,7 +3013,6 @@ public class BinanceServiceImpl implements BinanceService {
             fundingHistoryRepository
                     .save(createPumpDumpEntity(EVENT_DH4H1_H1_CRYPTO, gecko_id, symbol, trend_h1, true));
 
-            System.out.println(Utils.getChartName(list) + symbol + ":" + trend_h1);
         } catch (Exception e) {
         }
 
@@ -3094,6 +3093,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_switch = "";
             List<BtcFutures> list_h4 = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4, 15);
             if (!CollectionUtils.isEmpty(list_h4)) {
+
                 trend_switch = Utils.switchTrend(list_h4);
                 if (Utils.isNotBlank(trend_switch)) {
 
