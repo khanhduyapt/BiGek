@@ -2635,7 +2635,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.isNotBlank(trend)) {
             Utils.logWritelnWithTime(Utils.appendSpace(Utils.appendSpace(
                     "Crypto(" + trend + ")" + char_name + Utils.appendSpace(symbol, 8) + curr_price + append, 58)
-                    + append_btc.replace("_", "") + vmc, 100) + url);
+                    + vmc, 100) + url + " " + append_btc.replace("_", ""));
         }
     }
 
