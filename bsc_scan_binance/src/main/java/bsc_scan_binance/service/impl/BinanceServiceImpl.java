@@ -3045,7 +3045,7 @@ public class BinanceServiceImpl implements BinanceService {
         boolean allow_send_msg = false;
         String star = "";
         if (ma50_1.compareTo(ma10_1) > 0) {
-            star = "*5S*";
+            star = "*5S* ";
             allow_send_msg = true;
         }
 
