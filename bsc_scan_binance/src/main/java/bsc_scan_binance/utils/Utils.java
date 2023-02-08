@@ -78,6 +78,7 @@ public class Utils {
     public static final String TREND_LONG = "Long";
     public static final String TREND_SHORT = "Short";
 
+    public static final String TEXT_5STAR = "(*5S*)";
     public static final String TEXT_DANGER = "(Danger)";
     public static final String TEXT_START_LONG = "Start:Long";
     public static final String TEXT_STOP_LONG = "Stop:Long";

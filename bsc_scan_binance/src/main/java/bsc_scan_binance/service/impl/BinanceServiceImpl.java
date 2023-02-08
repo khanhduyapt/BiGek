@@ -2634,8 +2634,9 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (Utils.isNotBlank(trend)) {
             Utils.logWritelnWithTime(Utils.appendSpace(Utils.appendSpace(
-                    "Crypto(" + trend + ")" + char_name + Utils.appendSpace(symbol, 8) + curr_price + append, 58)
-                    + vmc, 100) + url + " " + append_btc.replace("_", ""));
+                    (append.contains(Utils.TEXT_5STAR) ? Utils.TEXT_5STAR : "Crypto") + "(" + trend + ")" + char_name
+                            + Utils.appendSpace(symbol, 8) + curr_price + append,
+                    58) + vmc, 100) + url + " " + append_btc.replace("_", ""));
         }
     }
 
@@ -2988,7 +2989,7 @@ public class BinanceServiceImpl implements BinanceService {
                     BigDecimal ma50_1 = Utils.calcMA(list, 50, 1);
 
                     if (ma50_1.compareTo(ma10_1) > 0) {
-                        star = "*5S* ";
+                        star = Utils.TEXT_5STAR;
                     } else if (!allowGreaterMa50) {
                         return "";
                     }
@@ -3003,7 +3004,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                 Utils.logWritelnWithTime(
                         Utils.appendSpace(Utils.appendSpace(
-                                star + "Crypto(" + trend_h1 + ")" + Utils.getChartName(list)
+                                (Utils.isNotBlank(star) ? star : "Crypto") + "(" + trend_h1 + ")"
+                                        + Utils.getChartName(list)
                                         + Utils.appendSpace(symbol, 8)
                                         + Utils.getCurrentPrice(list) + Utils.percentToMa(list, current_price),
                                 58) + getVolMc(gecko_id) + Utils.getAtlAth(list), 100) + url);
@@ -3011,7 +3013,7 @@ public class BinanceServiceImpl implements BinanceService {
             fundingHistoryRepository
                     .save(createPumpDumpEntity(EVENT_DH4H1_H1_CRYPTO, gecko_id, symbol, trend_h1, true));
 
-            System.out.println("checkChartCrypto: " + Utils.getChartName(list) + symbol);
+            System.out.println(Utils.getChartName(list) + symbol + ":" + trend_h1);
         } catch (Exception e) {
         }
 
