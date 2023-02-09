@@ -359,16 +359,20 @@ public class BinanceServiceImpl implements BinanceService {
                     + " order by                                                                                    \n"
                     + "     coalesce(can.priority, 3) ASC                                                           \n"
                     // -----------------------------------------------------------------------------
-                    //+ "   , (case when can.symbol = (                                                                                        \n"
-                    //+ " SELECT DISTINCT ON (symbol) symbol FROM funding_history main                                     \n"
-                    //+ " WHERE                                                                                                                                                  \n"
-                    //+ " note = 'Long'                                                                                                                                          \n"
-                    //+ " and symbol = can.symbol                                                                                                                                \n"
-                    //+ " and symbol= (SELECT symbol FROM funding_history WHERE event_time = 'DH4H1_D_TREND_CRYPTO' and symbol = main.symbol)                                    \n"
-                    //+ " and symbol= (SELECT symbol FROM funding_history WHERE event_time = 'DH4H1_STR_H4_CRYPTO' and symbol = main.symbol)                                     \n"
-                    //+ " and symbol= (SELECT symbol FROM funding_history WHERE event_time = 'DH4H1_STR_15M_CRYPTO' and symbol = main.symbol)                                    \n"
-                    //+ " and symbol= (SELECT symbol FROM funding_history WHERE event_time = 'DH4H1_STR_05M_CRYPTO' and symbol = main.symbol)                                    \n"
-                    //+ ") then 1 else 0 end) DESC                                                                                                                               \n"
+                    // + " , (case when can.symbol = ( \n"
+                    // + " SELECT DISTINCT ON (symbol) symbol FROM funding_history main \n"
+                    // + " WHERE \n"
+                    // + " note = 'Long' \n"
+                    // + " and symbol = can.symbol \n"
+                    // + " and symbol= (SELECT symbol FROM funding_history WHERE event_time =
+                    // 'DH4H1_D_TREND_CRYPTO' and symbol = main.symbol) \n"
+                    // + " and symbol= (SELECT symbol FROM funding_history WHERE event_time =
+                    // 'DH4H1_STR_H4_CRYPTO' and symbol = main.symbol) \n"
+                    // + " and symbol= (SELECT symbol FROM funding_history WHERE event_time =
+                    // 'DH4H1_STR_15M_CRYPTO' and symbol = main.symbol) \n"
+                    // + " and symbol= (SELECT symbol FROM funding_history WHERE event_time =
+                    // 'DH4H1_STR_05M_CRYPTO' and symbol = main.symbol) \n"
+                    // + ") then 1 else 0 end) DESC \n"
                     // -----------------------------------------------------------------------------
                     + "   , (case when (macd.futures LIKE '%Futures%' AND macd.futures LIKE '%_Position%') then 10 when (macd.futures LIKE '%Futures%' AND macd.futures LIKE '%Long_4h%') then 11 when (macd.futures LIKE '%Futures%' AND macd.futures LIKE '%move↑%') then 15 when macd.futures LIKE '%Futures%' then 19 \n"
                     + "           when (macd.futures LIKE '%Spot%'    AND macd.futures LIKE '%_Position%') then 30 when (macd.futures LIKE '%Spot%'    AND macd.futures LIKE '%Long_4h%') then 31 when (macd.futures LIKE '%Spot%'    AND macd.futures LIKE '%move↑%') then 35 when macd.futures LIKE '%Spot%'    then 39 \n"
@@ -2639,10 +2643,10 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (Utils.isNotBlank(trend)) {
-            Utils.logWritelnWithTime(Utils.appendSpace(Utils.appendSpace(
-                    (append.contains(Utils.TEXT_5STAR) ? Utils.TEXT_5STAR : "Crypto") + "(" + trend + ")" + char_name
-                            + Utils.appendSpace(symbol, 8) + curr_price + append,
-                    58) + vmc, 100) + url + " " + append_btc.replace("_", ""));
+            Utils.logWritelnWithTime(Utils.appendSpace(
+                    Utils.appendSpace((append.contains(Utils.TEXT_5STAR) ? Utils.TEXT_5STAR : "Crypto") + "(" + trend
+                            + ")" + char_name + Utils.appendSpace(symbol, 8) + curr_price + append, 58) + vmc,
+                    100) + url + " " + append_btc.replace("_", ""));
         }
     }
 
@@ -2885,8 +2889,7 @@ public class BinanceServiceImpl implements BinanceService {
         checkChartCrypto(list_h1, gecko_id, symbol, false);
 
         String trend_h1 = Utils.isUptrendByMaIndex(list_h1, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-        fundingHistoryRepository
-                .save(createPumpDumpEntity(EVENT_DH4H1_H1_CRYPTO, gecko_id, symbol, trend_h1, true));
+        fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_H1_CRYPTO, gecko_id, symbol, trend_h1, true));
 
         if (Utils.isNotBlank(trend_h4)) {
             init_trend_result = "initCrypto(D:" + trend_d1 + ", H4: " + trend_h4 + ", H1: " + trend_h1 + ")";
@@ -3011,13 +3014,11 @@ public class BinanceServiceImpl implements BinanceService {
                     url = Utils.getCryptoLink_Spot(symbol);
                 }
 
-                Utils.logWritelnWithTime(
-                        Utils.appendSpace(Utils.appendSpace(
-                                (Utils.isNotBlank(star) ? star : "Crypto") + "(" + trend + ")"
-                                        + Utils.getChartName(list)
-                                        + Utils.appendSpace(symbol, 8)
-                                        + Utils.getCurrentPrice(list) + Utils.percentToMa(list, current_price),
-                                58) + getVolMc(gecko_id) + Utils.getAtlAth(list), 100) + url);
+                Utils.logWritelnWithTime(Utils.appendSpace(Utils
+                        .appendSpace((Utils.isNotBlank(star) ? star : "Crypto") + "(" + trend + ")"
+                                + Utils.getChartName(list) + Utils.appendSpace(symbol, 8) + Utils.getCurrentPrice(list)
+                                + Utils.percentToMa(list, current_price), 58)
+                        + getVolMc(gecko_id) + Utils.getAtlAth(list), 100) + url);
             }
         } catch (Exception e) {
         }
@@ -3041,6 +3042,9 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public String checkChart_m15_follow_H4(String TIME, String gecko_id, String symbol) {
         List<BtcFutures> list_15m = Utils.loadData(symbol, TIME, 50);
+        if (CollectionUtils.isEmpty(list_15m)) {
+            return "";
+        }
         if ("_BTC_ETH_BNB_".contains("_" + symbol + "_") && Objects.equals(TIME, TIME_15m)) {
             sendMsgKillLongShort(list_15m, gecko_id, symbol, "");
         }
@@ -3121,42 +3125,42 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String checkForex_4H(String EPIC) {
-        String trend_w = getTrend(EVENT_DH4H1_W_FX, EPIC);
-        if (Utils.isBlank(trend_w)) {
-            return "";
-        }
+        // String trend_w = getTrend(EVENT_DH4H1_W_FX, EPIC);
+        // if (Utils.isBlank(trend_w)) {
+        // return "";
+        // }
 
         String result = "";
         try {
             String trend_switch = "";
-            List<BtcFutures> list;
-            if (Utils.EPICS_FOREX_H1.contains(EPIC)) {
-                list = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR, 15);
-            } else {
-                list = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4, 15);
-            }
+            List<BtcFutures> list = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4, 15);
+
+            // if (Utils.EPICS_FOREX_H1.contains(EPIC)) {
+            // list = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR, 15);
+            // } else {
+            // list = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4, 15);
+            // }
 
             if (!CollectionUtils.isEmpty(list)) {
                 String trend_ma3 = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
                 String trend_ma10 = Utils.isUptrendByMaIndex(list, 10) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
                 trend_switch = Utils.switchTrend(list);
-                if (Utils.isNotBlank(trend_switch) && Objects.equals(trend_w, trend_switch)) {
+                if (Utils.isNotBlank(trend_switch)) {
 
                     sendScapMsg(list, EPIC, trend_switch, "");
 
                     String action = Utils.appendSpace("Forex (" + trend_switch + ")" + Utils.getChartName(list), 15);
 
-                    Utils.logWritelnWithTime((Utils
-                            .appendSpace(action + Utils.appendSpace(EPIC, 8) + Utils.getCurrentPrice(list), 58)
-                            .replace("  ", "--") + Utils.getCapitalLink(EPIC)));
+                    Utils.logWritelnWithTime(
+                            (Utils.appendSpace(action + Utils.appendSpace(EPIC, 8) + Utils.getCurrentPrice(list), 58)
+                                    .replace("  ", "--") + Utils.getCapitalLink(EPIC)));
                 }
 
-                result = Utils.appendSpace(
-                        "initForex" + Utils.getChartName(list) + "(" + "Ma10:" + trend_ma10 + ", Ma3:" + trend_ma3
-                                + ")",
-                        60) + "--------------------------Size:" + list.size() + ", Cur:" + trend_switch + ", Week: "
-                        + trend_w;
+                result = Utils
+                        .appendSpace("initForex" + Utils.getChartName(list) + "(" + "Ma10:" + trend_ma10 + ", Ma3:"
+                                + trend_ma3 + ")", 60)
+                        + "--------------------------Size:" + list.size() + ", Cur:" + trend_switch;
 
             } else {
                 result = "initForex(" + EPIC + ")Size:" + list.size();

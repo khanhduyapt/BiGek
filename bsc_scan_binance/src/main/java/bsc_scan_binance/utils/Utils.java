@@ -107,19 +107,16 @@ public class Utils {
     public static final String CAPITAL_TIME_DAY = "DAY";
     public static final String CAPITAL_TIME_WEEK = "WEEK";
 
-    public static final List<String> EPICS_FOREX_H1 = Arrays.asList("GOLD", "OIL_CRUDE",
-            "US30", "US500", "UK100", "HK50", "FR40", "EURUSD", "USDJPY", "USDCHF"
+    public static final List<String> EPICS_FOREX_H1 = Arrays.asList("GOLD", "OIL_CRUDE", "US30", "US500", "UK100",
+            "HK50", "FR40", "EURUSD", "USDJPY", "USDCHF"
 
-            , "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF",
-            "EURGBP", "EURAUD", "EURJPY", "EURCAD", "EURCHF", "AUDJPY", "CADJPY",
-            "GBPJPY", "GBPAUD", "GBPCAD", "GBPCHF", "AUDCAD", "USDCNH");
+            , "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF", "EURGBP", "EURAUD", "EURJPY",
+            "EURCAD", "EURCHF", "AUDJPY", "CADJPY", "GBPJPY", "GBPAUD", "GBPCAD", "GBPCHF", "AUDCAD", "USDCNH");
 
-    public static final List<String> EPICS_FOREX = Arrays.asList(
-            "DXY", "GOLD", "OIL_CRUDE",
-            "US30", "US500", "UK100", "HK50", "FR40",
-            "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF", "USDCNH",
-            "EURGBP", "EURAUD", "EURJPY", "EURCAD", "EURCHF", "AUDJPY", "CADJPY",
-            "GBPJPY", "GBPAUD", "GBPCAD", "GBPCHF", "AUDCAD");
+    public static final List<String> EPICS_FOREX = Arrays.asList("DXY", "GOLD", "OIL_CRUDE", "US30", "US500", "UK100",
+            "HK50", "FR40", "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF", "USDCNH", "EURGBP",
+            "EURAUD", "EURJPY", "EURCAD", "EURCHF", "AUDJPY", "CADJPY", "GBPJPY", "GBPAUD", "GBPCAD", "GBPCHF",
+            "AUDCAD");
 
     // public static final List<String> EPICS_FOREX_SCAPS = Arrays.asList("DXY",
     // "GOLD", "US30", "GBPAUD", "USDCAD",
@@ -1883,6 +1880,9 @@ public class Utils {
     }
 
     public static String getChartName(List<BtcFutures> list) {
+        if (CollectionUtils.isEmpty(list)) {
+            return "";
+        }
         String result = "";
         String symbol = list.get(0).getId().toLowerCase();
         if (symbol.contains("_1h_")) {

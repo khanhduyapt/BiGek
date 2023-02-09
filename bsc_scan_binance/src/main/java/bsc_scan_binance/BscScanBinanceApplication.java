@@ -28,8 +28,7 @@ public class BscScanBinanceApplication {
     public static final String TIME_15m = "15m";// all_and_msg
     public static String callFormBinance = "";
     public static String TAKER_TOKENS = "_";
-    public static int SLEEP_MINISECONDS_INIT = 3000;
-    public static int SLEEP_MINISECONDS = 6000;
+    public static int SLEEP_MINISECONDS = 8000;
     private static Hashtable<String, String> keys_dict = new Hashtable<String, String>();
     public static Hashtable<String, String> forex_naming_dict = new Hashtable<String, String>();
     public static String hostname = "_";
@@ -109,7 +108,6 @@ public class BscScanBinanceApplication {
                 int index_forex = 0;
                 int index_crypto = 0;
                 int forex_size = capital_list.size();
-                int time = SLEEP_MINISECONDS_INIT;
                 Date start_time = Calendar.getInstance().getTime();
 
                 File log = new File(Utils.getLogFileName());
@@ -123,31 +121,34 @@ public class BscScanBinanceApplication {
 
                         // ----------------------------------------------
                         if (index_crypto % 3 == 1) {
-                            if (!Utils.isWeekend()) {
+                            if (!Utils.isWeekend() && Utils.isBusinessTime()) {
                                 if (index_forex < forex_size) {
                                     String EPIC = capital_list.get(index_forex);
                                     String init = "";
 
-                                    if (isReloadAfter(Utils.getYyyyMmDdHH_ChangeDailyChart(), EPIC)) {
-
-                                        init = binance_service.initForex_W_trend(EPIC);
-
-                                    } else {
-                                        if (Utils.EPICS_FOREX_H1.contains(EPIC)) {
-                                            if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH(), EPIC)) {
-                                                init = binance_service.checkForex_4H(EPIC);
-
-                                            }
-                                        } else {
-                                            if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog4h(), EPIC)) {
-                                                init = binance_service.checkForex_4H(EPIC);
-
-                                            }
-                                        }
+                                    if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog2h(), EPIC)) {
+                                        init = binance_service.checkForex_4H(EPIC);
                                     }
 
-                                    String msg = "(" + (index_forex + 1) + "/" + forex_size + ")"
-                                            + Utils.getTimeHHmm() + EPIC + " " + init;
+                                    // if (isReloadAfter(Utils.getYyyyMmDdHH_ChangeDailyChart(), EPIC)) {
+                                    //
+                                    // init = binance_service.initForex_W_trend(EPIC);
+                                    //
+                                    // } else {
+                                    // if (Utils.EPICS_FOREX_H1.contains(EPIC)) {
+                                    // if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH(), EPIC)) {
+                                    // init = binance_service.checkForex_4H(EPIC);
+                                    //
+                                    // }
+                                    // } else {
+                                    // if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog4h(), EPIC)) {
+                                    // init = binance_service.checkForex_4H(EPIC);
+                                    // }
+                                    // }
+                                    // }
+
+                                    String msg = "(" + (index_forex + 1) + "/" + forex_size + ")" + Utils.getTimeHHmm()
+                                            + EPIC + " " + init;
                                     System.out.println(msg);
 
                                     index_forex += 1;
@@ -172,7 +173,7 @@ public class BscScanBinanceApplication {
                         }
 
                         // ----------------------------------------------
-                        wait(time);
+                        wait(SLEEP_MINISECONDS);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -185,8 +186,6 @@ public class BscScanBinanceApplication {
 
                         System.out.println("reload: " + Utils.getMmDD_TimeHHmm() + ", spend:"
                                 + TimeUnit.MILLISECONDS.toMinutes(diff) + " Minutes.");
-
-                        time = SLEEP_MINISECONDS;
 
                         index_crypto = 0;
                     } else {
