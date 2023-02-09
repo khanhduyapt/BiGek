@@ -2822,8 +2822,12 @@ public class Utils {
     }
 
     public static boolean isUptrendByMaIndex(List<BtcFutures> list, int maIndex) {
+        int end = 3;
+        if (list.get(0).getId().contains("_1w_")) {
+            end = 2;
+        }
         BigDecimal ma_c = calcMA(list, maIndex, 1);
-        BigDecimal ma_p = calcMA(list, maIndex, 3);
+        BigDecimal ma_p = calcMA(list, maIndex, end);
         if (ma_c.compareTo(ma_p) > 0) {
             return true;
         }
