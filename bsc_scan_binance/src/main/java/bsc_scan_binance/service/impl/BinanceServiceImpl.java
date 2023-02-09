@@ -3087,9 +3087,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ------------------------END-----------------------
         }
-        System.out.println("checkCrypto_15m: " + symbol + ": " + trend_15m);
 
-        return "";
+        return "checkCrypto_15m: " + Utils.appendSpace(symbol, 8) + ": " + trend_15m;
     }
 
     @Override

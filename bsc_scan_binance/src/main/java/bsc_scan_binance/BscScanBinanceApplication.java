@@ -134,23 +134,6 @@ public class BscScanBinanceApplication {
                                         init = binance_service.checkForex_4H(EPIC);
                                     }
 
-                                    // if (isReloadAfter(Utils.getYyyyMmDdHH_ChangeDailyChart(), EPIC)) {
-                                    //
-                                    // init = binance_service.initForex_W_trend(EPIC);
-                                    //
-                                    // } else {
-                                    // if (Utils.EPICS_FOREX_H1.contains(EPIC)) {
-                                    // if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH(), EPIC)) {
-                                    // init = binance_service.checkForex_4H(EPIC);
-                                    //
-                                    // }
-                                    // } else {
-                                    // if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog4h(), EPIC)) {
-                                    // init = binance_service.checkForex_4H(EPIC);
-                                    // }
-                                    // }
-                                    // }
-
                                     String msg = "(" + (index_forex + 1) + "/" + forex_size + ")" + Utils.getTimeHHmm()
                                             + EPIC + " " + init;
                                     System.out.println(msg);
@@ -163,9 +146,18 @@ public class BscScanBinanceApplication {
                         }
                         // ----------------------------------------------
                         {
+                            if (isReloadAfter(Utils.MINUTES_OF_4H, coin.getGeckoid())) {
+                                gecko_service.loadData(coin.getGeckoid());
+                            }
 
                             if (isReloadAfter(Utils.MINUTES_OF_15M, coin.getSymbol())) {
-                                binance_service.checkCrypto_15m(TIME_15m, coin.getGeckoid(), coin.getSymbol());
+
+                                String init = binance_service.checkCrypto_15m(TIME_15m, coin.getGeckoid(),
+                                        coin.getSymbol());
+
+                                String msg = "(" + (index_crypto + 1) + "/" + total + ")" + Utils.getTimeHHmm() + init;
+
+                                System.out.println(msg);
                             }
 
                             if (!Utils.isWeekend() && Utils.isWorkingTime()) {
