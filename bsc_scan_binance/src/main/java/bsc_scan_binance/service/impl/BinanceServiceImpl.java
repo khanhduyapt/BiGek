@@ -3095,28 +3095,31 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_switch = "";
             List<BtcFutures> list;
             if (Utils.EPICS_FOREX_H1.contains(EPIC)) {
-                list = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4, 15);
+                list = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR, 15);
             } else {
                 list = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4, 15);
             }
 
             if (!CollectionUtils.isEmpty(list)) {
+                String trend_ma3 = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+                String trend_ma10 = Utils.isUptrendByMaIndex(list, 10) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+
                 trend_switch = Utils.switchTrend(list);
                 if (Utils.isNotBlank(trend_switch)) {
 
                     sendScapMsg(list, EPIC, trend_switch, "");
 
+                    String action = Utils.appendSpace("Forex (" + trend_switch + ")" + Utils.getChartName(list), 15);
+
                     Utils.logWritelnWithTime((Utils
-                            .appendSpace("Forex (" + trend_switch + ")" + Utils.getChartName(list)
-                                    + Utils.appendSpace(EPIC, 8) + Utils.getCurrentPrice(list), 58)
+                            .appendSpace(action + Utils.appendSpace(EPIC, 8) + Utils.getCurrentPrice(list), 58)
                             .replace("  ", "--") + Utils.getCapitalLink(EPIC)));
                 }
 
-                String trend_ma3 = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-                String trend_ma10 = Utils.isUptrendByMaIndex(list, 10) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-
-                result = "initForex(" + EPIC + ")(" + "D:" + trend_ma10 + ", H4:" + trend_ma3
-                        + ")--------------------------Size:" + list.size() + trend_switch;
+                result = Utils.appendSpace(
+                        "initForex" + Utils.getChartName(list) + "(" + "D:" + trend_ma10 + ", H4:" + trend_ma3
+                                + ")",
+                        60) + "--------------------------Size:" + list.size() + ", " + trend_switch;
 
                 fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_H4_FX, EPIC, EPIC, trend_ma3, true));
                 fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_D_FX, EPIC, EPIC, trend_ma10, true));
