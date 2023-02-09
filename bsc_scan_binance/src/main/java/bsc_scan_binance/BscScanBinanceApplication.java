@@ -124,7 +124,7 @@ public class BscScanBinanceApplication {
                         check_BTC_DXY_15m(binance_service);
 
                         // ----------------------------------------------
-                        if (index_crypto % 3 == 1) {
+                        if (isReloadAfter(1, "FOREX")) {
                             if (!Utils.isWeekend() && Utils.isBusinessTime()) {
                                 if (index_forex < forex_size) {
                                     String EPIC = capital_list.get(index_forex);
@@ -146,8 +146,10 @@ public class BscScanBinanceApplication {
                         }
                         // ----------------------------------------------
                         {
-                            if (isReloadAfter(Utils.MINUTES_OF_4H, coin.getGeckoid())) {
-                                gecko_service.loadData(coin.getGeckoid());
+                            if (isReloadAfter(1, "COIN_GECKO")) {
+                                if (isReloadAfter(Utils.MINUTES_OF_4H, coin.getGeckoid())) {
+                                    gecko_service.loadData(coin.getGeckoid());
+                                }
                             }
 
                             if (isReloadAfter(Utils.MINUTES_OF_15M, coin.getSymbol())) {
