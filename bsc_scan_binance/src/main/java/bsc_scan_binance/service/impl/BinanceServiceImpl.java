@@ -3117,7 +3117,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 result = Utils.appendSpace(
-                        "initForex" + Utils.getChartName(list) + "(" + "D:" + trend_ma10 + ", H4:" + trend_ma3
+                        "initForex" + Utils.getChartName(list) + "(" + "Ma10:" + trend_ma10 + ", Ma3:" + trend_ma3
                                 + ")",
                         60) + "--------------------------Size:" + list.size() + ", " + trend_switch;
 
