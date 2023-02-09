@@ -1,5 +1,6 @@
 package bsc_scan_binance;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.util.Calendar;
 import java.util.Date;
@@ -70,6 +71,9 @@ public class BscScanBinanceApplication {
             Utils.logWriteln("____________________Start_" + Utils.getToday_YyyyMMdd() + Utils.getTimeHHmm()
                     + "____________________", true);
 
+            File log = new File(Utils.getLogFileName());
+            System.out.println(log.getAbsolutePath());
+
             if (app_flag == Utils.const_app_flag_msg_on || app_flag == Utils.const_app_flag_all_and_msg) {
                 // try {
                 // wandaBot = applicationContext.getBean(WandaBot.class);
@@ -123,12 +127,22 @@ public class BscScanBinanceApplication {
                                 if (index_forex < forex_size) {
                                     String EPIC = capital_list.get(index_forex);
 
-                                    if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog4h(), EPIC)) {
-                                        String init = binance_service.checkForex_4H(EPIC);
+                                    if (Utils.EPICS_FOREX_H1.contains(EPIC)) {
+                                        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH(), EPIC)) {
+                                            String init = binance_service.checkForex_4H(EPIC);
 
-                                        String msg = "(" + (index_forex + 1) + "/" + forex_size + ")"
-                                                + Utils.getTimeHHmm() + EPIC + " " + init;
-                                        System.out.println(msg);
+                                            String msg = "(" + (index_forex + 1) + "/" + forex_size + ")"
+                                                    + Utils.getTimeHHmm() + EPIC + " " + init;
+                                            System.out.println(msg);
+                                        }
+                                    } else {
+                                        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog4h(), EPIC)) {
+                                            String init = binance_service.checkForex_4H(EPIC);
+
+                                            String msg = "(" + (index_forex + 1) + "/" + forex_size + ")"
+                                                    + Utils.getTimeHHmm() + EPIC + " " + init;
+                                            System.out.println(msg);
+                                        }
                                     }
 
                                     index_forex += 1;

@@ -107,6 +107,9 @@ public class Utils {
     public static final String CAPITAL_TIME_DAY = "DAY";
     public static final String CAPITAL_TIME_WEEK = "WEEK";
 
+    public static final List<String> EPICS_FOREX_H1 = Arrays.asList("GOLD", "OIL_CRUDE",
+            "US30", "EURUSD");
+
     public static final List<String> EPICS_FOREX = Arrays.asList(
             "DXY", "GOLD", "OIL_CRUDE",
             "US30", "US500", "UK100", "HK50", "FR40",
@@ -837,7 +840,7 @@ public class Utils {
         return " https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + epic;
     }
 
-    private static String getLogFileName() {
+    public static String getLogFileName() {
         String PATH = "crypto_forex_result/";
         String fileName = BscScanBinanceApplication.hostname + "_scan_result_" + getYyyyMmDdHH_ChangeDailyChart()
                 + ".log";
