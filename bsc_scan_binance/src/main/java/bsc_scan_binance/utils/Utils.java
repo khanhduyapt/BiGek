@@ -1092,7 +1092,7 @@ public class Utils {
     }
 
     public static String getTimeHHmm() {
-        return Utils.convertDateToString("(HH:mm)", Calendar.getInstance().getTime());
+        return Utils.convertDateToString("(HH:mm) ", Calendar.getInstance().getTime());
     }
 
     public static String getToday_YyyyMMdd() {
