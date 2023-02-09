@@ -3028,22 +3028,35 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     @Transactional
-    public String checkCrypto_H4vsBtc(String gecko_id, String symbol) {
-        String trend_15m = "";
+    public String checkCrypto_vsBtc(String gecko_id, String symbol) {
+        if (!binanceFuturesRepository.existsById(gecko_id)) {
+            return "";
+        }
+
+        String trend = "";
         try {
-            List<BtcFutures> list = Utils.loadData(symbol, TIME_4h, 50, "BTC");
+            List<BtcFutures> list = Utils.loadData(symbol, TIME_1h, 50, "BTC");
             if (CollectionUtils.isEmpty(list)) {
                 return "";
             }
 
-            trend_15m = Utils.switchTrend(list);
-            if (Objects.equals(Utils.TREND_LONG, trend_15m)) {
-                sendMsgOrLogCryptoBySwitchTrend(true, true, list, gecko_id, symbol, EVENT_DH4H1_H4_CRYPTO,
-                        "Compare.vs.BTC");
+            trend = Utils.switchTrend(list);
+            if (Objects.equals(Utils.TREND_LONG, trend)) {
+                String msg = Utils.getTimeHHmm() + "(Check:" + trend + ".vs.Btc)" + Utils.getChartName(list) + symbol;
+                String EVENT_ID = EVENT_PUMP + symbol + "_VS_BTC" + Utils.getCurrentYyyyMmDd_HH();
+                sendMsgPerHour(EVENT_ID, msg, true);
+
+                Utils.logWritelnWithTime(Utils
+                        .appendSpace(Utils
+                                .appendSpace("Crypto" + "(" + trend + ")" + Utils.getChartName(list)
+                                        + Utils.appendSpace(symbol, 8) + Utils.getCurrentPrice(list), 58)
+                                + getVolMc(gecko_id) + Utils.getAtlAth(list), 100)
+                        + Utils.getCryptoLink_Future(symbol));
+
             }
         } catch (Exception e) {
         }
-        System.out.println("checkCrypto_H4vsBtc: " + symbol + ", trend: " + trend_15m);
+        System.out.println("checkCrypto_H4vsBtc: " + symbol + ", trend: " + trend);
 
         return "";
     }

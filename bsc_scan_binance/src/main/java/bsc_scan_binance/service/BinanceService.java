@@ -50,7 +50,7 @@ public interface BinanceService {
 
     public String checkCrypto_15m(String TIME, String gecko_id, String symbol);
 
-    public String checkCrypto_H4vsBtc(String gecko_id, String symbol);
+    public String checkCrypto_vsBtc(String gecko_id, String symbol);
 
     public String initForex_W_trend(String EPIC);
 }

@@ -158,8 +158,8 @@ public class BscScanBinanceApplication {
                         }
 
                         // ----------------------------------------------
-                        if (isReloadAfter(Utils.MINUTES_OF_4H, "COMPARE_VS_BTC_" + coin.getSymbol())) {
-                            binance_service.checkCrypto_H4vsBtc(coin.getGeckoid(), coin.getSymbol());
+                        if (isReloadAfter(Utils.MINUTES_OF_1H, "COMPARE_VS_BTC_" + coin.getSymbol())) {
+                            binance_service.checkCrypto_vsBtc(coin.getGeckoid(), coin.getSymbol());
                             wait(SLEEP_MINISECONDS);
                         }
 

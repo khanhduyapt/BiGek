@@ -2749,6 +2749,10 @@ public class Utils {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
+        if (Utils.getStringValue(list.get(0).getCurrPrice()).contains("E")) {
+            return "";
+        }
+
         String result = "";
         String trend_main = checkTrendSideway(list, 0, 2);
         String trend_confirm = checkTrendSideway(list, 3, 8);
