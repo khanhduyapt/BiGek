@@ -71,9 +71,6 @@ public class BscScanBinanceApplication {
             Utils.logWriteln("____________________Start_" + Utils.getToday_YyyyMMdd() + Utils.getTimeHHmm()
                     + "____________________", true);
 
-            File log = new File(Utils.getLogFileName());
-            System.out.println(log.getAbsolutePath());
-
             if (app_flag == Utils.const_app_flag_msg_on || app_flag == Utils.const_app_flag_all_and_msg) {
                 // try {
                 // wandaBot = applicationContext.getBean(WandaBot.class);
@@ -114,6 +111,9 @@ public class BscScanBinanceApplication {
                 int forex_size = capital_list.size();
                 int time = SLEEP_MINISECONDS_INIT;
                 Date start_time = Calendar.getInstance().getTime();
+
+                File log = new File(Utils.getLogFileName());
+                System.out.println(log.getAbsolutePath());
 
                 while (index_crypto < total) {
                     CandidateCoin coin = token_list.get(index_crypto);

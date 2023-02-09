@@ -112,12 +112,12 @@ public class Utils {
 
             , "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF",
             "EURGBP", "EURAUD", "EURJPY", "EURCAD", "EURCHF", "AUDJPY", "CADJPY",
-            "GBPJPY", "GBPAUD", "GBPCAD", "GBPCHF", "AUDCAD");
+            "GBPJPY", "GBPAUD", "GBPCAD", "GBPCHF", "AUDCAD", "USDCNH");
 
     public static final List<String> EPICS_FOREX = Arrays.asList(
             "DXY", "GOLD", "OIL_CRUDE",
             "US30", "US500", "UK100", "HK50", "FR40",
-            "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF",
+            "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF", "USDCNH",
             "EURGBP", "EURAUD", "EURJPY", "EURCAD", "EURCHF", "AUDJPY", "CADJPY",
             "GBPJPY", "GBPAUD", "GBPCAD", "GBPCHF", "AUDCAD");
 
