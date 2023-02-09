@@ -3046,6 +3046,7 @@ public class BinanceServiceImpl implements BinanceService {
             System.out.println(symbol + ", size: 0");
             return "";
         }
+
         if ("_BTC_ETH_BNB_".contains("_" + symbol + "_") && Objects.equals(TIME, TIME_15m)) {
             sendMsgKillLongShort(list_15m, gecko_id, symbol, "");
         }
@@ -3086,6 +3087,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ------------------------END-----------------------
         }
+        System.out.println("checkCrypto_15m: " + symbol + ": " + trend_15m);
 
         return "";
     }
