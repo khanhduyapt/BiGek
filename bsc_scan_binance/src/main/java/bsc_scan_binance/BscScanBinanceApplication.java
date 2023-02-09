@@ -151,16 +151,18 @@ public class BscScanBinanceApplication {
                                 gecko_service.loadData(coin.getGeckoid());
                             }
 
-                            if (isReloadAfter(Utils.MINUTES_OF_4H, "COMPARE_VS_BTC_" + coin.getSymbol())) {
-                                binance_service.checkCrypto_H4vsBtc(coin.getGeckoid(), coin.getSymbol());
-                            }
-
                             if (!Utils.isWeekend() && Utils.isWorkingTime()) {
                                 init_Crypto_4h(binance_service, coin, index_crypto, total);
+                                wait(SLEEP_MINISECONDS);
                             }
                         }
 
                         // ----------------------------------------------
+                        if (isReloadAfter(Utils.MINUTES_OF_4H, "COMPARE_VS_BTC_" + coin.getSymbol())) {
+                            binance_service.checkCrypto_H4vsBtc(coin.getGeckoid(), coin.getSymbol());
+                            wait(SLEEP_MINISECONDS);
+                        }
+
                         if (isReloadAfter(Utils.MINUTES_OF_15M, coin.getSymbol())) {
                             String init = binance_service.checkCrypto_15m(TIME_15m, coin.getGeckoid(),
                                     coin.getSymbol());
