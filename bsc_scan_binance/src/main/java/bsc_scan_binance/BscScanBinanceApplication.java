@@ -131,7 +131,7 @@ public class BscScanBinanceApplication {
                                     String init = "";
 
                                     if (isReloadAfter(Utils.MINUTES_OF_4H, EPIC)) {
-                                        init = binance_service.checkForex_4H(EPIC);
+                                        init = binance_service.checkForex_4H(EPIC, Utils.CAPITAL_TIME_HOUR);
                                     }
 
                                     String msg = "(" + (index_forex + 1) + "/" + forex_size + ")" + Utils.getTimeHHmm()
@@ -144,27 +144,30 @@ public class BscScanBinanceApplication {
                                 }
                             }
                         }
+
                         // ----------------------------------------------
-                        {
-                            if (isReloadAfter(1, "COIN_GECKO")) {
-                                if (isReloadAfter(Utils.MINUTES_OF_4H, coin.getGeckoid())) {
-                                    gecko_service.loadData(coin.getGeckoid());
-                                }
+                        if (isReloadAfter(1, "CRYPTO")) {
+                            if (isReloadAfter(Utils.MINUTES_OF_4H, "COIN_GECKO_" + coin.getSymbol())) {
+                                gecko_service.loadData(coin.getGeckoid());
                             }
 
-                            if (isReloadAfter(Utils.MINUTES_OF_15M, coin.getSymbol())) {
-
-                                String init = binance_service.checkCrypto_15m(TIME_15m, coin.getGeckoid(),
-                                        coin.getSymbol());
-
-                                String msg = "(" + (index_crypto + 1) + "/" + total + ")" + Utils.getTimeHHmm() + init;
-
-                                System.out.println(msg);
+                            if (isReloadAfter(Utils.MINUTES_OF_4H, "COMPARE_VS_BTC_" + coin.getSymbol())) {
+                                binance_service.checkCrypto_H4vsBtc(coin.getGeckoid(), coin.getSymbol());
                             }
 
                             if (!Utils.isWeekend() && Utils.isWorkingTime()) {
                                 init_Crypto_4h(binance_service, coin, index_crypto, total);
                             }
+                        }
+
+                        // ----------------------------------------------
+                        if (isReloadAfter(Utils.MINUTES_OF_15M, coin.getSymbol())) {
+                            String init = binance_service.checkCrypto_15m(TIME_15m, coin.getGeckoid(),
+                                    coin.getSymbol());
+
+                            String msg = "(" + (index_crypto + 1) + "/" + total + ")" + Utils.getTimeHHmm() + init;
+
+                            System.out.println(msg);
                         }
 
                         // ----------------------------------------------
