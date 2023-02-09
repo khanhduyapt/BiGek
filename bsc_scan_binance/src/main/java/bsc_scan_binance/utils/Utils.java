@@ -107,6 +107,10 @@ public class Utils {
     public static final String CAPITAL_TIME_DAY = "DAY";
     public static final String CAPITAL_TIME_WEEK = "WEEK";
 
+    public static final long MINUTES_OF_4H = 240;
+    public static final long MINUTES_OF_1H = 60;
+    public static final long MINUTES_OF_15M = 15;
+
     public static final List<String> EPICS_FOREX_H1 = Arrays.asList("GOLD", "OIL_CRUDE", "US30", "US500", "UK100",
             "HK50", "FR40", "EURUSD", "USDJPY", "USDCHF"
 

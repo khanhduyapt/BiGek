@@ -3040,18 +3040,14 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     @Transactional
-    public String checkChart_m15_follow_H4(String TIME, String gecko_id, String symbol) {
+    public String checkCrypto_15m(String TIME, String gecko_id, String symbol) {
         List<BtcFutures> list_15m = Utils.loadData(symbol, TIME, 50);
         if (CollectionUtils.isEmpty(list_15m)) {
+            System.out.println(symbol + ", size: 0");
             return "";
         }
         if ("_BTC_ETH_BNB_".contains("_" + symbol + "_") && Objects.equals(TIME, TIME_15m)) {
             sendMsgKillLongShort(list_15m, gecko_id, symbol, "");
-        }
-
-        String trend_h1 = getTrend(EVENT_DH4H1_H1_CRYPTO, gecko_id);
-        if (Objects.equals(Utils.TREND_SHORT, trend_h1)) {
-            return "";
         }
 
         BigDecimal ma10_1 = Utils.calcMA(list_15m, 10, 1);
@@ -3070,13 +3066,10 @@ public class BinanceServiceImpl implements BinanceService {
             sendMsgOrLogCryptoBySwitchTrend(Utils.isNotBlank(trend_15m), false, list_15m, gecko_id, symbol,
                     EVENT_DH4H1_15M_CRYPTO, star);
 
-        } else if (Objects.equals(Utils.TREND_LONG, trend_15m) && Utils.isNotBlank(star)) {
-            String append = "";
-            if (!Objects.equals(Utils.TREND_LONG, trend_h1)) {
-                append = "(H1)" + Utils.TREND_SHORT;
-            }
+        } else if (Objects.equals(Utils.TREND_LONG, trend_15m)) {
+
             sendMsgOrLogCryptoBySwitchTrend(allow_send_msg, true, list_15m, gecko_id, symbol, EVENT_DH4H1_15M_CRYPTO,
-                    star + append);
+                    star);
         }
 
         // -----------------------------------------------

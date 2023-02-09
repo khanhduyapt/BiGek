@@ -2,6 +2,10 @@ package bsc_scan_binance;
 
 import java.io.File;
 import java.net.InetAddress;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
@@ -29,7 +33,7 @@ public class BscScanBinanceApplication {
     public static String callFormBinance = "";
     public static String TAKER_TOKENS = "_";
     public static int SLEEP_MINISECONDS = 8000;
-    private static Hashtable<String, String> keys_dict = new Hashtable<String, String>();
+    private static Hashtable<String, LocalTime> keys_dict = new Hashtable<String, LocalTime>();
     public static Hashtable<String, String> forex_naming_dict = new Hashtable<String, String>();
     public static String hostname = "_";
     public static ApplicationContext applicationContext;
@@ -126,7 +130,7 @@ public class BscScanBinanceApplication {
                                     String EPIC = capital_list.get(index_forex);
                                     String init = "";
 
-                                    if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog2h(), EPIC)) {
+                                    if (isReloadAfter(Utils.MINUTES_OF_4H, EPIC)) {
                                         init = binance_service.checkForex_4H(EPIC);
                                     }
 
@@ -159,16 +163,13 @@ public class BscScanBinanceApplication {
                         }
                         // ----------------------------------------------
                         {
-                            init_Crypto_4h(binance_service, coin, index_crypto, total);
 
-                            if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), coin.getSymbol())) {
+                            if (isReloadAfter(Utils.MINUTES_OF_15M, coin.getSymbol())) {
+                                binance_service.checkCrypto_15m(TIME_15m, coin.getGeckoid(), coin.getSymbol());
+                            }
 
-                                binance_service.checkChart_m15_follow_H4(TIME_15m, coin.getGeckoid(), coin.getSymbol());
-
-                            } else if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH(), coin.getSymbol())) {
-
-                                binance_service.checkChartH1_Crypto(coin.getGeckoid(), coin.getSymbol());
-
+                            if (!Utils.isWeekend() && Utils.isWorkingTime()) {
+                                init_Crypto_4h(binance_service, coin, index_crypto, total);
                             }
                         }
 
@@ -206,42 +207,42 @@ public class BscScanBinanceApplication {
     }
 
     private static void check_BTC_DXY_15m(BinanceService binance_service) {
-        if (!isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "DXY_BTC_ETH_BNB")) {
-            return;
-        }
-
-        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "BTC")) {
+        if (isReloadAfter(Utils.MINUTES_OF_15M, "BTC")) {
             System.out.println(Utils.getTimeHHmm() + "Check BTC(15m)");
-            binance_service.checkChart_m15_follow_H4(TIME_15m, "bitcoin", "BTC");
+            binance_service.checkCrypto_15m(TIME_15m, "bitcoin", "BTC");
             wait(SLEEP_MINISECONDS);
         }
 
-        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "ETH")) {
+        if (isReloadAfter(Utils.MINUTES_OF_15M, "ETH")) {
             System.out.println(Utils.getTimeHHmm() + "Check ETH(15m)");
-            binance_service.checkChart_m15_follow_H4(TIME_15m, "ethereum", "ETH");
+            binance_service.checkCrypto_15m(TIME_15m, "ethereum", "ETH");
             wait(SLEEP_MINISECONDS);
         }
 
-        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog15m(), "BNB")) {
+        if (isReloadAfter(Utils.MINUTES_OF_15M, "BNB")) {
             System.out.println(Utils.getTimeHHmm() + "Check BNB(15m)");
-            binance_service.checkChart_m15_follow_H4(TIME_15m, "binancecoin", "BNB");
+            binance_service.checkCrypto_15m(TIME_15m, "binancecoin", "BNB");
             wait(SLEEP_MINISECONDS);
         }
-
     }
 
-    public static boolean isReloadAfter(String blog, String geckoid_or_epic) {
-        String key = Utils.getStringValue(geckoid_or_epic) + "_";
-        key += blog;
+    public static boolean isReloadAfter(long minutes, String geckoid_or_epic) {
+        LocalTime cur_time = LocalTime.now();
+        String key = Utils.getStringValue(geckoid_or_epic);
+
         boolean reload = false;
         if (keys_dict.containsKey(key)) {
-            if (!Objects.equals(key, keys_dict.get(key))) {
-                keys_dict.put(key, key);
+            LocalTime pre_time = keys_dict.get(key);
+
+            long elapsedMinutes = Duration.between(pre_time, cur_time).toMinutes();
+
+            if (minutes <= elapsedMinutes) {
+                keys_dict.put(key, cur_time);
 
                 reload = true;
             }
         } else {
-            keys_dict.put(key, key);
+            keys_dict.put(key, cur_time);
             reload = true;
         }
 
@@ -249,7 +250,7 @@ public class BscScanBinanceApplication {
     }
 
     private static void init_Crypto_4h(BinanceService binance_service, CandidateCoin coin, int idx, int size) {
-        if (isReloadAfter(Utils.getCurrentYyyyMmDd_HH_Blog4h(), coin.getGeckoid())) {
+        if (isReloadAfter(Utils.MINUTES_OF_4H, coin.getGeckoid())) {
             String init = binance_service.initCrypto(coin.getGeckoid(), coin.getSymbol());
 
             String msg = "(" + (idx + 1) + "/" + size + ")" + Utils.getTimeHHmm() + coin.getSymbol() + " " + init;

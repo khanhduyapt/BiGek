@@ -48,7 +48,7 @@ public interface BinanceService {
 
     boolean isFutureCoin(String gecko_id);
 
-    public String checkChart_m15_follow_H4(String TIME, String gecko_id, String symbol);
+    public String checkCrypto_15m(String TIME, String gecko_id, String symbol);
 
     public String checkChartH1_Crypto(String gecko_id, String symbol);
 
