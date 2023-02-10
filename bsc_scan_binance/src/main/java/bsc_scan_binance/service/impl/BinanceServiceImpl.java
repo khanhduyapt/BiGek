@@ -3059,7 +3059,10 @@ public class BinanceServiceImpl implements BinanceService {
 
                 trend_switch = Utils.switchTrend(list);
                 if (Utils.isNotBlank(trend_switch)) {
-                    sendScapMsg(list, EPIC, trend_switch, "");
+
+                    if (Objects.equals(trend_w, trend_switch)) {
+                        sendScapMsg(list, EPIC, trend_switch, "");
+                    }
 
                     Utils.logWritelnWithTime(
                             Utils.appendSpace(
@@ -3072,8 +3075,9 @@ public class BinanceServiceImpl implements BinanceService {
                                     128));
                 }
 
-                result = Utils.getChartName(list) + "(" + "Ma10:" + trend_ma10 + ", Ma3:" + trend_ma3 + ")"
-                        + "--------------------------Size:" + list.size() + ", Cur:" + trend_switch;
+                result = "(" + "Ma10:" + trend_ma10 + ", Ma3:" + trend_ma3 + ")" + Utils.getChartName(list)
+                        + "--------------------------Size:" + list.size() + ", Cur:"
+                        + trend_switch;
 
             } else {
                 result = "(" + EPIC + ")Size:" + list.size();

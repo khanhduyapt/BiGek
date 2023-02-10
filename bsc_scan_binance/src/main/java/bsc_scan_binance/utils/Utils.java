@@ -2426,7 +2426,6 @@ public class Utils {
 
     public static String getScapLong(List<BtcFutures> list_entry, List<BtcFutures> list_tp, int usd, boolean isLong) {
         try {
-
             BigDecimal curr_price = list_entry.get(0).getCurrPrice();
             List<BigDecimal> low_heigh_tp = getLowHeightCandle(list_tp);
             List<BigDecimal> low_heigh_sl = getLowHeightCandle(list_entry.subList(0, 15));
@@ -2794,15 +2793,19 @@ public class Utils {
         BigDecimal ma3_1 = calcMA(list, 3, str);
         BigDecimal ma3_2 = calcMA(list, 3, end);
 
-        BigDecimal ma20_1 = calcMA(list, 10, str);
-        BigDecimal ma20_2 = calcMA(list, 10, end);
+        int slow_index = 10;
+        if (list.get(0).getId().contains("_4h_")) {
+            slow_index = 6;
+        }
+        BigDecimal maX_1 = calcMA(list, slow_index, str);
+        BigDecimal maX_2 = calcMA(list, slow_index, end);
 
-        l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma20_1, ma20_2);
+        l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, maX_1, maX_2);
         if (!isUptrendByMaIndex(list, 10)) {
             l_m03x10 = "";
         }
         // ----------------------------------------
-        s_m03x10 = Utils.checkXCutDownY(ma3_1, ma3_2, ma20_1, ma20_2);
+        s_m03x10 = Utils.checkXCutDownY(ma3_1, ma3_2, maX_1, maX_2);
         if (isUptrendByMaIndex(list, 10)) {
             s_m03x10 = "";
         }

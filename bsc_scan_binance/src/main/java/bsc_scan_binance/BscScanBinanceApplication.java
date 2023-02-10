@@ -136,13 +136,14 @@ public class BscScanBinanceApplication {
                                     }
 
                                     if (isReloadAfter(Utils.MINUTES_OF_1H, EPIC)) {
-                                        init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                        init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+
+                                        String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3) + "/"
+                                                + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
+                                                + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 8) + " " + init;
+
+                                        System.out.println(msg);
                                     }
-
-                                    String msg = Utils.appendSpace("(" + (index_forex + 1) + "/" + forex_size + ")", 10)
-                                            + Utils.getTimeHHmm() + EPIC + " " + init;
-
-                                    System.out.println(msg);
 
                                     index_forex += 1;
                                 } else {
@@ -161,8 +162,9 @@ public class BscScanBinanceApplication {
                                 if (isReloadAfter(Utils.MINUTES_OF_4H, coin.getGeckoid())) {
                                     String init = binance_service.initCrypto(coin.getGeckoid(), coin.getSymbol());
 
-                                    String msg = Utils.appendSpace("(" + (index_crypto + 1) + "/" + total + ")", 10)
-                                            + Utils.getTimeHHmm() + coin.getSymbol() + " " + init;
+                                    String msg = "(" + Utils.appendSpace(String.valueOf(index_crypto + 1), 3) + "/"
+                                            + Utils.appendSpace(String.valueOf(total), 3) + ")"
+                                            + Utils.getTimeHHmm() + Utils.appendSpace(coin.getSymbol(), 8) + " " + init;
 
                                     System.out.println(msg);
                                 }
