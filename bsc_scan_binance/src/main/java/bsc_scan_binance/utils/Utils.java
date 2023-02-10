@@ -107,6 +107,13 @@ public class Utils {
     public static final String CAPITAL_TIME_DAY = "DAY";
     public static final String CAPITAL_TIME_WEEK = "WEEK";
 
+    public static final String CRYPTO_TIME_5m = "5m";
+    public static final String CRYPTO_TIME_15m = "15m";
+    public static final String CRYPTO_TIME_1h = "1h";
+    public static final String CRYPTO_TIME_4h = "4h";
+    public static final String CRYPTO_TIME_1d = "1d";
+    public static final String CRYPTO_TIME_1w = "1w";
+
     public static final long MINUTES_OF_W = 10080;
     public static final long MINUTES_OF_D = 1440;
     public static final long MINUTES_OF_4H = 240;
