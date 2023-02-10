@@ -67,7 +67,8 @@ public class BscScanBinanceApplication {
             CoinGeckoService gecko_service = applicationContext.getBean(CoinGeckoService.class);
             BinanceService binance_service = applicationContext.getBean(BinanceService.class);
 
-            Utils.logWriteln("____________________Start_" + Utils.getToday_YyyyMMdd() + Utils.getTimeHHmm()
+            Utils.logWriteln("____________________Start "
+                    + Utils.getToday_YyyyMMdd() + Utils.getTimeHHmm()
                     + "____________________", true);
 
             if (app_flag == Utils.const_app_flag_msg_on || app_flag == Utils.const_app_flag_all_and_msg) {
