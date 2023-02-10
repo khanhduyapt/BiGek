@@ -140,7 +140,7 @@ public class BscScanBinanceApplication {
 
                                         String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3) + "/"
                                                 + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
-                                                + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 8) + " " + init;
+                                                + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 10) + " " + init;
 
                                         System.out.println(msg);
                                     }
@@ -164,7 +164,8 @@ public class BscScanBinanceApplication {
 
                                     String msg = "(" + Utils.appendSpace(String.valueOf(index_crypto + 1), 3) + "/"
                                             + Utils.appendSpace(String.valueOf(total), 3) + ")"
-                                            + Utils.getTimeHHmm() + Utils.appendSpace(coin.getSymbol(), 8) + " " + init;
+                                            + Utils.getTimeHHmm() + Utils.appendSpace(coin.getSymbol(), 10) + " "
+                                            + init;
 
                                     System.out.println(msg);
                                 }

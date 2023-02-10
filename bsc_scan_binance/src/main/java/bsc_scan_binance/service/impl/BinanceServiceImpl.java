@@ -3075,9 +3075,9 @@ public class BinanceServiceImpl implements BinanceService {
                                     128));
                 }
 
-                result = "(" + "Ma10:" + trend_ma10 + ", Ma3:" + trend_ma3 + ")" + Utils.getChartName(list)
-                        + "--------------------------Size:" + list.size() + ", Cur:"
-                        + trend_switch;
+                result = Utils.appendSpace(
+                        "(" + "Ma10:" + trend_ma10 + ", Ma3:" + trend_ma3 + ")" + Utils.getChartName(list), 38)
+                        + "--------------------------Size:" + list.size() + ", Cur:" + trend_switch;
 
             } else {
                 result = "(" + EPIC + ")Size:" + list.size();
