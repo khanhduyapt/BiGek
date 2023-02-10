@@ -2851,7 +2851,7 @@ public class BinanceServiceImpl implements BinanceService {
         fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_H1_CRYPTO, gecko_id, symbol, trend_h1, true));
 
         if (Utils.isNotBlank(trend_h4)) {
-            init_trend_result = "initCrypto(D:" + trend_d1 + ", H4: " + trend_h4 + ", H1: " + trend_h1 + ")";
+            init_trend_result = "(D:" + trend_d1 + ", H4: " + trend_h4 + ", H1: " + trend_h1 + ")";
         }
 
         // -------------------------- INIT WEBSITE --------------------------
@@ -3031,7 +3031,7 @@ public class BinanceServiceImpl implements BinanceService {
             PrepareOrders order = new PrepareOrders(id, EPIC, date_time.toString(), dataType);
             prepareOrdersRepository.save(order);
 
-            return "initForex_W_trend: " + trend;
+            return "W_trend: " + trend;
         }
 
         return "";
@@ -3069,20 +3069,18 @@ public class BinanceServiceImpl implements BinanceService {
                                             + Utils.appendSpace(EPIC, 8) + Utils.getCurrentPrice(list)
                                             + Utils.appendSpace("(W: " + trend_w + ")", 10), 51)
                                             + " " + Utils.getCapitalLink(EPIC),
-                                    126));
+                                    128));
                 }
 
-                result = Utils
-                        .appendSpace("initForex" + Utils.getChartName(list) + "(" + "Ma10:" + trend_ma10 + ", Ma3:"
-                                + trend_ma3 + ")", 60)
+                result = Utils.getChartName(list) + "(" + "Ma10:" + trend_ma10 + ", Ma3:" + trend_ma3 + ")"
                         + "--------------------------Size:" + list.size() + ", Cur:" + trend_switch;
 
             } else {
-                result = "initForex(" + EPIC + ")Size:" + list.size();
+                result = "(" + EPIC + ")Size:" + list.size();
                 Utils.logWritelnWithTime(result);
             }
         } catch (Exception e) {
-            result = "initForex(" + EPIC + ")Error:" + e.getMessage();
+            result = "(" + EPIC + ")Error:" + e.getMessage();
             Utils.logWritelnWithTime(result);
         }
 
@@ -3173,7 +3171,7 @@ public class BinanceServiceImpl implements BinanceService {
             // ------------------------END-----------------------
         }
 
-        return "checkCrypto_" + Utils.getChartName(list) + ": " + Utils.appendSpace(symbol, 8) + ": " + trend;
+        return Utils.getChartName(list) + ": " + Utils.appendSpace(symbol, 8) + ": " + trend;
     }
 
 }
