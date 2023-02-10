@@ -2795,7 +2795,7 @@ public class Utils {
 
         int slow_index = 10;
         if (list.get(0).getId().contains("_4h_")) {
-            slow_index = 6;
+            slow_index = 8;
         }
         BigDecimal maX_1 = calcMA(list, slow_index, str);
         BigDecimal maX_2 = calcMA(list, slow_index, end);
