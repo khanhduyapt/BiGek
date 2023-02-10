@@ -107,6 +107,8 @@ public class Utils {
     public static final String CAPITAL_TIME_DAY = "DAY";
     public static final String CAPITAL_TIME_WEEK = "WEEK";
 
+    public static final long MINUTES_OF_W = 10080;
+    public static final long MINUTES_OF_D = 1440;
     public static final long MINUTES_OF_4H = 240;
     public static final long MINUTES_OF_1H = 60;
     public static final long MINUTES_OF_15M = 15;

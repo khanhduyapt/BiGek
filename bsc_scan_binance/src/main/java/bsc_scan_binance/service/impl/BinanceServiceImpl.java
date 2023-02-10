@@ -3,6 +3,8 @@ package bsc_scan_binance.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,6 +45,7 @@ import bsc_scan_binance.entity.GeckoVolumeMonth;
 import bsc_scan_binance.entity.GeckoVolumeMonthKey;
 import bsc_scan_binance.entity.GeckoVolumeUpPre4h;
 import bsc_scan_binance.entity.Orders;
+import bsc_scan_binance.entity.PrepareOrders;
 import bsc_scan_binance.entity.PriorityCoinHistory;
 import bsc_scan_binance.repository.BinanceFuturesRepository;
 import bsc_scan_binance.repository.BinanceVolumeDateTimeRepository;
@@ -58,6 +61,7 @@ import bsc_scan_binance.repository.FundingHistoryRepository;
 import bsc_scan_binance.repository.GeckoVolumeMonthRepository;
 import bsc_scan_binance.repository.GeckoVolumeUpPre4hRepository;
 import bsc_scan_binance.repository.OrdersRepository;
+import bsc_scan_binance.repository.PrepareOrdersRepository;
 import bsc_scan_binance.repository.PriorityCoinHistoryRepository;
 import bsc_scan_binance.response.BollAreaResponse;
 import bsc_scan_binance.response.BtcFuturesResponse;
@@ -138,6 +142,9 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Autowired
     private FundingHistoryRepository fundingHistoryRepository;
+
+    @Autowired
+    private PrepareOrdersRepository prepareOrdersRepository;
 
     private String BTC_TREND_M15 = Utils.TREND_SHORT;
 
@@ -2982,28 +2989,104 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     @Override
+    @Transactional
     public String initForex_W_trend(String EPIC) {
-        String trend = "";
-        List<BtcFutures> list = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_WEEK, 8);
+        LocalDateTime date_time = LocalDateTime.now();
+        long elapsedMinutes = 0;
 
-        if (CollectionUtils.isEmpty(list)) {
-
-            fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_W_FX, EPIC, EPIC, "", true));
-
-        } else {
-
-            String trend_ma3 = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-            String trend_ma6 = Utils.isUptrendByMaIndex(list, 6) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-
-            if (Objects.equals(trend_ma3, trend_ma6)) {
-                trend = trend_ma3;
-                fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_W_FX, EPIC, EPIC, trend_ma3, true));
-            } else {
-                fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_W_FX, EPIC, EPIC, "", true));
+        String id = EPIC + "_" + Utils.CAPITAL_TIME_WEEK;
+        PrepareOrders order_entity = prepareOrdersRepository.findById(id).orElse(null);
+        if (!Objects.equals(null, order_entity)) {
+            String insert_time = Utils.getStringValue(order_entity.getName());
+            if (Utils.isNotBlank(insert_time)) {
+                LocalDateTime pre_time = LocalDateTime.parse(insert_time);
+                elapsedMinutes = Duration.between(pre_time, date_time).toMinutes();
             }
         }
 
-        return "initForex_W_trend: " + trend;
+        if (Utils.MINUTES_OF_D > elapsedMinutes) {
+            String trend = "";
+            List<BtcFutures> list = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_WEEK, 8);
+
+            if (CollectionUtils.isEmpty(list)) {
+
+                fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_W_FX, EPIC, EPIC, "", true));
+
+            } else {
+
+                String trend_ma3 = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+                String trend_ma6 = Utils.isUptrendByMaIndex(list, 6) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+
+                if (Objects.equals(trend_ma3, trend_ma6)) {
+                    trend = trend_ma3;
+                    fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_W_FX, EPIC, EPIC, trend_ma3, true));
+                } else {
+                    fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_W_FX, EPIC, EPIC, "", true));
+                }
+            }
+
+            String dataType = (Objects.equals(Utils.TREND_LONG, trend) ? "L"
+                    : Objects.equals(Utils.TREND_SHORT, trend) ? "S" : "");
+            PrepareOrders order = new PrepareOrders(id, EPIC, date_time.toString(), dataType);
+            prepareOrdersRepository.save(order);
+
+            return "initForex_W_trend: " + trend;
+        }
+
+        return "";
+    }
+
+    @Override
+    @Transactional
+    public String checkForex_4H(String EPIC, String TIME) {
+        String trend_w = "";
+        String id = EPIC + "_" + Utils.CAPITAL_TIME_WEEK;
+        PrepareOrders order_entity = prepareOrdersRepository.findById(id).orElse(null);
+        if (!Objects.equals(null, order_entity)) {
+            trend_w = (Objects.equals("L", order_entity.getDataType()) ? Utils.TREND_LONG
+                    : Objects.equals("S", order_entity.getDataType()) ? Utils.TREND_SHORT : "");
+        }
+
+        String result = "";
+        try {
+            String trend_switch = "";
+            List<BtcFutures> list = Utils.loadCapitalData(EPIC, TIME, 15);
+
+            if (!CollectionUtils.isEmpty(list)) {
+                String trend_ma3 = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+                String trend_ma10 = Utils.isUptrendByMaIndex(list, 10) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+
+                trend_switch = Utils.switchTrend(list);
+                if (Utils.isNotBlank(trend_switch)) {
+
+                    sendScapMsg(list, EPIC, trend_switch, "");
+
+                    Utils.logWritelnWithTime(
+                            Utils.appendSpace(
+                                    Utils.appendSpace("Forex "
+                                            + Utils.appendSpace("  (" + trend_switch + ")", 10)
+                                            + Utils.getChartName(list)
+                                            + Utils.appendSpace(EPIC, 8) + Utils.getCurrentPrice(list), 51)
+                                            + Utils.getCapitalLink(EPIC),
+                                    135) + " TREND_W: " + trend_w);
+
+                }
+
+                result = Utils
+                        .appendSpace("initForex" + Utils.getChartName(list) + "(" + "Ma10:" + trend_ma10 + ", Ma3:"
+                                + trend_ma3 + ")", 60)
+                        + "--------------------------Size:" + list.size() + ", Cur:" + trend_switch;
+
+            } else {
+                result = "initForex(" + EPIC + ")Size:" + list.size();
+                Utils.logWritelnWithTime(result);
+            }
+        } catch (Exception e) {
+            result = "initForex(" + EPIC + ")Error:" + e.getMessage();
+            Utils.logWritelnWithTime(result);
+        }
+
+        return result;
     }
 
     @Override
@@ -3094,48 +3177,4 @@ public class BinanceServiceImpl implements BinanceService {
         return "checkCrypto_" + Utils.getChartName(list) + ": " + Utils.appendSpace(symbol, 8) + ": " + trend;
     }
 
-    @Override
-    @Transactional
-    public String checkForex_4H(String EPIC, String TIME) {
-        String result = "";
-        try {
-            String trend_switch = "";
-            List<BtcFutures> list = Utils.loadCapitalData(EPIC, TIME, 15);
-
-            if (!CollectionUtils.isEmpty(list)) {
-                String trend_ma3 = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-                String trend_ma10 = Utils.isUptrendByMaIndex(list, 10) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-
-                trend_switch = Utils.switchTrend(list);
-                if (Utils.isNotBlank(trend_switch)) {
-
-                    sendScapMsg(list, EPIC, trend_switch, "");
-
-                    Utils.logWritelnWithTime(
-                            Utils.appendSpace(
-                                    Utils.appendSpace("Forex "
-                                            + Utils.appendSpace("  (" + trend_switch + ")", 10)
-                                            + Utils.getChartName(list)
-                                            + Utils.appendSpace(EPIC, 8) + Utils.getCurrentPrice(list), 51)
-                                            + Utils.getCapitalLink(EPIC),
-                                    135));
-
-                }
-
-                result = Utils
-                        .appendSpace("initForex" + Utils.getChartName(list) + "(" + "Ma10:" + trend_ma10 + ", Ma3:"
-                                + trend_ma3 + ")", 60)
-                        + "--------------------------Size:" + list.size() + ", Cur:" + trend_switch;
-
-            } else {
-                result = "initForex(" + EPIC + ")Size:" + list.size();
-                Utils.logWritelnWithTime(result);
-            }
-        } catch (Exception e) {
-            result = "initForex(" + EPIC + ")Error:" + e.getMessage();
-            Utils.logWritelnWithTime(result);
-        }
-
-        return result;
-    }
 }

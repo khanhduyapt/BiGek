@@ -123,12 +123,21 @@ public class BscScanBinanceApplication {
 
                         // ----------------------------------------------
                         if (isReloadAfter(1, "FOREX")) {
+
                             if (!Utils.isWeekend() && Utils.isBusinessTime()) {
                                 if (index_forex < forex_size) {
                                     String EPIC = capital_list.get(index_forex);
                                     String init = "";
 
-                                    if (isReloadAfter(Utils.MINUTES_OF_4H, EPIC)) {
+                                    if (isReloadAfter(Utils.MINUTES_OF_1H, "W_TREND_" + EPIC)) {
+                                        String trendw = binance_service.initForex_W_trend(EPIC);
+                                        if (Utils.isNotBlank(trendw)) {
+                                            wait(SLEEP_MINISECONDS);
+                                            System.out.println(trendw);
+                                        }
+                                    }
+
+                                    if (isReloadAfter(Utils.MINUTES_OF_1H, EPIC)) {
                                         init = binance_service.checkForex_4H(EPIC, Utils.CAPITAL_TIME_HOUR);
                                     }
 
