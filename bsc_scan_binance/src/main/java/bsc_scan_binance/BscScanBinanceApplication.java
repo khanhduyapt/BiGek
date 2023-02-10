@@ -170,19 +170,12 @@ public class BscScanBinanceApplication {
                                 wait(SLEEP_MINISECONDS);
                             }
                         }
-
                         // ----------------------------------------------
                         if (isReloadAfter(Utils.MINUTES_OF_1H, coin.getSymbol())) {
-                            String init = binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, coin.getGeckoid(),
-                                    coin.getSymbol());
-
-                            String msg = Utils.appendSpace("(" + (index_crypto + 1) + "/" + total + ")", 10)
-                                    + Utils.getTimeHHmm() + init;
-
-                            System.out.println(msg);
+                            binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, coin.getGeckoid(), coin.getSymbol());
                         }
-
                         // ----------------------------------------------
+
                         wait(SLEEP_MINISECONDS);
                     } catch (Exception e) {
                         e.printStackTrace();

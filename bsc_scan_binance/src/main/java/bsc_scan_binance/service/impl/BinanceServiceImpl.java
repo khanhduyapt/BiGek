@@ -3168,10 +3168,9 @@ public class BinanceServiceImpl implements BinanceService {
 
                 fundingHistoryRepository.save(coin);
             }
-            // ------------------------END-----------------------
         }
 
-        return Utils.getChartName(list) + ": " + Utils.appendSpace(symbol, 8) + ": " + trend;
+        return Utils.appendSpace(symbol, 8) + Utils.getChartName(list) + ": " + trend;
     }
 
 }
