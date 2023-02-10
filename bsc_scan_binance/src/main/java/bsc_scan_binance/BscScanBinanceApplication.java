@@ -133,7 +133,9 @@ public class BscScanBinanceApplication {
                                             wait(SLEEP_MINISECONDS);
                                             System.out.println(trendw);
                                         }
-                                    } else if (isReloadAfter(Utils.MINUTES_OF_1H, EPIC)) {
+                                    }
+
+                                    if (isReloadAfter(Utils.MINUTES_OF_1H, EPIC)) {
                                         init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR);
                                     }
 

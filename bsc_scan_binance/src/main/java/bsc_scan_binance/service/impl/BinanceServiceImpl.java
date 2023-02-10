@@ -2993,7 +2993,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public String initForex_W_trend(String EPIC) {
         LocalDateTime date_time = LocalDateTime.now();
-        long elapsedMinutes = 0;
+        long elapsedMinutes = Utils.MINUTES_OF_D;
 
         String id = EPIC + "_" + Utils.CAPITAL_TIME_WEEK;
         PrepareOrders order_entity = prepareOrdersRepository.findById(id).orElse(null);
@@ -3005,7 +3005,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        if (Utils.MINUTES_OF_D > elapsedMinutes) {
+        if (Utils.MINUTES_OF_D < elapsedMinutes) {
             String trend = "";
             List<BtcFutures> list = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_WEEK, 8);
 
