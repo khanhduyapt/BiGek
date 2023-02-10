@@ -133,7 +133,7 @@ public class BscScanBinanceApplication {
                                             System.out.println(trendw);
                                         }
                                     } else if (isReloadAfter(Utils.MINUTES_OF_1H, EPIC)) {
-                                        init = binance_service.checkForex_4H(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                        init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR);
                                     }
 
                                     String msg = "(" + (index_forex + 1) + "/" + forex_size + ")" + Utils.getTimeHHmm()
@@ -168,7 +168,7 @@ public class BscScanBinanceApplication {
 
                         // ----------------------------------------------
                         if (isReloadAfter(Utils.MINUTES_OF_1H, coin.getSymbol())) {
-                            String init = binance_service.checkCrypto_15m(Utils.CRYPTO_TIME_1h, coin.getGeckoid(),
+                            String init = binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, coin.getGeckoid(),
                                     coin.getSymbol());
 
                             String msg = "(" + (index_crypto + 1) + "/" + total + ")" + Utils.getTimeHHmm() + init;

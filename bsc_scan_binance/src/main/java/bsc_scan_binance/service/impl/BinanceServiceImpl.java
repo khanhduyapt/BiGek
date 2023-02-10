@@ -2847,8 +2847,6 @@ public class BinanceServiceImpl implements BinanceService {
         checkChartCrypto(list_h4, gecko_id, symbol, false);
         String trend_d1 = createTrendByMa10(EVENT_DH4H1_D_CRYPTO, list_days, gecko_id, symbol);
         String trend_h4 = createTrendByMa10(EVENT_DH4H1_H4_CRYPTO, list_h4, gecko_id, symbol);
-        checkChartCrypto(list_h1, gecko_id, symbol, false);
-
         String trend_h1 = Utils.isUptrendByMaIndex(list_h1, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
         fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_H1_CRYPTO, gecko_id, symbol, trend_h1, true));
 
@@ -2955,7 +2953,6 @@ public class BinanceServiceImpl implements BinanceService {
             trend = Utils.switchTrend(list);
             if (Objects.equals(Utils.TREND_LONG, trend)) {
                 String star = "";
-                BigDecimal current_price = list.get(0).getCurrPrice();
 
                 if (list.size() > 20) {
                     BigDecimal ma10_1 = Utils.calcMA(list, 10, 1);
@@ -2969,17 +2966,22 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 String url = "";
+                String type = "(Spot)    ";
                 if (binanceFuturesRepository.existsById(gecko_id)) {
+                    type = "(Futures) ";
                     url = Utils.getCryptoLink_Future(symbol);
                 } else {
                     url = Utils.getCryptoLink_Spot(symbol);
                 }
 
-                Utils.logWritelnWithTime(Utils.appendSpace(Utils
-                        .appendSpace((Utils.isNotBlank(star) ? star : "Crypto") + "(" + trend + ")"
-                                + Utils.getChartName(list) + Utils.appendSpace(symbol, 8) + Utils.getCurrentPrice(list)
-                                + Utils.percentToMa(list, current_price), 58)
-                        + getVolMc(gecko_id) + Utils.getAtlAth(list), 100) + url);
+                Utils.logWritelnWithTime(
+                        Utils.appendSpace(
+                                Utils.appendSpace("Crypto"
+                                        + Utils.appendSpace("  (" + trend + ")", 10) + Utils.getChartName(list)
+                                        + Utils.appendSpace(symbol, 8) + Utils.getCurrentPrice(list) + type,
+                                        51) + url,
+                                126) + " " + getVolMc(gecko_id) + Utils.getAtlAth(list) + star);
+
             }
         } catch (Exception e) {
         }
@@ -3037,7 +3039,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     @Transactional
-    public String checkForex_4H(String EPIC, String TIME) {
+    public String checkForex(String EPIC, String TIME) {
         String trend_w = "";
         String id = EPIC + "_" + Utils.CAPITAL_TIME_WEEK;
         PrepareOrders order_entity = prepareOrdersRepository.findById(id).orElse(null);
@@ -3057,7 +3059,6 @@ public class BinanceServiceImpl implements BinanceService {
 
                 trend_switch = Utils.switchTrend(list);
                 if (Utils.isNotBlank(trend_switch)) {
-
                     sendScapMsg(list, EPIC, trend_switch, "");
 
                     Utils.logWritelnWithTime(
@@ -3065,10 +3066,10 @@ public class BinanceServiceImpl implements BinanceService {
                                     Utils.appendSpace("Forex "
                                             + Utils.appendSpace("  (" + trend_switch + ")", 10)
                                             + Utils.getChartName(list)
-                                            + Utils.appendSpace(EPIC, 8) + Utils.getCurrentPrice(list), 51)
-                                            + "  " + Utils.getCapitalLink(EPIC),
-                                    126) + " TREND_W: " + trend_w);
-
+                                            + Utils.appendSpace(EPIC, 8) + Utils.getCurrentPrice(list)
+                                            + Utils.appendSpace("(W: " + trend_w + ")", 10), 51)
+                                            + " " + Utils.getCapitalLink(EPIC),
+                                    126));
                 }
 
                 result = Utils
@@ -3090,7 +3091,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     @Transactional
-    public String checkCrypto_15m(String TIME, String gecko_id, String symbol) {
+    public String checkCrypto(String TIME, String gecko_id, String symbol) {
         List<BtcFutures> list;
         if (Objects.equals("BTC", symbol)) {
             list = Utils.loadData(symbol, TIME, 50);

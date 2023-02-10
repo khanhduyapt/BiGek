@@ -427,7 +427,7 @@ public class WandaBot extends TelegramLongPollingBot {
             return;
         }
 
-        String msg = binance_service.checkCrypto_15m("15m", list.get(0).getGeckoid(),
+        String msg = binance_service.checkCrypto("15m", list.get(0).getGeckoid(),
                 list.get(0).getSymbol().toUpperCase());
 
         message.setText(msg);

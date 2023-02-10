@@ -38,7 +38,7 @@ public interface BinanceService {
 
     public void clearTrash();
 
-    public String checkForex_4H(String EPIC, String TIME);
+    public String checkForex(String EPIC, String TIME);
 
     public String initCrypto(String gecko_id, String symbol);
 
@@ -48,7 +48,7 @@ public interface BinanceService {
 
     boolean isFutureCoin(String gecko_id);
 
-    public String checkCrypto_15m(String TIME, String gecko_id, String symbol);
+    public String checkCrypto(String TIME, String gecko_id, String symbol);
 
     public String initForex_W_trend(String EPIC);
 
