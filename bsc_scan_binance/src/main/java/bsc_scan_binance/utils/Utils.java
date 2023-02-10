@@ -1903,7 +1903,7 @@ public class Utils {
         symbol = symbol.substring(symbol.indexOf("_"), symbol.length()).replace("_", "");
         result = "(" + symbol.replace("_00", "") + ")";
 
-        return Utils.appendSpace(result, 5);
+        return Utils.appendSpace(result, 6);
     }
 
     public static List<BigDecimal> calcFiboTakeProfit(BigDecimal low_heigh, BigDecimal entry) {

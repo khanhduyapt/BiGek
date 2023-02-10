@@ -4,8 +4,6 @@ import java.io.File;
 import java.net.InetAddress;
 import java.time.Duration;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
@@ -121,7 +119,7 @@ public class BscScanBinanceApplication {
                     CandidateCoin coin = token_list.get(index_crypto);
 
                     try {
-                        check_BTC_DXY_15m(binance_service);
+                        checkBtcKillLongShort_15m(binance_service);
 
                         // ----------------------------------------------
                         if (isReloadAfter(1, "FOREX")) {
@@ -158,11 +156,6 @@ public class BscScanBinanceApplication {
                         }
 
                         // ----------------------------------------------
-                        if (isReloadAfter(Utils.MINUTES_OF_1H, "COMPARE_VS_BTC_" + coin.getSymbol())) {
-                            binance_service.checkCrypto_vsBtc(coin.getGeckoid(), coin.getSymbol());
-                            wait(SLEEP_MINISECONDS);
-                        }
-
                         if (isReloadAfter(Utils.MINUTES_OF_15M, coin.getSymbol())) {
                             String init = binance_service.checkCrypto_15m(TIME_15m, coin.getGeckoid(),
                                     coin.getSymbol());
@@ -205,22 +198,22 @@ public class BscScanBinanceApplication {
         System.out.println("____________________initTelegramBotsApi" + Utils.getTimeHHmm() + "____________________");
     }
 
-    private static void check_BTC_DXY_15m(BinanceService binance_service) {
+    private static void checkBtcKillLongShort_15m(BinanceService binance_service) {
         if (isReloadAfter(Utils.MINUTES_OF_15M, "BTC")) {
-            System.out.println(Utils.getTimeHHmm() + "Check BTC(15m)");
-            binance_service.checkCrypto_15m(TIME_15m, "bitcoin", "BTC");
+            System.out.println(Utils.getTimeHHmm() + "checkKillLongShort BTC(15m)");
+            binance_service.sendMsgKillLongShort("bitcoin", "BTC");
             wait(SLEEP_MINISECONDS);
         }
 
         if (isReloadAfter(Utils.MINUTES_OF_15M, "ETH")) {
-            System.out.println(Utils.getTimeHHmm() + "Check ETH(15m)");
-            binance_service.checkCrypto_15m(TIME_15m, "ethereum", "ETH");
+            System.out.println(Utils.getTimeHHmm() + "checkKillLongShort ETH(15m)");
+            binance_service.sendMsgKillLongShort("ethereum", "ETH");
             wait(SLEEP_MINISECONDS);
         }
 
         if (isReloadAfter(Utils.MINUTES_OF_15M, "BNB")) {
-            System.out.println(Utils.getTimeHHmm() + "Check BNB(15m)");
-            binance_service.checkCrypto_15m(TIME_15m, "binancecoin", "BNB");
+            System.out.println(Utils.getTimeHHmm() + "checkKillLongShort BNB(15m)");
+            binance_service.sendMsgKillLongShort("binancecoin", "BNB");
             wait(SLEEP_MINISECONDS);
         }
     }
