@@ -136,7 +136,7 @@ public class BscScanBinanceApplication {
                                     }
 
                                     if (isReloadAfter(Utils.MINUTES_OF_1H, EPIC)) {
-                                        init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+                                        init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR);
 
                                         String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3) + "/"
                                                 + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
