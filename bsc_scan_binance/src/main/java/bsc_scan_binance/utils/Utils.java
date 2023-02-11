@@ -102,7 +102,7 @@ public class Utils {
     // public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
     // public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
     // public static final String CAPITAL_TIME_MINUTE_30 = "MINUTE_30";
-    // public static final String CAPITAL_TIME_HOUR = "HOUR";
+    public static final String CAPITAL_TIME_HOUR = "HOUR";
     public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
     public static final String CAPITAL_TIME_DAY = "DAY";
     // public static final String CAPITAL_TIME_WEEK = "WEEK";

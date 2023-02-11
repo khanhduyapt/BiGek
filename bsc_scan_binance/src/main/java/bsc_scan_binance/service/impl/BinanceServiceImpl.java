@@ -84,10 +84,9 @@ public class BinanceServiceImpl implements BinanceService {
     private static final String EVENT_1W1D_FX = "1W1D_FX";
     private static final String EVENT_1W1D_CRYPTO = "1W1D_CRYPTO";
 
-    private static final String EVENT_DH4H1_W_FX = "DH4H1_W_TREND_FX";
     private static final String EVENT_DH4H1_D_FX = "DH4H1_D_TREND_FX";
     private static final String EVENT_DH4H1_H4_FX = "DH4H1_STR_H4_FX";
-    private static final String EVENT_DH4H1_15M_FX = "DH4H1_STR_15M_FX";
+    private static final String EVENT_DH4H1_H1_FX = "DH4H1_STR_H1_FX";
 
     private static final String EVENT_DH4H1_D_CRYPTO = "DH4H1_D_TREND_CRYPTO";
     private static final String EVENT_DH4H1_H4_CRYPTO = "DH4H1_STR_H4_CRYPTO";
@@ -3011,7 +3010,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String result = "initForex_W_trend(" + EPIC + ")Size:" + list.size();
                     Utils.logWritelnWithTime(result, false);
 
-                    fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_W_FX, EPIC, EPIC, "", true));
+                    fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_D_FX, EPIC, EPIC, "", true));
 
                     return result;
                 }
@@ -3022,9 +3021,9 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.equals(trend_ma3, trend_ma10)) {
                 trend = trend_ma3;
-                fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_W_FX, EPIC, EPIC, trend_ma3, true));
+                fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_D_FX, EPIC, EPIC, trend_ma3, true));
             } else {
-                fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_W_FX, EPIC, EPIC, "", true));
+                fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_D_FX, EPIC, EPIC, "", true));
             }
 
             String dataType = (Objects.equals(Utils.TREND_LONG, trend) ? "L"
@@ -3079,6 +3078,17 @@ public class BinanceServiceImpl implements BinanceService {
                                 + Utils.getChartName(list) + Utils.appendSpace(EPIC, 8) + Utils.getCurrentPrice(list)
                                 + Utils.appendSpace("(D: " + trend_w + ")", 10), 51) + " " + Utils.getCapitalLink(EPIC),
                         128), false);
+            }
+
+            {
+                String event_id = EVENT_DH4H1_H1_FX;
+                if (Objects.equals(TIME, Utils.CAPITAL_TIME_DAY)) {
+                    event_id = EVENT_DH4H1_D_FX;
+
+                } else if (Objects.equals(TIME, Utils.CAPITAL_TIME_HOUR_4)) {
+                    event_id = EVENT_DH4H1_H4_FX;
+                }
+                fundingHistoryRepository.save(createPumpDumpEntity(event_id, EPIC, EPIC, trend_switch, true));
             }
 
             result = Utils
