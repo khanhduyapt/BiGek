@@ -3052,10 +3052,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 trend_switch = Utils.switchTrend(list);
                 if (Utils.isNotBlank(trend_switch)) {
-
-                    if (Objects.equals(trend_w, trend_switch)) {
-                        sendScapMsg(list, EPIC, trend_switch, "");
-                    }
+                    sendScapMsg(list, EPIC, trend_switch, "(Trend D: " + trend_w + ")");
 
                     Utils.logWritelnWithTime(Utils.appendSpace(Utils
                             .appendSpace("Forex " + Utils.appendSpace("  (" + trend_switch + ")", 10)

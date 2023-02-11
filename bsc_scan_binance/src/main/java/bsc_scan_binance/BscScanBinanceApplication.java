@@ -128,7 +128,7 @@ public class BscScanBinanceApplication {
 
                         // ----------------------------------------------
                         if (isReloadAfter(1, "FOREX")) {
-                            if (Utils.isBusinessTime()) { // !Utils.isWeekend() &&
+                            if (!Utils.isWeekend() && Utils.isBusinessTime()) { //
                                 if (index_forex < forex_size) {
                                     String EPIC = capital_list.get(index_forex);
                                     String init = "";
