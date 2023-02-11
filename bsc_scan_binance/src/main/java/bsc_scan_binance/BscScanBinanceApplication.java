@@ -67,9 +67,18 @@ public class BscScanBinanceApplication {
             CoinGeckoService gecko_service = applicationContext.getBean(CoinGeckoService.class);
             BinanceService binance_service = applicationContext.getBean(BinanceService.class);
 
-            Utils.logWriteln("____________________Start "
-                    + Utils.getToday_YyyyMMdd() + Utils.getTimeHHmm()
+            Utils.logWriteln("____________________Start " + Utils.getToday_YyyyMMdd() + Utils.getTimeHHmm()
                     + "____________________", true);
+
+            Utils.logForexWriteln("____________________Start " + Utils.getToday_YyyyMMdd() + Utils.getTimeHHmm()
+                    + "____________________", true);
+
+            System.out.println();
+            File log = new File(Utils.getCryptoLogFile());
+            System.out.println(log.getAbsolutePath());
+            log = new File(Utils.getForexLogFile());
+            System.out.println(log.getAbsolutePath());
+            System.out.println();
 
             if (app_flag == Utils.const_app_flag_msg_on || app_flag == Utils.const_app_flag_all_and_msg) {
                 // try {
@@ -111,9 +120,6 @@ public class BscScanBinanceApplication {
                 int forex_size = capital_list.size();
                 Date start_time = Calendar.getInstance().getTime();
 
-                File log = new File(Utils.getLogFileName());
-                System.out.println(log.getAbsolutePath());
-
                 while (index_crypto < total) {
                     CandidateCoin coin = token_list.get(index_crypto);
 
@@ -122,7 +128,7 @@ public class BscScanBinanceApplication {
 
                         // ----------------------------------------------
                         if (isReloadAfter(1, "FOREX")) {
-                            if (!Utils.isWeekend() && Utils.isBusinessTime()) {
+                            if (Utils.isBusinessTime()) { // !Utils.isWeekend() &&
                                 if (index_forex < forex_size) {
                                     String EPIC = capital_list.get(index_forex);
                                     String init = "";
@@ -136,7 +142,7 @@ public class BscScanBinanceApplication {
                                     }
 
                                     if (isReloadAfter(Utils.MINUTES_OF_1H, EPIC)) {
-                                        init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                        init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR_4);
 
                                         String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3) + "/"
                                                 + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
@@ -163,9 +169,8 @@ public class BscScanBinanceApplication {
                                     String init = binance_service.initCrypto(coin.getGeckoid(), coin.getSymbol());
 
                                     String msg = "(" + Utils.appendSpace(String.valueOf(index_crypto + 1), 3) + "/"
-                                            + Utils.appendSpace(String.valueOf(total), 3) + ")"
-                                            + Utils.getTimeHHmm() + Utils.appendSpace(coin.getSymbol(), 10) + " "
-                                            + init;
+                                            + Utils.appendSpace(String.valueOf(total), 3) + ")" + Utils.getTimeHHmm()
+                                            + Utils.appendSpace(coin.getSymbol(), 10) + " " + init;
 
                                     System.out.println(msg);
                                 }
@@ -179,9 +184,8 @@ public class BscScanBinanceApplication {
                                     coin.getSymbol());
 
                             String msg = "(" + Utils.appendSpace(String.valueOf(index_crypto + 1), 3) + "/"
-                                    + Utils.appendSpace(String.valueOf(total), 3) + ")"
-                                    + Utils.getTimeHHmm() + Utils.appendSpace(coin.getSymbol(), 10) + " "
-                                    + init;
+                                    + Utils.appendSpace(String.valueOf(total), 3) + ")" + Utils.getTimeHHmm()
+                                    + Utils.appendSpace(coin.getSymbol(), 10) + " " + init;
 
                             System.out.println(msg);
                         }

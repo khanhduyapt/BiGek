@@ -848,10 +848,30 @@ public class Utils {
         return " https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + epic;
     }
 
-    public static String getLogFileName() {
+    public static String getForexLogFile() {
+        String prefix = BscScanBinanceApplication.hostname.toLowerCase();
+        if (prefix.length() > 3) {
+            prefix = prefix.substring(0, 3);
+        }
+
         String PATH = "crypto_forex_result/";
-        String fileName = BscScanBinanceApplication.hostname + "_scan_result_" + getYyyyMmDdHH_ChangeDailyChart()
-                + ".log";
+        String fileName = prefix + "_forex_result_" + getYyyyMmDdHH_ChangeDailyChart() + ".log";
+
+        File directory = new File(PATH);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+        return PATH + fileName;
+    }
+
+    public static String getCryptoLogFile() {
+        String prefix = BscScanBinanceApplication.hostname.toLowerCase();
+        if (prefix.length() > 3) {
+            prefix = prefix.substring(0, 3);
+        }
+
+        String PATH = "crypto_forex_result/";
+        String fileName = prefix + "_crypto_result_" + getYyyyMmDdHH_ChangeDailyChart() + ".log";
 
         File directory = new File(PATH);
         if (!directory.exists()) {
@@ -861,7 +881,7 @@ public class Utils {
     }
 
     public static void writeBlogCrypto(String symbol, String long_short_content, boolean isFuturesCoin) {
-        Utils.logWritelnWithTime(long_short_content);
+        Utils.logWritelnWithTime(long_short_content, true);
         if (isFuturesCoin) {
             Utils.logWriteln(Utils.getCryptoLink_Future(symbol), false);
         } else {
@@ -870,10 +890,28 @@ public class Utils {
         logWriteln("_______________________________________________________________", true);
     }
 
-    public static void logWritelnWithTime(String text) {
+    public static void logWritelnWithTime(String text, boolean isCrypto) {
         try {
-            FileWriter fw = new FileWriter(getLogFileName(), true);
+            String logFilePath;
+            if (isCrypto) {
+                logFilePath = getCryptoLogFile();
+            } else {
+                logFilePath = getForexLogFile();
+            }
+
+            FileWriter fw = new FileWriter(logFilePath, true);
             fw.write(Utils.getTimeHHmm() + " " + text.replace(Utils.new_line_from_service, " ") + "\n");
+            fw.close();
+        } catch (IOException ioe) {
+            System.err.println("IOException: " + ioe.getMessage());
+        }
+    }
+
+    public static void logForexWriteln(String text, boolean isNewline) {
+        try {
+            FileWriter fw = new FileWriter(getForexLogFile(), true);
+            fw.write(
+                    (isNewline ? "\n" : "") + text.replace(Utils.new_line_from_service, " ") + (isNewline ? "\n" : ""));
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -882,7 +920,7 @@ public class Utils {
 
     public static void logWriteln(String text, boolean isNewline) {
         try {
-            FileWriter fw = new FileWriter(getLogFileName(), true);
+            FileWriter fw = new FileWriter(getCryptoLogFile(), true);
             fw.write(
                     (isNewline ? "\n" : "") + text.replace(Utils.new_line_from_service, " ") + (isNewline ? "\n" : ""));
             fw.close();
@@ -893,7 +931,7 @@ public class Utils {
 
     public static void writelnLogFooter() {
         try {
-            FileWriter fw = new FileWriter(getLogFileName(), true);
+            FileWriter fw = new FileWriter(getCryptoLogFile(), true);
             fw.write(
                     "------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
             fw.close();
