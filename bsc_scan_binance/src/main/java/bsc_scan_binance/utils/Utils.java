@@ -2878,7 +2878,7 @@ public class Utils {
         if (list.get(0).getId().contains("_1w_")) {
             end = 2;
         }
-        BigDecimal ma_c = calcMA(list, maIndex, 1);
+        BigDecimal ma_c = calcMA(list, maIndex, 0);
         BigDecimal ma_p = calcMA(list, maIndex, end);
         if (ma_c.compareTo(ma_p) > 0) {
             return true;

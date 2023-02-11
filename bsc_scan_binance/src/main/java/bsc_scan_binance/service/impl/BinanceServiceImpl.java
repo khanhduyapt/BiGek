@@ -3094,7 +3094,7 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
         // --------------------------------------------------------------
-        String star = "";
+        String star = "   ";
         String trend = Utils.switchTrend(list);
         if (Utils.isNotBlank(trend)) {
             List<BtcFutures> list_h4_usdt = Utils.loadData(symbol, Utils.CRYPTO_TIME_4h, 10);
@@ -3110,11 +3110,11 @@ public class BinanceServiceImpl implements BinanceService {
             BigDecimal ma50_1 = Utils.calcMA(list, 50, 1);
             if (Objects.equals(trend, Utils.TREND_LONG)) {
                 if (ma50_1.compareTo(ma10_1) > 0) {
-                    star = " *5S * ";
+                    star = " * ";
                 }
             } else {
                 if (ma10_1.compareTo(ma50_1) > 0) {
-                    star = " *5S * ";
+                    star = " * ";
                 }
             }
 
@@ -3133,19 +3133,27 @@ public class BinanceServiceImpl implements BinanceService {
                 isFututes = true;
             }
 
-            if (Objects.equals("BTC", symbol) || (isFututes && Utils.isNotBlank(star)
-                    && Objects.equals(trend, Utils.TREND_LONG) && Utils.isUptrendByMaIndex(list_h4_usdt, 10))) {
+            boolean trend_h4_ma3 = Utils.isUptrendByMaIndex(list_h4_usdt, 3);
+            boolean trend_h4_ma10 = Utils.isUptrendByMaIndex(list_h4_usdt, 10);
+            String str_trend_h4_ma3 = (trend_h4_ma3 ? Utils.TREND_LONG : Utils.TREND_SHORT);
+            if (Objects.equals("BTC", symbol)
+                    || (isFututes && Objects.equals(trend, Utils.TREND_LONG) && trend_h4_ma3 && trend_h4_ma10)) {
 
                 String EVENT_ID = EVENT_PUMP + symbol + char_name + Utils.getCurrentYyyyMmDd_HH();
                 sendMsgPerHour(EVENT_ID, msg, true);
             }
 
-            createNewTrendCycle(EVENT_DH4H1_15M_CRYPTO, list, trend, gecko_id, symbol);
+            if (Objects.equals(trend, str_trend_h4_ma3)) {
+                String trend_h4 = " (H4):" + " Ma10:" + (trend_h4_ma10 ? Utils.TREND_LONG : Utils.TREND_SHORT)
+                        + ", Ma3:" + str_trend_h4_ma3 + ".";
 
-            Utils.logWritelnWithTime(Utils
-                    .appendSpace(Utils.appendSpace("Crypto" + Utils.appendSpace("  (" + trend + ")", 10) + char_name
-                            + Utils.appendSpace(symbol, 8) + curr_price + type, 51) + url, 126)
-                    + " " + vmc + Utils.getAtlAth(list_h4_usdt) + star, true);
+                Utils.logWritelnWithTime(Utils
+                        .appendSpace(Utils.appendSpace("Crypto" + Utils.appendSpace("  (" + trend + ")", 10) + char_name
+                                + Utils.appendSpace(symbol, 8) + curr_price + type, 51) + url, 126)
+                        + " " + vmc + Utils.getAtlAth(list_h4_usdt) + star + trend_h4, true);
+            }
+
+            createNewTrendCycle(EVENT_DH4H1_15M_CRYPTO, list, trend, gecko_id, symbol);
         }
 
         // -----------------------------------------------

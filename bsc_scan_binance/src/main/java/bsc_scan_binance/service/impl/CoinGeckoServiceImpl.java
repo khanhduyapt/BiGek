@@ -87,9 +87,8 @@ public class CoinGeckoServiceImpl implements CoinGeckoService {
             coin.setSymbol(String.valueOf(symbol).toUpperCase());
             coin.setName(String.valueOf(name));
 
-            BigDecimal market_cap = Utils
-                    .getBigDecimal(
-                            Utils.getLinkedHashMapValue(result, Arrays.asList("market_data", "market_cap", "usd")));
+            BigDecimal market_cap = Utils.getBigDecimal(
+                    Utils.getLinkedHashMapValue(result, Arrays.asList("market_data", "market_cap", "usd")));
             BigDecimal total_volume = Utils.getBigDecimal(
                     Utils.getLinkedHashMapValue(result, Arrays.asList("market_data", "total_volume", "usd")));
             Object current_price = Utils.getLinkedHashMapValue(result,
@@ -571,7 +570,6 @@ public class CoinGeckoServiceImpl implements CoinGeckoService {
     @Transactional
     public Response delete(CoinGeckoTokenRequest request) {
         try {
-            System.out.println("Start delete  --->");
             if (!Objects.equals(null, request.getId())) {
                 String sql = " DELETE FROM candidate_coin WHERE gecko_id=:gecko_id ;"
                         + " DELETE FROM gecko_volumn_day WHERE gecko_id=:gecko_id ;"
@@ -583,10 +581,9 @@ public class CoinGeckoServiceImpl implements CoinGeckoService {
                 query.executeUpdate();
             }
 
-            System.out.println("End delete success <---");
+            System.out.println("delete success--->" + request.getId());
             return new Response("200", "Delete", null, request.getId());
         } catch (Exception e) {
-            System.out.println("Add token  error --->");
             System.out.println(e.getMessage());
             return new Response("500", "Error", e.toString());
         }
