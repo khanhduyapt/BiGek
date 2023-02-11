@@ -245,15 +245,18 @@ public class BscScanBinanceApplication {
 
         // ---------------------------------------------------------------------
         if (isReloadAfter(Utils.MINUTES_OF_15M, "CHART_15m_BTC")) {
-            binance_service.checkCrypto(Utils.CRYPTO_TIME_15m, "bitcoin", "BTC");
+            String trend = binance_service.checkCrypto(Utils.CRYPTO_TIME_15m, "bitcoin", "BTC");
+            System.out.println(Utils.getTimeHHmm() + "check chart BTC(15m)" + trend);
             wait(SLEEP_MINISECONDS);
         }
         if (isReloadAfter(Utils.MINUTES_OF_1H, "CHART_4H_BTC")) {
-            binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, "bitcoin", "BTC");
+            String trend = binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, "bitcoin", "BTC");
+            System.out.println(Utils.getTimeHHmm() + "check chart BTC(1h)" + trend);
             wait(SLEEP_MINISECONDS);
         }
-        if (isReloadAfter(Utils.MINUTES_OF_1H, "CHART_4H_BTC")) {
-            binance_service.checkCrypto(Utils.CRYPTO_TIME_4h, "bitcoin", "BTC");
+        if (isReloadAfter(Utils.MINUTES_OF_4H, "CHART_4H_BTC")) {
+            String trend = binance_service.checkCrypto(Utils.CRYPTO_TIME_4h, "bitcoin", "BTC");
+            System.out.println(Utils.getTimeHHmm() + "check chart BTC(4h)" + trend);
             wait(SLEEP_MINISECONDS);
         }
         // ---------------------------------------------------------------------
