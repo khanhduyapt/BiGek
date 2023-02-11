@@ -105,6 +105,7 @@ public class BscScanBinanceApplication {
             // capital_list.addAll(Utils.EPICS_FOREX_OTHERS);
 
             if (app_flag != Utils.const_app_flag_webonly) {
+                Utils.initCapital();
                 List<CandidateCoin> token_list = gecko_service.getList(callFormBinance);
                 int total = token_list.size();
 

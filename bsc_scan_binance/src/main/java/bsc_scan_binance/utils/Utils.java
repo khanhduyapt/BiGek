@@ -98,14 +98,14 @@ public class Utils {
     public static String CST = "";
     public static String X_SECURITY_TOKEN = "";
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
-    public static final String CAPITAL_TIME_MINUTE = "MINUTE";
-    public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
-    public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
-    public static final String CAPITAL_TIME_MINUTE_30 = "MINUTE_30";
-    public static final String CAPITAL_TIME_HOUR = "HOUR";
+    // public static final String CAPITAL_TIME_MINUTE = "MINUTE";
+    // public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
+    // public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
+    // public static final String CAPITAL_TIME_MINUTE_30 = "MINUTE_30";
+    // public static final String CAPITAL_TIME_HOUR = "HOUR";
     public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
     public static final String CAPITAL_TIME_DAY = "DAY";
-    public static final String CAPITAL_TIME_WEEK = "WEEK";
+    // public static final String CAPITAL_TIME_WEEK = "WEEK";
 
     public static final String CRYPTO_TIME_5m = "5m";
     public static final String CRYPTO_TIME_15m = "15m";
@@ -462,7 +462,6 @@ public class Utils {
     public static List<BtcFutures> loadCapitalData(String epic, String TIME, int length) {
         List<BtcFutures> results = new ArrayList<BtcFutures>();
         try {
-            initCapital();
             HttpHeaders headers = new HttpHeaders();
             HttpEntity<String> request;
             RestTemplate restTemplate = new RestTemplate();
@@ -551,6 +550,7 @@ public class Utils {
 
         } catch (Exception e) {
             if (e.getMessage().contains("Connection timed out")) {
+                Utils.logWritelnWithTime(epic + ": " + e.getMessage(), false);
                 initCapital();
             }
         }
@@ -559,59 +559,59 @@ public class Utils {
     }
 
     public static String getChartNameCapital_(String TIME) {
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE)) {
-            return "_1m_";
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
-            return "_5m_";
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
-            return "_15m_";
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
-            return "_30m_";
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
-            return "_1h_";
-        }
+        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE)) {
+        // return "_1m_";
+        // }
+        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
+        // return "_5m_";
+        // }
+        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
+        // return "_15m_";
+        // }
+        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
+        // return "_30m_";
+        // }
+        // if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
+        // return "_1h_";
+        // }
         if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
             return "_4h_";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_DAY)) {
             return "_1d_";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
-            return "_1w_";
-        }
+        // if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
+        // return "_1w_";
+        // }
 
         return TIME;
     }
 
     public static String getChartNameCapital(String TIME) {
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE)) {
-            return "(1m)";
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
-            return "(5m)";
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
-            return "(15m)";
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
-            return "(30m)";
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
-            return "(H1)";
-        }
+        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE)) {
+        // return "(1m)";
+        // }
+        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
+        // return "(5m)";
+        // }
+        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
+        // return "(15m)";
+        // }
+        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
+        // return "(30m)";
+        // }
+        // if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
+        // return "(H1)";
+        // }
         if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
             return "(H4)";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_DAY)) {
             return "(D)";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
-            return "(W)";
-        }
+        // if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
+        // return "(W)";
+        // }
 
         return TIME;
     }
