@@ -2801,7 +2801,7 @@ public class Utils {
         }
 
         String result = "";
-        String trend_main = checkTrendSideway(list, 0, 2);
+        String trend_main = checkTrendSideway(list, 1, 2);
         String trend_confirm = checkTrendSideway(list, 3, 8);
 
         if (trend_main.contains(Utils.TREND_LONG) && trend_main.contains(Utils.TREND_SHORT)) {
@@ -2833,9 +2833,10 @@ public class Utils {
         BigDecimal ma3_2 = calcMA(list, 3, end);
 
         int slow_index = 10;
-        if (list.get(0).getId().contains("_4h_")) {
-            slow_index = 8;
+        if (list.get(0).getId().contains("_15m_")) {
+            slow_index = 20;
         }
+
         BigDecimal maX_1 = calcMA(list, slow_index, str);
         BigDecimal maX_2 = calcMA(list, slow_index, end);
 

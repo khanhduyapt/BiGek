@@ -225,23 +225,38 @@ public class BscScanBinanceApplication {
     }
 
     private static void checkBtcKillLongShort_15m(BinanceService binance_service) {
-        if (isReloadAfter(Utils.MINUTES_OF_15M, "BTC")) {
+        if (isReloadAfter(Utils.MINUTES_OF_15M, "KILL_BTC")) {
             System.out.println(Utils.getTimeHHmm() + "checkKillLongShort BTC(15m)");
             binance_service.sendMsgKillLongShort("bitcoin", "BTC");
             wait(SLEEP_MINISECONDS);
         }
 
-        if (isReloadAfter(Utils.MINUTES_OF_15M, "ETH")) {
+        if (isReloadAfter(Utils.MINUTES_OF_15M, "KILL_ETH")) {
             System.out.println(Utils.getTimeHHmm() + "checkKillLongShort ETH(15m)");
             binance_service.sendMsgKillLongShort("ethereum", "ETH");
             wait(SLEEP_MINISECONDS);
         }
 
-        if (isReloadAfter(Utils.MINUTES_OF_15M, "BNB")) {
+        if (isReloadAfter(Utils.MINUTES_OF_15M, "KILL_BNB")) {
             System.out.println(Utils.getTimeHHmm() + "checkKillLongShort BNB(15m)");
             binance_service.sendMsgKillLongShort("binancecoin", "BNB");
             wait(SLEEP_MINISECONDS);
         }
+
+        // ---------------------------------------------------------------------
+        if (isReloadAfter(Utils.MINUTES_OF_15M, "CHART_15m_BTC")) {
+            binance_service.checkCrypto(Utils.CRYPTO_TIME_15m, "bitcoin", "BTC");
+            wait(SLEEP_MINISECONDS);
+        }
+        if (isReloadAfter(Utils.MINUTES_OF_1H, "CHART_4H_BTC")) {
+            binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, "bitcoin", "BTC");
+            wait(SLEEP_MINISECONDS);
+        }
+        if (isReloadAfter(Utils.MINUTES_OF_1H, "CHART_4H_BTC")) {
+            binance_service.checkCrypto(Utils.CRYPTO_TIME_4h, "bitcoin", "BTC");
+            wait(SLEEP_MINISECONDS);
+        }
+        // ---------------------------------------------------------------------
     }
 
     public static boolean isReloadAfter(long minutes, String geckoid_or_epic) {
