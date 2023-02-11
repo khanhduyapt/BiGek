@@ -553,6 +553,7 @@ public class Utils {
                 Utils.logWritelnWithTime(epic + ": " + e.getMessage(), false);
                 initCapital();
             }
+            System.out.println(e.getMessage());
         }
 
         return results;
