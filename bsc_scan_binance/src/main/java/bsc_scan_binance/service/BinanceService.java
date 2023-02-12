@@ -50,7 +50,7 @@ public interface BinanceService {
 
     public String checkCrypto(String TIME, String gecko_id, String symbol);
 
-    public String initForex_W_trend(String EPIC);
+    public String initForexTrend(String EPIC, String CAPITAL_TIME_XXX);
 
     public String sendMsgKillLongShort(String gecko_id, String symbol);
 }

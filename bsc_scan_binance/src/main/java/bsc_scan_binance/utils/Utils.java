@@ -100,7 +100,7 @@ public class Utils {
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
     // public static final String CAPITAL_TIME_MINUTE = "MINUTE";
     // public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
-    // public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
+    public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
     // public static final String CAPITAL_TIME_MINUTE_30 = "MINUTE_30";
     public static final String CAPITAL_TIME_HOUR = "HOUR";
     public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
@@ -2834,9 +2834,9 @@ public class Utils {
 
         int slow_index = 10;
         if (list.get(0).getId().contains("_15m_")) {
-            slow_index = 50;
-        } else if (list.get(0).getId().contains("_1h_")) {
             slow_index = 20;
+        } else if (list.get(0).getId().contains("_1h_")) {
+            slow_index = 15;
         }
 
         BigDecimal maX_1 = calcMA(list, slow_index, str);
