@@ -109,6 +109,7 @@ public class BscScanBinanceApplication {
                 List<CandidateCoin> token_list = gecko_service.getList(callFormBinance);
                 int total = token_list.size();
 
+                int round_count = 0;
                 int index_forex = 0;
                 int index_crypto = 0;
                 int forex_size = capital_list.size();
@@ -128,7 +129,8 @@ public class BscScanBinanceApplication {
                         checkBtcKillLongShort_15m(binance_service);
 
                         // ----------------------------------------------
-                        if (isReloadAfter(1, "FOREX") && (!Utils.isWeekend() && Utils.isBusinessTime())) {
+                        if (isReloadAfter(1, "FOREX") && !Utils.isWeekend() && Utils.isBusinessTime()
+                                && Utils.isAllowSendMsgSetting()) {
                             if (index_forex < forex_size) {
                                 String EPIC = capital_list.get(index_forex);
                                 String init = "";
@@ -159,28 +161,26 @@ public class BscScanBinanceApplication {
                         }
 
                         // ----------------------------------------------
-                        if (isReloadAfter(1, "CRYPTO")) {
+                        if ((round_count > 0) && Utils.isWorkingTime()) {
                             if (isReloadAfter(Utils.MINUTES_OF_4H, "COIN_GECKO_" + coin.getSymbol())) {
                                 gecko_service.loadData(coin.getGeckoid());
                             }
 
-                            if (!Utils.isWeekend() && Utils.isWorkingTime()) {
-                                if (isReloadAfter(Utils.MINUTES_OF_4H, "INIT_CRYPTO_" + coin.getGeckoid())) {
-                                    String init = binance_service.initCrypto(coin.getGeckoid(), coin.getSymbol());
+                            if (isReloadAfter(Utils.MINUTES_OF_4H, "INIT_CRYPTO_" + coin.getGeckoid())) {
+                                String init = binance_service.initCrypto(coin.getGeckoid(), coin.getSymbol());
 
-                                    String msg = "(" + Utils.appendSpace(String.valueOf(index_crypto + 1), 3) + "/"
-                                            + Utils.appendSpace(String.valueOf(total), 3) + ")" + Utils.getTimeHHmm()
-                                            + Utils.appendSpace(coin.getSymbol(), 10) + " " + init;
+                                String msg = "(" + Utils.appendSpace(String.valueOf(index_crypto + 1), 3) + "/"
+                                        + Utils.appendSpace(String.valueOf(total), 3) + ")" + Utils.getTimeHHmm()
+                                        + Utils.appendSpace(coin.getSymbol(), 10) + " " + init;
 
-                                    System.out.println(msg);
-                                }
-
-                                wait(SLEEP_MINISECONDS);
+                                System.out.println(msg);
                             }
+
+                            wait(SLEEP_MINISECONDS);
                         }
                         // ----------------------------------------------
                         if (isReloadAfter(Utils.MINUTES_OF_1H, "CRYPTO_CHART_H1_" + coin.getSymbol())) {
-                            String init = binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, coin.getGeckoid(),
+                            String init = binance_service.checkCrypto(Utils.CRYPTO_TIME_15m, coin.getGeckoid(),
                                     coin.getSymbol());
 
                             String msg = "(" + Utils.appendSpace(String.valueOf(index_crypto + 1), 3) + "/"
@@ -205,6 +205,7 @@ public class BscScanBinanceApplication {
                         System.out.println("reload: " + Utils.getMmDD_TimeHHmm() + ", spend:"
                                 + TimeUnit.MILLISECONDS.toMinutes(diff) + " Minutes.");
 
+                        round_count += 1;
                         index_crypto = 0;
                     } else {
                         index_crypto += 1;
