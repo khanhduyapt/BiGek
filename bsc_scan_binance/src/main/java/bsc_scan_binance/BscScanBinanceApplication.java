@@ -121,7 +121,7 @@ public class BscScanBinanceApplication {
                 log = new File(Utils.getForexLogFile());
                 System.out.println(log.getAbsolutePath());
                 System.out.println();
-
+                String init = "";
                 while (index_crypto < total) {
                     CandidateCoin coin = token_list.get(index_crypto);
 
@@ -133,22 +133,14 @@ public class BscScanBinanceApplication {
                                 && Utils.isAllowSendMsgSetting()) {
                             if (index_forex < forex_size) {
                                 String EPIC = capital_list.get(index_forex);
-                                String init = "";
 
-                                if (isReloadAfter(Utils.MINUTES_OF_D, "INIT_FOREX_D_" + EPIC)) {
-                                    String trend_d = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
-                                    if (Utils.isNotBlank(trend_d)) {
-                                        wait(SLEEP_MINISECONDS);
-                                        //System.out.println(trend_d);
-                                    }
+                                init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
+                                if (Utils.isNotBlank(init)) {
+                                    wait(SLEEP_MINISECONDS);
                                 }
-
-                                if (isReloadAfter(Utils.MINUTES_OF_4H, "INIT_FOREX_H4_" + EPIC)) {
-                                    String trend_h = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-                                    if (Utils.isNotBlank(trend_h)) {
-                                        wait(SLEEP_MINISECONDS);
-                                        //System.out.println(trend_h);
-                                    }
+                                init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+                                if (Utils.isNotBlank(init)) {
+                                    wait(SLEEP_MINISECONDS);
                                 }
 
                                 if (isReloadAfter(Utils.MINUTES_OF_1H, "FOREX_CHART_H1_" + EPIC)) {
@@ -178,7 +170,7 @@ public class BscScanBinanceApplication {
                             }
 
                             if (isReloadAfter(Utils.MINUTES_OF_4H, "INIT_CRYPTO_" + coin.getGeckoid())) {
-                                String init = binance_service.initCrypto(coin.getGeckoid(), coin.getSymbol());
+                                init = binance_service.initCrypto(coin.getGeckoid(), coin.getSymbol());
 
                                 String msg = "(" + Utils.appendSpace(String.valueOf(index_crypto + 1), 3) + "/"
                                         + Utils.appendSpace(String.valueOf(total), 3) + ")" + Utils.getTimeHHmm()
@@ -188,10 +180,22 @@ public class BscScanBinanceApplication {
                             }
 
                             wait(SLEEP_MINISECONDS);
+                        } else {
+                            // ----------------------------------------------
+                            init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1d, coin.getGeckoid(),
+                                    coin.getSymbol());
+                            if (Utils.isNotBlank(init)) {
+                                wait(SLEEP_MINISECONDS);
+                            }
+                            init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4h, coin.getGeckoid(),
+                                    coin.getSymbol());
+                            if (Utils.isNotBlank(init)) {
+                                wait(SLEEP_MINISECONDS);
+                            }
                         }
-                        // ----------------------------------------------
+
                         if (isReloadAfter(Utils.MINUTES_OF_1H, "CRYPTO_CHART_H1_" + coin.getSymbol())) {
-                            String init = binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, coin.getGeckoid(),
+                            init = binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, coin.getGeckoid(),
                                     coin.getSymbol());
 
                             String msg = "(" + Utils.appendSpace(String.valueOf(index_crypto + 1), 3) + "/"
@@ -223,7 +227,9 @@ public class BscScanBinanceApplication {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (
+
+        Exception e) {
             initTelegramBotsApi();
             System.out.println("Duydk:" + e.getMessage());
             e.printStackTrace();
@@ -253,24 +259,6 @@ public class BscScanBinanceApplication {
             binance_service.sendMsgKillLongShort("binancecoin", "BNB");
             wait(SLEEP_MINISECONDS);
         }
-
-        // ---------------------------------------------------------------------
-        if (isReloadAfter(Utils.MINUTES_OF_15M, "CHART_15m_BTC")) {
-            String trend = binance_service.checkCrypto(Utils.CRYPTO_TIME_15m, "bitcoin", "BTC");
-            System.out.println(Utils.getTimeHHmm() + "check chart BTC(15m)" + trend);
-            wait(SLEEP_MINISECONDS);
-        }
-        if (isReloadAfter(Utils.MINUTES_OF_1H, "CHART_1H_BTC")) {
-            String trend = binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, "bitcoin", "BTC");
-            System.out.println(Utils.getTimeHHmm() + "check chart BTC(1h) " + trend);
-            wait(SLEEP_MINISECONDS);
-        }
-        if (isReloadAfter(Utils.MINUTES_OF_4H, "CHART_4H_BTC")) {
-            String trend = binance_service.checkCrypto(Utils.CRYPTO_TIME_4h, "bitcoin", "BTC");
-            System.out.println(Utils.getTimeHHmm() + "check chart BTC(4h) " + trend);
-            wait(SLEEP_MINISECONDS);
-        }
-        // ---------------------------------------------------------------------
     }
 
     public static boolean isReloadAfter(long minutes, String geckoid_or_epic) {
