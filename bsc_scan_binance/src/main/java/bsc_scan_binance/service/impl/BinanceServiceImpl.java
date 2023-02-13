@@ -3110,7 +3110,9 @@ public class BinanceServiceImpl implements BinanceService {
 
             trend_switch = Utils.switchTrend(list);
             if (Utils.isNotBlank(trend_switch)) {
-                sendScapMsg(list, EPIC, trend_switch, "(D:" + trend_d + ", H4:" + trend_h4 + ")" + trend_d_h4_h1);
+                if (Objects.equals(trend_switch, trend_d)) {
+                    sendScapMsg(list, EPIC, trend_switch, "(D:" + trend_d + ", H4:" + trend_h4 + ")" + trend_d_h4_h1);
+                }
 
                 Utils.logWritelnWithTime(Utils.appendSpace(
                         Utils.appendSpace("Forex " + Utils.appendSpace("  (" + trend_switch + ")", 10)
@@ -3120,6 +3122,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             {
+                savePrepareOrderTrend(EPIC, TIME, trend_ma3);
+
                 String event_id = EVENT_DH4H1_H1_FX;
                 if (Objects.equals(TIME, Utils.CAPITAL_TIME_DAY)) {
                     event_id = EVENT_DH4H1_D_FX;

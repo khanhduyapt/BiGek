@@ -183,7 +183,7 @@ public class BscScanBinanceApplication {
                                         + Utils.appendSpace(String.valueOf(total), 3) + ")" + Utils.getTimeHHmm()
                                         + Utils.appendSpace(coin.getSymbol(), 10) + " " + init;
 
-                                System.out.println(msg);
+                                // System.out.println(msg);
                             }
 
                             wait(SLEEP_MINISECONDS);
@@ -197,7 +197,7 @@ public class BscScanBinanceApplication {
                                     + Utils.appendSpace(String.valueOf(total), 3) + ")" + Utils.getTimeHHmm()
                                     + Utils.appendSpace(coin.getSymbol(), 10) + " " + init;
 
-                            System.out.println(msg);
+                            // System.out.println(msg);
                         }
                         // ----------------------------------------------
 
