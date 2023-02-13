@@ -139,7 +139,7 @@ public class BscScanBinanceApplication {
                                     String trend_d = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
                                     if (Utils.isNotBlank(trend_d)) {
                                         wait(SLEEP_MINISECONDS);
-                                        System.out.println(trend_d);
+                                        //System.out.println(trend_d);
                                     }
                                 }
 
@@ -147,7 +147,7 @@ public class BscScanBinanceApplication {
                                     String trend_h = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
                                     if (Utils.isNotBlank(trend_h)) {
                                         wait(SLEEP_MINISECONDS);
-                                        System.out.println(trend_h);
+                                        //System.out.println(trend_h);
                                     }
                                 }
 

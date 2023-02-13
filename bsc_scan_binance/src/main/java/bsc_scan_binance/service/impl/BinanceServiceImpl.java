@@ -3092,20 +3092,14 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String checkForex(String EPIC, String CAPITAL_TIME_XXX) {
-        if (!reloadPrepareOrderTrend(EPIC, CAPITAL_TIME_XXX)) {
-            return "";
-        }
         String trend_d = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_DAY);
         String trend_h4 = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
         String trend_h1 = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
-        String trend_d_h4_h1 = "";
-        if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_15)) {
-            if (Objects.equals(trend_d, trend_h4) && Objects.equals(trend_h4, trend_h1) && Utils.isNotBlank(trend_h1)) {
-                trend_d_h4_h1 = "(trend_d_h4_h1): " + trend_h1;
-            }
-            if (Utils.isBlank(trend_d_h4_h1)) {
-                return "";
-            }
+        String dh4h1 = Utils.appendSpace(EPIC, 10) + "(D:" + trend_d + ", H4:" + trend_h4 + ", H1:" + trend_h1 + ")";
+        System.out.println(dh4h1);
+
+        if (!reloadPrepareOrderTrend(EPIC, CAPITAL_TIME_XXX)) {
+            return "";
         }
 
         String result = "";
@@ -3136,7 +3130,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_d_h4 = Utils.appendSpace("(D:" + trend_d + ", H4:" + trend_h4 + ")", 20);
 
                 if (Objects.equals(trend_switch, trend_d)) {
-                    sendScapMsg(list, EPIC, trend_switch, trend_d_h4 + trend_d_h4_h1);
+                    sendScapMsg(list, EPIC, trend_switch, trend_d_h4 + dh4h1);
                 }
 
                 Utils.logWritelnWithTime(Utils.appendSpace(
@@ -3144,7 +3138,7 @@ public class BinanceServiceImpl implements BinanceService {
                                 + Utils.getChartName(list) + Utils.appendSpace(EPIC, 8)
                                 + Utils.getCurrentPrice(list) + trend_d_h4, 51) + " "
                                 + Utils.getCapitalLink(EPIC),
-                        128) + trend_d_h4_h1, false);
+                        128) + dh4h1, false);
             }
 
             {
