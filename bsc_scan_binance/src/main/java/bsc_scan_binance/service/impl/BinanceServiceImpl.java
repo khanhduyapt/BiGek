@@ -3107,6 +3107,9 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String trend_ma3 = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+            if (Objects.equals(TIME, Utils.CAPITAL_TIME_HOUR_4)) {
+                trend_h4 = trend_ma3;
+            }
 
             trend_switch = Utils.switchTrend(list);
             if (Utils.isNotBlank(trend_switch)) {
@@ -3117,7 +3120,8 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnWithTime(Utils.appendSpace(
                         Utils.appendSpace("Forex " + Utils.appendSpace("  (" + trend_switch + ")", 10)
                                 + Utils.getChartName(list) + Utils.appendSpace(EPIC, 8) + Utils.getCurrentPrice(list)
-                                + Utils.appendSpace("(D: " + trend_d + ")", 10), 51) + " " + Utils.getCapitalLink(EPIC),
+                                + "(D: " + trend_d + ", H4:" + trend_h4 + ")", 51) + " "
+                                + Utils.getCapitalLink(EPIC),
                         128) + trend_d_h4_h1, false);
             }
 

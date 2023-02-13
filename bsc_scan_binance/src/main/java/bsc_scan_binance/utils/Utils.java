@@ -1934,7 +1934,10 @@ public class Utils {
             }
 
             String symbol = list.get(0).getId().toLowerCase();
-            if (symbol.contains("_1h_")) {
+
+            if (symbol.contains("_15m_")) {
+                result = "(15m)";
+            } else if (symbol.contains("_1h_")) {
                 result = "(H1)";
             } else if (symbol.contains("_2h_")) {
                 result = "(H2)";
