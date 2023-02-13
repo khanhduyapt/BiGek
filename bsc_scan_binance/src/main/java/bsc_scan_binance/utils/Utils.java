@@ -566,15 +566,15 @@ public class Utils {
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
         // return "_5m_";
         // }
-        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
-        // return "_15m_";
-        // }
+        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
+            return "_15m_";
+        }
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
         // return "_30m_";
         // }
-        // if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
-        // return "_1h_";
-        // }
+        if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
+            return "_1h_";
+        }
         if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
             return "_4h_";
         }
