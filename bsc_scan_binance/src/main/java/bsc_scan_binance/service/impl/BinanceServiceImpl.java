@@ -3096,6 +3096,27 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     @Override
+    public String getForexChart(String EPIC) {
+        String trend_d = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_DAY);
+        String trend_h4 = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+        String trend_h1 = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
+
+        if (Utils.isBlank(trend_d)) {
+            return Utils.CAPITAL_TIME_DAY;
+        }
+
+        if (!Objects.equals(trend_d, trend_h4)) {
+            return Utils.CAPITAL_TIME_HOUR_4;
+        }
+
+        if (!Objects.equals(trend_h4, trend_h1)) {
+            return Utils.CAPITAL_TIME_HOUR;
+        }
+
+        return Utils.CAPITAL_TIME_MINUTE_15;
+    }
+
+    @Override
     @Transactional
     public String checkForex(String EPIC, String CAPITAL_TIME_XXX) {
         String trend_d = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_DAY);
@@ -3194,8 +3215,33 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     @Override
+    public String getCryptoChart(String symbol) {
+        String trend_d = getPrepareOrderTrend(symbol, Utils.CRYPTO_TIME_1d);
+        String trend_h4 = getPrepareOrderTrend(symbol, Utils.CRYPTO_TIME_4h);
+        String trend_h1 = getPrepareOrderTrend(symbol, Utils.CRYPTO_TIME_1h);
+
+        if (Utils.isBlank(trend_d)) {
+            return Utils.CRYPTO_TIME_1d;
+        }
+
+        if (!Objects.equals(trend_d, trend_h4)) {
+            return Utils.CRYPTO_TIME_4h;
+        }
+
+        if (!Objects.equals(trend_h4, trend_h1)) {
+            return Utils.CRYPTO_TIME_1h;
+        }
+
+        return Utils.CRYPTO_TIME_15m;
+    }
+
+    @Override
     @Transactional
     public String checkCrypto(String TIME, String gecko_id, String symbol) {
+        if (!reloadPrepareOrderTrend(symbol, TIME)) {
+            return "";
+        }
+
         String trend_d = getPrepareOrderTrend(symbol, Utils.CRYPTO_TIME_1d);
         String trend_h4 = getPrepareOrderTrend(symbol, Utils.CRYPTO_TIME_4h);
         String dh4h1 = "(D:" + trend_d + ", H4:" + trend_h4 + ")";
@@ -3207,8 +3253,12 @@ public class BinanceServiceImpl implements BinanceService {
         if ("_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
             list_h1 = Utils.loadData(symbol, TIME, 50);
         } else {
+            if (Objects.equals(Utils.TREND_SHORT, trend_h4)) {
+                return "";
+            }
             list_h1 = Utils.loadData(symbol, TIME, 50, "BTC");
         }
+
         if (CollectionUtils.isEmpty(list_h1)) {
             list_h1 = Utils.loadData(symbol, TIME, 50, "BUSD");
 
