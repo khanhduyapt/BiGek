@@ -169,6 +169,7 @@ public class BscScanBinanceApplication {
                                 index_forex += 1;
                             } else {
                                 index_forex = 0;
+                                Utils.initCapital();
                                 Utils.writelnLogFooter_Forex();
                             }
                         }

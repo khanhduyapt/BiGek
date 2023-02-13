@@ -3179,7 +3179,7 @@ public class BinanceServiceImpl implements BinanceService {
         // checkForex("DXY", Utils.CAPITAL_TIME_HOUR_4);
 
         List<BtcFutures> list;
-        if (Objects.equals("BTC", symbol)) {
+        if ("_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
             list = Utils.loadData(symbol, TIME, 50);
         } else {
             list = Utils.loadData(symbol, TIME, 50, "BTC");
@@ -3222,8 +3222,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String char_name = Utils.getChartName(list);
             String curr_price = Utils.getCurrentPrice(list_h1_usdt);
-            String msg = "(" + trend.replace(Utils.TREND_SHORT, Utils.TEXT_STOP_LONG) + ")" + char_name + symbol
-                    + curr_price;
+            String msg = "(" + trend + ")" + char_name + symbol + curr_price;
 
             String type = "(Spot)    ";
             Boolean isFututes = false;

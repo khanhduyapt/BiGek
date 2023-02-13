@@ -2852,7 +2852,7 @@ public class Utils {
         if (list.get(0).getId().contains("_15m_")) {
             slow_index = 20;
         } else if (list.get(0).getId().contains("_1h_")) {
-            slow_index = 15;
+            slow_index = 10;
         }
 
         if (slow_index >= list.size()) {
