@@ -930,6 +930,17 @@ public class Utils {
         }
     }
 
+    public static void writelnLogFooter_Forex() {
+        try {
+            FileWriter fw = new FileWriter(getForexLogFile(), true);
+            fw.write(
+                    "------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+            fw.close();
+        } catch (IOException ioe) {
+            System.err.println("IOException: " + ioe.getMessage());
+        }
+    }
+
     public static void writelnLogFooter() {
         try {
             FileWriter fw = new FileWriter(getCryptoLogFile(), true);
