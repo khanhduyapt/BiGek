@@ -2781,7 +2781,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             saveElapsedMinutesForPrepareOrder(EPIC, trend, CAPITAL_TIME_XXX);
 
-            return "Trend(" + CAPITAL_TIME_XXX + "): " + trend;
+            return EPIC + " " + Utils.getChartNameCapital(CAPITAL_TIME_XXX) + ": " + trend;
         }
 
         return "";

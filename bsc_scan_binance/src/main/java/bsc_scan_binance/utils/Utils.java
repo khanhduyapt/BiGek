@@ -595,15 +595,15 @@ public class Utils {
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
         // return "(5m)";
         // }
-        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
-        // return "(15m)";
-        // }
+        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
+            return "(15m)";
+        }
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
         // return "(30m)";
         // }
-        // if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
-        // return "(H1)";
-        // }
+        if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
+            return "(H1)";
+        }
         if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
             return "(H4)";
         }

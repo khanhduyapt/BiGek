@@ -135,7 +135,7 @@ public class BscScanBinanceApplication {
                                 String EPIC = capital_list.get(index_forex);
                                 String init = "";
 
-                                if (isReloadAfter(Utils.MINUTES_OF_D, "INIT_FOREX_" + EPIC)) {
+                                if (isReloadAfter(Utils.MINUTES_OF_D, "INIT_FOREX_D_" + EPIC)) {
                                     String trend_d = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
                                     if (Utils.isNotBlank(trend_d)) {
                                         wait(SLEEP_MINISECONDS);
@@ -143,15 +143,11 @@ public class BscScanBinanceApplication {
                                     }
                                 }
 
-                                if (isReloadAfter(Utils.MINUTES_OF_4H, "FOREX_CHART_H4_" + EPIC)) {
-                                    init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-                                    if (Utils.isNotBlank(init)) {
-                                        String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3) + "/"
-                                                + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
-                                                + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 10) + " " + init;
-
+                                if (isReloadAfter(Utils.MINUTES_OF_4H, "INIT_FOREX_H4_" + EPIC)) {
+                                    String trend_h = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+                                    if (Utils.isNotBlank(trend_h)) {
                                         wait(SLEEP_MINISECONDS);
-                                        System.out.println(msg);
+                                        System.out.println(trend_h);
                                     }
                                 }
 
@@ -166,6 +162,7 @@ public class BscScanBinanceApplication {
                                         System.out.println(msg);
                                     }
                                 }
+
                                 index_forex += 1;
                             } else {
                                 index_forex = 0;
