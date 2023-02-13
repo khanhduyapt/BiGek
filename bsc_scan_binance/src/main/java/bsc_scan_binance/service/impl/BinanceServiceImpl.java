@@ -3131,8 +3131,9 @@ public class BinanceServiceImpl implements BinanceService {
                     + "--------------------------Size:" + list.size() + ", Cur:" + trend_switch;
 
         } catch (Exception e) {
-            result = "checkForex(" + EPIC + ")Error:" + e.getMessage();
+            result = "checkForex(" + EPIC + ") Error:" + e.getMessage();
             Utils.logWritelnWithTime(result, false);
+            e.printStackTrace();
         }
 
         return result;

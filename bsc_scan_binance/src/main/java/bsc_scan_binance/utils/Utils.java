@@ -1926,30 +1926,32 @@ public class Utils {
     }
 
     public static String getChartName(List<BtcFutures> list) {
-        if (CollectionUtils.isEmpty(list)) {
-            return "";
-        }
         String result = "";
-        String symbol = list.get(0).getId().toLowerCase();
-        if (symbol.contains("_1h_")) {
-            result = "(H1)";
-        }
-        if (symbol.contains("_2h_")) {
-            result = "(H2)";
-        }
-        if (symbol.contains("_4h_")) {
-            result = "(H4)";
-        }
-        if (symbol.contains("_1d_")) {
-            result = "(D1)";
-        }
-        if (symbol.contains("_1w_")) {
-            result = "(W)";
-        }
 
-        symbol = symbol.replace("_00", "");
-        symbol = symbol.substring(symbol.indexOf("_"), symbol.length()).replace("_", "");
-        result = "(" + symbol.replace("_00", "") + ")";
+        try {
+            if (CollectionUtils.isEmpty(list)) {
+                return "";
+            }
+
+            String symbol = list.get(0).getId().toLowerCase();
+            if (symbol.contains("_1h_")) {
+                result = "(H1)";
+            } else if (symbol.contains("_2h_")) {
+                result = "(H2)";
+            } else if (symbol.contains("_4h_")) {
+                result = "(H4)";
+            } else if (symbol.contains("_1d_")) {
+                result = "(D1)";
+            } else if (symbol.contains("_1w_")) {
+                result = "(W)";
+            } else {
+                symbol = symbol.replace("_00", "");
+                symbol = symbol.substring(symbol.indexOf("_"), symbol.length()).replace("_", "");
+                result = "(" + symbol.replace("_00", "") + ")";
+            }
+        } catch (Exception e) {
+            return list.get(0).getId();
+        }
 
         return Utils.appendSpace(result, 6);
     }
@@ -2837,6 +2839,10 @@ public class Utils {
             slow_index = 20;
         } else if (list.get(0).getId().contains("_1h_")) {
             slow_index = 15;
+        }
+
+        if (slow_index >= list.size()) {
+            slow_index = list.size() - 1;
         }
 
         BigDecimal maX_1 = calcMA(list, slow_index, str);
