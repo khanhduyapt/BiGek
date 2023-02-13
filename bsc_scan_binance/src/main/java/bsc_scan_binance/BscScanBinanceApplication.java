@@ -145,24 +145,26 @@ public class BscScanBinanceApplication {
 
                                 if (isReloadAfter(Utils.MINUTES_OF_4H, "FOREX_CHART_H4_" + EPIC)) {
                                     init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+                                    if (Utils.isNotBlank(init)) {
+                                        String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3) + "/"
+                                                + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
+                                                + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 10) + " " + init;
 
-                                    String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3) + "/"
-                                            + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
-                                            + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 10) + " " + init;
-
-                                    wait(SLEEP_MINISECONDS);
-                                    System.out.println(msg);
+                                        wait(SLEEP_MINISECONDS);
+                                        System.out.println(msg);
+                                    }
                                 }
 
                                 if (isReloadAfter(Utils.MINUTES_OF_1H, "FOREX_CHART_H1_" + EPIC)) {
                                     init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                    if (Utils.isNotBlank(init)) {
+                                        String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3) + "/"
+                                                + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
+                                                + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 10) + " " + init;
 
-                                    String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3) + "/"
-                                            + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
-                                            + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 10) + " " + init;
-
-                                    wait(SLEEP_MINISECONDS);
-                                    System.out.println(msg);
+                                        wait(SLEEP_MINISECONDS);
+                                        System.out.println(msg);
+                                    }
                                 }
                                 index_forex += 1;
                             } else {
