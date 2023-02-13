@@ -190,7 +190,7 @@ public class BscScanBinanceApplication {
                         }
                         // ----------------------------------------------
                         if (isReloadAfter(Utils.MINUTES_OF_1H, "CRYPTO_CHART_H1_" + coin.getSymbol())) {
-                            String init = binance_service.checkCrypto(Utils.CRYPTO_TIME_15m, coin.getGeckoid(),
+                            String init = binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, coin.getGeckoid(),
                                     coin.getSymbol());
 
                             String msg = "(" + Utils.appendSpace(String.valueOf(index_crypto + 1), 3) + "/"

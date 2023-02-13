@@ -3203,11 +3203,17 @@ public class BinanceServiceImpl implements BinanceService {
             boolean trend_h4_ma3 = Utils.isUptrendByMaIndex(list_h1_usdt, 3);
             boolean trend_h4_ma10 = Utils.isUptrendByMaIndex(list_h1_usdt, 10);
             String str_trend_h4_ma3 = (trend_h4_ma3 ? Utils.TREND_LONG : Utils.TREND_SHORT);
-            if (Objects.equals("BTC", symbol) || (isFututes && Objects.equals(trend, Utils.TREND_LONG) && trend_cu_ma3
-                    && trend_h4_ma3 && trend_h4_ma10)) {
+
+            if ("_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
 
                 String EVENT_ID = EVENT_PUMP + symbol + char_name + Utils.getCurrentYyyyMmDd_HH();
                 sendMsgPerHour(EVENT_ID, msg, true);
+
+            } else if ((isFututes && Objects.equals(trend, Utils.TREND_LONG) && trend_cu_ma3
+                    && trend_h4_ma3 && trend_h4_ma10)) {
+
+                //String EVENT_ID = EVENT_PUMP + symbol + char_name + Utils.getCurrentYyyyMmDd_HH();
+                //sendMsgPerHour(EVENT_ID, msg, true);
             }
 
             if (Objects.equals(trend, str_trend_h4_ma3)) {

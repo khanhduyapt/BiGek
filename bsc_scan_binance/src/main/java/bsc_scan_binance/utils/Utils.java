@@ -1945,8 +1945,8 @@ public class Utils {
             } else if (symbol.contains("_1w_")) {
                 result = "(W)";
             } else {
-                symbol = symbol.replace("_00", "");
-                symbol = symbol.substring(symbol.indexOf("_"), symbol.length()).replace("_", "");
+                //symbol = symbol.replace("_00", "");
+                //symbol = symbol.substring(symbol.indexOf("_"), symbol.length()).replace("_", "");
                 result = "(" + symbol.replace("_00", "") + ")";
             }
         } catch (Exception e) {
