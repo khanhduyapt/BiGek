@@ -3157,7 +3157,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_d_h4 = Utils.appendSpace("(D:" + trend_d + ", H4:" + trend_h4 + ")", 20);
 
                 String star = "";
-                if (Objects.equals(trend_d, trend_h4) && Objects.equals(trend_switch, trend_d)) {
+                if (Objects.equals(trend_d, trend_h4) && Objects.equals(trend_h4, trend_switch)) {
                     star = "*d=h4=h1*";
                     sendScapMsg(list, EPIC, trend_switch, trend_d_h4 + dh4h1);
                 }

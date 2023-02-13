@@ -122,6 +122,7 @@ public class BscScanBinanceApplication {
                 System.out.println(log.getAbsolutePath());
                 System.out.println();
                 String init = "";
+                String chart = "";
                 while (index_crypto < total) {
                     CandidateCoin coin = token_list.get(index_crypto);
                     String GECKOID = coin.getGeckoid();
@@ -144,21 +145,22 @@ public class BscScanBinanceApplication {
                                     wait(SLEEP_MINISECONDS);
                                 }
 
-                                if (isReloadAfter(Utils.MINUTES_OF_15M, "FOREX_CHART_" + EPIC)) {
-                                    String chart = binance_service.getForexChart(EPIC);
+                                chart = binance_service.getForexChart(EPIC);
+                                if (Objects.equals(chart, Utils.CAPITAL_TIME_HOUR)
+                                        || Objects.equals(chart, Utils.CAPITAL_TIME_MINUTE_15)) {
+                                    init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                    if (Utils.isBlank(init)) {
+                                        wait(SLEEP_MINISECONDS);
+                                        wait(SLEEP_MINISECONDS);
+                                        wait(SLEEP_MINISECONDS);
+                                        init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+                                    }
 
-                                    if (Objects.equals(chart, Utils.CAPITAL_TIME_HOUR)
-                                            || Objects.equals(chart, Utils.CAPITAL_TIME_MINUTE_15)) {
-
-                                        init = binance_service.checkForex(EPIC, chart);
-                                        if (Utils.isNotBlank(init)) {
-                                            String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3)
-                                                    + "/" + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
-                                                    + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 10) + " " + init;
-
-                                            wait(SLEEP_MINISECONDS);
-                                            System.out.println(msg);
-                                        }
+                                    if (Utils.isNotBlank(init)) {
+                                        String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3) + "/"
+                                                + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
+                                                + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 10) + " " + init;
+                                        System.out.println(msg);
                                     }
                                 }
 
@@ -199,14 +201,16 @@ public class BscScanBinanceApplication {
                             wait(SLEEP_MINISECONDS);
                         }
 
-                        if (isReloadAfter(Utils.MINUTES_OF_15M, "CRYPTO_CHART_" + SYMBOL)) {
-                            String chart = binance_service.getCryptoChart(SYMBOL);
-
-                            if (Objects.equals(chart, Utils.CRYPTO_TIME_1h)
-                                    || Objects.equals(chart, Utils.CRYPTO_TIME_15m)) {
-
+                        chart = binance_service.getCryptoChart(SYMBOL);
+                        if (Objects.equals(chart, Utils.CRYPTO_TIME_1h)
+                                || Objects.equals(chart, Utils.CRYPTO_TIME_15m)) {
+                            init = binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, GECKOID, SYMBOL);
+                            if (Utils.isBlank(init)) {
+                                wait(SLEEP_MINISECONDS);
                                 init = binance_service.checkCrypto(chart, GECKOID, SYMBOL);
+                            }
 
+                            if (Utils.isNotBlank(init)) {
                                 String msg = "(" + Utils.appendSpace(String.valueOf(index_crypto + 1), 3) + "/"
                                         + Utils.appendSpace(String.valueOf(total), 3) + ")" + Utils.getTimeHHmm()
                                         + Utils.appendSpace(SYMBOL, 10) + " " + init;
