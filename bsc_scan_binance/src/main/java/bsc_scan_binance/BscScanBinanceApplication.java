@@ -190,6 +190,15 @@ public class BscScanBinanceApplication {
 
                         init = binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, GECKOID, SYMBOL);
                         if (Utils.isNotBlank(init)) {
+                            wait(SLEEP_MINISECONDS);
+                        }
+
+                        chart = binance_service.getCryptoChart(SYMBOL);
+                        if (Objects.equals(chart, Utils.CRYPTO_TIME_15m)) {
+                            init = binance_service.checkCrypto(Utils.CRYPTO_TIME_15m, GECKOID, SYMBOL);
+                        }
+
+                        if (Utils.isNotBlank(init)) {
                             String msg = "(" + Utils.appendSpace(String.valueOf(index_crypto + 1), 3) + "/"
                                     + Utils.appendSpace(String.valueOf(total), 3) + ")" + Utils.getTimeHHmm()
                                     + Utils.appendSpace(SYMBOL, 10) + " " + init;
