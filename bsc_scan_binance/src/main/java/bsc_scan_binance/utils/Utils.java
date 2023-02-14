@@ -2786,7 +2786,7 @@ public class Utils {
         }
 
         String result = "";
-        String trend_main = checkTrendSideway(list, 1, 2);
+        String trend_main = checkTrendSideway(list, 0, 2);
         String trend_confirm = checkTrendSideway(list, 3, 8);
 
         if (trend_main.contains(Utils.TREND_LONG) && trend_main.contains(Utils.TREND_SHORT)) {
@@ -2811,7 +2811,6 @@ public class Utils {
     }
 
     private static String checkTrendSideway(List<BtcFutures> list, int str, int end) {
-        String l_m03x10 = "";
         String s_m03x10 = "";
 
         BigDecimal ma3_1 = calcMA(list, 3, str);
@@ -2831,7 +2830,7 @@ public class Utils {
         BigDecimal maX_1 = calcMA(list, slow_index, str);
         BigDecimal maX_2 = calcMA(list, slow_index, end);
 
-        l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, maX_1, maX_2);
+        String l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, maX_1, maX_2);
         if (!isUptrendByMaIndex(list, 10)) {
             l_m03x10 = "";
         }
