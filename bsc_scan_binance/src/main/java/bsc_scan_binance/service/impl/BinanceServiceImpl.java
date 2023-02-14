@@ -3075,12 +3075,12 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        List<BtcFutures> list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, 8);
+        List<BtcFutures> list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, 5);
         if (CollectionUtils.isEmpty(list)) {
             BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS);
 
             Utils.initCapital();
-            list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, 8);
+            list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, 5);
 
             if (CollectionUtils.isEmpty(list)) {
                 String result = "initForexTrend(" + EPIC + ")Size:" + list.size();
