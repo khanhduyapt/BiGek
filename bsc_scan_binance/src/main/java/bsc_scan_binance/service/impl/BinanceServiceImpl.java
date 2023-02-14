@@ -3245,7 +3245,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (!(Utils.isNotBlank(trend_d) && Objects.equals(trend_d, trend_h4))) {
-            //return "";
+            // return "";
         }
 
         List<BtcFutures> list_h1;
@@ -3274,13 +3274,17 @@ public class BinanceServiceImpl implements BinanceService {
         saveElapsedMinutesForPrepareOrder(gecko_id, trend_ma3, TIME);
 
         if (Utils.isNotBlank(trend_switch) && Objects.equals(trend_h4, trend_switch)) {
-            List<BtcFutures> list_h1_usdt = Utils.loadData(symbol, Utils.CRYPTO_TIME_1h, 10);
-            if (CollectionUtils.isEmpty(list_h1_usdt)) {
-                return "";
-            }
+            String curr_price = Utils.getCurrentPrice(list_h1);
             String vmc = Utils.appendSpace("", 15);
             if (!"_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
+                List<BtcFutures> list_h1_usdt = Utils.loadData(symbol, Utils.CRYPTO_TIME_1h, 10);
+                if (CollectionUtils.isEmpty(list_h1_usdt)) {
+                    return "";
+                }
+
                 vmc = getVolMc(gecko_id);
+                vmc += Utils.getAtlAth(list_h1_usdt);
+                curr_price = Utils.getCurrentPrice(list_h1_usdt);
             }
 
             BigDecimal ma10_1 = Utils.calcMA(list_h1, 10, 1);
@@ -3299,7 +3303,6 @@ public class BinanceServiceImpl implements BinanceService {
                     : Utils.getCryptoLink_Spot(symbol));
 
             String char_name = Utils.getChartName(list_h1);
-            String curr_price = Utils.getCurrentPrice(list_h1_usdt);
             String msg = "(" + trend_switch + ")" + char_name + symbol + curr_price;
             msg += Utils.new_line_from_service + dh4h1;
 
@@ -3317,16 +3320,13 @@ public class BinanceServiceImpl implements BinanceService {
                 sendMsgPerHour(EVENT_ID, msg, true);
 
             } else if (isFututes && Objects.equals(Utils.TREND_LONG, trend_switch)) {
-
-                sendMsgPerHour(EVENT_ID, msg, true);
+                // sendMsgPerHour(EVENT_ID, msg, true);
             }
 
             Utils.logWritelnWithTime(Utils
-                    .appendSpace(
-                            Utils.appendSpace("Crypto" + Utils.appendSpace("  (" + trend_switch + ")", 10) + char_name
-                                    + Utils.appendSpace(symbol, 8) + curr_price + type, 51) + url + " ",
-                            126)
-                    + " " + vmc + Utils.getAtlAth(list_h1_usdt) + star + dh4h1, true);
+                    .appendSpace(Utils.appendSpace("Crypto" + Utils.appendSpace("  (" + trend_switch + ")", 10)
+                            + char_name + Utils.appendSpace(symbol, 8) + curr_price + type, 51) + url + " ", 126)
+                    + " " + vmc + star + dh4h1, true);
 
             createNewTrendCycle(EVENT_DH4H1_15M_CRYPTO, list_h1, trend_switch, gecko_id, symbol);
         }

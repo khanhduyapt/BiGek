@@ -125,9 +125,9 @@ public class Utils {
             "EURAUD", "EURJPY", "EURCAD", "EURCHF", "AUDJPY", "CADJPY", "GBPJPY", "GBPAUD", "GBPCAD", "GBPCHF",
             "AUDCAD");
 
-    public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList(
-            "GBPNZD", "EURMXN", "EURNZD", "AUDCHF", "AUDCNH", "AUDMXN", "AUDNZD", "AUDSGD", "CADCHF",
-            "CHFHKD", "CHFJPY", "CHFSGD", "CNHHKD", "CNHJPY", "NZDCAD", "NZDCHF", "NZDJPY", "NZDSGD");
+    public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("GBPNZD", "EURMXN", "EURNZD", "AUDCHF",
+            "AUDCNH", "AUDMXN", "AUDNZD", "AUDSGD", "CADCHF", "CHFHKD", "CHFJPY", "CHFSGD", "CNHHKD", "CNHJPY",
+            "NZDCAD", "NZDCHF", "NZDJPY", "NZDSGD");
 
     // public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("AUDHKD",
     // "AUDPLN", "AUDZAR", "CADCNH",
@@ -953,7 +953,7 @@ public class Utils {
 
     public static boolean isWorkingTime() {
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-        if ((9 <= hh && hh <= 18)) {
+        if ((7 <= hh && hh <= 18)) {
             return true;
         }
 
@@ -1928,8 +1928,9 @@ public class Utils {
             } else if (symbol.contains("_1w_")) {
                 result = "(W)";
             } else {
-                //symbol = symbol.replace("_00", "");
-                //symbol = symbol.substring(symbol.indexOf("_"), symbol.length()).replace("_", "");
+                // symbol = symbol.replace("_00", "");
+                // symbol = symbol.substring(symbol.indexOf("_"), symbol.length()).replace("_",
+                // "");
                 result = "(" + symbol.replace("_00", "") + ")";
             }
         } catch (Exception e) {
