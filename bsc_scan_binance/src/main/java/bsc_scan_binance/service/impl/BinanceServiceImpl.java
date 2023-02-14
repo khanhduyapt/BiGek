@@ -3324,7 +3324,7 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnWithTime(Utils
                     .appendSpace(
                             Utils.appendSpace("Crypto" + Utils.appendSpace("  (" + trend_switch + ")", 10) + char_name
-                                    + Utils.appendSpace(symbol, 8) + curr_price + type, 51) + url,
+                                    + Utils.appendSpace(symbol, 8) + curr_price + type, 51) + url + " ",
                             126)
                     + " " + vmc + Utils.getAtlAth(list_h1_usdt) + star + dh4h1, true);
 

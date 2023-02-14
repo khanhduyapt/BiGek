@@ -2817,7 +2817,7 @@ public class Utils {
         BigDecimal ma3_1 = calcMA(list, 3, str);
         BigDecimal ma3_2 = calcMA(list, 3, end);
 
-        int slow_index = 10;
+        int slow_index = 8;
         if (list.get(0).getId().contains("_15m_")) {
             slow_index = 20;
         } else if (list.get(0).getId().contains("_1h_")) {
