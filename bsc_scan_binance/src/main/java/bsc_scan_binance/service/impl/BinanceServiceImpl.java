@@ -3156,18 +3156,16 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isNotBlank(trend_switch)) {
                 String trend_d_h4 = Utils.appendSpace("(D:" + trend_d + ", H4:" + trend_h4 + ")", 20);
 
-                String star = "";
                 if (Objects.equals(trend_d, trend_h4) && Objects.equals(trend_h4, trend_switch)) {
-                    star = "*d=h4=h1*";
-                    sendScapMsg(list, EPIC, trend_switch, trend_d_h4 + dh4h1);
+                    sendScapMsg(list, EPIC, trend_switch, trend_d_h4);
                 }
 
                 Utils.logWritelnWithTime(
                         Utils.appendSpace(Utils
-                                .appendSpace("Forex " + star + Utils.appendSpace("  (" + trend_switch + ")", 10)
+                                .appendSpace("Forex " + Utils.appendSpace("  (" + trend_switch + ")", 10)
                                         + Utils.getChartName(list) + Utils.appendSpace(EPIC, 8)
                                         + Utils.getCurrentPrice(list) + trend_d_h4, 51)
-                                + " " + Utils.getCapitalLink(EPIC), 128) + dh4h1,
+                                + " " + Utils.getCapitalLink(EPIC), 128),
                         false);
             }
 

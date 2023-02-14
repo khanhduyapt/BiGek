@@ -132,7 +132,7 @@ public class BscScanBinanceApplication {
                         checkBtcKillLongShort_15m(binance_service);
 
                         // ----------------------------------------------
-                        if (isReloadAfter(1, "FOREX") && !Utils.isWeekend() && Utils.isAllowSendMsgSetting()) {
+                        if (!Utils.isWeekend() && Utils.isAllowSendMsgSetting()) {
                             if (index_forex < forex_size) {
                                 String EPIC = capital_list.get(index_forex);
 
@@ -149,12 +149,12 @@ public class BscScanBinanceApplication {
                                 if (Objects.equals(chart, Utils.CAPITAL_TIME_HOUR)
                                         || Objects.equals(chart, Utils.CAPITAL_TIME_MINUTE_15)) {
                                     init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                    if (Utils.isBlank(init)) {
-                                        wait(SLEEP_MINISECONDS);
-                                        wait(SLEEP_MINISECONDS);
-                                        wait(SLEEP_MINISECONDS);
-                                        init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
-                                    }
+                                    //if (Utils.isBlank(init)) {
+                                    //    wait(SLEEP_MINISECONDS);
+                                    //    wait(SLEEP_MINISECONDS);
+                                    //    wait(SLEEP_MINISECONDS);
+                                    //    init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+                                    //}
 
                                     if (Utils.isNotBlank(init)) {
                                         String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3) + "/"
@@ -205,10 +205,10 @@ public class BscScanBinanceApplication {
                         if (Objects.equals(chart, Utils.CRYPTO_TIME_1h)
                                 || Objects.equals(chart, Utils.CRYPTO_TIME_15m)) {
                             init = binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, GECKOID, SYMBOL);
-                            if (Utils.isBlank(init)) {
-                                wait(SLEEP_MINISECONDS);
-                                init = binance_service.checkCrypto(chart, GECKOID, SYMBOL);
-                            }
+                            //if (Utils.isBlank(init)) {
+                            //    wait(SLEEP_MINISECONDS);
+                            //    init = binance_service.checkCrypto(chart, GECKOID, SYMBOL);
+                            //}
 
                             if (Utils.isNotBlank(init)) {
                                 String msg = "(" + Utils.appendSpace(String.valueOf(index_crypto + 1), 3) + "/"
