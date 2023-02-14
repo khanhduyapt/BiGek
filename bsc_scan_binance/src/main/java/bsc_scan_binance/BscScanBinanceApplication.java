@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.InetAddress;
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
@@ -94,15 +95,9 @@ public class BscScanBinanceApplication {
 
             // --------------------Debug--------------------
 
-            List<String> capital_list = Utils.EPICS_FOREX;
-            // capital_list.addAll(Utils.EPICS_FOREX_SCAPS);
-            // capital_list.addAll(Utils.EPICS_INDEXS);
-            // capital_list.addAll(Utils.EPICS_FOREX_EUR);
-            // capital_list.addAll(Utils.EPICS_FOREX_AUD);
-            // capital_list.addAll(Utils.EPICS_FOREX_GBP);
-            // capital_list.addAll(Utils.EPICS_FOREX_CAD);
-            // capital_list.addAll(Utils.EPICS_FOREX_DOLLAR);
-            // capital_list.addAll(Utils.EPICS_FOREX_OTHERS);
+            List<String> capital_list = new ArrayList<String>();
+            capital_list.addAll(Utils.EPICS_FOREX);
+            capital_list.addAll(Utils.EPICS_FOREX_OTHERS);
 
             if (app_flag != Utils.const_app_flag_webonly) {
                 Utils.initCapital();
@@ -151,9 +146,7 @@ public class BscScanBinanceApplication {
                                 }
 
                                 chart = binance_service.getForexChart(EPIC);
-                                if (Objects.equals(chart, Utils.CAPITAL_TIME_HOUR)
-                                        || Objects.equals(chart, Utils.CAPITAL_TIME_MINUTE_15)) {
-
+                                if (Objects.equals(chart, Utils.CAPITAL_TIME_MINUTE_15)) {
                                     init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
                                 }
 

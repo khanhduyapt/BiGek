@@ -125,35 +125,10 @@ public class Utils {
             "EURAUD", "EURJPY", "EURCAD", "EURCHF", "AUDJPY", "CADJPY", "GBPJPY", "GBPAUD", "GBPCAD", "GBPCHF",
             "AUDCAD");
 
-    // public static final List<String> EPICS_FOREX_SCAPS = Arrays.asList("DXY",
-    // "GOLD", "US30", "GBPAUD", "USDCAD",
-    // "EURJPY", "USDCHF", "USDCNH");
-    //
-    // public static final List<String> EPICS_INDEXS = Arrays.asList("OIL_CRUDE",
-    // "US500", "UK100", "HK50", "FR40");
-    //
-    // public static final List<String> EPICS_FOREX_EUR = Arrays.asList("EURAUD",
-    // "EURCAD", "EURCHF", "EURGBP", "EURJPY",
-    // "EURMXN", "EURNZD", "EURUSD");
-    //
-    // public static final List<String> EPICS_FOREX_AUD = Arrays.asList("AUDCAD",
-    // "AUDCHF", "AUDCNH", "AUDJPY", "AUDMXN",
-    // "AUDNZD", "AUDSGD", "AUDUSD");
-    //
-    // public static final List<String> EPICS_FOREX_GBP = Arrays.asList("GBPAUD",
-    // "GBPCAD", "GBPCHF", "GBPJPY", "GBPMXN",
-    // "GBPNZD", "GBPUSD");
-    //
-    // public static final List<String> EPICS_FOREX_CAD = Arrays.asList("CADCHF",
-    // "CADJPY", "CHFHKD", "CHFJPY", "CHFSGD",
-    // "CNHHKD", "CNHJPY"
-    //// "CADSGD",
-    // );
-    //
-    // public static final List<String> EPICS_FOREX_DOLLAR = Arrays.asList("NZDCAD",
-    // "NZDCHF", "NZDJPY", "NZDSGD",
-    // "NZDUSD", "USDCAD", "USDJPY");
-    //
+    public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList(
+            "GBPNZD", "EURMXN", "EURNZD", "AUDCHF", "AUDCNH", "AUDMXN", "AUDNZD", "AUDSGD", "CADCHF",
+            "CHFHKD", "CHFJPY", "CHFSGD", "CNHHKD", "CNHJPY", "NZDCAD", "NZDCHF", "NZDJPY", "NZDSGD");
+
     // public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("AUDHKD",
     // "AUDPLN", "AUDZAR", "CADCNH",
     // "CADHKD", "CADMXN", "CADNOK", "CADPLN", "CADTRY", "CADZAR", "CHFCNH",
@@ -166,12 +141,6 @@ public class Utils {
     // "NZDSEK", "PLNSEK", "PLNTRY",
     // "SEKMXN", "SGDHKD", "SGDMXN", "TRYJPY", "USDCZK", "USDDKK", "USDHKD",
     // "USDILS", "USDRON"
-    //// , "EURDKK", "USDTRY"
-    //// , "GBPHKD"
-    //// , "GBPTRY"
-    //// , "NZDCNH"
-    //// , "SEKTRY"
-    //// , "NZDTRY"
     // );
 
     public static String sql_CryptoHistoryResponse = " "

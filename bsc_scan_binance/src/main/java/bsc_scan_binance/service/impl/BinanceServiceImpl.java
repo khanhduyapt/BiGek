@@ -3123,7 +3123,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_h4 = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
         String trend_h1 = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
         String dh4h1 = Utils.appendSpace(EPIC, 10) + "(D:" + trend_d + ", H4:" + trend_h4 + ", H1:" + trend_h1 + ")";
-        System.out.println(dh4h1);
+        // System.out.println(dh4h1);
 
         if (!reloadPrepareOrderTrend(EPIC, CAPITAL_TIME_XXX)) {
             return "";
