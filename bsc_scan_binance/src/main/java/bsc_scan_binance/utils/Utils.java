@@ -2716,6 +2716,37 @@ public class Utils {
         return false;
     }
 
+    public static String checkTrend15m(List<BtcFutures> list) {
+        BigDecimal ma3_1 = calcMA(list, 3, 1);
+        BigDecimal ma3_2 = calcMA(list, 3, 3);
+        BigDecimal ma10_1 = calcMA(list, 10, 1);
+        BigDecimal ma10_2 = calcMA(list, 10, 3);
+        BigDecimal ma20_1 = calcMA(list, 20, 1);
+        BigDecimal ma20_2 = calcMA(list, 20, 3);
+
+        // Long
+        if ((ma3_1.compareTo(ma10_1) > 0) && (ma10_1.compareTo(ma20_1) > 0)) {
+            String ma3_10 = checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
+            String ma3_20 = checkXCutUpY(ma3_1, ma3_2, ma20_1, ma20_2);
+
+            if ((ma3_10 + ma3_20).contains(Utils.TREND_LONG)) {
+                return Utils.TREND_LONG;
+            }
+        }
+
+        // Short
+        if ((ma3_1.compareTo(ma10_1) < 0) && (ma10_1.compareTo(ma20_1) < 0)) {
+            String ma3_10 = checkXCutDownY(ma3_1, ma3_2, ma10_1, ma10_2);
+            String ma3_20 = checkXCutDownY(ma3_1, ma3_2, ma20_1, ma20_2);
+
+            if ((ma3_10 + ma3_20).contains(Utils.TREND_SHORT)) {
+                return Utils.TREND_SHORT;
+            }
+        }
+
+        return "";
+    }
+
     private static String checkXCutUpY(BigDecimal maX_1, BigDecimal maX_2, BigDecimal maY_1, BigDecimal maY_2) {
         if ((maX_1.compareTo(maX_2) > 0) && (maX_1.compareTo(maY_1) > 0) && (maY_2.compareTo(maX_2) > 0)) {
             return TREND_LONG;
