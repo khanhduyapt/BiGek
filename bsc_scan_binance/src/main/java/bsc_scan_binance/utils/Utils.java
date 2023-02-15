@@ -126,8 +126,7 @@ public class Utils {
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("GBPAUD",
             "EURAUD", "EURJPY", "EURCAD", "EURCHF", "AUDJPY", "CADJPY", "GBPJPY",
             "AUDCAD", "GBPCAD", "GBPCHF", "GBPNZD", "EURNZD", "AUDCHF",
-            "AUDNZD", "CADCHF", "CHFJPY",
-            "NZDCAD", "NZDCHF", "NZDJPY");
+            "AUDNZD", "CADCHF", "CHFJPY", "NZDCAD", "NZDCHF", "NZDJPY");
 
     // public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("AUDHKD",
     // "AUDPLN", "AUDZAR", "CADCNH",
@@ -825,7 +824,7 @@ public class Utils {
         }
 
         String PATH = "crypto_forex_result/";
-        String fileName = prefix + "_forex_result_" + getYyyyMmDdHH_ChangeDailyChart() + ".log";
+        String fileName = prefix + getYyyyMmDdHH_ChangeDailyChart() + "_Forex.log";
 
         File directory = new File(PATH);
         if (!directory.exists()) {
@@ -841,7 +840,7 @@ public class Utils {
         }
 
         String PATH = "crypto_forex_result/";
-        String fileName = prefix + "_crypto_result_" + getYyyyMmDdHH_ChangeDailyChart() + ".log";
+        String fileName = prefix + getYyyyMmDdHH_ChangeDailyChart() + "_Crypto.log";
 
         File directory = new File(PATH);
         if (!directory.exists()) {
@@ -2797,7 +2796,7 @@ public class Utils {
 
         String result = "";
         String trend_main = checkTrendSideway(list, 0, 2);
-        String trend_confirm = checkTrendSideway(list, 3, 8);
+        String trend_conf = checkTrendSideway(list, 3, 8);
 
         if (trend_main.contains(Utils.TREND_LONG) && trend_main.contains(Utils.TREND_SHORT)) {
             return "";
@@ -2805,14 +2804,14 @@ public class Utils {
 
         if (trend_main.contains(Utils.TREND_LONG)) {
             result = Utils.TREND_LONG;
-            if (trend_confirm.contains(Utils.TREND_SHORT)) {
+            if (trend_conf.contains(Utils.TREND_SHORT)) {
                 return "";
             }
         }
 
         if (trend_main.contains(Utils.TREND_SHORT)) {
             result = Utils.TREND_SHORT;
-            if (trend_confirm.contains(Utils.TREND_LONG)) {
+            if (trend_conf.contains(Utils.TREND_LONG)) {
                 return "";
             }
         }

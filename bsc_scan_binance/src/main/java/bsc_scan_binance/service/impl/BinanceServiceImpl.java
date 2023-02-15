@@ -3158,7 +3158,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             trend_switch = Utils.switchTrend(list);
             if (Utils.isNotBlank(trend_switch)) {
-
                 if (Objects.equals(trend_d, trend_h4) && Objects.equals(trend_h4, trend_switch)) {
                     sendScapMsg(list, EPIC, trend_switch, trend_d_h4);
                 }
@@ -3170,20 +3169,10 @@ public class BinanceServiceImpl implements BinanceService {
                                         + Utils.getCurrentPrice(list) + trend_d_h4, 51)
                                 + " " + Utils.getCapitalLink(EPIC), 128),
                         false);
+
             }
 
-            {
-                savePrepareOrderTrend(EPIC, CAPITAL_TIME_XXX, trend_ma3);
-
-                String event_id = EVENT_DH4H1_H1_FX;
-                if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_DAY)) {
-                    event_id = EVENT_DH4H1_D_FX;
-
-                } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_HOUR_4)) {
-                    event_id = EVENT_DH4H1_H4_FX;
-                }
-                fundingHistoryRepository.save(createPumpDumpEntity(event_id, EPIC, EPIC, trend_switch, true));
-            }
+            savePrepareOrderTrend(EPIC, CAPITAL_TIME_XXX, trend_ma3);
 
             result = Utils.appendSpace(EPIC + "(Trend:" + trend_ma3 + ")" + Utils.getChartName(list), 38)
                     + "--------------------------Size:" + list.size() + ", Cur:" + trend_switch;

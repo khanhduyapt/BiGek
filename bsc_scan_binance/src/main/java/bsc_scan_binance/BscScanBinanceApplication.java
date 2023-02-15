@@ -146,11 +146,7 @@ public class BscScanBinanceApplication {
                                         wait(SLEEP_MINISECONDS);
                                     }
                                     // ----------------------------------------------
-                                    //init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                    //if (Utils.isNotBlank(init)) {
-                                    //    wait(SLEEP_MINISECONDS);
-                                    //}
-                                    init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+                                    init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR);
                                     if (Utils.isNotBlank(init)) {
                                         String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3) + "/"
                                                 + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
