@@ -127,7 +127,8 @@ public class BscScanBinanceApplication {
                         checkBtcKillLongShort_15m(binance_service);
 
                         // ----------------------------------------------
-                        if (!Utils.isWeekend() && Utils.isAllowSendMsgSetting() && Utils.isWorkingTime()) {
+                        if (isReloadAfter(1, "FOREX") && !Utils.isWeekend() && Utils.isAllowSendMsgSetting()
+                                && Utils.isWorkingTime()) {
                             if (index_forex < forex_size) {
                                 String EPIC = capital_list.get(index_forex);
 
@@ -140,14 +141,11 @@ public class BscScanBinanceApplication {
                                     wait(SLEEP_MINISECONDS);
                                 }
                                 // ----------------------------------------------
-                                init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                if (Utils.isNotBlank(init)) {
-                                    wait(SLEEP_MINISECONDS);
-                                }
-                                // chart = binance_service.getForexChart(EPIC);
-                                // if (Objects.equals(chart, Utils.CAPITAL_TIME_MINUTE_15)) {
-                                // init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
-                                // }
+                                //init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                //if (Utils.isNotBlank(init)) {
+                                //    wait(SLEEP_MINISECONDS);
+                                //}
+                                init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
                                 if (Utils.isNotBlank(init)) {
                                     String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3) + "/"
                                             + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"

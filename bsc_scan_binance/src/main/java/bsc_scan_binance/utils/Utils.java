@@ -121,13 +121,13 @@ public class Utils {
     public static final long MINUTES_OF_15M = 15;
 
     public static final List<String> EPICS_FOREX = Arrays.asList("DXY", "GOLD", "OIL_CRUDE", "US30", "US500", "UK100",
-            "HK50", "FR40", "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF", "USDCNH", "EURGBP",
-            "EURAUD", "EURJPY", "EURCAD", "EURCHF", "AUDJPY", "CADJPY", "GBPJPY", "GBPAUD", "GBPCAD", "GBPCHF",
-            "AUDCAD");
+            "HK50", "FR40", "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF", "EURGBP");
 
-    public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("GBPNZD", "EURMXN", "EURNZD", "AUDCHF",
-            "AUDCNH", "AUDMXN", "AUDNZD", "AUDSGD", "CADCHF", "CHFHKD", "CHFJPY", "CHFSGD", "CNHHKD", "CNHJPY",
-            "NZDCAD", "NZDCHF", "NZDJPY", "NZDSGD");
+    public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("GBPAUD",
+            "EURAUD", "EURJPY", "EURCAD", "EURCHF", "AUDJPY", "CADJPY", "GBPJPY",
+            "AUDCAD", "GBPCAD", "GBPCHF", "GBPNZD", "EURNZD", "AUDCHF",
+            "AUDNZD", "CADCHF", "CHFJPY",
+            "NZDCAD", "NZDCHF", "NZDJPY");
 
     // public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("AUDHKD",
     // "AUDPLN", "AUDZAR", "CADCNH",
@@ -2817,6 +2817,8 @@ public class Utils {
         BigDecimal ma3_1 = calcMA(list, 3, str);
         BigDecimal ma3_2 = calcMA(list, 3, end);
 
+        String l_m10x20 = "";
+        String s_m10x20 = "";
         int slow_index = 8;
         if (list.get(0).getId().contains("_15m_")) {
             slow_index = 20;
@@ -2831,6 +2833,14 @@ public class Utils {
         BigDecimal maX_1 = calcMA(list, slow_index, str);
         BigDecimal maX_2 = calcMA(list, slow_index, end);
 
+        if (list.get(0).getId().contains("_15m_")) {
+            BigDecimal ma10_1 = calcMA(list, 10, str);
+            BigDecimal ma10_2 = calcMA(list, 10, end);
+
+            l_m10x20 = Utils.checkXCutUpY(ma10_1, ma10_2, maX_1, maX_2);
+            s_m10x20 = Utils.checkXCutDownY(ma10_1, ma10_2, maX_1, maX_2);
+        }
+
         String l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, maX_1, maX_2);
         if (!isUptrendByMaIndex(list, 10)) {
             l_m03x10 = "";
@@ -2840,7 +2850,7 @@ public class Utils {
         if (isUptrendByMaIndex(list, 10)) {
             s_m03x10 = "";
         }
-        String trend = l_m03x10 + "_" + s_m03x10;
+        String trend = l_m03x10 + "_" + l_m10x20 + "_" + s_m03x10 + "_" + s_m10x20;
 
         return trend;
     }
