@@ -819,9 +819,10 @@ public class Utils {
 
     public static String getForexLogFile() {
         String prefix = BscScanBinanceApplication.hostname.toLowerCase();
-        if (prefix.length() > 3) {
-            prefix = prefix.substring(0, 3);
+        if (prefix.length() > 2) {
+            prefix = prefix.substring(0, 2);
         }
+        prefix += "_";
 
         String PATH = "crypto_forex_result/";
         String fileName = prefix + getYyyyMmDdHH_ChangeDailyChart() + "_Forex.log";
@@ -835,9 +836,10 @@ public class Utils {
 
     public static String getCryptoLogFile() {
         String prefix = BscScanBinanceApplication.hostname.toLowerCase();
-        if (prefix.length() > 3) {
-            prefix = prefix.substring(0, 3);
+        if (prefix.length() > 2) {
+            prefix = prefix.substring(0, 2);
         }
+        prefix += "_";
 
         String PATH = "crypto_forex_result/";
         String fileName = prefix + getYyyyMmDdHH_ChangeDailyChart() + "_Crypto.log";
