@@ -126,80 +126,86 @@ public class BscScanBinanceApplication {
                     try {
                         checkBtcKillLongShort_15m(binance_service);
 
-                        // ----------------------------------------------
-                        if (isReloadAfter(1, "FOREX") && !Utils.isWeekend() && Utils.isAllowSendMsgSetting()
-                                && Utils.isWorkingTime()) {
-                            if (index_forex < forex_size) {
-                                String EPIC = capital_list.get(index_forex);
+                        if (!Utils.isNewsTime()) {
+                            // ----------------------------------------------
+                            if (isReloadAfter(1, "FOREX") && !Utils.isWeekend() && Utils.isAllowSendMsgSetting()
+                                    && Utils.isWorkingTime()) {
+                                if (index_forex < forex_size) {
+                                    String EPIC = capital_list.get(index_forex);
 
-                                init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
-                                if (Utils.isNotBlank(init)) {
-                                    wait(SLEEP_MINISECONDS);
+                                    init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_WEEK);
+                                    if (Utils.isNotBlank(init)) {
+                                        wait(SLEEP_MINISECONDS);
+                                    }
+                                    init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
+                                    if (Utils.isNotBlank(init)) {
+                                        wait(SLEEP_MINISECONDS);
+                                    }
+                                    init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+                                    if (Utils.isNotBlank(init)) {
+                                        wait(SLEEP_MINISECONDS);
+                                    }
+                                    // ----------------------------------------------
+                                    //init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                    //if (Utils.isNotBlank(init)) {
+                                    //    wait(SLEEP_MINISECONDS);
+                                    //}
+                                    init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+                                    if (Utils.isNotBlank(init)) {
+                                        String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3) + "/"
+                                                + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
+                                                + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 10) + " " + init;
+                                        System.out.println(msg);
+                                    }
+
+                                    index_forex += 1;
+                                } else {
+                                    index_forex = 0;
+                                    Utils.initCapital();
+                                    Utils.writelnLogFooter_Forex();
                                 }
-                                init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-                                if (Utils.isNotBlank(init)) {
-                                    wait(SLEEP_MINISECONDS);
-                                }
-                                // ----------------------------------------------
-                                //init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                //if (Utils.isNotBlank(init)) {
-                                //    wait(SLEEP_MINISECONDS);
-                                //}
-                                init = binance_service.checkForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
-                                if (Utils.isNotBlank(init)) {
-                                    String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3) + "/"
-                                            + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
-                                            + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 10) + " " + init;
-                                    System.out.println(msg);
-                                }
-
-                                index_forex += 1;
-                            } else {
-                                index_forex = 0;
-                                Utils.initCapital();
-                                Utils.writelnLogFooter_Forex();
-                            }
-                        }
-
-                        // ----------------------------------------------
-                        if ((round_count > 0) && Utils.isWorkingTime()) {
-                            if (isReloadAfter(Utils.MINUTES_OF_4H, "COIN_GECKO_" + SYMBOL)) {
-                                gecko_service.loadData(GECKOID);
-                            }
-
-                            if (isReloadAfter(Utils.MINUTES_OF_4H, "INIT_CRYPTO_" + GECKOID)) {
-                                binance_service.initCrypto(GECKOID, SYMBOL);
                             }
 
-                            wait(SLEEP_MINISECONDS);
-                        }
+                            // ----------------------------------------------
+                            if ((round_count > 0) && Utils.isWorkingTime()) {
+                                if (isReloadAfter(Utils.MINUTES_OF_4H, "COIN_GECKO_" + SYMBOL)) {
+                                    gecko_service.loadData(GECKOID);
+                                }
 
-                        // ----------------------------------------------
-                        init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1d, GECKOID, SYMBOL);
-                        if (Utils.isNotBlank(init)) {
-                            wait(SLEEP_MINISECONDS);
-                        }
-                        init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4h, GECKOID, SYMBOL);
-                        if (Utils.isNotBlank(init)) {
-                            wait(SLEEP_MINISECONDS);
-                        }
+                                if (isReloadAfter(Utils.MINUTES_OF_4H, "INIT_CRYPTO_" + GECKOID)) {
+                                    binance_service.initCrypto(GECKOID, SYMBOL);
+                                }
 
-                        init = binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, GECKOID, SYMBOL);
-                        if (Utils.isNotBlank(init)) {
-                            wait(SLEEP_MINISECONDS);
-                        }
-                        // chart = binance_service.getCryptoChart(SYMBOL);
-                        // if (Objects.equals(chart, Utils.CRYPTO_TIME_15m)) {
-                        // init = binance_service.checkCrypto(Utils.CRYPTO_TIME_15m, GECKOID, SYMBOL);
-                        // }
-                        if (Utils.isNotBlank(init)) {
-                            String msg = "(" + Utils.appendSpace(String.valueOf(index_crypto + 1), 3) + "/"
-                                    + Utils.appendSpace(String.valueOf(total), 3) + ")" + Utils.getTimeHHmm()
-                                    + Utils.appendSpace(SYMBOL, 10) + " " + init;
+                                wait(SLEEP_MINISECONDS);
+                            }
 
+                            // ----------------------------------------------
+                            init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1d, GECKOID, SYMBOL);
+                            if (Utils.isNotBlank(init)) {
+                                wait(SLEEP_MINISECONDS);
+                            }
+                            init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4h, GECKOID, SYMBOL);
+                            if (Utils.isNotBlank(init)) {
+                                wait(SLEEP_MINISECONDS);
+                            }
+
+                            init = binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, GECKOID, SYMBOL);
+                            if (Utils.isNotBlank(init)) {
+                                wait(SLEEP_MINISECONDS);
+                            }
+                            // chart = binance_service.getCryptoChart(SYMBOL);
+                            // if (Objects.equals(chart, Utils.CRYPTO_TIME_15m)) {
+                            // init = binance_service.checkCrypto(Utils.CRYPTO_TIME_15m, GECKOID, SYMBOL);
+                            // }
+                            // if (Utils.isNotBlank(init)) {
+                            // String msg = "(" + Utils.appendSpace(String.valueOf(index_crypto + 1), 3) + "/"
+                            //        + Utils.appendSpace(String.valueOf(total), 3) + ")" + Utils.getTimeHHmm()
+                            //        + Utils.appendSpace(SYMBOL, 10) + " " + init;
+                            //
                             // System.out.println(msg);
+                            // }
+                            // ----------------------------------------------
                         }
-                        // ----------------------------------------------
 
                         wait(SLEEP_MINISECONDS);
                     } catch (Exception e) {

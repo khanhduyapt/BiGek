@@ -105,7 +105,7 @@ public class Utils {
     public static final String CAPITAL_TIME_HOUR = "HOUR";
     public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
     public static final String CAPITAL_TIME_DAY = "DAY";
-    // public static final String CAPITAL_TIME_WEEK = "WEEK";
+    public static final String CAPITAL_TIME_WEEK = "WEEK";
 
     public static final String CRYPTO_TIME_5m = "5m";
     public static final String CRYPTO_TIME_15m = "15m";
@@ -550,9 +550,9 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_DAY)) {
             return "_1d_";
         }
-        // if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
-        // return "_1w_";
-        // }
+        if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
+            return "_1w_";
+        }
 
         return TIME;
     }
@@ -579,9 +579,9 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_DAY)) {
             return "(D)";
         }
-        // if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
-        // return "(W)";
-        // }
+        if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
+            return "(W)";
+        }
 
         return TIME;
     }
@@ -949,6 +949,15 @@ public class Utils {
         DayOfWeek day = DayOfWeek.of(today.get(ChronoField.DAY_OF_WEEK));
         boolean value = day == DayOfWeek.SUNDAY || day == DayOfWeek.SATURDAY;
         return value;
+    }
+
+    public static boolean isNewsTime() {
+        int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
+        if ((20 <= hh && hh <= 22)) {
+            return true;
+        }
+
+        return false;
     }
 
     public static boolean isWorkingTime() {

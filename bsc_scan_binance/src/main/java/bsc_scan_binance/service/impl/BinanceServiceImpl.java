@@ -2760,6 +2760,8 @@ public class BinanceServiceImpl implements BinanceService {
         } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_HOUR_4)
                 || Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_4h)) {
             time = Utils.MINUTES_OF_4H;
+        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_WEEK)) {
+            time = Utils.MINUTES_OF_W;
         }
 
         if (time <= elapsedMinutes) {
@@ -3122,11 +3124,10 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String checkForex(String EPIC, String CAPITAL_TIME_XXX) {
+        String trend_w = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_WEEK);
         String trend_d = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_DAY);
         String trend_h4 = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-        String trend_h1 = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
-        String dh4h1 = Utils.appendSpace(EPIC, 10) + "(D:" + trend_d + ", H4:" + trend_h4 + ", H1:" + trend_h1 + ")";
-        // System.out.println(dh4h1);
+        String trend_d_h4 = Utils.appendSpace("(W:" + trend_w + ", D:" + trend_d + ", H4:" + trend_h4 + ")", 30);
 
         if (!reloadPrepareOrderTrend(EPIC, CAPITAL_TIME_XXX)) {
             return "";
@@ -3157,7 +3158,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             trend_switch = Utils.switchTrend(list);
             if (Utils.isNotBlank(trend_switch)) {
-                String trend_d_h4 = Utils.appendSpace("(D:" + trend_d + ", H4:" + trend_h4 + ")", 20);
 
                 if (Objects.equals(trend_d, trend_h4) && Objects.equals(trend_h4, trend_switch)) {
                     sendScapMsg(list, EPIC, trend_switch, trend_d_h4);
