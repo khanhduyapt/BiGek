@@ -3019,6 +3019,9 @@ public class BinanceServiceImpl implements BinanceService {
         }
         // ---------------------------------------------------------
         String web_result = note + type + Utils.analysisVolume(list_days) + m2ma + ma7 + sl2ma + taker;
+        if (web_result.length() > 500) {
+            web_result = web_result.substring(0, 450);
+        }
         String EVENT_ID = EVENT_1W1D_CRYPTO + "_" + symbol;
         fundingHistoryRepository.save(createPumpDumpEntity(EVENT_ID, gecko_id, symbol, web_result, true));
 
@@ -3267,7 +3270,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
         // --------------------------------------------------------------
-        String star = "   ";
         String trend_switch = Utils.switchTrend(list_h1);
 
         String trend_ma3 = Utils.isUptrendByMaIndex(list_h1, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
@@ -3276,7 +3278,14 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.isNotBlank(trend_switch) && Objects.equals(trend_h4, trend_switch)) {
             String curr_price = Utils.getCurrentPrice(list_h1);
             String vmc = Utils.appendSpace("", 15);
+            BigDecimal ma10_1 = Utils.calcMA(list_h1, 10, 1);
+            BigDecimal ma50_1 = Utils.calcMA(list_h1, 50, 1);
+
             if (!"_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
+                if (ma10_1.compareTo(ma50_1) > 0) {
+                    return "";
+                }
+
                 List<BtcFutures> list_h1_usdt = Utils.loadData(symbol, Utils.CRYPTO_TIME_1h, 10);
                 if (CollectionUtils.isEmpty(list_h1_usdt)) {
                     return "";
@@ -3285,18 +3294,6 @@ public class BinanceServiceImpl implements BinanceService {
                 vmc = getVolMc(gecko_id);
                 vmc += Utils.getAtlAth(list_h1_usdt);
                 curr_price = Utils.getCurrentPrice(list_h1_usdt);
-            }
-
-            BigDecimal ma10_1 = Utils.calcMA(list_h1, 10, 1);
-            BigDecimal ma50_1 = Utils.calcMA(list_h1, 50, 1);
-            if (Objects.equals(trend_switch, Utils.TREND_LONG)) {
-                if (ma50_1.compareTo(ma10_1) > 0) {
-                    star = " * ";
-                }
-            } else {
-                if (ma10_1.compareTo(ma50_1) > 0) {
-                    star = " * ";
-                }
             }
 
             String url = " " + (binanceFuturesRepository.existsById(gecko_id) ? Utils.getCryptoLink_Future(symbol)
@@ -3316,33 +3313,17 @@ public class BinanceServiceImpl implements BinanceService {
             String EVENT_ID = EVENT_PUMP + symbol + char_name + Utils.getCurrentYyyyMmDd_HH();
 
             if ("_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
-
                 sendMsgPerHour(EVENT_ID, msg, true);
-
             } else if (isFututes && Objects.equals(Utils.TREND_LONG, trend_switch)) {
-                // sendMsgPerHour(EVENT_ID, msg, true);
+                sendMsgPerHour(EVENT_ID, msg, true);
             }
 
             Utils.logWritelnWithTime(Utils
                     .appendSpace(Utils.appendSpace("Crypto" + Utils.appendSpace("  (" + trend_switch + ")", 10)
                             + char_name + Utils.appendSpace(symbol, 8) + curr_price + type, 51) + url + " ", 126)
-                    + " " + vmc + star + dh4h1, true);
+                    + " " + vmc + dh4h1, true);
 
             createNewTrendCycle(EVENT_DH4H1_15M_CRYPTO, list_h1, trend_switch, gecko_id, symbol);
-        }
-
-        // -----------------------------------------------
-        if (Objects.equals(Utils.TREND_LONG, trend_switch)) {
-            String EVENT_1W1D_ID = EVENT_1W1D_CRYPTO + "_" + symbol;
-            FundingHistory coin = fundingHistoryRepository.findById(new FundingHistoryKey(EVENT_1W1D_ID, gecko_id))
-                    .orElse(null);
-            if (!Objects.equals(null, coin)) {
-                String note = Utils.getStringValue(coin.getNote());
-                note += "_Position_DHM5";
-                coin.setNote(note);
-
-                fundingHistoryRepository.save(coin);
-            }
         }
 
         return Utils.appendSpace(symbol, 8) + Utils.getChartName(list_h1) + ": " + trend_switch;
