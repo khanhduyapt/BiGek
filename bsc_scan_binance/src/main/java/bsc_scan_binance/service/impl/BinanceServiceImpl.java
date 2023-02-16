@@ -3088,13 +3088,68 @@ public class BinanceServiceImpl implements BinanceService {
             list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, 5);
 
             if (CollectionUtils.isEmpty(list)) {
-                String result = "initForexTrend(" + EPIC + ")Size:" + list.size();
+                String result = "initForexTrend(" + EPIC + ") Size:" + list.size();
                 Utils.logWritelnWithTime(result, false);
                 return result;
             }
         }
 
-        String trend = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+        String trend = Utils.getTrendByCandle(list, CAPITAL_TIME_XXX);
+
+        if (Objects.equals(Utils.CAPITAL_TIME_WEEK, CAPITAL_TIME_XXX)
+                || Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
+
+            List<BtcFutures> list_1 = list.subList(1, 2);
+            List<BigDecimal> body_1 = Utils.getOpenCloseCandle(list_1);
+            List<BigDecimal> beard_1 = Utils.getLowHeightCandle(list_1);
+
+            String EVENT_ID = EVENT_1W1D_FX + "_" + CAPITAL_TIME_XXX + "_" + EPIC;
+            FundingHistory entity = createPumpDumpEntity(EVENT_ID, EPIC, EPIC, trend, true);
+            entity.setAvgLow(body_1.get(0));
+            entity.setAvgHigh(body_1.get(1));
+            entity.setLow(beard_1.get(0));
+            entity.setHigh(beard_1.get(1));
+            fundingHistoryRepository.save(entity);
+        }
+
+        String switch_trend = Utils.switchTrendByCandle(list);
+        if (Utils.isNotBlank(switch_trend)) {
+
+            String EVENT_D_ID = EVENT_1W1D_FX + "_" + Utils.CAPITAL_TIME_DAY + "_" + EPIC;
+            String EVENT_W_ID = EVENT_1W1D_FX + "_" + Utils.CAPITAL_TIME_WEEK + "_" + EPIC;
+            FundingHistory entity_d = fundingHistoryRepository.findById(new FundingHistoryKey(EVENT_D_ID, EPIC))
+                    .orElse(null);
+            FundingHistory entity_w = fundingHistoryRepository.findById(new FundingHistoryKey(EVENT_W_ID, EPIC))
+                    .orElse(null);
+
+            boolean isObjects = false;
+            BigDecimal curr_price = list.get(0).getCurrPrice();
+            if (Objects.nonNull(entity_w)) {
+                if ((curr_price.compareTo(entity_w.getAvgLow()) < 0)
+                        || (curr_price.compareTo(entity_w.getHigh()) > 0)) {
+                    isObjects = true;
+                }
+            }
+            if (Objects.nonNull(entity_d)) {
+                if ((curr_price.compareTo(entity_d.getAvgLow()) < 0)
+                        || (curr_price.compareTo(entity_d.getHigh()) > 0)) {
+                    isObjects = true;
+                }
+            }
+
+            if (isObjects) {
+                sendScapMsg(list, EPIC, switch_trend, "SwitchTrendByCandle");
+
+                Utils.logWritelnWithTime(
+                        Utils.appendSpace(Utils
+                                .appendSpace("Forex " + Utils.appendSpace("  (" + switch_trend + ")", 10)
+                                        + Utils.getChartName(list) + Utils.appendSpace(EPIC, 8)
+                                        + Utils.getCurrentPrice(list) + "SwitchTrendByCandle", 51)
+                                + " " + Utils.getCapitalLink(EPIC), 128),
+                        false);
+            }
+        }
+
         String result = savePrepareOrderTrend(EPIC, CAPITAL_TIME_XXX, trend);
 
         return result;
@@ -3261,10 +3316,10 @@ public class BinanceServiceImpl implements BinanceService {
         // --------------------------------------------------------------
         String trend_switch = Utils.switchTrend(list_h1);
 
-        String trend_ma3 = Utils.isUptrendByMaIndex(list_h1, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+        String trend_ma3 = Utils.getTrendByCandle(list_h1, TIME);
         saveElapsedMinutesForPrepareOrder(gecko_id, trend_ma3, TIME);
 
-        if (Utils.isNotBlank(trend_switch) && Objects.equals(trend_h4, trend_switch)) {
+        if (Utils.isNotBlank(trend_switch)) {
             String curr_price = Utils.getCurrentPrice(list_h1);
             String vmc = Utils.appendSpace("", 15);
             BigDecimal ma10_1 = Utils.calcMA(list_h1, 10, 1);

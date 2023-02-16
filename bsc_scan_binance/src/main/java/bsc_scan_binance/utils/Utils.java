@@ -114,7 +114,7 @@ public class Utils {
     public static final String CRYPTO_TIME_1d = "1d";
     public static final String CRYPTO_TIME_1w = "1w";
 
-    public static final long MINUTES_OF_W = 10080;
+    public static final long MINUTES_OF_W = 2880; //10080
     public static final long MINUTES_OF_D = 1440;
     public static final long MINUTES_OF_4H = 240;
     public static final long MINUTES_OF_1H = 60;
@@ -2155,7 +2155,7 @@ public class Utils {
                 }
 
                 if (max_Hig.compareTo(dto.getPrice_open_candle()) < 0) {
-                    max_Hig = dto.getPrice_open_candle();
+                    max_Hig = dto.getPrice_close_candle();
                 }
             } else {
                 if (min_low.compareTo(dto.getPrice_close_candle()) > 0) {
@@ -2163,7 +2163,7 @@ public class Utils {
                 }
 
                 if (max_Hig.compareTo(dto.getPrice_close_candle()) < 0) {
-                    max_Hig = dto.getPrice_close_candle();
+                    max_Hig = dto.getPrice_open_candle();
                 }
             }
 
@@ -2915,6 +2915,84 @@ public class Utils {
         }
 
         return false;
+    }
+
+    public static String getTrendByCandle(List<BtcFutures> list, String CAPITAL_TIME_XXX) {
+        boolean isUptrend = Utils.isUptrendByMaIndex(list, 3);
+
+        String trend = isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
+
+        List<BtcFutures> list_0 = list.subList(1, 2);
+        List<BtcFutures> list_1 = list.subList(2, 3);
+
+        if (Objects.equals(Utils.CAPITAL_TIME_WEEK, CAPITAL_TIME_XXX)
+                || Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)
+                || Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_1d)) {
+            list_0 = list.subList(0, 1);
+            list_1 = list.subList(1, 2);
+        }
+
+        List<BigDecimal> body_0 = Utils.getOpenCloseCandle(list_0);
+        List<BigDecimal> body_1 = Utils.getOpenCloseCandle(list_1);
+
+        boolean body_up = false;
+        //Up: compare the lowest point of the candle body.
+        if (body_0.get(0).compareTo(body_1.get(0)) > 0) {
+            body_up = true;
+        }
+
+        boolean body_down = false;
+        //down: compare the highest point of the candle body.
+        if (body_0.get(1).compareTo(body_1.get(1)) < 0) {
+            body_down = true;
+        }
+
+        if (body_up != body_down) {
+            if (body_up) {
+                trend = Utils.TREND_LONG;
+            }
+
+            if (body_down) {
+                trend = Utils.TREND_SHORT;
+            }
+        }
+
+        return trend;
+    }
+
+    public static String switchTrendByCandle(List<BtcFutures> list) {
+        String trend = "";
+        List<BtcFutures> list_1 = list.subList(1, 2);
+        List<BtcFutures> list_2 = list.subList(2, 3);
+        List<BtcFutures> list_3 = list.subList(3, 4);
+
+        List<BigDecimal> body_1 = Utils.getOpenCloseCandle(list_1);
+        List<BigDecimal> body_2 = Utils.getOpenCloseCandle(list_2);
+        List<BigDecimal> body_3 = Utils.getOpenCloseCandle(list_3);
+
+        //Up: compare the lowest point of the candle body.
+        boolean swith_to_uptrend = false;
+        if ((body_1.get(0).compareTo(body_2.get(0)) > 0) && (body_3.get(0).compareTo(body_2.get(0)) > 0)) {
+            swith_to_uptrend = true;
+        }
+
+        //down: compare the highest point of the candle body.
+        boolean swith_to_downtrend = false;
+        if ((body_1.get(0).compareTo(body_2.get(0)) < 0) && (body_3.get(0).compareTo(body_2.get(0)) < 0)) {
+            swith_to_downtrend = true;
+        }
+
+        if (swith_to_uptrend != swith_to_downtrend) {
+            if (swith_to_uptrend) {
+                trend = Utils.TREND_LONG;
+            }
+
+            if (swith_to_downtrend) {
+                trend = Utils.TREND_SHORT;
+            }
+        }
+
+        return trend;
     }
 
     public static boolean isUptrendByMaIndex(List<BtcFutures> list, int maIndex) {
