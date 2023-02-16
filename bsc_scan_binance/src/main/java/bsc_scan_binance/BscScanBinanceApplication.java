@@ -126,10 +126,9 @@ public class BscScanBinanceApplication {
                     try {
                         checkBtcKillLongShort_15m(binance_service);
 
-                        if (!Utils.isNewsTime()) {
+                        if (Utils.isBusinessTime()) { // !Utils.isNewsTime() && Utils.isBusinessTime()
                             // ----------------------------------------------
-                            if (isReloadAfter(1, "FOREX") && !Utils.isWeekend() && Utils.isAllowSendMsgSetting()
-                                    && Utils.isWorkingTime()) {
+                            if (isReloadAfter(1, "FOREX") && !Utils.isWeekend() && Utils.isAllowSendMsgSetting()) {
                                 if (index_forex < forex_size) {
                                     String EPIC = capital_list.get(index_forex);
 
@@ -194,9 +193,10 @@ public class BscScanBinanceApplication {
                             // init = binance_service.checkCrypto(Utils.CRYPTO_TIME_15m, GECKOID, SYMBOL);
                             // }
                             // if (Utils.isNotBlank(init)) {
-                            // String msg = "(" + Utils.appendSpace(String.valueOf(index_crypto + 1), 3) + "/"
-                            //        + Utils.appendSpace(String.valueOf(total), 3) + ")" + Utils.getTimeHHmm()
-                            //        + Utils.appendSpace(SYMBOL, 10) + " " + init;
+                            // String msg = "(" + Utils.appendSpace(String.valueOf(index_crypto + 1), 3) +
+                            // "/"
+                            // + Utils.appendSpace(String.valueOf(total), 3) + ")" + Utils.getTimeHHmm()
+                            // + Utils.appendSpace(SYMBOL, 10) + " " + init;
                             //
                             // System.out.println(msg);
                             // }

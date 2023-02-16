@@ -3079,13 +3079,17 @@ public class BinanceServiceImpl implements BinanceService {
         if (!reloadPrepareOrderTrend(EPIC, CAPITAL_TIME_XXX)) {
             return "";
         }
+        int lengh = 5;
+        if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
+            lengh = 8;
+        }
 
-        List<BtcFutures> list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, 5);
+        List<BtcFutures> list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, lengh);
         if (CollectionUtils.isEmpty(list)) {
             BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS);
 
             Utils.initCapital();
-            list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, 5);
+            list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, lengh);
 
             if (CollectionUtils.isEmpty(list)) {
                 String result = "initForexTrend(" + EPIC + ") Size:" + list.size();
@@ -3289,8 +3293,8 @@ public class BinanceServiceImpl implements BinanceService {
         }
         // --------------------------------------------------------------
         String trend_switch = Utils.switchTrend(list_h1);
+        String trend_ma3 = Utils.isUptrendByMaIndex(list_h1, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
-        String trend_ma3 = Utils.getTrendByCandle(list_h1, TIME);
         saveElapsedMinutesForPrepareOrder(gecko_id, trend_ma3, TIME);
 
         if (Utils.isNotBlank(trend_switch)) {
@@ -3328,12 +3332,11 @@ public class BinanceServiceImpl implements BinanceService {
                 isFututes = true;
             }
 
-            String EVENT_ID = EVENT_PUMP + symbol + char_name + Utils.getCurrentYyyyMmDd_HH();
-
+            String EVENT_ID = EVENT_PUMP + symbol + char_name + Utils.getCurrentYyyyMmDdHHByChart(list_h1);
             if ("_BTC_ETH_BNB_".contains("_" + symbol + "_")) {
                 sendMsgPerHour(EVENT_ID, msg, true);
             } else if (isFututes && Objects.equals(Utils.TREND_LONG, trend_switch)) {
-                sendMsgPerHour(EVENT_ID, msg, true);
+                // sendMsgPerHour(EVENT_ID, msg, true);
             }
 
             Utils.logWritelnWithTime(Utils

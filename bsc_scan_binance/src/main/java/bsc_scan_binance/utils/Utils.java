@@ -114,7 +114,7 @@ public class Utils {
     public static final String CRYPTO_TIME_1d = "1d";
     public static final String CRYPTO_TIME_1w = "1w";
 
-    public static final long MINUTES_OF_W = 2880; //10080
+    public static final long MINUTES_OF_W = 2880; // 10080
     public static final long MINUTES_OF_D = 1440;
     public static final long MINUTES_OF_4H = 240;
     public static final long MINUTES_OF_1H = 60;
@@ -123,9 +123,8 @@ public class Utils {
     public static final List<String> EPICS_FOREX = Arrays.asList("DXY", "GOLD", "OIL_CRUDE", "US30", "US500", "UK100",
             "HK50", "FR40", "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF", "EURGBP");
 
-    public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("GBPAUD",
-            "EURAUD", "EURJPY", "EURCAD", "EURCHF", "AUDJPY", "CADJPY", "GBPJPY",
-            "AUDCAD", "GBPCAD", "GBPCHF", "GBPNZD", "EURNZD", "AUDCHF",
+    public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("GBPAUD", "EURAUD", "EURJPY", "EURCAD",
+            "EURCHF", "AUDJPY", "CADJPY", "GBPJPY", "AUDCAD", "GBPCAD", "GBPCHF", "GBPNZD", "EURNZD", "AUDCHF",
             "AUDNZD", "CADCHF", "CHFJPY", "NZDCAD", "NZDCHF", "NZDJPY");
 
     // public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("AUDHKD",
@@ -959,7 +958,7 @@ public class Utils {
             result = true;
         }
 
-        //TODO:
+        // TODO:
         result = false;
 
         return result;
@@ -976,7 +975,7 @@ public class Utils {
 
     public static boolean isBusinessTime() {
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-        if ((22 <= hh || hh <= 8)) {
+        if ((22 <= hh || hh <= 6)) {
             return false;
         }
 
@@ -2722,37 +2721,6 @@ public class Utils {
         return false;
     }
 
-    public static String checkTrend15m(List<BtcFutures> list) {
-        BigDecimal ma3_1 = calcMA(list, 3, 1);
-        BigDecimal ma3_2 = calcMA(list, 3, 3);
-        BigDecimal ma10_1 = calcMA(list, 10, 1);
-        BigDecimal ma10_2 = calcMA(list, 10, 3);
-        BigDecimal ma20_1 = calcMA(list, 20, 1);
-        BigDecimal ma20_2 = calcMA(list, 20, 3);
-
-        // Long
-        if ((ma3_1.compareTo(ma10_1) > 0) && (ma10_1.compareTo(ma20_1) > 0)) {
-            String ma3_10 = checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
-            String ma3_20 = checkXCutUpY(ma3_1, ma3_2, ma20_1, ma20_2);
-
-            if ((ma3_10 + ma3_20).contains(Utils.TREND_LONG)) {
-                return Utils.TREND_LONG;
-            }
-        }
-
-        // Short
-        if ((ma3_1.compareTo(ma10_1) < 0) && (ma10_1.compareTo(ma20_1) < 0)) {
-            String ma3_10 = checkXCutDownY(ma3_1, ma3_2, ma10_1, ma10_2);
-            String ma3_20 = checkXCutDownY(ma3_1, ma3_2, ma20_1, ma20_2);
-
-            if ((ma3_10 + ma3_20).contains(Utils.TREND_SHORT)) {
-                return Utils.TREND_SHORT;
-            }
-        }
-
-        return "";
-    }
-
     private static String checkXCutUpY(BigDecimal maX_1, BigDecimal maX_2, BigDecimal maY_1, BigDecimal maY_2) {
         if ((maX_1.compareTo(maX_2) > 0) && (maX_1.compareTo(maY_1) > 0) && (maY_2.compareTo(maX_2) > 0)) {
             return TREND_LONG;
@@ -2802,21 +2770,6 @@ public class Utils {
         BigDecimal ma50_2 = calcMA(list, maSlow, end);
 
         if ((ma3_1.compareTo(ma3_2) < 0) && (ma3_1.compareTo(ma50_1) < 0) && (ma50_2.compareTo(ma3_2) < 0)) {
-            return TREND_SHORT;
-        }
-
-        return "";
-    }
-
-    public static String checkTrendByMa3_10_20(List<BtcFutures> list) {
-        Boolean isUptrendByMa3 = Utils.isUptrendByMaIndex(list, 3);
-        Boolean isUptrendByMa10 = Utils.isUptrendByMaIndex(list, 10);
-        Boolean isUptrendByMa20 = Utils.isUptrendByMaIndex(list, 20);
-
-        if (isUptrendByMa3 && isUptrendByMa10 && isUptrendByMa20) {
-            return TREND_LONG;
-        }
-        if (!isUptrendByMa3 && !isUptrendByMa10 && !isUptrendByMa20) {
             return TREND_SHORT;
         }
 
@@ -2921,78 +2874,28 @@ public class Utils {
         return false;
     }
 
-    public static String getTrendByCandle(List<BtcFutures> list, String CAPITAL_TIME_XXX) {
-        boolean isUptrend = Utils.isUptrendByMaIndex(list, 3);
-
-        String trend = isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
-
-        List<BtcFutures> list_0 = list.subList(1, 2);
-        List<BtcFutures> list_1 = list.subList(2, 3);
-
-        if (Objects.equals(Utils.CAPITAL_TIME_WEEK, CAPITAL_TIME_XXX)
-                || Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)
-                || Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_1d)) {
-            list_0 = list.subList(0, 1);
-            list_1 = list.subList(1, 2);
-        }
-
-        List<BigDecimal> body_0 = Utils.getOpenCloseCandle(list_0);
-        List<BigDecimal> body_1 = Utils.getOpenCloseCandle(list_1);
-
-        boolean body_up = false;
-        //Up: compare the lowest point of the candle body.
-        if (body_0.get(0).compareTo(body_1.get(0)) > 0) {
-            body_up = true;
-        }
-
-        boolean body_down = false;
-        //down: compare the highest point of the candle body.
-        if (body_0.get(1).compareTo(body_1.get(1)) < 0) {
-            body_down = true;
-        }
-
-        if (body_up != body_down) {
-            if (body_up) {
-                trend = Utils.TREND_LONG;
-            }
-
-            if (body_down) {
-                trend = Utils.TREND_SHORT;
-            }
-        }
-
-        return trend;
-    }
-
     public static String switchTrendByCandle(List<BtcFutures> list) {
         String trend = "";
-        List<BtcFutures> list_1 = list.subList(1, 2);
-        List<BtcFutures> list_2 = list.subList(2, 3);
-        List<BtcFutures> list_3 = list.subList(3, 4);
+        BigDecimal ma3_0 = calcMA(list, 3, 0);
+        BigDecimal ma3_1 = calcMA(list, 3, 1);
+        BigDecimal ma3_2 = calcMA(list, 3, 2);
+        BigDecimal ma3_3 = calcMA(list, 3, 3);
 
-        List<BigDecimal> body_1 = Utils.getOpenCloseCandle(list_1);
-        List<BigDecimal> body_2 = Utils.getOpenCloseCandle(list_2);
-        List<BigDecimal> body_3 = Utils.getOpenCloseCandle(list_3);
+        List<BigDecimal> low_heigh = getLowHeightCandle(list);
+        BigDecimal range = (low_heigh.get(1).subtract(low_heigh.get(0)));
+        range = range.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
+        BigDecimal start_short_area = low_heigh.get(1).subtract(range);
+        BigDecimal start_long_area = low_heigh.get(0).add(range);
 
-        //Up: compare the lowest point of the candle body.
-        boolean swith_to_uptrend = false;
-        if ((body_1.get(0).compareTo(body_2.get(0)) > 0) && (body_3.get(0).compareTo(body_2.get(0)) > 0)) {
-            swith_to_uptrend = true;
-        }
-
-        //down: compare the highest point of the candle body.
-        boolean swith_to_downtrend = false;
-        if ((body_1.get(0).compareTo(body_2.get(0)) < 0) && (body_3.get(0).compareTo(body_2.get(0)) < 0)) {
-            swith_to_downtrend = true;
-        }
-
-        if (swith_to_uptrend != swith_to_downtrend) {
-            if (swith_to_uptrend) {
-                trend = Utils.TREND_LONG;
+        if ((ma3_1.compareTo(ma3_2) > 0) && (ma3_3.compareTo(ma3_2) > 0)) {
+            if (ma3_0.compareTo(start_long_area) < 0) {
+                trend = TREND_LONG;
             }
+        }
 
-            if (swith_to_downtrend) {
-                trend = Utils.TREND_SHORT;
+        if ((ma3_2.compareTo(ma3_1) > 0) && (ma3_2.compareTo(ma3_3) > 0)) {
+            if (ma3_0.compareTo(start_short_area) > 0) {
+                trend = TREND_SHORT;
             }
         }
 
