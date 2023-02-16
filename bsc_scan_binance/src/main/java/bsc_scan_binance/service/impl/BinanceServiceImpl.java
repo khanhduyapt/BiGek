@@ -3094,11 +3094,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        String trend = Utils.getTrendByCandle(list, CAPITAL_TIME_XXX);
+        boolean isUptrend = Utils.isUptrendByMaIndex(list, 3);
+        String trend = isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
-        if (Objects.equals(Utils.CAPITAL_TIME_WEEK, CAPITAL_TIME_XXX)
-                || Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
-
+        if (Objects.equals(Utils.CAPITAL_TIME_WEEK, CAPITAL_TIME_XXX)) {
             List<BtcFutures> list_1 = list.subList(1, 2);
             List<BigDecimal> body_1 = Utils.getOpenCloseCandle(list_1);
             List<BigDecimal> beard_1 = Utils.getLowHeightCandle(list_1);
@@ -3112,34 +3111,9 @@ public class BinanceServiceImpl implements BinanceService {
             fundingHistoryRepository.save(entity);
         }
 
-        String switch_trend = Utils.switchTrendByCandle(list);
-        if (Utils.isNotBlank(switch_trend)) {
-
-            String EVENT_D_ID = EVENT_1W1D_FX + "_" + Utils.CAPITAL_TIME_DAY + "_" + EPIC;
-            String EVENT_W_ID = EVENT_1W1D_FX + "_" + Utils.CAPITAL_TIME_WEEK + "_" + EPIC;
-            FundingHistory entity_d = fundingHistoryRepository.findById(new FundingHistoryKey(EVENT_D_ID, EPIC))
-                    .orElse(null);
-            FundingHistory entity_w = fundingHistoryRepository.findById(new FundingHistoryKey(EVENT_W_ID, EPIC))
-                    .orElse(null);
-
-            boolean isObjects = false;
-            BigDecimal curr_price = list.get(0).getCurrPrice();
-            if (Objects.nonNull(entity_w)) {
-                if ((curr_price.compareTo(entity_w.getAvgLow()) < 0)
-                        || (curr_price.compareTo(entity_w.getHigh()) > 0)) {
-                    isObjects = true;
-                }
-            }
-            if (Objects.nonNull(entity_d)) {
-                if ((curr_price.compareTo(entity_d.getAvgLow()) < 0)
-                        || (curr_price.compareTo(entity_d.getHigh()) > 0)) {
-                    isObjects = true;
-                }
-            }
-
-            if (isObjects) {
-                sendScapMsg(list, EPIC, switch_trend, "SwitchTrendByCandle");
-
+        if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
+            String switch_trend = Utils.switchTrendByCandle(list);
+            if (Utils.isNotBlank(switch_trend)) {
                 Utils.logWritelnWithTime(
                         Utils.appendSpace(Utils
                                 .appendSpace("Forex " + Utils.appendSpace("  (" + switch_trend + ")", 10)

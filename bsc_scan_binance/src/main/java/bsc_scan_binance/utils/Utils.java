@@ -953,12 +953,16 @@ public class Utils {
     }
 
     public static boolean isNewsTime() {
+        boolean result = false;
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if ((20 <= hh && hh <= 22)) {
-            return true;
+            result = true;
         }
 
-        return false;
+        //TODO:
+        result = false;
+
+        return result;
     }
 
     public static boolean isWorkingTime() {
