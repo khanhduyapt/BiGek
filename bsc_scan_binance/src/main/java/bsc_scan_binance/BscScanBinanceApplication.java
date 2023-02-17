@@ -32,7 +32,7 @@ public class BscScanBinanceApplication {
     public static int SLEEP_MINISECONDS = 8000;
     private static Hashtable<String, LocalTime> keys_dict = new Hashtable<String, LocalTime>();
     public static Hashtable<String, String> forex_naming_dict = new Hashtable<String, String>();
-    public static String hostname = "_";
+    public static String hostname = " ";
     public static ApplicationContext applicationContext;
     public static WandaBot wandaBot;
     public static TelegramBotsApi telegramBotsApi;
@@ -41,6 +41,10 @@ public class BscScanBinanceApplication {
         try {
             initForex_naming_dict();
             hostname = InetAddress.getLocalHost().getHostName();
+            if (hostname.length() > 2) {
+                hostname = hostname.substring(0, 2);
+            }
+            hostname += " ";
 
             System.out.println("Start "
                     + Utils.convertDateToString("yyyy-MM-dd HH:mm:ss", Calendar.getInstance().getTime()) + " ---->");

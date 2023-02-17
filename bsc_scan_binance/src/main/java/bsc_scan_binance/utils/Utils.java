@@ -817,14 +817,8 @@ public class Utils {
     }
 
     public static String getForexLogFile() {
-        String prefix = BscScanBinanceApplication.hostname.toLowerCase();
-        if (prefix.length() > 2) {
-            prefix = prefix.substring(0, 2);
-        }
-        prefix += "_";
-
         String PATH = "crypto_forex_result/";
-        String fileName = prefix + getYyyyMmDdHH_ChangeDailyChart() + "_Forex.log";
+        String fileName = getYyyyMmDdHH_ChangeDailyChart() + "_Forex.log";
 
         File directory = new File(PATH);
         if (!directory.exists()) {
@@ -834,14 +828,8 @@ public class Utils {
     }
 
     public static String getCryptoLogFile() {
-        String prefix = BscScanBinanceApplication.hostname.toLowerCase();
-        if (prefix.length() > 2) {
-            prefix = prefix.substring(0, 2);
-        }
-        prefix += "_";
-
         String PATH = "crypto_forex_result/";
-        String fileName = prefix + getYyyyMmDdHH_ChangeDailyChart() + "_Crypto.log";
+        String fileName = getYyyyMmDdHH_ChangeDailyChart() + "_Crypto.log";
 
         File directory = new File(PATH);
         if (!directory.exists()) {
@@ -870,7 +858,8 @@ public class Utils {
             }
 
             FileWriter fw = new FileWriter(logFilePath, true);
-            fw.write(Utils.getTimeHHmm() + " " + text.replace(Utils.new_line_from_service, " ") + "\n");
+            fw.write(BscScanBinanceApplication.hostname + Utils.getTimeHHmm() + " "
+                    + text.replace(Utils.new_line_from_service, " ") + "\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -880,7 +869,7 @@ public class Utils {
     public static void logForexWriteln(String text, boolean isNewline) {
         try {
             FileWriter fw = new FileWriter(getForexLogFile(), true);
-            fw.write(
+            fw.write(BscScanBinanceApplication.hostname +
                     (isNewline ? "\n" : "") + text.replace(Utils.new_line_from_service, " ") + (isNewline ? "\n" : ""));
             fw.close();
         } catch (IOException ioe) {
@@ -891,7 +880,7 @@ public class Utils {
     public static void logWriteln(String text, boolean isNewline) {
         try {
             FileWriter fw = new FileWriter(getCryptoLogFile(), true);
-            fw.write(
+            fw.write(BscScanBinanceApplication.hostname +
                     (isNewline ? "\n" : "") + text.replace(Utils.new_line_from_service, " ") + (isNewline ? "\n" : ""));
             fw.close();
         } catch (IOException ioe) {
@@ -902,7 +891,7 @@ public class Utils {
     public static void writelnLogFooter_Forex() {
         try {
             FileWriter fw = new FileWriter(getForexLogFile(), true);
-            fw.write(
+            fw.write(BscScanBinanceApplication.hostname +
                     "------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
             fw.close();
         } catch (IOException ioe) {
@@ -913,7 +902,7 @@ public class Utils {
     public static void writelnLogFooter() {
         try {
             FileWriter fw = new FileWriter(getCryptoLogFile(), true);
-            fw.write(
+            fw.write(BscScanBinanceApplication.hostname +
                     "------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
             fw.close();
         } catch (IOException ioe) {
