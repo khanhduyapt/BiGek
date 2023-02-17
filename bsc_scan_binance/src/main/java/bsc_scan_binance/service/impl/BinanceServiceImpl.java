@@ -2791,6 +2791,17 @@ public class BinanceServiceImpl implements BinanceService {
         return "";
     }
 
+    private String getPrepareOrderTrend_WDH4(String EPIC) {
+        String trend_w = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_WEEK);
+        String trend_d = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_DAY);
+        String trend_h4 = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+
+        String trend_d_h4 = Utils.appendSpace("(W:" + Utils.appendSpace(trend_w, 5) + ", D:"
+                + Utils.appendSpace(trend_d, 5) + ", H4:" + Utils.appendSpace(trend_h4, 5) + ")", 30);
+
+        return trend_d_h4;
+    }
+
     private String getPrepareOrderTrend(String EPIC, String utils_capital_time_xxx) {
         String id = EPIC + "_" + utils_capital_time_xxx;
 
@@ -3130,6 +3141,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isNotBlank(note)) {
+                String wdh4 = getPrepareOrderTrend_WDH4(EPIC);
+
                 String trend_h4 = "(" + (switch_trend_ma + " " + switch_trend_ca).trim() + ")";
                 String char_name = Utils.getChartName(list);
                 String EVENT_ID = EVENT_PUMP + EPIC + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
@@ -3141,8 +3154,9 @@ public class BinanceServiceImpl implements BinanceService {
                         Utils.appendSpace(Utils
                                 .appendSpace("Forex " + Utils.appendSpace("  " + trend_h4, 10)
                                         + Utils.getChartName(list) + Utils.appendSpace(EPIC, 8)
-                                        + Utils.getCurrentPrice(list) + " Range: " + Utils.appendSpace(range, 6), 51)
-                                + " " + Utils.getCapitalLink(EPIC), 128) + Utils.appendSpace(note, 30),
+                                        + Utils.getCurrentPrice(list) + wdh4, 51)
+                                + " " + Utils.getCapitalLink(EPIC), 128) + " Range: " + Utils.appendSpace(range, 6)
+                                + Utils.appendSpace(note, 30),
                         false);
             }
         }
@@ -3176,11 +3190,8 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String checkForex(String EPIC, String CAPITAL_TIME_XXX) {
-        String trend_w = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_WEEK);
-        String trend_d = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_DAY);
         String trend_h4 = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-        String trend_d_h4 = Utils.appendSpace("(W:" + trend_w + ", D:" + trend_d + ", H4:" + trend_h4 + ")", 30);
-
+        String trend_d_h4 = getPrepareOrderTrend_WDH4(EPIC);
         if (!reloadPrepareOrderTrend(EPIC, CAPITAL_TIME_XXX)) {
             return "";
         }
@@ -3210,7 +3221,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             trend_switch = Utils.switchTrend(list);
             if (Utils.isNotBlank(trend_switch)) {
-                if (Objects.equals(trend_d, trend_h4) && Objects.equals(trend_h4, trend_switch)) {
+                if (Objects.equals(trend_h4, trend_switch)) {
                     sendScapMsg(list, EPIC, trend_switch, trend_d_h4);
                 }
 
