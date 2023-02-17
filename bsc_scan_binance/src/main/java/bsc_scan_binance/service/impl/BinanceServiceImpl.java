@@ -2691,46 +2691,6 @@ public class BinanceServiceImpl implements BinanceService {
         return cur_trend;
     }
 
-    /*
-     * public String checkTrendByBtc(String gecko_id, String symbol, String TIME,
-     * BigDecimal ref_price, boolean allowSendMsg, String append, boolean
-     * isCompareWithBtc) { String trend = ""; String CURRENCY = isCompareWithBtc ?
-     * "BTC" : "USDT"; List<BtcFutures> list_compare_btc = Utils.loadData(symbol,
-     * TIME, 60, CURRENCY); BigDecimal current_price = isCompareWithBtc ? ref_price
-     * : list_compare_btc.get(0).getCurrPrice();
-     *
-     * if (!CollectionUtils.isEmpty(list_compare_btc)) { trend =
-     * Utils.switchTrend(list_compare_btc);
-     *
-     * if (allowSendMsg && Objects.equals(Utils.TREND_LONG, trend)) { String
-     * chartname = Utils.getChartName(list_compare_btc);
-     *
-     * saveDepthData(gecko_id, symbol); list_bids_ok = getBids(gecko_id,
-     * current_price); list_asks_ok = getAsks(gecko_id, current_price); String
-     * bid_ask = ""; if (!CollectionUtils.isEmpty(list_bids_ok)) { DepthResponse
-     * dto_min = list_bids_ok.get(list_bids_ok.size() - 1); bid_ask += "(bid)" +
-     * Utils.removeLastZero(dto_min.getPrice()) + "(" + dto_min.getPercent() + ")";
-     * } if (!CollectionUtils.isEmpty(list_asks_ok)) { DepthResponse dto_max =
-     * list_asks_ok.get(list_asks_ok.size() - 1); bid_ask += "(ask)" +
-     * Utils.removeLastZero(dto_max.getPrice()) + "(" + dto_max.getPercent() + ")";
-     * }
-     *
-     * String str_current_price = "(" + Utils.removeLastZero(current_price) + ")";
-     * String msg = chartname + trend + symbol + str_current_price + append;
-     *
-     * if (Utils.isNotBlank(bid_ask)) { msg += Utils.new_line_from_service +
-     * bid_ask; }
-     *
-     * String EVENT_ID_COMPARE_BTC = EVENT_PUMP + symbol +
-     * Utils.getCurrentYyyyMmDdHHByChart(list_compare_btc);
-     *
-     * sendMsgPerHour(EVENT_ID_COMPARE_BTC, msg, true);
-     *
-     * return msg; } }
-     *
-     * return trend; }
-     */
-
     private long getElapsedMinutes(String EPIC, String utils_capital_time_xxx) {
         String id = EPIC + "_" + utils_capital_time_xxx;
 
