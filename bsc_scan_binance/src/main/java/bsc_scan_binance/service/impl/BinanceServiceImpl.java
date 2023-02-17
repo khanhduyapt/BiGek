@@ -3321,12 +3321,13 @@ public class BinanceServiceImpl implements BinanceService {
                 return "";
             }
         }
+
         // --------------------------------------------------------------
-        String trend_switch = Utils.switchTrend(list_h1);
         String trend_ma3 = Utils.isUptrendByMaIndex(list_h1, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+        saveElapsedMinutesForPrepareOrder(symbol, trend_ma3, TIME);
+        // --------------------------------------------------------------
 
-        saveElapsedMinutesForPrepareOrder(gecko_id, trend_ma3, TIME);
-
+        String trend_switch = Utils.switchTrend(list_h1);
         if (Utils.isNotBlank(trend_switch)) {
             String curr_price = Utils.getCurrentPrice(list_h1);
             String vmc = Utils.appendSpace("", 15);
