@@ -2817,7 +2817,7 @@ public class Utils {
 
         String l_m10x20 = "";
         String s_m10x20 = "";
-        int slow_index = 8;
+        int slow_index = 6;
         if (list.get(0).getId().contains("_15m_")) {
             slow_index = 20;
         } else if (list.get(0).getId().contains("_1h_")) {
@@ -2840,12 +2840,12 @@ public class Utils {
         }
 
         String l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, maX_1, maX_2);
-        if (!isUptrendByMaIndex(list, 10)) {
+        if (!isUptrendByMaIndex(list, 3)) {
             l_m03x10 = "";
         }
         // ----------------------------------------
         s_m03x10 = Utils.checkXCutDownY(ma3_1, ma3_2, maX_1, maX_2);
-        if (isUptrendByMaIndex(list, 10)) {
+        if (isUptrendByMaIndex(list, 3)) {
             s_m03x10 = "";
         }
         String trend = l_m03x10 + "_" + l_m10x20 + "_" + s_m03x10 + "_" + s_m10x20;
@@ -2874,12 +2874,9 @@ public class Utils {
         return false;
     }
 
-    public static String switchTrendByCandle(List<BtcFutures> list) {
+    public static String switchTrendByRange(List<BtcFutures> list) {
         String trend = "";
         BigDecimal ma3_0 = calcMA(list, 3, 0);
-        BigDecimal ma3_1 = calcMA(list, 3, 1);
-        BigDecimal ma3_2 = calcMA(list, 3, 2);
-        BigDecimal ma3_3 = calcMA(list, 3, 3);
 
         List<BigDecimal> low_heigh = getLowHeightCandle(list);
         BigDecimal range = (low_heigh.get(1).subtract(low_heigh.get(0)));
@@ -2887,16 +2884,29 @@ public class Utils {
         BigDecimal start_short_area = low_heigh.get(1).subtract(range);
         BigDecimal start_long_area = low_heigh.get(0).add(range);
 
+        if (ma3_0.compareTo(start_long_area) < 0) {
+            trend = TREND_LONG;
+        }
+
+        if (ma3_0.compareTo(start_short_area) > 0) {
+            trend = TREND_SHORT;
+        }
+
+        return trend;
+    }
+
+    public static String switchTrendByCandle(List<BtcFutures> list) {
+        String trend = "";
+        BigDecimal ma3_1 = calcMA(list, 3, 1);
+        BigDecimal ma3_2 = calcMA(list, 3, 2);
+        BigDecimal ma3_3 = calcMA(list, 3, 3);
+
         if ((ma3_1.compareTo(ma3_2) > 0) && (ma3_3.compareTo(ma3_2) > 0)) {
-            if (ma3_0.compareTo(start_long_area) < 0) {
-                trend = TREND_LONG;
-            }
+            trend = TREND_LONG;
         }
 
         if ((ma3_2.compareTo(ma3_1) > 0) && (ma3_2.compareTo(ma3_3) > 0)) {
-            if (ma3_0.compareTo(start_short_area) > 0) {
-                trend = TREND_SHORT;
-            }
+            trend = TREND_SHORT;
         }
 
         return trend;

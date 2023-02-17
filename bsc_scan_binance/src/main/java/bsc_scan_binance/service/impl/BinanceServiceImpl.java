@@ -3116,14 +3116,32 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
-            String switch_trend = Utils.switchTrendByCandle(list);
-            if (Utils.isNotBlank(switch_trend)) {
+            String note = "";
+
+            String range = Utils.switchTrendByRange(list);
+
+            String switch_trend_ma = Utils.switchTrend(list);
+            if (Utils.isNotBlank(switch_trend_ma)) {
+                note = " Ma3xMa6 ";
+            }
+            String switch_trend_ca = Utils.switchTrendByCandle(list);
+            if (Utils.isNotBlank(switch_trend_ca)) {
+                note += " SwitchTrendByCandle ";
+            }
+
+            if (Utils.isNotBlank(note)) {
+                String char_name = Utils.getChartName(list);
+                String EVENT_ID = EVENT_PUMP + EPIC + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
+                String msg = "(" + (switch_trend_ma + " " + switch_trend_ca).trim() + ")" + char_name + EPIC;
+
+                sendMsgPerHour(EVENT_ID, msg, true);
+
                 Utils.logWritelnWithTime(
                         Utils.appendSpace(Utils
-                                .appendSpace("Forex " + Utils.appendSpace("  (" + switch_trend + ")", 10)
+                                .appendSpace("Forex " + Utils.appendSpace("  (" + switch_trend_ca + ")", 10)
                                         + Utils.getChartName(list) + Utils.appendSpace(EPIC, 8)
-                                        + Utils.getCurrentPrice(list) + "SwitchTrendByCandle", 51)
-                                + " " + Utils.getCapitalLink(EPIC), 128),
+                                        + Utils.getCurrentPrice(list) + " Range: " + Utils.appendSpace(range, 6), 51)
+                                + " " + Utils.getCapitalLink(EPIC), 128) + note,
                         false);
             }
         }
