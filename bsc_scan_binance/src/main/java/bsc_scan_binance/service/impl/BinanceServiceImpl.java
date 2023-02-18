@@ -139,7 +139,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Autowired
     private FundingHistoryRepository fundingHistoryRepository;
 
-    private String BTC_TREND_M15 = Utils.TREND_SHORT;
+    private String BTC_ETH_BNB = "_BTC_ETH_BNB_";
 
     private static final String EVENT_DANGER_CZ_KILL_LONG = "CZ_KILL_LONG";
     private static final String EVENT_BTC_RANGE = "BTC_RANGE";
@@ -2566,12 +2566,6 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        if (Objects.equals("BTC", symbol)) {
-            String trend_15m = Utils.isUptrendByMaIndex(list_15m, 10) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-
-            BTC_TREND_M15 = trend_15m;
-        }
-
         String chartname = Utils.getChartName(list_15m);
         BtcFutures ido = list_15m.get(0);
         boolean isShort = Utils.isAboveMALine(list_15m, 50, 0);
@@ -2826,46 +2820,46 @@ public class BinanceServiceImpl implements BinanceService {
         return init_trend_result;
     }
 
-    private String checkChartCrypto(List<BtcFutures> list, String gecko_id, String symbol, boolean allowGreaterMa50) {
-        String trend = "";
-        try {
-            trend = Utils.switchTrendByMa(list);
-            if (Objects.equals(Utils.TREND_LONG, trend)) {
-                String star = "";
-
-                if (list.size() > 20) {
-                    BigDecimal ma10_1 = Utils.calcMA(list, 10, 1);
-                    BigDecimal ma50_1 = Utils.calcMA(list, 50, 1);
-
-                    if (ma50_1.compareTo(ma10_1) > 0) {
-                        star = Utils.TEXT_5STAR;
-                    } else if (!allowGreaterMa50) {
-                        return "";
-                    }
-                }
-
-                String url = "";
-                String type = "(Spot)    ";
-                if (binanceFuturesRepository.existsById(gecko_id)) {
-                    type = "(Futures) ";
-                    url = Utils.getCryptoLink_Future(symbol);
-                } else {
-                    url = Utils.getCryptoLink_Spot(symbol);
-                }
-
-                Utils.logWritelnWithTime(Utils.appendSpace(
-                        Utils.appendSpace(
-                                "Crypto" + Utils.appendSpace("  (" + trend + ")", 10) + Utils.getChartName(list)
-                                        + Utils.appendSpace(symbol, 8) + Utils.getCurrentPrice(list) + type,
-                                51) + url,
-                        126) + " " + getVolMc(gecko_id) + Utils.getAtlAth(list) + star, true);
-
-            }
-        } catch (Exception e) {
-        }
-
-        return trend;
-    }
+    //    private String checkChartCrypto(List<BtcFutures> list, String gecko_id, String symbol, boolean allowGreaterMa50) {
+    //        String trend = "";
+    //        try {
+    //            trend = Utils.switchTrendByMa(list);
+    //            if (Objects.equals(Utils.TREND_LONG, trend)) {
+    //                String star = "";
+    //
+    //                if (list.size() > 20) {
+    //                    BigDecimal ma10_1 = Utils.calcMA(list, 10, 1);
+    //                    BigDecimal ma50_1 = Utils.calcMA(list, 50, 1);
+    //
+    //                    if (ma50_1.compareTo(ma10_1) > 0) {
+    //                        star = Utils.TEXT_5STAR;
+    //                    } else if (!allowGreaterMa50) {
+    //                        return "";
+    //                    }
+    //                }
+    //
+    //                String url = "";
+    //                String type = "(Spot)    ";
+    //                if (binanceFuturesRepository.existsById(gecko_id)) {
+    //                    type = "(Futures) ";
+    //                    url = Utils.getCryptoLink_Future(symbol);
+    //                } else {
+    //                    url = Utils.getCryptoLink_Spot(symbol);
+    //                }
+    //
+    //                Utils.logWritelnWithTime(Utils.appendSpace(
+    //                        Utils.appendSpace(
+    //                                "Crypto" + Utils.appendSpace("  (" + trend + ")", 10) + Utils.getChartName(list)
+    //                                        + Utils.appendSpace(symbol, 8) + Utils.getCurrentPrice(list) + type,
+    //                                51) + url,
+    //                        126) + " " + getVolMc(gecko_id) + Utils.getAtlAth(list) + star, true);
+    //
+    //            }
+    //        } catch (Exception e) {
+    //        }
+    //
+    //        return trend;
+    //    }
 
     @Override
     public boolean hasConnectTimeOutException() {
@@ -2949,7 +2943,7 @@ public class BinanceServiceImpl implements BinanceService {
                     sendMsgPerHour(EVENT_ID, msg, true);
                 }
 
-                String buffer = Utils.calc_BUF_LO_HI_BUF(list);
+                String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(list);
                 note = buffer + Utils.appendSpace(note, 30);
 
                 Utils.logWritelnWithTime(
@@ -3009,16 +3003,18 @@ public class BinanceServiceImpl implements BinanceService {
                 note = " Ma3xMa6 ";
             }
 
-            if (Utils.isNotBlank(note) && trend.contains(Utils.TREND_LONG)) {
+            if (Utils.isNotBlank(note)) {
                 String char_name = Utils.getChartName(list);
-                String url = "";
-                if (binanceFuturesRepository.existsById(gecko_id)) {
-                    url = Utils.getCryptoLink_Future(symbol);
 
+                if (BTC_ETH_BNB.contains(symbol)) {
                     String msg = "(" + trend + ")" + char_name + symbol + Utils.getCurrentPrice(list);
                     String EVENT_ID = EVENT_PUMP + symbol + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
                     sendMsgPerHour(EVENT_ID, msg, true);
+                }
 
+                String url = "";
+                if (binanceFuturesRepository.existsById(gecko_id)) {
+                    url = Utils.getCryptoLink_Future(symbol);
                 } else {
                     url = Utils.getCryptoLink_Spot(symbol);
                 }

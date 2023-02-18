@@ -130,7 +130,8 @@ public class BscScanBinanceApplication {
                         checkBtcKillLongShort_15m(binance_service);
 
                         if (!Utils.isNewsTime()) {
-                            if (isReloadAfter(1, "FOREX") && Utils.isBusinessTime() && Utils.isAllowSendMsgSetting()) { //!Utils.isWeekend() &&
+                            if (isReloadAfter(1, "FOREX") && !Utils.isWeekend() && Utils.isBusinessTime()
+                                    && Utils.isAllowSendMsgSetting()) {
                                 if (index_forex < forex_size) {
                                     String EPIC = capital_list.get(index_forex);
 

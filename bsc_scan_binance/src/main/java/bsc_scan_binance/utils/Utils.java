@@ -2579,7 +2579,7 @@ public class Utils {
         return Utils.appendSpace(result, 46);
     }
 
-    public static String calc_BUF_LO_HI_BUF(List<BtcFutures> list) {
+    public static String calc_BUF_LO_HI_BUF_Forex(List<BtcFutures> list) {
         BigDecimal account = BigDecimal.valueOf(200000);
         BigDecimal risk_percent = BigDecimal.valueOf(0.0025);
         BigDecimal risk = account.multiply(risk_percent);
