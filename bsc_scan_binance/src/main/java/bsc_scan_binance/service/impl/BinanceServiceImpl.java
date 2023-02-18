@@ -2955,8 +2955,8 @@ public class BinanceServiceImpl implements BinanceService {
                                 .appendSpace("Forex " + Utils.appendSpace("  " + trend_h, 10)
                                         + Utils.getChartName(list) + Utils.appendSpace(EPIC, 8)
                                         + Utils.getCurrentPrice(list) + wdh4, 51)
-                                + " " + Utils.getCapitalLink(EPIC), 138) + " Range: " + Utils.appendSpace(range, 6)
-                                + note,
+                                + " " + Utils.getCapitalLink(EPIC), 138)
+                                + note + " Range: " + Utils.appendSpace(range, 6),
                         false);
             }
         }

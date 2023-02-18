@@ -2598,29 +2598,32 @@ public class Utils {
         BigDecimal sl_short = HI.subtract(ma10);
         sl_short = roundDefault(HI.add(sl_short));
 
-        BigDecimal pips_long = entry.subtract(sl_long);
+        BigDecimal pips_long = entry.subtract(sl_long).abs();
         BigDecimal lot_long = risk.divide(pips_long, 10, RoundingMode.CEILING);
-        if (lot_long.compareTo(BigDecimal.valueOf(1000)) > 0) {
-            lot_long = risk.divide(pips_long, 100000, RoundingMode.CEILING);
-        }
-        lot_long = formatPrice(lot_long, 2);
+        BigDecimal div = BigDecimal.valueOf(1);
 
-        BigDecimal pips_short = sl_short.subtract(entry);
+        if (lot_long.compareTo(BigDecimal.valueOf(10000)) > 0) {
+            div = BigDecimal.valueOf(100000);
+        } else if (lot_long.compareTo(BigDecimal.valueOf(100)) > 0) {
+            div = BigDecimal.valueOf(1000);
+        }
+        lot_long = lot_long.divide(div, 2, RoundingMode.CEILING);
+
+        BigDecimal pips_short = sl_short.subtract(entry).abs();
         BigDecimal lot_short = risk.divide(pips_short, 10, RoundingMode.CEILING);
-        if (lot_short.compareTo(BigDecimal.valueOf(1000)) > 0) {
-            lot_short = risk.divide(pips_long, 100000, RoundingMode.CEILING);
-        }
-        lot_short = formatPrice(lot_short, 2);
+        lot_short = lot_short.divide(div, 2, RoundingMode.CEILING);
 
-        result += getChartName(list);
-        result += Utils.appendSpace("Sl: " + getPercentToEntry(LO, sl_long, true), 15);
+        result += "SL: " + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12);
         result += " (" + Utils.appendSpace(removeLastZero(lot_long), 5) + " lot)";
-        result += ",Lo: " + Utils.appendSpace(removeLastZero(LO), 8);
-        result += ",Hi: " + Utils.appendSpace(removeLastZero(HI), 8);
-        result += Utils.appendSpace(",Sl: " + getPercentToEntry(HI, sl_short, true), 15);
+        result += ", Lo: " + Utils.appendSpace(removeLastZero(LO), 8);
+        result += ", Hi: " + Utils.appendSpace(removeLastZero(HI), 8);
+        result += ", SL: " + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12);
         result += " (" + Utils.appendSpace(removeLastZero(lot_short), 5) + " lot)";
 
-        return Utils.appendSpace(result, 95);
+        result = Utils.appendSpace(result, 95);
+        result += " Risk: " + Utils.appendSpace(removeLastZero(risk) + "$", 8);
+
+        return result;
     }
 
     public static String analysisTakerVolume(List<BtcFutures> list_days, List<BtcFutures> list_h4) {
