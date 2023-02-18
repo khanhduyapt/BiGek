@@ -2965,9 +2965,15 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String date_time = LocalDateTime.now().toString();
-            Orders entity = new Orders(id, date_time, trend, list.get(0).getCurrPrice(),
-                    list.get(1).getPrice_open_candle(), list.get(1).getPrice_close_candle(), list.get(1).getLow_price(),
-                    list.get(1).getCandleHeight(), note.trim());
+            BigDecimal str_body = list.get(1).getPrice_open_candle();
+            BigDecimal end_body = list.get(1).getPrice_close_candle();
+            if (str_body.compareTo(end_body) < 0) {
+                str_body = list.get(1).getPrice_close_candle();
+                end_body = list.get(1).getPrice_open_candle();
+            }
+
+            Orders entity = new Orders(id, date_time, trend, list.get(0).getCurrPrice(), str_body, end_body,
+                    list.get(1).getLow_price(), list.get(1).getHight_price(), note.trim());
 
             ordersRepository.save(entity);
         }

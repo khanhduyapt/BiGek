@@ -22,26 +22,26 @@ public class Orders {
     @Column(name = "gecko_id")
     private String id;
 
-    @Column(name = "symbol")
+    @Column(name = "insert_time")
     private String insertTime;
 
-    @Column(name = "name")
+    @Column(name = "trend")
     private String trend;
 
-    @Column(name = "order_price")
+    @Column(name = "current_price")
     private BigDecimal current_price = BigDecimal.ZERO;
 
-    @Column(name = "qty")
-    private BigDecimal open_price = BigDecimal.ZERO;
+    @Column(name = "str_body_price")
+    private BigDecimal str_body_price = BigDecimal.ZERO;
 
-    @Column(name = "amount")
-    private BigDecimal close_price = BigDecimal.ZERO;
+    @Column(name = "end_body_price")
+    private BigDecimal end_body_price = BigDecimal.ZERO;
 
     @Column(name = "low_price")
     private BigDecimal low_price = BigDecimal.ZERO;
 
-    @Column(name = "height_price")
-    private BigDecimal height_price = BigDecimal.ZERO;
+    @Column(name = "high_price")
+    private BigDecimal high_price = BigDecimal.ZERO;
 
     @Column(name = "note")
     private String note;
