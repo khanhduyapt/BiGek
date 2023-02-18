@@ -2623,7 +2623,7 @@ public class BinanceServiceImpl implements BinanceService {
         Orders entity = ordersRepository.findById(id).orElse(null);
 
         if (!Objects.equals(null, entity)) {
-            String insert_time = Utils.getStringValue(entity.getNote());
+            String insert_time = Utils.getStringValue(entity.getInsertTime());
             if (Utils.isNotBlank(insert_time)) {
                 LocalDateTime pre_time = LocalDateTime.parse(insert_time);
                 elapsedMinutes = Duration.between(pre_time, date_time).toMinutes();
@@ -2952,7 +2952,7 @@ public class BinanceServiceImpl implements BinanceService {
                                 .appendSpace("Forex " + Utils.appendSpace("  " + trend_h, 10)
                                         + Utils.getChartName(list) + Utils.appendSpace(EPIC, 8)
                                         + Utils.getCurrentPrice(list) + wdh4, 51)
-                                + " " + Utils.getCapitalLink(EPIC), 128) + " Range: " + Utils.appendSpace(range, 6)
+                                + " " + Utils.getCapitalLink(EPIC), 138) + " Range: " + Utils.appendSpace(range, 6)
                                 + Utils.appendSpace(note, 30),
                         false);
             }
@@ -2967,7 +2967,7 @@ public class BinanceServiceImpl implements BinanceService {
             String date_time = LocalDateTime.now().toString();
             BigDecimal str_body = list.get(1).getPrice_open_candle();
             BigDecimal end_body = list.get(1).getPrice_close_candle();
-            if (str_body.compareTo(end_body) < 0) {
+            if (str_body.compareTo(end_body) > 0) {
                 str_body = list.get(1).getPrice_close_candle();
                 end_body = list.get(1).getPrice_open_candle();
             }

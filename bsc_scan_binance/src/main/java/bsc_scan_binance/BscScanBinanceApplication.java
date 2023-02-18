@@ -138,13 +138,19 @@ public class BscScanBinanceApplication {
                                     init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_WEEK);
                                     if (Utils.isNotBlank(init)) {
                                         wait(SLEEP_MINISECONDS);
+                                        wait(SLEEP_MINISECONDS);
+                                        wait(SLEEP_MINISECONDS);
                                     }
                                     init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
                                     if (Utils.isNotBlank(init)) {
                                         wait(SLEEP_MINISECONDS);
+                                        wait(SLEEP_MINISECONDS);
+                                        wait(SLEEP_MINISECONDS);
                                     }
                                     init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
                                     if (Utils.isNotBlank(init)) {
+                                        wait(SLEEP_MINISECONDS);
+                                        wait(SLEEP_MINISECONDS);
                                         wait(SLEEP_MINISECONDS);
                                     }
                                     // ----------------------------------------------
