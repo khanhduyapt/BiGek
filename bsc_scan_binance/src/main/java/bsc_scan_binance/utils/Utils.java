@@ -904,11 +904,10 @@ public class Utils {
     public static boolean isNewsTime() {
         boolean result = false;
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-        if ((20 <= hh && hh <= 22)) {
+        if (20 == hh) {
             result = true;
         }
 
-        // TODO:
         result = false;
 
         return result;
@@ -2580,33 +2579,48 @@ public class Utils {
         return Utils.appendSpace(result, 46);
     }
 
-    public static String calc_BUF_LO_HI_BUF(List<BtcFutures> list, String trend) {
-        BigDecimal buf = BigDecimal.ZERO;
-        BigDecimal ma10 = calcMA(list, 10, 1);
-        BigDecimal ma20 = calcMA(list, 20, 1);
-        BigDecimal entry = list.get(0).getCurrPrice();
-        BigDecimal range = ma10.subtract(ma20).abs();
+    public static String calc_BUF_LO_HI_BUF(List<BtcFutures> list) {
+        BigDecimal account = BigDecimal.valueOf(200000);
+        BigDecimal risk_percent = BigDecimal.valueOf(0.0025);
+        BigDecimal risk = account.multiply(risk_percent);
 
-        List<BigDecimal> low_heigh_SL = getLowHeightCandle(list.subList(0, 10));
+        BigDecimal entry = list.get(0).getCurrPrice();
+
         List<BigDecimal> low_heigh = getLowHeightCandle(list);
         BigDecimal LO = low_heigh.get(0);
         BigDecimal HI = low_heigh.get(1);
+        BigDecimal ma10 = calcMA(list, 8, 1);
 
         String result = "";
-        if (trend.contains(TREND_LONG)) {
-            buf = roundDefault(low_heigh_SL.get(0).subtract(range));
-            result += "Buf:" + getPercentToEntry(LO, buf, true);
-            result += ",Lo:" + getPercentToEntry(entry, LO, true);
-            result += ",Hi:" + getPercentToEntry(entry, HI, true);
-        } else {
-            buf = roundDefault(low_heigh_SL.get(1).add(range));
-            result += "Lo:" + getPercentToEntry(entry, LO, true);
-            result += ",Hi:" + getPercentToEntry(entry, HI, true);
-            result += ",Buf:" + getPercentToEntry(HI, buf, true);
-        }
-        result += getChartName(list);
 
-        return result;
+        BigDecimal sl_long = ma10.subtract(LO);
+        sl_long = roundDefault(LO.subtract(sl_long));
+        BigDecimal sl_short = HI.subtract(ma10);
+        sl_short = roundDefault(HI.add(sl_short));
+
+        BigDecimal pips_long = entry.subtract(sl_long);
+        BigDecimal lot_long = risk.divide(pips_long, 10, RoundingMode.CEILING);
+        if (lot_long.compareTo(BigDecimal.valueOf(1000)) > 0) {
+            lot_long = risk.divide(pips_long, 100000, RoundingMode.CEILING);
+        }
+        lot_long = formatPrice(lot_long, 2);
+
+        BigDecimal pips_short = sl_short.subtract(entry);
+        BigDecimal lot_short = risk.divide(pips_short, 10, RoundingMode.CEILING);
+        if (lot_short.compareTo(BigDecimal.valueOf(1000)) > 0) {
+            lot_short = risk.divide(pips_long, 100000, RoundingMode.CEILING);
+        }
+        lot_short = formatPrice(lot_short, 2);
+
+        result += getChartName(list);
+        result += Utils.appendSpace("Sl: " + getPercentToEntry(LO, sl_long, true), 15);
+        result += " (" + Utils.appendSpace(removeLastZero(lot_long), 5) + " lot)";
+        result += ",Lo: " + Utils.appendSpace(removeLastZero(LO), 8);
+        result += ",Hi: " + Utils.appendSpace(removeLastZero(HI), 8);
+        result += Utils.appendSpace(",Sl: " + getPercentToEntry(HI, sl_short, true), 15);
+        result += " (" + Utils.appendSpace(removeLastZero(lot_short), 5) + " lot)";
+
+        return Utils.appendSpace(result, 95);
     }
 
     public static String analysisTakerVolume(List<BtcFutures> list_days, List<BtcFutures> list_h4) {
@@ -2726,7 +2740,7 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrend(List<BtcFutures> list) {
+    public static String switchTrendByMa(List<BtcFutures> list) {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }

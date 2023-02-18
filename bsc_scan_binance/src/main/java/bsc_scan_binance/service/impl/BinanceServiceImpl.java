@@ -2759,10 +2759,10 @@ public class BinanceServiceImpl implements BinanceService {
         note += ",L10w:" + Utils.getPercentToEntry(current_price, min_week, true) + ",";
         // ---------------------------------------------------------
         String position = "";
-        if (Objects.equals(Utils.TREND_LONG, Utils.switchTrend(list_h4))) {
+        if (Objects.equals(Utils.TREND_LONG, Utils.switchTrendByMa(list_h4))) {
             position = "_PositionH4";
         }
-        if (Objects.equals(Utils.TREND_LONG, Utils.switchTrend(list_days))) {
+        if (Objects.equals(Utils.TREND_LONG, Utils.switchTrendByMa(list_days))) {
             position = "_PositionD1";
 
             PriorityCoinHistory his = new PriorityCoinHistory();
@@ -2829,7 +2829,7 @@ public class BinanceServiceImpl implements BinanceService {
     private String checkChartCrypto(List<BtcFutures> list, String gecko_id, String symbol, boolean allowGreaterMa50) {
         String trend = "";
         try {
-            trend = Utils.switchTrend(list);
+            trend = Utils.switchTrendByMa(list);
             if (Objects.equals(Utils.TREND_LONG, trend)) {
                 String star = "";
 
@@ -2929,7 +2929,7 @@ public class BinanceServiceImpl implements BinanceService {
                 note += " SwitchTrendByCandle ";
             }
 
-            String switch_trend_ma = Utils.switchTrend(list);
+            String switch_trend_ma = Utils.switchTrendByMa(list);
             if (Utils.isNotBlank(switch_trend_ma)) {
                 trend = switch_trend_ma;
                 note = " Ma3xMa6 ";
@@ -2947,13 +2947,16 @@ public class BinanceServiceImpl implements BinanceService {
                     sendMsgPerHour(EVENT_ID, msg, true);
                 }
 
+                String buffer = Utils.calc_BUF_LO_HI_BUF(list);
+                note = buffer + Utils.appendSpace(note, 30);
+
                 Utils.logWritelnWithTime(
                         Utils.appendSpace(Utils
                                 .appendSpace("Forex " + Utils.appendSpace("  " + trend_h, 10)
                                         + Utils.getChartName(list) + Utils.appendSpace(EPIC, 8)
                                         + Utils.getCurrentPrice(list) + wdh4, 51)
                                 + " " + Utils.getCapitalLink(EPIC), 138) + " Range: " + Utils.appendSpace(range, 6)
-                                + Utils.appendSpace(note, 30),
+                                + note,
                         false);
             }
         }
@@ -3031,7 +3034,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // --------------------------------------------------------------
 
-        String trend_switch = Utils.switchTrend(list_h1);
+        String trend_switch = Utils.switchTrendByMa(list_h1);
         if (Utils.isNotBlank(trend_switch)) {
             String curr_price = Utils.getCurrentPrice(list_h1);
             String vmc = Utils.appendSpace("", 15);
