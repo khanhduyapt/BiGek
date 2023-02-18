@@ -2589,13 +2589,16 @@ public class Utils {
         List<BigDecimal> low_heigh = getLowHeightCandle(list);
         BigDecimal LO = low_heigh.get(0);
         BigDecimal HI = low_heigh.get(1);
-        BigDecimal ma10 = calcMA(list, 8, 1);
+        BigDecimal ma3 = calcMA(list, 3, 1);
 
         String result = "";
 
-        BigDecimal sl_long = ma10.subtract(LO);
+        BigDecimal sl_long = ma3.subtract(LO);
+        sl_long = sl_long.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
         sl_long = roundDefault(LO.subtract(sl_long));
-        BigDecimal sl_short = HI.subtract(ma10);
+
+        BigDecimal sl_short = HI.subtract(ma3);
+        sl_short = sl_short.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
         sl_short = roundDefault(HI.add(sl_short));
 
         BigDecimal pips_long = entry.subtract(sl_long).abs();
@@ -2619,9 +2622,9 @@ public class Utils {
         result += ", Hi: " + Utils.appendSpace(removeLastZero(HI), 8);
         result += ", SL: " + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12);
         result += " (" + Utils.appendSpace(removeLastZero(lot_short), 5) + " lot)";
-
-        result = Utils.appendSpace(result, 95);
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk) + "$", 8);
+
+        result = Utils.appendSpace(result, 100);
 
         return result;
     }
