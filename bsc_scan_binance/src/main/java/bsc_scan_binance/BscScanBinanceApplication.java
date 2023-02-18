@@ -184,10 +184,6 @@ public class BscScanBinanceApplication {
                             }
 
                             // ----------------------------------------------
-                            init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1d, GECKOID, SYMBOL);
-                            if (Utils.isNotBlank(init)) {
-                                wait(SLEEP_MINISECONDS);
-                            }
                             init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4h, GECKOID, SYMBOL);
                             if (Utils.isNotBlank(init)) {
                                 wait(SLEEP_MINISECONDS);
@@ -250,9 +246,9 @@ public class BscScanBinanceApplication {
             binance_service.sendMsgKillLongShort("binancecoin", "BNB");
             wait(SLEEP_MINISECONDS);
         }
-        binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, "bitcoin", "BTC");
-        binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, "ethereum", "ETH");
-        binance_service.checkCrypto(Utils.CRYPTO_TIME_1h, "binancecoin", "BNB");
+        binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1h, "bitcoin", "BTC");
+        binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1h, "ethereum", "ETH");
+        binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1h, "binancecoin", "BNB");
     }
 
     public static boolean isReloadAfter(long minutes, String geckoid_or_epic) {

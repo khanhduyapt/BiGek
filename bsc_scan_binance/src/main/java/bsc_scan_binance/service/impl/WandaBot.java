@@ -1,13 +1,10 @@
 package bsc_scan_binance.service.impl;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -15,7 +12,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import com.google.common.base.Objects;
 
-import bsc_scan_binance.entity.CandidateCoin;
 import bsc_scan_binance.repository.BinanceVolumnDayRepository;
 import bsc_scan_binance.repository.BinanceVolumnWeekRepository;
 import bsc_scan_binance.repository.CandidateCoinRepository;
@@ -406,20 +402,20 @@ public class WandaBot extends TelegramLongPollingBot {
     }
 
     private void checkCommand(SendMessage message, String token) throws TelegramApiException {
-        String SYMBOL = token.toUpperCase();
-
-        List<CandidateCoin> list = candidateCoinRepository.searchBySymbol(SYMBOL);
-        if (CollectionUtils.isEmpty(list)) {
-            message.setText("Empty");
-            execute(message);
-            return;
-        }
-
-        String msg = binance_service.checkCrypto("15m", list.get(0).getGeckoid(),
-                list.get(0).getSymbol().toUpperCase());
-
-        message.setText(msg);
-        execute(message);
+        //        String SYMBOL = token.toUpperCase();
+        //
+        //        List<CandidateCoin> list = candidateCoinRepository.searchBySymbol(SYMBOL);
+        //        if (CollectionUtils.isEmpty(list)) {
+        //            message.setText("Empty");
+        //            execute(message);
+        //            return;
+        //        }
+        //
+        //        String msg = binance_service.checkCrypto("15m", list.get(0).getGeckoid(),
+        //                list.get(0).getSymbol().toUpperCase());
+        //
+        //        message.setText(msg);
+        //        execute(message);
     }
 
 }
