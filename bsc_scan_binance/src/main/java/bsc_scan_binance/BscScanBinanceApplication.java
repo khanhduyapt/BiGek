@@ -132,6 +132,14 @@ public class BscScanBinanceApplication {
                         if (!Utils.isNewsTime()) {
                             if (isReloadAfter(1, "FOREX") && !Utils.isWeekend() && Utils.isBusinessTime()
                                     && Utils.isAllowSendMsgSetting()) {
+
+                                if (binance_service.hasConnectTimeOutException()) {
+                                    for (int loop = 1; loop < 15; loop++) {
+                                        System.out.println("Connection timed out");
+                                        wait(SLEEP_MINISECONDS);
+                                    }
+                                }
+
                                 if (index_forex < forex_size) {
                                     String EPIC = capital_list.get(index_forex);
 

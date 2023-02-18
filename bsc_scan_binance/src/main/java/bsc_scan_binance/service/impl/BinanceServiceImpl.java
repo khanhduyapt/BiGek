@@ -2706,24 +2706,6 @@ public class BinanceServiceImpl implements BinanceService {
         }
         String taker = Utils.analysisTakerVolume(list_days, list_h4);
 
-        // -----------------------------------------------------------------
-        //        TODO:
-        //        checkChartCrypto(list_weeks, gecko_id, symbol, false);
-        //        checkChartCrypto(list_days, gecko_id, symbol, false);
-        //        checkChartCrypto(list_h4, gecko_id, symbol, false);
-        //        String trend_d1 = createTrendByMa10(EVENT_DH4H1_D_CRYPTO, list_days, gecko_id, symbol);
-        //        String trend_h4 = createTrendByMa10(EVENT_DH4H1_H4_CRYPTO, list_h4, gecko_id, symbol);
-        //        String trend_h1 = Utils.isUptrendByMaIndex(list_h1, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-        //        fundingHistoryRepository.save(createPumpDumpEntity(EVENT_DH4H1_H1_CRYPTO, gecko_id, symbol, trend_h1, true));
-        //        if (Utils.isNotBlank(trend_h4)) {
-        //            init_trend_result = "(D:" + trend_d1 + ", H4: " + trend_h4 + ", H1: " + trend_h1 + ")";
-        //        }
-        //
-        //        trend_d1 = Utils.isUptrendByMaIndex(list_days, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-        //        saveElapsedMinutesForPrepareOrder(symbol, trend_d1, Utils.CRYPTO_TIME_1d);
-        //
-        //        trend_h4 = Utils.isUptrendByMaIndex(list_days, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-        //        saveElapsedMinutesForPrepareOrder(symbol, trend_h4, Utils.CRYPTO_TIME_4h);
         // -------------------------- INIT WEBSITE --------------------------
 
         Boolean allow_long_d1 = Utils.checkClosePriceAndMa_StartFindLong(list_days);
@@ -2820,54 +2802,11 @@ public class BinanceServiceImpl implements BinanceService {
         return init_trend_result;
     }
 
-    //    private String checkChartCrypto(List<BtcFutures> list, String gecko_id, String symbol, boolean allowGreaterMa50) {
-    //        String trend = "";
-    //        try {
-    //            trend = Utils.switchTrendByMa(list);
-    //            if (Objects.equals(Utils.TREND_LONG, trend)) {
-    //                String star = "";
-    //
-    //                if (list.size() > 20) {
-    //                    BigDecimal ma10_1 = Utils.calcMA(list, 10, 1);
-    //                    BigDecimal ma50_1 = Utils.calcMA(list, 50, 1);
-    //
-    //                    if (ma50_1.compareTo(ma10_1) > 0) {
-    //                        star = Utils.TEXT_5STAR;
-    //                    } else if (!allowGreaterMa50) {
-    //                        return "";
-    //                    }
-    //                }
-    //
-    //                String url = "";
-    //                String type = "(Spot)    ";
-    //                if (binanceFuturesRepository.existsById(gecko_id)) {
-    //                    type = "(Futures) ";
-    //                    url = Utils.getCryptoLink_Future(symbol);
-    //                } else {
-    //                    url = Utils.getCryptoLink_Spot(symbol);
-    //                }
-    //
-    //                Utils.logWritelnWithTime(Utils.appendSpace(
-    //                        Utils.appendSpace(
-    //                                "Crypto" + Utils.appendSpace("  (" + trend + ")", 10) + Utils.getChartName(list)
-    //                                        + Utils.appendSpace(symbol, 8) + Utils.getCurrentPrice(list) + type,
-    //                                51) + url,
-    //                        126) + " " + getVolMc(gecko_id) + Utils.getAtlAth(list) + star, true);
-    //
-    //            }
-    //        } catch (Exception e) {
-    //        }
-    //
-    //        return trend;
-    //    }
-
     @Override
     public boolean hasConnectTimeOutException() {
-        if (isReloadPrepareOrderTrend(Utils.TEXT_CONNECTION_TIMED_OUT, Utils.CAPITAL_TIME_MINUTE_15)) {
-            return true;
-        }
+        String id = Utils.TEXT_CONNECTION_TIMED_OUT + "_" + Utils.CAPITAL_TIME_MINUTE_15;
 
-        return false;
+        return ordersRepository.existsById(id);
     }
 
     @Override
@@ -3022,8 +2961,8 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnWithTime(Utils
                         .appendSpace(Utils.appendSpace("Crypto" + Utils.appendSpace("  (" + trend + ")", 10)
                                 + char_name + Utils.appendSpace(symbol, 8) + Utils.getCurrentPrice(list), 51) + url
-                                + " ", 126),
-                        true);
+                                + " ", 126)
+                        + Utils.appendSpace(note, 30), true);
             }
         }
 
