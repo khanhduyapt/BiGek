@@ -50,7 +50,6 @@ import bsc_scan_binance.response.BtcFuturesResponse;
 import bsc_scan_binance.response.CandidateTokenCssResponse;
 import bsc_scan_binance.response.DepthResponse;
 import bsc_scan_binance.response.FundingResponse;
-import bsc_scan_binance.response.OrdersProfitResponse;
 
 //@Slf4j
 public class Utils {
@@ -83,6 +82,8 @@ public class Utils {
     public static final String TEXT_START_LONG = "Start:Long";
     public static final String TEXT_STOP_LONG = "Stop:Long";
 
+    public static final String TEXT_CONNECTION_TIMED_OUT = "CONNECTION_TIMED_OUT";
+
     public static final String CHAR_MONEY = "💰";
     public static final String CHAR_LONG_UP = "Up";
     public static final String CHAR_SHORT_DN = "Dn";
@@ -114,7 +115,7 @@ public class Utils {
     public static final String CRYPTO_TIME_1d = "1d";
     public static final String CRYPTO_TIME_1w = "1w";
 
-    public static final long MINUTES_OF_W = 2880; // 10080
+    public static final long MINUTES_OF_W = 1440; // 10080 2880
     public static final long MINUTES_OF_D = 1440;
     public static final long MINUTES_OF_4H = 240;
     public static final long MINUTES_OF_1H = 60;
@@ -190,30 +191,6 @@ public class Utils {
             + " WHERE (tmp.trend_h is not null)                                                         \n"
             + "   AND tmp.trend_h = tmp.trend_h    \n"
             + " ORDER BY tmp.symbol_or_epic                                                             \n";
-
-    public static String sql_OrdersProfitResponse = ""
-            + " SELECT * from (                                                                             \n"
-            + "    SELECT                                                                                   \n"
-            + "      od.gecko_id,                                                                           \n"
-            + "      od.symbol      as chatId,                                                              \n"
-            + "      od.name        as userName,                                                            \n"
-            + "      od.order_price,                                                                        \n"
-            + "      ROUND(od.qty, 1) qty,                                                                  \n"
-            + "      od.amount,                                                                             \n"
-            + "      cur.price_at_binance,                                                                  \n"
-            + "      (select target_percent from priority_coin po where po.gecko_id = od.gecko_id) target_percent, \n"
-            + "      ROUND(((cur.price_at_binance - od.order_price)/od.order_price)*100, 1)  as tp_percent, \n"
-            + "      ROUND( (cur.price_at_binance - od.order_price)*od.qty, 1)               as tp_amount,  \n"
-            + "      od.low_price,                                                                          \n"
-            + "      od.height_price,                                                                       \n"
-            + "      (select note from priority_coin pc where pc.gecko_id = od.gecko_id) as target          \n"
-            + "    FROM                                                                                     \n"
-            + "        orders od,                                                                           \n"
-            + "        binance_volumn_day cur                                                               \n"
-            + "    WHERE                                                                                    \n"
-            + "            cur.hh      = TO_CHAR(NOW(), 'HH24')                                             \n"
-            + "        and od.gecko_id = cur.gecko_id                                                       \n"
-            + " ) odr ORDER BY odr.tp_amount desc ";
 
     public static String sql_boll_2_body = ""
             + " (                                                                                           \n"
@@ -582,22 +559,6 @@ public class Utils {
         }
 
         return TIME;
-    }
-
-    public static String createMsgBalance(OrdersProfitResponse dto, String newline) {
-        String result = String.format("[%s]", dto.getGecko_id()) + newline + "Price: "
-                + dto.getPrice_at_binance().toString() + "$, "
-                + (dto.getTp_amount().compareTo(BigDecimal.ZERO) > 0 ? "Profit: " : "Loss: ")
-                + Utils.removeLastZero(dto.getTp_amount().toString()) + "$ (" + dto.getTp_percent() + "%)" + newline
-                + "Bought: " + dto.getOrder_price().toString() + "$, " + "T: "
-                + Utils.removeLastZero(dto.getAmount().toString()) + "$" + newline
-                + createMsgLowHeight(dto.getPrice_at_binance(), dto.getLow_price(), dto.getHeight_price());
-
-        if (isNotBlank(dto.getTarget()) && dto.getTarget().contains("~v/mc")) {
-            result += newline + dto.getTarget().substring(0, dto.getTarget().indexOf("~v/mc"));
-        }
-
-        return result;
     }
 
     public static String createMsg(CandidateTokenCssResponse css) {
@@ -2900,9 +2861,16 @@ public class Utils {
     }
 
     public static boolean isUptrendByMaIndex(List<BtcFutures> list, int maIndex) {
+        if (CollectionUtils.isEmpty(list)) {
+            return false;
+        }
+
         int end = 3;
         if (list.get(0).getId().contains("_1w_")) {
             end = 2;
+        }
+        if (end > list.size()) {
+            end = list.size() - 1;
         }
         BigDecimal ma_c = calcMA(list, maIndex, 0);
         BigDecimal ma_p = calcMA(list, maIndex, end);

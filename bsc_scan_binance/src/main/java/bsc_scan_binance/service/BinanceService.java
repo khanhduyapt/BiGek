@@ -2,7 +2,6 @@ package bsc_scan_binance.service;
 
 import java.util.List;
 
-import bsc_scan_binance.entity.Orders;
 import bsc_scan_binance.response.CandidateTokenCssResponse;
 import bsc_scan_binance.response.DepthResponse;
 import bsc_scan_binance.response.EntryCssResponse;
@@ -12,11 +11,7 @@ public interface BinanceService {
 
     List<CandidateTokenCssResponse> getList(Boolean isOrderByBynaceVolume);
 
-    public void monitorProfit();
-
     public void monitorBollingerBandwidth(Boolean isCallFormBot);
-
-    List<Orders> getOrderList();
 
     public String loadPremarket();
 
@@ -38,8 +33,6 @@ public interface BinanceService {
 
     public void clearTrash();
 
-    public String checkForex(String EPIC, String TIME);
-
     public String initCrypto(String gecko_id, String symbol);
 
     public List<ForexHistoryResponse> getForexSamePhaseList();
@@ -56,7 +49,4 @@ public interface BinanceService {
 
     public String initCryptoTrend(String TIME, String gecko_id, String symbol);
 
-    public String getCryptoChart(String symbol);
-
-    public String getForexChart(String EPIC);
 }
