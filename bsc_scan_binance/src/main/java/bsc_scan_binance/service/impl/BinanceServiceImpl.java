@@ -2857,7 +2857,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             String switch_trend_ma = Utils.switchTrendByMa(list);
             if (Utils.isNotBlank(switch_trend_ma)) {
-                trend = switch_trend_ma;
                 note = "   Ma3xMa6 ";
             }
 
@@ -2869,32 +2868,34 @@ public class BinanceServiceImpl implements BinanceService {
                 String EVENT_ID = EVENT_PUMP + EPIC + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
                 msg = trend_h + char_name + EPIC;
 
-                if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX) && !Utils.isWeekend()) {
-                    sendMsgPerHour(EVENT_ID, msg, true);
-                }
-
                 String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(list);
                 note = buffer + Utils.appendSpace(note, 12);
-                String atl_ath = "";
-                Orders entity_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-                if (Objects.nonNull(entity_h4)) {
-                    atl_ath = "   (H4)";
-                    atl_ath += " alt: " + Utils.appendSpace(Utils.removeLastZero(entity_h4.getLow_price()), 8);
-                    atl_ath += " ath: " + Utils.appendSpace(Utils.removeLastZero(entity_h4.getHigh_price()), 8);
 
-                } else if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
-                    atl_ath = "   (H4)";
-                    atl_ath += " alt: " + Utils.appendSpace(Utils.removeLastZero(low_high.get(0)), 8);
-                    atl_ath += " ath: " + Utils.appendSpace(Utils.removeLastZero(low_high.get(1)), 8);
+                if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
+
+                    String note_h4 = "";
+                    Orders entity_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+                    if (Objects.nonNull(entity_h4)) {
+                        note_h4 = entity_h4.getNote();
+                    }
+
+                    String log = "";
+                    log += Utils.appendSpace(Utils
+                            .appendSpace("Forex " + Utils.appendSpace("  " + trend_h, 10) + Utils.getChartName(list)
+                                    + Utils.appendSpace(EPIC, 10) + Utils.getCurrentPrice(list) + wdh4, 51)
+                            + " " + Utils.getCapitalLink(EPIC), 138);
+
+                    if (Utils.isNotBlank(note_h4)) {
+                        log += "\n                            (H4)  " + note_h4;
+                    }
+                    log += "\n                            (H1)  " + note;
+
+                    Utils.logWritelnWithTime(log, false);
+
+                    if (!Utils.isWeekend()) {
+                        sendMsgPerHour(EVENT_ID, msg, true);
+                    }
                 }
-                note += atl_ath;
-
-                Utils.logWritelnWithTime(Utils
-                        .appendSpace(Utils
-                                .appendSpace("Forex " + Utils.appendSpace("  " + trend_h, 10) + Utils.getChartName(list)
-                                        + Utils.appendSpace(EPIC, 8) + Utils.getCurrentPrice(list) + wdh4, 51)
-                                + " " + Utils.getCapitalLink(EPIC), 138)
-                        + "\n" + "                                  " + note, false);
             }
         }
 
@@ -2906,9 +2907,9 @@ public class BinanceServiceImpl implements BinanceService {
 
             String date_time = LocalDateTime.now().toString();
             List<BigDecimal> body = Utils.getOpenCloseCandle(list);
-            note = note.replaceAll(" +", " ");
+            // note = note.replaceAll(" +", " ");
             if (note.length() > 500) {
-                note = note.substring(0, 450);
+                note = note.substring(0, 485);
             }
             Orders entity = new Orders(id, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
                     low_high.get(0), low_high.get(1), note.trim());

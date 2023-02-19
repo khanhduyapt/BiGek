@@ -121,26 +121,14 @@ public class Utils {
     public static final long MINUTES_OF_1H = 60;
     public static final long MINUTES_OF_15M = 15;
 
-    public static final List<String> EPICS_FOREX = Arrays.asList("DXY", "GOLD", "OIL_CRUDE", "US30", "US500", "UK100",
-            "HK50", "FR40", "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF", "EURGBP");
+    public static final List<String> EPICS_FOREX = Arrays.asList("BTCUSD", "DXY", "GOLD", "OIL_CRUDE", "NATURALGAS",
+            "US30", "US500", "UK100", "FR40", "DE40", "HK50", "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY",
+            "USDCAD", "USDCHF", "EURGBP");
 
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("GBPAUD", "EURAUD", "EURJPY", "EURCAD",
             "EURCHF", "AUDJPY", "CADJPY", "GBPJPY", "AUDCAD", "GBPCAD", "GBPCHF", "GBPNZD", "EURNZD", "AUDCHF",
-            "AUDNZD", "CADCHF", "CHFJPY", "NZDCAD", "NZDCHF", "NZDJPY");
-
-    // public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("AUDHKD",
-    // "AUDPLN", "AUDZAR", "CADCNH",
-    // "CADHKD", "CADMXN", "CADNOK", "CADPLN", "CADTRY", "CADZAR", "CHFCNH",
-    // "CHFCZK", "CHFDKK", "CHFMXN",
-    // "CHFNOK", "CHFPLN", "CHFSEK", "CHFTRY", "CHFZAR", "DKKJPY", "EURCZK",
-    // "EURILS", "EURPLN", "EURRON",
-    // "EURSGD", "GBPCNH", "GBPCZK", "GBPDKK", "GBPHUF", "GBPNOK", "GBPPLN",
-    // "GBPSEK", "GBPSGD", "GBPZAR",
-    // "HKDMXN", "HKDTRY", "NOKSEK", "NOKTRY", "NZDHKD", "NZDMXN", "NZDPLN",
-    // "NZDSEK", "PLNSEK", "PLNTRY",
-    // "SEKMXN", "SGDHKD", "SGDMXN", "TRYJPY", "USDCZK", "USDDKK", "USDHKD",
-    // "USDILS", "USDRON"
-    // );
+            "AUDNZD", "CADCHF", "CHFJPY", "NZDCAD", "NZDCHF", "NZDJPY", "USDMXN", "USDNOK", "USDPLN", "USDTRY",
+            "USDZAR", "USDCZK", "EURCZK", "EURPLN", "USDHUF", "USDSEK", "USDHKD", "USDILS");
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                   \n"
