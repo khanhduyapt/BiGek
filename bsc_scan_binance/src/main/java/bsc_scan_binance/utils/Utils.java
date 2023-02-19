@@ -830,8 +830,8 @@ public class Utils {
     public static void logForexWriteln(String text, boolean isNewline) {
         try {
             FileWriter fw = new FileWriter(getForexLogFile(), true);
-            fw.write(BscScanBinanceApplication.hostname +
-                    (isNewline ? "\n" : "") + text.replace(Utils.new_line_from_service, " ") + (isNewline ? "\n" : ""));
+            fw.write(BscScanBinanceApplication.hostname + (isNewline ? "\n" : "")
+                    + text.replace(Utils.new_line_from_service, " ") + (isNewline ? "\n" : ""));
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -841,8 +841,8 @@ public class Utils {
     public static void logWriteln(String text, boolean isNewline) {
         try {
             FileWriter fw = new FileWriter(getCryptoLogFile(), true);
-            fw.write(BscScanBinanceApplication.hostname +
-                    (isNewline ? "\n" : "") + text.replace(Utils.new_line_from_service, " ") + (isNewline ? "\n" : ""));
+            fw.write(BscScanBinanceApplication.hostname + (isNewline ? "\n" : "")
+                    + text.replace(Utils.new_line_from_service, " ") + (isNewline ? "\n" : ""));
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -852,8 +852,8 @@ public class Utils {
     public static void writelnLogFooter_Forex() {
         try {
             FileWriter fw = new FileWriter(getForexLogFile(), true);
-            fw.write(BscScanBinanceApplication.hostname +
-                    "------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+            fw.write(BscScanBinanceApplication.hostname
+                    + "------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -863,8 +863,8 @@ public class Utils {
     public static void writelnLogFooter() {
         try {
             FileWriter fw = new FileWriter(getCryptoLogFile(), true);
-            fw.write(BscScanBinanceApplication.hostname +
-                    "------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+            fw.write(BscScanBinanceApplication.hostname
+                    + "------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -2053,7 +2053,7 @@ public class Utils {
     // if (Utils.rangeOfLowHeigh(list_5m).compareTo(BigDecimal.valueOf(0.5)) > 0) {
 
     public static BigDecimal rangeOfLowHeigh(List<BtcFutures> list) {
-        List<BigDecimal> LowHeight = getLowHeightCandle(list);
+        List<BigDecimal> LowHeight = getLowHighCandle(list);
 
         return getPercent(LowHeight.get(1), LowHeight.get(0));
     }
@@ -2061,7 +2061,7 @@ public class Utils {
     public static boolean isDangerRange(List<BtcFutures> list) {
         BigDecimal ma3 = calcMA(list, 3, 0);
 
-        List<BigDecimal> low_heigh = Utils.getLowHeightCandle(list);
+        List<BigDecimal> low_heigh = Utils.getLowHighCandle(list);
         BigDecimal range = low_heigh.get(1).subtract(low_heigh.get(0));
         range = range.divide(BigDecimal.valueOf(4), 10, RoundingMode.CEILING);
         BigDecimal max_allow_long = low_heigh.get(1).subtract(range);
@@ -2072,7 +2072,7 @@ public class Utils {
         return false;
     }
 
-    public static List<BigDecimal> getLowHeightCandle(List<BtcFutures> list) {
+    public static List<BigDecimal> getLowHighCandle(List<BtcFutures> list) {
         List<BigDecimal> result = new ArrayList<BigDecimal>();
 
         BigDecimal min_low = BigDecimal.valueOf(1000000);
@@ -2132,7 +2132,7 @@ public class Utils {
 
         BigDecimal curr_price = list.get(0).getCurrPrice();
 
-        List<BigDecimal> low_heigh = getLowHeightCandle(list);
+        List<BigDecimal> low_heigh = getLowHighCandle(list);
 
         BigDecimal price_long = getGoodPriceLong(low_heigh.get(0), low_heigh.get(1));
         BigDecimal price_short = getGoodPriceShort(low_heigh.get(0), low_heigh.get(1));
@@ -2414,8 +2414,8 @@ public class Utils {
     public static String getScapLong(List<BtcFutures> list_entry, List<BtcFutures> list_tp, int usd, boolean isLong) {
         try {
             BigDecimal curr_price = list_entry.get(0).getCurrPrice();
-            List<BigDecimal> low_heigh_tp = getLowHeightCandle(list_tp);
-            List<BigDecimal> low_heigh_sl = getLowHeightCandle(list_entry.subList(0, 15));
+            List<BigDecimal> low_heigh_tp = getLowHighCandle(list_tp);
+            List<BigDecimal> low_heigh_sl = getLowHighCandle(list_entry.subList(0, 15));
             int slow_index = getSlowIndex(list_entry);
 
             BigDecimal entry = curr_price;
@@ -2465,8 +2465,8 @@ public class Utils {
     public static String getScapLongOrShort(List<BtcFutures> list_find_entry, List<BtcFutures> list_tp, int usd,
             boolean isLong) {
         try {
-            List<BigDecimal> low_heigh_tp1 = getLowHeightCandle(list_tp);
-            List<BigDecimal> low_heigh_sl = getLowHeightCandle(list_find_entry.subList(0, 15));
+            List<BigDecimal> low_heigh_tp1 = getLowHighCandle(list_tp);
+            List<BigDecimal> low_heigh_sl = getLowHighCandle(list_find_entry.subList(0, 15));
 
             // BigDecimal ma10 = calcMA(list_entry, 10, 0);
             BigDecimal SL = BigDecimal.ZERO;
@@ -2544,7 +2544,7 @@ public class Utils {
         BigDecimal SL = BigDecimal.ZERO;
         BigDecimal SL_10percent = BigDecimal.ZERO;
         BigDecimal SL_LowHeigh = BigDecimal.ZERO;
-        List<BigDecimal> low_heigh = getLowHeightCandle(list);
+        List<BigDecimal> low_heigh = getLowHighCandle(list);
         if (isLong) {
             SL_LowHeigh = low_heigh.get(0);
             SL_10percent = entry.multiply(BigDecimal.valueOf(0.9));
@@ -2570,7 +2570,7 @@ public class Utils {
 
     public static String getAtlAth(List<BtcFutures> list) {
         BigDecimal entry = list.get(0).getCurrPrice();
-        List<BigDecimal> low_heigh = getLowHeightCandle(list);
+        List<BigDecimal> low_heigh = getLowHighCandle(list);
         String result = "";
         result += Utils.appendSpace(" atl:" + getPercentToEntry(entry, low_heigh.get(0), true), 20);
         result += " ath:" + getPercentToEntry(entry, low_heigh.get(1), true);
@@ -2586,7 +2586,7 @@ public class Utils {
 
         BigDecimal entry = list.get(0).getCurrPrice();
 
-        List<BigDecimal> low_heigh = getLowHeightCandle(list);
+        List<BigDecimal> low_heigh = getLowHighCandle(list);
         BigDecimal LO = low_heigh.get(0);
         BigDecimal HI = low_heigh.get(1);
         BigDecimal ma3 = calcMA(list, 3, 1);
@@ -2616,11 +2616,11 @@ public class Utils {
         BigDecimal lot_short = risk.divide(pips_short, 10, RoundingMode.CEILING);
         lot_short = lot_short.divide(div, 2, RoundingMode.CEILING);
 
-        result += "SL: " + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12);
+        result += "SL_Long: " + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12);
         result += " (" + Utils.appendSpace(removeLastZero(lot_long), 5) + " lot)";
         result += ", Lo: " + Utils.appendSpace(removeLastZero(LO), 8);
         result += ", Hi: " + Utils.appendSpace(removeLastZero(HI), 8);
-        result += ", SL: " + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12);
+        result += ", SL_short: " + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12);
         result += " (" + Utils.appendSpace(removeLastZero(lot_short), 5) + " lot)";
         result += "   Risk: " + Utils.appendSpace(removeLastZero(risk) + "$", 8);
 
@@ -2846,7 +2846,7 @@ public class Utils {
         String trend = "";
         BigDecimal ma3_0 = calcMA(list, 3, 0);
 
-        List<BigDecimal> low_heigh = getLowHeightCandle(list);
+        List<BigDecimal> low_heigh = getLowHighCandle(list);
         BigDecimal range = (low_heigh.get(1).subtract(low_heigh.get(0)));
         range = range.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
         BigDecimal start_short_area = low_heigh.get(1).subtract(range);
