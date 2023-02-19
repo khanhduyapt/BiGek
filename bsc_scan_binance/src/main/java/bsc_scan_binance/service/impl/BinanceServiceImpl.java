@@ -2855,8 +2855,17 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)
                 || Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
 
+            if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
+                String switch_trend_ca = Utils.switchTrendByCandle(list);
+                if (Utils.isNotBlank(switch_trend_ca)) {
+                    trend = switch_trend_ca;
+                    note += "   ByCandle ";
+                }
+            }
+
             String switch_trend_ma = Utils.switchTrendByMa(list);
             if (Utils.isNotBlank(switch_trend_ma)) {
+                trend = switch_trend_ma;
                 note = "   Ma3xMa6 ";
             }
 

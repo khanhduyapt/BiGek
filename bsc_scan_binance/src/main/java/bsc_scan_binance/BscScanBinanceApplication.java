@@ -130,8 +130,9 @@ public class BscScanBinanceApplication {
                         checkBtcKillLongShort_15m(binance_service);
 
                         if (!Utils.isNewsTime()) {
-                            // !Utils.isWeekend() &&
-                            if (isReloadAfter(1, "FOREX") && Utils.isBusinessTime() && Utils.isAllowSendMsgSetting()) {
+                            //
+                            if (!Utils.isWeekend() && isReloadAfter(1, "FOREX") && Utils.isBusinessTime()
+                                    && Utils.isAllowSendMsgSetting()) {
 
                                 if (binance_service.hasConnectTimeOutException()) {
                                     for (int loop = 1; loop < 15; loop++) {
