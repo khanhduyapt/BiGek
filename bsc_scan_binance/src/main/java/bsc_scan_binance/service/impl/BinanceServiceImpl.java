@@ -2642,13 +2642,25 @@ public class BinanceServiceImpl implements BinanceService {
         return false;
     }
 
-    private String getPrepareOrderTrend_WDH4(String EPIC) {
-        String trend_w = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_WEEK);
-        String trend_d = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_DAY);
-        String trend_h4 = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+    private String getPrepareOrderTrend_WDH4(String EPIC, boolean isForex) {
+        String trend_w = "";
+        String trend_d = "";
+        String trend_h4 = "";
+        String trend_d_h4 = "";
+        if (isForex) {
+            trend_w = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_WEEK);
+            trend_d = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_DAY);
+            trend_h4 = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
 
-        String trend_d_h4 = Utils.appendSpace("(W:" + Utils.appendSpace(trend_w, 5) + ", D:"
-                + Utils.appendSpace(trend_d, 5) + ", H4:" + Utils.appendSpace(trend_h4, 5) + ")", 30);
+            trend_d_h4 = Utils.appendSpace("(W:" + Utils.appendSpace(trend_w, 5) + ", D:"
+                    + Utils.appendSpace(trend_d, 5) + ", H4:" + Utils.appendSpace(trend_h4, 5) + ")", 30);
+        } else {
+            trend_d = getPrepareOrderTrend(EPIC, Utils.CRYPTO_TIME_1d);
+            trend_h4 = getPrepareOrderTrend(EPIC, Utils.CRYPTO_TIME_4h);
+
+            trend_d_h4 = Utils.appendSpace(
+                    "(D:" + Utils.appendSpace(trend_d, 5) + ", H4:" + Utils.appendSpace(trend_h4, 5) + ")", 30);
+        }
 
         return trend_d_h4;
     }
@@ -2880,7 +2892,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isNotBlank(switch_trend)) {
-                String wdh4 = getPrepareOrderTrend_WDH4(EPIC);
+                String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
 
                 String trend_h = "(" + trend + ")";
                 String char_name = Utils.getChartName(list);
@@ -2945,49 +2957,52 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        String trend = "";
         List<BtcFutures> list = Utils.loadData(symbol, TIME, 10);
-        if (!CollectionUtils.isEmpty(list)) {
-            String note = "";
+        if (CollectionUtils.isEmpty(list)) {
+            return "";
+        }
+        String note = "";
+        String trend = "";
+        trend = Utils.switchTrendByMa(list);
+        if (Utils.isNotBlank(trend)) {
+            note = "   Ma3xMa6   ";
+        } else {
+            trend = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+        }
 
-            trend = Utils.switchTrendByMa(list);
-            if (Utils.isNotBlank(trend)) {
-                note = " Ma3xMa6 ";
+        if (Utils.isNotBlank(note) && Objects.equals(TIME, Utils.CRYPTO_TIME_4h)) {
+            String char_name = Utils.getChartName(list);
+
+            if (BTC_ETH_BNB.contains(symbol)) {
+                String msg = "(" + trend + ")" + char_name + symbol + Utils.getCurrentPrice(list);
+                String EVENT_ID = EVENT_PUMP + symbol + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
+                sendMsgPerHour(EVENT_ID, msg, true);
             }
 
-            if (Utils.isNotBlank(note)) {
-                String char_name = Utils.getChartName(list);
-
-                if (BTC_ETH_BNB.contains(symbol)) {
-                    String msg = "(" + trend + ")" + char_name + symbol + Utils.getCurrentPrice(list);
-                    String EVENT_ID = EVENT_PUMP + symbol + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
-                    sendMsgPerHour(EVENT_ID, msg, true);
-                }
-
-                String url = "";
-                if (binanceFuturesRepository.existsById(gecko_id)) {
-                    url = Utils.getCryptoLink_Future(symbol);
-                } else {
-                    url = Utils.getCryptoLink_Spot(symbol);
-                }
-
-                Utils.logWritelnWithTime(
-                        Utils.appendSpace(
-                                Utils.appendSpace("Crypto" + Utils.appendSpace("  (" + trend + ")", 10) + char_name
-                                        + Utils.appendSpace(symbol, 8) + Utils.getCurrentPrice(list), 51) + url + " ",
-                                126) + Utils.appendSpace(note, 30),
-                        true);
+            String url = "";
+            if (binanceFuturesRepository.existsById(gecko_id)) {
+                url = Utils.getCryptoLink_Future(symbol);
+            } else {
+                url = Utils.getCryptoLink_Spot(symbol);
             }
+
+            String wdh4 = getPrepareOrderTrend_WDH4(symbol, false);
+
+            Utils.logWritelnWithTime(Utils
+                    .appendSpace(Utils.appendSpace(Utils.appendSpace("  (" + trend + ")", 10) + char_name
+                            + Utils.appendSpace(symbol, 8) + Utils.getCurrentPrice(list), 51) + url + " ", 126)
+                    + note + wdh4, true);
         }
 
         {
             String id = symbol + "_" + TIME;
             String date_time = LocalDateTime.now().toString();
             Orders entity = new Orders(id, date_time, trend, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-                    BigDecimal.ZERO, BigDecimal.ZERO, "");
+                    BigDecimal.ZERO, BigDecimal.ZERO, note);
 
             ordersRepository.save(entity);
         }
+
         return trend;
     }
 

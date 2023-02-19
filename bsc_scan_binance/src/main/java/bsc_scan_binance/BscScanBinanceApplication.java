@@ -193,6 +193,10 @@ public class BscScanBinanceApplication {
                             }
 
                             // ----------------------------------------------
+                            init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1d, GECKOID, SYMBOL);
+                            if (Utils.isNotBlank(init)) {
+                                wait(SLEEP_MINISECONDS);
+                            }
                             init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4h, GECKOID, SYMBOL);
                             if (Utils.isNotBlank(init)) {
                                 wait(SLEEP_MINISECONDS);
