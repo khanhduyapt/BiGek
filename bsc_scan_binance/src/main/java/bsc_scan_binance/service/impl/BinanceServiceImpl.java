@@ -2855,10 +2855,12 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)
                 || Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
 
+            String switch_trend = "";
             if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
                 String switch_trend_ca = Utils.switchTrendByCandle(list);
                 if (Utils.isNotBlank(switch_trend_ca)) {
                     trend = switch_trend_ca;
+                    switch_trend = switch_trend_ca;
                     note += "   ByCandle ";
                 }
             }
@@ -2866,10 +2868,18 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_trend_ma = Utils.switchTrendByMa(list);
             if (Utils.isNotBlank(switch_trend_ma)) {
                 trend = switch_trend_ma;
+                switch_trend = switch_trend_ma;
                 note = "   Ma3xMa6 ";
             }
 
-            if (Utils.isNotBlank(note)) {
+            String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(list);
+            if (Utils.isNotBlank(switch_trend)) {
+                note = buffer + Utils.appendSpace(note, 12);
+            } else if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
+                note = buffer + ("   The trend not reversed yet.   ");
+            }
+
+            if (Utils.isNotBlank(switch_trend)) {
                 String wdh4 = getPrepareOrderTrend_WDH4(EPIC);
 
                 String trend_h = "(" + trend + ")";
@@ -2877,27 +2887,26 @@ public class BinanceServiceImpl implements BinanceService {
                 String EVENT_ID = EVENT_PUMP + EPIC + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
                 msg = trend_h + char_name + EPIC;
 
-                String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(list);
-                note = buffer + Utils.appendSpace(note, 12);
-
                 if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
 
                     String note_h4 = "";
+                    String trend_h4 = "";
                     Orders entity_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
                     if (Objects.nonNull(entity_h4)) {
                         note_h4 = entity_h4.getNote();
+                        trend_h4 = entity_h4.getTrend();
                     }
 
                     String log = "";
-                    log += Utils.appendSpace(Utils
-                            .appendSpace("Forex " + Utils.appendSpace("  " + trend_h, 10) + Utils.getChartName(list)
-                                    + Utils.appendSpace(EPIC, 10) + Utils.getCurrentPrice(list) + wdh4, 51)
-                            + " " + Utils.getCapitalLink(EPIC), 138);
+                    log += Utils.appendSpace(
+                            Utils.appendSpace(Utils.appendSpace(EPIC, 15) + Utils.getCurrentPrice(list) + "  " + wdh4,
+                                    51) + " " + Utils.getCapitalLink(EPIC),
+                            138);
 
                     if (Utils.isNotBlank(note_h4)) {
-                        log += "\n                            (H4)  " + note_h4;
+                        log += "\n                      (" + Utils.appendSpace(trend_h4, 5) + ") (H4)  " + note_h4;
                     }
-                    log += "\n                            (H1)  " + note;
+                    log += "\n                      (" + Utils.appendSpace(switch_trend, 5) + ") (H1)  " + note;
 
                     Utils.logWritelnWithTime(log, false);
 
@@ -2921,7 +2930,7 @@ public class BinanceServiceImpl implements BinanceService {
                 note = note.substring(0, 485);
             }
             Orders entity = new Orders(id, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
-                    low_high.get(0), low_high.get(1), note.trim());
+                    low_high.get(0), low_high.get(1), note);
 
             ordersRepository.save(entity);
         }
