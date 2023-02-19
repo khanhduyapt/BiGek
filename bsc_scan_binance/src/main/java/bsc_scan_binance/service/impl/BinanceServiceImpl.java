@@ -2947,7 +2947,7 @@ public class BinanceServiceImpl implements BinanceService {
             ordersRepository.save(entity);
         }
 
-        return msg;
+        return trend;
     }
 
     @Override
@@ -2961,39 +2961,56 @@ public class BinanceServiceImpl implements BinanceService {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
+
         String note = "";
-        String trend = "";
-        trend = Utils.switchTrendByMa(list);
-        if (Utils.isNotBlank(trend)) {
-            note = "   Ma3xMa6   ";
-        } else {
-            trend = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-        }
+        String trend = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
-        if (Utils.isNotBlank(note) && Objects.equals(TIME, Utils.CRYPTO_TIME_4h)) {
-            String char_name = Utils.getChartName(list);
+        if (Objects.equals(TIME, Utils.CRYPTO_TIME_4h) || Objects.equals(TIME, Utils.CRYPTO_TIME_1h)) {
 
-            if (BTC_ETH_BNB.contains(symbol)) {
-                String msg = "(" + trend + ")" + char_name + symbol + Utils.getCurrentPrice(list);
-                String EVENT_ID = EVENT_PUMP + symbol + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
-                sendMsgPerHour(EVENT_ID, msg, true);
+            if (Objects.equals(TIME, Utils.CRYPTO_TIME_4h) && Utils.isNotBlank(Utils.switchTrendByCandle(list))) {
+                note = "SwitchTrendByCandle ";
             }
 
-            String url = "";
-            if (binanceFuturesRepository.existsById(gecko_id)) {
-                url = Utils.getCryptoLink_Future(symbol);
-            } else {
-                url = Utils.getCryptoLink_Spot(symbol);
+            String switch_trend = Utils.switchTrendByMa(list);
+            if (Utils.isNotBlank(switch_trend)) {
+                trend = switch_trend;
+                note += "Ma3xMa6";
+
+                if (Objects.equals(TIME, Utils.CRYPTO_TIME_1h)) {
+                    String note_h4 = "";
+                    Orders entity_h4 = ordersRepository.findById(symbol + "_" + Utils.CRYPTO_TIME_4h).orElse(null);
+                    if (Objects.nonNull(entity_h4)) {
+                        note_h4 = Utils.getStringValue(entity_h4.getNote());
+                    }
+
+                    if (Utils.isNotBlank(note_h4)) {
+                        String char_name = Utils.getChartName(list);
+
+                        if (BTC_ETH_BNB.contains(symbol)) {
+                            String msg = "(" + switch_trend + ")" + char_name + symbol + Utils.getCurrentPrice(list);
+                            String EVENT_ID = EVENT_PUMP + symbol + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
+                            sendMsgPerHour(EVENT_ID, msg, true);
+                        }
+
+                        String url = "";
+                        if (binanceFuturesRepository.existsById(gecko_id)) {
+                            url = Utils.getCryptoLink_Future(symbol);
+                        } else {
+                            url = Utils.getCryptoLink_Spot(symbol);
+                        }
+
+                        String wdh4 = getPrepareOrderTrend_WDH4(symbol, false);
+                        note += "   " + wdh4;
+
+                        String msg = Utils.appendSpace("(" + switch_trend + ")", 10) + char_name
+                                + Utils.appendSpace(symbol, 8) + Utils.getCurrentPrice(list);
+
+                        Utils.logWritelnWithTime(Utils.appendSpace(Utils.appendSpace(msg, 35) + url, 100) + note, true);
+                    }
+                }
             }
-
-            String wdh4 = getPrepareOrderTrend_WDH4(symbol, false);
-
-            Utils.logWritelnWithTime(Utils
-                    .appendSpace(Utils.appendSpace(Utils.appendSpace("  (" + trend + ")", 10) + char_name
-                            + Utils.appendSpace(symbol, 8) + Utils.getCurrentPrice(list), 51) + url + " ", 126)
-                    + note + wdh4, true);
         }
-
+        // ---------------------------------------------------------------
         {
             String id = symbol + "_" + TIME;
             String date_time = LocalDateTime.now().toString();

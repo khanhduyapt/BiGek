@@ -40,7 +40,7 @@ public class BscScanBinanceApplication {
     public static void main(String[] args) {
         try {
             initForex_naming_dict();
-            hostname = InetAddress.getLocalHost().getHostName();
+            hostname = InetAddress.getLocalHost().getHostName().toLowerCase();
             if (hostname.length() > 2) {
                 hostname = hostname.substring(0, 2);
             }
@@ -146,22 +146,17 @@ public class BscScanBinanceApplication {
 
                                     init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_WEEK);
                                     if (Utils.isNotBlank(init)) {
-                                        wait(SLEEP_MINISECONDS);
-                                        wait(SLEEP_MINISECONDS);
-                                        wait(SLEEP_MINISECONDS);
+                                        wait(SLEEP_MINISECONDS * 5);
                                     }
                                     init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
                                     if (Utils.isNotBlank(init)) {
-                                        wait(SLEEP_MINISECONDS);
-                                        wait(SLEEP_MINISECONDS);
-                                        wait(SLEEP_MINISECONDS);
+                                        wait(SLEEP_MINISECONDS * 5);
                                     }
                                     init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
                                     if (Utils.isNotBlank(init)) {
-                                        wait(SLEEP_MINISECONDS);
-                                        wait(SLEEP_MINISECONDS);
-                                        wait(SLEEP_MINISECONDS);
+                                        wait(SLEEP_MINISECONDS * 5);
                                     }
+
                                     // ----------------------------------------------
                                     init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
                                     if (Utils.isNotBlank(init)) {
@@ -198,6 +193,10 @@ public class BscScanBinanceApplication {
                                 wait(SLEEP_MINISECONDS);
                             }
                             init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4h, GECKOID, SYMBOL);
+                            if (Utils.isNotBlank(init)) {
+                                wait(SLEEP_MINISECONDS);
+                            }
+                            init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1h, GECKOID, SYMBOL);
                             if (Utils.isNotBlank(init)) {
                                 wait(SLEEP_MINISECONDS);
                             }

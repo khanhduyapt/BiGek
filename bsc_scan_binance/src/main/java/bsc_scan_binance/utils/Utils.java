@@ -121,9 +121,9 @@ public class Utils {
     public static final long MINUTES_OF_1H = 60;
     public static final long MINUTES_OF_15M = 15;
 
-    public static final List<String> EPICS_FOREX = Arrays.asList("BTCUSD", "DXY", "GOLD", "OIL_CRUDE", "NATURALGAS",
-            "US30", "US500", "UK100", "FR40", "DE40", "HK50", "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY",
-            "USDCAD", "USDCHF", "EURGBP");
+    public static final List<String> EPICS_FOREX = Arrays.asList("BTCUSD", "DXY", "GOLD", "OIL_CRUDE", "SILVER",
+            "PALLADIUM", "NATURALGAS", "US30", "US500", "US100", "J225", "EU50", "AU200", "SP35", "UK100", "FR40",
+            "DE40", "HK50", "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF", "EURGBP");
 
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("GBPAUD", "EURAUD", "EURJPY", "EURCAD",
             "EURCHF", "AUDJPY", "CADJPY", "GBPJPY", "AUDCAD", "GBPCAD", "GBPCHF", "GBPNZD", "EURNZD", "AUDCHF",
@@ -131,8 +131,8 @@ public class Utils {
             "USDZAR", "USDCZK", "EURCZK", "EURPLN", "USDHUF", "USDSEK", "USDHKD", "USDILS");
 
     public static String sql_CryptoHistoryResponse = " "
-            + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                   \n"
-            + "     tmp.geckoid_or_epic,                                                                 \n"
+            + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
+            + "     tmp.geckoid_or_epic,                                                                  \n"
             + "     tmp.symbol_or_epic,                                                                   \n"
             + "     tmp.trend_d      as d,                                                                \n"
             + "     tmp.trend_h      as h,                                                                \n"
@@ -818,8 +818,8 @@ public class Utils {
     public static void logForexWriteln(String text, boolean isNewline) {
         try {
             FileWriter fw = new FileWriter(getForexLogFile(), true);
-            fw.write(BscScanBinanceApplication.hostname + (isNewline ? "\n" : "")
-                    + text.replace(Utils.new_line_from_service, " ") + (isNewline ? "\n" : ""));
+            fw.write(BscScanBinanceApplication.hostname + text.replace(Utils.new_line_from_service, " ")
+                    + (isNewline ? "\n" : ""));
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -829,8 +829,8 @@ public class Utils {
     public static void logWriteln(String text, boolean isNewline) {
         try {
             FileWriter fw = new FileWriter(getCryptoLogFile(), true);
-            fw.write(BscScanBinanceApplication.hostname + (isNewline ? "\n" : "")
-                    + text.replace(Utils.new_line_from_service, " ") + (isNewline ? "\n" : ""));
+            fw.write(BscScanBinanceApplication.hostname + text.replace(Utils.new_line_from_service, " ")
+                    + (isNewline ? "\n" : ""));
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
