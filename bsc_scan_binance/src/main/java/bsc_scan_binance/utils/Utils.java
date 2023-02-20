@@ -126,10 +126,9 @@ public class Utils {
     public static final long MINUTES_OF_15M = 15;
 
     public static final List<String> EPICS_FOREX = Arrays.asList("BTCUSD", "DXY", "GOLD", "OIL_CRUDE", "SILVER",
-            "NATURALGAS", "US30", "US500", "US100", "J225", "SP35", "UK100", "FR40", "HK50", "EURUSD", "GBPUSD",
-            "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF", "EURGBP");
-
-    // MFF ko co: "EU50", "AU200", "DE40",
+            "NATURALGAS", "US30", "US500", "J225", "SP35", "UK100", "FR40", "HK50", "EURUSD", "GBPUSD", "AUDUSD",
+            "NZDUSD", "USDJPY", "USDCAD", "USDCHF", "EURGBP");
+    // MFF ko co: "EU50", "AU200", "DE40", "US100",
 
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("GBPAUD", "EURAUD", "EURJPY", "EURCAD",
             "CADJPY", "GBPJPY", "AUDCAD", "GBPCAD", "EURNZD", "AUDNZD", "NZDCAD", "USDNOK", "USDPLN", "USDCZK",
