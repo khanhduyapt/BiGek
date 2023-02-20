@@ -174,32 +174,32 @@ public class BscScanBinanceApplication {
                                 }
                             }
 
-                            // ----------------------------------------------
-                            if ((round_count > 0) && Utils.isWorkingTime()) {
-                                if (isReloadAfter(Utils.MINUTES_OF_4H, "COIN_GECKO_" + SYMBOL)) {
-                                    gecko_service.loadData(GECKOID);
-                                }
-
-                                if (isReloadAfter(Utils.MINUTES_OF_4H, "INIT_CRYPTO_" + GECKOID)) {
-                                    binance_service.initCrypto(GECKOID, SYMBOL);
-                                }
-
-                                wait(SLEEP_MINISECONDS);
-                            }
-
-                            // ----------------------------------------------
-                            init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1d, GECKOID, SYMBOL);
-                            if (Utils.isNotBlank(init)) {
-                                wait(SLEEP_MINISECONDS);
-                            }
-                            init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4h, GECKOID, SYMBOL);
-                            if (Utils.isNotBlank(init)) {
-                                wait(SLEEP_MINISECONDS);
-                            }
-                            init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1h, GECKOID, SYMBOL);
-                            if (Utils.isNotBlank(init)) {
-                                wait(SLEEP_MINISECONDS);
-                            }
+                            //// ----------------------------------------------
+                            //if ((round_count > 0) && Utils.isWorkingTime()) {
+                            //    if (isReloadAfter(Utils.MINUTES_OF_4H, "COIN_GECKO_" + SYMBOL)) {
+                            //        gecko_service.loadData(GECKOID);
+                            //    }
+                            //
+                            //    if (isReloadAfter(Utils.MINUTES_OF_4H, "INIT_CRYPTO_" + GECKOID)) {
+                            //        binance_service.initCrypto(GECKOID, SYMBOL);
+                            //    }
+                            //
+                            //    wait(SLEEP_MINISECONDS);
+                            //}
+                            //
+                            //// ----------------------------------------------
+                            //init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1d, GECKOID, SYMBOL);
+                            //if (Utils.isNotBlank(init)) {
+                            //    wait(SLEEP_MINISECONDS);
+                            //}
+                            //init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4h, GECKOID, SYMBOL);
+                            //if (Utils.isNotBlank(init)) {
+                            //    wait(SLEEP_MINISECONDS);
+                            //}
+                            //init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1h, GECKOID, SYMBOL);
+                            //if (Utils.isNotBlank(init)) {
+                            //    wait(SLEEP_MINISECONDS);
+                            //}
                             // ----------------------------------------------
                         }
 

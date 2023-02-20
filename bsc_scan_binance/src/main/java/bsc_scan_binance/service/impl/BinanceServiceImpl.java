@@ -2860,7 +2860,6 @@ public class BinanceServiceImpl implements BinanceService {
         // Trend W & D = trend of Ma3
         boolean isUptrend = Utils.isUptrendByMaIndex(list, 3);
         String trend = isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
-        List<BigDecimal> low_high = Utils.getLowHighCandle(list);
 
         String msg = "";
         String note = "";
@@ -2868,15 +2867,6 @@ public class BinanceServiceImpl implements BinanceService {
                 || Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
 
             String switch_trend = "";
-            if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
-                String switch_trend_ca = Utils.switchTrendByCandle(list);
-                if (Utils.isNotBlank(switch_trend_ca)) {
-                    trend = switch_trend_ca;
-                    switch_trend = switch_trend_ca;
-                    note += "   ByCandle ";
-                }
-            }
-
             String switch_trend_ma = Utils.switchTrendByMa(list);
             if (Utils.isNotBlank(switch_trend_ma)) {
                 trend = switch_trend_ma;
@@ -2884,14 +2874,14 @@ public class BinanceServiceImpl implements BinanceService {
                 note = "   Ma3xMa6 ";
             }
 
-            String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(list);
             if (Utils.isNotBlank(switch_trend)) {
-                note = buffer + Utils.appendSpace(note, 12);
+                note = "Ma3xMa6";
             } else if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
-                note = buffer + ("   " + Utils.THE_TREND_NOT_REVERSED_YET + "   ");
+                note = Utils.THE_TREND_NOT_REVERSED_YET;
             }
 
-            if (Utils.isNotBlank(switch_trend)) {
+            if (Utils.isNotBlank(switch_trend) && Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
+
                 String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
 
                 String trend_h = "(" + trend + ")";
@@ -2899,27 +2889,19 @@ public class BinanceServiceImpl implements BinanceService {
                 String EVENT_ID = EVENT_PUMP + EPIC + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
                 msg = trend_h + char_name + EPIC;
 
-                if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
+                String note_h4 = "";
+                Orders entity_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+                if (Objects.nonNull(entity_h4)) {
+                    note_h4 = entity_h4.getNote();
 
-                    String note_h4 = "";
-                    String trend_h4 = "";
-                    Orders entity_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-                    if (Objects.nonNull(entity_h4)) {
-                        note_h4 = entity_h4.getNote();
-                        trend_h4 = entity_h4.getTrend();
-                    }
+                    BigDecimal sl_long_h4 = Utils.getBigDecimal(entity_h4.getLow_price());
+                    BigDecimal sl_short_h4 = Utils.getBigDecimal(entity_h4.getHigh_price());
 
-                    String log = "";
-                    log += Utils.appendSpace(
-                            Utils.appendSpace(EPIC, 15) + " " + Utils.getCapitalLink(EPIC),
-                            176);
+                    String buffer = Utils.calc_BUF_LO_HI_BUF_Forex_h1(list, sl_long_h4, sl_short_h4);
 
-                    if (Utils.isNotBlank(note_h4)) {
-                        log += "\n                      (" + Utils.appendSpace(trend_h4, 5) + ") (H4)  " + note_h4;
-                    }
-                    log += "\n          " + Utils.getCurrentPrice(list) + "(" + Utils.appendSpace(switch_trend, 5)
-                            + ") (H1)  " + note + wdh4;
-
+                    String log = "(" + Utils.appendSpace(switch_trend, 5) + ") ";
+                    log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 83);
+                    log += Utils.getCurrentPrice(list) + buffer + "   Ma3xMa6   " + wdh4 + "   (H4): " + note_h4;
                     Utils.logWritelnWithTime(log, false);
 
                     if (!Utils.isWeekend() && !note_h4.contains(Utils.THE_TREND_NOT_REVERSED_YET)) {
@@ -2937,6 +2919,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             String date_time = LocalDateTime.now().toString();
             List<BigDecimal> body = Utils.getOpenCloseCandle(list);
+            List<BigDecimal> low_high = Utils.calc_SL_Long_Short_Forex(list);
+
             // note = note.replaceAll(" +", " ");
             if (note.length() > 500) {
                 note = note.substring(0, 485);

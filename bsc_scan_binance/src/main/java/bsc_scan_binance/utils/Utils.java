@@ -53,6 +53,9 @@ import bsc_scan_binance.response.FundingResponse;
 
 //@Slf4j
 public class Utils {
+    public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.001);
+
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
 
@@ -123,13 +126,16 @@ public class Utils {
     public static final long MINUTES_OF_15M = 15;
 
     public static final List<String> EPICS_FOREX = Arrays.asList("BTCUSD", "DXY", "GOLD", "OIL_CRUDE", "SILVER",
-            "PALLADIUM", "NATURALGAS", "US30", "US500", "US100", "J225", "EU50", "AU200", "SP35", "UK100", "FR40",
-            "DE40", "HK50", "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF", "EURGBP");
+            "NATURALGAS", "US30", "US500", "US100", "J225", "SP35", "UK100", "FR40",
+            "HK50", "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF", "EURGBP");
+
+    //MFF ko co: "EU50", "AU200", "DE40",
 
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("GBPAUD", "EURAUD", "EURJPY", "EURCAD",
-            "EURCHF", "AUDJPY", "CADJPY", "GBPJPY", "AUDCAD", "GBPCAD", "GBPCHF", "EURNZD", "AUDCHF",
-            "AUDNZD", "CADCHF", "CHFJPY", "NZDCAD", "NZDCHF", "NZDJPY", "USDMXN", "USDNOK", "USDPLN", "USDTRY",
-            "USDZAR", "USDCZK", "USDHUF", "USDSEK", "USDHKD", "USDILS");
+            "AUDJPY", "CADJPY", "GBPJPY", "AUDCAD", "GBPCAD", "EURNZD",
+            "AUDNZD", "NZDCAD", "USDNOK", "USDPLN", "USDTRY",
+            "USDCZK", "USDHUF", "USDSEK", "USDHKD");
+    // Kho an: "NZDJPY", "USDMXN", "USDZAR",
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
@@ -2568,17 +2574,15 @@ public class Utils {
         return Utils.appendSpace(result, 46);
     }
 
-    public static String calc_BUF_LO_HI_BUF_Forex(List<BtcFutures> list) {
-        BigDecimal account = BigDecimal.valueOf(200000);
-        BigDecimal risk_percent = BigDecimal.valueOf(0.0025);
-        BigDecimal risk = account.multiply(risk_percent);
+    public static String calc_BUF_LO_HI_BUF_Forex(List<BtcFutures> list_h4) {
+        BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
-        BigDecimal entry = list.get(0).getCurrPrice();
+        BigDecimal entry = list_h4.get(0).getCurrPrice();
 
-        List<BigDecimal> low_heigh = getLowHighCandle(list);
+        List<BigDecimal> low_heigh = getLowHighCandle(list_h4);
         BigDecimal LO = low_heigh.get(0);
         BigDecimal HI = low_heigh.get(1);
-        BigDecimal ma3 = calcMA(list, 3, 1);
+        BigDecimal ma3 = calcMA(list_h4, 3, 1);
 
         String result = "";
 
@@ -2614,6 +2618,67 @@ public class Utils {
         result += "   Risk: " + Utils.appendSpace(removeLastZero(risk) + "$", 8);
 
         result = Utils.appendSpace(result, 100);
+
+        return result;
+    }
+
+    public static List<BigDecimal> calc_SL_Long_Short_Forex(List<BtcFutures> list) {
+        List<BigDecimal> low_heigh = getLowHighCandle(list);
+        BigDecimal LO = low_heigh.get(0);
+        BigDecimal HI = low_heigh.get(1);
+        BigDecimal ma3 = calcMA(list, 3, 1);
+
+        BigDecimal sl_long = ma3.subtract(LO);
+        sl_long = sl_long.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
+        sl_long = roundDefault(LO.subtract(sl_long));
+
+        BigDecimal sl_short = HI.subtract(ma3);
+        sl_short = sl_short.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
+        sl_short = roundDefault(HI.add(sl_short));
+
+        List<BigDecimal> result = new ArrayList<BigDecimal>();
+        result.add(sl_long);
+        result.add(sl_short);
+
+        return result;
+    }
+
+    public static String calc_BUF_LO_HI_BUF_Forex_h1(List<BtcFutures> list_h1, BigDecimal sl_long_h4,
+            BigDecimal sl_short_h4) {
+        BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
+
+        BigDecimal entry = list_h1.get(0).getCurrPrice();
+
+        List<BigDecimal> low_heigh = getLowHighCandle(list_h1);
+        BigDecimal LO = low_heigh.get(0);
+        BigDecimal HI = low_heigh.get(1);
+
+        String result = "";
+
+        BigDecimal pips_long = entry.subtract(sl_long_h4).abs();
+        BigDecimal lot_long = risk.divide(pips_long, 10, RoundingMode.CEILING);
+        BigDecimal div = BigDecimal.valueOf(1);
+
+        if (lot_long.compareTo(BigDecimal.valueOf(10000)) > 0) {
+            div = BigDecimal.valueOf(100000);
+        } else if (lot_long.compareTo(BigDecimal.valueOf(100)) > 0) {
+            div = BigDecimal.valueOf(1000);
+        }
+        lot_long = lot_long.divide(div, 2, RoundingMode.CEILING);
+
+        BigDecimal pips_short = sl_short_h4.subtract(entry).abs();
+        BigDecimal lot_short = risk.divide(pips_short, 10, RoundingMode.CEILING);
+        lot_short = lot_short.divide(div, 2, RoundingMode.CEILING);
+
+        result += "SL_Long(H4): " + Utils.appendSpace(getPercentToEntry(LO, sl_long_h4, true), 12);
+        //result += " (" + Utils.appendSpace(removeLastZero(lot_long), 5) + " lot)";
+        result += " Lo(H1): " + Utils.appendSpace(removeLastZero(LO), 8);
+        result += " Hi(H1): " + Utils.appendSpace(removeLastZero(HI), 8);
+        result += " SL_short(H4): " + Utils.appendSpace(getPercentToEntry(HI, sl_short_h4, true), 12);
+        //result += " (" + Utils.appendSpace(removeLastZero(lot_short), 5) + " lot)";
+        // result += "   Risk: " + Utils.appendSpace(removeLastZero(risk) + "$", 8);
+
+        result = Utils.appendSpace(result, 80);
 
         return result;
     }
@@ -2874,9 +2939,9 @@ public class Utils {
             return false;
         }
 
-        int end = 3;
+        int end = 2;
         if (list.get(0).getId().contains("_1w_")) {
-            end = 2;
+            end = 1;
         }
         if (end > list.size()) {
             end = list.size() - 1;
