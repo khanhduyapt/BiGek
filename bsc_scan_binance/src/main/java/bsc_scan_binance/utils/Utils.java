@@ -134,8 +134,8 @@ public class Utils {
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("GBPAUD", "EURAUD", "EURJPY", "EURCAD",
             "AUDJPY", "CADJPY", "GBPJPY", "AUDCAD", "GBPCAD", "EURNZD",
             "AUDNZD", "NZDCAD", "USDNOK", "USDPLN", "USDTRY",
-            "USDCZK", "USDHUF", "USDSEK", "USDHKD");
-    // Kho an: "NZDJPY", "USDMXN", "USDZAR",
+            "USDCZK", "USDSEK");
+    // Kho an: "NZDJPY", "USDMXN", "USDZAR", "USDHUF", "USDHKD",
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
