@@ -2876,6 +2876,13 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Utils.isNotBlank(switch_trend)) {
                 note = "Ma3xMa6";
+
+                String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(list);
+                String log = Utils.getChartName(list) + "(" + Utils.appendSpace(switch_trend, 5) + ") ";
+                log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 83);
+                log += Utils.getCurrentPrice(list) + buffer + "   Ma3xMa6   ";
+                Utils.logWritelnWithTime(log, false);
+
             } else if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
                 note = Utils.THE_TREND_NOT_REVERSED_YET;
             }

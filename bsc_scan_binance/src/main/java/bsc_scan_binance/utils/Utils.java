@@ -2610,14 +2610,14 @@ public class Utils {
         lot_short = lot_short.divide(div, 2, RoundingMode.CEILING);
 
         result += "SL_Long: " + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12);
-        result += " (" + Utils.appendSpace(removeLastZero(lot_long), 5) + " lot)";
-        result += ", Lo: " + Utils.appendSpace(removeLastZero(LO), 8);
-        result += ", Hi: " + Utils.appendSpace(removeLastZero(HI), 8);
-        result += ", SL_short: " + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12);
-        result += " (" + Utils.appendSpace(removeLastZero(lot_short), 5) + " lot)";
-        result += "   Risk: " + Utils.appendSpace(removeLastZero(risk) + "$", 8);
+        // result += " (" + Utils.appendSpace(removeLastZero(lot_long), 5) + " lot)";
+        result += " Lo: " + Utils.appendSpace(removeLastZero(LO), 8);
+        result += " Hi: " + Utils.appendSpace(removeLastZero(HI), 8);
+        result += " SL_short: " + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12);
+        // result += " (" + Utils.appendSpace(removeLastZero(lot_short), 5) + " lot)";
+        // result += "   Risk: " + Utils.appendSpace(removeLastZero(risk) + "$", 8);
 
-        result = Utils.appendSpace(result, 100);
+        result = Utils.appendSpace(result, 80);
 
         return result;
     }
