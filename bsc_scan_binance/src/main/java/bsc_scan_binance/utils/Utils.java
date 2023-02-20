@@ -83,6 +83,7 @@ public class Utils {
     public static final String TEXT_STOP_LONG = "Stop:Long";
 
     public static final String TEXT_CONNECTION_TIMED_OUT = "CONNECTION_TIMED_OUT";
+    public static final String THE_TREND_NOT_REVERSED_YET = "The trend not reversed yet.";
 
     public static final String CHAR_MONEY = "💰";
     public static final String CHAR_LONG_UP = "Up";
@@ -126,9 +127,9 @@ public class Utils {
             "DE40", "HK50", "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF", "EURGBP");
 
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("GBPAUD", "EURAUD", "EURJPY", "EURCAD",
-            "EURCHF", "AUDJPY", "CADJPY", "GBPJPY", "AUDCAD", "GBPCAD", "GBPCHF", "GBPNZD", "EURNZD", "AUDCHF",
+            "EURCHF", "AUDJPY", "CADJPY", "GBPJPY", "AUDCAD", "GBPCAD", "GBPCHF", "EURNZD", "AUDCHF",
             "AUDNZD", "CADCHF", "CHFJPY", "NZDCAD", "NZDCHF", "NZDJPY", "USDMXN", "USDNOK", "USDPLN", "USDTRY",
-            "USDZAR", "USDCZK", "EURCZK", "EURPLN", "USDHUF", "USDSEK", "USDHKD", "USDILS");
+            "USDZAR", "USDCZK", "USDHUF", "USDSEK", "USDHKD", "USDILS");
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
@@ -912,7 +913,7 @@ public class Utils {
 
     public static boolean isBusinessTime() {
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-        if ((22 <= hh || hh <= 6)) {
+        if ((22 <= hh || hh <= 5)) {
             return false;
         }
 
@@ -1055,7 +1056,7 @@ public class Utils {
         if (hh >= 0 && hh < 7) {
             calendar.add(Calendar.DAY_OF_MONTH, -1);
         }
-        String result = Utils.convertDateToString("yyyy.MM.dd", calendar.getTime()) + "_07";
+        String result = Utils.convertDateToString("yyyy.MM.dd", calendar.getTime()) + "_05";
 
         return result;
     }

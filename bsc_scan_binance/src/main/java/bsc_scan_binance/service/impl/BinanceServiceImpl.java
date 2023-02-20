@@ -2888,7 +2888,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isNotBlank(switch_trend)) {
                 note = buffer + Utils.appendSpace(note, 12);
             } else if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
-                note = buffer + ("   The trend not reversed yet.   ");
+                note = buffer + ("   " + Utils.THE_TREND_NOT_REVERSED_YET + "   ");
             }
 
             if (Utils.isNotBlank(switch_trend)) {
@@ -2911,18 +2911,18 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String log = "";
                     log += Utils.appendSpace(
-                            Utils.appendSpace(Utils.appendSpace(EPIC, 15) + Utils.getCurrentPrice(list) + "  " + wdh4,
-                                    51) + " " + Utils.getCapitalLink(EPIC),
-                            138);
+                            Utils.appendSpace(EPIC, 15) + " " + Utils.getCapitalLink(EPIC),
+                            176);
 
                     if (Utils.isNotBlank(note_h4)) {
                         log += "\n                      (" + Utils.appendSpace(trend_h4, 5) + ") (H4)  " + note_h4;
                     }
-                    log += "\n                      (" + Utils.appendSpace(switch_trend, 5) + ") (H1)  " + note;
+                    log += "\n          " + Utils.getCurrentPrice(list) + "(" + Utils.appendSpace(switch_trend, 5)
+                            + ") (H1)  " + note + wdh4;
 
                     Utils.logWritelnWithTime(log, false);
 
-                    if (!Utils.isWeekend()) {
+                    if (!Utils.isWeekend() && !note_h4.contains(Utils.THE_TREND_NOT_REVERSED_YET)) {
                         sendMsgPerHour(EVENT_ID, msg, true);
                     }
                 }
