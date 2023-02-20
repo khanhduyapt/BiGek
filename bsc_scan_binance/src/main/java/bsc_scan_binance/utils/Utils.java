@@ -905,7 +905,7 @@ public class Utils {
 
         result = false;
 
-        return result;
+        return false;
     }
 
     public static boolean isWorkingTime() {
