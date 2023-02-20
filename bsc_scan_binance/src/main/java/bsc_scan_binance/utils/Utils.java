@@ -2807,8 +2807,8 @@ public class Utils {
         }
 
         String result = "";
-        String trend_main = checkTrendSideway(list, 0, 2);
-        String trend_conf = checkTrendSideway(list, 3, 8);
+        String trend_main = checkTrendSideway(list, 1, 3);
+        String trend_conf = "";// checkTrendSideway(list, 3, 8);
 
         if (trend_main.contains(Utils.TREND_LONG) && trend_main.contains(Utils.TREND_SHORT)) {
             return "";
@@ -2839,9 +2839,11 @@ public class Utils {
 
         String l_m10x20 = "";
         String s_m10x20 = "";
-        int slow_index = 6;
+        int slow_index = 5;
         if (list.get(0).getId().contains("_15m_")) {
             slow_index = 20;
+        } else if (list.get(0).getId().contains("_1h_")) {
+            slow_index = 10;
         }
 
         if (slow_index >= list.size()) {
