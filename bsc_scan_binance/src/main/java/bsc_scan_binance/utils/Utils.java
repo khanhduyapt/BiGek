@@ -126,16 +126,15 @@ public class Utils {
     public static final long MINUTES_OF_15M = 15;
 
     public static final List<String> EPICS_FOREX = Arrays.asList("BTCUSD", "DXY", "GOLD", "OIL_CRUDE", "SILVER",
-            "NATURALGAS", "US30", "US500", "US100", "J225", "SP35", "UK100", "FR40",
-            "HK50", "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF", "EURGBP");
+            "NATURALGAS", "US30", "US500", "US100", "J225", "SP35", "UK100", "FR40", "HK50", "EURUSD", "GBPUSD",
+            "AUDUSD", "NZDUSD", "USDJPY", "USDCAD", "USDCHF", "EURGBP");
 
-    //MFF ko co: "EU50", "AU200", "DE40",
+    // MFF ko co: "EU50", "AU200", "DE40",
 
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("GBPAUD", "EURAUD", "EURJPY", "EURCAD",
-            "AUDJPY", "CADJPY", "GBPJPY", "AUDCAD", "GBPCAD", "EURNZD",
-            "AUDNZD", "NZDCAD", "USDNOK", "USDPLN", "USDTRY",
-            "USDCZK", "USDSEK");
-    // Kho an: "NZDJPY", "USDMXN", "USDZAR", "USDHUF", "USDHKD",
+            "CADJPY", "GBPJPY", "AUDCAD", "GBPCAD", "EURNZD", "AUDNZD", "NZDCAD", "USDNOK", "USDPLN", "USDCZK",
+            "USDSEK");
+    // Kho an: "NZDJPY", "USDMXN", "USDZAR", "USDHUF", "USDHKD","AUDJPY", "USDTRY",
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
@@ -2615,7 +2614,7 @@ public class Utils {
         result += " Hi: " + Utils.appendSpace(removeLastZero(HI), 8);
         result += " SL_short: " + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12);
         // result += " (" + Utils.appendSpace(removeLastZero(lot_short), 5) + " lot)";
-        // result += "   Risk: " + Utils.appendSpace(removeLastZero(risk) + "$", 8);
+        // result += " Risk: " + Utils.appendSpace(removeLastZero(risk) + "$", 8);
 
         result = Utils.appendSpace(result, 80);
 
@@ -2671,12 +2670,12 @@ public class Utils {
         lot_short = lot_short.divide(div, 2, RoundingMode.CEILING);
 
         result += "SL_Long(H4): " + Utils.appendSpace(getPercentToEntry(LO, sl_long_h4, true), 12);
-        //result += " (" + Utils.appendSpace(removeLastZero(lot_long), 5) + " lot)";
+        // result += " (" + Utils.appendSpace(removeLastZero(lot_long), 5) + " lot)";
         result += " Lo(H1): " + Utils.appendSpace(removeLastZero(LO), 8);
         result += " Hi(H1): " + Utils.appendSpace(removeLastZero(HI), 8);
         result += " SL_short(H4): " + Utils.appendSpace(getPercentToEntry(HI, sl_short_h4, true), 12);
-        //result += " (" + Utils.appendSpace(removeLastZero(lot_short), 5) + " lot)";
-        // result += "   Risk: " + Utils.appendSpace(removeLastZero(risk) + "$", 8);
+        // result += " (" + Utils.appendSpace(removeLastZero(lot_short), 5) + " lot)";
+        // result += " Risk: " + Utils.appendSpace(removeLastZero(risk) + "$", 8);
 
         result = Utils.appendSpace(result, 80);
 
