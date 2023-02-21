@@ -2865,7 +2865,7 @@ public class BinanceServiceImpl implements BinanceService {
         String note = "";
         if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)
                 || Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
-
+            String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
             String char_name = Utils.getChartName(list);
             String switch_trend = "";
             String switch_trend_ma = Utils.switchTrendByMa(list);
@@ -2883,19 +2883,8 @@ public class BinanceServiceImpl implements BinanceService {
                     String EVENT_ID = EVENT_PUMP + EPIC + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
                     msg = trend_h + char_name + EPIC;
                     sendMsgPerHour(EVENT_ID, msg, true);
-                    Utils.logWritelnWithTime(msg, false);
 
-                    Orders entity_d = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
-                    if (Objects.nonNull(entity_d)) {
-                        BigDecimal sl_long = Utils.getBigDecimal(entity_d.getLow_price());
-                        BigDecimal sl_short = Utils.getBigDecimal(entity_d.getHigh_price());
-
-                        String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long, sl_short);
-                        String log = char_name + "(" + Utils.appendSpace(switch_trend, 5) + ") ";
-                        log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 83);
-                        log += Utils.getCurrentPrice(list) + buffer + "   Ma3xMa6   ";
-                        Utils.logWritelnWithTime(log, false);
-                    }
+                    Utils.logWritelnWithTime(EPIC, false);
                 }
             } else if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
                 note = Utils.THE_TREND_NOT_REVERSED_YET;
@@ -2903,21 +2892,34 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Utils.isNotBlank(switch_trend) && Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
                 String note_h4 = "";
-                String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
 
                 Orders entity_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
                 if (Objects.nonNull(entity_h4)) {
                     note_h4 = entity_h4.getNote();
 
-                    BigDecimal sl_long_h4 = Utils.getBigDecimal(entity_h4.getLow_price());
-                    BigDecimal sl_short_h4 = Utils.getBigDecimal(entity_h4.getHigh_price());
+                    if (!note_h4.contains(Utils.THE_TREND_NOT_REVERSED_YET)) {
+                        Orders entity_d = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+                        if (Objects.nonNull(entity_d)) {
+                            BigDecimal sl_long = Utils.getBigDecimal(entity_d.getLow_price());
+                            BigDecimal sl_short = Utils.getBigDecimal(entity_d.getHigh_price());
 
-                    String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long_h4, sl_short_h4);
+                            String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long, sl_short);
+                            String log = "(H4)  (" + Utils.appendSpace(switch_trend, 5) + ") ";
+                            log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 83);
+                            log += Utils.getCurrentPrice(list) + buffer + "   Ma3xMa6   " + wdh4;
+                            Utils.logWritelnWithTime(log, false);
+                        }
+                        //------------------------------------------------
 
-                    String log = char_name + "(" + Utils.appendSpace(switch_trend, 5) + ") ";
-                    log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 83);
-                    log += Utils.getCurrentPrice(list) + buffer + "   Ma3xMa6   " + wdh4 + "   (H4): " + note_h4;
-                    Utils.logWritelnWithTime(log, false);
+                        BigDecimal sl_long_h4 = Utils.getBigDecimal(entity_h4.getLow_price());
+                        BigDecimal sl_short_h4 = Utils.getBigDecimal(entity_h4.getHigh_price());
+
+                        String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long_h4, sl_short_h4);
+                        String log = char_name + "(" + Utils.appendSpace(switch_trend, 5) + ") ";
+                        log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 83);
+                        log += Utils.getCurrentPrice(list) + buffer + "   Ma3xMa6   " + wdh4 + "   (H4): " + note_h4;
+                        Utils.logWritelnWithTime(log + "\n", false);
+                    }
                 }
             }
         }

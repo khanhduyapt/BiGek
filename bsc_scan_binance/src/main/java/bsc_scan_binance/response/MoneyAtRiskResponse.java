@@ -19,6 +19,10 @@ public class MoneyAtRiskResponse {
     private BigDecimal take_profit; //C20
 
     public BigDecimal calcSLMoney() {
+        if ((entry.subtract(stop_loss)).abs().compareTo(BigDecimal.ZERO) <= 0) {
+            return BigDecimal.ZERO;
+        }
+
         //C18*C17/ABS(C18-C19)
         //entry*money_risk/ABS(entry-stop_loss)
         BigDecimal buy = entry.multiply(money_risk);
@@ -36,6 +40,10 @@ public class MoneyAtRiskResponse {
     }
 
     public BigDecimal calcTPMoney() {
+        if ((entry.subtract(stop_loss)).abs().compareTo(BigDecimal.ZERO) <= 0) {
+            return BigDecimal.ZERO;
+        }
+
         //C18*C17/ABS(C18-C19)
         //entry*money_risk/ABS(entry-stop_loss)
         BigDecimal buy = entry.multiply(money_risk);
@@ -53,6 +61,10 @@ public class MoneyAtRiskResponse {
     }
 
     public BigDecimal calcLot() {
+        if ((entry.subtract(stop_loss)).abs().compareTo(BigDecimal.ZERO) <= 0) {
+            return BigDecimal.ZERO;
+        }
+
         //qty = C31*C35/C33
         BigDecimal qty = BigDecimal.ZERO;
 
@@ -60,7 +72,7 @@ public class MoneyAtRiskResponse {
         BigDecimal standard_lot = list.get(0);
         BigDecimal unit_risk_per_pip = list.get(1);
 
-        if (unit_risk_per_pip.compareTo(BigDecimal.ZERO) == 0) {
+        if (unit_risk_per_pip.compareTo(BigDecimal.ZERO) <= 0) {
             return BigDecimal.ZERO;
         }
 

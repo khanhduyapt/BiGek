@@ -132,9 +132,8 @@ public class Utils {
     // MFF ko co: "EU50", "AU200", "DE40", "US100",
 
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("GBPAUD", "EURAUD", "EURJPY", "EURCAD",
-            "CADJPY", "GBPJPY", "AUDCAD", "GBPCAD", "EURNZD", "AUDNZD", "NZDCAD", "USDNOK", "USDPLN", "USDCZK",
-            "USDSEK");
-    // Kho an: "NZDJPY", "USDMXN", "USDZAR", "USDHUF", "USDHKD","AUDJPY", "USDTRY",
+            "CADJPY", "GBPJPY", "AUDCAD", "GBPCAD", "EURNZD", "AUDNZD", "NZDCAD", "USDPLN");
+    // Kho an: "NZDJPY", "USDMXN", "USDZAR", "USDHUF", "USDHKD","AUDJPY", "USDTRY",  "USDNOK", "USDSEK", "USDCZK"
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
@@ -2600,7 +2599,7 @@ public class Utils {
         String result = "";
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
-        BigDecimal entry = calcMA(list_h1, 3, 1);
+        BigDecimal entry = roundDefault(calcMA(list_h1, 3, 1));
         List<BigDecimal> low_heigh = getLowHighCandle(list_h1);
         BigDecimal LO = low_heigh.get(0);
         BigDecimal HI = low_heigh.get(1);
@@ -2618,12 +2617,12 @@ public class Utils {
         result += "   ";
         result += " SL_Long: " + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12);
         result += "(" + Utils.appendSpace(removeLastZero(lot_long), 5) + " lot)";
-        result += " to: " + Utils.appendSpace(removeLastZero(HI), 8);
+        result += " to: " + Utils.appendSpace(removeLastZero(roundDefault(HI)), 8);
         result += "=" + Utils.appendSpace(removeLastZero(tp_money_long), 5) + "$";
         result += "    ";
         result += " SL_short: " + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12);
         result += "(" + Utils.appendSpace(removeLastZero(lot_short), 5) + " lot)";
-        result += " to: " + Utils.appendSpace(removeLastZero(LO), 8);
+        result += " to: " + Utils.appendSpace(removeLastZero(roundDefault(LO)), 8);
         result += "=" + Utils.appendSpace(removeLastZero(tp_money_short), 5) + "$";
 
         result = Utils.appendSpace(result, 150);
