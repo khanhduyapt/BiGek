@@ -2910,16 +2910,16 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.nonNull(entity_h4)) {
                     note_h4 = entity_h4.getNote();
 
-                    if (!note_h4.contains(Utils.THE_TREND_NOT_REVERSED_YET)) {
-                        BigDecimal sl_long_h4 = Utils.getBigDecimal(entity_h4.getLow_price());
-                        BigDecimal sl_short_h4 = Utils.getBigDecimal(entity_h4.getHigh_price());
+                    //if (!note_h4.contains(Utils.THE_TREND_NOT_REVERSED_YET)) {
+                    BigDecimal sl_long_h4 = Utils.getBigDecimal(entity_h4.getLow_price());
+                    BigDecimal sl_short_h4 = Utils.getBigDecimal(entity_h4.getHigh_price());
 
-                        String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long_h4, sl_short_h4);
-                        String log = char_name + "(" + Utils.appendSpace(switch_trend, 5) + ") ";
-                        log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 83);
-                        log += Utils.getCurrentPrice(list) + buffer + "   Ma3xMa6   " + wdh4 + "   (H4): " + note_h4;
-                        Utils.logWritelnWithTime(log + "\n", false);
-                    }
+                    String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long_h4, sl_short_h4);
+                    String log = char_name + "(" + Utils.appendSpace(switch_trend, 5) + ") ";
+                    log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 83);
+                    log += Utils.getCurrentPrice(list) + buffer + "   Ma3xMa6   " + wdh4 + "   (H4): " + note_h4;
+                    Utils.logWritelnWithTime(log + "\n", false);
+                    //}
                 }
             }
         }
@@ -2931,17 +2931,30 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String date_time = LocalDateTime.now().toString();
-            List<BigDecimal> body = Utils.getOpenCloseCandle(list);
-            List<BigDecimal> low_high = Utils.calc_SL_Long_Short_Forex(list);
 
-            // note = note.replaceAll(" +", " ");
-            if (note.length() > 500) {
-                note = note.substring(0, 485);
+            if (Objects.equals(Utils.CAPITAL_TIME_WEEK, CAPITAL_TIME_XXX)) {
+
+                List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(1, 2));
+                List<BigDecimal> low_high = Utils.getLowHighCandle(list.subList(1, 2));
+
+                Orders entity = new Orders(id, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
+                        low_high.get(0), low_high.get(1), note);
+
+                ordersRepository.save(entity);
+
+            } else {
+
+                List<BigDecimal> body = Utils.getOpenCloseCandle(list);
+                List<BigDecimal> low_high = Utils.calc_SL_Long_Short_Forex(list);
+
+                if (note.length() > 500) {
+                    note = note.substring(0, 485);
+                }
+                Orders entity = new Orders(id, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
+                        low_high.get(0), low_high.get(1), note);
+
+                ordersRepository.save(entity);
             }
-            Orders entity = new Orders(id, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
-                    low_high.get(0), low_high.get(1), note);
-
-            ordersRepository.save(entity);
         }
 
         return trend;
