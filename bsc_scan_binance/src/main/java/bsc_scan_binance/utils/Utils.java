@@ -50,6 +50,7 @@ import bsc_scan_binance.response.BtcFuturesResponse;
 import bsc_scan_binance.response.CandidateTokenCssResponse;
 import bsc_scan_binance.response.DepthResponse;
 import bsc_scan_binance.response.FundingResponse;
+import bsc_scan_binance.response.MoneyAtRiskResponse;
 
 //@Slf4j
 public class Utils {
@@ -2572,53 +2573,6 @@ public class Utils {
         return Utils.appendSpace(result, 46);
     }
 
-    public static String calc_BUF_LO_HI_BUF_Forex(List<BtcFutures> list_h4) {
-        BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
-
-        BigDecimal entry = list_h4.get(0).getCurrPrice();
-
-        List<BigDecimal> low_heigh = getLowHighCandle(list_h4);
-        BigDecimal LO = low_heigh.get(0);
-        BigDecimal HI = low_heigh.get(1);
-        BigDecimal ma3 = calcMA(list_h4, 3, 1);
-
-        String result = "";
-
-        BigDecimal sl_long = ma3.subtract(LO);
-        sl_long = sl_long.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
-        sl_long = roundDefault(LO.subtract(sl_long));
-
-        BigDecimal sl_short = HI.subtract(ma3);
-        sl_short = sl_short.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
-        sl_short = roundDefault(HI.add(sl_short));
-
-        BigDecimal pips_long = entry.subtract(sl_long).abs();
-        BigDecimal lot_long = risk.divide(pips_long, 10, RoundingMode.CEILING);
-        BigDecimal div = BigDecimal.valueOf(1);
-
-        if (lot_long.compareTo(BigDecimal.valueOf(10000)) > 0) {
-            div = BigDecimal.valueOf(100000);
-        } else if (lot_long.compareTo(BigDecimal.valueOf(100)) > 0) {
-            div = BigDecimal.valueOf(1000);
-        }
-        lot_long = lot_long.divide(div, 2, RoundingMode.CEILING);
-
-        BigDecimal pips_short = sl_short.subtract(entry).abs();
-        BigDecimal lot_short = risk.divide(pips_short, 10, RoundingMode.CEILING);
-        lot_short = lot_short.divide(div, 2, RoundingMode.CEILING);
-
-        result += "SL_Long: " + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12);
-        // result += " (" + Utils.appendSpace(removeLastZero(lot_long), 5) + " lot)";
-        result += " Lo: " + Utils.appendSpace(removeLastZero(LO), 8);
-        result += " Hi: " + Utils.appendSpace(removeLastZero(HI), 8);
-        result += " SL_short: " + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12);
-        // result += " (" + Utils.appendSpace(removeLastZero(lot_short), 5) + " lot)";
-        // result += " Risk: " + Utils.appendSpace(removeLastZero(risk) + "$", 8);
-
-        result = Utils.appendSpace(result, 80);
-
-        return result;
-    }
 
     public static List<BigDecimal> calc_SL_Long_Short_Forex(List<BtcFutures> list) {
         List<BigDecimal> low_heigh = getLowHighCandle(list);
@@ -2641,8 +2595,8 @@ public class Utils {
         return result;
     }
 
-    public static String calc_BUF_LO_HI_BUF_Forex_h1(List<BtcFutures> list_h1, BigDecimal sl_long_h4,
-            BigDecimal sl_short_h4) {
+    public static String calc_BUF_LO_HI_BUF_Forex(String EPIC, List<BtcFutures> list_h1, BigDecimal sl_long,
+            BigDecimal sl_short) {
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
         BigDecimal entry = list_h1.get(0).getCurrPrice();
@@ -2653,30 +2607,28 @@ public class Utils {
 
         String result = "";
 
-        BigDecimal pips_long = entry.subtract(sl_long_h4).abs();
-        BigDecimal lot_long = risk.divide(pips_long, 10, RoundingMode.CEILING);
-        BigDecimal div = BigDecimal.valueOf(1);
+        MoneyAtRiskResponse money_long = new MoneyAtRiskResponse(EPIC, risk, entry, sl_long, HI);
+        BigDecimal lot_long = money_long.calcLot();
+        BigDecimal tp_money_long = money_long.calcTPMoney();
 
-        if (lot_long.compareTo(BigDecimal.valueOf(10000)) > 0) {
-            div = BigDecimal.valueOf(100000);
-        } else if (lot_long.compareTo(BigDecimal.valueOf(100)) > 0) {
-            div = BigDecimal.valueOf(1000);
-        }
-        lot_long = lot_long.divide(div, 2, RoundingMode.CEILING);
+        MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, entry, sl_short, LO);
+        BigDecimal lot_short = money_short.calcLot();
+        BigDecimal tp_money_short = money_short.calcTPMoney();
 
-        BigDecimal pips_short = sl_short_h4.subtract(entry).abs();
-        BigDecimal lot_short = risk.divide(pips_short, 10, RoundingMode.CEILING);
-        lot_short = lot_short.divide(div, 2, RoundingMode.CEILING);
+        result += " Risk: " + Utils.appendSpace(removeLastZero(risk) + "$", 8);
+        result += "   Entry: " + Utils.appendSpace(removeLastZero(entry) + "$", 8);
+        result += "   ";
+        result += " SL_Long: " + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12);
+        result += "(" + Utils.appendSpace(removeLastZero(lot_long), 5) + " lot)";
+        result += " to: " + Utils.appendSpace(removeLastZero(HI), 8);
+        result += "=" + Utils.appendSpace(removeLastZero(tp_money_long), 5) + "$";
+        result += "    ";
+        result += " SL_short: " + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12);
+        result += "(" + Utils.appendSpace(removeLastZero(lot_short), 5) + " lot)";
+        result += " to: " + Utils.appendSpace(removeLastZero(LO), 8);
+        result += "=" + Utils.appendSpace(removeLastZero(tp_money_short), 5) + "$";
 
-        result += "SL_Long(H4): " + Utils.appendSpace(getPercentToEntry(LO, sl_long_h4, true), 12);
-        // result += " (" + Utils.appendSpace(removeLastZero(lot_long), 5) + " lot)";
-        result += " Lo(H1): " + Utils.appendSpace(removeLastZero(LO), 8);
-        result += " Hi(H1): " + Utils.appendSpace(removeLastZero(HI), 8);
-        result += " SL_short(H4): " + Utils.appendSpace(getPercentToEntry(HI, sl_short_h4, true), 12);
-        // result += " (" + Utils.appendSpace(removeLastZero(lot_short), 5) + " lot)";
-        // result += " Risk: " + Utils.appendSpace(removeLastZero(risk) + "$", 8);
-
-        result = Utils.appendSpace(result, 80);
+        result = Utils.appendSpace(result, 150);
 
         return result;
     }
