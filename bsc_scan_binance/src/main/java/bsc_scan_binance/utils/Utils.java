@@ -2618,12 +2618,12 @@ public class Utils {
         result += " SL_Long: " + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12);
         result += "(" + Utils.appendSpace(removeLastZero(lot_long), 5) + " lot)";
         result += " to: " + Utils.appendSpace(removeLastZero(roundDefault(HI)), 8);
-        result += "=" + Utils.appendSpace(removeLastZero(tp_money_long), 5) + "$";
+        result += "= " + Utils.appendSpace(removeLastZero(tp_money_long), 5) + "$";
         result += "    ";
         result += " SL_short: " + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12);
         result += "(" + Utils.appendSpace(removeLastZero(lot_short), 5) + " lot)";
         result += " to: " + Utils.appendSpace(removeLastZero(roundDefault(LO)), 8);
-        result += "=" + Utils.appendSpace(removeLastZero(tp_money_short), 5) + "$";
+        result += "= " + Utils.appendSpace(removeLastZero(tp_money_short), 5) + "$";
 
         result = Utils.appendSpace(result, 150);
 
