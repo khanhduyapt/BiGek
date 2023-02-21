@@ -2845,44 +2845,6 @@ public class Utils {
         return false;
     }
 
-    public static String switchTrendByRange(List<BtcFutures> list) {
-        String trend = "";
-        BigDecimal ma3_0 = calcMA(list, 3, 0);
-
-        List<BigDecimal> low_heigh = getLowHighCandle(list);
-        BigDecimal range = (low_heigh.get(1).subtract(low_heigh.get(0)));
-        range = range.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
-        BigDecimal start_short_area = low_heigh.get(1).subtract(range);
-        BigDecimal start_long_area = low_heigh.get(0).add(range);
-
-        if (ma3_0.compareTo(start_long_area) < 0) {
-            trend = TREND_LONG;
-        }
-
-        if (ma3_0.compareTo(start_short_area) > 0) {
-            trend = TREND_SHORT;
-        }
-
-        return trend;
-    }
-
-    public static String switchTrendByCandle(List<BtcFutures> list) {
-        String trend = "";
-        BigDecimal ma3_1 = calcMA(list, 3, 1);
-        BigDecimal ma3_2 = calcMA(list, 3, 2);
-        BigDecimal ma3_3 = calcMA(list, 3, 3);
-
-        if ((ma3_1.compareTo(ma3_2) > 0) && (ma3_3.compareTo(ma3_2) > 0)) {
-            trend = TREND_LONG;
-        }
-
-        if ((ma3_2.compareTo(ma3_1) > 0) && (ma3_2.compareTo(ma3_3) > 0)) {
-            trend = TREND_SHORT;
-        }
-
-        return trend;
-    }
-
     public static boolean isUptrendByMaIndex(List<BtcFutures> list, int maIndex) {
         if (CollectionUtils.isEmpty(list)) {
             return false;
