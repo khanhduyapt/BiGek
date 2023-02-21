@@ -2573,7 +2573,6 @@ public class Utils {
         return Utils.appendSpace(result, 46);
     }
 
-
     public static List<BigDecimal> calc_SL_Long_Short_Forex(List<BtcFutures> list) {
         List<BigDecimal> low_heigh = getLowHighCandle(list);
         BigDecimal LO = low_heigh.get(0);
@@ -2597,15 +2596,14 @@ public class Utils {
 
     public static String calc_BUF_LO_HI_BUF_Forex(String EPIC, List<BtcFutures> list_h1, BigDecimal sl_long,
             BigDecimal sl_short) {
+
+        String result = "";
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
-        BigDecimal entry = list_h1.get(0).getCurrPrice();
-
+        BigDecimal entry = calcMA(list_h1, 3, 1);
         List<BigDecimal> low_heigh = getLowHighCandle(list_h1);
         BigDecimal LO = low_heigh.get(0);
         BigDecimal HI = low_heigh.get(1);
-
-        String result = "";
 
         MoneyAtRiskResponse money_long = new MoneyAtRiskResponse(EPIC, risk, entry, sl_long, HI);
         BigDecimal lot_long = money_long.calcLot();
