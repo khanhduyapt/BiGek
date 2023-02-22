@@ -2871,10 +2871,9 @@ public class BinanceServiceImpl implements BinanceService {
             String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
             String char_name = Utils.getChartName(list);
 
-            String switch_trend_ma = Utils.switchTrendByMa(list);
-            if (Utils.isNotBlank(switch_trend_ma)) {
-                trend = switch_trend_ma;
-                switch_trend = switch_trend_ma;
+            switch_trend = Utils.switchTrendByMa(list);
+            if (Utils.isNotBlank(switch_trend)) {
+                trend = switch_trend;
                 note = "   Ma3xMa6 ";
             }
 

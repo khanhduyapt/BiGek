@@ -127,13 +127,13 @@ public class Utils {
     public static final long MINUTES_OF_15M = 15;
 
     public static final List<String> EPICS_FOREX = Arrays.asList("BTCUSD", "DXY", "GOLD", "OIL_CRUDE", "SILVER",
-            "NATURALGAS", "US30", "US500", "J225", "SP35", "UK100", "FR40", "HK50", "EURUSD", "GBPUSD", "AUDUSD",
+            "NATURALGAS", "US30", "US500", "J225", "UK100", "FR40", "HK50", "EURUSD", "GBPUSD", "AUDUSD",
             "NZDUSD", "USDJPY", "USDCAD", "USDCHF", "EURGBP");
-    // MFF ko co: "EU50", "AU200", "DE40", "US100",
+    // MFF ko co: "EU50", "AU200", "DE40", "US100", "SP35",
 
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("GBPAUD", "EURAUD", "EURJPY", "EURCAD",
-            "CADJPY", "GBPJPY", "AUDCAD", "GBPCAD", "EURNZD", "AUDNZD", "NZDCAD", "USDPLN");
-    // Kho an: "NZDJPY", "USDMXN", "USDZAR", "USDHUF", "USDHKD","AUDJPY", "USDTRY",  "USDNOK", "USDSEK", "USDCZK"
+            "CADJPY", "GBPJPY", "NZDJPY", "AUDJPY", "AUDCAD", "GBPCAD", "EURNZD", "AUDNZD", "NZDCAD", "USDPLN");
+    // Kho an: "USDMXN", "USDZAR", "USDHUF", "USDHKD","USDTRY",  "USDNOK", "USDSEK", "USDCZK"
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
@@ -2764,12 +2764,10 @@ public class Utils {
 
         if (trend_main.contains(Utils.TREND_LONG)) {
             result = Utils.TREND_LONG;
-            return "";
         }
 
         if (trend_main.contains(Utils.TREND_SHORT)) {
             result = Utils.TREND_SHORT;
-            return "";
         }
 
         return result;
