@@ -2896,7 +2896,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                         String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long, sl_short);
                         String log = wdh4 + "(H4: " + Utils.appendSpace(switch_trend, 5) + ") ";
-                        log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
+                        log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 75);
                         log += buffer + "   Ma3xMa6   " + wdh4;
                         Utils.logWritelnWithTime(log, false);
                     }
@@ -2918,7 +2918,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long_h4, sl_short_h4);
                     String log = wdh4 + char_name.replace(")", "").trim();
                     log += ": " + Utils.appendSpace(switch_trend, 5) + ") ";
-                    log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
+                    log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 75);
                     log += buffer + "   Ma3xMa6   (H4): " + note_h4;
                     Utils.logWritelnWithTime(log, false); //+ "\n"
                 }
