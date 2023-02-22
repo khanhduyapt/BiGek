@@ -2720,7 +2720,7 @@ public class Utils {
         return "";
     }
 
-    private static String checkXCutDownY(BigDecimal maX_1, BigDecimal maX_2, BigDecimal maY_1, BigDecimal maY_2) {
+    private static String checkXCutDnY(BigDecimal maX_1, BigDecimal maX_2, BigDecimal maY_1, BigDecimal maY_2) {
         if ((maX_1.compareTo(maX_2) < 0) && (maX_1.compareTo(maY_1) < 0) && (maY_2.compareTo(maX_2) < 0)) {
             return TREND_SHORT;
         }
@@ -2757,7 +2757,6 @@ public class Utils {
 
         String result = "";
         String trend_main = checkTrendSideway(list, 1, 3);
-        String trend_conf = "";// checkTrendSideway(list, 3, 8);
 
         if (trend_main.contains(Utils.TREND_LONG) && trend_main.contains(Utils.TREND_SHORT)) {
             return "";
@@ -2765,61 +2764,54 @@ public class Utils {
 
         if (trend_main.contains(Utils.TREND_LONG)) {
             result = Utils.TREND_LONG;
-            if (trend_conf.contains(Utils.TREND_SHORT)) {
-                return "";
-            }
+            return "";
         }
 
         if (trend_main.contains(Utils.TREND_SHORT)) {
             result = Utils.TREND_SHORT;
-            if (trend_conf.contains(Utils.TREND_LONG)) {
-                return "";
-            }
+            return "";
         }
 
         return result;
     }
 
     private static String checkTrendSideway(List<BtcFutures> list, int str, int end) {
-        String s_m03x10 = "";
+        String l_m3x15 = "";
+        String s_m3x15 = "";
+        String l_m3x20 = "";
+        String s_m3x20 = "";
 
-        BigDecimal ma3_1 = calcMA(list, 3, str);
-        BigDecimal ma3_2 = calcMA(list, 3, end);
-
-        String l_m10x20 = "";
-        String s_m10x20 = "";
         int slow_index = 5;
         if (list.get(0).getId().contains("_15m_")) {
             slow_index = 20;
         } else if (list.get(0).getId().contains("_1h_")) {
             slow_index = 10;
         }
-
         if (slow_index >= list.size()) {
             slow_index = list.size() - 1;
         }
 
-        BigDecimal maX_1 = calcMA(list, slow_index, str);
-        BigDecimal maX_2 = calcMA(list, slow_index, end);
+        BigDecimal ma3_1 = calcMA(list, 3, str);
+        BigDecimal ma3_2 = calcMA(list, 3, end);
+        BigDecimal ma10_1 = calcMA(list, slow_index, str);
+        BigDecimal ma10_2 = calcMA(list, slow_index, end);
 
-        if (list.get(0).getId().contains("_15m_")) {
-            BigDecimal ma10_1 = calcMA(list, 10, str);
-            BigDecimal ma10_2 = calcMA(list, 10, end);
+        String l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
+        String s_m03x10 = Utils.checkXCutDnY(ma3_1, ma3_2, ma10_1, ma10_2);
 
-            l_m10x20 = Utils.checkXCutUpY(ma10_1, ma10_2, maX_1, maX_2);
-            s_m10x20 = Utils.checkXCutDownY(ma10_1, ma10_2, maX_1, maX_2);
+        if (list.get(0).getId().contains("_15m_") || list.get(0).getId().contains("_1h_")) {
+            BigDecimal ma15_1 = calcMA(list, 15, str);
+            BigDecimal ma15_2 = calcMA(list, 15, end);
+            l_m3x15 = Utils.checkXCutUpY(ma3_1, ma3_2, ma15_1, ma15_2);
+            s_m3x15 = Utils.checkXCutDnY(ma3_1, ma3_2, ma15_1, ma15_2);
+
+            BigDecimal ma20_1 = calcMA(list, 20, str);
+            BigDecimal ma20_2 = calcMA(list, 20, end);
+            l_m3x20 = Utils.checkXCutUpY(ma3_1, ma3_2, ma20_1, ma20_2);
+            s_m3x20 = Utils.checkXCutDnY(ma3_1, ma3_2, ma20_1, ma20_2);
         }
 
-        String l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, maX_1, maX_2);
-        if (!isUptrendByMaIndex(list, 3)) {
-            l_m03x10 = "";
-        }
-        // ----------------------------------------
-        s_m03x10 = Utils.checkXCutDownY(ma3_1, ma3_2, maX_1, maX_2);
-        if (isUptrendByMaIndex(list, 3)) {
-            s_m03x10 = "";
-        }
-        String trend = l_m03x10 + "_" + l_m10x20 + "_" + s_m03x10 + "_" + s_m10x20;
+        String trend = l_m03x10 + "_" + l_m3x15 + "_" + l_m3x20 + "_____" + s_m03x10 + "_" + s_m3x15 + "_" + s_m3x20;
 
         return trend;
     }
