@@ -2895,7 +2895,7 @@ public class BinanceServiceImpl implements BinanceService {
                         BigDecimal sl_short = Utils.getBigDecimal(entity_d.getHigh_price());
 
                         String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long, sl_short);
-                        String log = wdh4 + "(H4)  (" + Utils.appendSpace(switch_trend, 5) + ") ";
+                        String log = wdh4 + "(H4: " + Utils.appendSpace(switch_trend, 5) + ") ";
                         log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 83);
                         log += Utils.getCurrentPrice(list) + buffer + "   Ma3xMa6   " + wdh4;
                         Utils.logWritelnWithTime(log, false);
@@ -2916,7 +2916,7 @@ public class BinanceServiceImpl implements BinanceService {
                     BigDecimal sl_short_h4 = Utils.getBigDecimal(entity_h4.getHigh_price());
 
                     String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long_h4, sl_short_h4);
-                    String log = wdh4 + char_name + "(" + Utils.appendSpace(switch_trend, 5) + ") ";
+                    String log = wdh4 + char_name.replace(")", "") + ": " + Utils.appendSpace(switch_trend, 5) + ") ";
                     log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 83);
                     log += Utils.getCurrentPrice(list) + buffer + "   Ma3xMa6   (H4): " + note_h4;
                     Utils.logWritelnWithTime(log + "\n", false);
@@ -2932,17 +2932,34 @@ public class BinanceServiceImpl implements BinanceService {
                 ordersRepository.deleteById(connect_time_out_id);
             }
 
-            String date_time = LocalDateTime.now().toString();
-            List<BigDecimal> body = Utils.getOpenCloseCandle(list);
-            List<BigDecimal> low_high = Utils.calc_SL_Long_Short_Forex(list);
+            boolean allow_update = true;
+            if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX) && Utils.isBlank(switch_trend)) {
+                Orders entity_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+                if (Objects.nonNull(entity_h4)) {
+                    LocalDateTime curr_time = LocalDateTime.now();
+                    String insert_time = Utils.getStringValue(entity_h4.getInsertTime());
+                    LocalDateTime pre_time = LocalDateTime.parse(insert_time);
+                    long elapsedMinutes = Duration.between(pre_time, curr_time).toMinutes();
 
-            if (note.length() > 500) {
-                note = note.substring(0, 485);
+                    if ((Utils.MINUTES_OF_4H * 3) <= elapsedMinutes) {
+                        allow_update = false;
+                    }
+                }
             }
-            Orders entity = new Orders(id, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
-                    low_high.get(0), low_high.get(1), note);
 
-            ordersRepository.save(entity);
+            if (allow_update) {
+                String date_time = LocalDateTime.now().toString();
+                List<BigDecimal> body = Utils.getOpenCloseCandle(list);
+                List<BigDecimal> low_high = Utils.calc_SL_Long_Short_Forex(list);
+
+                if (note.length() > 500) {
+                    note = note.substring(0, 485);
+                }
+                Orders entity = new Orders(id, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
+                        low_high.get(0), low_high.get(1), note);
+
+                ordersRepository.save(entity);
+            }
         }
 
         return trend;
