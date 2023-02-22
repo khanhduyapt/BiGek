@@ -2612,17 +2612,17 @@ public class Utils {
         BigDecimal lot_short = money_short.calcLot();
         BigDecimal tp_money_short = money_short.calcTPMoney();
 
-        result += " Risk: " + Utils.appendSpace(removeLastZero(risk) + "$", 8);
-        result += "   Entry: " + Utils.appendSpace(removeLastZero(entry) + "$", 8);
+        result += " Risk: " + Utils.appendSpace(removeLastZero(risk) + "$", 5);
+        result += "   Entry: " + Utils.appendSpace(removeLastZero(roundDefault(entry)) + "$", 10);
         result += "   ";
         result += " SL_Long: " + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12);
         result += "(" + Utils.appendSpace(removeLastZero(lot_long), 5) + " lot)";
-        result += " to: " + Utils.appendSpace(removeLastZero(roundDefault(HI)), 8);
+        result += " to: " + Utils.appendSpace(removeLastZero(roundDefault(HI)), 10);
         result += "= " + Utils.appendSpace(removeLastZero(tp_money_long), 5) + "$";
         result += "    ";
         result += " SL_short: " + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12);
         result += "(" + Utils.appendSpace(removeLastZero(lot_short), 5) + " lot)";
-        result += " to: " + Utils.appendSpace(removeLastZero(roundDefault(LO)), 8);
+        result += " to: " + Utils.appendSpace(removeLastZero(roundDefault(LO)), 10);
         result += "= " + Utils.appendSpace(removeLastZero(tp_money_short), 5) + "$";
 
         result = Utils.appendSpace(result, 150);
