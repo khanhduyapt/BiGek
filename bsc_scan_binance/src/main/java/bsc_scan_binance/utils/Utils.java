@@ -1311,7 +1311,7 @@ public class Utils {
     }
 
     public static String getPercentToEntry(BigDecimal curr_price, BigDecimal entry, boolean isLong) {
-        String mySL = Utils.appendSpace(Utils.removeLastZero(roundDefault(entry)), 5) + "("
+        String mySL = Utils.appendSpace(Utils.removeLastZero(roundDefault(entry)), 6) + "("
                 + (curr_price.compareTo(entry) > 0 ? Utils.getPercentStr(curr_price, entry)
                         : Utils.getPercentStr(entry, curr_price))
                 + ")";
@@ -2616,13 +2616,13 @@ public class Utils {
         result += "   Entry: " + Utils.appendSpace(removeLastZero(roundDefault(entry)) + "$", 10);
         result += "   ";
         result += " SL_Long: " + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12);
-        result += "(" + Utils.appendSpace(removeLastZero(lot_long), 5) + " lot)";
-        result += " to: " + Utils.appendSpace(removeLastZero(roundDefault(HI)), 10);
+        result += "(" + Utils.appendSpace(removeLastZero(lot_long), 6) + " lot)";
+        result += " to: " + Utils.appendSpace(removeLastZero(roundDefault(HI)), 6);
         result += "= " + Utils.appendSpace(removeLastZero(tp_money_long), 5) + "$";
-        result += "    ";
+        result += "     ";
         result += " SL_short: " + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12);
-        result += "(" + Utils.appendSpace(removeLastZero(lot_short), 5) + " lot)";
-        result += " to: " + Utils.appendSpace(removeLastZero(roundDefault(LO)), 10);
+        result += "(" + Utils.appendSpace(removeLastZero(lot_short), 6) + " lot)";
+        result += " to: " + Utils.appendSpace(removeLastZero(roundDefault(LO)), 6);
         result += "= " + Utils.appendSpace(removeLastZero(tp_money_short), 5) + "$";
 
         result = Utils.appendSpace(result, 150);
