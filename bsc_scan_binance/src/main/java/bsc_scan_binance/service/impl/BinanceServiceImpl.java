@@ -2858,6 +2858,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // Trend W & D = trend of Ma3
+        String switch_trend = "";
         boolean isUptrend = Utils.isUptrendByMaIndex(list, 3);
         String trend = isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
@@ -2867,7 +2868,7 @@ public class BinanceServiceImpl implements BinanceService {
                 || Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
             String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
             String char_name = Utils.getChartName(list);
-            String switch_trend = "";
+
             String switch_trend_ma = Utils.switchTrendByMa(list);
             if (Utils.isNotBlank(switch_trend_ma)) {
                 trend = switch_trend_ma;
@@ -2924,26 +2925,32 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
+        //----------------------------------------------------------------------------------------------------
+
         {
             Orders entity_time_out = ordersRepository.findById(connect_time_out_id).orElse(null);
             if (Objects.nonNull(entity_time_out)) {
                 ordersRepository.deleteById(connect_time_out_id);
             }
 
+            boolean allow_update = true;
             String date_time = LocalDateTime.now().toString();
 
-            if (Objects.equals(Utils.CAPITAL_TIME_WEEK, CAPITAL_TIME_XXX)) {
+            if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX) && Utils.isBlank(switch_trend)) {
+                Orders entity_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+                if (Objects.nonNull(entity_h4)) {
+                    LocalDateTime curr_time = LocalDateTime.now();
+                    String insert_time = Utils.getStringValue(entity_h4.getInsertTime());
+                    LocalDateTime pre_time = LocalDateTime.parse(insert_time);
+                    long elapsedMinutes = Duration.between(pre_time, curr_time).toMinutes();
 
-                List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(1, 2));
-                List<BigDecimal> low_high = Utils.getLowHighCandle(list.subList(1, 2));
+                    if ((Utils.MINUTES_OF_4H * 3) <= elapsedMinutes) {
+                        allow_update = false;
+                    }
+                }
+            }
 
-                Orders entity = new Orders(id, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
-                        low_high.get(0), low_high.get(1), note);
-
-                ordersRepository.save(entity);
-
-            } else {
-
+            if (allow_update) {
                 List<BigDecimal> body = Utils.getOpenCloseCandle(list);
                 List<BigDecimal> low_high = Utils.calc_SL_Long_Short_Forex(list);
 

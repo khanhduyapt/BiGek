@@ -2599,7 +2599,7 @@ public class Utils {
         String result = "";
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
-        BigDecimal entry = roundDefault(calcMA(list_h1, 3, 1));
+        BigDecimal entry = list_h1.get(0).getCurrPrice();
         List<BigDecimal> low_heigh = getLowHighCandle(list_h1);
         BigDecimal LO = low_heigh.get(0);
         BigDecimal HI = low_heigh.get(1);
