@@ -2942,7 +2942,7 @@ public class BinanceServiceImpl implements BinanceService {
                     LocalDateTime pre_time = LocalDateTime.parse(insert_time);
                     long elapsedMinutes = Duration.between(pre_time, curr_time).toMinutes();
 
-                    if ((Utils.MINUTES_OF_4H * 3) <= elapsedMinutes) {
+                    if ((Utils.MINUTES_OF_4H * 2) <= elapsedMinutes) {
                         allow_update = false;
                     }
                 }
