@@ -1311,7 +1311,7 @@ public class Utils {
     }
 
     public static String getPercentToEntry(BigDecimal curr_price, BigDecimal entry, boolean isLong) {
-        String mySL = Utils.removeLastZero(entry) + "("
+        String mySL = Utils.appendSpace(Utils.removeLastZero(roundDefault(entry)), 5) + "("
                 + (curr_price.compareTo(entry) > 0 ? Utils.getPercentStr(curr_price, entry)
                         : Utils.getPercentStr(entry, curr_price))
                 + ")";

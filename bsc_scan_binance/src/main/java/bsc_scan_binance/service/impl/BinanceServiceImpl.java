@@ -2916,10 +2916,11 @@ public class BinanceServiceImpl implements BinanceService {
                     BigDecimal sl_short_h4 = Utils.getBigDecimal(entity_h4.getHigh_price());
 
                     String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long_h4, sl_short_h4);
-                    String log = wdh4 + char_name.replace(")", "") + ": " + Utils.appendSpace(switch_trend, 5) + ") ";
+                    String log = wdh4 + char_name.replace(")", "").trim();
+                    log += ": " + Utils.appendSpace(switch_trend, 5) + ") ";
                     log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 83);
                     log += Utils.getCurrentPrice(list) + buffer + "   Ma3xMa6   (H4): " + note_h4;
-                    Utils.logWritelnWithTime(log + "\n", false);
+                    Utils.logWritelnWithTime(log, false); //+ "\n"
                 }
             }
         }
