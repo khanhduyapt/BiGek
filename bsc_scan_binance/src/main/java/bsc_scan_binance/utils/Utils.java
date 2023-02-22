@@ -2579,11 +2579,11 @@ public class Utils {
         BigDecimal ma3 = calcMA(list, 3, 1);
 
         BigDecimal sl_long = ma3.subtract(LO);
-        sl_long = sl_long.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
+        sl_long = sl_long.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         sl_long = roundDefault(LO.subtract(sl_long));
 
         BigDecimal sl_short = HI.subtract(ma3);
-        sl_short = sl_short.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
+        sl_short = sl_short.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         sl_short = roundDefault(HI.add(sl_short));
 
         List<BigDecimal> result = new ArrayList<BigDecimal>();
