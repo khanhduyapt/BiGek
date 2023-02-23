@@ -2985,8 +2985,21 @@ public class BinanceServiceImpl implements BinanceService {
                     // sendMsgPerHour(EVENT_ID, msg, true);
                 }
 
+                String ma_3_5_8_15 = "";
                 if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
                     entity = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+
+                    BigDecimal ma3_1 = Utils.calcMA(list, 3, 1);
+                    BigDecimal ma5_1 = Utils.calcMA(list, 5, 1);
+                    BigDecimal ma8_1 = Utils.calcMA(list, 8, 1);
+                    BigDecimal ma15_1 = Utils.calcMA(list, 15, 1);
+
+                    if ((ma3_1.compareTo(ma5_1) > 0) && (ma5_1.compareTo(ma8_1) > 0) && (ma8_1.compareTo(ma15_1) > 0)) {
+                        ma_3_5_8_15 = "   (LONG_Ma3, 5, 8, 15)";
+                    }
+                    if ((ma3_1.compareTo(ma5_1) < 0) && (ma5_1.compareTo(ma8_1) < 0) && (ma8_1.compareTo(ma15_1) < 0)) {
+                        ma_3_5_8_15 = "   (SHORT_Ma3, 5, 8, 15)";
+                    }
                 }
 
                 if (Objects.nonNull(entity)) {
@@ -2997,8 +3010,15 @@ public class BinanceServiceImpl implements BinanceService {
                     String log = wdh4 + char_name.replace(")", "").trim();
                     log += ": " + Utils.appendSpace(switch_trend, 5) + ") ";
                     log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
-                    log += buffer;
+                    log += buffer + ma_3_5_8_15;
                     Utils.logWritelnWithTime(log, false); // + "\n"
+
+                    if (Utils.isNotBlank(ma_3_5_8_15)) {
+                        String trend_h = "(" + ma_3_5_8_15 + ")";
+                        String EVENT_ID = EVENT_PUMP + EPIC + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
+                        String msg = trend_h + char_name + EPIC;
+                        sendMsgPerHour(EVENT_ID, msg, true);
+                    }
                 }
             }
         }

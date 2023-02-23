@@ -92,7 +92,7 @@ public class BscScanBinanceApplication {
             }
 
             // ----------------------------------------
-            binance_service.clearTrash();
+            // binance_service.clearTrash();
 
             List<String> capital_list = new ArrayList<String>();
             capital_list.addAll(Utils.EPICS_FOREX);

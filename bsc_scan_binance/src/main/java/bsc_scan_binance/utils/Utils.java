@@ -55,7 +55,7 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 //@Slf4j
 public class Utils {
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0015);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.001);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -2893,14 +2893,14 @@ public class Utils {
             return false;
         }
 
-        int end = 2;
+        int end = 3;
         if (list.get(0).getId().contains("_1w_")) {
-            end = 1;
+            end = 2;
         }
         if (end > list.size()) {
             end = list.size() - 1;
         }
-        BigDecimal ma_c = calcMA(list, maIndex, 0);
+        BigDecimal ma_c = calcMA(list, maIndex, 1);
         BigDecimal ma_p = calcMA(list, maIndex, end);
         if (ma_c.compareTo(ma_p) > 0) {
             return true;
