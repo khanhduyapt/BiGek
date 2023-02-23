@@ -247,9 +247,11 @@ public class MoneyAtRiskResponse {
             standard_lot = BigDecimal.valueOf(0.337);
             unit_risk_per_pip = BigDecimal.valueOf(259.999999999996);
             break;
-
         default:
+            String msg = "getStandard_lot: " + EPIC + " not exist!";
             System.out.println("getStandard_lot: " + EPIC + " not exist!----------------------------------");
+            Utils.logWritelnWithTime(msg, false);
+            Utils.sendToMyTelegram(msg);
             break;
         }
 
