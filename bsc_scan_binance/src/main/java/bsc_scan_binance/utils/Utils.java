@@ -132,7 +132,8 @@ public class Utils {
     // MFF ko co: "EU50", "AU200", "DE40", "US100", "SP35",
 
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("GBPAUD", "EURAUD", "EURJPY", "EURCAD",
-            "CADJPY", "GBPJPY", "NZDJPY", "AUDJPY", "AUDCAD", "GBPCAD", "EURNZD", "AUDNZD", "NZDCAD", "USDPLN");
+            "CADJPY", "GBPJPY", "NZDJPY", "AUDJPY", "AUDCAD", "GBPCAD", "EURNZD", "AUDNZD", "NZDCAD", "USDPLN",
+            "USDSEK");
     // Kho an: "USDMXN", "USDZAR", "USDHUF", "USDHKD","USDTRY",  "USDNOK", "USDSEK", "USDCZK"
 
     public static String sql_CryptoHistoryResponse = " "
@@ -2624,6 +2625,14 @@ public class Utils {
         result += "(" + Utils.appendSpace(removeLastZero(lot_short), 6) + " lot)";
         result += " to: " + Utils.appendSpace(removeLastZero(roundDefault(LO)), 6);
         result += "= " + Utils.appendSpace(removeLastZero(tp_money_short), 5) + "$";
+
+        if (tp_money_long.compareTo(tp_money_short.multiply(BigDecimal.valueOf(2))) > 0) {
+            result += " --->  " + Utils.appendSpace("LONG", 8);
+        } else if (tp_money_short.compareTo(tp_money_long.multiply(BigDecimal.valueOf(2))) > 0) {
+            result += " --->  " + Utils.appendSpace("SHORT", 8);
+        } else {
+            result += Utils.appendSpace("", 15);
+        }
 
         result = Utils.appendSpace(result, 150);
 
