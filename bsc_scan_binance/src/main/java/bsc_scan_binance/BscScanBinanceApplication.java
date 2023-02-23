@@ -117,12 +117,12 @@ public class BscScanBinanceApplication {
 
                 while (index_crypto < total) {
                     wait(SLEEP_MINISECONDS);
-
                     CandidateCoin coin = token_list.get(index_crypto);
                     String GECKOID = coin.getGeckoid();
                     String SYMBOL = coin.getSymbol();
 
                     try {
+                        checkBtcKillLongShort_15m(binance_service);
 
                         //isReloadAfter(1, "FOREX") &&
                         if (!Utils.isWeekend() && Utils.isBusinessTime() && Utils.isAllowSendMsg()) {
@@ -180,8 +180,6 @@ public class BscScanBinanceApplication {
                         // wait(SLEEP_MINISECONDS);
                         // }
                         // ----------------------------------------------
-
-                        checkBtcKillLongShort_15m(binance_service);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

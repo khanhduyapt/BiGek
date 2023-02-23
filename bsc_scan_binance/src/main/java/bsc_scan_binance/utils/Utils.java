@@ -2621,23 +2621,29 @@ public class Utils {
         BigDecimal tp_money_long = money_long.calcTPMoney();
 
         MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, entry, sl_short, LO);
-        BigDecimal lot_short = money_short.calcLot();
-        BigDecimal tp_money_short = money_short.calcTPMoney();
+        BigDecimal lot_shot = money_short.calcLot();
+        BigDecimal tp_money_shot = money_short.calcTPMoney();
 
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 10);
-        //result +=   "\n            ";
         result += " E: " + Utils.appendSpace(removeLastZero(roundDefault(entry)) + "$", 8);
-        result += "(Long )";
-        result += Utils.appendLeft(removeLastZero(lot_long), 6) + "(lot)";
-        result += "   SL: " + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12);
-        result += "   TP: " + Utils.appendSpace(removeLastZero(roundDefault(HI)), 6);
-        result += "= " + Utils.appendLeft(removeLastZero(tp_money_long), 5) + "$";
-        result += "     ";
-        result += " (Short) ";
-        result += Utils.appendLeft(removeLastZero(lot_short), 6) + "(lot)";
-        result += "   SL: " + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12);
-        result += "   TP: " + Utils.appendSpace(removeLastZero(roundDefault(LO)), 6);
-        result += "= " + Utils.appendLeft(removeLastZero(tp_money_short), 5) + "$";
+
+        result += Utils.appendSpace(
+                "(Long )"
+                        + Utils.appendLeft(removeLastZero(lot_long), 6) + "(lot)"
+                        + "   SL: " + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12)
+                        + "   TP: " + Utils.appendSpace(removeLastZero(roundDefault(HI)), 6)
+                        + "= " + Utils.appendLeft(removeLastZero(tp_money_long), 5) + "$",
+                65);
+
+        result += "  ";
+
+        result += Utils.appendSpace(
+                " (Short)"
+                        + Utils.appendLeft(removeLastZero(lot_shot), 6) + "(lot)"
+                        + "   SL: " + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12)
+                        + "   TP: " + Utils.appendSpace(removeLastZero(roundDefault(LO)), 6)
+                        + "= " + Utils.appendLeft(removeLastZero(tp_money_shot), 5) + "$",
+                65);
 
         // result += Utils.appendSpace("", 15);
         //if (tp_money_long.compareTo(tp_money_short.multiply(BigDecimal.valueOf(2))) > 0) {
