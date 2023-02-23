@@ -123,6 +123,8 @@ public class BscScanBinanceApplication {
                 System.out.println();
                 String init = "";
                 while (index_crypto < total) {
+                    // wait(SLEEP_MINISECONDS);
+
                     CandidateCoin coin = token_list.get(index_crypto);
                     String GECKOID = coin.getGeckoid();
                     String SYMBOL = coin.getSymbol();
@@ -171,6 +173,11 @@ public class BscScanBinanceApplication {
 
                                 index_forex += 1;
                             } else {
+                                if (round_forex == 0) {
+                                    Utils.logWritelnWithTime(Utils.appendSpace("", 163), true);
+                                    Utils.logWritelnWithTime(Utils.appendSpace("", 163), true);
+                                    Utils.logWritelnWithTime(Utils.appendSpace("", 163), true);
+                                }
                                 index_forex = 0;
                                 round_forex += 1;
                                 Utils.initCapital();
@@ -208,8 +215,6 @@ public class BscScanBinanceApplication {
                         // wait(SLEEP_MINISECONDS);
                         // }
                         // ----------------------------------------------
-
-                        wait(SLEEP_MINISECONDS);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -264,9 +269,19 @@ public class BscScanBinanceApplication {
             binance_service.sendMsgKillLongShort("binancecoin", "BNB");
             wait(SLEEP_MINISECONDS);
         }
-        binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1h, "bitcoin", "BTC");
-        binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1h, "ethereum", "ETH");
-        binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1h, "binancecoin", "BNB");
+        String init = "";
+        init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1h, "bitcoin", "BTC");
+        if (Utils.isNotBlank(init)) {
+            wait(SLEEP_MINISECONDS);
+        }
+        init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1h, "ethereum", "ETH");
+        if (Utils.isNotBlank(init)) {
+            wait(SLEEP_MINISECONDS);
+        }
+        init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1h, "binancecoin", "BNB");
+        if (Utils.isNotBlank(init)) {
+            wait(SLEEP_MINISECONDS);
+        }
     }
 
     public static boolean isReloadAfter(long minutes, String geckoid_or_epic) {

@@ -2624,7 +2624,7 @@ public class Utils {
         BigDecimal lot_short = money_short.calcLot();
         BigDecimal tp_money_short = money_short.calcTPMoney();
 
-        result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 5) + "\n";
+        result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 19) + "\n";
         result += "            ";
         result += Utils.appendSpace("(" + removeLastZero(roundDefault(entry)) + "$)", 10);
         result += "(Long )";

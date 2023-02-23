@@ -2824,8 +2824,6 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initForexTrend(String EPIC, String CAPITAL_TIME_XXX) {
-        String connect_time_out_id = Utils.TEXT_CONNECTION_TIMED_OUT + "_" + Utils.CAPITAL_TIME_MINUTE_15;
-
         if (!isReloadPrepareOrderTrend(EPIC, CAPITAL_TIME_XXX)) {
             return "";
         }
@@ -2839,6 +2837,7 @@ public class BinanceServiceImpl implements BinanceService {
             lengh = 15;
         }
 
+        String time_out_id = Utils.TEXT_CONNECTION_TIMED_OUT + "_" + Utils.CAPITAL_TIME_MINUTE_15;
         List<BtcFutures> list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, lengh);
         if (CollectionUtils.isEmpty(list)) {
             BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS);
@@ -2851,7 +2850,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnWithTime(result, false);
 
                 String date_time = LocalDateTime.now().toString();
-                Orders entity_time_out = new Orders(connect_time_out_id, date_time, "", BigDecimal.ZERO,
+                Orders entity_time_out = new Orders(time_out_id, date_time, "", BigDecimal.ZERO,
                         BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "Connection timed out");
                 ordersRepository.save(entity_time_out);
 
@@ -2914,9 +2913,9 @@ public class BinanceServiceImpl implements BinanceService {
         //----------------------------------------------------------------------------------------------------
 
         {
-            Orders entity_time_out = ordersRepository.findById(connect_time_out_id).orElse(null);
+            Orders entity_time_out = ordersRepository.findById(time_out_id).orElse(null);
             if (Objects.nonNull(entity_time_out)) {
-                ordersRepository.deleteById(connect_time_out_id);
+                ordersRepository.deleteById(time_out_id);
             }
 
             boolean allow_update = true;
