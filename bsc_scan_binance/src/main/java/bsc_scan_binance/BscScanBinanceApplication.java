@@ -131,12 +131,12 @@ public class BscScanBinanceApplication {
 
                     try {
 
-                        if (!Utils.isWeekend() && Utils.isBusinessTime() && Utils.isAllowSendMsgSetting()) {
-
+                        //isReloadAfter(1, "FOREX") &&
+                        if (!Utils.isWeekend() && Utils.isBusinessTime() && Utils.isAllowSendMsg()) {
                             if (binance_service.hasConnectTimeOutException()) {
                                 for (int loop = 1; loop < 15; loop++) {
                                     System.out.println("Connection timed out");
-                                    wait(SLEEP_MINISECONDS);
+                                    wait(SLEEP_MINISECONDS * 5);
                                 }
                             }
 
@@ -158,24 +158,22 @@ public class BscScanBinanceApplication {
 
                                 // ----------------------------------------------
                                 if (round_forex > 0) {
-                                    if (isReloadAfter(1, "FOREX")) {
-                                        init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                        if (Utils.isNotBlank(init)) {
-                                            String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3)
-                                                    + "/"
-                                                    + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
-                                                    + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 10) + " " + init;
-                                            System.out.println(msg);
-                                        }
+                                    init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                    if (Utils.isNotBlank(init)) {
+                                        String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3)
+                                                + "/"
+                                                + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
+                                                + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 10) + " " + init;
+                                        System.out.println(msg);
+
+                                        wait(SLEEP_MINISECONDS * 5);
                                     }
                                 }
 
                                 index_forex += 1;
                             } else {
                                 if (round_forex == 0) {
-                                    Utils.logWritelnWithTime(Utils.appendSpace("", 163), true);
-                                    Utils.logWritelnWithTime(Utils.appendSpace("", 163), true);
-                                    Utils.logWritelnWithTime(Utils.appendSpace("", 163), true);
+                                    Utils.writelnLogFooter_Forex();
                                 }
                                 index_forex = 0;
                                 round_forex += 1;

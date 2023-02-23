@@ -749,7 +749,7 @@ public class Utils {
         return false;
     }
 
-    public static boolean isAllowSendMsgSetting() {
+    public static boolean isAllowSendMsg() {
         String cty = "PC";
         String home = "DESKTOP-L4M1JU2";
         String hostname;
@@ -858,7 +858,7 @@ public class Utils {
         try {
             FileWriter fw = new FileWriter(getForexLogFile(), true);
             fw.write(BscScanBinanceApplication.hostname
-                    + "------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+                    + "-------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -880,7 +880,7 @@ public class Utils {
         String msg = text.replaceAll("↑", "^").replaceAll("↓", "v").replaceAll(" ", "");
         System.out.println();
         System.out.println(msg + " 💰 ");
-        if (isAllowSendMsgSetting()) {
+        if (isAllowSendMsg()) {
             sendToChatId(Utils.chatId_duydk, msg + " 💰 ");
         }
     }
@@ -889,7 +889,7 @@ public class Utils {
         String msg = text.replaceAll("↑", "^").replaceAll("↓", "v").replaceAll(" ", "");
         System.out.println(msg);
 
-        if (isAllowSendMsgSetting()) {
+        if (isAllowSendMsg()) {
             if (!isBusinessTime()) {
                 // return;
             }
