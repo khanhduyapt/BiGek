@@ -1332,7 +1332,7 @@ public class Utils {
 
     public static String getPercentStr(BigDecimal value, BigDecimal entry) {
 
-        return removeLastZero(getPercent(value, entry)) + "%";
+        return appendLeft(removeLastZero(getPercent(value, entry)), 5) + "%";
 
     }
 
@@ -2624,9 +2624,9 @@ public class Utils {
         BigDecimal lot_short = money_short.calcLot();
         BigDecimal tp_money_short = money_short.calcTPMoney();
 
-        result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 19) + "\n";
-        result += "            ";
-        result += Utils.appendSpace("(" + removeLastZero(roundDefault(entry)) + "$)", 10);
+        result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 10);
+        //result +=   "\n            ";
+        result += " E: " + Utils.appendSpace(removeLastZero(roundDefault(entry)) + "$", 8);
         result += "(Long )";
         result += Utils.appendLeft(removeLastZero(lot_long), 6) + "(lot)";
         result += "   SL: " + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12);
@@ -2639,13 +2639,14 @@ public class Utils {
         result += "   TP: " + Utils.appendSpace(removeLastZero(roundDefault(LO)), 6);
         result += "= " + Utils.appendLeft(removeLastZero(tp_money_short), 5) + "$";
 
-        if (tp_money_long.compareTo(tp_money_short.multiply(BigDecimal.valueOf(2))) > 0) {
-            result += " --->  " + Utils.appendSpace("LONG", 8);
-        } else if (tp_money_short.compareTo(tp_money_long.multiply(BigDecimal.valueOf(2))) > 0) {
-            result += " --->  " + Utils.appendSpace("SHORT", 8);
-        } else {
-            result += Utils.appendSpace("", 15);
-        }
+        // result += Utils.appendSpace("", 15);
+        //if (tp_money_long.compareTo(tp_money_short.multiply(BigDecimal.valueOf(2))) > 0) {
+        //    result += " --->  " + Utils.appendSpace("LONG", 8);
+        //} else if (tp_money_short.compareTo(tp_money_long.multiply(BigDecimal.valueOf(2))) > 0) {
+        //    result += " --->  " + Utils.appendSpace("SHORT", 8);
+        //} else {
+        //    result += Utils.appendSpace("", 15);
+        //}
 
         result = Utils.appendSpace(result, 150);
 

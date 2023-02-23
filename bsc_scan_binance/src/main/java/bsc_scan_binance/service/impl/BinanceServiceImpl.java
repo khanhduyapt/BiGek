@@ -2112,6 +2112,11 @@ public class BinanceServiceImpl implements BinanceService {
         if (!CollectionUtils.isEmpty(list)) {
             fundingHistoryRepository.deleteAll(list);
         }
+
+        List<Orders> orders = ordersRepository.clearTrash();
+        if (!CollectionUtils.isEmpty(orders)) {
+            ordersRepository.deleteAll(orders);
+        }
     }
 
     @Override
@@ -2652,8 +2657,17 @@ public class BinanceServiceImpl implements BinanceService {
             trend_d = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_DAY);
             trend_h4 = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
 
-            trend_d_h4 = Utils.appendSpace("(W:" + Utils.appendSpace(trend_w, 5) + ", D:"
-                    + Utils.appendSpace(trend_d, 5) + ", H4:" + Utils.appendSpace(trend_h4, 5) + ")", 30);
+            String msg = "(W:" + Utils.appendSpace(trend_w, 5) + ", D:"
+                    + Utils.appendSpace(trend_d, 5);
+
+            if (Utils.isNotBlank(trend_h4)) {
+                msg += ", H4:" + Utils.appendSpace(trend_h4, 5);
+            } else {
+                msg += Utils.appendSpace("", 10);
+            }
+            msg += ")";
+
+            trend_d_h4 = Utils.appendSpace(msg, 30);
         } else {
             trend_d = getPrepareOrderTrend(EPIC, Utils.CRYPTO_TIME_1d);
             trend_h4 = getPrepareOrderTrend(EPIC, Utils.CRYPTO_TIME_4h);
@@ -2863,7 +2877,6 @@ public class BinanceServiceImpl implements BinanceService {
         boolean isUptrend = Utils.isUptrendByMaIndex(list, 3);
         String trend = isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
-        String msg = "";
         String note = "";
         if (!Objects.equals(Utils.CAPITAL_TIME_WEEK, CAPITAL_TIME_XXX)) {
             String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
@@ -2885,10 +2898,10 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
                     entity = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
 
-                    String trend_h = "(" + trend + ")";
-                    String EVENT_ID = EVENT_PUMP + EPIC + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
-                    msg = trend_h + char_name + EPIC;
-                    sendMsgPerHour(EVENT_ID, msg, true);
+                    //String trend_h = "(" + trend + ")";
+                    //String EVENT_ID = EVENT_PUMP + EPIC + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
+                    //String msg = trend_h + char_name + EPIC;
+                    //sendMsgPerHour(EVENT_ID, msg, true);
                 }
 
                 if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {

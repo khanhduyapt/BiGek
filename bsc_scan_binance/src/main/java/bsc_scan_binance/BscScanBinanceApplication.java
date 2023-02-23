@@ -72,12 +72,6 @@ public class BscScanBinanceApplication {
             CoinGeckoService gecko_service = applicationContext.getBean(CoinGeckoService.class);
             BinanceService binance_service = applicationContext.getBean(BinanceService.class);
 
-            Utils.logWriteln("____________________Start " + Utils.getToday_YyyyMMdd() + Utils.getTimeHHmm()
-                    + "____________________", true);
-
-            Utils.logForexWriteln("____________________Start " + Utils.getToday_YyyyMMdd() + Utils.getTimeHHmm()
-                    + "____________________", true);
-
             if (app_flag == Utils.const_app_flag_msg_on || app_flag == Utils.const_app_flag_all_and_msg) {
                 // try {
                 // wandaBot = applicationContext.getBean(WandaBot.class);
@@ -97,7 +91,8 @@ public class BscScanBinanceApplication {
                 // }
             }
 
-            // --------------------Debug--------------------
+            // ----------------------------------------
+            binance_service.clearTrash();
 
             List<String> capital_list = new ArrayList<String>();
             capital_list.addAll(Utils.EPICS_FOREX);
@@ -109,8 +104,6 @@ public class BscScanBinanceApplication {
                 int total = token_list.size();
 
                 int round_crypto = 0;
-                int round_forex = 0;
-                int index_forex = 0;
                 int index_crypto = 0;
                 int forex_size = capital_list.size();
                 Date start_time = Calendar.getInstance().getTime();
@@ -121,7 +114,7 @@ public class BscScanBinanceApplication {
                 log = new File(Utils.getForexLogFile());
                 System.out.println(log.getAbsolutePath());
                 System.out.println();
-                String init = "";
+
                 while (index_crypto < total) {
                     wait(SLEEP_MINISECONDS);
 
@@ -133,39 +126,27 @@ public class BscScanBinanceApplication {
 
                         //isReloadAfter(1, "FOREX") &&
                         if (!Utils.isWeekend() && Utils.isBusinessTime() && Utils.isAllowSendMsg()) {
-                            if (binance_service.hasConnectTimeOutException()) {
-                                for (int loop = 1; loop < 15; loop++) {
-                                    System.out.println("Connection timed out");
-                                    wait(SLEEP_MINISECONDS * 5);
+
+                            if (isReloadAfter((Utils.MINUTES_OF_1H * 2), "INIT_FOREX_W_D_H4")) {
+                                for (int index = 0; index < forex_size; index++) {
+                                    String EPIC = capital_list.get(index);
+                                    checkCapital_h4(binance_service, EPIC);
+
+                                    sleepWhenExceptionTimeOut(binance_service);
                                 }
+
+                                Utils.writelnLogFooter_Forex();
                             }
 
-                            if (index_forex < forex_size) {
-                                String EPIC = capital_list.get(index_forex);
+                            if (isReloadAfter(Utils.MINUTES_OF_1H, "INIT_FOREX_H1")) {
+                                for (int index = 0; index < forex_size; index++) {
+                                    String EPIC = capital_list.get(index);
+                                    checkCapital_h1(binance_service, EPIC, index, forex_size);
 
-                                checkCapital_15m(binance_service, EPIC);
-                                // ----------------------------------------------
-                                if (round_forex > 0) {
-                                    init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                    if (Utils.isNotBlank(init)) {
-                                        String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3)
-                                                + "/"
-                                                + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
-                                                + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 10) + " " + init;
-                                        System.out.println(msg);
-
-                                        wait(SLEEP_MINISECONDS * 5);
-                                    }
+                                    sleepWhenExceptionTimeOut(binance_service);
                                 }
 
-                                index_forex += 1;
-                            } else {
-                                index_forex = 0;
-                                round_forex += 1;
-                                if (round_forex == 1) {
-                                    Utils.writelnLogFooter_Forex();
-                                }
-
+                                Utils.writelnLogFooter_Forex();
                             }
                         }
 
@@ -237,7 +218,28 @@ public class BscScanBinanceApplication {
         System.out.println("____________________initTelegramBotsApi" + Utils.getTimeHHmm() + "____________________");
     }
 
-    public static void checkCapital_15m(BinanceService binance_service, String EPIC) {
+    public static void sleepWhenExceptionTimeOut(BinanceService binance_service) {
+        if (binance_service.hasConnectTimeOutException()) {
+            for (int loop = 1; loop < 15; loop++) {
+                System.out.println("Connection timed out");
+                wait(SLEEP_MINISECONDS * 5);
+            }
+        }
+    }
+
+    public static void checkCapital_h1(BinanceService binance_service, String EPIC, int index, int size) {
+        String init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
+        if (Utils.isNotBlank(init)) {
+            String msg = "(" + Utils.appendSpace(String.valueOf(index + 1), 3)
+                    + "/" + Utils.appendSpace(String.valueOf(size), 3) + ")"
+                    + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 10) + " " + init;
+            System.out.println(msg);
+
+            wait(SLEEP_MINISECONDS * 3);
+        }
+    }
+
+    public static void checkCapital_h4(BinanceService binance_service, String EPIC) {
         String init = "";
         if (isReloadAfter(Utils.MINUTES_OF_4H, "CAPITAL_WEEK_" + EPIC)) {
             init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_WEEK);
