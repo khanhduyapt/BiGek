@@ -2592,7 +2592,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (!fundingHistoryRepository.existsPumDump(gecko_id, EVENT_ID5)) {
                 fundingHistoryRepository.save(createPumpDumpEntity(EVENT_ID5, gecko_id, symbol, msg, true));
 
-                if (!Utils.isBusinessTime()) {
+                if (!Utils.isBusinessTime_6h_17h()) {
                     // return msg;
                 }
                 Utils.sendToTelegram(msg);

@@ -890,7 +890,7 @@ public class Utils {
         System.out.println(msg);
 
         if (isAllowSendMsg()) {
-            if (!isBusinessTime()) {
+            if (!isBusinessTime_6h_17h()) {
                 // return;
             }
 
@@ -927,7 +927,7 @@ public class Utils {
         return false;
     }
 
-    public static boolean isBusinessTime() {
+    public static boolean isBusinessTime_6h_17h() {
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if ((18 <= hh || hh <= 5)) {
             return false;

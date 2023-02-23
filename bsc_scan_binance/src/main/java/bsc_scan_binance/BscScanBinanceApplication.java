@@ -125,7 +125,7 @@ public class BscScanBinanceApplication {
                         checkBtcKillLongShort_15m(binance_service);
 
                         //isReloadAfter(1, "FOREX") &&
-                        if (!Utils.isWeekend() && Utils.isBusinessTime() && Utils.isAllowSendMsg()) {
+                        if (!Utils.isWeekend() && Utils.isBusinessTime_6h_17h() && Utils.isAllowSendMsg()) {
 
                             if (isReloadAfter((Utils.MINUTES_OF_1H * 2), "INIT_FOREX_W_D_H4")) {
                                 for (int index = 0; index < forex_size; index++) {
