@@ -124,23 +124,13 @@ public class BscScanBinanceApplication {
                     try {
                         checkBtcKillLongShort_15m(binance_service);
 
-                        //isReloadAfter(1, "FOREX") &&
-                        if (!Utils.isWeekend() && Utils.isBusinessTime_6h_17h() && Utils.isAllowSendMsg()) {
-
-                            if (isReloadAfter((Utils.MINUTES_OF_1H * 2), "INIT_FOREX_W_D_H4")) {
+                        // isReloadAfter(1, "FOREX") && && Utils.isBusinessTime_6h_to_17h()
+                        if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
+                            if (isReloadAfter((Utils.MINUTES_OF_1H), "INIT_FOREX_W_D_H")) {
                                 for (int index = 0; index < forex_size; index++) {
                                     String EPIC = capital_list.get(index);
+
                                     checkCapital_h4(binance_service, EPIC);
-
-                                    sleepWhenExceptionTimeOut(binance_service);
-                                }
-
-                                Utils.writelnLogFooter_Forex();
-                            }
-
-                            if (isReloadAfter(Utils.MINUTES_OF_1H, "INIT_FOREX_H1")) {
-                                for (int index = 0; index < forex_size; index++) {
-                                    String EPIC = capital_list.get(index);
                                     checkCapital_h1(binance_service, EPIC, index, forex_size);
 
                                     sleepWhenExceptionTimeOut(binance_service);
@@ -228,9 +218,9 @@ public class BscScanBinanceApplication {
     public static void checkCapital_h1(BinanceService binance_service, String EPIC, int index, int size) {
         String init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
         if (Utils.isNotBlank(init)) {
-            String msg = "(" + Utils.appendSpace(String.valueOf(index + 1), 3)
-                    + "/" + Utils.appendSpace(String.valueOf(size), 3) + ")"
-                    + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 10) + " " + init;
+            String msg = "(" + Utils.appendSpace(String.valueOf(index + 1), 3) + "/"
+                    + Utils.appendSpace(String.valueOf(size), 3) + ")" + Utils.getTimeHHmm()
+                    + Utils.appendSpace(EPIC, 10) + " " + init;
             System.out.println(msg);
 
             wait(SLEEP_MINISECONDS * 3);

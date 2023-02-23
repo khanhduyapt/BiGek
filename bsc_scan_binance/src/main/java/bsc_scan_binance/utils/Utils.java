@@ -127,14 +127,15 @@ public class Utils {
     public static final long MINUTES_OF_15M = 15;
 
     public static final List<String> EPICS_FOREX = Arrays.asList("BTCUSD", "DXY", "GOLD", "OIL_CRUDE", "SILVER",
-            "NATURALGAS", "US30", "US500", "J225", "UK100", "FR40", "HK50", "EURUSD", "GBPUSD", "AUDUSD",
-            "NZDUSD", "USDJPY", "USDCAD", "USDCHF", "EURGBP");
+            "NATURALGAS", "US30", "US500", "J225", "UK100", "FR40", "HK50", "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD",
+            "USDJPY", "USDCAD", "USDCHF", "EURGBP");
     // MFF ko co: "EU50", "AU200", "DE40", "US100", "SP35",
 
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("GBPAUD", "EURAUD", "EURJPY", "EURCAD",
             "CADJPY", "GBPJPY", "NZDJPY", "AUDJPY", "AUDCAD", "GBPCAD", "EURNZD", "AUDNZD", "NZDCAD", "USDPLN",
             "USDSEK");
-    // Kho an: "USDMXN", "USDZAR", "USDHUF", "USDHKD","USDTRY",  "USDNOK", "USDSEK", "USDCZK"
+    // Kho an: "USDMXN", "USDZAR", "USDHUF", "USDHKD","USDTRY", "USDNOK", "USDSEK",
+    // "USDCZK"
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
@@ -890,7 +891,7 @@ public class Utils {
         System.out.println(msg);
 
         if (isAllowSendMsg()) {
-            if (!isBusinessTime_6h_17h()) {
+            if (!isBusinessTime_6h_to_17h()) {
                 // return;
             }
 
@@ -927,7 +928,7 @@ public class Utils {
         return false;
     }
 
-    public static boolean isBusinessTime_6h_17h() {
+    public static boolean isBusinessTime_6h_to_17h() {
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if ((18 <= hh || hh <= 5)) {
             return false;
@@ -2627,32 +2628,29 @@ public class Utils {
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 10);
         result += " E: " + Utils.appendSpace(removeLastZero(roundDefault(entry)) + "$", 8);
 
-        result += Utils.appendSpace(
-                "(Long )"
-                        + Utils.appendLeft(removeLastZero(lot_long), 6) + "(lot)"
-                        + "   SL: " + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12)
-                        + "   TP: " + Utils.appendSpace(removeLastZero(roundDefault(HI)), 6)
-                        + "= " + Utils.appendLeft(removeLastZero(tp_money_long), 5) + "$",
-                65);
+        result += Utils.appendSpace("(Long )" + Utils.appendLeft(removeLastZero(lot_long), 6) + "(lot)" + "   SL: "
+                + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12) + "   TP: "
+                + Utils.appendSpace(removeLastZero(roundDefault(HI)), 6) + "= "
+                + Utils.appendLeft(removeLastZero(tp_money_long), 5) + "$", 65);
 
         result += "  ";
 
-        result += Utils.appendSpace(
-                " (Short)"
-                        + Utils.appendLeft(removeLastZero(lot_shot), 6) + "(lot)"
-                        + "   SL: " + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12)
-                        + "   TP: " + Utils.appendSpace(removeLastZero(roundDefault(LO)), 6)
-                        + "= " + Utils.appendLeft(removeLastZero(tp_money_shot), 5) + "$",
-                65);
+        result += Utils.appendSpace(" (Short)" + Utils.appendLeft(removeLastZero(lot_shot), 6) + "(lot)" + "   SL: "
+                + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12) + "   TP: "
+                + Utils.appendSpace(removeLastZero(roundDefault(LO)), 6) + "= "
+                + Utils.appendLeft(removeLastZero(tp_money_shot), 5) + "$", 65);
 
         // result += Utils.appendSpace("", 15);
-        //if (tp_money_long.compareTo(tp_money_short.multiply(BigDecimal.valueOf(2))) > 0) {
-        //    result += " --->  " + Utils.appendSpace("LONG", 8);
-        //} else if (tp_money_short.compareTo(tp_money_long.multiply(BigDecimal.valueOf(2))) > 0) {
-        //    result += " --->  " + Utils.appendSpace("SHORT", 8);
-        //} else {
-        //    result += Utils.appendSpace("", 15);
-        //}
+        // if (tp_money_long.compareTo(tp_money_short.multiply(BigDecimal.valueOf(2))) >
+        // 0) {
+        // result += " ---> " + Utils.appendSpace("LONG", 8);
+        // } else if
+        // (tp_money_short.compareTo(tp_money_long.multiply(BigDecimal.valueOf(2))) > 0)
+        // {
+        // result += " ---> " + Utils.appendSpace("SHORT", 8);
+        // } else {
+        // result += Utils.appendSpace("", 15);
+        // }
 
         result = Utils.appendSpace(result, 150);
 

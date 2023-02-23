@@ -2592,7 +2592,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (!fundingHistoryRepository.existsPumDump(gecko_id, EVENT_ID5)) {
                 fundingHistoryRepository.save(createPumpDumpEntity(EVENT_ID5, gecko_id, symbol, msg, true));
 
-                if (!Utils.isBusinessTime_6h_17h()) {
+                if (!Utils.isBusinessTime_6h_to_17h()) {
                     // return msg;
                 }
                 Utils.sendToTelegram(msg);
@@ -2657,8 +2657,7 @@ public class BinanceServiceImpl implements BinanceService {
             trend_d = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_DAY);
             trend_h4 = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
 
-            String msg = "(W:" + Utils.appendSpace(trend_w, 5) + ", D:"
-                    + Utils.appendSpace(trend_d, 5);
+            String msg = "(W:" + Utils.appendSpace(trend_w, 5) + ", D:" + Utils.appendSpace(trend_d, 5);
 
             if (Utils.isNotBlank(trend_h4)) {
                 msg += ", H4:" + Utils.appendSpace(trend_h4, 5);
@@ -2945,8 +2944,8 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnWithTime(result, false);
 
                 String date_time = LocalDateTime.now().toString();
-                Orders entity_time_out = new Orders(time_out_id, date_time, "", BigDecimal.ZERO,
-                        BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "Connection timed out");
+                Orders entity_time_out = new Orders(time_out_id, date_time, "", BigDecimal.ZERO, BigDecimal.ZERO,
+                        BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "Connection timed out");
                 ordersRepository.save(entity_time_out);
 
                 return result;
@@ -2979,10 +2978,11 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
                     entity = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
 
-                    //String trend_h = "(" + trend + ")";
-                    //String EVENT_ID = EVENT_PUMP + EPIC + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
-                    //String msg = trend_h + char_name + EPIC;
-                    //sendMsgPerHour(EVENT_ID, msg, true);
+                    // String trend_h = "(" + trend + ")";
+                    // String EVENT_ID = EVENT_PUMP + EPIC + char_name +
+                    // Utils.getCurrentYyyyMmDdHHByChart(list);
+                    // String msg = trend_h + char_name + EPIC;
+                    // sendMsgPerHour(EVENT_ID, msg, true);
                 }
 
                 if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
@@ -2998,12 +2998,12 @@ public class BinanceServiceImpl implements BinanceService {
                     log += ": " + Utils.appendSpace(switch_trend, 5) + ") ";
                     log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
                     log += buffer;
-                    Utils.logWritelnWithTime(log, false); //+ "\n"
+                    Utils.logWritelnWithTime(log, false); // + "\n"
                 }
             }
         }
 
-        //----------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------
 
         {
             Orders entity_time_out = ordersRepository.findById(time_out_id).orElse(null);
