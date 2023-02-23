@@ -55,7 +55,7 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 //@Slf4j
 public class Utils {
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.001);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0015);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -703,6 +703,17 @@ public class Utils {
         return result;
     }
 
+    public static String appendLeft(String value, int length) {
+        String result = value;
+        int len = value.length();
+        if (len < length) {
+            for (int i = len; i < length; i++) {
+                result = " " + result;
+            }
+        }
+        return result;
+    }
+
     public static BigDecimal getMidPrice(BigDecimal low_price, BigDecimal hight_price) {
         BigDecimal mid_price = (getBigDecimal(hight_price).add(getBigDecimal(low_price)));
         mid_price = mid_price.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
@@ -918,7 +929,7 @@ public class Utils {
 
     public static boolean isBusinessTime() {
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-        if ((22 <= hh || hh <= 5)) {
+        if ((18 <= hh || hh <= 5)) {
             return false;
         }
 
@@ -2580,11 +2591,11 @@ public class Utils {
         BigDecimal ma3 = calcMA(list, 3, 1);
 
         BigDecimal sl_long = ma3.subtract(LO);
-        sl_long = sl_long.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+        sl_long = sl_long.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
         sl_long = roundDefault(LO.subtract(sl_long));
 
         BigDecimal sl_short = HI.subtract(ma3);
-        sl_short = sl_short.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+        sl_short = sl_short.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
         sl_short = roundDefault(HI.add(sl_short));
 
         List<BigDecimal> result = new ArrayList<BigDecimal>();
@@ -2613,18 +2624,20 @@ public class Utils {
         BigDecimal lot_short = money_short.calcLot();
         BigDecimal tp_money_short = money_short.calcTPMoney();
 
-        result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 5);
-        result += "   Entry: " + Utils.appendSpace(removeLastZero(roundDefault(entry)) + "$", 10);
-        result += "   ";
-        result += " SL_Long: " + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12);
-        result += "(" + Utils.appendSpace(removeLastZero(lot_long), 6) + " lot)";
-        result += " to: " + Utils.appendSpace(removeLastZero(roundDefault(HI)), 6);
-        result += "= " + Utils.appendSpace(removeLastZero(tp_money_long), 5) + "$";
+        result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 5) + "\n";
+        result += Utils.appendSpace(EPIC, 10);
+        result += Utils.appendSpace("(" + removeLastZero(roundDefault(entry)) + "$)", 11);
+        result += "(Long )";
+        result += Utils.appendLeft(removeLastZero(lot_long), 6) + "(lot)";
+        result += "   SL: " + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12);
+        result += "   TP: " + Utils.appendSpace(removeLastZero(roundDefault(HI)), 6);
+        result += "= " + Utils.appendLeft(removeLastZero(tp_money_long), 5) + "$";
         result += "     ";
-        result += " SL_short: " + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12);
-        result += "(" + Utils.appendSpace(removeLastZero(lot_short), 6) + " lot)";
-        result += " to: " + Utils.appendSpace(removeLastZero(roundDefault(LO)), 6);
-        result += "= " + Utils.appendSpace(removeLastZero(tp_money_short), 5) + "$";
+        result += " (Short) ";
+        result += Utils.appendLeft(removeLastZero(lot_short), 6) + "(lot)";
+        result += "   SL: " + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12);
+        result += "   TP: " + Utils.appendSpace(removeLastZero(roundDefault(LO)), 6);
+        result += "= " + Utils.appendLeft(removeLastZero(tp_money_short), 5) + "$";
 
         if (tp_money_long.compareTo(tp_money_short.multiply(BigDecimal.valueOf(2))) > 0) {
             result += " --->  " + Utils.appendSpace("LONG", 8);
@@ -2783,6 +2796,10 @@ public class Utils {
     }
 
     private static String checkTrendSideway(List<BtcFutures> list, int str, int end) {
+        String l_m3x5 = "";
+        String s_m3x5 = "";
+        String l_m3x8 = "";
+        String s_m3x8 = "";
         String l_m3x15 = "";
         String s_m3x15 = "";
         String l_m3x20 = "";
@@ -2806,7 +2823,7 @@ public class Utils {
         String l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
         String s_m03x10 = Utils.checkXCutDnY(ma3_1, ma3_2, ma10_1, ma10_2);
 
-        if (list.get(0).getId().contains("_15m_") || list.get(0).getId().contains("_1h_")) {
+        if (list.get(0).getId().contains("_15m_")) {
             BigDecimal ma15_1 = calcMA(list, 15, str);
             BigDecimal ma15_2 = calcMA(list, 15, end);
             l_m3x15 = Utils.checkXCutUpY(ma3_1, ma3_2, ma15_1, ma15_2);
@@ -2818,7 +2835,29 @@ public class Utils {
             s_m3x20 = Utils.checkXCutDnY(ma3_1, ma3_2, ma20_1, ma20_2);
         }
 
-        String trend = l_m03x10 + "_" + l_m3x15 + "_" + l_m3x20 + "_____" + s_m03x10 + "_" + s_m3x15 + "_" + s_m3x20;
+        if (list.get(0).getId().contains("_1h_")) {
+            BigDecimal ma15_1 = calcMA(list, 15, str);
+            BigDecimal ma15_2 = calcMA(list, 15, end);
+            l_m3x15 = Utils.checkXCutUpY(ma3_1, ma3_2, ma15_1, ma15_2);
+            s_m3x15 = Utils.checkXCutDnY(ma3_1, ma3_2, ma15_1, ma15_2);
+        }
+
+        if (list.get(0).getId().contains("_4h_")) {
+            BigDecimal ma5_1 = calcMA(list, 5, str);
+            BigDecimal ma5_2 = calcMA(list, 5, end);
+            l_m3x5 = Utils.checkXCutUpY(ma3_1, ma3_2, ma5_1, ma5_2);
+            s_m3x5 = Utils.checkXCutDnY(ma3_1, ma3_2, ma5_1, ma5_2);
+
+            BigDecimal ma8_1 = calcMA(list, 8, str);
+            BigDecimal ma8_2 = calcMA(list, 8, end);
+            l_m3x8 = Utils.checkXCutUpY(ma3_1, ma3_2, ma8_1, ma8_2);
+            s_m3x8 = Utils.checkXCutDnY(ma3_1, ma3_2, ma8_1, ma8_2);
+        }
+
+        String trend = "";
+        trend += l_m03x10 + "_" + l_m3x5 + "_" + l_m3x8 + "_" + l_m3x15 + "_" + l_m3x20;
+        trend += "_____";
+        trend += s_m03x10 + "_" + s_m3x5 + "_" + s_m3x8 + "_" + s_m3x15 + "_" + s_m3x20;
 
         return trend;
     }

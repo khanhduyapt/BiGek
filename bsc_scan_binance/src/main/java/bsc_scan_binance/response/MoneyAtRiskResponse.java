@@ -80,7 +80,11 @@ public class MoneyAtRiskResponse {
         qty = standard_lot.multiply(money_risk.divide((entry.subtract(stop_loss)).abs(), 10, RoundingMode.CEILING));
         qty = qty.divide(unit_risk_per_pip, 10, RoundingMode.CEILING);
 
-        qty = Utils.formatPrice(qty, 2);
+        if (qty.compareTo(BigDecimal.valueOf(0.01)) < 0) {
+            qty = Utils.formatPrice(qty, 4);
+        } else {
+            qty = Utils.formatPrice(qty, 2);
+        }
 
         return qty;
     }

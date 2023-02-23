@@ -108,7 +108,8 @@ public class BscScanBinanceApplication {
                 List<CandidateCoin> token_list = gecko_service.getList(callFormBinance);
                 int total = token_list.size();
 
-                int round_count = 0;
+                int round_crypto = 0;
+                int round_forex = 0;
                 int index_forex = 0;
                 int index_crypto = 0;
                 int forex_size = capital_list.size();
@@ -129,84 +130,84 @@ public class BscScanBinanceApplication {
                     try {
                         checkBtcKillLongShort_15m(binance_service);
 
-                        if (!Utils.isNewsTime()) {
-                            //
-                            if (!Utils.isWeekend() && isReloadAfter(1, "FOREX") && Utils.isBusinessTime()
-                                    && Utils.isAllowSendMsgSetting()) {
+                        if (!Utils.isWeekend() && Utils.isBusinessTime() && Utils.isAllowSendMsgSetting()) {
 
-                                if (binance_service.hasConnectTimeOutException()) {
-                                    for (int loop = 1; loop < 15; loop++) {
-                                        System.out.println("Connection timed out");
-                                        wait(SLEEP_MINISECONDS);
-                                    }
-                                }
-
-                                if (index_forex < forex_size) {
-                                    String EPIC = capital_list.get(index_forex);
-
-                                    init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_WEEK);
-                                    if (Utils.isNotBlank(init)) {
-                                        wait(SLEEP_MINISECONDS * 5);
-                                    }
-                                    init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
-                                    if (Utils.isNotBlank(init)) {
-                                        wait(SLEEP_MINISECONDS * 5);
-                                    }
-                                    init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-                                    if (Utils.isNotBlank(init)) {
-                                        wait(SLEEP_MINISECONDS * 5);
-                                    }
-
-                                    // ----------------------------------------------
-                                    init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                    if (Utils.isNotBlank(init)) {
-                                        String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3) + "/"
-                                                + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
-                                                + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 10) + " " + init;
-                                        System.out.println(msg);
-                                    }
-
-                                    index_forex += 1;
-                                } else {
-                                    index_forex = 0;
-                                    Utils.initCapital();
-                                    Utils.writelnLogFooter_Forex();
+                            if (binance_service.hasConnectTimeOutException()) {
+                                for (int loop = 1; loop < 15; loop++) {
+                                    System.out.println("Connection timed out");
+                                    wait(SLEEP_MINISECONDS);
                                 }
                             }
 
-                            //// ----------------------------------------------
-                            // if ((round_count > 0) && Utils.isWorkingTime()) {
-                            // if (isReloadAfter(Utils.MINUTES_OF_4H, "COIN_GECKO_" + SYMBOL)) {
-                            // gecko_service.loadData(GECKOID);
-                            // }
-                            //
-                            // if (isReloadAfter(Utils.MINUTES_OF_4H, "INIT_CRYPTO_" + GECKOID)) {
-                            // binance_service.initCrypto(GECKOID, SYMBOL);
-                            // }
-                            //
-                            // wait(SLEEP_MINISECONDS);
-                            // }
-                            //
-                            //// ----------------------------------------------
-                            // init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1d, GECKOID,
-                            //// SYMBOL);
-                            // if (Utils.isNotBlank(init)) {
-                            // wait(SLEEP_MINISECONDS);
-                            // }
-                            // init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4h, GECKOID,
-                            //// SYMBOL);
-                            // if (Utils.isNotBlank(init)) {
-                            // wait(SLEEP_MINISECONDS);
-                            // }
-                            // init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1h, GECKOID,
-                            //// SYMBOL);
-                            // if (Utils.isNotBlank(init)) {
-                            // wait(SLEEP_MINISECONDS);
-                            // }
-                            // ----------------------------------------------
-                        } else if (isReloadAfter(15, "isNewsTime")) {
-                            System.out.println("NewsTime");
+                            if (index_forex < forex_size) {
+                                String EPIC = capital_list.get(index_forex);
+
+                                init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_WEEK);
+                                if (Utils.isNotBlank(init)) {
+                                    wait(SLEEP_MINISECONDS * 5);
+                                }
+                                init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
+                                if (Utils.isNotBlank(init)) {
+                                    wait(SLEEP_MINISECONDS * 5);
+                                }
+                                init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+                                if (Utils.isNotBlank(init)) {
+                                    wait(SLEEP_MINISECONDS * 5);
+                                }
+
+                                // ----------------------------------------------
+                                if (round_forex > 0) {
+                                    if (isReloadAfter(1, "FOREX")) {
+                                        init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                        if (Utils.isNotBlank(init)) {
+                                            String msg = "(" + Utils.appendSpace(String.valueOf(index_forex + 1), 3)
+                                                    + "/"
+                                                    + Utils.appendSpace(String.valueOf(forex_size), 3) + ")"
+                                                    + Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 10) + " " + init;
+                                            System.out.println(msg);
+                                        }
+                                    }
+                                }
+
+                                index_forex += 1;
+                            } else {
+                                index_forex = 0;
+                                round_forex += 1;
+                                Utils.initCapital();
+                                Utils.writelnLogFooter_Forex();
+                            }
                         }
+
+                        //// ----------------------------------------------
+                        // if ((round_count > 0) && Utils.isWorkingTime()) {
+                        // if (isReloadAfter(Utils.MINUTES_OF_4H, "COIN_GECKO_" + SYMBOL)) {
+                        // gecko_service.loadData(GECKOID);
+                        // }
+                        //
+                        // if (isReloadAfter(Utils.MINUTES_OF_4H, "INIT_CRYPTO_" + GECKOID)) {
+                        // binance_service.initCrypto(GECKOID, SYMBOL);
+                        // }
+                        //
+                        // wait(SLEEP_MINISECONDS);
+                        // }
+                        //
+                        //// ----------------------------------------------
+                        // init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1d, GECKOID,
+                        //// SYMBOL);
+                        // if (Utils.isNotBlank(init)) {
+                        // wait(SLEEP_MINISECONDS);
+                        // }
+                        // init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4h, GECKOID,
+                        //// SYMBOL);
+                        // if (Utils.isNotBlank(init)) {
+                        // wait(SLEEP_MINISECONDS);
+                        // }
+                        // init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1h, GECKOID,
+                        //// SYMBOL);
+                        // if (Utils.isNotBlank(init)) {
+                        // wait(SLEEP_MINISECONDS);
+                        // }
+                        // ----------------------------------------------
 
                         wait(SLEEP_MINISECONDS);
                     } catch (Exception e) {
@@ -222,10 +223,10 @@ public class BscScanBinanceApplication {
                         System.out.println("reload: " + Utils.getMmDD_TimeHHmm() + ", spend:"
                                 + TimeUnit.MILLISECONDS.toMinutes(diff) + " Minutes.");
 
-                        round_count += 1;
+                        round_crypto += 1;
                         index_crypto = 0;
 
-                        System.out.println("round:" + round_count);
+                        System.out.println("round:" + round_crypto);
                     } else {
                         index_crypto += 1;
                     }

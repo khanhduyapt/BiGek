@@ -2830,13 +2830,13 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        int lengh = 6;
+        int lengh = 8;
         if (Objects.equals(Utils.CAPITAL_TIME_WEEK, CAPITAL_TIME_XXX)) {
             lengh = 3;
         } else if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
             lengh = 5;
         } else if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
-            lengh = 20;
+            lengh = 15;
         }
 
         List<BtcFutures> list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, lengh);
