@@ -130,7 +130,6 @@ public class BscScanBinanceApplication {
                     String SYMBOL = coin.getSymbol();
 
                     try {
-                        checkBtcKillLongShort_15m(binance_service);
 
                         if (!Utils.isWeekend() && Utils.isBusinessTime() && Utils.isAllowSendMsgSetting()) {
 
@@ -215,6 +214,8 @@ public class BscScanBinanceApplication {
                         // wait(SLEEP_MINISECONDS);
                         // }
                         // ----------------------------------------------
+
+                        checkBtcKillLongShort_15m(binance_service);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

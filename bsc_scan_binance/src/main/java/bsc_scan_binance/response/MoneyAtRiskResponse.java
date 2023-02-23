@@ -239,6 +239,18 @@ public class MoneyAtRiskResponse {
             standard_lot = BigDecimal.valueOf(0.129);
             unit_risk_per_pip = BigDecimal.valueOf(1250.00000000003);
             break;
+        case "AUDJPY":
+            standard_lot = BigDecimal.valueOf(0.225);
+            unit_risk_per_pip = BigDecimal.valueOf(170.000000000002);
+            break;
+        case "NZDJPY":
+            standard_lot = BigDecimal.valueOf(0.337);
+            unit_risk_per_pip = BigDecimal.valueOf(259.999999999996);
+            break;
+
+        default:
+            System.out.println("getStandard_lot: " + EPIC + " not exist!----------------------------------");
+            break;
         }
 
         result.add(standard_lot);
