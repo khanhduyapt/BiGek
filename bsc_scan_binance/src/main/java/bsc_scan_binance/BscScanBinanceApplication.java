@@ -123,7 +123,7 @@ public class BscScanBinanceApplication {
                 System.out.println();
                 String init = "";
                 while (index_crypto < total) {
-                    // wait(SLEEP_MINISECONDS);
+                    wait(SLEEP_MINISECONDS);
 
                     CandidateCoin coin = token_list.get(index_crypto);
                     String GECKOID = coin.getGeckoid();
@@ -177,8 +177,6 @@ public class BscScanBinanceApplication {
                                 }
                                 index_forex = 0;
                                 round_forex += 1;
-                                Utils.initCapital();
-                                Utils.writelnLogFooter_Forex();
                             }
                         }
 
