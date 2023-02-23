@@ -2889,7 +2889,6 @@ public class BinanceServiceImpl implements BinanceService {
                     String EVENT_ID = EVENT_PUMP + EPIC + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
                     msg = trend_h + char_name + EPIC;
                     sendMsgPerHour(EVENT_ID, msg, true);
-                    Utils.logWritelnWithTime(Utils.appendSpace(EPIC, 148), false);
                 }
 
                 if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
