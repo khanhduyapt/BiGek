@@ -143,19 +143,7 @@ public class BscScanBinanceApplication {
                             if (index_forex < forex_size) {
                                 String EPIC = capital_list.get(index_forex);
 
-                                init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_WEEK);
-                                if (Utils.isNotBlank(init)) {
-                                    wait(SLEEP_MINISECONDS * 5);
-                                }
-                                init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
-                                if (Utils.isNotBlank(init)) {
-                                    wait(SLEEP_MINISECONDS * 5);
-                                }
-                                init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-                                if (Utils.isNotBlank(init)) {
-                                    wait(SLEEP_MINISECONDS * 5);
-                                }
-
+                                checkCapital_15m(binance_service, EPIC);
                                 // ----------------------------------------------
                                 if (round_forex > 0) {
                                     init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
@@ -172,11 +160,12 @@ public class BscScanBinanceApplication {
 
                                 index_forex += 1;
                             } else {
-                                if (round_forex == 0) {
-                                    Utils.writelnLogFooter_Forex();
-                                }
                                 index_forex = 0;
                                 round_forex += 1;
+                                if (round_forex == 1) {
+                                    Utils.writelnLogFooter_Forex();
+                                }
+
                             }
                         }
 
@@ -246,6 +235,30 @@ public class BscScanBinanceApplication {
 
     public static void initTelegramBotsApi() {
         System.out.println("____________________initTelegramBotsApi" + Utils.getTimeHHmm() + "____________________");
+    }
+
+    public static void checkCapital_15m(BinanceService binance_service, String EPIC) {
+        String init = "";
+        if (isReloadAfter(Utils.MINUTES_OF_4H, "CAPITAL_WEEK_" + EPIC)) {
+            init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_WEEK);
+            if (Utils.isNotBlank(init)) {
+                wait(SLEEP_MINISECONDS * 3);
+            }
+        }
+
+        if (isReloadAfter(Utils.MINUTES_OF_4H, "CAPITAL_DAY_" + EPIC)) {
+            init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
+            if (Utils.isNotBlank(init)) {
+                wait(SLEEP_MINISECONDS * 3);
+            }
+        }
+
+        if (isReloadAfter(Utils.MINUTES_OF_1H, "CAPITAL_H4_" + EPIC)) {
+            init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+            if (Utils.isNotBlank(init)) {
+                wait(SLEEP_MINISECONDS * 3);
+            }
+        }
     }
 
     private static void checkBtcKillLongShort_15m(BinanceService binance_service) {
