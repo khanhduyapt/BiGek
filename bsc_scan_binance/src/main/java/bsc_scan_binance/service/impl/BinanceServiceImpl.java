@@ -2954,6 +2954,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isNotBlank(switch_trend)) {
                 note = "Ma3xMa6";
                 trend = switch_trend;
+                String parent_trend = "";
                 Orders entity = null;
                 BigDecimal current_price = list.get(0).getCurrPrice();
 
@@ -2972,6 +2973,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
                     entity = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+                    parent_trend = entity.getTrend();
 
                     Orders week = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
                     if (Objects.nonNull(week)) {
@@ -3015,12 +3017,21 @@ public class BinanceServiceImpl implements BinanceService {
                     sl_long = Utils.getBigDecimal(entity.getLow_price());
                     sl_shot = Utils.getBigDecimal(entity.getHigh_price());
 
-                    String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long, sl_shot);
-                    String log = wdh4 + char_name.replace(")", "").trim();
-                    log += ": " + Utils.appendSpace(switch_trend, 5) + ") ";
-                    log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
-                    log += buffer + ma_3_5_8_15;
-                    Utils.logWritelnWithTime(log, false); // + "\n"
+                    boolean allow_write_long = true;
+                    if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
+                        if (!Objects.equals(parent_trend, switch_trend)) {
+                            allow_write_long = false;
+                        }
+                    }
+
+                    if (allow_write_long) {
+                        String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long, sl_shot);
+                        String log = wdh4 + char_name.replace(")", "").trim();
+                        log += ": " + Utils.appendSpace(switch_trend, 5) + ") ";
+                        log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
+                        log += buffer + ma_3_5_8_15;
+                        Utils.logWritelnWithTime(log, false); // + "\n"
+                    }
                 }
 
                 if (allow_send_msg) {
@@ -3074,10 +3085,9 @@ public class BinanceServiceImpl implements BinanceService {
                     "USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD", "PLN", "SEK");
 
             for (String cur : currencies) {
-
                 for (Orders entity : list_h4) {
-                    String EPIC = entity.getId().replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
                     String trend = entity.getTrend();
+                    String EPIC = entity.getId().replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
 
                     if (EPIC.contains(cur)) {
                         if (!cur_dict.containsKey(cur)) {
@@ -3091,7 +3101,7 @@ public class BinanceServiceImpl implements BinanceService {
                             } else {
                                 count -= 1;
                             }
-                        } else {
+                        } else if (index > 0) {
                             if (Objects.equals(Utils.TREND_LONG, trend)) {
                                 count -= 1;
                             } else {
@@ -3110,16 +3120,44 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
+            List<Orders> list_day = ordersRepository.getTrendDayList();
             for (String cur : currencies) {
                 Integer count = cur_dict.get(cur);
                 results += cur + ": ";
                 if (count > 0) {
-                    results += "Long (+" + count + "/" + sum_dict.get(cur) + ")    ";
+                    results += "Long (+" + count + "/" + sum_dict.get(cur) + ")";
                 } else if (count < 0) {
-                    results += "Short(" + count + "/" + sum_dict.get(cur) + ")    ";
+                    results += "Short(" + count + "/" + sum_dict.get(cur) + ")";
                 } else {
-                    results += "     (" + count + "/" + sum_dict.get(cur) + ")    ";
+                    results += "     (" + count + "/" + sum_dict.get(cur) + ")";
                 }
+
+                for (Orders entity : list_day) {
+                    if (entity.getId().contains(Utils.CAPITAL_TIME_DAY) && !Objects.equals("CHF", cur)) {
+                        String trend = entity.getTrend();
+                        String EPIC = entity.getId().replace("_" + Utils.CAPITAL_TIME_DAY, "");
+
+                        if (EPIC.contains("CHF") && EPIC.contains(cur)) {
+
+                            int index = EPIC.indexOf(cur);
+
+                            if (index == 0) {
+                                if (Objects.equals(Utils.TREND_LONG, trend)) {
+                                    results += "(Up.vs.CHF)";
+                                } else {
+                                    results += "(Down.vs.CHF)";
+                                }
+                            } else if (index > 0) {
+                                if (Objects.equals(Utils.TREND_LONG, trend)) {
+                                    results += "(Down.vs.CHF)";
+                                } else {
+                                    results += "(Up.vs.CHF)";
+                                }
+                            }
+                        }
+                    }
+                }
+                results += "   ";
             }
         }
 
@@ -3132,7 +3170,7 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.logWritelnReport("");
         Utils.logWritelnReport("");
         Utils.logWritelnReport(getSummaryCurrencies());
-        List<Orders> orders = ordersRepository.swithTrendDayList();
+        List<Orders> orders = ordersRepository.swithTrendDayAndH4List();
         if (!CollectionUtils.isEmpty(orders)) {
             Utils.logWritelnReport("");
             for (Orders entity : orders) {
