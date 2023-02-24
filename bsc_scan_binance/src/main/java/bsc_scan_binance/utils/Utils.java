@@ -829,10 +829,14 @@ public class Utils {
     public static void logWritelnReport(String text) {
         try {
             String logFilePath = getReportLogFile();
+            String msg = text.trim();
+            if (Utils.isNotBlank(msg)) {
+                msg = BscScanBinanceApplication.hostname + Utils.getTimeHHmm() + " "
+                        + text.replace(Utils.new_line_from_service, " ");
+            }
 
             FileWriter fw = new FileWriter(logFilePath, true);
-            fw.write(BscScanBinanceApplication.hostname + Utils.getTimeHHmm() + " "
-                    + text.replace(Utils.new_line_from_service, " ") + "\n");
+            fw.write(msg + "\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
