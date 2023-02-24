@@ -81,7 +81,7 @@ public class MoneyAtRiskResponse {
         qty = qty.divide(unit_risk_per_pip, 10, RoundingMode.CEILING);
 
         if (qty.compareTo(BigDecimal.valueOf(0.01)) < 0) {
-            qty = Utils.formatPrice(qty, 4);
+            qty = Utils.formatPrice(qty, 3);
         } else {
             qty = Utils.formatPrice(qty, 2);
         }

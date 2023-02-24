@@ -49,4 +49,6 @@ public interface BinanceService {
 
     public boolean hasConnectTimeOutException();
 
+    public void createReport();
+
 }

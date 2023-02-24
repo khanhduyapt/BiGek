@@ -92,8 +92,8 @@ public class BscScanBinanceApplication {
             }
 
             // ----------------------------------------
-            // binance_service.clearTrash();
-
+            binance_service.clearTrash();
+            // ----------------------------------------
             List<String> capital_list = new ArrayList<String>();
             capital_list.addAll(Utils.EPICS_FOREX);
             capital_list.addAll(Utils.EPICS_FOREX_OTHERS);
@@ -107,11 +107,13 @@ public class BscScanBinanceApplication {
                 int index_crypto = 0;
                 int forex_size = capital_list.size();
                 Date start_time = Calendar.getInstance().getTime();
-
+                Utils.writelnLogFooter_Forex();
                 System.out.println();
                 File log = new File(Utils.getCryptoLogFile());
                 System.out.println(log.getAbsolutePath());
                 log = new File(Utils.getForexLogFile());
+                System.out.println(log.getAbsolutePath());
+                log = new File(Utils.getReportLogFile());
                 System.out.println(log.getAbsolutePath());
                 System.out.println();
 
@@ -137,6 +139,8 @@ public class BscScanBinanceApplication {
                                 }
 
                                 Utils.writelnLogFooter_Forex();
+
+                                binance_service.createReport();
                             }
                         }
 

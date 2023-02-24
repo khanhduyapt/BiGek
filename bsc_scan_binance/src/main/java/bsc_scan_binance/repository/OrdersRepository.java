@@ -14,4 +14,9 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
     @Query(value = "SELECT m.* FROM orders m WHERE gecko_id like '%HOUR%' ", nativeQuery = true)
     public List<Orders> clearTrash();
 
+    @Query(value = "SELECT m.* FROM orders m where (gecko_id like '%HOUR_4') and (note <> '') ", nativeQuery = true)
+    public List<Orders> swithTrendH4List();
+
+    @Query(value = "SELECT m.* FROM orders m where (gecko_id like '%HOUR') and (note <> '') ", nativeQuery = true)
+    public List<Orders> swithTrendH1List();
 }

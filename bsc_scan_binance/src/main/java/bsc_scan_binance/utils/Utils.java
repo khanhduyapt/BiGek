@@ -55,7 +55,7 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 //@Slf4j
 public class Utils {
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.001);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.002);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -783,6 +783,17 @@ public class Utils {
         return " https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + epic;
     }
 
+    public static String getReportLogFile() {
+        String PATH = "crypto_forex_result/";
+        String fileName = getYyyyMmDdHH_ChangeDailyChart() + "_Report.log";
+
+        File directory = new File(PATH);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+        return PATH + fileName;
+    }
+
     public static String getForexLogFile() {
         String PATH = "crypto_forex_result/";
         String fileName = getYyyyMmDdHH_ChangeDailyChart() + "_Forex.log";
@@ -813,6 +824,19 @@ public class Utils {
             Utils.logWriteln(Utils.getCryptoLink_Spot(symbol), false);
         }
         logWriteln("_______________________________________________________________", true);
+    }
+
+    public static void logWritelnReport(String text) {
+        try {
+            String logFilePath = getReportLogFile();
+
+            FileWriter fw = new FileWriter(logFilePath, true);
+            fw.write(BscScanBinanceApplication.hostname + Utils.getTimeHHmm() + " "
+                    + text.replace(Utils.new_line_from_service, " ") + "\n");
+            fw.close();
+        } catch (IOException ioe) {
+            System.err.println("IOException: " + ioe.getMessage());
+        }
     }
 
     public static void logWritelnWithTime(String text, boolean isCrypto) {
@@ -2810,23 +2834,34 @@ public class Utils {
         String l_m3x20 = "";
         String s_m3x20 = "";
 
-        int slow_index = 5;
-        if (list.get(0).getId().contains("_15m_")) {
-            slow_index = 20;
-        } else if (list.get(0).getId().contains("_1h_")) {
-            slow_index = 10;
-        }
-        if (slow_index >= list.size()) {
-            slow_index = list.size() - 1;
-        }
-
         BigDecimal ma3_1 = calcMA(list, 3, str);
         BigDecimal ma3_2 = calcMA(list, 3, end);
-        BigDecimal ma10_1 = calcMA(list, slow_index, str);
-        BigDecimal ma10_2 = calcMA(list, slow_index, end);
+        BigDecimal ma10_1 = calcMA(list, 10, str);
+        BigDecimal ma10_2 = calcMA(list, 10, end);
 
         String l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
         String s_m03x10 = Utils.checkXCutDnY(ma3_1, ma3_2, ma10_1, ma10_2);
+
+        if (list.get(0).getId().contains("_1d_")) {
+            BigDecimal ma5_1 = calcMA(list, 5, str);
+            BigDecimal ma5_2 = calcMA(list, 5, end);
+            l_m3x5 = Utils.checkXCutUpY(ma3_1, ma3_2, ma5_1, ma5_2);
+            s_m3x5 = Utils.checkXCutDnY(ma3_1, ma3_2, ma5_1, ma5_2);
+        }
+
+        if (list.get(0).getId().contains("_4h_")) {
+            BigDecimal ma8_1 = calcMA(list, 8, str);
+            BigDecimal ma8_2 = calcMA(list, 8, end);
+            l_m3x8 = Utils.checkXCutUpY(ma3_1, ma3_2, ma8_1, ma8_2);
+            s_m3x8 = Utils.checkXCutDnY(ma3_1, ma3_2, ma8_1, ma8_2);
+        }
+
+        if (list.get(0).getId().contains("_1h_")) {
+            BigDecimal ma15_1 = calcMA(list, 15, str);
+            BigDecimal ma15_2 = calcMA(list, 15, end);
+            l_m3x15 = Utils.checkXCutUpY(ma3_1, ma3_2, ma15_1, ma15_2);
+            s_m3x15 = Utils.checkXCutDnY(ma3_1, ma3_2, ma15_1, ma15_2);
+        }
 
         if (list.get(0).getId().contains("_15m_")) {
             BigDecimal ma15_1 = calcMA(list, 15, str);
@@ -2838,25 +2873,6 @@ public class Utils {
             BigDecimal ma20_2 = calcMA(list, 20, end);
             l_m3x20 = Utils.checkXCutUpY(ma3_1, ma3_2, ma20_1, ma20_2);
             s_m3x20 = Utils.checkXCutDnY(ma3_1, ma3_2, ma20_1, ma20_2);
-        }
-
-        if (list.get(0).getId().contains("_1h_")) {
-            BigDecimal ma15_1 = calcMA(list, 15, str);
-            BigDecimal ma15_2 = calcMA(list, 15, end);
-            l_m3x15 = Utils.checkXCutUpY(ma3_1, ma3_2, ma15_1, ma15_2);
-            s_m3x15 = Utils.checkXCutDnY(ma3_1, ma3_2, ma15_1, ma15_2);
-        }
-
-        if (list.get(0).getId().contains("_4h_")) {
-            BigDecimal ma5_1 = calcMA(list, 5, str);
-            BigDecimal ma5_2 = calcMA(list, 5, end);
-            l_m3x5 = Utils.checkXCutUpY(ma3_1, ma3_2, ma5_1, ma5_2);
-            s_m3x5 = Utils.checkXCutDnY(ma3_1, ma3_2, ma5_1, ma5_2);
-
-            BigDecimal ma8_1 = calcMA(list, 8, str);
-            BigDecimal ma8_2 = calcMA(list, 8, end);
-            l_m3x8 = Utils.checkXCutUpY(ma3_1, ma3_2, ma8_1, ma8_2);
-            s_m3x8 = Utils.checkXCutDnY(ma3_1, ma3_2, ma8_1, ma8_2);
         }
 
         String trend = "";
