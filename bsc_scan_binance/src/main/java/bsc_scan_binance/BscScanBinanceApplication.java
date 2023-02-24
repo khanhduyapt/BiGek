@@ -117,6 +117,8 @@ public class BscScanBinanceApplication {
                 System.out.println(log.getAbsolutePath());
                 System.out.println();
 
+                Utils.logWritelnWithTime("\n\n\n" + binance_service.getSummaryCurrencies() + "\n", false);
+
                 while (index_crypto < total) {
                     wait(SLEEP_MINISECONDS);
                     CandidateCoin coin = token_list.get(index_crypto);

@@ -55,7 +55,7 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 //@Slf4j
 public class Utils {
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.002);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0015);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -132,10 +132,8 @@ public class Utils {
     // MFF ko co: "EU50", "AU200", "DE40", "US100", "SP35",
 
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("GBPAUD", "EURAUD", "EURJPY", "EURCAD",
-            "CADJPY", "GBPJPY", "NZDJPY", "AUDJPY", "AUDCAD", "GBPCAD", "EURNZD", "AUDNZD", "NZDCAD", "USDPLN",
-            "USDSEK");
-    // Kho an: "USDMXN", "USDZAR", "USDHUF", "USDHKD","USDTRY", "USDNOK", "USDSEK",
-    // "USDCZK"
+            "CADJPY", "GBPJPY", "NZDJPY", "AUDJPY", "AUDCAD", "GBPCAD", "GBPNZD", "EURNZD", "AUDNZD", "NZDCAD",
+            "EURCHF", "AUDCHF", "GBPCHF", "CADCHF", "CHFJPY", "NZDCHF");
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
@@ -149,22 +147,22 @@ public class Utils {
             + "  FROM                                                                                     \n"
             + " (                                                                                         \n"
             + "     SELECT                                                                                \n"
-            + "        str_h.gecko_id  as geckoid_or_epic,                                              \n"
-            + "        str_h.symbol    as symbol_or_epic,                                               \n"
+            + "        str_h.gecko_id  as geckoid_or_epic,                                                \n"
+            + "        str_h.symbol    as symbol_or_epic,                                                 \n"
             + "        (select str_d.note from funding_history str_d where event_time = 'DH4H1_D_TREND_CRYPTO' and str_d.gecko_id = str_h.gecko_id) as trend_d,  \n"
             + "        (select str_d.note from funding_history str_d where event_time = 'DH4H1_STR_15M_CRYPTO' and str_d.gecko_id = str_h.gecko_id limit 1) as trend_15m, \n"
             + "        (select str_d.note from funding_history str_d where event_time = 'DH4H1_STR_05M_CRYPTO' and str_d.gecko_id = str_h.gecko_id limit 1) as trend_5m, \n"
-            + "        str_h.note   as trend_h                                                           \n"
+            + "        str_h.note   as trend_h                                                            \n"
             + "     FROM funding_history str_h                                                            \n"
             + "     WHERE str_h.event_time = 'DH4H1_STR_H4_CRYPTO'                                        \n"
             + "  ) tmp                                                                                    \n"
             + "  WHERE (tmp.trend_d = 'Long') and (tmp.trend_d = tmp.trend_h)  and (tmp.trend_d = tmp.trend_15m)   \n"
-            + "  ORDER BY tmp.symbol_or_epic                                                          \n";
+            + "  ORDER BY tmp.symbol_or_epic                                                              \n";
 
     public static String sql_ForexHistoryResponse = " "
-            + " SELECT DISTINCT ON (tmp.symbol_or_epic)                                                    \n"
+            + " SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
             + "    tmp.geckoid_or_epic,                                                                 \n"
-            + "    tmp.symbol_or_epic,                                                                   \n"
+            + "    tmp.symbol_or_epic,                                                                  \n"
             + "    tmp.trend_d      as d,                                                               \n"
             + "    tmp.trend_h      as h,                                                               \n"
             + "    COALESCE(tmp.trend_15m,'') as m15,                                                   \n"

@@ -2977,7 +2977,7 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.nonNull(week)) {
                         if ((week.getStr_body_price().compareTo(list.get(1).getLow_price()) > 0)
                                 || (week.getStr_body_price().compareTo(current_price) > 0)) {
-                            ma_3_5_8_15 += " Long range (Week). ";
+                            ma_3_5_8_15 += " Long  range (Week). ";
                         }
                         if ((week.getEnd_body_price().compareTo(list.get(1).getHight_price()) < 0)
                                 || (week.getStr_body_price().compareTo(current_price) < 0)) {
@@ -2988,7 +2988,7 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.nonNull(entity)) {
                         if ((entity.getStr_body_price().compareTo(list.get(1).getLow_price()) > 0)
                                 || (week.getStr_body_price().compareTo(current_price) > 0)) {
-                            ma_3_5_8_15 += " Long range (day). ";
+                            ma_3_5_8_15 += " Long  range (day). ";
                         }
                         if ((entity.getEnd_body_price().compareTo(list.get(1).getHight_price()) < 0)
                                 || (week.getStr_body_price().compareTo(current_price) < 0)) {
@@ -3003,11 +3003,11 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if ((ma3_1.compareTo(ma5_1) > 0) && (ma5_1.compareTo(ma8_1) > 0) && (ma8_1.compareTo(ma15_1) > 0)) {
                         //allow_send_msg = true;
-                        ma_3_5_8_15 += "   (LONG_Ma3, 5, 8, 15)";
+                        ma_3_5_8_15 += "   (LONG  Ma3, 5, 8, 15)";
                     }
                     if ((ma3_1.compareTo(ma5_1) < 0) && (ma5_1.compareTo(ma8_1) < 0) && (ma8_1.compareTo(ma15_1) < 0)) {
                         //allow_send_msg = true;
-                        ma_3_5_8_15 += "   (SHORT_Ma3, 5, 8, 15)";
+                        ma_3_5_8_15 += "   (SHORT Ma3, 5, 8, 15)";
                     }
                 }
 
@@ -3031,7 +3031,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String EVENT_ID = EVENT_PUMP + EPIC + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
                     String msg = trend_tmp + char_name + EPIC + ma_3_5_8_15;
-                    sendMsgPerHour(EVENT_ID, msg, true);
+                    // sendMsgPerHour(EVENT_ID, msg, true);
                 }
             } else if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
                 Orders entity_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
@@ -3062,29 +3062,30 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     @Override
-    public void createReport() {
+    public String getSummaryCurrencies() {
+        String results = "";
+
         List<Orders> list_h4 = ordersRepository.swithTrendH4List();
         if (!CollectionUtils.isEmpty(list_h4)) {
-            Utils.logWritelnReport("");
-            Utils.logWritelnReport("");
 
             Hashtable<String, Integer> cur_dict = new Hashtable<String, Integer>();
-            List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD", "PLN",
-                    "SEK");
+            Hashtable<String, Integer> sum_dict = new Hashtable<String, Integer>();
+            List<String> currencies = Arrays.asList(
+                    "USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD", "PLN", "SEK");
 
-            for (Orders entity : list_h4) {
-                String EPIC = entity.getId().replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
-                String trend = entity.getTrend();
+            for (String cur : currencies) {
 
-                for (String cur : currencies) {
+                for (Orders entity : list_h4) {
+                    String EPIC = entity.getId().replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
+                    String trend = entity.getTrend();
+
                     if (EPIC.contains(cur)) {
-
                         if (!cur_dict.containsKey(cur)) {
                             cur_dict.put(cur, 0);
                         }
-
                         Integer count = cur_dict.get(cur);
-                        if (EPIC.indexOf(cur) == 0) {
+                        int index = EPIC.indexOf(cur);
+                        if (index == 0) {
                             if (Objects.equals(Utils.TREND_LONG, trend)) {
                                 count += 1;
                             } else {
@@ -3097,26 +3098,40 @@ public class BinanceServiceImpl implements BinanceService {
                                 count += 1;
                             }
                         }
-
                         cur_dict.put(cur, count);
+                        // -----------------------------
+                        if (!sum_dict.containsKey(cur)) {
+                            sum_dict.put(cur, 0);
+                        }
+                        Integer sum = sum_dict.get(cur);
+                        sum += 1;
+                        sum_dict.put(cur, sum);
                     }
                 }
             }
 
-            String results = "";
             for (String cur : currencies) {
                 Integer count = cur_dict.get(cur);
-
                 results += cur + ": ";
                 if (count > 0) {
-                    results += "Long     ";
+                    results += "Long (+" + count + "/" + sum_dict.get(cur) + ")    ";
+                } else if (count < 0) {
+                    results += "Short(" + count + "/" + sum_dict.get(cur) + ")    ";
                 } else {
-                    results += "Short    ";
+                    results += "     (" + count + "/" + sum_dict.get(cur) + ")    ";
                 }
             }
-            Utils.logWritelnReport(results + "\n");
         }
 
+        return results;
+    }
+
+    @Override
+    public void createReport() {
+        Utils.logWritelnReport("");
+        Utils.logWritelnReport("");
+        Utils.logWritelnReport("");
+        Utils.logWritelnReport(getSummaryCurrencies());
         List<Orders> orders = ordersRepository.swithTrendDayList();
         if (!CollectionUtils.isEmpty(orders)) {
             Utils.logWritelnReport("");

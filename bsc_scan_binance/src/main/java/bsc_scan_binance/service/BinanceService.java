@@ -51,4 +51,6 @@ public interface BinanceService {
 
     public void createReport();
 
+    public String getSummaryCurrencies();
+
 }
