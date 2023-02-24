@@ -1324,7 +1324,7 @@ public class Utils {
     }
 
     public static String getPercentToEntry(BigDecimal curr_price, BigDecimal entry, boolean isLong) {
-        String mySL = Utils.appendSpace(Utils.removeLastZero(roundDefault(entry)), 6) + "("
+        String mySL = Utils.appendLeft(Utils.removeLastZero(roundDefault(entry)), 6) + "("
                 + (curr_price.compareTo(entry) > 0 ? Utils.getPercentStr(curr_price, entry)
                         : Utils.getPercentStr(entry, curr_price))
                 + ")";
@@ -2626,19 +2626,19 @@ public class Utils {
         BigDecimal tp_money_shot = money_short.calcTPMoney();
 
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 10);
-        result += " E: " + Utils.appendSpace(removeLastZero(roundDefault(entry)) + "$", 8);
+        result += " E: " + Utils.appendLeft(removeLastZero(roundDefault(entry)) + "$", 8);
 
-        result += Utils.appendSpace("(Long )" + Utils.appendLeft(removeLastZero(lot_long), 6) + "(lot)" + "   SL: "
+        result += Utils.appendSpace("(Long)" + Utils.appendLeft(removeLastZero(lot_long), 6) + "(lot)" + "   SL: "
                 + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12) + "   TP: "
-                + Utils.appendSpace(removeLastZero(roundDefault(HI)), 6) + "= "
-                + Utils.appendLeft(removeLastZero(tp_money_long), 5) + "$", 65);
+                + Utils.appendLeft(removeLastZero(roundDefault(HI)), 6) + " ("
+                + Utils.appendLeft(removeLastZero(tp_money_long), 6) + "$)", 65);
 
-        result += "  ";
+        result += " ";
 
-        result += Utils.appendSpace(" (Short)" + Utils.appendLeft(removeLastZero(lot_shot), 6) + "(lot)" + "   SL: "
+        result += Utils.appendSpace("(Short)" + Utils.appendLeft(removeLastZero(lot_shot), 6) + "(lot)" + "   SL: "
                 + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12) + "   TP: "
-                + Utils.appendSpace(removeLastZero(roundDefault(LO)), 6) + "= "
-                + Utils.appendLeft(removeLastZero(tp_money_shot), 5) + "$", 65);
+                + Utils.appendLeft(removeLastZero(roundDefault(LO)), 6) + " ("
+                + Utils.appendLeft(removeLastZero(tp_money_shot), 6) + "$)", 65);
 
         // result += Utils.appendSpace("", 15);
         // if (tp_money_long.compareTo(tp_money_short.multiply(BigDecimal.valueOf(2))) >
