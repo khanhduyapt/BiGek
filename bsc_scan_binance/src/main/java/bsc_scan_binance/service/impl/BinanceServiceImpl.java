@@ -3073,95 +3073,99 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     @Override
-    public String getSummaryCurrencies() {
+    public String getSummaryCurrencies(String CAPITAL_TIME_XXX) {
         String results = "";
+        List<Orders> orders_list;
+        if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_DAY)) {
+            orders_list = ordersRepository.getTrendDayList();
+        } else {
+            orders_list = ordersRepository.getTrendH4List();
+        }
 
-        List<Orders> list_h4 = ordersRepository.swithTrendH4List();
-        if (!CollectionUtils.isEmpty(list_h4)) {
+        ordersRepository.getTrendDayList();
+        Hashtable<String, Integer> day_dict = new Hashtable<String, Integer>();
 
-            Hashtable<String, Integer> cur_dict = new Hashtable<String, Integer>();
-            Hashtable<String, Integer> sum_dict = new Hashtable<String, Integer>();
-            List<String> currencies = Arrays.asList(
-                    "USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD", "PLN", "SEK");
-
-            for (String cur : currencies) {
-                for (Orders entity : list_h4) {
-                    String trend = entity.getTrend();
-                    String EPIC = entity.getId().replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
-
-                    if (EPIC.contains(cur)) {
-                        if (!cur_dict.containsKey(cur)) {
-                            cur_dict.put(cur, 0);
-                        }
-                        Integer count = cur_dict.get(cur);
-                        int index = EPIC.indexOf(cur);
-                        if (index == 0) {
-                            if (Objects.equals(Utils.TREND_LONG, trend)) {
-                                count += 1;
-                            } else {
-                                count -= 1;
-                            }
-                        } else if (index > 0) {
-                            if (Objects.equals(Utils.TREND_LONG, trend)) {
-                                count -= 1;
-                            } else {
-                                count += 1;
-                            }
-                        }
-                        cur_dict.put(cur, count);
-                        // -----------------------------
-                        if (!sum_dict.containsKey(cur)) {
-                            sum_dict.put(cur, 0);
-                        }
-                        Integer sum = sum_dict.get(cur);
-                        sum += 1;
-                        sum_dict.put(cur, sum);
-                    }
-                }
-            }
-
-            List<Orders> list_day = ordersRepository.getTrendDayList();
-            for (String cur : currencies) {
-                Integer count = cur_dict.get(cur);
-                results += cur + ": ";
-                if (count > 0) {
-                    results += "Long (+" + count + "/" + sum_dict.get(cur) + ")";
-                } else if (count < 0) {
-                    results += "Short(" + count + "/" + sum_dict.get(cur) + ")";
-                } else {
-                    results += "     (" + count + "/" + sum_dict.get(cur) + ")";
+        List<String> source_compare = Arrays.asList("USD", "CHF");
+        for (String SOURCE : source_compare) {
+            for (String cur : Utils.currencies) {
+                if (Objects.equals(SOURCE, cur)) {
+                    continue;
                 }
 
-                for (Orders entity : list_day) {
-                    if (entity.getId().contains(Utils.CAPITAL_TIME_DAY) && !Objects.equals("CHF", cur)) {
+                Integer sum = 0;
+                for (Orders entity : orders_list) {
+                    if (entity.getId().contains(Utils.CAPITAL_TIME_DAY) && entity.getId().contains(SOURCE)
+                            && entity.getId().contains(cur)) {
+
                         String trend = entity.getTrend();
                         String EPIC = entity.getId().replace("_" + Utils.CAPITAL_TIME_DAY, "");
 
-                        if (EPIC.contains("CHF") && EPIC.contains(cur)) {
+                        int index = EPIC.indexOf(cur);
 
-                            int index = EPIC.indexOf(cur);
-
-                            if (index == 0) {
-                                if (Objects.equals(Utils.TREND_LONG, trend)) {
-                                    results += "(Up.vs.CHF)";
-                                } else {
-                                    results += "(Down.vs.CHF)";
-                                }
-                            } else if (index > 0) {
-                                if (Objects.equals(Utils.TREND_LONG, trend)) {
-                                    results += "(Down.vs.CHF)";
-                                } else {
-                                    results += "(Up.vs.CHF)";
-                                }
+                        if (index == 0) {
+                            if (Objects.equals(Utils.TREND_LONG, trend)) {
+                                sum += 1;
+                            } else {
+                                sum -= 1;
+                            }
+                        } else if (index > 0) {
+                            if (Objects.equals(Utils.TREND_LONG, trend)) {
+                                sum -= 1;
+                            } else {
+                                sum += 1;
                             }
                         }
                     }
                 }
-                results += "   ";
+                if (!day_dict.containsKey(cur)) {
+                    day_dict.put(cur, 0);
+                }
+                Integer val = day_dict.get(cur);
+                val += sum;
+                day_dict.put(cur, val);
             }
         }
 
-        return results;
+        results += "Scores: ";
+        List<String> epic_long = new ArrayList<String>();
+        List<String> epic_shot = new ArrayList<String>();
+        for (String cur : Utils.currencies) {
+            if (day_dict.containsKey(cur)) {
+                Integer sum = day_dict.get(cur);
+                if (sum > 0) {
+                    epic_long.add(cur);
+                } else if (sum < 0) {
+                    epic_shot.add(cur);
+                }
+
+                results += cur + ":" + Utils.appendLeft(sum.toString(), 2) + "   ";
+            }
+        }
+
+        List<String> combination_list = new ArrayList<String>();
+        for (String eLong : epic_long) {
+            for (String eShot : epic_shot) {
+                combination_list.add(eLong + eShot);
+                combination_list.add(eShot + eLong);
+            }
+        }
+
+        List<String> candidate_list = new ArrayList<String>();
+        List<String> capital_list = new ArrayList<String>();
+        capital_list.addAll(Utils.EPICS_FOREX);
+        capital_list.addAll(Utils.EPICS_FOREX_OTHERS);
+        for (String epic : capital_list) {
+            if (combination_list.contains(epic)) {
+                candidate_list.add(epic);
+            }
+        }
+
+        results += "  ---> Candidates: ";
+        for (String epic : candidate_list) {
+            results += epic + "   ";
+        }
+
+        return results.trim();
     }
 
     @Override
@@ -3169,7 +3173,8 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.logWritelnReport("");
         Utils.logWritelnReport("");
         Utils.logWritelnReport("");
-        Utils.logWritelnReport(getSummaryCurrencies());
+        Utils.logWritelnReport("(D1): " + getSummaryCurrencies(Utils.CAPITAL_TIME_DAY));
+        Utils.logWritelnReport("(H4): " + getSummaryCurrencies(Utils.CAPITAL_TIME_HOUR_4));
         List<Orders> orders = ordersRepository.swithTrendDayAndH4List();
         if (!CollectionUtils.isEmpty(orders)) {
             Utils.logWritelnReport("");
@@ -3207,7 +3212,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         List<Orders> orders = ordersRepository.clearTrash();
         if (!CollectionUtils.isEmpty(orders)) {
-            // ordersRepository.deleteAll(orders); // TODO: debug
+            ordersRepository.deleteAll(orders); // TODO: debug
         }
     }
 }

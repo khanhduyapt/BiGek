@@ -51,6 +51,6 @@ public interface BinanceService {
 
     public void createReport();
 
-    public String getSummaryCurrencies();
+    public String getSummaryCurrencies(String CAPITAL_TIME_XXX);
 
 }

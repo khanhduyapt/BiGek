@@ -23,7 +23,7 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
     public List<Orders> swithTrendDayAndH4List();
 
     @Query(value = "SELECT m.* FROM orders m where (gecko_id like '%HOUR_4') order by gecko_id ", nativeQuery = true)
-    public List<Orders> swithTrendH4List();
+    public List<Orders> getTrendH4List();
 
     @Query(value = "SELECT m.* FROM orders m where (gecko_id like '%DAY') order by gecko_id ", nativeQuery = true)
     public List<Orders> getTrendDayList();

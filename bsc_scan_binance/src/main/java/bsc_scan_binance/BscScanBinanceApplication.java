@@ -117,8 +117,6 @@ public class BscScanBinanceApplication {
                 System.out.println(log.getAbsolutePath());
                 System.out.println();
 
-                Utils.logWritelnWithTime("\n\n\n" + binance_service.getSummaryCurrencies() + "\n", false);
-
                 while (index_crypto < total) {
                     wait(SLEEP_MINISECONDS);
                     CandidateCoin coin = token_list.get(index_crypto);
@@ -133,16 +131,26 @@ public class BscScanBinanceApplication {
                             if (isReloadAfter((Utils.MINUTES_OF_1H), "INIT_FOREX_W_D_H")) {
                                 for (int index = 0; index < forex_size; index++) {
                                     String EPIC = capital_list.get(index);
-
                                     checkCapital_h4(binance_service, EPIC);
-                                    checkCapital_h1(binance_service, EPIC, index, forex_size);
-
                                     sleepWhenExceptionTimeOut(binance_service);
                                 }
-
                                 Utils.writelnLogFooter_Forex();
-
                                 binance_service.createReport();
+                            }
+
+                            if (isReloadAfter((Utils.MINUTES_OF_1H), "INIT_FOREX_H1")) {
+                                String summary_day = "Day: "
+                                        + binance_service.getSummaryCurrencies(Utils.CAPITAL_TIME_DAY);
+                                String summary_h4 = "H4 : "
+                                        + binance_service.getSummaryCurrencies(Utils.CAPITAL_TIME_HOUR_4);
+                                Utils.logWritelnWithTime(summary_day, false);
+                                Utils.logWritelnWithTime(summary_h4, false);
+
+                                for (int index = 0; index < forex_size; index++) {
+                                    String EPIC = capital_list.get(index);
+                                    checkCapital_h1(binance_service, EPIC, index, forex_size);
+                                    sleepWhenExceptionTimeOut(binance_service);
+                                }
                             }
                         }
 
