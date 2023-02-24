@@ -247,6 +247,36 @@ public class MoneyAtRiskResponse {
             standard_lot = BigDecimal.valueOf(0.337);
             unit_risk_per_pip = BigDecimal.valueOf(259.999999999996);
             break;
+
+        case "GBPNZD":
+            standard_lot = BigDecimal.valueOf(0.0402);
+            unit_risk_per_pip = BigDecimal.valueOf(2550);
+            break;
+        case "EURCHF":
+            standard_lot = BigDecimal.valueOf(0.0468);
+            unit_risk_per_pip = BigDecimal.valueOf(5200);
+            break;
+        case "AUDCHF":
+            standard_lot = BigDecimal.valueOf(0.0234);
+            unit_risk_per_pip = BigDecimal.valueOf(2650.00000000001);
+            break;
+        case "GBPCHF":
+            standard_lot = BigDecimal.valueOf(0.0468);
+            unit_risk_per_pip = BigDecimal.valueOf(5400);
+            break;
+        case "CADCHF":
+            standard_lot = BigDecimal.valueOf(0.0468);
+            unit_risk_per_pip = BigDecimal.valueOf(5500);
+            break;
+        case "CHFJPY":
+            standard_lot = BigDecimal.valueOf(0.674);
+            unit_risk_per_pip = BigDecimal.valueOf(560.000000000032);
+            break;
+        case "NZDCHF":
+            standard_lot = BigDecimal.valueOf(0.0468);
+            unit_risk_per_pip = BigDecimal.valueOf(5699.99999999999);
+            break;
+
         default:
             String msg = "getStandard_lot: " + EPIC + " not exist!";
             System.out.println("getStandard_lot: " + EPIC + " not exist!----------------------------------");
