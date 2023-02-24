@@ -2977,22 +2977,22 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.nonNull(week)) {
                         if ((week.getStr_body_price().compareTo(list.get(1).getLow_price()) > 0)
                                 || (week.getStr_body_price().compareTo(current_price) > 0)) {
-                            ma_3_5_8_15 += " Long  range (Week). ";
+                            ma_3_5_8_15 += " Long  (Week). ";
                         }
                         if ((week.getEnd_body_price().compareTo(list.get(1).getHight_price()) < 0)
                                 || (week.getStr_body_price().compareTo(current_price) < 0)) {
-                            ma_3_5_8_15 += " Short range (Week). ";
+                            ma_3_5_8_15 += " Short (Week). ";
                         }
                     }
 
                     if (Objects.nonNull(entity)) {
                         if ((entity.getStr_body_price().compareTo(list.get(1).getLow_price()) > 0)
                                 || (week.getStr_body_price().compareTo(current_price) > 0)) {
-                            ma_3_5_8_15 += " Long  range (day). ";
+                            ma_3_5_8_15 += " Long  (day). ";
                         }
                         if ((entity.getEnd_body_price().compareTo(list.get(1).getHight_price()) < 0)
                                 || (week.getStr_body_price().compareTo(current_price) < 0)) {
-                            ma_3_5_8_15 += " Short range (day). ";
+                            ma_3_5_8_15 += " Short (day). ";
                         }
                     }
 
