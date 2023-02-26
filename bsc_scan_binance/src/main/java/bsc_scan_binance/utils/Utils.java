@@ -126,8 +126,11 @@ public class Utils {
     public static final long MINUTES_OF_1H = 60;
     public static final long MINUTES_OF_15M = 15;
 
-    public static final List<String> currencies = Arrays.asList(
-            "USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD", "PLN", "SEK");
+    public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
+            "PLN", "SEK");
+
+    public static final List<String> EPICS_SCAP = Arrays.asList("DXY", "GOLD", "SILVER", "US30", "US500", "J225",
+            "UK100");
 
     public static final List<String> EPICS_FOREX = Arrays.asList("BTCUSD", "DXY", "GOLD", "OIL_CRUDE", "SILVER",
             "NATURALGAS", "US30", "US500", "J225", "UK100", "FR40", "HK50", "EURUSD", "GBPUSD", "AUDUSD", "NZDUSD",
