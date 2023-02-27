@@ -226,7 +226,7 @@ public class BscScanBinanceApplication {
     }
 
     public static void checkCapital_h1(BinanceService binance_service, String EPIC, int index, int size) {
-        String init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
+        String init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_30);
         if (Utils.isNotBlank(init)) {
             String msg = "(" + Utils.appendSpace(String.valueOf(index + 1), 3) + "/"
                     + Utils.appendSpace(String.valueOf(size), 3) + ")" + Utils.getTimeHHmm()

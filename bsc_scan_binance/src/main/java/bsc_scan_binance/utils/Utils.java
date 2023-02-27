@@ -106,9 +106,9 @@ public class Utils {
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
     // public static final String CAPITAL_TIME_MINUTE = "MINUTE";
     // public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
-    public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
-    // public static final String CAPITAL_TIME_MINUTE_30 = "MINUTE_30";
-    public static final String CAPITAL_TIME_HOUR = "HOUR";
+    // public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
+    public static final String CAPITAL_TIME_MINUTE_30 = "MINUTE_30";
+    // public static final String CAPITAL_TIME_HOUR = "HOUR";
     public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
     public static final String CAPITAL_TIME_DAY = "DAY";
     public static final String CAPITAL_TIME_WEEK = "WEEK";
@@ -509,15 +509,15 @@ public class Utils {
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
         // return "_5m_";
         // }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
-            return "_15m_";
+        //        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
+        //            return "_15m_";
+        //        }
+        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
+            return "_30m_";
         }
-        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
-        // return "_30m_";
-        // }
-        if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
-            return "_1h_";
-        }
+        //        if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
+        //            return "_1h_";
+        //        }
         if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
             return "_4h_";
         }
@@ -538,15 +538,15 @@ public class Utils {
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
         // return "(5m)";
         // }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
-            return "(15m)";
+        //        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
+        //            return "(15m)";
+        //        }
+        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
+            return "(30m)";
         }
-        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
-        // return "(30m)";
-        // }
-        if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
-            return "(H1)";
-        }
+        //        if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
+        //            return "(H1)";
+        //        }
         if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
             return "(H4)";
         }
@@ -2881,7 +2881,12 @@ public class Utils {
             s_m3x15 = Utils.checkXCutDnY(ma3_1, ma3_2, ma15_1, ma15_2);
         }
 
-        if (list.get(0).getId().contains("_15m_")) {
+        if (list.get(0).getId().contains("_15m_") || list.get(0).getId().contains("_30m_")) {
+            BigDecimal ma8_1 = calcMA(list, 8, str);
+            BigDecimal ma8_2 = calcMA(list, 8, end);
+            l_m3x8 = Utils.checkXCutUpY(ma3_1, ma3_2, ma8_1, ma8_2);
+            s_m3x8 = Utils.checkXCutDnY(ma3_1, ma3_2, ma8_1, ma8_2);
+
             BigDecimal ma15_1 = calcMA(list, 15, str);
             BigDecimal ma15_2 = calcMA(list, 15, end);
             l_m3x15 = Utils.checkXCutUpY(ma3_1, ma3_2, ma15_1, ma15_2);

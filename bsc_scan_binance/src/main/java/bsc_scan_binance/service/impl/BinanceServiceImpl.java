@@ -2817,7 +2817,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public boolean hasConnectTimeOutException() {
-        String id = Utils.TEXT_CONNECTION_TIMED_OUT + "_" + Utils.CAPITAL_TIME_MINUTE_15;
+        String id = Utils.TEXT_CONNECTION_TIMED_OUT + "_" + Utils.CAPITAL_TIME_MINUTE_30;
 
         return ordersRepository.existsById(id);
     }
@@ -2909,16 +2909,16 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        int lengh = 8;
+        int lengh = 10;
         if (Objects.equals(Utils.CAPITAL_TIME_WEEK, CAPITAL_TIME_XXX)) {
             lengh = 3;
         } else if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
             lengh = 8;
-        } else if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
+        } else if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
             lengh = 15;
         }
 
-        String time_out_id = Utils.TEXT_CONNECTION_TIMED_OUT + "_" + Utils.CAPITAL_TIME_MINUTE_15;
+        String time_out_id = Utils.TEXT_CONNECTION_TIMED_OUT + "_" + Utils.CAPITAL_TIME_MINUTE_30;
         List<BtcFutures> list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, lengh);
         if (CollectionUtils.isEmpty(list)) {
             BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS);
@@ -2949,7 +2949,7 @@ public class BinanceServiceImpl implements BinanceService {
         boolean allow_write_log = true;
 
         if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)
-                || Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
+                || Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
 
             String ma_3_5_8_15 = "";
             String char_name = Utils.getChartName(list);
@@ -2977,7 +2977,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
+                if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
                     allow_send_msg = false;
                     allow_write_log = false;
                     entity = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
@@ -2986,7 +2986,6 @@ public class BinanceServiceImpl implements BinanceService {
                         String trend_day = entity.getTrend();
 
                         if (Objects.equals(trend_day, trend_ma3) && Objects.equals(trend_day, switch_trend)) {
-
                             // allow_send_msg = true;
                             // allow_write_log = true;
 
@@ -3096,8 +3095,8 @@ public class BinanceServiceImpl implements BinanceService {
             orders_list = ordersRepository.getTrend_DayList();
         } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_HOUR_4)) {
             orders_list = ordersRepository.getTrend_H4List();
-        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_HOUR)) {
-            orders_list = ordersRepository.getTrend_H1List();
+        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_30)) {
+            orders_list = ordersRepository.getTrend_30mList();
         } else {
             return result;
         }
@@ -3115,7 +3114,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String EPIC = entity.getId().replace("_" + Utils.CAPITAL_TIME_DAY, "");
                     EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
-                    EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");
+                    EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_30, "");
 
                     int index = EPIC.indexOf(cur);
 
@@ -3223,9 +3222,9 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.nonNull(temp_obj)) {
             temp += ", H4: " + temp_obj.getTrend();
         }
-        temp_obj = ordersRepository.findById("DXY" + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
+        temp_obj = ordersRepository.findById("DXY" + "_" + Utils.CAPITAL_TIME_MINUTE_30).orElse(null);
         if (Objects.nonNull(temp_obj)) {
-            temp += ", H1: " + temp_obj.getTrend();
+            temp += ", 30m: " + temp_obj.getTrend();
         }
         Utils.logWritelnReport("(USD) " + temp);
         //--------------------------------------------------------------------------
@@ -3244,17 +3243,17 @@ public class BinanceServiceImpl implements BinanceService {
                 str_shot += result.get(1);
                 Utils.logWritelnReport("(H4 Compare.vs." + CUR + "): " + result.get(0) + "     " + result.get(1));
             }
-            result = getSummaryCurrencies(CUR, Utils.CAPITAL_TIME_HOUR);
+            result = getSummaryCurrencies(CUR, Utils.CAPITAL_TIME_MINUTE_30);
             if (!CollectionUtils.isEmpty(result)) {
                 str_long += result.get(0);
                 str_shot += result.get(1);
-                Utils.logWritelnReport("(H1 Compare.vs." + CUR + "): " + result.get(0) + "     " + result.get(1));
+                Utils.logWritelnReport("(30m Compare.vs." + CUR + "): " + result.get(0) + "     " + result.get(1));
             }
         }
         //--------------------------------------------------------------------------
         List<Orders> orders_day = ordersRepository.getTrend_DayList();
         List<Orders> orders_h4 = ordersRepository.getTrend_H4List();
-        List<Orders> orders_h1 = ordersRepository.getTrend_H1List();
+        List<Orders> orders_h1 = ordersRepository.getTrend_30mList();
         orders_day.add(null);
         orders_day.addAll(orders_h4);
         orders_day.add(null);
@@ -3270,7 +3269,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String chart = "";
                 String EPIC = entity.getId().replace("_" + Utils.CAPITAL_TIME_DAY, "");
                 EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
-                EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");
+                EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_30, "");
 
                 if (entity.getId().contains(Utils.CAPITAL_TIME_DAY)) {
                     chart = "(D1: ";
@@ -3282,8 +3281,8 @@ public class BinanceServiceImpl implements BinanceService {
                     if (str_shot.contains(EPIC)) {
                         note += " Check_Short ";
                     }
-                } else if (entity.getId().contains(Utils.CAPITAL_TIME_HOUR)) {
-                    chart = "(H1: ";
+                } else if (entity.getId().contains(Utils.CAPITAL_TIME_MINUTE_30)) {
+                    chart = "(30m: ";
                     if (str_long.contains(EPIC)) {
                         note += " Check_Long ";
                     }
