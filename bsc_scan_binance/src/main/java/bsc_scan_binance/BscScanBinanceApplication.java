@@ -140,26 +140,13 @@ public class BscScanBinanceApplication {
                             }
 
                             if (isReloadAfter((Utils.MINUTES_OF_1H), "INIT_FOREX_H1")) {
-                                String summary_day = "Day: "
-                                        + binance_service.getSummaryCurrencies("USD", Utils.CAPITAL_TIME_DAY);
-                                String summary_day2 = "Day: "
-                                        + binance_service.getSummaryCurrencies("CHF", Utils.CAPITAL_TIME_DAY);
-
-                                String summary_h4 = "H4 : "
-                                        + binance_service.getSummaryCurrencies("USD", Utils.CAPITAL_TIME_HOUR_4);
-                                String summary_h42 = "H4 : "
-                                        + binance_service.getSummaryCurrencies("CHF", Utils.CAPITAL_TIME_HOUR_4);
-
-                                Utils.logWritelnWithTime(summary_day, false);
-                                Utils.logWritelnWithTime(summary_day2, false);
-                                Utils.logWritelnWithTime(summary_h4, false);
-                                Utils.logWritelnWithTime(summary_h42, false);
-
                                 for (int index = 0; index < forex_size; index++) {
                                     String EPIC = capital_list.get(index);
                                     checkCapital_h1(binance_service, EPIC, index, forex_size);
                                     sleepWhenExceptionTimeOut(binance_service);
                                 }
+
+                                binance_service.createReport();
                             }
                         }
 

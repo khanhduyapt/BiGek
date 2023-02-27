@@ -2987,8 +2987,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                         if (Objects.equals(trend_day, trend_ma3) && Objects.equals(trend_day, switch_trend)) {
 
-                            allow_send_msg = true;
-                            allow_write_log = true;
+                            // allow_send_msg = true;
+                            // allow_write_log = true;
 
                             Orders week = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
                             if (Objects.nonNull(week)) {
@@ -3089,17 +3089,18 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public String getSummaryCurrencies(String SOURCE, String CAPITAL_TIME_XXX) {
-
         List<Orders> orders_list;
         if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_DAY)) {
-            orders_list = ordersRepository.getTrendDayList();
+            orders_list = ordersRepository.getTrend_DayList();
+        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_HOUR_4)) {
+            orders_list = ordersRepository.getTrend_H4List();
+        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_HOUR)) {
+            orders_list = ordersRepository.getTrend_H1List();
         } else {
-            orders_list = ordersRepository.getTrendH4List();
+            return "";
         }
 
-        ordersRepository.getTrendDayList();
         Hashtable<String, Integer> day_dict = new Hashtable<String, Integer>();
-        // "USD", "CHF"
         for (String cur : Utils.currencies) {
             if (Objects.equals(SOURCE, cur)) {
                 continue;
@@ -3109,8 +3110,10 @@ public class BinanceServiceImpl implements BinanceService {
             for (Orders entity : orders_list) {
                 if (entity.getId().contains(SOURCE) && entity.getId().contains(cur)) {
                     String trend = entity.getTrend();
-                    String EPIC = entity.getId().replace("_" + Utils.CAPITAL_TIME_DAY, "")
-                            .replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
+
+                    String EPIC = entity.getId().replace("_" + Utils.CAPITAL_TIME_DAY, "");
+                    EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
+                    EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");
 
                     int index = EPIC.indexOf(cur);
 
@@ -3193,7 +3196,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
         } else {
-            return "";
+            // return "";
         }
 
         return results.trim();
@@ -3204,36 +3207,27 @@ public class BinanceServiceImpl implements BinanceService {
         File myObj = new File(Utils.getReportLogFile());
         myObj.delete();
 
-        String dxy = "";
+        String temp = "";
 
         Orders temp_obj = ordersRepository.findById("DXY" + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
         if (Objects.nonNull(temp_obj)) {
-            dxy += "D: " + temp_obj.getTrend();
+            temp += "D: " + temp_obj.getTrend();
         }
         temp_obj = ordersRepository.findById("DXY" + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
         if (Objects.nonNull(temp_obj)) {
-            dxy += ", H4: " + temp_obj.getTrend();
+            temp += ", H4: " + temp_obj.getTrend();
         }
         temp_obj = ordersRepository.findById("DXY" + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
         if (Objects.nonNull(temp_obj)) {
-            dxy += ", H1: " + temp_obj.getTrend();
+            temp += ", H1: " + temp_obj.getTrend();
         }
-        Utils.logWritelnReport("(USD) " + dxy);
+        Utils.logWritelnReport("(USD) " + temp);
         //--------------------------------------------------------------------------
-        String temp = getSummaryCurrencies("USD", Utils.CAPITAL_TIME_DAY);
+        temp = getSummaryCurrencies("USD", Utils.CAPITAL_TIME_DAY);
         if (Utils.isNotBlank(temp)) {
             Utils.logWritelnReport("(D1 Compare.vs.USD): " + temp);
         }
-        temp = getSummaryCurrencies("CHF", Utils.CAPITAL_TIME_DAY);
-        if (Utils.isNotBlank(temp)) {
-            Utils.logWritelnReport("(D1 Compare.vs.CHF): " + temp);
-        }
-
         temp = getSummaryCurrencies("USD", Utils.CAPITAL_TIME_HOUR_4);
-        if (Utils.isNotBlank(temp)) {
-            Utils.logWritelnReport("(H4 Compare.vs.USD): " + temp);
-        }
-        temp = getSummaryCurrencies("CHF", Utils.CAPITAL_TIME_HOUR_4);
         if (Utils.isNotBlank(temp)) {
             Utils.logWritelnReport("(H4 Compare.vs.USD): " + temp);
         }
@@ -3242,9 +3236,9 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnReport("(H1 Compare.vs.USD): " + temp);
         }
         //--------------------------------------------------------------------------
-        List<Orders> orders_day = ordersRepository.getTrendDayList();
-        List<Orders> orders_h4 = ordersRepository.getTrendH4List();
-        List<Orders> orders_h1 = ordersRepository.getTrendh1List();
+        List<Orders> orders_day = ordersRepository.getTrend_DayList();
+        List<Orders> orders_h4 = ordersRepository.getTrend_H4List();
+        List<Orders> orders_h1 = ordersRepository.getTrend_H1List();
         orders_day.add(null);
         orders_day.addAll(orders_h4);
         orders_day.add(null);
@@ -3256,12 +3250,11 @@ public class BinanceServiceImpl implements BinanceService {
                     Utils.logWritelnReport("");
                     continue;
                 }
-
-                String chart = entity.getId().contains(Utils.CAPITAL_TIME_HOUR_4) ? "(H4: " : "(D1: ";
-                if (entity.getId().contains(Utils.CAPITAL_TIME_HOUR_4)) {
-                    chart = "(H4: ";
-                } else if (entity.getId().contains(Utils.CAPITAL_TIME_DAY)) {
+                String chart = "";
+                if (entity.getId().contains(Utils.CAPITAL_TIME_DAY)) {
                     chart = "(D1: ";
+                } else if (entity.getId().contains(Utils.CAPITAL_TIME_HOUR_4)) {
+                    chart = "(H4: ";
                 } else if (entity.getId().contains(Utils.CAPITAL_TIME_HOUR)) {
                     chart = "(H1: ";
                 }
