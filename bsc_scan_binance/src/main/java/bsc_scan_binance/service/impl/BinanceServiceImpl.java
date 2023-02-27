@@ -3088,7 +3088,9 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     @Override
-    public String getSummaryCurrencies(String SOURCE, String CAPITAL_TIME_XXX) {
+    public List<String> getSummaryCurrencies(String SOURCE, String CAPITAL_TIME_XXX) {
+        List<String> result = new ArrayList<String>();
+
         List<Orders> orders_list;
         if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_DAY)) {
             orders_list = ordersRepository.getTrend_DayList();
@@ -3097,7 +3099,7 @@ public class BinanceServiceImpl implements BinanceService {
         } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_HOUR)) {
             orders_list = ordersRepository.getTrend_H1List();
         } else {
-            return "";
+            return result;
         }
 
         Hashtable<String, Integer> day_dict = new Hashtable<String, Integer>();
@@ -3181,25 +3183,27 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if ((candidate_long_list.size() > 0) || (candidate_shot_list.size() > 0)) {
-            results += "  ---> ";
+            String str_long = "";
+            String str_shot = "";
             if ((candidate_long_list.size() > 0)) {
-                results += "(Long ): ";
+                str_long += "(Long ): ";
                 for (String epic : candidate_long_list) {
-                    results += epic + "   ";
+                    str_long += epic + "   ";
                 }
             }
 
             if ((candidate_shot_list.size() > 0)) {
-                results += "(Short): ";
+                str_shot += "(Short): ";
                 for (String epic : candidate_shot_list) {
-                    results += epic + "   ";
+                    str_shot += epic + "   ";
                 }
             }
-        } else {
-            // return "";
+
+            result.add(str_long);
+            result.add(str_shot);
         }
 
-        return results.trim();
+        return result;
     }
 
     @Override
@@ -3208,6 +3212,8 @@ public class BinanceServiceImpl implements BinanceService {
         myObj.delete();
 
         String temp = "";
+        String str_long = "";
+        String str_shot = "";
 
         Orders temp_obj = ordersRepository.findById("DXY" + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
         if (Objects.nonNull(temp_obj)) {
@@ -3223,17 +3229,27 @@ public class BinanceServiceImpl implements BinanceService {
         }
         Utils.logWritelnReport("(USD) " + temp);
         //--------------------------------------------------------------------------
-        temp = getSummaryCurrencies("USD", Utils.CAPITAL_TIME_DAY);
-        if (Utils.isNotBlank(temp)) {
-            Utils.logWritelnReport("(D1 Compare.vs.USD): " + temp);
-        }
-        temp = getSummaryCurrencies("USD", Utils.CAPITAL_TIME_HOUR_4);
-        if (Utils.isNotBlank(temp)) {
-            Utils.logWritelnReport("(H4 Compare.vs.USD): " + temp);
-        }
-        temp = getSummaryCurrencies("USD", Utils.CAPITAL_TIME_HOUR);
-        if (Utils.isNotBlank(temp)) {
-            Utils.logWritelnReport("(H1 Compare.vs.USD): " + temp);
+
+        List<String> compare_list = Arrays.asList("USD", "EUR", "GBP");
+        for (String CUR : compare_list) {
+            List<String> result = getSummaryCurrencies(CUR, Utils.CAPITAL_TIME_DAY);
+            if (!CollectionUtils.isEmpty(result)) {
+                str_long += result.get(0);
+                str_shot += result.get(1);
+                Utils.logWritelnReport("(D1 Compare.vs." + CUR + "): " + result.get(0) + "     " + result.get(1));
+            }
+            result = getSummaryCurrencies(CUR, Utils.CAPITAL_TIME_HOUR_4);
+            if (!CollectionUtils.isEmpty(result)) {
+                str_long += result.get(0);
+                str_shot += result.get(1);
+                Utils.logWritelnReport("(H4 Compare.vs." + CUR + "): " + result.get(0) + "     " + result.get(1));
+            }
+            result = getSummaryCurrencies(CUR, Utils.CAPITAL_TIME_HOUR);
+            if (!CollectionUtils.isEmpty(result)) {
+                str_long += result.get(0);
+                str_shot += result.get(1);
+                Utils.logWritelnReport("(H1 Compare.vs." + CUR + "): " + result.get(0) + "     " + result.get(1));
+            }
         }
         //--------------------------------------------------------------------------
         List<Orders> orders_day = ordersRepository.getTrend_DayList();
@@ -3250,18 +3266,31 @@ public class BinanceServiceImpl implements BinanceService {
                     Utils.logWritelnReport("");
                     continue;
                 }
+                String note = "";
                 String chart = "";
+                String EPIC = entity.getId().replace("_" + Utils.CAPITAL_TIME_DAY, "");
+                EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
+                EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");
+
                 if (entity.getId().contains(Utils.CAPITAL_TIME_DAY)) {
                     chart = "(D1: ";
                 } else if (entity.getId().contains(Utils.CAPITAL_TIME_HOUR_4)) {
                     chart = "(H4: ";
+                    if (str_long.contains(EPIC)) {
+                        note += " Check_Long ";
+                    }
+                    if (str_shot.contains(EPIC)) {
+                        note += " Check_Short ";
+                    }
                 } else if (entity.getId().contains(Utils.CAPITAL_TIME_HOUR)) {
                     chart = "(H1: ";
+                    if (str_long.contains(EPIC)) {
+                        note += " Check_Long ";
+                    }
+                    if (str_shot.contains(EPIC)) {
+                        note += " Check_Short ";
+                    }
                 }
-
-                String EPIC = entity.getId().replace("_" + Utils.CAPITAL_TIME_DAY, "");
-                EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
-                EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");
 
                 List<BtcFutures> list = new ArrayList<BtcFutures>();
                 BtcFutures dto = new BtcFutures(entity.getId(), entity.getCurrent_price(), entity.getLow_price(),
@@ -3274,9 +3303,14 @@ public class BinanceServiceImpl implements BinanceService {
 
                 String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
                 String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long, sl_shot);
-                String log = (wdh4 + chart).replace(" (H", "*(H") + Utils.appendSpace(entity.getTrend(), 5) + ") ";
+                String log = (wdh4 + chart);
+                if (Utils.isNotBlank(note)) {
+                    log = log.replace(" (H", "*(H");
+                }
+
+                log += Utils.appendSpace(entity.getTrend(), 5) + ") ";
                 log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
-                log += buffer;
+                log += buffer + note;
                 Utils.logWritelnReport(log);
             }
         }
