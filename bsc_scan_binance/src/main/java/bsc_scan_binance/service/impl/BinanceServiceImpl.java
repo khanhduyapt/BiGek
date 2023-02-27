@@ -3304,13 +3304,15 @@ public class BinanceServiceImpl implements BinanceService {
                 String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
                 String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long, sl_shot);
                 String log = (wdh4 + chart);
-                if (Utils.isNotBlank(note)) {
+                if (Utils.isNotBlank(note) && Utils.isNotBlank(entity.getNote())) {
+                    log = log.replace("  (H", "**(H");
+                } else if (Utils.isNotBlank(note) || Utils.isNotBlank(entity.getNote())) {
                     log = log.replace(" (H", "*(H");
                 }
 
                 log += Utils.appendSpace(entity.getTrend(), 5) + ") ";
                 log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
-                log += buffer + note;
+                log += buffer + (Utils.isNotBlank(entity.getNote()) ? entity.getNote() + "   " : "") + note.trim();
                 Utils.logWritelnReport(log);
             }
         }
@@ -3326,7 +3328,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         List<Orders> orders = ordersRepository.clearTrash();
         if (!CollectionUtils.isEmpty(orders)) {
-            ordersRepository.deleteAll(orders); // TODO: debug
+            ordersRepository.deleteAll(orders);
         }
     }
 }
