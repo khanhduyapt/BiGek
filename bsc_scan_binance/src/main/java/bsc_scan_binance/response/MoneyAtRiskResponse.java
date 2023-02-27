@@ -13,18 +13,18 @@ import lombok.Data;
 @AllArgsConstructor
 public class MoneyAtRiskResponse {
     private String EPIC;
-    private BigDecimal money_risk; //C17
-    private BigDecimal entry; //C18
-    private BigDecimal stop_loss; //C19
-    private BigDecimal take_profit; //C20
+    private BigDecimal money_risk; // C17
+    private BigDecimal entry; // C18
+    private BigDecimal stop_loss; // C19
+    private BigDecimal take_profit; // C20
 
     public BigDecimal calcSLMoney() {
         if ((entry.subtract(stop_loss)).abs().compareTo(BigDecimal.ZERO) <= 0) {
             return BigDecimal.ZERO;
         }
 
-        //C18*C17/ABS(C18-C19)
-        //entry*money_risk/ABS(entry-stop_loss)
+        // C18*C17/ABS(C18-C19)
+        // entry*money_risk/ABS(entry-stop_loss)
         BigDecimal buy = entry.multiply(money_risk);
         buy = buy.divide((entry.subtract(stop_loss)).abs(), 10, RoundingMode.CEILING);
 
@@ -44,8 +44,8 @@ public class MoneyAtRiskResponse {
             return BigDecimal.ZERO;
         }
 
-        //C18*C17/ABS(C18-C19)
-        //entry*money_risk/ABS(entry-stop_loss)
+        // C18*C17/ABS(C18-C19)
+        // entry*money_risk/ABS(entry-stop_loss)
         BigDecimal buy = entry.multiply(money_risk);
         buy = buy.divide((entry.subtract(stop_loss)).abs(), 10, RoundingMode.CEILING);
 
@@ -65,7 +65,7 @@ public class MoneyAtRiskResponse {
             return BigDecimal.ZERO;
         }
 
-        //qty = C31*C35/C33
+        // qty = C31*C35/C33
         BigDecimal qty = BigDecimal.ZERO;
 
         List<BigDecimal> list = getStandard_lot();
@@ -76,7 +76,7 @@ public class MoneyAtRiskResponse {
             return BigDecimal.ZERO;
         }
 
-        //qty = standard_lot *  ((money_risk/(ABS(entry-stop_loss)))  / unit_risk_per_pip
+        // qty = standard_lot * ((money_risk/(ABS(entry-stop_loss))) / unit_risk_per_pip
         qty = standard_lot.multiply(money_risk.divide((entry.subtract(stop_loss)).abs(), 10, RoundingMode.CEILING));
         qty = qty.divide(unit_risk_per_pip, 10, RoundingMode.CEILING);
 
@@ -275,6 +275,55 @@ public class MoneyAtRiskResponse {
         case "J225":
             standard_lot = BigDecimal.valueOf(68);
             unit_risk_per_pip = BigDecimal.valueOf(0.5);
+            break;
+
+        case "AU200":
+            standard_lot = BigDecimal.valueOf(0.746);
+            unit_risk_per_pip = BigDecimal.valueOf(0.5);
+            break;
+        case "DE40":
+            standard_lot = BigDecimal.valueOf(0.158);
+            unit_risk_per_pip = BigDecimal.valueOf(0.166666666666667);
+            break;
+        case "EU50":
+            standard_lot = BigDecimal.valueOf(0.474);
+            unit_risk_per_pip = BigDecimal.valueOf(0.5);
+            break;
+        case "EURCZK":
+            standard_lot = BigDecimal.valueOf(0.0373);
+            unit_risk_per_pip = BigDecimal.valueOf(166.666666666668);
+            break;
+        case "EURPLN":
+            standard_lot = BigDecimal.valueOf(0.112);
+            unit_risk_per_pip = BigDecimal.valueOf(2500.00000000005);
+            break;
+        case "US100":
+            standard_lot = BigDecimal.valueOf(0.167);
+            unit_risk_per_pip = BigDecimal.valueOf(0.166666666666667);
+            break;
+        case "USDHKD":
+            standard_lot = BigDecimal.valueOf(0.131);
+            unit_risk_per_pip = BigDecimal.valueOf(1666.66666666665);
+            break;
+        case "USDHUF":
+            standard_lot = BigDecimal.valueOf(0.18);
+            unit_risk_per_pip = BigDecimal.valueOf(50);
+            break;
+        case "USDILS":
+            standard_lot = BigDecimal.valueOf(0.184);
+            unit_risk_per_pip = BigDecimal.valueOf(5000.00000000011);
+            break;
+        case "USDMXN":
+            standard_lot = BigDecimal.valueOf(0.0306);
+            unit_risk_per_pip = BigDecimal.valueOf(166.666666666666);
+            break;
+        case "USDTRY":
+            standard_lot = BigDecimal.valueOf(0.118);
+            unit_risk_per_pip = BigDecimal.valueOf(625.000000000013);
+            break;
+        case "USDZAR":
+            standard_lot = BigDecimal.valueOf(0.023);
+            unit_risk_per_pip = BigDecimal.valueOf(124.999999999999);
             break;
 
         default:
