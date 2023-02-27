@@ -2987,7 +2987,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                         if (Objects.equals(trend_day, trend_ma3) && Objects.equals(trend_day, switch_trend)) {
                             // allow_send_msg = true;
-                            // allow_write_log = true;
+                            allow_write_log = true;
 
                             Orders week = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
                             if (Objects.nonNull(week)) {
@@ -3303,10 +3303,8 @@ public class BinanceServiceImpl implements BinanceService {
                 String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
                 String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long, sl_shot);
                 String log = (wdh4 + chart);
-                if (Utils.isNotBlank(note) && Utils.isNotBlank(entity.getNote())) {
-                    log = log.replace("  (H", "**(H");
-                } else if (Utils.isNotBlank(note) || Utils.isNotBlank(entity.getNote())) {
-                    log = log.replace(" (H", "*(H");
+                if (Utils.isNotBlank(note)) {
+                    log = log.replace(" (H", "*(H").replace(" (30m", "*(30m");
                 }
 
                 log += Utils.appendSpace(entity.getTrend(), 5) + ") ";
