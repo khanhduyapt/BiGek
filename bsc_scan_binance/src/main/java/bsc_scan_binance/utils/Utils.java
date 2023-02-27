@@ -789,7 +789,7 @@ public class Utils {
 
     public static String getReportLogFile() {
         String PATH = "crypto_forex_result/";
-        String fileName = getYyyyMmDdHH_ChangeDailyChart() + "_Report.log";
+        String fileName = getToday_YyyyMMdd() + "_Report.log";
 
         File directory = new File(PATH);
         if (!directory.exists()) {
@@ -800,7 +800,7 @@ public class Utils {
 
     public static String getForexLogFile() {
         String PATH = "crypto_forex_result/";
-        String fileName = getYyyyMmDdHH_ChangeDailyChart() + "_Forex.log";
+        String fileName = getToday_YyyyMMdd() + "_Forex.log";
 
         File directory = new File(PATH);
         if (!directory.exists()) {
@@ -811,7 +811,7 @@ public class Utils {
 
     public static String getCryptoLogFile() {
         String PATH = "crypto_forex_result/";
-        String fileName = getYyyyMmDdHH_ChangeDailyChart() + "_Crypto.log";
+        String fileName = getToday_YyyyMMdd() + "_Crypto.log";
 
         File directory = new File(PATH);
         if (!directory.exists()) {

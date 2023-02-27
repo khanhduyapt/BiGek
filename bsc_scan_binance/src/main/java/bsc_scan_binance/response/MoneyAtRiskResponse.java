@@ -127,10 +127,6 @@ public class MoneyAtRiskResponse {
             standard_lot = BigDecimal.valueOf(0.5);
             unit_risk_per_pip = BigDecimal.valueOf(0.5);
             break;
-        case "J225":
-            standard_lot = BigDecimal.valueOf(0.224);
-            unit_risk_per_pip = BigDecimal.valueOf(0.166666666666667);
-            break;
         case "SP35":
             standard_lot = BigDecimal.valueOf(0.234);
             unit_risk_per_pip = BigDecimal.valueOf(0.25);
@@ -250,31 +246,35 @@ public class MoneyAtRiskResponse {
 
         case "GBPNZD":
             standard_lot = BigDecimal.valueOf(0.0402);
-            unit_risk_per_pip = BigDecimal.valueOf(2550);
+            unit_risk_per_pip = BigDecimal.valueOf(2500);
             break;
         case "EURCHF":
             standard_lot = BigDecimal.valueOf(0.0468);
-            unit_risk_per_pip = BigDecimal.valueOf(5200);
+            unit_risk_per_pip = BigDecimal.valueOf(5000);
             break;
         case "AUDCHF":
             standard_lot = BigDecimal.valueOf(0.0234);
-            unit_risk_per_pip = BigDecimal.valueOf(2650.00000000001);
+            unit_risk_per_pip = BigDecimal.valueOf(2500.00000000001);
             break;
         case "GBPCHF":
             standard_lot = BigDecimal.valueOf(0.0468);
-            unit_risk_per_pip = BigDecimal.valueOf(5400);
+            unit_risk_per_pip = BigDecimal.valueOf(5000);
             break;
         case "CADCHF":
             standard_lot = BigDecimal.valueOf(0.0468);
-            unit_risk_per_pip = BigDecimal.valueOf(5500);
+            unit_risk_per_pip = BigDecimal.valueOf(5000);
             break;
         case "CHFJPY":
             standard_lot = BigDecimal.valueOf(0.674);
-            unit_risk_per_pip = BigDecimal.valueOf(560.000000000032);
+            unit_risk_per_pip = BigDecimal.valueOf(500.000000000028);
             break;
         case "NZDCHF":
             standard_lot = BigDecimal.valueOf(0.0468);
-            unit_risk_per_pip = BigDecimal.valueOf(5699.99999999999);
+            unit_risk_per_pip = BigDecimal.valueOf(5000);
+            break;
+        case "J225":
+            standard_lot = BigDecimal.valueOf(68);
+            unit_risk_per_pip = BigDecimal.valueOf(0.5);
             break;
 
         default:
