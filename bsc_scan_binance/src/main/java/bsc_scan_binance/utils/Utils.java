@@ -509,15 +509,15 @@ public class Utils {
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
         // return "_5m_";
         // }
-        //        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
-        //            return "_15m_";
-        //        }
+        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
+        // return "_15m_";
+        // }
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
             return "_30m_";
         }
-        //        if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
-        //            return "_1h_";
-        //        }
+        // if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
+        // return "_1h_";
+        // }
         if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
             return "_4h_";
         }
@@ -538,15 +538,15 @@ public class Utils {
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
         // return "(5m)";
         // }
-        //        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
-        //            return "(15m)";
-        //        }
+        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
+        // return "(15m)";
+        // }
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
             return "(30m)";
         }
-        //        if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
-        //            return "(H1)";
-        //        }
+        // if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
+        // return "(H1)";
+        // }
         if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
             return "(H4)";
         }
@@ -2842,6 +2842,11 @@ public class Utils {
         String l_m3x20 = "";
         String s_m3x20 = "";
 
+        String l_m5x15 = "";
+        String s_m5x15 = "";
+        String l_m8x15 = "";
+        String s_m8x15 = "";
+
         BigDecimal ma3_1 = calcMA(list, 3, str);
         BigDecimal ma3_2 = calcMA(list, 3, end);
         BigDecimal ma10_1 = calcMA(list, 10, str);
@@ -2896,12 +2901,15 @@ public class Utils {
             BigDecimal ma20_2 = calcMA(list, 20, end);
             l_m3x20 = Utils.checkXCutUpY(ma3_1, ma3_2, ma20_1, ma20_2);
             s_m3x20 = Utils.checkXCutDnY(ma3_1, ma3_2, ma20_1, ma20_2);
+
+            l_m8x15 = Utils.checkXCutUpY(ma8_1, ma8_2, ma15_1, ma15_2);
+            s_m8x15 = Utils.checkXCutDnY(ma8_1, ma8_2, ma15_1, ma15_2);
         }
 
         String trend = "";
-        trend += l_m03x10 + "_" + l_m3x5 + "_" + l_m3x8 + "_" + l_m3x15 + "_" + l_m3x20;
+        trend += l_m03x10 + "_" + l_m3x5 + "_" + l_m3x8 + "_" + l_m3x15 + "_" + l_m8x15 + "_" + l_m3x20;
         trend += "_____";
-        trend += s_m03x10 + "_" + s_m3x5 + "_" + s_m3x8 + "_" + s_m3x15 + "_" + s_m3x20;
+        trend += s_m03x10 + "_" + s_m3x5 + "_" + s_m3x8 + "_" + s_m3x15 + "_" + s_m8x15 + "_" + s_m3x20;
 
         return trend;
     }
