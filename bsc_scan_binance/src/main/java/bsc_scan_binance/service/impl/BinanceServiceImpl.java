@@ -2940,7 +2940,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // Trend W & D = trend of Ma3
-        boolean isUptrend = Utils.isUptrendByMaIndex(list, 3);
+        boolean isUptrend = Utils.isUptrendByMaIndex(list, lengh);
         String trend = isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
         String note = "";
 
@@ -2949,7 +2949,7 @@ public class BinanceServiceImpl implements BinanceService {
         boolean allow_write_log = true;
 
         if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)
-                && Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
+                || Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
 
             String ma_3_5_8_15 = "";
             String char_name = Utils.getChartName(list);
@@ -2972,13 +2972,13 @@ public class BinanceServiceImpl implements BinanceService {
                             allow_send_msg = true;
                         }
                     }
-
                 }
 
                 if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
                     entity = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
                     if (Objects.nonNull(entity)) {
-                        if (Objects.equals(trend, entity.getTrend())) {
+                        if (Objects.equals(trend, entity.getTrend())
+                                || Objects.equals(switch_trend, entity.getTrend())) {
                             allow_send_msg = true;
                         } else {
                             allow_write_log = false;
@@ -3047,7 +3047,7 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         String EVENT_ID = EVENT_PUMP + EPIC + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
-                        String msg = trend_tmp + char_name + EPIC + ma_3_5_8_15;
+                        String msg = trend_tmp + char_name + EPIC;
                         sendMsgPerHour(EVENT_ID, msg, true);
                     }
                 }
@@ -3197,14 +3197,39 @@ public class BinanceServiceImpl implements BinanceService {
         File myObj = new File(Utils.getReportLogFile());
         myObj.delete();
 
-        Utils.logWritelnReport("");
-        Utils.logWritelnReport("");
-        Utils.logWritelnReport("");
-        Utils.logWritelnReport("(D1): " + getSummaryCurrencies("USD", Utils.CAPITAL_TIME_DAY));
-        Utils.logWritelnReport("(D1): " + getSummaryCurrencies("CHF", Utils.CAPITAL_TIME_DAY));
-        Utils.logWritelnReport("(H4): " + getSummaryCurrencies("USD", Utils.CAPITAL_TIME_HOUR_4));
-        Utils.logWritelnReport("(H4): " + getSummaryCurrencies("CHF", Utils.CAPITAL_TIME_HOUR_4));
+        String dxy = "";
 
+        Orders temp_obj = ordersRepository.findById("DXY" + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+        if (Objects.nonNull(temp_obj)) {
+            dxy += "D: " + temp_obj.getTrend();
+        }
+        temp_obj = ordersRepository.findById("DXY" + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+        if (Objects.nonNull(temp_obj)) {
+            dxy += ", H4: " + temp_obj.getTrend();
+        }
+        temp_obj = ordersRepository.findById("DXY" + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
+        if (Objects.nonNull(temp_obj)) {
+            dxy += ", H1: " + temp_obj.getTrend();
+        }
+        Utils.logWritelnReport("(USD) " + dxy);
+        //--------------------------------------------------------------------------
+        String temp = getSummaryCurrencies("USD", Utils.CAPITAL_TIME_DAY);
+        if (Utils.isNotBlank(temp)) {
+            Utils.logWritelnReport("(D1): " + temp);
+        }
+        temp = getSummaryCurrencies("CHF", Utils.CAPITAL_TIME_DAY);
+        if (Utils.isNotBlank(temp)) {
+            Utils.logWritelnReport("(D1): " + temp);
+        }
+        temp = getSummaryCurrencies("USD", Utils.CAPITAL_TIME_HOUR_4);
+        if (Utils.isNotBlank(temp)) {
+            Utils.logWritelnReport("(H4): " + temp);
+        }
+        temp = getSummaryCurrencies("CHF", Utils.CAPITAL_TIME_HOUR_4);
+        if (Utils.isNotBlank(temp)) {
+            Utils.logWritelnReport("(H4): " + temp);
+        }
+        //--------------------------------------------------------------------------
         List<Orders> orders = ordersRepository.swithTrendDayAndH4List();
         if (!CollectionUtils.isEmpty(orders)) {
             Utils.logWritelnReport("");
