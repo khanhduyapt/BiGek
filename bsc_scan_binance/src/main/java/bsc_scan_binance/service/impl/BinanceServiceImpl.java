@@ -2975,14 +2975,12 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
+                    allow_write_log = false;
                     entity = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
-                    if (Objects.nonNull(entity)) {
-                        if (Objects.equals(trend, entity.getTrend())
-                                || Objects.equals(switch_trend, entity.getTrend())) {
-                            allow_send_msg = true;
-                        } else {
-                            allow_write_log = false;
-                        }
+
+                    if (Objects.nonNull(entity) && Objects.equals(trend, entity.getTrend())) {
+                        allow_send_msg = true;
+                        allow_write_log = false;
 
                         Orders week = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
                         if (Objects.nonNull(week)) {
@@ -3082,7 +3080,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public String getSummaryCurrencies(String SOURCE, String CAPITAL_TIME_XXX) {
-        String results = "";
+
         List<Orders> orders_list;
         if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_DAY)) {
             orders_list = ordersRepository.getTrendDayList();
@@ -3130,7 +3128,7 @@ public class BinanceServiceImpl implements BinanceService {
             day_dict.put(cur, val);
         }
 
-        results += "Compare.vs." + SOURCE + ": ";
+        String results = "";
         List<String> epic_long = new ArrayList<String>();
         List<String> epic_shot = new ArrayList<String>();
         for (String cur : Utils.currencies) {
@@ -3215,19 +3213,20 @@ public class BinanceServiceImpl implements BinanceService {
         //--------------------------------------------------------------------------
         String temp = getSummaryCurrencies("USD", Utils.CAPITAL_TIME_DAY);
         if (Utils.isNotBlank(temp)) {
-            Utils.logWritelnReport("(D1): " + temp);
+            Utils.logWritelnReport("(D1 Compare.vs.USD): " + temp);
         }
         temp = getSummaryCurrencies("CHF", Utils.CAPITAL_TIME_DAY);
         if (Utils.isNotBlank(temp)) {
-            Utils.logWritelnReport("(D1): " + temp);
+            Utils.logWritelnReport("(D1 Compare.vs.CHF): " + temp);
         }
+
         temp = getSummaryCurrencies("USD", Utils.CAPITAL_TIME_HOUR_4);
         if (Utils.isNotBlank(temp)) {
-            Utils.logWritelnReport("(H4): " + temp);
+            Utils.logWritelnReport("(H4 Compare.vs.USD): " + temp);
         }
         temp = getSummaryCurrencies("CHF", Utils.CAPITAL_TIME_HOUR_4);
         if (Utils.isNotBlank(temp)) {
-            Utils.logWritelnReport("(H4): " + temp);
+            Utils.logWritelnReport("(H4 Compare.vs.USD): " + temp);
         }
         //--------------------------------------------------------------------------
         List<Orders> orders = ordersRepository.swithTrendDayAndH4List();
@@ -3235,8 +3234,9 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnReport("");
             for (Orders entity : orders) {
                 String chart = entity.getId().contains(Utils.CAPITAL_TIME_HOUR_4) ? "(H4: " : "(D1: ";
-                String EPIC = entity.getId().replace("_" + Utils.CAPITAL_TIME_DAY, "")
-                        .replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
+                String EPIC = entity.getId().replace("_" + Utils.CAPITAL_TIME_DAY, "");
+                EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
+                EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");
 
                 List<BtcFutures> list = new ArrayList<BtcFutures>();
                 BtcFutures dto = new BtcFutures(entity.getId(), entity.getCurrent_price(), entity.getLow_price(),

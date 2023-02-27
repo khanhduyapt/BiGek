@@ -16,9 +16,11 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
 
     // and (note <> '')
     @Query(value = "SELECT m.* FROM ( "
-            + "    SELECT * FROM public.orders mst where (gecko_id like '%DAY%') and gecko_id = (select REPLACE(gecko_id, 'HOUR_4', 'DAY') from orders where gecko_id= REPLACE(mst.gecko_id, 'DAY', 'HOUR_4') )   "
+            + "    SELECT * FROM public.orders mst where (gecko_id like '%DAY%')   "
             + "    UNION                                                                                          "
-            + "    SELECT * FROM public.orders where (gecko_id like '%HOUR_4') and (note <> '')                   "
+            + "    SELECT * FROM public.orders det where (det.gecko_id like '%HOUR_4') and (det.note <> '') and det.gecko_id = (select REPLACE(mst.gecko_id, 'DAY', 'HOUR_4') from orders mst where det.trend=mst.trend and mst.gecko_id=REPLACE(det.gecko_id, 'HOUR_4', 'DAY'))                   "
+            + "    UNION                                                                                          "
+            + "    SELECT * FROM public.orders det where (det.gecko_id like '%HOUR')   and (det.note <> '') and det.gecko_id = (select REPLACE(mst.gecko_id, 'DAY', 'HOUR')   from orders mst where det.trend=mst.trend and mst.gecko_id=REPLACE(det.gecko_id, 'HOUR'  , 'DAY'))                   "
             + " ) m                                                                                               "
             + " ORDER BY gecko_id     ", nativeQuery = true)
     public List<Orders> swithTrendDayAndH4List();
