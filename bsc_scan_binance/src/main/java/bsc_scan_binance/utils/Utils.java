@@ -2858,15 +2858,20 @@ public class Utils {
         }
 
         if (list.get(0).getId().contains("_4h_")) {
-            BigDecimal ma8_1 = calcMA(list, 6, str);
-            BigDecimal ma8_2 = calcMA(list, 6, end);
-            l_m3x8 = Utils.checkXCutUpY(ma3_1, ma3_2, ma8_1, ma8_2);
-            s_m3x8 = Utils.checkXCutDnY(ma3_1, ma3_2, ma8_1, ma8_2);
+            BigDecimal ma5_1 = calcMA(list, 5, str);
+            BigDecimal ma5_2 = calcMA(list, 5, end);
+            l_m3x5 = Utils.checkXCutUpY(ma3_1, ma3_2, ma5_1, ma5_2);
+            s_m3x5 = Utils.checkXCutDnY(ma3_1, ma3_2, ma5_1, ma5_2);
         }
 
         if (list.get(0).getId().contains("_1h_")) {
-            BigDecimal ma15_1 = calcMA(list, 8, str);
-            BigDecimal ma15_2 = calcMA(list, 8, end);
+            BigDecimal ma8_1 = calcMA(list, 8, str);
+            BigDecimal ma8_2 = calcMA(list, 8, end);
+            l_m3x8 = Utils.checkXCutUpY(ma3_1, ma3_2, ma8_1, ma8_2);
+            s_m3x8 = Utils.checkXCutDnY(ma3_1, ma3_2, ma8_1, ma8_2);
+
+            BigDecimal ma15_1 = calcMA(list, 15, str);
+            BigDecimal ma15_2 = calcMA(list, 15, end);
             l_m3x15 = Utils.checkXCutUpY(ma3_1, ma3_2, ma15_1, ma15_2);
             s_m3x15 = Utils.checkXCutDnY(ma3_1, ma3_2, ma15_1, ma15_2);
         }
