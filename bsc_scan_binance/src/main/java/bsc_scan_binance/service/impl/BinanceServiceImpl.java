@@ -2617,13 +2617,16 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        long time = Utils.MINUTES_OF_1H;
+        long time = Utils.MINUTES_OF_30M;
         if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_DAY)
                 || Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_1d)) {
             time = Utils.MINUTES_OF_D;
         } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_HOUR_4)
                 || Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_4h)) {
             time = Utils.MINUTES_OF_4H;
+        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_HOUR)
+                || Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_1h)) {
+            time = Utils.MINUTES_OF_1H;
         } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_WEEK)) {
             time = Utils.MINUTES_OF_W;
         }

@@ -115,7 +115,7 @@ public class Utils {
     // public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
     // public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_MINUTE_30 = "MINUTE_30";
-    // public static final String CAPITAL_TIME_HOUR = "HOUR";
+    public static final String CAPITAL_TIME_HOUR = "HOUR";
     public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
     public static final String CAPITAL_TIME_DAY = "DAY";
     public static final String CAPITAL_TIME_WEEK = "WEEK";
@@ -131,6 +131,7 @@ public class Utils {
     public static final long MINUTES_OF_D = 1440;
     public static final long MINUTES_OF_4H = 240;
     public static final long MINUTES_OF_1H = 60;
+    public static final long MINUTES_OF_30M = 30;
     public static final long MINUTES_OF_15M = 15;
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
@@ -534,9 +535,9 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
             return "_30m_";
         }
-        // if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
-        // return "_1h_";
-        // }
+        if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
+            return "_1h_";
+        }
         if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
             return "_4h_";
         }
@@ -563,9 +564,9 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
             return "(30m)";
         }
-        // if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
-        // return "(H1)";
-        // }
+        if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
+            return "(H1)";
+        }
         if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
             return "(H4)";
         }
