@@ -2994,6 +2994,29 @@ public class BinanceServiceImpl implements BinanceService {
                                 // allow_send_msg = true;
                                 allow_write_log = true;
                                 int count = 0;
+
+                                BigDecimal ma3_1 = Utils.calcMA(list, 3, 1);
+                                BigDecimal ma5_1 = Utils.calcMA(list, 5, 1);
+                                BigDecimal ma8_1 = Utils.calcMA(list, 8, 1);
+                                BigDecimal ma15_1 = Utils.calcMA(list, 15, 1);
+
+                                if ((ma3_1.compareTo(ma5_1) > 0) && (ma5_1.compareTo(ma8_1) > 0)
+                                        && (ma8_1.compareTo(ma15_1) > 0)) {
+                                    if (Utils.EPICS_SCAP.contains(EPIC)) {
+                                        allow_send_msg = true;
+                                    }
+                                    ma_3_5_8_15 += "   (Long  Ma3, 5, 8, 15)";
+                                    count += 3;
+                                }
+                                if ((ma3_1.compareTo(ma5_1) < 0) && (ma5_1.compareTo(ma8_1) < 0)
+                                        && (ma8_1.compareTo(ma15_1) < 0)) {
+                                    if (Utils.EPICS_SCAP.contains(EPIC)) {
+                                        allow_send_msg = true;
+                                    }
+                                    ma_3_5_8_15 += "   (Short Ma3, 5, 8, 15)";
+                                    count += 3;
+                                }
+
                                 Orders week = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK)
                                         .orElse(null);
                                 if (Objects.nonNull(week)) {
@@ -3020,30 +3043,7 @@ public class BinanceServiceImpl implements BinanceService {
                                     count += 1;
                                 }
 
-                                BigDecimal ma3_1 = Utils.calcMA(list, 3, 1);
-                                BigDecimal ma5_1 = Utils.calcMA(list, 5, 1);
-                                BigDecimal ma8_1 = Utils.calcMA(list, 8, 1);
-                                BigDecimal ma15_1 = Utils.calcMA(list, 15, 1);
-
-                                if ((ma3_1.compareTo(ma5_1) > 0) && (ma5_1.compareTo(ma8_1) > 0)
-                                        && (ma8_1.compareTo(ma15_1) > 0)) {
-                                    if (Utils.EPICS_SCAP.contains(EPIC)) {
-                                        allow_send_msg = true;
-                                    }
-                                    ma_3_5_8_15 += "   (LONG  Ma3, 5, 8, 15)";
-                                    count += 2;
-                                }
-                                if ((ma3_1.compareTo(ma5_1) < 0) && (ma5_1.compareTo(ma8_1) < 0)
-                                        && (ma8_1.compareTo(ma15_1) < 0)) {
-                                    if (Utils.EPICS_SCAP.contains(EPIC)) {
-                                        allow_send_msg = true;
-                                    }
-                                    ma_3_5_8_15 += "   (SHORT Ma3, 5, 8, 15)";
-                                    count += 2;
-                                }
-
                                 note += ma_3_5_8_15;
-
                                 if (count > 2) {
                                     allow_send_msg = true;
                                 }
@@ -3071,7 +3071,7 @@ public class BinanceServiceImpl implements BinanceService {
                             }
 
                             String EVENT_ID = EVENT_PUMP + EPIC + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
-                            String msg = trend_tmp + char_name + EPIC;
+                            String msg = trend_tmp + char_name + EPIC + "_" + ma_3_5_8_15;
                             sendMsgPerHour(EVENT_ID, msg, true);
                         }
                     }
