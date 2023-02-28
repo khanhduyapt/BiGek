@@ -11,7 +11,7 @@ import bsc_scan_binance.entity.Orders;
 @Repository
 public interface OrdersRepository extends JpaRepository<Orders, String> {
 
-    @Query(value = "SELECT m.* FROM orders m WHERE ((gecko_id like '%HOUR%') or (gecko_id like '%MINUTE_30%') ) AND (TO_CHAR(created_at, 'YYYY-MM-DD HH24:mm') < TO_CHAR(NOW() - interval '2 hours', 'YYYY-MM-DD HH24:mm'))  ", nativeQuery = true)
+    @Query(value = "SELECT m.* FROM orders m WHERE ((gecko_id like '%HOUR%') or (gecko_id like '%MINUTE_30%')) AND (TO_CHAR(created_at, 'YYYY-MM-DD HH24:mm') < TO_CHAR(NOW() - interval '12 hours', 'YYYY-MM-DD HH24:mm'))  ", nativeQuery = true)
     public List<Orders> clearTrash();
 
     @Query(value = "SELECT * FROM public.orders mst where (gecko_id like '%DAY') ORDER BY trend, gecko_id  ", nativeQuery = true)

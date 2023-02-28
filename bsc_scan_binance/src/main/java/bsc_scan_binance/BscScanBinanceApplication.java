@@ -222,6 +222,8 @@ public class BscScanBinanceApplication {
                 System.out.println("Connection timed out");
                 wait(SLEEP_MINISECONDS * 5);
             }
+
+            Utils.initCapital();
         }
     }
 

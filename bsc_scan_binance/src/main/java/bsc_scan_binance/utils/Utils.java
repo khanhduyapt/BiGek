@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -45,7 +47,9 @@ import org.springframework.web.servlet.LocaleResolver;
 
 import bsc_scan_binance.BscScanBinanceApplication;
 import bsc_scan_binance.entity.BtcFutures;
+import bsc_scan_binance.entity.Orders;
 import bsc_scan_binance.entity.PrepareOrders;
+import bsc_scan_binance.repository.OrdersRepository;
 import bsc_scan_binance.response.BtcFuturesResponse;
 import bsc_scan_binance.response.CandidateTokenCssResponse;
 import bsc_scan_binance.response.DepthResponse;
@@ -54,8 +58,11 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 
 //@Slf4j
 public class Utils {
+    @Autowired
+    private static OrdersRepository ordersRepository;
+
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0015);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.003);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -344,6 +351,18 @@ public class Utils {
     }
 
     public static void initCapital() {
+        try {
+
+        } catch (Exception e) {
+            String result = "initCapital: " + e.getMessage();
+            Utils.logWritelnWithTime(result, false);
+
+            String date_time = LocalDateTime.now().toString();
+            String time_out_id = Utils.TEXT_CONNECTION_TIMED_OUT + "_" + Utils.CAPITAL_TIME_MINUTE_30;
+            Orders entity_time_out = new Orders(time_out_id, date_time, "", BigDecimal.ZERO, BigDecimal.ZERO,
+                    BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "Connection timed out");
+            ordersRepository.save(entity_time_out);
+        }
         String API = "G1fTHbEak0kDE5mg";
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> request;
