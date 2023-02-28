@@ -3065,6 +3065,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                         if (Objects.equals(trend_day, switch_trend)) {
                             trend = switch_trend;
+                        } else {
+                            note = "";
                         }
                     }
 
