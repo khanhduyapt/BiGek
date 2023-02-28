@@ -2670,7 +2670,7 @@ public class Utils {
 
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 5);
         result += " E: " + Utils.appendLeft(removeLastZero(roundDefault(entry)) + "$", 8);
-
+        result += "     ";
         result += Utils.appendSpace("(Long)" + Utils.appendLeft(removeLastZero(lot_long), 6) + "(lot)" + "   SL: "
                 + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12) + "   TP: "
                 + Utils.appendLeft(removeLastZero(roundDefault(HI)), 6) + " ("

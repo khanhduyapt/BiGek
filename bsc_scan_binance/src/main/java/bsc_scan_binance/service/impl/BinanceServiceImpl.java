@@ -2956,6 +2956,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean allow_update = true;
+            boolean allow_send_msg = false;
             boolean allow_write_log = true;
             if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)
                     || Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
@@ -2963,7 +2964,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String ma_3_5_8_15 = "";
                 String char_name = Utils.getChartName(list);
                 String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
-
+                String trend_day = "";
                 if (Utils.isNotBlank(switch_trend)) {
                     Orders entity = null;
                     BigDecimal current_price = list.get(0).getCurrPrice();
@@ -2985,10 +2986,12 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
                         entity = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+                        trend_day = Objects.nonNull(entity) ? entity.getTrend() : "";
                     }
 
                     if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
                         entity = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+                        trend_day = Objects.nonNull(entity) ? entity.getTrend() : "";
 
                         if (Objects.nonNull(entity)) {
                             if ((entity.getStr_body_price().compareTo(list.get(1).getLow_price()) > 0)
@@ -3024,24 +3027,15 @@ public class BinanceServiceImpl implements BinanceService {
                         sl_long = Utils.getBigDecimal(entity.getLow_price());
                         sl_shot = Utils.getBigDecimal(entity.getHigh_price());
 
-                        if (allow_write_log) {
-                            String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long, sl_shot);
-                            String log = wdh4 + char_name.replace(")", "").trim();
-                            log += ": " + Utils.appendSpace(switch_trend, 5) + ") ";
-                            log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
-                            log += buffer + ma_3_5_8_15;
-                            Utils.logWritelnReport(log);
-                        }
-
                         if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
-                            boolean allow_send_msg = false;
+
                             if (GLOBAL_LONG_LIST.contains(EPIC) && Objects.equals(Utils.TREND_LONG, switch_trend)) {
                                 allow_send_msg = true;
                             }
                             if (GLOBAL_SHOT_LIST.contains(EPIC) && Objects.equals(Utils.TREND_SHORT, switch_trend)) {
                                 allow_send_msg = true;
                             }
-                            if (Utils.EPICS_SCAP.contains(EPIC) && Objects.equals(entity.getTrend(), switch_trend)) {
+                            if (Utils.EPICS_SCAP.contains(EPIC) && Objects.equals(trend_day, switch_trend)) {
                                 allow_send_msg = true;
                             }
 
@@ -3056,6 +3050,16 @@ public class BinanceServiceImpl implements BinanceService {
                                 String msg = trend_tmp + char_name + EPIC;
                                 sendMsgPerHour(EVENT_ID, msg, true);
                             }
+                        }
+
+                        if (allow_write_log) {
+                            String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long, sl_shot);
+                            String log = wdh4 + char_name.replace(")", "").trim();
+                            log += ": " + Utils.appendSpace(switch_trend, 5) + ") ";
+                            log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
+                            log += buffer + ma_3_5_8_15;
+                            log += (allow_send_msg ? "   SEND_MSG " : "");
+                            Utils.logWritelnReport(log);
                         }
                     }
 
