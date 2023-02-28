@@ -3033,18 +3033,29 @@ public class BinanceServiceImpl implements BinanceService {
                             Utils.logWritelnReport(log);
                         }
 
-                        if ((GLOBAL_LONG_LIST.contains(EPIC) && Objects.equals(Utils.TREND_LONG, switch_trend))
-                                || (GLOBAL_SHOT_LIST.contains(EPIC)
-                                        && Objects.equals(Utils.TREND_SHORT, switch_trend))) {
-
-                            String trend_tmp = "(" + switch_trend + ")";
-                            if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
-                                trend_tmp = "(" + switch_trend + "_" + switch_trend + "_" + switch_trend + ")";
+                        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
+                            boolean allow_send_msg = false;
+                            if (GLOBAL_LONG_LIST.contains(EPIC) && Objects.equals(Utils.TREND_LONG, switch_trend)) {
+                                allow_send_msg = true;
+                            }
+                            if (GLOBAL_SHOT_LIST.contains(EPIC) && Objects.equals(Utils.TREND_SHORT, switch_trend)) {
+                                allow_send_msg = true;
+                            }
+                            if (Utils.EPICS_SCAP.contains(EPIC) && Objects.equals(entity.getTrend(), switch_trend)) {
+                                allow_send_msg = true;
                             }
 
-                            String EVENT_ID = EVENT_PUMP + EPIC + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
-                            String msg = trend_tmp + char_name + EPIC;
-                            sendMsgPerHour(EVENT_ID, msg, true);
+                            if (allow_send_msg) {
+                                String trend_tmp = "(" + switch_trend + ")";
+                                if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
+                                    trend_tmp = "(" + switch_trend + "_" + switch_trend + "_" + switch_trend + ")";
+                                }
+
+                                String EVENT_ID = EVENT_PUMP + EPIC + char_name
+                                        + Utils.getCurrentYyyyMmDdHHByChart(list);
+                                String msg = trend_tmp + char_name + EPIC;
+                                sendMsgPerHour(EVENT_ID, msg, true);
+                            }
                         }
                     }
 
@@ -3075,7 +3086,9 @@ public class BinanceServiceImpl implements BinanceService {
 
             return trend;
 
-        } catch (Exception e) {
+        } catch (
+
+        Exception e) {
             String result = "initForexTrend(" + EPIC + ") " + e.getMessage();
             Utils.logWritelnReport(result);
 

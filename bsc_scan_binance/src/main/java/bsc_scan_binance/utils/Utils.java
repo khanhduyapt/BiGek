@@ -137,8 +137,8 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final List<String> EPICS_SCAP = Arrays.asList("DXY", "GOLD", "SILVER", "US30", "US500", "J225",
-            "UK100");
+    public static final List<String> EPICS_SCAP = Arrays.asList("GOLD", "US30", "US500", "UK100",
+            "FR40", "HK50", "SILVER");
 
     public static final List<String> EPICS_FOREX = Arrays.asList("DXY", "GOLD", "US30", "US500", "J225", "UK100",
             "FR40", "HK50", "BTCUSD", "SILVER", "OIL_CRUDE", "NATURALGAS");
@@ -2668,7 +2668,7 @@ public class Utils {
         BigDecimal lot_shot = money_short.calcLot();
         BigDecimal tp_money_shot = money_short.calcTPMoney();
 
-        result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 10);
+        result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 5);
         result += " E: " + Utils.appendLeft(removeLastZero(roundDefault(entry)) + "$", 8);
 
         result += Utils.appendSpace("(Long)" + Utils.appendLeft(removeLastZero(lot_long), 6) + "(lot)" + "   SL: "
