@@ -2970,6 +2970,21 @@ public class BinanceServiceImpl implements BinanceService {
                     BigDecimal sl_long = BigDecimal.ZERO;
                     BigDecimal sl_shot = BigDecimal.ZERO;
 
+                    String range_area = "";
+                    Orders week = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
+                    if (Objects.nonNull(week)) {
+                        if ((week.getStr_body_price().compareTo(list.get(1).getLow_price()) > 0)
+                                || (week.getStr_body_price().compareTo(current_price) > 0)) {
+                            ma_3_5_8_15 += " Long  (Week). ";
+                            range_area += Utils.TREND_LONG;
+                        }
+                        if ((week.getEnd_body_price().compareTo(list.get(1).getHight_price()) < 0)
+                                || (week.getStr_body_price().compareTo(current_price) < 0)) {
+                            ma_3_5_8_15 += " Short (Week). ";
+                            range_area += Utils.TREND_SHORT;
+                        }
+                    }
+
                     if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
                         entity = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
 
@@ -2993,8 +3008,6 @@ public class BinanceServiceImpl implements BinanceService {
                             if (Objects.equals(trend_day, trend_ma3) && Objects.equals(trend_day, switch_trend)) {
                                 // allow_send_msg = true;
                                 allow_write_log = true;
-                                int count = 0;
-
                                 BigDecimal ma3_1 = Utils.calcMA(list, 3, 1);
                                 BigDecimal ma5_1 = Utils.calcMA(list, 5, 1);
                                 BigDecimal ma8_1 = Utils.calcMA(list, 8, 1);
@@ -3005,50 +3018,40 @@ public class BinanceServiceImpl implements BinanceService {
                                     if (Utils.EPICS_SCAP.contains(EPIC)) {
                                         allow_send_msg = true;
                                     }
+                                    range_area += Utils.TREND_LONG;
                                     ma_3_5_8_15 += "   (Long  Ma3, 5, 8, 15)";
-                                    count += 3;
                                 }
                                 if ((ma3_1.compareTo(ma5_1) < 0) && (ma5_1.compareTo(ma8_1) < 0)
                                         && (ma8_1.compareTo(ma15_1) < 0)) {
                                     if (Utils.EPICS_SCAP.contains(EPIC)) {
                                         allow_send_msg = true;
                                     }
+                                    range_area += Utils.TREND_SHORT;
                                     ma_3_5_8_15 += "   (Short Ma3, 5, 8, 15)";
-                                    count += 3;
-                                }
-
-                                Orders week = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK)
-                                        .orElse(null);
-                                if (Objects.nonNull(week)) {
-                                    if ((week.getStr_body_price().compareTo(list.get(1).getLow_price()) > 0)
-                                            || (week.getStr_body_price().compareTo(current_price) > 0)) {
-                                        ma_3_5_8_15 += " Long  (Week). ";
-                                        count += 1;
-                                    }
-                                    if ((week.getEnd_body_price().compareTo(list.get(1).getHight_price()) < 0)
-                                            || (week.getStr_body_price().compareTo(current_price) < 0)) {
-                                        ma_3_5_8_15 += " Short (Week). ";
-                                        count += 1;
-                                    }
                                 }
 
                                 if ((entity.getStr_body_price().compareTo(list.get(1).getLow_price()) > 0)
                                         || (week.getStr_body_price().compareTo(current_price) > 0)) {
                                     ma_3_5_8_15 += " Long  (day). ";
-                                    count += 1;
+                                    range_area += Utils.TREND_LONG;
                                 }
                                 if ((entity.getEnd_body_price().compareTo(list.get(1).getHight_price()) < 0)
                                         || (week.getStr_body_price().compareTo(current_price) < 0)) {
                                     ma_3_5_8_15 += " Short (day). ";
-                                    count += 1;
+                                    range_area += Utils.TREND_SHORT;
                                 }
 
                                 note += ma_3_5_8_15;
-                                if (count > 2) {
+
+                                if (!(range_area.contains(Utils.TREND_LONG)
+                                        && range_area.contains(Utils.TREND_SHORT)) && Utils.isNotBlank(range_area)
+                                        && ma_3_5_8_15.contains("Ma3")) {
                                     allow_send_msg = true;
                                 }
                             }
                         }
+
+                        entity = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
                     }
 
                     if (Objects.nonNull(entity)) {
@@ -3283,11 +3286,11 @@ public class BinanceServiceImpl implements BinanceService {
         //--------------------------------------------------------------------------
         List<Orders> orders_list = ordersRepository.getTrend_30mList();
         List<Orders> orders_h4 = ordersRepository.getTrend_H4List();
-        List<Orders> orders_day = ordersRepository.getTrend_DayList();
+        //List<Orders> orders_day = ordersRepository.getTrend_DayList();
         orders_list.add(null);
         orders_list.addAll(orders_h4);
         orders_list.add(null);
-        orders_list.addAll(orders_day);
+        //orders_list.addAll(orders_day);
         if (!CollectionUtils.isEmpty(orders_list)) {
             Utils.logWritelnReport("");
             for (Orders entity : orders_list) {
