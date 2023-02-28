@@ -1936,6 +1936,8 @@ public class Utils {
 
             if (symbol.contains("_15m_")) {
                 result = "(15m)";
+            } else if (symbol.contains("_30m_")) {
+                result = "(30m)";
             } else if (symbol.contains("_1h_")) {
                 result = "(H1)";
             } else if (symbol.contains("_2h_")) {
