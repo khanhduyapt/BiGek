@@ -3175,19 +3175,20 @@ public class BinanceServiceImpl implements BinanceService {
         capital_list.addAll(Utils.EPICS_FOREX_OTHERS);
         for (String epic : capital_list) {
             if (long_list.contains(epic)) {
-                candidate_long_list.add(epic);
 
-                if (!GLOBAL_LONG_LIST.contains(epic)) {
+                if ((!GLOBAL_LONG_LIST.contains(epic)) && (!GLOBAL_SHOT_LIST.contains(epic))) {
                     GLOBAL_LONG_LIST.add(epic);
-                }
 
+                    candidate_long_list.add(epic);
+                }
             }
 
             if (shot_list.contains(epic)) {
-                candidate_shot_list.add(epic);
 
-                if (!GLOBAL_SHOT_LIST.contains(epic)) {
+                if ((!GLOBAL_SHOT_LIST.contains(epic)) && (!GLOBAL_LONG_LIST.contains(epic))) {
                     GLOBAL_SHOT_LIST.add(epic);
+
+                    candidate_shot_list.add(epic);
                 }
             }
         }
@@ -3241,9 +3242,14 @@ public class BinanceServiceImpl implements BinanceService {
         String str_shot = "";
         for (String CUR : compare_list) {
             getSummaryCurrencies(CUR, Utils.CAPITAL_TIME_DAY);
-            getSummaryCurrencies(CUR, Utils.CAPITAL_TIME_HOUR_4);
-            //getSummaryCurrencies(CUR, Utils.CAPITAL_TIME_MINUTE_30);
         }
+        for (String CUR : compare_list) {
+            getSummaryCurrencies(CUR, Utils.CAPITAL_TIME_HOUR_4);
+        }
+        for (String CUR : compare_list) {
+            getSummaryCurrencies(CUR, Utils.CAPITAL_TIME_MINUTE_30);
+        }
+
         if (!CollectionUtils.isEmpty(GLOBAL_LONG_LIST)) {
             for (String s : GLOBAL_LONG_LIST) {
                 str_long += s + "    ";
@@ -3259,9 +3265,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         //--------------------------------------------------------------------------
         List<Orders> orders_list = ordersRepository.getTrend_30mList();
-        List<Orders> orders_h4 = ordersRepository.getTrend_H4List();
-        orders_list.add(null);
-        orders_list.addAll(orders_h4);
+        //orders_list.add(null);
+        //orders_list.addAll(ordersRepository.getTrend_H4List());
         orders_list.add(null);
         if (!CollectionUtils.isEmpty(orders_list)) {
             Utils.logWritelnReport("");
@@ -3314,7 +3319,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 log += Utils.appendSpace(entity.getTrend(), 5) + ") ";
                 log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
-                log += buffer + (Utils.isNotBlank(entity.getNote()) ? entity.getNote() + "   " : "") + note.trim();
+                log += buffer + entity.getNote().trim();
                 Utils.logWritelnReport(log);
             }
         }
