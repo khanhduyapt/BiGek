@@ -970,12 +970,14 @@ public class Utils {
     }
 
     public static boolean isBusinessTime_6h_to_17h() {
-        int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-        if ((18 <= hh || hh <= 5)) {
-            return false;
+        //Sang 6-8h, Trua: 1h-3h, Chieu 5h-6h, toi 8h-9h: la khung gio gia ro rang nhat, sau khung gio nay gia moi chay.
+        List<Integer> times = Arrays.asList(6, 7, 8, 13, 14, 15, 17, 18, 20, 21, 22);
+        Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
+        if (times.contains(hh)) {
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     public static String getChatId(String userName) {
