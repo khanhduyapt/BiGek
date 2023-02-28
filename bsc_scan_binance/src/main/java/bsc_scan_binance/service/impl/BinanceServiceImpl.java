@@ -92,7 +92,6 @@ public class BinanceServiceImpl implements BinanceService {
     private static final String EVENT_DH4H1_H1_CRYPTO = "DH4H1_STR_H1_CRYPTO";
     private static final String EVENT_DH4H1_15M_CRYPTO = "DH4H1_STR_15M_CRYPTO";
     // ********************************************************************************
-
     private static List<String> GLOBAL_LONG_LIST = new ArrayList<String>();
     private static List<String> GLOBAL_SHOT_LIST = new ArrayList<String>();
 
@@ -2292,6 +2291,7 @@ public class BinanceServiceImpl implements BinanceService {
         // }
     }
 
+    @SuppressWarnings("unused")
     private String getVolMc(String gecko_id) {
         CandidateCoin coinmarketcap = candidateCoinRepository.findById(gecko_id).orElse(null);
         if (Objects.equals(null, coinmarketcap)) {
@@ -2918,11 +2918,11 @@ public class BinanceServiceImpl implements BinanceService {
                 return "";
             }
 
-            int lengh = 10;
+            int lengh = 8;
             if (Objects.equals(Utils.CAPITAL_TIME_WEEK, CAPITAL_TIME_XXX)) {
                 lengh = 3;
             } else if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
-                lengh = 8;
+                lengh = 5;
             } else if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
                 lengh = 15;
             }
@@ -3060,6 +3060,10 @@ public class BinanceServiceImpl implements BinanceService {
                             log += (allow_send_msg ? "   SEND_MSG " : "");
                             Utils.logWritelnReport(log);
                         }
+
+                        if (Objects.equals(trend_day, switch_trend)) {
+                            trend = switch_trend;
+                        }
                     }
 
                 } else if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
@@ -3159,7 +3163,7 @@ public class BinanceServiceImpl implements BinanceService {
             day_dict.put(cur, val);
         }
 
-        String results = "";
+        //String results = "";
         List<String> epic_long = new ArrayList<String>();
         List<String> epic_shot = new ArrayList<String>();
         for (String cur : Utils.currencies) {
@@ -3171,7 +3175,7 @@ public class BinanceServiceImpl implements BinanceService {
                     epic_shot.add(cur);
                 }
 
-                results += cur + ":" + Utils.appendLeft(sum.toString(), 2) + "   ";
+                //results += cur + ":" + Utils.appendLeft(sum.toString(), 2) + "   ";
             }
         }
 

@@ -62,7 +62,7 @@ public class Utils {
     private static OrdersRepository ordersRepository;
 
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.003);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.002);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
