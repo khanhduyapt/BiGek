@@ -2941,25 +2941,25 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            // Trend W & D = trend of Ma3
+            String note = "";
             boolean isUptrend = Utils.isUptrendByMaIndex(list, lengh);
             String trend = isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
-            String note = "";
+            String switch_trend = Utils.switchTrendByMa(list);
+            if (Utils.isNotBlank(switch_trend)) {
+                note = "Ma3xMa6";
+            }
 
             boolean allow_update = true;
             boolean allow_send_msg = false;
             boolean allow_write_log = true;
-
             if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)
                     || Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
 
                 String ma_3_5_8_15 = "";
                 String char_name = Utils.getChartName(list);
-                String switch_trend = Utils.switchTrendByMa(list);
                 String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
 
                 if (Utils.isNotBlank(switch_trend)) {
-                    note = "Ma3xMa6";
                     Orders entity = null;
                     BigDecimal current_price = list.get(0).getCurrPrice();
                     String trend_ma3 = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
@@ -2990,27 +2990,31 @@ public class BinanceServiceImpl implements BinanceService {
                             if (Objects.equals(trend_day, trend_ma3) && Objects.equals(trend_day, switch_trend)) {
                                 // allow_send_msg = true;
                                 allow_write_log = true;
-
+                                int count = 0;
                                 Orders week = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK)
                                         .orElse(null);
                                 if (Objects.nonNull(week)) {
                                     if ((week.getStr_body_price().compareTo(list.get(1).getLow_price()) > 0)
                                             || (week.getStr_body_price().compareTo(current_price) > 0)) {
                                         ma_3_5_8_15 += " Long  (Week). ";
+                                        count += 1;
                                     }
                                     if ((week.getEnd_body_price().compareTo(list.get(1).getHight_price()) < 0)
                                             || (week.getStr_body_price().compareTo(current_price) < 0)) {
                                         ma_3_5_8_15 += " Short (Week). ";
+                                        count += 1;
                                     }
                                 }
 
                                 if ((entity.getStr_body_price().compareTo(list.get(1).getLow_price()) > 0)
                                         || (week.getStr_body_price().compareTo(current_price) > 0)) {
                                     ma_3_5_8_15 += " Long  (day). ";
+                                    count += 1;
                                 }
                                 if ((entity.getEnd_body_price().compareTo(list.get(1).getHight_price()) < 0)
                                         || (week.getStr_body_price().compareTo(current_price) < 0)) {
                                     ma_3_5_8_15 += " Short (day). ";
+                                    count += 1;
                                 }
 
                                 BigDecimal ma3_1 = Utils.calcMA(list, 3, 1);
@@ -3024,6 +3028,7 @@ public class BinanceServiceImpl implements BinanceService {
                                         allow_send_msg = true;
                                     }
                                     ma_3_5_8_15 += "   (LONG  Ma3, 5, 8, 15)";
+                                    count += 2;
                                 }
                                 if ((ma3_1.compareTo(ma5_1) < 0) && (ma5_1.compareTo(ma8_1) < 0)
                                         && (ma8_1.compareTo(ma15_1) < 0)) {
@@ -3031,6 +3036,13 @@ public class BinanceServiceImpl implements BinanceService {
                                         allow_send_msg = true;
                                     }
                                     ma_3_5_8_15 += "   (SHORT Ma3, 5, 8, 15)";
+                                    count += 2;
+                                }
+
+                                note += ma_3_5_8_15;
+
+                                if (count > 2) {
+                                    allow_send_msg = true;
                                 }
                             }
                         }
