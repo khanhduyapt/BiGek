@@ -114,8 +114,6 @@ public class BscScanBinanceApplication {
                 System.out.println(log.getAbsolutePath());
                 log = new File(Utils.getForexLogFile());
                 System.out.println(log.getAbsolutePath());
-                log = new File(Utils.getReportLogFile());
-                System.out.println(log.getAbsolutePath());
                 System.out.println();
 
                 while (index_crypto < total) {

@@ -807,17 +807,6 @@ public class Utils {
         return " https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + epic;
     }
 
-    public static String getReportLogFile() {
-        String PATH = "crypto_forex_result/";
-        String fileName = getToday_YyyyMMdd() + "_Report.log";
-
-        File directory = new File(PATH);
-        if (!directory.exists()) {
-            directory.mkdir();
-        }
-        return PATH + fileName;
-    }
-
     public static String getForexLogFile() {
         String PATH = "crypto_forex_result/";
         String fileName = getToday_YyyyMMdd() + "_Forex.log";
@@ -852,7 +841,7 @@ public class Utils {
 
     public static void logWritelnReport(String text) {
         try {
-            String logFilePath = getReportLogFile();
+            String logFilePath = getForexLogFile();
             String msg = text.trim();
             if (Utils.isNotBlank(msg)) {
                 msg = BscScanBinanceApplication.hostname + Utils.getTimeHHmm() + " "
