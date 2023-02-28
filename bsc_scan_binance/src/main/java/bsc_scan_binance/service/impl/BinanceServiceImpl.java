@@ -3266,9 +3266,6 @@ public class BinanceServiceImpl implements BinanceService {
         for (String CUR : compare_list) {
             getSummaryCurrencies(CUR, Utils.CAPITAL_TIME_HOUR_4);
         }
-        for (String CUR : compare_list) {
-            getSummaryCurrencies(CUR, Utils.CAPITAL_TIME_MINUTE_30);
-        }
 
         if (!CollectionUtils.isEmpty(GLOBAL_LONG_LIST)) {
             for (String s : GLOBAL_LONG_LIST) {
