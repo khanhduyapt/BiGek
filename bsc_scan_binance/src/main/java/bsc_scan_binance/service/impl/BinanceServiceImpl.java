@@ -2957,7 +2957,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean allow_update = true;
             boolean allow_send_msg = false;
-            boolean allow_write_log = true;
             if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)
                     || Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
 
@@ -3052,7 +3051,7 @@ public class BinanceServiceImpl implements BinanceService {
                             }
                         }
 
-                        if (allow_write_log) {
+                        if (Objects.equals(trend_day, switch_trend)) {
                             String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list, sl_long, sl_shot);
                             String log = wdh4 + char_name.replace(")", "").trim();
                             log += ": " + Utils.appendSpace(switch_trend, 5) + ") ";
