@@ -3092,9 +3092,11 @@ public class BinanceServiceImpl implements BinanceService {
 
                 BigDecimal beard_buy = (body.get(0).subtract(low_high.get(0))).abs();
                 BigDecimal bread_sell = (low_high.get(1).subtract(body.get(1))).abs();
+                BigDecimal bread = (beard_buy.compareTo(bread_sell) > 0 ? beard_buy : bread_sell);
+                bread = bread.multiply(BigDecimal.valueOf(3));
 
-                BigDecimal sl_long = low_high.get(0).subtract(beard_buy.multiply(BigDecimal.valueOf(2)));
-                BigDecimal sl_shot = low_high.get(1).add(bread_sell.multiply(BigDecimal.valueOf(2)));
+                BigDecimal sl_long = low_high.get(0).subtract(bread);
+                BigDecimal sl_shot = low_high.get(1).add(bread);
 
                 Orders entity = new Orders(id, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
                         sl_long, sl_shot, note);
