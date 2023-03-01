@@ -62,7 +62,7 @@ public class Utils {
     private static OrdersRepository ordersRepository;
 
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.005);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0025);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -2909,8 +2909,7 @@ public class Utils {
         int moneny_length = 8;
 
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 5);
-        // result += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry, 5)) +
-        // "$", 9);
+        result += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry, 5)) + "$", 9);
         result += "     ";
 
         String temp = "";
@@ -2931,7 +2930,7 @@ public class Utils {
         temp += Utils.appendLeft(removeLastZero(lot_shot), 8) + "(lot)";
         result += Utils.appendSpace("(SELL)" + temp, 38);
 
-        result = Utils.appendSpace(result, 90);
+        result = Utils.appendSpace(result, 99);
         return result;
     }
 

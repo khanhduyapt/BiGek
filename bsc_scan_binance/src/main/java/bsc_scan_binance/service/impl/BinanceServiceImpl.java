@@ -3025,20 +3025,25 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         if (Objects.equals(trend_day, switch_trend)) {
-                            BigDecimal sl_long = Utils.getBigDecimal(week.getLow_price());
-                            BigDecimal sl_shot = Utils.getBigDecimal(week.getHigh_price());
-                            BigDecimal tp_long = Utils.getBigDecimal(week.getEnd_body_price());
-                            BigDecimal tp_shot = Utils.getBigDecimal(week.getStr_body_price());
+                            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4)
+                                    .orElse(null);
 
-                            String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list.get(0).getCurrPrice(), sl_long,
-                                    sl_shot, tp_long, tp_shot);
+                            if (Objects.nonNull(dto_h4)) {
+                                BigDecimal sl_long = Utils.getBigDecimal(dto_h4.getLow_price());
+                                BigDecimal sl_shot = Utils.getBigDecimal(dto_h4.getHigh_price());
+                                BigDecimal tp_long = Utils.getBigDecimal(dto_h4.getEnd_body_price());
+                                BigDecimal tp_shot = Utils.getBigDecimal(dto_h4.getStr_body_price());
 
-                            String log = wdh4 + char_name.replace(")", "").trim();
-                            log += ": " + Utils.appendSpace(switch_trend, 4) + ") ";
-                            log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
-                            log += buffer + ma_3_5_8_15 + week_area;
-                            log += (allow_send_msg ? "   SEND_MSG " : "");
-                            Utils.logWritelnReport(log);
+                                String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list.get(0).getCurrPrice(),
+                                        sl_long, sl_shot, tp_long, tp_shot);
+
+                                String log = wdh4 + char_name.replace(")", "").trim();
+                                log += ": " + Utils.appendSpace(switch_trend, 4) + ") ";
+                                log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
+                                log += buffer + ma_3_5_8_15 + week_area;
+                                log += (allow_send_msg ? "   SEND_MSG " : "");
+                                Utils.logWritelnReport(log);
+                            }
                         }
 
                         if (!Objects.equals(trend_day, switch_trend)) {
@@ -3099,9 +3104,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             return trend;
 
-        } catch (
-
-        Exception e) {
+        } catch (Exception e) {
             String result = "initForexTrend(" + EPIC + ") " + e.getMessage();
             Utils.logWritelnReport(result);
 
@@ -3329,12 +3332,12 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                Orders week = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
-                if (Objects.nonNull(week)) {
-                    BigDecimal sl_long = Utils.getBigDecimal(week.getLow_price());
-                    BigDecimal sl_shot = Utils.getBigDecimal(week.getHigh_price());
-                    BigDecimal tp_long = Utils.getBigDecimal(week.getEnd_body_price());
-                    BigDecimal tp_shot = Utils.getBigDecimal(week.getStr_body_price());
+                Orders dto = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+                if (Objects.nonNull(dto)) {
+                    BigDecimal sl_long = Utils.getBigDecimal(dto.getLow_price());
+                    BigDecimal sl_shot = Utils.getBigDecimal(dto.getHigh_price());
+                    BigDecimal tp_long = Utils.getBigDecimal(dto.getEnd_body_price());
+                    BigDecimal tp_shot = Utils.getBigDecimal(dto.getStr_body_price());
 
                     String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
                     String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, entity.getCurrent_price(), sl_long, sl_shot,
