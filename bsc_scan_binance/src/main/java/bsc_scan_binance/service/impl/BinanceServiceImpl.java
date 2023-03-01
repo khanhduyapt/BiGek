@@ -2967,11 +2967,11 @@ public class BinanceServiceImpl implements BinanceService {
 
                             if ((ma3_1.compareTo(ma5_1) > 0) && (ma5_1.compareTo(ma8_1) > 0)
                                     && (ma8_1.compareTo(ma15_1) > 0)) {
-                                ma_3_5_8_15 += "   (BUY  Ma3, 5, 8, 15)";
+                                ma_3_5_8_15 += "   (" + Utils.TREND_LONG + "  .Ma3, 5, 8, 15)";
                             }
                             if ((ma3_1.compareTo(ma5_1) < 0) && (ma5_1.compareTo(ma8_1) < 0)
                                     && (ma8_1.compareTo(ma15_1) < 0)) {
-                                ma_3_5_8_15 += "   (SELL Ma3, 5, 8, 15)";
+                                ma_3_5_8_15 += "   (" + Utils.TREND_SHORT + " .Ma3, 5, 8, 15)";
                             }
 
                             note += ma_3_5_8_15;
