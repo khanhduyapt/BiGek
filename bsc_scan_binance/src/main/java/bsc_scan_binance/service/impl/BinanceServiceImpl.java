@@ -2978,6 +2978,18 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     if (Objects.nonNull(week)) {
+                        if (Objects.nonNull(week)) {
+                            BigDecimal current_price = list.get(0).getCurrPrice();
+                            if (week.getStr_body_price().compareTo(current_price) > 0) {
+                                allow_send_msg = true;
+                                ma_3_5_8_15 += " BUY_AREA_(Week). ";
+                            }
+                            if (week.getEnd_body_price().compareTo(current_price) < 0) {
+                                allow_send_msg = true;
+                                ma_3_5_8_15 += " SELL_AREA_(Week). ";
+                            }
+                        }
+
                         if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
                             if (GLOBAL_LONG_LIST.contains(EPIC) && Objects.equals(Utils.TREND_LONG, switch_trend)) {
                                 allow_send_msg = true;
