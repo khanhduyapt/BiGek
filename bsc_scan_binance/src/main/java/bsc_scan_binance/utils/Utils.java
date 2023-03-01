@@ -85,8 +85,8 @@ public class Utils {
     public static final String PREPARE_ORDERS_DATA_TYPE_MIN14D = "4";
     public static final String PREPARE_ORDERS_DATA_TYPE_MAX14D = "5";
 
-    public static final String TREND_LONG = "Long";
-    public static final String TREND_SHORT = "Short";
+    public static final String TREND_LONG = "BUY";
+    public static final String TREND_SHORT = "SELL";
 
     public static final String TEXT_5STAR = "(*5S*)";
     public static final String TEXT_DANGER = "(Danger)";
@@ -970,7 +970,7 @@ public class Utils {
 
     public static boolean isBusinessTime_6h_to_17h() {
         //Sang 6-8h, Trua: 1h-3h, Chieu 5h-6h, toi 8h-9h: la khung gio gia ro rang nhat, sau khung gio nay gia moi chay.
-        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18, 20, 21, 22);
+        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 20, 21, 22);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -2628,54 +2628,43 @@ public class Utils {
         return Utils.appendSpace(result, 46);
     }
 
-    public static String calc_BUF_LO_HI_BUF_Forex(String EPIC, List<BtcFutures> list_h1, BigDecimal sl_long,
-            BigDecimal sl_short) {
+    public static String calc_BUF_LO_HI_BUF_Forex(String EPIC, BigDecimal entry, BigDecimal sl_long,
+            BigDecimal sl_short, BigDecimal tp_long, BigDecimal tp_short) {
 
         String result = "";
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
-        BigDecimal entry = list_h1.get(0).getCurrPrice();
-        List<BigDecimal> low_heigh = getLowHighCandle(list_h1);
-        BigDecimal LO = low_heigh.get(0);
-        BigDecimal HI = low_heigh.get(1);
-
-        MoneyAtRiskResponse money_long = new MoneyAtRiskResponse(EPIC, risk, entry, sl_long, HI);
+        MoneyAtRiskResponse money_long = new MoneyAtRiskResponse(EPIC, risk, entry, sl_long, tp_long);
         BigDecimal lot_long = money_long.calcLot();
         BigDecimal tp_money_long = money_long.calcTPMoney();
 
-        MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, entry, sl_short, LO);
+        MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, entry, sl_short, tp_short);
         BigDecimal lot_shot = money_short.calcLot();
         BigDecimal tp_money_shot = money_short.calcTPMoney();
 
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 5);
-        result += " E: " + Utils.appendLeft(removeLastZero(roundDefault(entry)) + "$", 8);
+        result += " E: " + Utils.appendLeft(removeLastZero(entry) + "$", 8);
         result += "     ";
-        result += Utils.appendSpace("(Long)" + Utils.appendLeft(removeLastZero(lot_long), 6) + "(lot)" + "   SL: "
-                + Utils.appendLeft(removeLastZero(roundDefault(LO)), 6) + "   TP: "
-                + Utils.appendLeft(removeLastZero(roundDefault(HI)), 6) + " ("
-                + Utils.appendLeft(removeLastZero(tp_money_long), 6) + "$)", 65);
+
+        int moneny_length = 8;
+
+        String temp = "";
+        temp += " SL: " + Utils.appendLeft(removeLastZero(sl_long), moneny_length);
+        temp += "   TP: " + Utils.appendLeft(removeLastZero(tp_long), moneny_length);
+        temp += " (" + Utils.appendLeft(removeLastZero(tp_money_long), 6) + "$)";
+        temp += Utils.appendLeft(removeLastZero(lot_long), 6) + "(lot)";
+        result += Utils.appendSpace(" (BUY)" + temp, 60);
 
         result += " ";
 
-        result += Utils.appendSpace("(Short)" + Utils.appendLeft(removeLastZero(lot_shot), 6) + "(lot)" + "   SL: "
-                + Utils.appendLeft(removeLastZero(roundDefault(HI)), 6) + "   TP: "
-                + Utils.appendLeft(removeLastZero(roundDefault(LO)), 6) + " ("
-                + Utils.appendLeft(removeLastZero(tp_money_shot), 6) + "$)", 65);
+        temp = "";
+        temp += " SL: " + Utils.appendLeft(removeLastZero(sl_short), moneny_length);
+        temp += "   TP: " + Utils.appendLeft(removeLastZero(tp_short), moneny_length);
+        temp += " (" + Utils.appendLeft(removeLastZero(tp_money_shot), 6) + "$)";
+        temp += Utils.appendLeft(removeLastZero(lot_shot), 6) + "(lot)";
+        result += Utils.appendSpace("(SELL)" + temp, 60);
 
-        // result += Utils.appendSpace("", 15);
-        // if (tp_money_long.compareTo(tp_money_short.multiply(BigDecimal.valueOf(2))) >
-        // 0) {
-        // result += " ---> " + Utils.appendSpace("LONG", 8);
-        // } else if
-        // (tp_money_short.compareTo(tp_money_long.multiply(BigDecimal.valueOf(2))) > 0)
-        // {
-        // result += " ---> " + Utils.appendSpace("SHORT", 8);
-        // } else {
-        // result += Utils.appendSpace("", 15);
-        // }
-
-        result = Utils.appendSpace(result, 150);
-
+        result = Utils.appendSpace(result, 130);
         return result;
     }
 
