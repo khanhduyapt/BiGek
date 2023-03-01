@@ -2983,11 +2983,11 @@ public class BinanceServiceImpl implements BinanceService {
                             BigDecimal current_price = list.get(0).getCurrPrice();
                             if (week.getStr_body_price().compareTo(current_price) > 0) {
                                 allow_send_msg = true;
-                                week_area = " BUY_AREA_(Week). ";
+                                week_area = " " + Utils.TREND_LONG + "_AREA_(Week). ";
                             }
                             if (week.getEnd_body_price().compareTo(current_price) < 0) {
                                 allow_send_msg = true;
-                                week_area = " SELL_AREA_(Week). ";
+                                week_area = " " + Utils.TREND_SHORT + "_AREA_(Week). ";
                             }
                         }
 
@@ -3002,6 +3002,15 @@ public class BinanceServiceImpl implements BinanceService {
                             if (Objects.equals(trend_day, switch_trend)) {
                                 allow_send_msg = true;
                             } else {
+                                allow_send_msg = false;
+                            }
+
+                            if (Objects.equals(Utils.TREND_LONG, switch_trend)
+                                    && week_area.contains(Utils.TREND_SHORT)) {
+                                allow_send_msg = false;
+                            }
+                            if (Objects.equals(Utils.TREND_SHORT, switch_trend)
+                                    && week_area.contains(Utils.TREND_LONG)) {
                                 allow_send_msg = false;
                             }
 
