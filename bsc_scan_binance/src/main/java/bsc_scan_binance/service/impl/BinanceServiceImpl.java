@@ -2997,24 +2997,24 @@ public class BinanceServiceImpl implements BinanceService {
                             if (GLOBAL_SHOT_LIST.contains(EPIC) && Objects.equals(Utils.TREND_SHORT, switch_trend)) {
                                 allow_send_msg = true;
                             }
-                        }
 
-                        if (Objects.equals(trend_day, switch_trend)) {
-                            allow_send_msg = true;
-                        } else {
-                            allow_send_msg = false;
-                        }
-
-                        if (allow_send_msg) {
-                            String trend_tmp = "(" + switch_trend + ")";
-                            if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
-                                trend_tmp = "(" + switch_trend + "_" + switch_trend + "_" + switch_trend + ")";
+                            if (Objects.equals(trend_day, switch_trend)) {
+                                allow_send_msg = true;
+                            } else {
+                                allow_send_msg = false;
                             }
 
-                            String EVENT_ID = EVENT_PUMP + EPIC + char_name
-                                    + Utils.getCurrentYyyyMmDdHHByChart(list);
-                            String msg = trend_tmp + char_name + EPIC;
-                            sendMsgPerHour(EVENT_ID, msg, true);
+                            if (allow_send_msg) {
+                                String trend_tmp = "(" + switch_trend + ")";
+                                if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
+                                    trend_tmp = "(" + switch_trend + "_" + switch_trend + "_" + switch_trend + ")";
+                                }
+
+                                String EVENT_ID = EVENT_PUMP + EPIC + char_name
+                                        + Utils.getCurrentYyyyMmDdHHByChart(list);
+                                String msg = trend_tmp + char_name + EPIC;
+                                sendMsgPerHour(EVENT_ID, msg, true);
+                            }
                         }
 
                         if (Objects.equals(trend_day, switch_trend)) {
