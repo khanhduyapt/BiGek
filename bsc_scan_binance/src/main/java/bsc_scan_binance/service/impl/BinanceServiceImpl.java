@@ -1,5 +1,6 @@
 package bsc_scan_binance.service.impl;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -3041,17 +3042,30 @@ public class BinanceServiceImpl implements BinanceService {
                         }
                     }
 
-                } else if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
-                    Orders entity_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-                    if (Objects.nonNull(entity_h4)) {
-                        LocalDateTime curr_time = LocalDateTime.now();
-                        String insert_time = Utils.getStringValue(entity_h4.getInsertTime());
-                        LocalDateTime pre_time = LocalDateTime.parse(insert_time);
-                        long elapsedMinutes = Duration.between(pre_time, curr_time).toMinutes();
+                }
+            }
 
-                        if ((Utils.MINUTES_OF_4H * 3) <= elapsedMinutes) {
-                            allow_update = false;
-                        }
+            if (Utils.isBlank(switch_trend)) {
+                Orders entity_h = null;
+                long time = Utils.MINUTES_OF_1H;
+                if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
+                    entity_h = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+                    time = Utils.MINUTES_OF_4H * 3;
+                }
+
+                if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
+                    entity_h = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_30).orElse(null);
+                    time = Utils.MINUTES_OF_1H * 2;
+                }
+
+                if (Objects.nonNull(entity_h)) {
+                    LocalDateTime curr_time = LocalDateTime.now();
+                    String insert_time = Utils.getStringValue(entity_h.getInsertTime());
+                    LocalDateTime pre_time = LocalDateTime.parse(insert_time);
+                    long elapsedMinutes = Duration.between(pre_time, curr_time).toMinutes();
+
+                    if (time > elapsedMinutes) {
+                        allow_update = false;
                     }
                 }
             }
@@ -3224,9 +3238,8 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public void createReport() {
-        Utils.writelnLogFooter_Forex();
-        Utils.writelnLogFooter_Forex();
-        Utils.writelnLogFooter_Forex();
+        File myObj = new File(Utils.getForexLogFile());
+        myObj.delete();
 
         String temp = "";
         Orders temp_obj = ordersRepository.findById("DXY" + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
@@ -3270,11 +3283,9 @@ public class BinanceServiceImpl implements BinanceService {
         List<Orders> orders_list = ordersRepository.getTrend_30mList();
         orders_list.add(null);
         orders_list.addAll(ordersRepository.getTrend_H4List());
-
         orders_list.add(null);
         orders_list.addAll(ordersRepository.getSwitchTrend_DayList());
 
-        orders_list.add(null);
         if (!CollectionUtils.isEmpty(orders_list)) {
             Utils.logWritelnReport("");
             for (Orders entity : orders_list) {
@@ -3331,6 +3342,9 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
         }
+        Utils.writelnLogFooter_Forex();
+        Utils.writelnLogFooter_Forex();
+        Utils.writelnLogFooter_Forex();
     }
 
     @Override

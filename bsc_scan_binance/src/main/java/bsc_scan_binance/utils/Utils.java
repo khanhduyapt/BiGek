@@ -62,7 +62,7 @@ public class Utils {
     private static OrdersRepository ordersRepository;
 
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.003);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0035);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -2642,15 +2642,15 @@ public class Utils {
         BigDecimal lot_shot = money_short.calcLot();
         BigDecimal tp_money_shot = money_short.calcTPMoney();
 
-        result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 5);
-        result += " E: " + Utils.appendLeft(removeLastZero(entry) + "$", 8);
-        result += "     ";
-
         int moneny_length = 8;
 
+        result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 5);
+        result += " E: " + Utils.appendLeft(removeLastZero(formatPrice(entry, 5)) + "$", 8);
+        result += "     ";
+
         String temp = "";
-        temp += " SL: " + Utils.appendLeft(removeLastZero(sl_long), moneny_length);
-        temp += "   TP: " + Utils.appendLeft(removeLastZero(tp_long), moneny_length);
+        temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), moneny_length);
+        temp += "   TP: " + Utils.appendLeft(removeLastZero(formatPrice(tp_long, 5)), moneny_length);
         temp += " (" + Utils.appendLeft(removeLastZero(tp_money_long), 6) + "$)";
         temp += Utils.appendLeft(removeLastZero(lot_long), 6) + "(lot)";
         result += Utils.appendSpace(" (BUY)" + temp, 60);
@@ -2658,8 +2658,8 @@ public class Utils {
         result += " ";
 
         temp = "";
-        temp += " SL: " + Utils.appendLeft(removeLastZero(sl_short), moneny_length);
-        temp += "   TP: " + Utils.appendLeft(removeLastZero(tp_short), moneny_length);
+        temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_short, 5)), moneny_length);
+        temp += "   TP: " + Utils.appendLeft(removeLastZero(formatPrice(tp_short, 5)), moneny_length);
         temp += " (" + Utils.appendLeft(removeLastZero(tp_money_shot), 6) + "$)";
         temp += Utils.appendLeft(removeLastZero(lot_shot), 6) + "(lot)";
         result += Utils.appendSpace("(SELL)" + temp, 60);
