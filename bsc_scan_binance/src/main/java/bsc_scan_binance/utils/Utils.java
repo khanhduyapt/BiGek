@@ -137,8 +137,8 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final List<String> EPICS_SCAP = Arrays.asList("GOLD", "US30", "US500", "UK100",
-            "FR40", "HK50", "SILVER");
+    public static final List<String> EPICS_SCAP = Arrays.asList("GOLD", "US30", "US500", "UK100", "FR40", "HK50",
+            "SILVER");
 
     public static final List<String> EPICS_FOREX = Arrays.asList("DXY", "GOLD", "US30", "US500", "J225", "UK100",
             "FR40", "HK50", "BTCUSD", "SILVER", "OIL_CRUDE");
@@ -969,7 +969,8 @@ public class Utils {
     }
 
     public static boolean isBusinessTime_6h_to_17h() {
-        //Sang 6-8h, Trua: 1h-3h, Chieu 5h-6h, toi 8h-9h: la khung gio gia ro rang nhat, sau khung gio nay gia moi chay.
+        // Sang 6-8h, Trua: 1h-3h, Chieu 5h-6h, toi 8h-9h: la khung gio gia ro rang
+        // nhat, sau khung gio nay gia moi chay.
         List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
@@ -2835,68 +2836,58 @@ public class Utils {
         String s_m3x8 = "";
         String l_m3x15 = "";
         String s_m3x15 = "";
-        String l_m3x20 = "";
-        String s_m3x20 = "";
 
-        String l_m5x15 = "";
-        String s_m5x15 = "";
+        String l_m6x8 = "";
+        String s_m6x8 = "";
         String l_m8x15 = "";
         String s_m8x15 = "";
 
-        BigDecimal ma3_1 = calcMA(list, 3, str);
-        BigDecimal ma3_2 = calcMA(list, 3, end);
-        BigDecimal ma10_1 = calcMA(list, 10, str);
-        BigDecimal ma10_2 = calcMA(list, 10, end);
+        if (list.get(0).getId().contains("_1d_") || list.get(0).getId().contains("_4h_")
+                || list.get(0).getId().contains("_1h_")) {
 
-        String l_m03x10 = Utils.checkXCutUpY(ma3_1, ma3_2, ma10_1, ma10_2);
-        String s_m03x10 = Utils.checkXCutDnY(ma3_1, ma3_2, ma10_1, ma10_2);
+            BigDecimal ma3_1 = calcMA(list, 3, str);
+            BigDecimal ma3_2 = calcMA(list, 3, end);
 
-        if (list.get(0).getId().contains("_1d_")) {
-            BigDecimal ma5_1 = calcMA(list, 5, str);
-            BigDecimal ma5_2 = calcMA(list, 5, end);
-            l_m3x5 = Utils.checkXCutUpY(ma3_1, ma3_2, ma5_1, ma5_2);
-            s_m3x5 = Utils.checkXCutDnY(ma3_1, ma3_2, ma5_1, ma5_2);
-        } else if (list.get(0).getId().contains("_4h_")) {
-            BigDecimal ma5_1 = calcMA(list, 5, str);
-            BigDecimal ma5_2 = calcMA(list, 5, end);
-            l_m3x5 = Utils.checkXCutUpY(ma3_1, ma3_2, ma5_1, ma5_2);
-            s_m3x5 = Utils.checkXCutDnY(ma3_1, ma3_2, ma5_1, ma5_2);
+            BigDecimal ma6_1 = calcMA(list, 6, str);
+            BigDecimal ma6_2 = calcMA(list, 6, end);
 
             BigDecimal ma8_1 = calcMA(list, 8, str);
             BigDecimal ma8_2 = calcMA(list, 8, end);
-            l_m3x8 = Utils.checkXCutUpY(ma3_1, ma3_2, ma8_1, ma8_2);
-            s_m3x8 = Utils.checkXCutDnY(ma3_1, ma3_2, ma8_1, ma8_2);
-        } else if (list.get(0).getId().contains("_1h_")) {
-            BigDecimal ma8_1 = calcMA(list, 6, str);
-            BigDecimal ma8_2 = calcMA(list, 6, end);
+
+            l_m3x5 = Utils.checkXCutUpY(ma3_1, ma3_2, ma6_1, ma6_2);
+            s_m3x5 = Utils.checkXCutDnY(ma3_1, ma3_2, ma6_1, ma6_2);
+
             l_m3x8 = Utils.checkXCutUpY(ma3_1, ma3_2, ma8_1, ma8_2);
             s_m3x8 = Utils.checkXCutDnY(ma3_1, ma3_2, ma8_1, ma8_2);
 
-            BigDecimal ma15_1 = calcMA(list, 15, str);
-            BigDecimal ma15_2 = calcMA(list, 15, end);
-            l_m3x15 = Utils.checkXCutUpY(ma3_1, ma3_2, ma15_1, ma15_2);
-            s_m3x15 = Utils.checkXCutDnY(ma3_1, ma3_2, ma15_1, ma15_2);
-
-        } else if (list.get(0).getId().contains("_15m_") || list.get(0).getId().contains("_30m_")) {
+            l_m6x8 = Utils.checkXCutUpY(ma6_1, ma6_2, ma8_1, ma8_2);
+            s_m6x8 = Utils.checkXCutDnY(ma6_1, ma6_2, ma8_1, ma8_2);
+        } else {
+            // if (list.get(0).getId().contains("_15m_") ||
+            // list.get(0).getId().contains("_30m_"))
             BigDecimal ma6_1 = calcMA(list, 6, str);
             BigDecimal ma6_2 = calcMA(list, 6, end);
+
+            BigDecimal ma8_1 = calcMA(list, 8, str);
+            BigDecimal ma8_2 = calcMA(list, 8, end);
+
             BigDecimal ma15_1 = calcMA(list, 15, str);
             BigDecimal ma15_2 = calcMA(list, 15, end);
 
-            l_m03x10 = Utils.checkXCutUpY(ma6_1, ma6_2, ma10_1, ma10_2);
-            s_m03x10 = Utils.checkXCutDnY(ma6_1, ma6_2, ma10_1, ma10_2);
+            l_m6x8 = Utils.checkXCutUpY(ma6_1, ma6_2, ma8_1, ma8_2);
+            s_m6x8 = Utils.checkXCutDnY(ma6_1, ma6_2, ma8_1, ma8_2);
 
             l_m3x15 = Utils.checkXCutUpY(ma6_1, ma6_2, ma15_1, ma15_2);
             s_m3x15 = Utils.checkXCutDnY(ma6_1, ma6_2, ma15_1, ma15_2);
 
-            l_m8x15 = Utils.checkXCutUpY(ma10_1, ma10_2, ma15_1, ma15_2);
-            s_m8x15 = Utils.checkXCutDnY(ma10_1, ma10_2, ma15_1, ma15_2);
+            l_m8x15 = Utils.checkXCutUpY(ma8_1, ma8_2, ma15_1, ma15_2);
+            s_m8x15 = Utils.checkXCutDnY(ma8_1, ma8_2, ma15_1, ma15_2);
         }
 
         String trend = "";
-        trend += l_m03x10 + "_" + l_m3x5 + "_" + l_m3x8 + "_" + l_m3x15 + "_" + l_m8x15 + "_" + l_m3x20;
+        trend += "_" + l_m3x5 + "_" + l_m3x8 + "_" + l_m6x8 + "_" + l_m3x15 + "_" + l_m8x15 + "_";
         trend += "_____";
-        trend += s_m03x10 + "_" + s_m3x5 + "_" + s_m3x8 + "_" + s_m3x15 + "_" + s_m8x15 + "_" + s_m3x20;
+        trend += "_" + s_m3x5 + "_" + s_m3x8 + "_" + s_m6x8 + "_" + s_m3x15 + "_" + s_m8x15 + "_";
 
         return trend;
     }
@@ -2918,13 +2909,15 @@ public class Utils {
         int moneny_length = 8;
 
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 5);
-        //result += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry, 5)) + "$", 9);
+        // result += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry, 5)) +
+        // "$", 9);
         result += "     ";
 
         String temp = "";
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), moneny_length);
-        //temp += "   TP: " + Utils.appendLeft(removeLastZero(formatPrice(tp_long, 5)), moneny_length);
-        //temp += " (" + Utils.appendLeft(removeLastZero(tp_money_long), 6) + "$)";
+        // temp += " TP: " + Utils.appendLeft(removeLastZero(formatPrice(tp_long, 5)),
+        // moneny_length);
+        // temp += " (" + Utils.appendLeft(removeLastZero(tp_money_long), 6) + "$)";
         temp += Utils.appendLeft(removeLastZero(lot_long), 8) + "(lot)";
         result += Utils.appendSpace(" (BUY)" + temp, 38);
 
@@ -2932,8 +2925,9 @@ public class Utils {
 
         temp = "";
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_short, 5)), moneny_length);
-        //temp += "   TP: " + Utils.appendLeft(removeLastZero(formatPrice(tp_short, 5)), moneny_length);
-        //temp += " (" + Utils.appendLeft(removeLastZero(tp_money_shot), 6) + "$)";
+        // temp += " TP: " + Utils.appendLeft(removeLastZero(formatPrice(tp_short, 5)),
+        // moneny_length);
+        // temp += " (" + Utils.appendLeft(removeLastZero(tp_money_shot), 6) + "$)";
         temp += Utils.appendLeft(removeLastZero(lot_shot), 8) + "(lot)";
         result += Utils.appendSpace("(SELL)" + temp, 38);
 
