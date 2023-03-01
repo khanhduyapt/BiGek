@@ -2642,31 +2642,30 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private String getPrepareOrderTrend_WDH4(String EPIC, boolean isForex) {
-        String trend_w = "";
         String trend_d = "";
         String trend_h4 = "";
         String trend_d_h4 = "";
+
         if (isForex) {
-            trend_w = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_WEEK);
             trend_d = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_DAY);
             trend_h4 = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
 
-            String msg = "(W:" + Utils.appendSpace(trend_w, 5) + ", D:" + Utils.appendSpace(trend_d, 5);
+            String msg = "(D:" + Utils.appendSpace(trend_d, 5);
 
             if (Utils.isNotBlank(trend_h4)) {
-                msg += ", H4:" + Utils.appendSpace(trend_h4, 5);
+                msg += "  H4:" + Utils.appendSpace(trend_h4, 4);
             } else {
                 msg += Utils.appendSpace("", 10);
             }
             msg += ")";
 
-            trend_d_h4 = Utils.appendSpace(msg, 30);
+            trend_d_h4 = Utils.appendSpace(msg, 20);
         } else {
             trend_d = getPrepareOrderTrend(EPIC, Utils.CRYPTO_TIME_1d);
             trend_h4 = getPrepareOrderTrend(EPIC, Utils.CRYPTO_TIME_4h);
 
             trend_d_h4 = Utils.appendSpace(
-                    "(D:" + Utils.appendSpace(trend_d, 5) + ", H4:" + Utils.appendSpace(trend_h4, 5) + ")", 30);
+                    "(D:" + Utils.appendSpace(trend_d, 5) + "  H4:" + Utils.appendSpace(trend_h4, 5) + ")", 20);
         }
 
         return trend_d_h4.replace(Utils.TREND_LONG, "BUY").replace(Utils.TREND_SHORT, "SELL");
@@ -2950,6 +2949,7 @@ public class BinanceServiceImpl implements BinanceService {
                         || Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
 
                     String ma_3_5_8_15 = "";
+                    String week_area = "";
                     String char_name = Utils.getChartName(list);
                     String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
                     String trend_day = "";
@@ -2983,11 +2983,11 @@ public class BinanceServiceImpl implements BinanceService {
                             BigDecimal current_price = list.get(0).getCurrPrice();
                             if (week.getStr_body_price().compareTo(current_price) > 0) {
                                 allow_send_msg = true;
-                                ma_3_5_8_15 += " BUY_AREA_(Week). ";
+                                week_area = " BUY_AREA_(Week). ";
                             }
                             if (week.getEnd_body_price().compareTo(current_price) < 0) {
                                 allow_send_msg = true;
-                                ma_3_5_8_15 += " SELL_AREA_(Week). ";
+                                week_area = " SELL_AREA_(Week). ";
                             }
                         }
 
@@ -3013,7 +3013,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                                 String EVENT_ID = EVENT_PUMP + EPIC + char_name
                                         + Utils.getCurrentYyyyMmDdHHByChart(list);
-                                String msg = trend_tmp + char_name + EPIC;
+                                String msg = trend_tmp + char_name + EPIC + ma_3_5_8_15;
                                 sendMsgPerHour(EVENT_ID, msg, true);
                             }
                         }
@@ -3028,20 +3028,17 @@ public class BinanceServiceImpl implements BinanceService {
                                     sl_shot, tp_long, tp_shot);
 
                             String log = wdh4 + char_name.replace(")", "").trim();
-                            log += ": " + Utils.appendSpace(switch_trend, 5) + ") ";
+                            log += ": " + Utils.appendSpace(switch_trend, 4) + ") ";
                             log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
-                            log += buffer + ma_3_5_8_15;
+                            log += buffer + ma_3_5_8_15 + week_area;
                             log += (allow_send_msg ? "   SEND_MSG " : "");
                             Utils.logWritelnReport(log);
                         }
 
-                        if (Objects.equals(trend_day, switch_trend)) {
-                            trend = switch_trend;
-                        } else {
+                        if (!Objects.equals(trend_day, switch_trend)) {
                             note = "";
                         }
                     }
-
                 }
             }
 
@@ -3081,8 +3078,12 @@ public class BinanceServiceImpl implements BinanceService {
                 String date_time = LocalDateTime.now().toString();
                 List<BigDecimal> body = Utils.getOpenCloseCandle(list);
                 List<BigDecimal> low_high = Utils.getLowHighCandle(list);
-                BigDecimal sl_long = low_high.get(0).subtract((body.get(0).subtract(low_high.get(0))).abs());
-                BigDecimal sl_shot = low_high.get(1).add((low_high.get(1).subtract(body.get(1))).abs());
+
+                BigDecimal beard_buy = (body.get(0).subtract(low_high.get(0))).abs();
+                BigDecimal bread_sell = (low_high.get(1).subtract(body.get(1))).abs();
+
+                BigDecimal sl_long = low_high.get(0).subtract(beard_buy.multiply(BigDecimal.valueOf(2)));
+                BigDecimal sl_shot = low_high.get(1).add(bread_sell.multiply(BigDecimal.valueOf(2)));
 
                 Orders entity = new Orders(id, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
                         sl_long, sl_shot, note);
@@ -3254,7 +3255,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.nonNull(temp_obj)) {
             temp += ", 30m: " + temp_obj.getTrend();
         }
-        Utils.logWritelnReport("(USD) " + temp);
+        Utils.logWritelnReport("(USD ) " + temp);
         //--------------------------------------------------------------------------
         List<String> compare_list = Arrays.asList("USD", "CHF", "NZD", "EUR", "GBP", "AUD");
         String str_long = "";
@@ -3276,7 +3277,7 @@ public class BinanceServiceImpl implements BinanceService {
                 str_shot += s + "    ";
             }
         }
-        Utils.logWritelnReport("(BUY) " + str_long.trim());
+        Utils.logWritelnReport("(BUY ) " + str_long.trim());
         Utils.logWritelnReport("(SELL) " + str_shot.trim());
 
         //--------------------------------------------------------------------------
