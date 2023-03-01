@@ -2960,18 +2960,15 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
                         if (Objects.nonNull(day)) {
-                            BigDecimal ma3_1 = Utils.calcMA(list, 3, 1);
-                            BigDecimal ma5_1 = Utils.calcMA(list, 5, 1);
+                            BigDecimal ma6_1 = Utils.calcMA(list, 6, 1);
                             BigDecimal ma8_1 = Utils.calcMA(list, 8, 1);
                             BigDecimal ma15_1 = Utils.calcMA(list, 15, 1);
 
-                            if ((ma3_1.compareTo(ma5_1) > 0) && (ma5_1.compareTo(ma8_1) > 0)
-                                    && (ma8_1.compareTo(ma15_1) > 0)) {
-                                ma_3_5_8_15 += "   (" + Utils.TREND_LONG + "  .Ma3, 5, 8, 15)";
+                            if ((ma6_1.compareTo(ma8_1) > 0) && (ma8_1.compareTo(ma15_1) > 0)) {
+                                ma_3_5_8_15 += "   (" + Utils.TREND_LONG + "  .Ma.6.8.15)";
                             }
-                            if ((ma3_1.compareTo(ma5_1) < 0) && (ma5_1.compareTo(ma8_1) < 0)
-                                    && (ma8_1.compareTo(ma15_1) < 0)) {
-                                ma_3_5_8_15 += "   (" + Utils.TREND_SHORT + " .Ma3, 5, 8, 15)";
+                            if ((ma6_1.compareTo(ma8_1) < 0) && (ma8_1.compareTo(ma15_1) < 0)) {
+                                ma_3_5_8_15 += "   (" + Utils.TREND_SHORT + " .Ma.6.8.15)";
                             }
 
                             note += ma_3_5_8_15;
