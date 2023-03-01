@@ -141,8 +141,8 @@ public class Utils {
             "FR40", "HK50", "SILVER");
 
     public static final List<String> EPICS_FOREX = Arrays.asList("DXY", "GOLD", "US30", "US500", "J225", "UK100",
-            "FR40", "HK50", "BTCUSD", "SILVER", "OIL_CRUDE", "NATURALGAS");
-    // MFF ko co: "EU50", "AU200", "DE40", "US100", "SP35",
+            "FR40", "HK50", "BTCUSD", "SILVER", "OIL_CRUDE");
+    // MFF ko co: "EU50", "AU200", "DE40", "US100", "SP35", "NATURALGAS",
 
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD",
             "AUDUSD", "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD",
@@ -326,14 +326,9 @@ public class Utils {
                 day.setTaker_qty(taker_qty);
                 day.setTaker_volume(taker_volume);
 
-                BigDecimal candle_heigh = hight_price.subtract(low_price).abs();
-                BigDecimal range = candle_heigh.divide(BigDecimal.valueOf(10), 10, RoundingMode.CEILING);
-
                 day.setUptrend(false);
                 if (price_open_candle.compareTo(price_close_candle) < 0) {
-                    if ((price_open_candle.add(range)).compareTo(price_close_candle) < 0) {
-                        day.setUptrend(true);
-                    }
+                    day.setUptrend(true);
                 }
 
                 list_entity.add(day);
@@ -502,6 +497,10 @@ public class Utils {
                     dto.setHight_price(hight_price);
                     dto.setPrice_open_candle(open_price);
                     dto.setPrice_close_candle(close_price);
+                    dto.setUptrend(false);
+                    if (open_price.compareTo(close_price) < 0) {
+                        dto.setUptrend(true);
+                    }
 
                     results.add(dto);
 
@@ -971,7 +970,7 @@ public class Utils {
 
     public static boolean isBusinessTime_6h_to_17h() {
         //Sang 6-8h, Trua: 1h-3h, Chieu 5h-6h, toi 8h-9h: la khung gio gia ro rang nhat, sau khung gio nay gia moi chay.
-        List<Integer> times = Arrays.asList(6, 7, 8, 13, 14, 15, 17, 18, 20, 21, 22, 9, 10, 11);
+        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18, 20, 21, 22);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -2628,28 +2627,6 @@ public class Utils {
         result += getChartName(list);
 
         return Utils.appendSpace(result, 46);
-    }
-
-    public static List<BigDecimal> calc_SL_Long_Short_Forex(List<BtcFutures> list) {
-        List<BigDecimal> open_close = getOpenCloseCandle(list);
-        List<BigDecimal> low_heigh = getLowHighCandle(list);
-        BigDecimal LO = low_heigh.get(0);
-        BigDecimal HI = low_heigh.get(1);
-
-        BigDecimal OP = open_close.get(0);
-        BigDecimal CL = open_close.get(1);
-
-        BigDecimal sl_long = OP.subtract(LO);
-        sl_long = roundDefault(LO.subtract(sl_long.abs()));
-
-        BigDecimal sl_short = HI.subtract(CL);
-        sl_short = roundDefault(HI.add(sl_short.abs()));
-
-        List<BigDecimal> result = new ArrayList<BigDecimal>();
-        result.add(sl_long);
-        result.add(sl_short);
-
-        return result;
     }
 
     public static String calc_BUF_LO_HI_BUF_Forex(String EPIC, List<BtcFutures> list_h1, BigDecimal sl_long,

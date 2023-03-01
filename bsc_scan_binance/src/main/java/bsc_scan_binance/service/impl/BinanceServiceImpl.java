@@ -2827,18 +2827,6 @@ public class BinanceServiceImpl implements BinanceService {
         return ordersRepository.existsById(id);
     }
 
-    private void saveOrders(List<BtcFutures> list, String trend, String note, String EPIC, String CAPITAL_TIME_XXX) {
-        String id = EPIC + "_" + CAPITAL_TIME_XXX;
-        String date_time = LocalDateTime.now().toString();
-        List<BigDecimal> body = Utils.getOpenCloseCandle(list);
-        List<BigDecimal> low_high = Utils.calc_SL_Long_Short_Forex(list);
-
-        Orders entity = new Orders(id, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
-                low_high.get(0), low_high.get(1), note);
-
-        ordersRepository.save(entity);
-    }
-
     @Override
     @Transactional
     public String initCryptoTrend(String TIME, String gecko_id, String symbol) {
@@ -2910,8 +2898,10 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initForexTrend(String EPIC, String CAPITAL_TIME_XXX) {
-        String time_out_id = Utils.TEXT_CONNECTION_TIMED_OUT + "_" + Utils.CAPITAL_TIME_MINUTE_30;
+        //EPIC = "CADCHF";
+        //CAPITAL_TIME_XXX = Utils.CAPITAL_TIME_WEEK;
 
+        String time_out_id = Utils.TEXT_CONNECTION_TIMED_OUT + "_" + Utils.CAPITAL_TIME_MINUTE_30;
         try {
             if (!isReloadPrepareOrderTrend(EPIC, CAPITAL_TIME_XXX)) {
                 return "";
@@ -2947,23 +2937,22 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String note = "";
+            boolean allow_update = true;
+            boolean allow_send_msg = false;
             boolean isUptrend = Utils.isUptrendByMaIndex(list, lengh);
             String trend = isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
             String switch_trend = Utils.switchTrendByMa(list);
             if (Utils.isNotBlank(switch_trend)) {
                 note = "Ma3xMa6";
-            }
 
-            boolean allow_update = true;
-            boolean allow_send_msg = false;
-            if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)
-                    || Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
+                if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)
+                        || Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
 
-                String ma_3_5_8_15 = "";
-                String char_name = Utils.getChartName(list);
-                String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
-                String trend_day = "";
-                if (Utils.isNotBlank(switch_trend)) {
+                    String ma_3_5_8_15 = "";
+                    String char_name = Utils.getChartName(list);
+                    String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
+                    String trend_day = "";
+
                     BigDecimal current_price = list.get(0).getCurrPrice();
 
                     BigDecimal sl_long = BigDecimal.ZERO;
@@ -3083,7 +3072,15 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (allow_update) {
-                saveOrders(list, trend, note, EPIC, CAPITAL_TIME_XXX);
+                String id = EPIC + "_" + CAPITAL_TIME_XXX;
+                String date_time = LocalDateTime.now().toString();
+                List<BigDecimal> body = Utils.getOpenCloseCandle(list);
+                List<BigDecimal> low_high = Utils.getLowHighCandle(list);
+
+                Orders entity = new Orders(id, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
+                        low_high.get(0), low_high.get(1), note);
+
+                ordersRepository.save(entity);
             }
 
             return trend;
@@ -3274,8 +3271,12 @@ public class BinanceServiceImpl implements BinanceService {
 
         //--------------------------------------------------------------------------
         List<Orders> orders_list = ordersRepository.getTrend_30mList();
-        //orders_list.add(null);
-        //orders_list.addAll(ordersRepository.getTrend_H4List());
+        orders_list.add(null);
+        orders_list.addAll(ordersRepository.getTrend_H4List());
+
+        orders_list.add(null);
+        orders_list.addAll(ordersRepository.getSwitchTrend_DayList());
+
         orders_list.add(null);
         if (!CollectionUtils.isEmpty(orders_list)) {
             Utils.logWritelnReport("");
