@@ -1926,9 +1926,9 @@ public class Utils {
             String symbol = list.get(0).getId().toLowerCase();
 
             if (symbol.contains("_15m_")) {
-                result = "(15m)";
+                result = "(15)";
             } else if (symbol.contains("_30m_")) {
-                result = "(30m)";
+                result = "(30)";
             } else if (symbol.contains("_1h_")) {
                 result = "(H1)";
             } else if (symbol.contains("_2h_")) {
@@ -1936,9 +1936,9 @@ public class Utils {
             } else if (symbol.contains("_4h_")) {
                 result = "(H4)";
             } else if (symbol.contains("_1d_")) {
-                result = "(D1)";
+                result = "(D5)";
             } else if (symbol.contains("_1w_")) {
-                result = "(W)";
+                result = "(W3)";
             } else {
                 // symbol = symbol.replace("_00", "");
                 // symbol = symbol.substring(symbol.indexOf("_"), symbol.length()).replace("_",
@@ -2168,7 +2168,6 @@ public class Utils {
                     max_Hig = dto.getPrice_open_candle();
                 }
             }
-
         }
 
         result.add(min_low);
@@ -2652,14 +2651,14 @@ public class Utils {
         result += " E: " + Utils.appendLeft(removeLastZero(roundDefault(entry)) + "$", 8);
         result += "     ";
         result += Utils.appendSpace("(Long)" + Utils.appendLeft(removeLastZero(lot_long), 6) + "(lot)" + "   SL: "
-                + Utils.appendSpace(getPercentToEntry(LO, sl_long, true), 12) + "   TP: "
+                + Utils.appendLeft(removeLastZero(roundDefault(LO)), 6) + "   TP: "
                 + Utils.appendLeft(removeLastZero(roundDefault(HI)), 6) + " ("
                 + Utils.appendLeft(removeLastZero(tp_money_long), 6) + "$)", 65);
 
         result += " ";
 
         result += Utils.appendSpace("(Short)" + Utils.appendLeft(removeLastZero(lot_shot), 6) + "(lot)" + "   SL: "
-                + Utils.appendSpace(getPercentToEntry(HI, sl_short, true), 12) + "   TP: "
+                + Utils.appendLeft(removeLastZero(roundDefault(HI)), 6) + "   TP: "
                 + Utils.appendLeft(removeLastZero(roundDefault(LO)), 6) + " ("
                 + Utils.appendLeft(removeLastZero(tp_money_shot), 6) + "$)", 65);
 
