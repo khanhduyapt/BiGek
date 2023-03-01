@@ -1,6 +1,5 @@
 package bsc_scan_binance.service.impl;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -2965,13 +2964,15 @@ public class BinanceServiceImpl implements BinanceService {
                 String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
                 String trend_day = "";
                 if (Utils.isNotBlank(switch_trend)) {
-                    Orders entity = null;
                     BigDecimal current_price = list.get(0).getCurrPrice();
 
                     BigDecimal sl_long = BigDecimal.ZERO;
                     BigDecimal sl_shot = BigDecimal.ZERO;
 
                     Orders week = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
+                    Orders day = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+                    trend_day = Objects.nonNull(day) ? day.getTrend() : "";
+
                     if (Objects.nonNull(week)) {
                         if ((week.getStr_body_price().compareTo(list.get(1).getLow_price()) > 0)
                                 || (week.getStr_body_price().compareTo(current_price) > 0)) {
@@ -2983,21 +2984,13 @@ public class BinanceServiceImpl implements BinanceService {
                         }
                     }
 
-                    if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
-                        entity = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
-                        trend_day = Objects.nonNull(entity) ? entity.getTrend() : "";
-                    }
-
                     if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
-                        entity = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
-                        trend_day = Objects.nonNull(entity) ? entity.getTrend() : "";
-
-                        if (Objects.nonNull(entity)) {
-                            if ((entity.getStr_body_price().compareTo(list.get(1).getLow_price()) > 0)
+                        if (Objects.nonNull(day)) {
+                            if ((day.getStr_body_price().compareTo(list.get(1).getLow_price()) > 0)
                                     || (week.getStr_body_price().compareTo(current_price) > 0)) {
                                 ma_3_5_8_15 += " Long  (day). ";
                             }
-                            if ((entity.getEnd_body_price().compareTo(list.get(1).getHight_price()) < 0)
+                            if ((day.getEnd_body_price().compareTo(list.get(1).getHight_price()) < 0)
                                     || (week.getStr_body_price().compareTo(current_price) < 0)) {
                                 ma_3_5_8_15 += " Short (day). ";
                             }
@@ -3018,13 +3011,11 @@ public class BinanceServiceImpl implements BinanceService {
 
                             note += ma_3_5_8_15;
                         }
-
-                        entity = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
                     }
 
-                    if (Objects.nonNull(entity)) {
-                        sl_long = Utils.getBigDecimal(entity.getLow_price());
-                        sl_shot = Utils.getBigDecimal(entity.getHigh_price());
+                    if (Objects.nonNull(week)) {
+                        sl_long = Utils.getBigDecimal(week.getLow_price());
+                        sl_shot = Utils.getBigDecimal(week.getHigh_price());
 
                         if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
                             if (GLOBAL_LONG_LIST.contains(EPIC) && Objects.equals(Utils.TREND_LONG, switch_trend)) {
@@ -3243,9 +3234,6 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public void createReport() {
-        File myObj = new File(Utils.getForexLogFile());
-        myObj.delete();
-
         String temp = "";
         Orders temp_obj = ordersRepository.findById("DXY" + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
         if (Objects.nonNull(temp_obj)) {

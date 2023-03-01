@@ -62,7 +62,7 @@ public class Utils {
     private static OrdersRepository ordersRepository;
 
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.002);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.003);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -971,7 +971,7 @@ public class Utils {
 
     public static boolean isBusinessTime_6h_to_17h() {
         //Sang 6-8h, Trua: 1h-3h, Chieu 5h-6h, toi 8h-9h: la khung gio gia ro rang nhat, sau khung gio nay gia moi chay.
-        List<Integer> times = Arrays.asList(6, 7, 8, 13, 14, 15, 17, 18, 20, 21, 22);
+        List<Integer> times = Arrays.asList(6, 7, 8, 13, 14, 15, 17, 18, 20, 21, 22, 9, 10, 11);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -2631,18 +2631,19 @@ public class Utils {
     }
 
     public static List<BigDecimal> calc_SL_Long_Short_Forex(List<BtcFutures> list) {
+        List<BigDecimal> open_close = getOpenCloseCandle(list);
         List<BigDecimal> low_heigh = getLowHighCandle(list);
         BigDecimal LO = low_heigh.get(0);
         BigDecimal HI = low_heigh.get(1);
-        BigDecimal ma3 = calcMA(list, 3, 1);
 
-        BigDecimal sl_long = ma3.subtract(LO);
-        sl_long = sl_long.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
-        sl_long = roundDefault(LO.subtract(sl_long));
+        BigDecimal OP = open_close.get(0);
+        BigDecimal CL = open_close.get(1);
 
-        BigDecimal sl_short = HI.subtract(ma3);
-        sl_short = sl_short.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
-        sl_short = roundDefault(HI.add(sl_short));
+        BigDecimal sl_long = OP.subtract(LO);
+        sl_long = roundDefault(LO.subtract(sl_long.abs()));
+
+        BigDecimal sl_short = HI.subtract(CL);
+        sl_short = roundDefault(HI.add(sl_short.abs()));
 
         List<BigDecimal> result = new ArrayList<BigDecimal>();
         result.add(sl_long);
