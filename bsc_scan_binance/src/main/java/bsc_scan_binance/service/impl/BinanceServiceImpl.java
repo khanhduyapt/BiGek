@@ -3308,6 +3308,9 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (entity.getId().contains(Utils.CAPITAL_TIME_DAY)) {
                     chart = "(D5: ";
+                    if (Utils.isNotBlank(entity.getNote())) {
+                        note += " Check_Day ";
+                    }
                 } else if (entity.getId().contains(Utils.CAPITAL_TIME_HOUR_4)) {
                     chart = "(H4: ";
                     if (str_long.contains(EPIC)) {
@@ -3339,7 +3342,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String log = (wdh4 + chart);
                     if (Utils.isNotBlank(note)) {
-                        log = log.replace(" (H", "*(H").replace(" (30m", "*(30m");
+                        log = log.replace(" (D5", "*(D5").replace(" (H", "*(H").replace(" (30m", "*(30m");
                     }
 
                     log += Utils.appendSpace(entity.getTrend(), 4) + ") ";
