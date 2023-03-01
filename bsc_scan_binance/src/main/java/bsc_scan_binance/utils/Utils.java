@@ -2645,7 +2645,7 @@ public class Utils {
         int moneny_length = 8;
 
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 5);
-        result += " E: " + Utils.appendLeft(removeLastZero(formatPrice(entry, 5)) + "$", 8);
+        result += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry, 5)) + "$", 9);
         result += "     ";
 
         String temp = "";

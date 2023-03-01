@@ -2911,7 +2911,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(Utils.CAPITAL_TIME_WEEK, CAPITAL_TIME_XXX)) {
                 lengh = 3;
             } else if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
-                lengh = 5;
+                lengh = 10;
             } else if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
                 lengh = 15;
             }
