@@ -3054,8 +3054,8 @@ public class BinanceServiceImpl implements BinanceService {
                 String date_time = LocalDateTime.now().toString();
                 List<BigDecimal> body = Utils.getOpenCloseCandle(list);
                 List<BigDecimal> low_high = Utils.getLowHighCandle(list);
-                BigDecimal sl_long = body.get(0).subtract((body.get(0).subtract(low_high.get(0))).abs());
-                BigDecimal sl_shot = body.get(1).add((low_high.get(1).subtract(body.get(1))).abs());
+                BigDecimal sl_long = low_high.get(0).subtract((body.get(0).subtract(low_high.get(0))).abs());
+                BigDecimal sl_shot = low_high.get(1).add((low_high.get(1).subtract(body.get(1))).abs());
 
                 Orders entity = new Orders(id, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
                         sl_long, sl_shot, note);
