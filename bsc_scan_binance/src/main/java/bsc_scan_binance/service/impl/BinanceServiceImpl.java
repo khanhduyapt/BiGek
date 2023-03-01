@@ -2898,8 +2898,8 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initForexTrend(String EPIC, String CAPITAL_TIME_XXX) {
-        //EPIC = "CADCHF";
-        //CAPITAL_TIME_XXX = Utils.CAPITAL_TIME_WEEK;
+        EPIC = "EURNZD";
+        CAPITAL_TIME_XXX = Utils.CAPITAL_TIME_MINUTE_30;
 
         String time_out_id = Utils.TEXT_CONNECTION_TIMED_OUT + "_" + Utils.CAPITAL_TIME_MINUTE_30;
         try {
@@ -2943,7 +2943,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend = isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
             String switch_trend = Utils.switchTrendByMa(list);
             if (Utils.isNotBlank(switch_trend)) {
-                note = "Ma3xMa6";
+                note = "Ma3xMa6 ";
 
                 if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)
                         || Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
@@ -3016,9 +3016,6 @@ public class BinanceServiceImpl implements BinanceService {
 
                             if (allow_send_msg) {
                                 String trend_tmp = "(" + switch_trend + ")";
-                                if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
-                                    trend_tmp = "(" + switch_trend + "_" + switch_trend + "_" + switch_trend + ")";
-                                }
 
                                 String EVENT_ID = EVENT_PUMP + EPIC + char_name
                                         + Utils.getCurrentYyyyMmDdHHByChart(list);
@@ -3345,7 +3342,7 @@ public class BinanceServiceImpl implements BinanceService {
                         log = log.replace(" (H", "*(H").replace(" (30m", "*(30m");
                     }
 
-                    log += Utils.appendSpace(entity.getTrend(), 5) + ") ";
+                    log += Utils.appendSpace(entity.getTrend(), 4) + ") ";
                     log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
                     log += buffer + entity.getNote().trim();
                     Utils.logWritelnReport(log);

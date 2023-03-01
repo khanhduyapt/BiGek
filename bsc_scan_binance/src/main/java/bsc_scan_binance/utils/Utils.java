@@ -970,7 +970,7 @@ public class Utils {
 
     public static boolean isBusinessTime_6h_to_17h() {
         //Sang 6-8h, Trua: 1h-3h, Chieu 5h-6h, toi 8h-9h: la khung gio gia ro rang nhat, sau khung gio nay gia moi chay.
-        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 20, 21, 22);
+        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -2800,11 +2800,12 @@ public class Utils {
             return "";
         }
 
-        if (trend_main.contains(Utils.TREND_LONG)) {
+        boolean isUptrendbyma3 = isUptrendByMaIndex(list, 3);
+        if (trend_main.contains(Utils.TREND_LONG) && isUptrendbyma3) {
             result = Utils.TREND_LONG;
         }
 
-        if (trend_main.contains(Utils.TREND_SHORT)) {
+        if (trend_main.contains(Utils.TREND_SHORT) && (!isUptrendbyma3)) {
             result = Utils.TREND_SHORT;
         }
 
