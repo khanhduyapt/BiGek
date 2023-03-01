@@ -3169,7 +3169,7 @@ public class BinanceServiceImpl implements BinanceService {
             day_dict.put(cur, val);
         }
 
-        //String results = "";
+        // String results = "";
         List<String> epic_long = new ArrayList<String>();
         List<String> epic_shot = new ArrayList<String>();
         for (String cur : Utils.currencies) {
@@ -3181,7 +3181,7 @@ public class BinanceServiceImpl implements BinanceService {
                     epic_shot.add(cur);
                 }
 
-                //results += cur + ":" + Utils.appendLeft(sum.toString(), 2) + "   ";
+                // results += cur + ":" + Utils.appendLeft(sum.toString(), 2) + " ";
             }
         }
 
@@ -3262,7 +3262,7 @@ public class BinanceServiceImpl implements BinanceService {
             temp += ", 30m: " + temp_obj.getTrend();
         }
         Utils.logWritelnReport("(USD ) " + temp);
-        //--------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
         List<String> compare_list = Arrays.asList("USD", "CHF", "NZD", "EUR", "GBP", "AUD");
         String str_long = "";
         String str_shot = "";
@@ -3286,12 +3286,12 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.logWritelnReport("(BUY ) " + str_long.trim());
         Utils.logWritelnReport("(SELL) " + str_shot.trim());
 
-        //--------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
         List<Orders> orders_list = ordersRepository.getTrend_30mList();
         orders_list.add(null);
         orders_list.addAll(ordersRepository.getTrend_H4List());
         orders_list.add(null);
-        orders_list.addAll(ordersRepository.getSwitchTrend_DayList());
+        orders_list.addAll(ordersRepository.getTrend_DayList());
 
         if (!CollectionUtils.isEmpty(orders_list)) {
             Utils.logWritelnReport("");
