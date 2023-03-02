@@ -123,7 +123,6 @@ public class BscScanBinanceApplication {
                     String SYMBOL = coin.getSymbol();
 
                     try {
-                        checkBtcKillLongShort_15m(binance_service);
 
                         // isReloadAfter(1, "FOREX") && && Utils.isBusinessTime_6h_to_17h()
                         if (!Utils.isWeekend() && Utils.isBusinessTime_6h_to_17h() && Utils.isAllowSendMsg()) {
@@ -148,6 +147,8 @@ public class BscScanBinanceApplication {
                                 }
                             }
                         }
+
+                        checkBtcKillLongShort_15m(binance_service);
 
                         //// ----------------------------------------------
                         // if ((round_count > 0) && Utils.isWorkingTime()) {

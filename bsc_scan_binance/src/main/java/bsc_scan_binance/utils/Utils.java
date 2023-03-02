@@ -141,8 +141,8 @@ public class Utils {
             "SILVER");
 
     public static final List<String> EPICS_FOREX = Arrays.asList("DXY", "GOLD", "US30", "US500", "J225", "UK100",
-            "FR40", "HK50", "BTCUSD", "SILVER", "OIL_CRUDE");
-    // MFF ko co: "EU50", "AU200", "DE40", "US100", "SP35", "NATURALGAS",
+            "FR40", "HK50", "BTCUSD", "SILVER");
+    // MFF ko co: "EU50", "AU200", "DE40", "US100", "SP35", "NATURALGAS", "OIL_CRUDE",
 
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD",
             "AUDUSD", "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD",
@@ -971,7 +971,7 @@ public class Utils {
     public static boolean isBusinessTime_6h_to_17h() {
         // Sang 6-8h, Trua: 1h-3h, Chieu 5h-6h, toi 8h-9h: la khung gio gia ro rang
         // nhat, sau khung gio nay gia moi chay.
-        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22);
+        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -2863,8 +2863,8 @@ public class Utils {
             s_m6x8 = Utils.checkXCutDnY(ma6_1, ma6_2, ma8_1, ma8_2);
         } else {
             // id.contains("_15m_") || id.contains("_30m_"))
-            BigDecimal ma6_1 = calcMA(list, 6, str);
-            BigDecimal ma6_2 = calcMA(list, 6, end);
+            BigDecimal ma6_1 = calcMA(list, 5, str);
+            BigDecimal ma6_2 = calcMA(list, 5, end);
 
             BigDecimal ma8_1 = calcMA(list, 8, str);
             BigDecimal ma8_2 = calcMA(list, 8, end);
