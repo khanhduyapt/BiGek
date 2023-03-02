@@ -3122,7 +3122,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             int lengh = 10;
             if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
-                lengh = 5;
+                lengh = 8;
             }
 
             List<BtcFutures> list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, lengh);
@@ -3154,7 +3154,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean isUptrend = Utils.isUptrendByMaIndex(list, 6);
             if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
-                isUptrend = Utils.isUptrendByMaIndex(list, 3);
+                isUptrend = Utils.isUptrendByMaIndex(list, 6);
             }
 
             String trend = isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
@@ -3243,7 +3243,7 @@ public class BinanceServiceImpl implements BinanceService {
                 BigDecimal sl_long = low_high.get(0).subtract(bread);
                 BigDecimal sl_shot = low_high.get(1).add(bread);
 
-                if (Utils.isNotBlank(switch_trend)) {
+                if (Utils.isNotBlank(switch_trend) && Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
                     trend = switch_trend;
                 }
                 Orders entity = new Orders(id, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),

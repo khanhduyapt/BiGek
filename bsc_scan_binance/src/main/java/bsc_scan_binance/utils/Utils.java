@@ -2822,13 +2822,13 @@ public class Utils {
 
         int end = 3;
         if (list.get(0).getId().contains("_1w_") || list.get(0).getId().contains("_1d_")) {
-            end = 2;
+            end = 3;
         }
         if (end > list.size()) {
             end = list.size() - 1;
         }
         BigDecimal ma_c = calcMA(list, maIndex, 1);
-        BigDecimal ma_p = calcMA(list, maIndex, end);
+        BigDecimal ma_p = calcMA(list, maIndex, 3);
         if (ma_c.compareTo(ma_p) > 0) {
             return true;
         }
