@@ -118,7 +118,7 @@ public class Utils {
     public static final String CAPITAL_TIME_HOUR = "HOUR";
     public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
     public static final String CAPITAL_TIME_DAY = "DAY";
-    public static final String CAPITAL_TIME_WEEK = "WEEK";
+    //public static final String CAPITAL_TIME_WEEK = "WEEK";
 
     public static final String CRYPTO_TIME_5m = "5m";
     public static final String CRYPTO_TIME_15m = "15m";
@@ -127,9 +127,9 @@ public class Utils {
     public static final String CRYPTO_TIME_1d = "1d";
     public static final String CRYPTO_TIME_1w = "1w";
 
-    public static final long MINUTES_OF_W = 1440; // 10080 2880
-    public static final long MINUTES_OF_D = 1440;
-    public static final long MINUTES_OF_4H = 240;
+    //public static final long MINUTES_OF_W = 1440;
+    public static final long MINUTES_OF_D = 720;
+    public static final long MINUTES_OF_4H = 120;
     public static final long MINUTES_OF_1H = 60;
     public static final long MINUTES_OF_30M = 30;
     public static final long MINUTES_OF_15M = 15;
@@ -543,9 +543,9 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_DAY)) {
             return "_1d_";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
-            return "_1w_";
-        }
+        //if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
+        //   return "_1w_";
+        //}
 
         return TIME;
     }
@@ -572,9 +572,9 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_DAY)) {
             return "(D)";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
-            return "(W)";
-        }
+        //if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
+        //    return "(W)";
+        //}
 
         return TIME;
     }
@@ -2842,11 +2842,10 @@ public class Utils {
         String l_m8x15 = "";
         String s_m8x15 = "";
 
-        if (list.get(0).getId().contains("_1d_") || list.get(0).getId().contains("_4h_")
-                || list.get(0).getId().contains("_1h_")) {
-
-            BigDecimal ma3_1 = calcMA(list, 3, str);
-            BigDecimal ma3_2 = calcMA(list, 3, end);
+        String id = list.get(0).getId();
+        if (id.contains("_1d_") || id.contains("_4h_") || id.contains("_1h_")) {
+            BigDecimal ma5_1 = calcMA(list, 5, str);
+            BigDecimal ma5_2 = calcMA(list, 5, end);
 
             BigDecimal ma6_1 = calcMA(list, 6, str);
             BigDecimal ma6_2 = calcMA(list, 6, end);
@@ -2854,34 +2853,33 @@ public class Utils {
             BigDecimal ma8_1 = calcMA(list, 8, str);
             BigDecimal ma8_2 = calcMA(list, 8, end);
 
-            l_m3x5 = Utils.checkXCutUpY(ma3_1, ma3_2, ma6_1, ma6_2);
-            s_m3x5 = Utils.checkXCutDnY(ma3_1, ma3_2, ma6_1, ma6_2);
+            l_m3x5 = Utils.checkXCutUpY(ma5_1, ma5_2, ma6_1, ma6_2);
+            s_m3x5 = Utils.checkXCutDnY(ma5_1, ma5_2, ma6_1, ma6_2);
 
-            l_m3x8 = Utils.checkXCutUpY(ma3_1, ma3_2, ma8_1, ma8_2);
-            s_m3x8 = Utils.checkXCutDnY(ma3_1, ma3_2, ma8_1, ma8_2);
+            l_m3x8 = Utils.checkXCutUpY(ma5_1, ma5_2, ma8_1, ma8_2);
+            s_m3x8 = Utils.checkXCutDnY(ma5_1, ma5_2, ma8_1, ma8_2);
 
             l_m6x8 = Utils.checkXCutUpY(ma6_1, ma6_2, ma8_1, ma8_2);
             s_m6x8 = Utils.checkXCutDnY(ma6_1, ma6_2, ma8_1, ma8_2);
         } else {
-            // if (list.get(0).getId().contains("_15m_") ||
-            // list.get(0).getId().contains("_30m_"))
+            // id.contains("_15m_") || id.contains("_30m_"))
             BigDecimal ma6_1 = calcMA(list, 6, str);
             BigDecimal ma6_2 = calcMA(list, 6, end);
 
             BigDecimal ma8_1 = calcMA(list, 8, str);
             BigDecimal ma8_2 = calcMA(list, 8, end);
 
-            BigDecimal ma15_1 = calcMA(list, 15, str);
-            BigDecimal ma15_2 = calcMA(list, 15, end);
+            BigDecimal ma13_1 = calcMA(list, 13, str);
+            BigDecimal ma13_2 = calcMA(list, 13, end);
 
             l_m6x8 = Utils.checkXCutUpY(ma6_1, ma6_2, ma8_1, ma8_2);
             s_m6x8 = Utils.checkXCutDnY(ma6_1, ma6_2, ma8_1, ma8_2);
 
-            l_m3x15 = Utils.checkXCutUpY(ma6_1, ma6_2, ma15_1, ma15_2);
-            s_m3x15 = Utils.checkXCutDnY(ma6_1, ma6_2, ma15_1, ma15_2);
+            l_m3x15 = Utils.checkXCutUpY(ma6_1, ma6_2, ma13_1, ma13_2);
+            s_m3x15 = Utils.checkXCutDnY(ma6_1, ma6_2, ma13_1, ma13_2);
 
-            l_m8x15 = Utils.checkXCutUpY(ma8_1, ma8_2, ma15_1, ma15_2);
-            s_m8x15 = Utils.checkXCutDnY(ma8_1, ma8_2, ma15_1, ma15_2);
+            l_m8x15 = Utils.checkXCutUpY(ma8_1, ma8_2, ma13_1, ma13_2);
+            s_m8x15 = Utils.checkXCutDnY(ma8_1, ma8_2, ma13_1, ma13_2);
         }
 
         String trend = "";

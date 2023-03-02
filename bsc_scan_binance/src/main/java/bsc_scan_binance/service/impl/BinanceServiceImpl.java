@@ -2630,8 +2630,6 @@ public class BinanceServiceImpl implements BinanceService {
         } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_HOUR)
                 || Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_1h)) {
             time = Utils.MINUTES_OF_1H;
-        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_WEEK)) {
-            time = Utils.MINUTES_OF_W;
         }
 
         if (time <= elapsedMinutes) {
@@ -2898,19 +2896,14 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initForexTrend(String EPIC, String CAPITAL_TIME_XXX) {
-        EPIC = "EURNZD";
-        CAPITAL_TIME_XXX = Utils.CAPITAL_TIME_MINUTE_30;
-
         String time_out_id = Utils.TEXT_CONNECTION_TIMED_OUT + "_" + Utils.CAPITAL_TIME_MINUTE_30;
         try {
             if (!isReloadPrepareOrderTrend(EPIC, CAPITAL_TIME_XXX)) {
                 return "";
             }
 
-            int lengh = 8;
-            if (Objects.equals(Utils.CAPITAL_TIME_WEEK, CAPITAL_TIME_XXX)) {
-                lengh = 3;
-            } else if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
+            int lengh = 10;
+            if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
                 lengh = 10;
             } else if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
                 lengh = 15;
@@ -2937,115 +2930,98 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String note = "";
+            String ma_3_5_8_15 = "";
+            BigDecimal ma6_1 = Utils.calcMA(list, 6, 1);
+            BigDecimal ma8_1 = Utils.calcMA(list, 8, 1);
+            BigDecimal ma10_1 = Utils.calcMA(list, 10, 1);
+            if ((ma6_1.compareTo(ma8_1) > 0) && (ma8_1.compareTo(ma10_1) > 0)) {
+                ma_3_5_8_15 += "   (" + Utils.TREND_LONG + "  .Ma.6.8.10)";
+            }
+            if ((ma6_1.compareTo(ma8_1) < 0) && (ma8_1.compareTo(ma10_1) < 0)) {
+                ma_3_5_8_15 += "   (" + Utils.TREND_SHORT + " .Ma.6.8.10)";
+            }
+            note += ma_3_5_8_15;
+
             boolean allow_update = true;
             boolean allow_send_msg = false;
             boolean isUptrend = Utils.isUptrendByMaIndex(list, lengh);
             String trend = isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
             String switch_trend = Utils.switchTrendByMa(list);
+
             if (Utils.isNotBlank(switch_trend)) {
                 note = "Ma3xMa6 ";
 
                 if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)
                         || Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
 
-                    String ma_3_5_8_15 = "";
                     String week_area = "";
                     String char_name = Utils.getChartName(list);
                     String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
                     String trend_day = "";
 
-                    Orders week = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
                     Orders day = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
                     trend_day = Objects.nonNull(day) ? day.getTrend() : "";
 
                     if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
-                        if (Objects.nonNull(day)) {
-                            BigDecimal ma6_1 = Utils.calcMA(list, 6, 1);
-                            BigDecimal ma8_1 = Utils.calcMA(list, 8, 1);
-                            BigDecimal ma15_1 = Utils.calcMA(list, 15, 1);
-
-                            if ((ma6_1.compareTo(ma8_1) > 0) && (ma8_1.compareTo(ma15_1) > 0)) {
-                                ma_3_5_8_15 += "   (" + Utils.TREND_LONG + "  .Ma.6.8.15)";
-                            }
-                            if ((ma6_1.compareTo(ma8_1) < 0) && (ma8_1.compareTo(ma15_1) < 0)) {
-                                ma_3_5_8_15 += "   (" + Utils.TREND_SHORT + " .Ma.6.8.15)";
-                            }
-
-                            note += ma_3_5_8_15;
+                        if (GLOBAL_LONG_LIST.contains(EPIC) && Objects.equals(Utils.TREND_LONG, switch_trend)) {
+                            allow_send_msg = true;
                         }
-                    }
-
-                    if (Objects.nonNull(week)) {
-                        if (Objects.nonNull(week)) {
-                            BigDecimal current_price = list.get(0).getCurrPrice();
-                            if (week.getStr_body_price().compareTo(current_price) > 0) {
-                                allow_send_msg = true;
-                                week_area = " " + Utils.TREND_LONG + "_AREA_(Week). ";
-                            }
-                            if (week.getEnd_body_price().compareTo(current_price) < 0) {
-                                allow_send_msg = true;
-                                week_area = " " + Utils.TREND_SHORT + "_AREA_(Week). ";
-                            }
-                        }
-
-                        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
-                            if (GLOBAL_LONG_LIST.contains(EPIC) && Objects.equals(Utils.TREND_LONG, switch_trend)) {
-                                allow_send_msg = true;
-                            }
-                            if (GLOBAL_SHOT_LIST.contains(EPIC) && Objects.equals(Utils.TREND_SHORT, switch_trend)) {
-                                allow_send_msg = true;
-                            }
-
-                            if (Objects.equals(trend_day, switch_trend)) {
-                                allow_send_msg = true;
-                            } else {
-                                allow_send_msg = false;
-                            }
-
-                            if (Objects.equals(Utils.TREND_LONG, switch_trend)
-                                    && week_area.contains(Utils.TREND_SHORT)) {
-                                allow_send_msg = false;
-                            }
-                            if (Objects.equals(Utils.TREND_SHORT, switch_trend)
-                                    && week_area.contains(Utils.TREND_LONG)) {
-                                allow_send_msg = false;
-                            }
-
-                            if (allow_send_msg) {
-                                String trend_tmp = "(" + switch_trend + ")";
-
-                                String EVENT_ID = EVENT_PUMP + EPIC + char_name
-                                        + Utils.getCurrentYyyyMmDdHHByChart(list);
-                                String msg = trend_tmp + char_name + EPIC + ma_3_5_8_15;
-                                sendMsgPerHour(EVENT_ID, msg, true);
-                            }
+                        if (GLOBAL_SHOT_LIST.contains(EPIC) && Objects.equals(Utils.TREND_SHORT, switch_trend)) {
+                            allow_send_msg = true;
                         }
 
                         if (Objects.equals(trend_day, switch_trend)) {
-                            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4)
-                                    .orElse(null);
-
-                            if (Objects.nonNull(dto_h4)) {
-                                BigDecimal sl_long = Utils.getBigDecimal(dto_h4.getLow_price());
-                                BigDecimal sl_shot = Utils.getBigDecimal(dto_h4.getHigh_price());
-                                BigDecimal tp_long = Utils.getBigDecimal(dto_h4.getEnd_body_price());
-                                BigDecimal tp_shot = Utils.getBigDecimal(dto_h4.getStr_body_price());
-
-                                String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list.get(0).getCurrPrice(),
-                                        sl_long, sl_shot, tp_long, tp_shot);
-
-                                String log = wdh4 + char_name.replace(")", "").trim();
-                                log += ": " + Utils.appendSpace(switch_trend, 4) + ") ";
-                                log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
-                                log += buffer + ma_3_5_8_15 + week_area;
-                                log += (allow_send_msg ? "   SEND_MSG " : "");
-                                Utils.logWritelnReport(log);
-                            }
+                            allow_send_msg = true;
+                        } else {
+                            allow_send_msg = false;
                         }
 
-                        if (!Objects.equals(trend_day, switch_trend)) {
-                            note = "";
+                        if (Objects.equals(Utils.TREND_LONG, switch_trend)
+                                && week_area.contains(Utils.TREND_SHORT)) {
+                            allow_send_msg = false;
                         }
+                        if (Objects.equals(Utils.TREND_SHORT, switch_trend)
+                                && week_area.contains(Utils.TREND_LONG)) {
+                            allow_send_msg = false;
+                        }
+
+                        if (allow_send_msg) {
+                            String trend_tmp = "(" + switch_trend + ")";
+
+                            String EVENT_ID = EVENT_PUMP + EPIC + char_name
+                                    + Utils.getCurrentYyyyMmDdHHByChart(list);
+                            String msg = trend_tmp + char_name + EPIC + ma_3_5_8_15;
+                            sendMsgPerHour(EVENT_ID, msg, true);
+                        }
+                    } else if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)
+                            && Objects.equals(trend_day, switch_trend)) {
+                        allow_send_msg = true;
+                    }
+
+                    if (Objects.equals(trend_day, switch_trend)) {
+                        Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4)
+                                .orElse(null);
+
+                        if (Objects.nonNull(dto_h4)) {
+                            BigDecimal sl_long = Utils.getBigDecimal(dto_h4.getLow_price());
+                            BigDecimal sl_shot = Utils.getBigDecimal(dto_h4.getHigh_price());
+                            BigDecimal tp_long = Utils.getBigDecimal(dto_h4.getEnd_body_price());
+                            BigDecimal tp_shot = Utils.getBigDecimal(dto_h4.getStr_body_price());
+
+                            String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(EPIC, list.get(0).getCurrPrice(),
+                                    sl_long, sl_shot, tp_long, tp_shot);
+
+                            String log = wdh4 + char_name.replace(")", "").trim();
+                            log += ": " + Utils.appendSpace(switch_trend, 4) + ") ";
+                            log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
+                            log += buffer + ma_3_5_8_15 + week_area;
+                            log += (allow_send_msg ? "   SEND_MSG " : "");
+                            Utils.logWritelnReport(log);
+                        }
+                    }
+
+                    if (!Objects.equals(trend_day, switch_trend)) {
+                        note = "";
                     }
                 }
             }

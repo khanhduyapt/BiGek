@@ -240,13 +240,6 @@ public class BscScanBinanceApplication {
 
     public static void checkCapital_h4(BinanceService binance_service, String EPIC) {
         String init = "";
-        if (isReloadAfter(Utils.MINUTES_OF_4H * 3, "CAPITAL_WEEK_" + EPIC)) {
-            init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_WEEK);
-            if (Utils.isNotBlank(init)) {
-                wait(SLEEP_MINISECONDS);
-            }
-        }
-
         if (isReloadAfter(Utils.MINUTES_OF_4H * 2, "CAPITAL_DAY_" + EPIC)) {
             init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
             if (Utils.isNotBlank(init)) {
