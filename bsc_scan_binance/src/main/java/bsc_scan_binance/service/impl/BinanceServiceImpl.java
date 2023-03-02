@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -2648,18 +2649,18 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (isForex) {
             trend_d = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_DAY);
-            trend_h = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
+            // trend_h = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
 
-            String msg = "(D:" + Utils.appendSpace(trend_d, 5);
+            String msg = "(D:" + Utils.appendSpace(trend_d, 4);
 
-            if (Utils.isNotBlank(trend_h)) {
-                msg += "  H1:" + Utils.appendSpace(trend_h, 4);
-            } else {
-                msg += Utils.appendSpace("", 10);
-            }
+            //if (Utils.isNotBlank(trend_h)) {
+            //    msg += "  H1:" + Utils.appendSpace(trend_h, 4);
+            //} else {
+            //    msg += Utils.appendSpace("", 10);
+            //}
             msg += ")";
 
-            trend_d_h4 = Utils.appendSpace(msg, 20);
+            trend_d_h4 = Utils.appendSpace(msg, 10);
         } else {
             trend_d = getPrepareOrderTrend(EPIC, Utils.CRYPTO_TIME_1d);
             trend_h = getPrepareOrderTrend(EPIC, Utils.CRYPTO_TIME_4h);
@@ -3109,6 +3110,10 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initForexTrend(String EPIC, String CAPITAL_TIME_XXX) {
+        //TODO:
+        EPIC = "AUDNZD";
+        CAPITAL_TIME_XXX = Utils.CAPITAL_TIME_DAY;
+
         String time_out_id = Utils.TEXT_CONNECTION_TIMED_OUT + "_" + Utils.CAPITAL_TIME_HOUR;
         try {
             if (!isReloadPrepareOrderTrend(EPIC, CAPITAL_TIME_XXX)) {
@@ -3117,7 +3122,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             int lengh = 10;
             if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
-                lengh = 3;
+                lengh = 5;
             }
 
             List<BtcFutures> list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, lengh);
@@ -3191,7 +3196,7 @@ public class BinanceServiceImpl implements BinanceService {
                     LocalDateTime pre_time = LocalDateTime.parse(insert_time);
                     long elapsedMinutes = Duration.between(pre_time, curr_time).toMinutes();
 
-                    if (time > elapsedMinutes) {
+                    if ((time > elapsedMinutes) && (Utils.isNotBlank(entity_h.getNote()))) {
                         allow_update = false;
                     }
                 }
@@ -3204,7 +3209,8 @@ public class BinanceServiceImpl implements BinanceService {
                     BigDecimal curr_price = list.get(0).getCurrPrice();
                     if (curr_price.compareTo(day.getStr_body_price()) < 0) {
                         note += "(MIN_DAY_AREA)";
-                        if (Objects.equals(Utils.TREND_SHORT, switch_trend)) {
+                        if (Objects.equals(Utils.TREND_SHORT, switch_trend)
+                                || Objects.equals(Utils.TREND_SHORT, trend)) {
                             note = "";
                         }
 
@@ -3212,7 +3218,8 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                     if (curr_price.compareTo(day.getEnd_body_price()) > 0) {
                         note += "(MAX_DAY_AREA)";
-                        if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
+                        if (Objects.equals(Utils.TREND_LONG, switch_trend)
+                                || Objects.equals(Utils.TREND_SHORT, trend)) {
                             note = "";
                         }
 
@@ -3407,7 +3414,11 @@ public class BinanceServiceImpl implements BinanceService {
                             dto_h.getEnd_body_price(), sl_long, sl_shot,
                             tp_long, tp_shot);
 
-                    String log = (wdh4 + chart);
+                    String insert_time = Utils.getStringValue(entity.getInsertTime());
+                    LocalDateTime pre_time = LocalDateTime.parse(insert_time);
+                    String time = pre_time.format(DateTimeFormatter.ofPattern("HH:mm"));
+
+                    String log = time + "  " + (wdh4 + chart);
                     if (Utils.isNotBlank(note) && Utils.isNotBlank(entity.getNote())) {
                         log = log.replace(" (D5", "*(D5").replace(" (H", "*(H").replace(" (30", "*(30");
                     }

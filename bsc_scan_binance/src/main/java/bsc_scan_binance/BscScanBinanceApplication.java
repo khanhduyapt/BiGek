@@ -126,13 +126,14 @@ public class BscScanBinanceApplication {
 
                         // isReloadAfter(1, "FOREX") && && Utils.isBusinessTime_6h_to_17h()
                         if (!Utils.isWeekend() && Utils.isBusinessTime_6h_to_17h() && Utils.isAllowSendMsg()) {
-                            if (isReloadAfter((Utils.MINUTES_OF_1H * 8), "INIT_FOREX_W_D_H")) {
-                                for (int index = 0; index < forex_size; index++) {
-                                    String EPIC = capital_list.get(index);
-                                    checkCapital_h4(binance_service, EPIC);
-                                    sleepWhenExceptionTimeOut(binance_service);
-                                }
 
+                            for (int index = 0; index < forex_size; index++) {
+                                String EPIC = capital_list.get(index);
+                                checkCapital_h4(binance_service, EPIC);
+                                sleepWhenExceptionTimeOut(binance_service);
+                            }
+
+                            if (isReloadAfter((Utils.MINUTES_OF_1H), "INIT_FOREX_W_D_H")) {
                                 binance_service.createReport();
                             }
 

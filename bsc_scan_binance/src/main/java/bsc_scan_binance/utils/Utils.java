@@ -2820,7 +2820,7 @@ public class Utils {
         }
 
         int end = 3;
-        if (list.get(0).getId().contains("_1w_")) {
+        if (list.get(0).getId().contains("_1w_") || list.get(0).getId().contains("_1d_")) {
             end = 2;
         }
         if (end > list.size()) {
@@ -2966,7 +2966,7 @@ public class Utils {
             temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry_long, 5)) + " ", 10);
             temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), moneny_length);
             temp += Utils.appendLeft(removeLastZero(lot_long), 8) + "(lot)";
-            result += Utils.appendSpace(" (BUY)" + temp, 38);
+            result += Utils.appendSpace("(BUY )" + temp, 38);
 
         } else if (Objects.equals(trend, TREND_SHORT)) {
             MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, entry_short, sl_short, tp_short);
@@ -2978,7 +2978,7 @@ public class Utils {
             result += Utils.appendSpace("(SELL)" + temp, 38);
         }
 
-        result = Utils.appendSpace(result, 60);
+        result = Utils.appendSpace(result, 80);
         return result;
     }
 
