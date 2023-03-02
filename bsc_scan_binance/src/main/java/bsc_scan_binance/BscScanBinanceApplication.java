@@ -128,9 +128,10 @@ public class BscScanBinanceApplication {
                         if (!Utils.isWeekend() && Utils.isBusinessTime_6h_to_17h() && Utils.isAllowSendMsg()) {
 
                             for (int index = 0; index < forex_size; index++) {
+                                sleepWhenExceptionTimeOut(binance_service);
+
                                 String EPIC = capital_list.get(index);
                                 checkCapital_h4(binance_service, EPIC);
-                                sleepWhenExceptionTimeOut(binance_service);
                             }
 
                             if (isReloadAfter((Utils.MINUTES_OF_1H), "INIT_FOREX_W_D_H")) {

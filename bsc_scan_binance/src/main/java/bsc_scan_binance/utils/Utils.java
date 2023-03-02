@@ -130,7 +130,7 @@ public class Utils {
     //public static final long MINUTES_OF_W = 1440;
     public static final long MINUTES_OF_D = 720;
     //public static final long MINUTES_OF_4H = 120;
-    public static final long MINUTES_OF_1H = 60;
+    public static final long MINUTES_OF_1H = 30;
     //public static final long MINUTES_OF_30M = 30;
     public static final long MINUTES_OF_15M = 15;
 
@@ -143,10 +143,11 @@ public class Utils {
             "FR40", "HK50", "BTCUSD", "SILVER");
     // MFF ko co: "EU50", "AU200", "DE40", "US100", "SP35", "NATURALGAS", "OIL_CRUDE",
 
-    public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD",
-            "AUDUSD", "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD",
+    public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("AUDCHF", "AUDJPY",
+            "AUDUSD", "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY",
             "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY",
-            "NZDUSD", "USDCAD", "USDCHF", "USDJPY");
+            "NZDUSD", "USDCAD", "USDJPY");
+    // Stoploss: "EURNZD", "AUDNZD","USDCHF", "AUDCAD",
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"

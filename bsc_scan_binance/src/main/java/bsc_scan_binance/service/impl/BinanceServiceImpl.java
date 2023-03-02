@@ -2686,7 +2686,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_DAY)) {
             orders_list = ordersRepository.getTrend_DayList();
         } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_HOUR)) {
-            orders_list = ordersRepository.getTrend_H4List();
+            orders_list = ordersRepository.getTrend_HList();
         } else {
             return result;
         }
@@ -3111,8 +3111,8 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public String initForexTrend(String EPIC, String CAPITAL_TIME_XXX) {
         //TODO:
-        EPIC = "AUDNZD";
-        CAPITAL_TIME_XXX = Utils.CAPITAL_TIME_DAY;
+        //EPIC = "AUDNZD";
+        //CAPITAL_TIME_XXX = Utils.CAPITAL_TIME_DAY;
 
         String time_out_id = Utils.TEXT_CONNECTION_TIMED_OUT + "_" + Utils.CAPITAL_TIME_HOUR;
         try {
@@ -3152,7 +3152,11 @@ public class BinanceServiceImpl implements BinanceService {
             boolean allow_send_msg = false;
             boolean allow_write_log = false;
 
-            boolean isUptrend = Utils.isUptrendByMaIndex(list, lengh);
+            boolean isUptrend = Utils.isUptrendByMaIndex(list, 6);
+            if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
+                isUptrend = Utils.isUptrendByMaIndex(list, 3);
+            }
+
             String trend = isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
             String switch_trend = Utils.switchTrendByMa(list);
 
@@ -3182,13 +3186,10 @@ public class BinanceServiceImpl implements BinanceService {
 
             //--------------------------------------------------------
             boolean allow_update = true;
-            if (Utils.isBlank(switch_trend)) {
-                Orders entity_h = null;
+            if (Utils.isBlank(switch_trend) && Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
                 long time = Utils.MINUTES_OF_1H;
-                if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
-                    entity_h = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
-                    time = Utils.MINUTES_OF_1H * 2;
-                }
+                Orders entity_h = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
+                time = Utils.MINUTES_OF_1H * 4;
 
                 if (Objects.nonNull(entity_h)) {
                     LocalDateTime curr_time = LocalDateTime.now();
@@ -3227,7 +3228,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
             }
-            allow_update = true;
+
             if (allow_update) {
                 String id = EPIC + "_" + CAPITAL_TIME_XXX;
                 String date_time = LocalDateTime.now().toString();
@@ -3315,7 +3316,9 @@ public class BinanceServiceImpl implements BinanceService {
 
             return trend;
 
-        } catch (Exception e) {
+        } catch (
+
+        Exception e) {
             String result = "initForexTrend(" + EPIC + ") " + e.getMessage();
             Utils.logWritelnReport(result);
 
@@ -3366,9 +3369,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // --------------------------------------------------------------------------
         List<Orders> orders_list = new ArrayList<Orders>();
-        orders_list.addAll(ordersRepository.getTrend_30mList());
-        orders_list.add(null);
-        orders_list.addAll(ordersRepository.getTrend_H4List());
+        orders_list.addAll(ordersRepository.getTrend_DayequalH1List());
 
         if (!CollectionUtils.isEmpty(orders_list)) {
             Utils.logWritelnReport("");
