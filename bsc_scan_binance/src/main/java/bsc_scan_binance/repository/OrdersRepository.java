@@ -23,6 +23,6 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
     @Query(value = "SELECT * FROM public.orders det where (det.gecko_id like '%HOUR_4')     ORDER BY det.insert_time ", nativeQuery = true)
     public List<Orders> getTrend_H4List();
 
-    @Query(value = "SELECT * FROM public.orders det where (det.gecko_id like '%MINUTE_30')  AND (COALESCE(det.note, '') <> '')  ORDER BY det.insert_time ", nativeQuery = true)
+    @Query(value = "SELECT * FROM public.orders det where (det.gecko_id like '%MINUTE%')  AND (COALESCE(det.note, '') <> '') AND (COALESCE(det.trend, '') <> '') ORDER BY det.insert_time ", nativeQuery = true)
     public List<Orders> getTrend_30mList();
 }

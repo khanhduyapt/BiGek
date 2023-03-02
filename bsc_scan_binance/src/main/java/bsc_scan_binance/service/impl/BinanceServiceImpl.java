@@ -3025,23 +3025,36 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     @Override
+    @Transactional
     public void scapForexTrend(String EPIC) {
         String time_out_id = Utils.TEXT_CONNECTION_TIMED_OUT + "_" + Utils.CAPITAL_TIME_MINUTE_30;
         try {
             //--------------------------------------------------------------------------
+            if (!isReloadPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_15)) {
+                return;
+            }
+
             Orders dto_day = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY)
                     .orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4)
                     .orElse(null);
 
+            String switch_trend = "";
+            BigDecimal cu_price = BigDecimal.ZERO;
+            BigDecimal str_body = BigDecimal.ZERO;
+            BigDecimal end_body = BigDecimal.ZERO;
+            BigDecimal sl_long = BigDecimal.ZERO;
+            BigDecimal sl_shot = BigDecimal.ZERO;
             if (Objects.nonNull(dto_day) && Objects.nonNull(dto_h4)
                     && Objects.equals(dto_day.getTrend(), dto_h4.getTrend())) {
 
-                List<BtcFutures> list = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5, 15);
+                List<BtcFutures> list = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 15);
                 if (!CollectionUtils.isEmpty(list)) {
-                    String switch_trend = Utils.switchTrendByMa5_8_12(list);
+                    switch_trend = Utils.switchTrendByMa5_8_12(list);
 
-                    if (Utils.isNotBlank(switch_trend)) {
+                    if (Utils.isNotBlank(switch_trend) && Objects.equals(dto_day.getTrend(), switch_trend)) {
+                        cu_price = list.get(0).getCurrPrice();
+
                         List<BigDecimal> body = Utils.getOpenCloseCandle(list);
                         List<BigDecimal> low_high = Utils.getLowHighCandle(list);
 
@@ -3049,8 +3062,11 @@ public class BinanceServiceImpl implements BinanceService {
                         BigDecimal bread_sell = (low_high.get(1).subtract(body.get(1))).abs();
                         BigDecimal bread = (beard_buy.compareTo(bread_sell) > 0 ? beard_buy : bread_sell);
                         bread = bread.multiply(BigDecimal.valueOf(3));
-                        BigDecimal sl_long = low_high.get(0).subtract(bread);
-                        BigDecimal sl_shot = low_high.get(1).add(bread);
+                        sl_long = low_high.get(0).subtract(bread);
+                        sl_shot = low_high.get(1).add(bread);
+
+                        str_body = body.get(0);
+                        end_body = body.get(1);
                         BigDecimal tp_long = low_high.get(1);
                         BigDecimal tp_shot = low_high.get(0);
 
@@ -3066,13 +3082,6 @@ public class BinanceServiceImpl implements BinanceService {
 
                         String EVENT_ID = "SCAP_FOREX_" + EPIC + "_" + Utils.getCurrentYyyyMmDd_HH();
                         sendMsgPerHour(EVENT_ID, "(SCAP)(" + switch_trend + ")" + char_name + EPIC, true);
-
-                        String id = EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_5;
-                        String date_time = LocalDateTime.now().toString();
-                        Orders entity = new Orders(id, date_time, switch_trend, list.get(0).getCurrPrice(), body.get(0),
-                                body.get(1), sl_long, sl_shot, "(SCAP)");
-
-                        ordersRepository.save(entity);
                     }
                 }
             }
@@ -3081,6 +3090,13 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.nonNull(entity_time_out)) {
                 ordersRepository.deleteById(time_out_id);
             }
+
+            String id = EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15;
+            String date_time = LocalDateTime.now().toString();
+            Orders entity = new Orders(id, date_time, switch_trend, cu_price,
+                    str_body, end_body, sl_long, sl_shot, "(SCAP)");
+            ordersRepository.save(entity);
+
         } catch (Exception e) {
             String result = "initForexTrend(" + EPIC + ") " + e.getMessage();
             Utils.logWritelnReport(result);

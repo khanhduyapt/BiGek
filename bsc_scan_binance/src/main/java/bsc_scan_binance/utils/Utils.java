@@ -113,7 +113,7 @@ public class Utils {
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
     // public static final String CAPITAL_TIME_MINUTE = "MINUTE";
     public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
-    // public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
+    public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_MINUTE_30 = "MINUTE_30";
     public static final String CAPITAL_TIME_HOUR = "HOUR";
     public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
@@ -137,8 +137,7 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final List<String> EPICS_SCAP = Arrays.asList("GOLD", "US30", "US500", "UK100", "FR40", "HK50",
-            "SILVER");
+    public static final List<String> EPICS_SCAP = Arrays.asList("GOLD", "SILVER");
 
     public static final List<String> EPICS_FOREX = Arrays.asList("DXY", "GOLD", "US30", "US500", "J225", "UK100",
             "FR40", "HK50", "BTCUSD", "SILVER");
@@ -528,9 +527,9 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
             return "_5m_";
         }
-        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
-        // return "_15m_";
-        // }
+        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
+            return "_15m_";
+        }
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
             return "_30m_";
         }
@@ -557,9 +556,9 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
             return "(5m)";
         }
-        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
-        // return "(15m)";
-        // }
+        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
+            return "(15m)";
+        }
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
             return "(30m)";
         }
