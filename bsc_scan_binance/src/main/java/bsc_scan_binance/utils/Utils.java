@@ -112,11 +112,11 @@ public class Utils {
     public static String X_SECURITY_TOKEN = "";
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
     // public static final String CAPITAL_TIME_MINUTE = "MINUTE";
-    public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
-    public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
-    public static final String CAPITAL_TIME_MINUTE_30 = "MINUTE_30";
+    //public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
+    // public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
+    // public static final String CAPITAL_TIME_MINUTE_30 = "MINUTE_30";
     public static final String CAPITAL_TIME_HOUR = "HOUR";
-    public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
+    // public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
     public static final String CAPITAL_TIME_DAY = "DAY";
     //public static final String CAPITAL_TIME_WEEK = "WEEK";
 
@@ -129,9 +129,9 @@ public class Utils {
 
     //public static final long MINUTES_OF_W = 1440;
     public static final long MINUTES_OF_D = 720;
-    public static final long MINUTES_OF_4H = 120;
+    //public static final long MINUTES_OF_4H = 120;
     public static final long MINUTES_OF_1H = 60;
-    public static final long MINUTES_OF_30M = 30;
+    //public static final long MINUTES_OF_30M = 30;
     public static final long MINUTES_OF_15M = 15;
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
@@ -353,7 +353,7 @@ public class Utils {
             Utils.logWritelnWithTime(result, false);
 
             String date_time = LocalDateTime.now().toString();
-            String time_out_id = Utils.TEXT_CONNECTION_TIMED_OUT + "_" + Utils.CAPITAL_TIME_MINUTE_30;
+            String time_out_id = Utils.TEXT_CONNECTION_TIMED_OUT + "_" + Utils.CAPITAL_TIME_HOUR;
             Orders entity_time_out = new Orders(time_out_id, date_time, "", BigDecimal.ZERO, BigDecimal.ZERO,
                     BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "Connection timed out");
             ordersRepository.save(entity_time_out);
@@ -524,21 +524,21 @@ public class Utils {
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE)) {
         // return "_1m_";
         // }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
-            return "_5m_";
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
-            return "_15m_";
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
-            return "_30m_";
-        }
+        //        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
+        //            return "_5m_";
+        //        }
+        //        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
+        //            return "_15m_";
+        //        }
+        //        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
+        //            return "_30m_";
+        //        }
         if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
             return "_1h_";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
-            return "_4h_";
-        }
+        //        if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
+        //            return "_4h_";
+        //        }
         if (Objects.equals(TIME, CAPITAL_TIME_DAY)) {
             return "_1d_";
         }
@@ -553,21 +553,21 @@ public class Utils {
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE)) {
         // return "(1m)";
         // }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
-            return "(5m)";
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
-            return "(15m)";
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
-            return "(30m)";
-        }
+        //        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
+        //            return "(5m)";
+        //        }
+        //        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
+        //            return "(15m)";
+        //        }
+        //        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
+        //            return "(30m)";
+        //        }
         if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
             return "(H1)";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
-            return "(H4)";
-        }
+        //        if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
+        //            return "(H4)";
+        //        }
         if (Objects.equals(TIME, CAPITAL_TIME_DAY)) {
             return "(D)";
         }
@@ -2883,8 +2883,8 @@ public class Utils {
             s_m6x8 = Utils.checkXCutDnY(ma5_1, ma5_2, ma8_1, ma8_2);
         } else {
             // id.contains("_15m_") || id.contains("_30m_"))
-            BigDecimal ma6_1 = calcMA(list, 5, str);
-            BigDecimal ma6_2 = calcMA(list, 5, end);
+            BigDecimal ma5_1 = calcMA(list, 5, str);
+            BigDecimal ma5_2 = calcMA(list, 5, end);
 
             BigDecimal ma8_1 = calcMA(list, 8, str);
             BigDecimal ma8_2 = calcMA(list, 8, end);
@@ -2892,11 +2892,11 @@ public class Utils {
             BigDecimal ma13_1 = calcMA(list, 13, str);
             BigDecimal ma13_2 = calcMA(list, 13, end);
 
-            l_m6x8 = Utils.checkXCutUpY(ma6_1, ma6_2, ma8_1, ma8_2);
-            s_m6x8 = Utils.checkXCutDnY(ma6_1, ma6_2, ma8_1, ma8_2);
+            l_m6x8 = Utils.checkXCutUpY(ma5_1, ma5_2, ma8_1, ma8_2);
+            s_m6x8 = Utils.checkXCutDnY(ma5_1, ma5_2, ma8_1, ma8_2);
 
-            l_m3x15 = Utils.checkXCutUpY(ma6_1, ma6_2, ma13_1, ma13_2);
-            s_m3x15 = Utils.checkXCutDnY(ma6_1, ma6_2, ma13_1, ma13_2);
+            l_m3x15 = Utils.checkXCutUpY(ma5_1, ma5_2, ma13_1, ma13_2);
+            s_m3x15 = Utils.checkXCutDnY(ma5_1, ma5_2, ma13_1, ma13_2);
 
             l_m8x15 = Utils.checkXCutUpY(ma8_1, ma8_2, ma13_1, ma13_2);
             s_m8x15 = Utils.checkXCutDnY(ma8_1, ma8_2, ma13_1, ma13_2);
@@ -2968,25 +2968,17 @@ public class Utils {
             temp += Utils.appendLeft(removeLastZero(lot_long), 8) + "(lot)";
             result += Utils.appendSpace(" (BUY)" + temp, 38);
 
-            result += "        ";
-
-            result += Utils.appendSpace("      ", 38);
-
         } else if (Objects.equals(trend, TREND_SHORT)) {
             MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, entry_short, sl_short, tp_short);
             BigDecimal lot_shot = money_short.calcLot();
-            result += Utils.appendSpace("      ", 38);
-
-            result += "        ";
-
             temp = "";
             temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry_short, 5)) + " ", 10);
             temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_short, 5)), moneny_length);
             temp += Utils.appendLeft(removeLastZero(lot_shot), 8) + "(lot)";
-            result += Utils.appendSpace("        (SELL)" + temp, 38);
+            result += Utils.appendSpace("(SELL)" + temp, 38);
         }
 
-        result = Utils.appendSpace(result, 120);
+        result = Utils.appendSpace(result, 60);
         return result;
     }
 

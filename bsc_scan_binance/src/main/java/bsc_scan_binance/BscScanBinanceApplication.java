@@ -126,20 +126,10 @@ public class BscScanBinanceApplication {
 
                         // isReloadAfter(1, "FOREX") && && Utils.isBusinessTime_6h_to_17h()
                         if (!Utils.isWeekend() && Utils.isBusinessTime_6h_to_17h() && Utils.isAllowSendMsg()) {
-                            if (isReloadAfter((Utils.MINUTES_OF_4H), "INIT_FOREX_W_D_H")) {
+                            if (isReloadAfter((Utils.MINUTES_OF_1H * 8), "INIT_FOREX_W_D_H")) {
                                 for (int index = 0; index < forex_size; index++) {
                                     String EPIC = capital_list.get(index);
                                     checkCapital_h4(binance_service, EPIC);
-                                    sleepWhenExceptionTimeOut(binance_service);
-                                }
-
-                                binance_service.createReport();
-                            }
-
-                            if (isReloadAfter((Utils.MINUTES_OF_30M), "INIT_FOREX_30m")) {
-                                for (int index = 0; index < forex_size; index++) {
-                                    String EPIC = capital_list.get(index);
-                                    checkCapital_30m(binance_service, EPIC, index, forex_size);
                                     sleepWhenExceptionTimeOut(binance_service);
                                 }
 
@@ -234,29 +224,17 @@ public class BscScanBinanceApplication {
         }
     }
 
-    public static void checkCapital_30m(BinanceService binance_service, String EPIC, int index, int size) {
-        String init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_30);
-        if (Utils.isNotBlank(init)) {
-            String msg = "(" + Utils.appendSpace(String.valueOf(index + 1), 3) + "/"
-                    + Utils.appendSpace(String.valueOf(size), 3) + ")" + Utils.getTimeHHmm()
-                    + Utils.appendSpace(EPIC, 10) + " " + init;
-            System.out.println(msg);
-
-            wait(SLEEP_MINISECONDS);
-        }
-    }
-
     public static void checkCapital_h4(BinanceService binance_service, String EPIC) {
         String init = "";
-        if (isReloadAfter(Utils.MINUTES_OF_4H * 2, "CAPITAL_DAY_" + EPIC)) {
+        if (isReloadAfter(Utils.MINUTES_OF_1H * 8, "CAPITAL_DAY_" + EPIC)) {
             init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
             if (Utils.isNotBlank(init)) {
                 wait(SLEEP_MINISECONDS);
             }
         }
 
-        if (isReloadAfter(Utils.MINUTES_OF_4H, "CAPITAL_H4_" + EPIC)) {
-            init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+        if (isReloadAfter(Utils.MINUTES_OF_1H, "CAPITAL_H1_" + EPIC)) {
+            init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
             if (Utils.isNotBlank(init)) {
                 wait(SLEEP_MINISECONDS);
             }
