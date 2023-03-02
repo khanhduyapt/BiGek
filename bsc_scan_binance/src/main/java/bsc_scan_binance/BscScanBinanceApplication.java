@@ -132,18 +132,27 @@ public class BscScanBinanceApplication {
                                     checkCapital_h4(binance_service, EPIC);
                                     sleepWhenExceptionTimeOut(binance_service);
                                 }
-                                Utils.writelnLogFooter_Forex();
-                            }
-
-                            if (isReloadAfter((Utils.MINUTES_OF_30M), "INIT_FOREX_30m")) {
-                                for (int index = 0; index < forex_size; index++) {
-                                    String EPIC = capital_list.get(index);
-                                    checkCapital_30m(binance_service, EPIC, index, forex_size);
-                                    sleepWhenExceptionTimeOut(binance_service);
-                                }
 
                                 binance_service.createReport();
                             }
+
+                            //if (isReloadAfter((Utils.MINUTES_OF_30M), "INIT_FOREX_30m")) {
+                            //    for (int index = 0; index < forex_size; index++) {
+                            //        String EPIC = capital_list.get(index);
+                            //        checkCapital_30m(binance_service, EPIC, index, forex_size);
+                            //        sleepWhenExceptionTimeOut(binance_service);
+                            //    }
+                            //
+                            //    binance_service.createReport();
+                            //}
+                            //for (int index = 0; index < forex_size; index++) {
+                            //    String EPIC = capital_list.get(index);
+                            //    if (isReloadAfter((Utils.MINUTES_OF_15M), "scap_FOREX_5m_" + EPIC)) {
+                            //        binance_service.scapForexTrend(EPIC);
+                            //        sleepWhenExceptionTimeOut(binance_service);
+                            //        wait(SLEEP_MINISECONDS);
+                            //    }
+                            //}
                         }
 
                         checkBtcKillLongShort_15m(binance_service);

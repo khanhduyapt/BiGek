@@ -62,7 +62,7 @@ public class Utils {
     private static OrdersRepository ordersRepository;
 
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0025);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.005);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -112,7 +112,7 @@ public class Utils {
     public static String X_SECURITY_TOKEN = "";
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
     // public static final String CAPITAL_TIME_MINUTE = "MINUTE";
-    // public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
+    public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
     // public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_MINUTE_30 = "MINUTE_30";
     public static final String CAPITAL_TIME_HOUR = "HOUR";
@@ -525,9 +525,9 @@ public class Utils {
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE)) {
         // return "_1m_";
         // }
-        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
-        // return "_5m_";
-        // }
+        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
+            return "_5m_";
+        }
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
         // return "_15m_";
         // }
@@ -554,9 +554,9 @@ public class Utils {
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE)) {
         // return "(1m)";
         // }
-        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
-        // return "(5m)";
-        // }
+        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
+            return "(5m)";
+        }
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
         // return "(15m)";
         // }
@@ -2746,6 +2746,27 @@ public class Utils {
         return "";
     }
 
+    public static String switchTrendByMa5_8_12(List<BtcFutures> list) {
+        BigDecimal ma3_1 = Utils.calcMA(list, 3, 1);
+        BigDecimal ma6_1 = Utils.calcMA(list, 5, 1);
+        BigDecimal ma8_1 = Utils.calcMA(list, 8, 1);
+        BigDecimal ma10_1 = Utils.calcMA(list, 12, 1);
+        String switch_trend = switchTrendByMa(list);
+        String result = "";
+        if ((ma3_1.compareTo(ma6_1) > 0) && (ma6_1.compareTo(ma8_1) > 0) && (ma8_1.compareTo(ma10_1) > 0)) {
+            if (Utils.isNotBlank(switch_trend)) {
+                result = Utils.TREND_LONG;
+            }
+        }
+        if ((ma3_1.compareTo(ma6_1) < 0) && (ma6_1.compareTo(ma8_1) < 0) && (ma8_1.compareTo(ma10_1) < 0)) {
+            if (Utils.isNotBlank(switch_trend)) {
+                result = Utils.TREND_SHORT;
+            }
+        }
+
+        return result;
+    }
+
     public static String switchTrendByMa(List<BtcFutures> list) {
         if (CollectionUtils.isEmpty(list)) {
             return "";
@@ -2890,6 +2911,42 @@ public class Utils {
         return trend;
     }
 
+    public static String calc_BUF_LO_HI_BUF_Forex_Scap(String trend, String EPIC, BigDecimal entry_long,
+            BigDecimal entry_short, BigDecimal sl_long, BigDecimal sl_short, BigDecimal tp_long, BigDecimal tp_short) {
+
+        String result = "";
+        String temp = "";
+        int moneny_length = 8;
+        BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT.divide(BigDecimal.valueOf(5), 10, RoundingMode.CEILING));
+
+        if (Objects.equals(trend, TREND_LONG)) {
+            MoneyAtRiskResponse money_long = new MoneyAtRiskResponse(EPIC, risk, entry_long, sl_long, tp_long);
+            BigDecimal lot_long = money_long.calcLot();
+
+            result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 5);
+            result += "     ";
+
+            temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry_long, 5)) + " ", 10);
+            temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), moneny_length);
+            temp += Utils.appendLeft(removeLastZero(lot_long), 8) + "(lot)";
+            result += Utils.appendSpace(" (BUY)" + temp, 38);
+
+        } else if (Objects.equals(trend, TREND_SHORT)) {
+            MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, entry_short, sl_short, tp_short);
+            BigDecimal lot_shot = money_short.calcLot();
+
+            result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 5);
+            result += "     ";
+            temp = "";
+            temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry_short, 5)) + " ", 10);
+            temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_short, 5)), moneny_length);
+            temp += Utils.appendLeft(removeLastZero(lot_shot), 8) + "(lot)";
+            result += Utils.appendSpace("(SELL)" + temp, 38);
+        }
+
+        return result;
+    }
+
     public static String calc_BUF_LO_HI_BUF_Forex(String EPIC, BigDecimal entry_long, BigDecimal entry_short,
             BigDecimal sl_long,
             BigDecimal sl_short, BigDecimal tp_long, BigDecimal tp_short) {
@@ -2911,7 +2968,7 @@ public class Utils {
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 5);
         result += "     ";
 
-        temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry_long, 5)) + "$", 9);
+        temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry_long, 5)) + " ", 10);
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), moneny_length);
         temp += Utils.appendLeft(removeLastZero(lot_long), 8) + "(lot)";
         result += Utils.appendSpace(" (BUY)" + temp, 38);
@@ -2919,7 +2976,7 @@ public class Utils {
         result += "        ";
 
         temp = "";
-        temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry_short, 5)) + "$", 9);
+        temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry_short, 5)) + " ", 10);
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_short, 5)), moneny_length);
         temp += Utils.appendLeft(removeLastZero(lot_shot), 8) + "(lot)";
         result += Utils.appendSpace("(SELL)" + temp, 38);
