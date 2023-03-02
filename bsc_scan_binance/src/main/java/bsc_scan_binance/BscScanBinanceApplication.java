@@ -134,17 +134,17 @@ public class BscScanBinanceApplication {
                                 checkCapital_h4(binance_service, EPIC);
                             }
 
-                            if (isReloadAfter((Utils.MINUTES_OF_1H), "INIT_FOREX_W_D_H")) {
+                            if (isReloadAfter((Utils.MINUTES_OF_1H * 2), "INIT_FOREX_W_D_H")) {
                                 binance_service.createReport();
                             }
 
-                            //for (String EPIC : Utils.EPICS_SCAP) {
-                            //    if (isReloadAfter((Utils.MINUTES_OF_15M), "scap_FOREX_15m_" + EPIC)) {
-                            //        binance_service.scapForexTrend(EPIC);
-                            //        sleepWhenExceptionTimeOut(binance_service);
-                            //        wait(SLEEP_MINISECONDS);
-                            //    }
-                            //}
+                            // for (String EPIC : Utils.EPICS_SCAP) {
+                            // if (isReloadAfter((Utils.MINUTES_OF_15M), "scap_FOREX_15m_" + EPIC)) {
+                            // binance_service.scapForexTrend(EPIC);
+                            // sleepWhenExceptionTimeOut(binance_service);
+                            // wait(SLEEP_MINISECONDS);
+                            // }
+                            // }
                         }
 
                         checkBtcKillLongShort_15m(binance_service);
