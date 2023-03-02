@@ -3060,12 +3060,15 @@ public class BinanceServiceImpl implements BinanceService {
 
             String note = "";
             String ma_3_5_8_15 = "";
+            String char_name = Utils.getChartName(list);
 
             boolean allow_send_msg = false;
             boolean allow_write_log = false;
+
             boolean isUptrend = Utils.isUptrendByMaIndex(list, lengh);
             String trend = isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
             String switch_trend = Utils.switchTrendByMa(list);
+
             if (Utils.isNotBlank(switch_trend)) {
                 note = "Ma.3.6.8";
 
@@ -3116,6 +3119,30 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
             }
+
+            String msg_min_max_day = "";
+            Orders day = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+            if (Objects.nonNull(day)) {
+                if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)
+                        || Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
+                    BigDecimal curr_price = list.get(0).getCurrPrice();
+                    if (curr_price.compareTo(day.getStr_body_price()) < 0) {
+                        note += "(MIN_DAY_AREA)";
+                        msg_min_max_day = char_name + EPIC + "(MIN_DAY_AREA)";
+                    }
+                    if (curr_price.compareTo(day.getEnd_body_price()) > 0) {
+                        note += "(MAX_DAY_AREA)";
+                        msg_min_max_day = char_name + EPIC + "(MAX_DAY_AREA)";
+                    }
+                    if (Utils.isNotBlank(msg_min_max_day)) {
+                        allow_update = true;
+                        allow_write_log = true;
+                        String EVENT_ID = "MIN_MAX_DAY_AREA_" + EPIC + "_" + Utils.getCurrentYyyyMmDd_HH();
+                        sendMsgPerHour(EVENT_ID, msg_min_max_day, true);
+                    }
+                }
+            }
+
             if (allow_update) {
                 String id = EPIC + "_" + CAPITAL_TIME_XXX;
                 String date_time = LocalDateTime.now().toString();
@@ -3141,11 +3168,8 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)
                         || Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
 
-                    String char_name = Utils.getChartName(list);
                     String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
                     String trend_day = "";
-
-                    Orders day = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
                     trend_day = Objects.nonNull(day) ? day.getTrend() : "";
 
                     if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
@@ -3200,10 +3224,6 @@ public class BinanceServiceImpl implements BinanceService {
                             log += (allow_send_msg ? "   SEND_MSG " : "");
                             Utils.logWritelnReport(log);
                         }
-                    }
-
-                    if (!Objects.equals(trend_day, switch_trend)) {
-                        note = "";
                     }
                 }
             }
