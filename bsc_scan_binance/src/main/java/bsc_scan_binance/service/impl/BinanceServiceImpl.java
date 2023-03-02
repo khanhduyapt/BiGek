@@ -3203,6 +3203,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
+            String scap_trend = "";
             String msg_min_max_day = "";
             Orders day = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
             if (Objects.nonNull(day)) {
@@ -3210,6 +3211,7 @@ public class BinanceServiceImpl implements BinanceService {
                     BigDecimal curr_price = list.get(0).getCurrPrice();
                     if (curr_price.compareTo(day.getStr_body_price()) < 0) {
                         note += "(MIN_DAY_AREA)";
+                        scap_trend = Utils.TREND_LONG;
                         if (Objects.equals(Utils.TREND_SHORT, switch_trend)
                                 || Objects.equals(Utils.TREND_SHORT, trend)) {
                             note = "";
@@ -3219,6 +3221,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                     if (curr_price.compareTo(day.getEnd_body_price()) > 0) {
                         note += "(MAX_DAY_AREA)";
+                        scap_trend = Utils.TREND_SHORT;
                         if (Objects.equals(Utils.TREND_LONG, switch_trend)
                                 || Objects.equals(Utils.TREND_SHORT, trend)) {
                             note = "";
@@ -3227,6 +3230,21 @@ public class BinanceServiceImpl implements BinanceService {
                         msg_min_max_day = "(MAX_DAY_AREA)";
                     }
                 }
+            }
+
+            if (Utils.EPICS_SCAP.contains(EPIC) && Utils.isNotBlank(scap_trend)) {
+                String EVENT_ID = "MIN_MAX_DAY_AREA" + EPIC + Utils.getCurrentYyyyMmDd_HH();
+                String msg = msg_min_max_day + "(" + scap_trend + ")" + EPIC + "(Check_m15)";
+                sendMsgPerHour(EVENT_ID, msg, true);
+
+                String buffer = Utils.calc_BUF_LO_HI_BUF_Forex_Scap(
+                        switch_trend, EPIC, day.getStr_body_price(), day.getEnd_body_price(), day.getLow_price(),
+                        day.getHigh_price(), day.getEnd_body_price(), day.getStr_body_price());
+
+                String log = msg_min_max_day + "(" + scap_trend + ")";
+                log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
+                log += buffer;
+                Utils.logWritelnReport(log);
             }
 
             if (allow_update) {

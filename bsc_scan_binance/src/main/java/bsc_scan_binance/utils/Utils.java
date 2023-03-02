@@ -137,7 +137,7 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final List<String> EPICS_SCAP = Arrays.asList("GOLD", "SILVER");
+    public static final List<String> EPICS_SCAP = Arrays.asList("GOLD", "SILVER", "FR40", "US30", "US500", "UK100");
 
     public static final List<String> EPICS_FOREX = Arrays.asList("DXY", "GOLD", "US30", "US500", "J225", "UK100",
             "FR40", "HK50", "BTCUSD", "SILVER");
