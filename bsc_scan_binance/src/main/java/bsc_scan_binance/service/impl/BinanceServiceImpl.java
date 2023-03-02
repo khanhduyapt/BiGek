@@ -3164,7 +3164,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             //--------------------------------------------------------
 
-            if (Utils.isNotBlank(switch_trend)) {
+            if (Utils.isNotBlank(switch_trend) || Utils.isNotBlank(msg_min_max_day)) {
                 if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)
                         || Objects.equals(Utils.CAPITAL_TIME_MINUTE_30, CAPITAL_TIME_XXX)) {
 
@@ -3220,7 +3220,7 @@ public class BinanceServiceImpl implements BinanceService {
                             String log = wdh4 + char_name.replace(")", "").trim();
                             log += ": " + Utils.appendSpace(switch_trend, 4) + ") ";
                             log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
-                            log += buffer + ma_3_5_8_15;
+                            log += buffer + ma_3_5_8_15 + msg_min_max_day;
                             log += (allow_send_msg ? "   SEND_MSG " : "");
                             Utils.logWritelnReport(log);
                         }

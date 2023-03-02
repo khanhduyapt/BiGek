@@ -142,9 +142,7 @@ public class BscScanBinanceApplication {
                                     sleepWhenExceptionTimeOut(binance_service);
                                 }
 
-                                if (isReloadAfter((Utils.MINUTES_OF_4H), "createReport_FOREX")) {
-                                    binance_service.createReport();
-                                }
+                                binance_service.createReport();
                             }
                         }
 
