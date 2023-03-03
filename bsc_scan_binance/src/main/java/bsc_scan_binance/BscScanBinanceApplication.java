@@ -126,10 +126,8 @@ public class BscScanBinanceApplication {
                     String SYMBOL = coin.getSymbol();
 
                     try {
-
                         // isReloadAfter(1, "FOREX") && && Utils.isBusinessTime_6h_to_17h()
                         if (!Utils.isWeekend() && Utils.isBusinessTime_6h_to_17h() && Utils.isAllowSendMsg()) {
-
                             for (int index = 0; index < forex_size; index++) {
                                 sleepWhenExceptionTimeOut(binance_service);
 
