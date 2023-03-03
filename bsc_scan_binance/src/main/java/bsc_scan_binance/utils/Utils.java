@@ -138,7 +138,8 @@ public class Utils {
 
     public static final List<String> EPICS_FOREX = Arrays.asList("DXY", "GOLD", "US30", "US500", "J225", "UK100",
             "FR40", "HK50", "BTCUSD", "SILVER");
-    // MFF ko co: "EU50", "AU200", "DE40", "US100", "SP35", "NATURALGAS", "OIL_CRUDE",
+    // MFF ko co: "EU50", "AU200", "DE40", "US100", "SP35", "NATURALGAS",
+    // "OIL_CRUDE",
 
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("AUDCHF", "AUDJPY", "AUDUSD", "CADCHF",
             "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURUSD", "GBPAUD", "GBPCAD",
@@ -2839,11 +2840,13 @@ public class Utils {
         } else if (id.contains("_1h_")) {
             end = 2;
         }
+        // end = 2;
+        // } else if (id.contains("_1h_")) {
+        // str = 1;
+        // end = 2;
+        // }
 
-        if (end > list.size()) {
-            end = list.size() - 1;
-        }
-        BigDecimal ma_c = calcMA(list, maIndex, 0);
+        BigDecimal ma_c = calcMA(list, maIndex, str);
         BigDecimal ma_p = calcMA(list, maIndex, end);
         if (ma_c.compareTo(ma_p) > 0) {
             return true;
