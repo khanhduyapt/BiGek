@@ -53,6 +53,4 @@ public interface BinanceService {
 
     public List<String> getSummaryCurrencies(String SOURCE, String CAPITAL_TIME_XXX);
 
-    public void scapForexTrend(String EPIC);
-
 }

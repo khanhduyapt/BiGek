@@ -245,6 +245,11 @@ public class BscScanBinanceApplication {
         if (Utils.isNotBlank(init)) {
             wait(SLEEP_MINISECONDS);
         }
+
+        init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+        if (Utils.isNotBlank(init)) {
+            wait(SLEEP_MINISECONDS);
+        }
     }
 
     private static void checkBtcKillLongShort_15m(BinanceService binance_service) {
