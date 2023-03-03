@@ -2632,7 +2632,7 @@ public class BinanceServiceImpl implements BinanceService {
                 || Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_1h)) {
             time = Utils.MINUTES_OF_1H;
         } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_15)) {
-            time = Utils.MINUTES_OF_15M;
+            time = Utils.MINUTES_OF_15M * 2;
         }
 
         if (time <= elapsedMinutes) {
@@ -2996,6 +2996,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
         }
+
         // ---------------------------------------------------------------
         {
             String id = symbol + "_" + TIME;
@@ -3012,8 +3013,6 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initForexTrend(String EPIC, String CAPITAL_TIME_XXX) {
-        boolean allow_send_msg = false;
-
         try {
             if (!isReloadPrepareOrderTrend(EPIC, CAPITAL_TIME_XXX)) {
                 return "";
@@ -3043,20 +3042,19 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XXX)) {
-                if (!Utils.EPICS_SCAP.contains(EPIC)) {
-                    return "";
-                }
-
+                Orders entity_day = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
                 Orders entity_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
                 Orders entity_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
 
-                if (Objects.isNull(entity_h4) || Objects.isNull(entity_h1)) {
+                if (Objects.isNull(entity_day) || Objects.isNull(entity_h4) || Objects.isNull(entity_h1)) {
+                    return "";
+                }
+                if (!Objects.equals(entity_day.getTrend(), entity_h4.getTrend())) {
                     return "";
                 }
                 if (!Objects.equals(entity_h4.getTrend(), entity_h1.getTrend())) {
                     return "";
                 }
-                allow_send_msg = true;
             }
             // --------------------------------------------------------------
 
@@ -3086,8 +3084,17 @@ public class BinanceServiceImpl implements BinanceService {
             String char_name = Utils.getChartName(list);
 
             String switch_trend = Utils.switchTrendByMa(list);
-            if (Utils.isNotBlank(switch_trend)) {
-                note = "Ma3x6x8";
+            String trend_3579 = Utils.switchTrendByMa36810(list);
+            if (Utils.isNotBlank(trend_3579)) {
+                switch_trend = trend_3579;
+
+                if (Objects.equals(Utils.TREND_LONG, trend_3579)) {
+                    ma_3579 += "(" + Utils.TREND_LONG + ".Ma.3.5.7.9)";
+                }
+
+                if (Objects.equals(Utils.TREND_SHORT, trend_3579)) {
+                    ma_3579 += "(" + Utils.TREND_SHORT + ".Ma.9.7.5.3)";
+                }
             }
 
             String msg_min_max_day = "";
@@ -3106,11 +3113,6 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            BigDecimal ma3_1 = Utils.calcMA(list, 3, 1);
-            BigDecimal ma5_1 = Utils.calcMA(list, 5, 1);
-            BigDecimal ma7_1 = Utils.calcMA(list, 7, 1);
-            BigDecimal ma9_1 = Utils.calcMA(list, 9, 1);
-
             int maIndex = 6;
             if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)
                     || Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
@@ -3118,20 +3120,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
             boolean isUptrend = Utils.isUptrendByMaIndex(list, maIndex);
             String trend = isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
-            if ((ma3_1.compareTo(ma5_1) >= 0) && (ma5_1.compareTo(ma7_1) >= 0) && (ma7_1.compareTo(ma9_1) >= 0)) {
-                trend = Utils.TREND_LONG;
-                if (Utils.isNotBlank(switch_trend)) {
-                    switch_trend = Utils.TREND_LONG;
-                }
-                ma_3579 += "(" + Utils.TREND_LONG + ".Ma.3.5.7.9)";
-            }
-            if ((ma3_1.compareTo(ma5_1) <= 0) && (ma5_1.compareTo(ma7_1) <= 0) && (ma7_1.compareTo(ma9_1) <= 0)) {
-                trend = Utils.TREND_SHORT;
-                if (Utils.isNotBlank(switch_trend)) {
-                    switch_trend = Utils.TREND_SHORT;
-                }
-                ma_3579 += "(" + Utils.TREND_SHORT + ".Ma.9.7.5.3)";
-            }
             note += ma_3579;
 
             // --------------------------------------------------------
@@ -3174,7 +3162,7 @@ public class BinanceServiceImpl implements BinanceService {
                 BigDecimal sl_shot = low_high.get(1).add(bread);
 
                 if (Utils.isNotBlank(switch_trend)) {
-                    note += "(ChangeTo:" + switch_trend + ")";
+                    note += "Ma3x6x8(ChangeTo:" + switch_trend + ")";
                 }
 
                 Orders entity = new Orders(id, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
@@ -3182,30 +3170,23 @@ public class BinanceServiceImpl implements BinanceService {
 
                 ordersRepository.save(entity);
             }
+
             // --------------------------------------------------------
+
             if (Utils.isNotBlank(switch_trend)) {
-
-                if (GLOBAL_LONG_LIST.contains(EPIC) && Objects.equals(Utils.TREND_LONG, switch_trend)) {
+                boolean allow_send_msg = false;
+                if (Utils.isNotBlank(trend_3579)) {
                     allow_send_msg = true;
-                }
-                if (GLOBAL_SHOT_LIST.contains(EPIC) && Objects.equals(Utils.TREND_SHORT, switch_trend)) {
-                    allow_send_msg = true;
-                }
+                    String trend_tmp = "Ma(" + trend_3579 + ")";
 
-                if (allow_send_msg) {
-                    String trend_tmp = "(" + switch_trend + ")";
-
-                    String EVENT_ID = EVENT_PUMP + EPIC + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
+                    String EVENT_ID = EVENT_PUMP + "_ma_3579_" + EPIC + Utils.getCurrentYyyyMmDd_HH();
                     String msg = trend_tmp + char_name + EPIC + ma_3579;
                     sendMsgPerHour(EVENT_ID, msg, true);
                 }
 
                 Orders dto_h = null;
-
                 if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
                     dto_h = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-                } else if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XXX)) {
-                    dto_h = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
                 } else {
                     dto_h = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
                 }

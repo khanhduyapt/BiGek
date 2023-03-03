@@ -2793,22 +2793,23 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrendByMa5_8_12(List<BtcFutures> list) {
+    public static String switchTrendByMa36810(List<BtcFutures> list) {
+        String switch_trend = switchTrendByMa(list);
+        if (Utils.isBlank(switch_trend)) {
+            return "";
+        }
+
         BigDecimal ma3_1 = Utils.calcMA(list, 3, 1);
         BigDecimal ma6_1 = Utils.calcMA(list, 5, 1);
         BigDecimal ma8_1 = Utils.calcMA(list, 8, 1);
-        BigDecimal ma10_1 = Utils.calcMA(list, 12, 1);
-        String switch_trend = switchTrendByMa(list);
+        BigDecimal ma10_1 = Utils.calcMA(list, 10, 1);
+
         String result = "";
-        if ((ma3_1.compareTo(ma6_1) > 0) && (ma6_1.compareTo(ma8_1) > 0) && (ma8_1.compareTo(ma10_1) > 0)) {
-            if (Utils.isNotBlank(switch_trend)) {
-                result = Utils.TREND_LONG;
-            }
+        if ((ma3_1.compareTo(ma6_1) >= 0) && (ma6_1.compareTo(ma8_1) >= 0) && (ma8_1.compareTo(ma10_1) >= 0)) {
+            result = Utils.TREND_LONG;
         }
-        if ((ma3_1.compareTo(ma6_1) < 0) && (ma6_1.compareTo(ma8_1) < 0) && (ma8_1.compareTo(ma10_1) < 0)) {
-            if (Utils.isNotBlank(switch_trend)) {
-                result = Utils.TREND_SHORT;
-            }
+        if ((ma3_1.compareTo(ma6_1) <= 0) && (ma6_1.compareTo(ma8_1) <= 0) && (ma8_1.compareTo(ma10_1) <= 0)) {
+            result = Utils.TREND_SHORT;
         }
 
         return result;
