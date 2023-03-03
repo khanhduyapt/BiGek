@@ -114,6 +114,9 @@ public class BscScanBinanceApplication {
                 System.out.println(log.getAbsolutePath());
                 log = new File(Utils.getForexLogFile());
                 System.out.println(log.getAbsolutePath());
+                log = new File(Utils.getDraftLogFile());
+                Utils.logWritelnDraft("");
+                System.out.println(log.getAbsolutePath());
                 System.out.println();
 
                 while (index_crypto < total) {
@@ -228,18 +231,14 @@ public class BscScanBinanceApplication {
 
     public static void checkCapital_h4(BinanceService binance_service, String EPIC) {
         String init = "";
-        if (isReloadAfter(Utils.MINUTES_OF_1H * 8, "CAPITAL_DAY_" + EPIC)) {
-            init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
-            if (Utils.isNotBlank(init)) {
-                wait(SLEEP_MINISECONDS);
-            }
+        init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+        if (Utils.isNotBlank(init)) {
+            wait(SLEEP_MINISECONDS);
         }
 
-        if (isReloadAfter(Utils.MINUTES_OF_1H, "CAPITAL_H1_" + EPIC)) {
-            init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
-            if (Utils.isNotBlank(init)) {
-                wait(SLEEP_MINISECONDS);
-            }
+        init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
+        if (Utils.isNotBlank(init)) {
+            wait(SLEEP_MINISECONDS);
         }
     }
 

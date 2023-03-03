@@ -96,6 +96,7 @@ public class Utils {
     public static final String TEXT_MAX_DAY_AREA = "(MAX_DAY_AREA)";
 
     public static final String TEXT_CONNECTION_TIMED_OUT = "CONNECTION_TIMED_OUT";
+    public static final String CONNECTION_TIMED_OUT_ID = "CONNECTION_TIMED_OUT_MINUTE_15";
     public static final String THE_TREND_NOT_REVERSED_YET = "The trend not reversed yet.";
 
     public static final String CHAR_MONEY = "💰";
@@ -118,7 +119,7 @@ public class Utils {
     // public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
     // public static final String CAPITAL_TIME_MINUTE_30 = "MINUTE_30";
     public static final String CAPITAL_TIME_HOUR = "HOUR";
-    // public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
+    public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
     public static final String CAPITAL_TIME_DAY = "DAY";
     // public static final String CAPITAL_TIME_WEEK = "WEEK";
 
@@ -131,7 +132,7 @@ public class Utils {
 
     // public static final long MINUTES_OF_W = 1440;
     public static final long MINUTES_OF_D = 720;
-    // public static final long MINUTES_OF_4H = 120;
+    public static final long MINUTES_OF_4H = 240;
     public static final long MINUTES_OF_1H = 30;
     // public static final long MINUTES_OF_30M = 30;
     public static final long MINUTES_OF_15M = 15;
@@ -143,13 +144,13 @@ public class Utils {
 
     public static final List<String> EPICS_FOREX = Arrays.asList("DXY", "GOLD", "US30", "US500", "J225", "UK100",
             "FR40", "HK50", "BTCUSD", "SILVER");
-    // MFF ko co: "EU50", "AU200", "DE40", "US100", "SP35", "NATURALGAS",
-    // "OIL_CRUDE",
+    // MFF ko co: "EU50", "AU200", "DE40", "US100", "SP35", "NATURALGAS", "OIL_CRUDE",
 
     public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("AUDCHF", "AUDJPY", "AUDUSD", "CADCHF",
             "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURUSD", "GBPAUD", "GBPCAD",
-            "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD", "USDJPY");
-    // Stoploss: "EURNZD", "AUDNZD","USDCHF", "AUDCAD",
+            "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD", "USDJPY",
+            "EURNZD", "AUDNZD", "USDCHF", "AUDCAD");
+    // Stoploss: "EURNZD", "AUDNZD","USDCHF", "AUDCAD"
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
@@ -539,9 +540,9 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
             return "_1h_";
         }
-        // if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
-        // return "_4h_";
-        // }
+        if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
+            return "_4h_";
+        }
         if (Objects.equals(TIME, CAPITAL_TIME_DAY)) {
             return "_1d_";
         }
@@ -568,9 +569,9 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
             return "(H1)";
         }
-        // if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
-        // return "(H4)";
-        // }
+        if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
+            return "(H4)";
+        }
         if (Objects.equals(TIME, CAPITAL_TIME_DAY)) {
             return "(D)";
         }
@@ -808,6 +809,17 @@ public class Utils {
         return " https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + epic;
     }
 
+    public static String getDraftLogFile() {
+        String PATH = "crypto_forex_result/";
+        String fileName = "_draft.log";
+
+        File directory = new File(PATH);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+        return PATH + fileName;
+    }
+
     public static String getForexLogFile() {
         String PATH = "crypto_forex_result/";
         String fileName = getToday_YyyyMMdd() + "_Forex.log";
@@ -838,6 +850,23 @@ public class Utils {
             Utils.logWriteln(Utils.getCryptoLink_Spot(symbol), false);
         }
         logWriteln("_______________________________________________________________", true);
+    }
+
+    public static void logWritelnDraft(String text) {
+        try {
+            String logFilePath = getDraftLogFile();
+            String msg = text.trim();
+            if (Utils.isNotBlank(msg)) {
+                msg = BscScanBinanceApplication.hostname + Utils.getTimeHHmm() + " "
+                        + text.replace(Utils.new_line_from_service, " ");
+            }
+
+            FileWriter fw = new FileWriter(logFilePath, true);
+            fw.write(msg + "\n");
+            fw.close();
+        } catch (IOException ioe) {
+            System.err.println("IOException: " + ioe.getMessage());
+        }
     }
 
     public static void logWritelnReport(String text) {
@@ -2875,37 +2904,29 @@ public class Utils {
     }
 
     private static String checkTrendSideway(List<BtcFutures> list, int str, int end) {
-        String l_m3x5 = "";
-        String s_m3x5 = "";
-        String l_m3x8 = "";
-        String s_m3x8 = "";
-        String l_m3x15 = "";
-        String s_m3x15 = "";
-
-        String l_m6x8 = "";
-        String s_m6x8 = "";
-        String l_m8x15 = "";
-        String s_m8x15 = "";
+        String temp_long = "";
+        String temp_shot = "";
 
         String id = list.get(0).getId();
         if (id.contains("_1d_") || id.contains("_4h_") || id.contains("_1h_")) {
             BigDecimal ma3_1 = calcMA(list, 3, str);
             BigDecimal ma3_2 = calcMA(list, 3, end);
 
-            BigDecimal ma5_1 = calcMA(list, 5, str);
-            BigDecimal ma5_2 = calcMA(list, 5, end);
+            BigDecimal ma6_1 = calcMA(list, 6, str);
+            BigDecimal ma6_2 = calcMA(list, 6, end);
 
             BigDecimal ma8_1 = calcMA(list, 8, str);
             BigDecimal ma8_2 = calcMA(list, 8, end);
 
-            l_m3x5 = Utils.checkXCutUpY(ma3_1, ma3_2, ma5_1, ma5_2);
-            s_m3x5 = Utils.checkXCutDnY(ma3_1, ma3_2, ma5_1, ma5_2);
+            temp_long += Utils.checkXCutUpY(ma3_1, ma3_2, ma6_1, ma6_2) + "_";
+            temp_shot += Utils.checkXCutDnY(ma3_1, ma3_2, ma6_1, ma6_2) + "_";
 
-            l_m3x8 = Utils.checkXCutUpY(ma3_1, ma3_2, ma8_1, ma8_2);
-            s_m3x8 = Utils.checkXCutDnY(ma3_1, ma3_2, ma8_1, ma8_2);
+            temp_long += Utils.checkXCutUpY(ma3_1, ma3_2, ma8_1, ma8_2) + "_";
+            temp_shot += Utils.checkXCutDnY(ma3_1, ma3_2, ma8_1, ma8_2) + "_";
 
-            l_m6x8 = Utils.checkXCutUpY(ma5_1, ma5_2, ma8_1, ma8_2);
-            s_m6x8 = Utils.checkXCutDnY(ma5_1, ma5_2, ma8_1, ma8_2);
+            temp_long += Utils.checkXCutUpY(ma6_1, ma6_2, ma8_1, ma8_2) + "_";
+            temp_long += Utils.checkXCutDnY(ma6_1, ma6_2, ma8_1, ma8_2) + "_";
+
         } else {
             // id.contains("_15m_") || id.contains("_30m_"))
             BigDecimal ma5_1 = calcMA(list, 5, str);
@@ -2917,20 +2938,20 @@ public class Utils {
             BigDecimal ma13_1 = calcMA(list, 13, str);
             BigDecimal ma13_2 = calcMA(list, 13, end);
 
-            l_m6x8 = Utils.checkXCutUpY(ma5_1, ma5_2, ma8_1, ma8_2);
-            s_m6x8 = Utils.checkXCutDnY(ma5_1, ma5_2, ma8_1, ma8_2);
+            temp_long = Utils.checkXCutUpY(ma5_1, ma5_2, ma8_1, ma8_2) + "_";
+            temp_long = Utils.checkXCutDnY(ma5_1, ma5_2, ma8_1, ma8_2) + "_";
 
-            l_m3x15 = Utils.checkXCutUpY(ma5_1, ma5_2, ma13_1, ma13_2);
-            s_m3x15 = Utils.checkXCutDnY(ma5_1, ma5_2, ma13_1, ma13_2);
+            temp_long = Utils.checkXCutUpY(ma5_1, ma5_2, ma13_1, ma13_2) + "_";
+            temp_long = Utils.checkXCutDnY(ma5_1, ma5_2, ma13_1, ma13_2) + "_";
 
-            l_m8x15 = Utils.checkXCutUpY(ma8_1, ma8_2, ma13_1, ma13_2);
-            s_m8x15 = Utils.checkXCutDnY(ma8_1, ma8_2, ma13_1, ma13_2);
+            temp_long = Utils.checkXCutUpY(ma8_1, ma8_2, ma13_1, ma13_2) + "_";
+            temp_long = Utils.checkXCutDnY(ma8_1, ma8_2, ma13_1, ma13_2) + "_";
         }
 
         String trend = "";
-        trend += "_" + l_m3x5 + "_" + l_m3x8 + "_" + l_m6x8 + "_" + l_m3x15 + "_" + l_m8x15 + "_";
+        trend += "_" + temp_long + "_";
         trend += "_____";
-        trend += "_" + s_m3x5 + "_" + s_m3x8 + "_" + s_m6x8 + "_" + s_m3x15 + "_" + s_m8x15 + "_";
+        trend += "_" + temp_shot + "_";
 
         return trend;
     }
