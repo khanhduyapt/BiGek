@@ -2833,21 +2833,19 @@ public class Utils {
             return false;
         }
 
-        int end = 3;
-        String id = list.get(0).getId();
-        if (id.contains("_4h_") || id.contains("_1d_")) {
-            end = 1;
-        } else if (id.contains("_1h_")) {
-            end = 2;
-        }
+        // int str = 1;
+        // int end = 2;
+        // String id = list.get(0).getId();
+        // if (id.contains("_1d_") || id.contains("_4h_")) {
+        // str = 1;
         // end = 2;
         // } else if (id.contains("_1h_")) {
         // str = 1;
         // end = 2;
         // }
 
-        BigDecimal ma_c = calcMA(list, maIndex, str);
-        BigDecimal ma_p = calcMA(list, maIndex, end);
+        BigDecimal ma_c = calcMA(list, maIndex, 1);
+        BigDecimal ma_p = calcMA(list, maIndex, 2);
         if (ma_c.compareTo(ma_p) > 0) {
             return true;
         }
