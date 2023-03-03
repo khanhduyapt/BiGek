@@ -231,6 +231,11 @@ public class BscScanBinanceApplication {
 
     public static void checkCapital_h4(BinanceService binance_service, String EPIC) {
         String init = "";
+        init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
+        if (Utils.isNotBlank(init)) {
+            wait(SLEEP_MINISECONDS);
+        }
+
         init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
         if (Utils.isNotBlank(init)) {
             wait(SLEEP_MINISECONDS);

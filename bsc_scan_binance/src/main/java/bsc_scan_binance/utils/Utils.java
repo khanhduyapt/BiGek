@@ -131,7 +131,7 @@ public class Utils {
     public static final String CRYPTO_TIME_1w = "1w";
 
     // public static final long MINUTES_OF_W = 1440;
-    public static final long MINUTES_OF_D = 720;
+    public static final long MINUTES_OF_D = 1440;
     public static final long MINUTES_OF_4H = 240;
     public static final long MINUTES_OF_1H = 30;
     // public static final long MINUTES_OF_30M = 30;
@@ -2907,46 +2907,32 @@ public class Utils {
         String temp_long = "";
         String temp_shot = "";
 
-        String id = list.get(0).getId();
-        if (id.contains("_1d_") || id.contains("_4h_") || id.contains("_1h_")) {
-            BigDecimal ma3_1 = calcMA(list, 3, str);
-            BigDecimal ma3_2 = calcMA(list, 3, end);
+        BigDecimal ma3_1 = calcMA(list, 3, str);
+        BigDecimal ma3_2 = calcMA(list, 3, end);
 
-            BigDecimal ma6_1 = calcMA(list, 6, str);
-            BigDecimal ma6_2 = calcMA(list, 6, end);
+        BigDecimal ma5_1 = calcMA(list, 5, str);
+        BigDecimal ma5_2 = calcMA(list, 5, end);
 
-            BigDecimal ma8_1 = calcMA(list, 8, str);
-            BigDecimal ma8_2 = calcMA(list, 8, end);
+        BigDecimal ma7_1 = calcMA(list, 7, str);
+        BigDecimal ma7_2 = calcMA(list, 7, end);
 
-            temp_long += Utils.checkXCutUpY(ma3_1, ma3_2, ma6_1, ma6_2) + "_";
-            temp_shot += Utils.checkXCutDnY(ma3_1, ma3_2, ma6_1, ma6_2) + "_";
+        BigDecimal ma9_1 = calcMA(list, 9, str);
+        BigDecimal ma9_2 = calcMA(list, 9, end);
 
-            temp_long += Utils.checkXCutUpY(ma3_1, ma3_2, ma8_1, ma8_2) + "_";
-            temp_shot += Utils.checkXCutDnY(ma3_1, ma3_2, ma8_1, ma8_2) + "_";
+        temp_long += Utils.checkXCutUpY(ma3_1, ma3_2, ma5_1, ma5_2) + "_";
+        temp_shot += Utils.checkXCutDnY(ma3_1, ma3_2, ma5_1, ma5_2) + "_";
+        temp_long += Utils.checkXCutUpY(ma3_1, ma3_2, ma7_1, ma7_2) + "_";
+        temp_shot += Utils.checkXCutDnY(ma3_1, ma3_2, ma7_1, ma7_2) + "_";
+        temp_long += Utils.checkXCutUpY(ma3_1, ma3_2, ma9_1, ma9_2) + "_";
+        temp_shot += Utils.checkXCutDnY(ma3_1, ma3_2, ma9_1, ma9_2) + "_";
 
-            temp_long += Utils.checkXCutUpY(ma6_1, ma6_2, ma8_1, ma8_2) + "_";
-            temp_long += Utils.checkXCutDnY(ma6_1, ma6_2, ma8_1, ma8_2) + "_";
+        temp_long += Utils.checkXCutUpY(ma5_1, ma5_2, ma7_1, ma7_2) + "_";
+        temp_shot += Utils.checkXCutDnY(ma5_1, ma5_2, ma7_1, ma7_2) + "_";
+        temp_long += Utils.checkXCutUpY(ma5_1, ma5_2, ma9_1, ma9_2) + "_";
+        temp_shot += Utils.checkXCutDnY(ma5_1, ma5_2, ma9_1, ma9_2) + "_";
 
-        } else {
-            // id.contains("_15m_") || id.contains("_30m_"))
-            BigDecimal ma5_1 = calcMA(list, 5, str);
-            BigDecimal ma5_2 = calcMA(list, 5, end);
-
-            BigDecimal ma8_1 = calcMA(list, 8, str);
-            BigDecimal ma8_2 = calcMA(list, 8, end);
-
-            BigDecimal ma13_1 = calcMA(list, 13, str);
-            BigDecimal ma13_2 = calcMA(list, 13, end);
-
-            temp_long = Utils.checkXCutUpY(ma5_1, ma5_2, ma8_1, ma8_2) + "_";
-            temp_long = Utils.checkXCutDnY(ma5_1, ma5_2, ma8_1, ma8_2) + "_";
-
-            temp_long = Utils.checkXCutUpY(ma5_1, ma5_2, ma13_1, ma13_2) + "_";
-            temp_long = Utils.checkXCutDnY(ma5_1, ma5_2, ma13_1, ma13_2) + "_";
-
-            temp_long = Utils.checkXCutUpY(ma8_1, ma8_2, ma13_1, ma13_2) + "_";
-            temp_long = Utils.checkXCutDnY(ma8_1, ma8_2, ma13_1, ma13_2) + "_";
-        }
+        temp_long += Utils.checkXCutUpY(ma7_1, ma7_2, ma9_1, ma9_2) + "_";
+        temp_shot += Utils.checkXCutDnY(ma7_1, ma7_2, ma9_1, ma9_2) + "_";
 
         String trend = "";
         trend += "_" + temp_long + "_";

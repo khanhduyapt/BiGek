@@ -2648,26 +2648,15 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_d_h4 = "";
 
         if (isForex) {
-            //trend_d = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_DAY);
+            trend_d = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_DAY);
             trend_h = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-
-            String msg = "(H4:" + Utils.appendSpace(trend_d, 4);
-
-            // if (Utils.isNotBlank(trend_h)) {
-            // msg += " H1:" + Utils.appendSpace(trend_h, 4);
-            // } else {
-            // msg += Utils.appendSpace("", 10);
-            // }
-            msg += ")";
-
-            trend_d_h4 = Utils.appendSpace(msg, 10);
         } else {
             trend_d = getPrepareOrderTrend(EPIC, Utils.CRYPTO_TIME_1d);
             trend_h = getPrepareOrderTrend(EPIC, Utils.CRYPTO_TIME_4h);
-
-            trend_d_h4 = Utils.appendSpace(
-                    "(D:" + Utils.appendSpace(trend_d, 5) + "  H4:" + Utils.appendSpace(trend_h, 5) + ")", 20);
         }
+
+        trend_d_h4 = Utils.appendSpace(
+                "(D:" + Utils.appendSpace(trend_d, 4) + "  H4:" + Utils.appendSpace(trend_h, 4) + ")", 20);
 
         return trend_d_h4.replace(Utils.TREND_LONG, "BUY").replace(Utils.TREND_SHORT, "SELL");
     }
