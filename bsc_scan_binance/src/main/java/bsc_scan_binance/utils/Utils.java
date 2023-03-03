@@ -2875,7 +2875,7 @@ public class Utils {
         if (end > list.size()) {
             end = list.size() - 1;
         }
-        BigDecimal ma_c = calcMA(list, maIndex, 1);
+        BigDecimal ma_c = calcMA(list, maIndex, 0);
         BigDecimal ma_p = calcMA(list, maIndex, 3);
         if (ma_c.compareTo(ma_p) > 0) {
             return true;
