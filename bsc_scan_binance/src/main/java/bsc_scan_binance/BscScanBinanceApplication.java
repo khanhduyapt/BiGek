@@ -137,7 +137,7 @@ public class BscScanBinanceApplication {
                                 checkCapital_h4(binance_service, EPIC);
                             }
 
-                            if (isReloadAfter((Utils.MINUTES_OF_1H * 2), "INIT_FOREX_W_D_H")) {
+                            if (isReloadAfter((Utils.MINUTES_OF_1H), "INIT_FOREX_W_D_H")) {
                                 binance_service.createReport();
                             }
 
