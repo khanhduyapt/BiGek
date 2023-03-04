@@ -62,7 +62,7 @@ public class Utils {
     private static OrdersRepository ordersRepository;
 
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0025);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.005);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -92,8 +92,8 @@ public class Utils {
     public static final String TEXT_DANGER = "(Danger)";
     public static final String TEXT_START_LONG = "Start:Long";
     public static final String TEXT_STOP_LONG = "Stop:Long";
-    public static final String TEXT_MIN_DAY_AREA = "(MIN_DAY_AREA)";
-    public static final String TEXT_MAX_DAY_AREA = "(MAX_DAY_AREA)";
+    public static final String TEXT_MIN_DAY_AREA = "(Min_Day_Area_Wait_buy. )";
+    public static final String TEXT_MAX_DAY_AREA = "(Max_DAY_Area_Wait_sell.)";
 
     public static final String TEXT_CONNECTION_TIMED_OUT = "CONNECTION_TIMED_OUT";
     public static final String CONNECTION_TIMED_OUT_ID = "CONNECTION_TIMED_OUT_MINUTE_15";
@@ -143,11 +143,12 @@ public class Utils {
             "HK50", "BTCUSD", "SILVER", "OIL_CRUDE", "SP35", "DE40", "AU200");
     // MFF ko co: "EU50", "US100", "NATURALGAS",
 
+    // bad: "EURDKK",
     public static final List<String> EPICS_FOREXS = Arrays.asList("AUDUSD", "CADJPY", "CHFJPY", "EURAUD", "EURCAD",
-            "EURCHF", "EURCZK", "EURDKK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNOK", "EURNZD", "EURPLN",
-            "EURRON", "EURSEK", "EURSGD", "EURTRY", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD",
-            "GBPTRY", "GBPUSD", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDCNH", "USDCZK", "USDDKK", "USDHKD",
-            "USDHUF", "USDILS", "USDJPY", "USDMXN", "USDNOK", "USDRON", "USDSEK", "USDSGD", "USDTRY", "USDZAR");
+            "EURCHF", "EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNOK", "EURNZD", "EURPLN", "EURRON",
+            "EURSEK", "EURSGD", "EURTRY", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPTRY",
+            "GBPUSD", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDCNH", "USDCZK", "USDDKK", "USDHKD", "USDHUF",
+            "USDILS", "USDJPY", "USDMXN", "USDNOK", "USDRON", "USDSEK", "USDSGD", "USDTRY", "USDZAR");
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
@@ -2805,7 +2806,7 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrendByMa(List<BtcFutures> list) {
+    public static String switchTrendByMa(List<BtcFutures> list, boolean isRequest368) {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
@@ -2829,6 +2830,9 @@ public class Utils {
 
         BigDecimal ma6_1 = calcMA(list, 6, str);
         BigDecimal ma6_2 = calcMA(list, 6, end);
+
+        BigDecimal ma8_1 = calcMA(list, 8, str);
+        BigDecimal ma8_2 = calcMA(list, 8, end);
 
         temp_long += Utils.checkXCutUpY(ma3_1, ma3_2, ma4_1, ma4_2) + "_";
         temp_shot += Utils.checkXCutDnY(ma3_1, ma3_2, ma4_1, ma4_2) + "_";
@@ -2860,13 +2864,23 @@ public class Utils {
 
         String result = "";
         if (trend.contains(Utils.TREND_LONG)) {
-            if ((ma3_1.compareTo(ma4_1) >= 0) && (ma4_1.compareTo(ma5_1) >= 0) && (ma5_1.compareTo(ma6_1) >= 0)) {
+            if (isRequest368) {
+                if ((ma3_1.compareTo(ma4_1) >= 0) && (ma4_1.compareTo(ma5_1) >= 0) && (ma5_1.compareTo(ma6_1) >= 0)
+                        && (ma6_1.compareTo(ma8_1) >= 0)) {
+                    result = Utils.TREND_LONG;
+                }
+            } else {
                 result = Utils.TREND_LONG;
             }
         }
 
         if (trend.contains(Utils.TREND_SHORT)) {
-            if ((ma3_1.compareTo(ma4_1) <= 0) && (ma4_1.compareTo(ma5_1) <= 0) && (ma5_1.compareTo(ma6_1) <= 0)) {
+            if (isRequest368) {
+                if ((ma3_1.compareTo(ma4_1) <= 0) && (ma4_1.compareTo(ma5_1) <= 0) && (ma5_1.compareTo(ma6_1) <= 0)
+                        && (ma6_1.compareTo(ma8_1) <= 0)) {
+                    result = Utils.TREND_SHORT;
+                }
+            } else {
                 result = Utils.TREND_SHORT;
             }
         }

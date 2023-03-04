@@ -92,7 +92,7 @@ public class BscScanBinanceApplication {
             }
 
             // ----------------------------------------
-            binance_service.clearTrash();
+            // binance_service.clearTrash();
             binance_service.createReport();
             // ----------------------------------------
             List<String> capital_list = new ArrayList<String>();
@@ -100,11 +100,6 @@ public class BscScanBinanceApplication {
             capital_list.addAll(Utils.EPICS_FOREXS);
 
             if (app_flag != Utils.const_app_flag_webonly) {
-
-                if (Utils.isBusinessTime_6h_to_17h() && !Utils.isWeekend() && Utils.isAllowSendMsg()) {
-                    Utils.initCapital();
-                }
-
                 List<CandidateCoin> token_list = gecko_service.getList(callFormBinance);
                 int total = token_list.size();
 
@@ -128,15 +123,16 @@ public class BscScanBinanceApplication {
 
                     try {
                         if (Utils.isBusinessTime_6h_to_17h()) {
-                            if (isReloadAfter(Utils.MINUTES_OF_15M, "RE_CHECK_FOREX") && !Utils.isWeekend()
+                            if (isReloadAfter(Utils.MINUTES_OF_1H, "RE_CHECK_FOREX") && !Utils.isWeekend()
                                     && Utils.isAllowSendMsg()) {
+
+                                Utils.initCapital();
                                 for (int index = 0; index < forex_size; index++) {
                                     sleepWhenExceptionTimeOut(binance_service);
 
                                     String EPIC = capital_list.get(index);
-                                    checkCapital_h4(binance_service, EPIC);
+                                    checkCapital(binance_service, EPIC);
                                 }
-
                                 if (isReloadAfter((Utils.MINUTES_OF_1H), "INIT_FOREX_W_D_H")) {
                                     binance_service.createReport();
                                 }
@@ -196,26 +192,21 @@ public class BscScanBinanceApplication {
         }
     }
 
-    public static void checkCapital_h4(BinanceService binance_service, String EPIC) {
+    public static void checkCapital(BinanceService binance_service, String EPIC) {
         String init = "";
         init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
         if (Utils.isNotBlank(init)) {
-            wait(SLEEP_MINISECONDS);
+            wait(SLEEP_MINISECONDS * 3);
         }
 
         init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
         if (Utils.isNotBlank(init)) {
-            wait(SLEEP_MINISECONDS);
+            wait(SLEEP_MINISECONDS * 3);
         }
 
         init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
         if (Utils.isNotBlank(init)) {
-            wait(SLEEP_MINISECONDS);
-        }
-
-        init = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
-        if (Utils.isNotBlank(init)) {
-            wait(SLEEP_MINISECONDS);
+            wait(SLEEP_MINISECONDS * 3);
         }
     }
 
@@ -251,15 +242,9 @@ public class BscScanBinanceApplication {
             wait(SLEEP_MINISECONDS);
         }
 
-        String trend_h1 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1H, GECKOID, SYMBOL);
-        if (Utils.isNotBlank(trend_h1)) {
-            wait(SLEEP_MINISECONDS);
-        }
-
         String init = "";
         init += "D:" + Utils.appendSpace(trend_d, 6);
         init += "H4:" + Utils.appendSpace(trend_h4, 6);
-        init += "H1:" + Utils.appendSpace(trend_h1, 6);
         System.out.println(Utils.getTimeHHmm() + str_index + Utils.appendSpace(SYMBOL, 10) + init);
 
         // ----------------------------------------------
