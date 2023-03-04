@@ -325,6 +325,58 @@ public class MoneyAtRiskResponse {
             standard_lot = BigDecimal.valueOf(0.023);
             unit_risk_per_pip = BigDecimal.valueOf(124.999999999999);
             break;
+        case "EURDKK":
+            standard_lot = BigDecimal.valueOf(0.175);
+            unit_risk_per_pip = BigDecimal.valueOf(2499.99999999994);
+            break;
+        case "EURHUF":
+            standard_lot = BigDecimal.valueOf(0.357);
+            unit_risk_per_pip = BigDecimal.valueOf(100);
+            break;
+        case "EURMXN":
+            standard_lot = BigDecimal.valueOf(0.435);
+            unit_risk_per_pip = BigDecimal.valueOf(2421.30750605329);
+            break;
+        case "EURNOK":
+            standard_lot = BigDecimal.valueOf(0.11);
+            unit_risk_per_pip = BigDecimal.valueOf(1063.82978723403);
+            break;
+        case "EURRON":
+            standard_lot = BigDecimal.valueOf(0.116);
+            unit_risk_per_pip = BigDecimal.valueOf(2500.00000000005);
+            break;
+        case "EURSEK":
+            standard_lot = BigDecimal.valueOf(0.261);
+            unit_risk_per_pip = BigDecimal.valueOf(2500.00000000005);
+            break;
+        case "EURSGD":
+            standard_lot = BigDecimal.valueOf(0.336);
+            unit_risk_per_pip = BigDecimal.valueOf(25000);
+            break;
+        case "EURTRY":
+            standard_lot = BigDecimal.valueOf(0.314);
+            unit_risk_per_pip = BigDecimal.valueOf(1666.6666666666);
+            break;
+        case "GBPTRY":
+            standard_lot = BigDecimal.valueOf(0.314);
+            unit_risk_per_pip = BigDecimal.valueOf(1666.6666666666);
+            break;
+        case "USDCNH":
+            standard_lot = BigDecimal.valueOf(0.345);
+            unit_risk_per_pip = BigDecimal.valueOf(5000.00000000011);
+            break;
+        case "USDDKK":
+            standard_lot = BigDecimal.valueOf(0.35);
+            unit_risk_per_pip = BigDecimal.valueOf(5000.00000000011);
+            break;
+        case "USDRON":
+            standard_lot = BigDecimal.valueOf(0.232);
+            unit_risk_per_pip = BigDecimal.valueOf(5000.00000000011);
+            break;
+        case "USDSGD":
+            standard_lot = BigDecimal.valueOf(0.135);
+            unit_risk_per_pip = BigDecimal.valueOf(10000.0000000002);
+            break;
 
         default:
             String msg = "getStandard_lot: " + EPIC + " not exist!";

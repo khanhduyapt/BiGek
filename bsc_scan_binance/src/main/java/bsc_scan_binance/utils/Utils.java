@@ -121,9 +121,9 @@ public class Utils {
 
     public static final String CRYPTO_TIME_5m = "5m";
     public static final String CRYPTO_TIME_15m = "15m";
-    public static final String CRYPTO_TIME_1h = "1h";
-    public static final String CRYPTO_TIME_4h = "4h";
-    public static final String CRYPTO_TIME_1d = "1d";
+    public static final String CRYPTO_TIME_1H = "1h";
+    public static final String CRYPTO_TIME_4H = "4h";
+    public static final String CRYPTO_TIME_1D = "1d";
     public static final String CRYPTO_TIME_1w = "1w";
 
     public static final long MINUTES_OF_D = 1440;
@@ -131,21 +131,24 @@ public class Utils {
     public static final long MINUTES_OF_1H = 30;
     public static final long MINUTES_OF_15M = 15;
 
+    public static final List<String> BINANCE_PRICE_AT_BTC_LIST = Arrays.asList("OAX");
+    public static final List<String> BINANCE_PRICE_AT_BUSD_LIST = Arrays.asList("");
+
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
     public static final List<String> EPICS_SCAP = Arrays.asList("GOLD", "SILVER", "FR40", "US30", "US500", "UK100");
 
-    public static final List<String> EPICS_FOREX = Arrays.asList("DXY", "GOLD", "US30", "US500", "J225", "UK100",
-            "FR40", "HK50", "BTCUSD", "SILVER");
-    // MFF ko co: "EU50", "AU200", "DE40", "US100", "SP35", "NATURALGAS",
-    // "OIL_CRUDE",
+    public static final List<String> EPICS_STOCKS = Arrays.asList("GOLD", "US30", "US500", "J225", "UK100", "FR40",
+            "HK50", "BTCUSD", "SILVER", "OIL_CRUDE", "SP35", "DE40", "AU200");
+    // MFF ko co: "EU50", "US100", "NATURALGAS",
 
-    public static final List<String> EPICS_FOREX_OTHERS = Arrays.asList("AUDCHF", "AUDJPY", "AUDUSD", "CADCHF",
-            "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURUSD", "GBPAUD", "GBPCAD",
-            "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD", "USDJPY",
-            "EURNZD", "AUDNZD", "USDCHF", "AUDCAD");
-    // Stoploss: "EURNZD", "AUDNZD","USDCHF", "AUDCAD"
+    public static final List<String> EPICS_FOREXS = Arrays.asList("AUDUSD", "AUDCHF", "CADJPY", "CHFJPY", "EURAUD",
+            "EURCAD", "EURCHF", "EURCZK", "EURDKK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNOK", "EURNZD",
+            "EURPLN", "EURRON", "EURSEK", "EURSGD", "EURTRY", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY",
+            "GBPNZD", "GBPTRY", "GBPUSD", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDCNH", "USDCZK", "USDDKK",
+            "USDHKD", "USDHUF", "USDILS", "USDJPY", "USDMXN", "USDNOK", "USDRON", "USDSEK", "USDSGD", "USDTRY",
+            "USDZAR");
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
@@ -236,8 +239,14 @@ public class Utils {
             + " ) boll                                                                                      \n";
 
     public static List<BtcFutures> loadData(String symbol, String TIME, int LIMIT_DATA) {
+        String currency = "USDT";
+        if (BINANCE_PRICE_AT_BTC_LIST.contains(symbol)) {
+            currency = "BTC";
+        } else if (BINANCE_PRICE_AT_BUSD_LIST.contains(symbol)) {
+            currency = "BUSD";
+        }
 
-        return loadData(symbol, TIME, LIMIT_DATA, "USDT");
+        return loadData(symbol, TIME, LIMIT_DATA, currency);
     }
 
     public static List<BtcFutures> loadData(String symbol, String TIME, int LIMIT_DATA, String currency) {
@@ -2802,72 +2811,8 @@ public class Utils {
             return "";
         }
 
-        String result = checkTrendSideway(list, 1, 3);
-
-        return result;
-    }
-
-    public static boolean checkClosePriceAndMa_StartFindLong(List<BtcFutures> list) {
-        int cur = 1;
-        String symbol = list.get(0).getId();
-        BigDecimal ma;
-        BigDecimal pre_close_price = list.get(1).getPrice_close_candle();
-
-        if (symbol.contains("_1d_")) {
-            ma = calcMA(list, MA_INDEX_D1_START_LONG, cur);
-        } else if (symbol.contains("_4h_")) {
-            ma = calcMA(list, MA_INDEX_H4_START_LONG, cur);
-        } else {
-            ma = calcMA(list, 50, cur);
-        }
-
-        if (pre_close_price.compareTo(ma) > 0) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static boolean isUptrendByMaIndex(List<BtcFutures> list, int maIndex) {
-        if (CollectionUtils.isEmpty(list)) {
-            return false;
-        }
-
-        // int str = 1;
-        // int end = 2;
-        // String id = list.get(0).getId();
-        // if (id.contains("_1d_") || id.contains("_4h_")) {
-        // str = 1;
-        // end = 2;
-        // } else if (id.contains("_1h_")) {
-        // str = 1;
-        // end = 2;
-        // }
-
-        BigDecimal ma_c = calcMA(list, maIndex, 1);
-        BigDecimal ma_p = calcMA(list, maIndex, 2);
-        if (ma_c.compareTo(ma_p) > 0) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static String getTrendPrifix(String trend) {
-        String check = Objects.equals(trend, Utils.TREND_LONG) ? " 💹(" + CHAR_LONG_UP + ")"
-                : "  📉 (" + CHAR_SHORT_DN + ")";
-
-        return check;
-    }
-
-    public static String getTrendPrifix(String trend, int maFast, int maSlow) {
-        String check = Objects.equals(trend, Utils.TREND_LONG) ? maFast + CHAR_LONG_UP + maSlow + " 💹"
-                : maFast + CHAR_SHORT_DN + maSlow + " 📉";
-
-        return "(" + check + " )";
-    }
-
-    private static String checkTrendSideway(List<BtcFutures> list, int str, int end) {
+        int str = 1;
+        int end = 3;
         String temp_long = "";
         String temp_shot = "";
 
@@ -2927,13 +2872,64 @@ public class Utils {
         return result;
     }
 
+    public static boolean checkClosePriceAndMa_StartFindLong(List<BtcFutures> list) {
+        int cur = 1;
+        String symbol = list.get(0).getId();
+        BigDecimal ma;
+        BigDecimal pre_close_price = list.get(1).getPrice_close_candle();
+
+        if (symbol.contains("_1d_")) {
+            ma = calcMA(list, MA_INDEX_D1_START_LONG, cur);
+        } else if (symbol.contains("_4h_")) {
+            ma = calcMA(list, MA_INDEX_H4_START_LONG, cur);
+        } else {
+            ma = calcMA(list, 50, cur);
+        }
+
+        if (pre_close_price.compareTo(ma) > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isUptrendByMaIndex(List<BtcFutures> list, int maIndex) {
+        if (CollectionUtils.isEmpty(list)) {
+            return false;
+        }
+        // quyet dinh: khong lay 0 vi can su chac chan.
+        int str = 1;
+        int end = 2;
+        BigDecimal ma_c = calcMA(list, maIndex, str);
+        BigDecimal ma_p = calcMA(list, maIndex, end);
+        if (ma_c.compareTo(ma_p) > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static String getTrendPrifix(String trend) {
+        String check = Objects.equals(trend, Utils.TREND_LONG) ? " 💹(" + CHAR_LONG_UP + ")"
+                : "  📉 (" + CHAR_SHORT_DN + ")";
+
+        return check;
+    }
+
+    public static String getTrendPrifix(String trend, int maFast, int maSlow) {
+        String check = Objects.equals(trend, Utils.TREND_LONG) ? maFast + CHAR_LONG_UP + maSlow + " 💹"
+                : maFast + CHAR_SHORT_DN + maSlow + " 📉";
+
+        return "(" + check + " )";
+    }
+
     public static String calc_BUF_LO_HI_BUF_Forex(boolean isScap15m, String trend, String EPIC, BigDecimal entry_long,
             BigDecimal entry_short, BigDecimal sl_long, BigDecimal sl_short, BigDecimal tp_long, BigDecimal tp_short) {
 
         String result = "";
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
         if (isScap15m) {
-            risk = risk.divide(BigDecimal.valueOf(5), 10, RoundingMode.CEILING);
+            risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
 
         String temp = "";
