@@ -131,7 +131,7 @@ public class Utils {
     public static final long MINUTES_OF_1H = 30;
     public static final long MINUTES_OF_15M = 15;
 
-    public static final List<String> BINANCE_PRICE_AT_BTC_LIST = Arrays.asList("OAX");
+    public static final List<String> BINANCE_PRICE_AT_BTC_LIST = Arrays.asList("OAX", "AST");
     public static final List<String> BINANCE_PRICE_AT_BUSD_LIST = Arrays.asList("");
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",

@@ -140,7 +140,10 @@ public class BscScanBinanceApplication {
 
                             // ---------------------------------------------------------
                             CandidateCoin coin = token_list.get(index_crypto);
-                            checkCrypto(binance_service, coin);
+                            String str_index = Utils.appendLeft(String.valueOf(index_crypto + 1), 3) + "/"
+                                    + Utils.appendLeft(String.valueOf(total), 3) + "   ";
+
+                            checkCrypto(binance_service, coin, str_index);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -212,7 +215,7 @@ public class BscScanBinanceApplication {
         }
     }
 
-    private static void checkCrypto(BinanceService binance_service, CandidateCoin coin) {
+    private static void checkCrypto(BinanceService binance_service, CandidateCoin coin, String str_index) {
         if (isReloadAfter(Utils.MINUTES_OF_15M, "KILL_BTC")) {
             System.out.println(Utils.getTimeHHmm() + "checkKillLongShort BTC(15m)");
             binance_service.sendMsgKillLongShort("bitcoin", "BTC");
@@ -253,7 +256,7 @@ public class BscScanBinanceApplication {
         init += "D:" + Utils.appendSpace(trend_d, 6);
         init += "H4:" + Utils.appendSpace(trend_h4, 6);
         init += "H1:" + Utils.appendSpace(trend_h1, 6);
-        System.out.println(Utils.appendSpace(SYMBOL, 10) + init);
+        System.out.println(Utils.getTimeHHmm() + str_index + Utils.appendSpace(SYMBOL, 10) + init);
 
         // ----------------------------------------------
         // if ((round_count > 0) && Utils.isWorkingTime()) {

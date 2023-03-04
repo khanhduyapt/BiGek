@@ -2992,12 +2992,12 @@ public class BinanceServiceImpl implements BinanceService {
         List<BtcFutures> list = Utils.loadData(symbol, TIME, 15);
         if (CollectionUtils.isEmpty(list)) {
             isFoundData = false;
-            String msg = "Binance NotFound:" + symbol + "(" + TIME + ")";
+            String msg = "BinanceNotFound:" + symbol + "(" + TIME + ")";
 
             String EVENT_ID = EVENT_PUMP + symbol + Utils.getCurrentYyyyMmDd_HH();
             sendMsgPerHour(EVENT_ID, msg, true);
             Utils.logWritelnWithTime(msg, true);
-            BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS * 5);
+            BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS * 100);
         }
 
         String note = "";
