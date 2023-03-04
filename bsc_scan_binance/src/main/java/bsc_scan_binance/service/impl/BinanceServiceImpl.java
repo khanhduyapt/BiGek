@@ -2944,6 +2944,9 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initCryptoTrend(String TIME, String gecko_id, String symbol) {
+        // TIME = Utils.CRYPTO_TIME_4H;
+        // symbol = "AVAX";
+
         String url = "";
         String type = "";
         String curr_trend_byMa = "";
@@ -3063,7 +3066,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (!Objects.equals(TIME, Utils.CRYPTO_TIME_1H)) {
                 // allow_write_log = false;
             }
-            if (isScapH && Objects.equals(pre_trend_day, switch_trend)) {
+            if (isScapH && !Objects.equals(pre_trend_day, switch_trend)) {
                 allow_write_log = false;
             }
 
@@ -3073,13 +3076,11 @@ public class BinanceServiceImpl implements BinanceService {
                 sl += "   SL_Sell:" + Utils.appendLeft(Utils.removeLastZero(sl_shot), 8);
                 sl += ")  ";
                 String wdh4 = getPrepareOrderTrend_WDH4(EPIC, false);
-                String msg = type + wdh4 + char_name + Utils.appendSpace(symbol, 8);
-                msg += Utils.getCurrentPrice(list) + sl + Utils.appendSpace(note, 20);
+                String msg = type + wdh4 + char_name + Utils.appendSpace(note, 20) + Utils.appendSpace(symbol, 8);
+                msg += Utils.getCurrentPrice(list) + sl;
                 Utils.logWritelnWithTime(Utils.appendSpace(Utils.appendSpace(msg, 35) + url, 185), true);
 
-                if (!Objects.equals(TIME, Utils.CRYPTO_TIME_1H)) {
-                    Utils.logWritelnDraft(msg);
-                }
+                Utils.logWritelnDraft(msg);
             }
         }
 
@@ -3236,7 +3237,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(isScap15m, buf_trend, EPIC, body.get(0), body.get(1),
                             sl_long, sl_shot, tp_long, tp_shot);
 
-                    String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
+                    String wdh4 = getPrepareOrderTrend_WDH4(EPIC, false);
                     String log = wdh4 + char_name.replace(")", "").trim();
                     log += ": " + Utils.appendSpace(switch_trend, 4) + ") ";
                     log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);

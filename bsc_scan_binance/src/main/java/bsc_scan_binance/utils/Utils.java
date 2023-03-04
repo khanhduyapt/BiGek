@@ -863,7 +863,7 @@ public class Utils {
             String logFilePath = getDraftLogFile();
             String msg = text.trim();
             if (Utils.isNotBlank(msg)) {
-                msg = BscScanBinanceApplication.hostname + Utils.getTimeHHmm() + " "
+                msg = BscScanBinanceApplication.hostname + Utils.getMmDD_TimeHHmm() + " "
                         + text.replace(Utils.new_line_from_service, " ");
             }
 
