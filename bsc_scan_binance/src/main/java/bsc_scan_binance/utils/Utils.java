@@ -355,69 +355,66 @@ public class Utils {
     public static void initCapital() {
         try {
 
+            String API = "G1fTHbEak0kDE5mg";
+            HttpHeaders headers = new HttpHeaders();
+            HttpEntity<String> request;
+            RestTemplate restTemplate = new RestTemplate();
+
+            // https://api-capital.backend-capital.com/api/v1/session/encryptionKey
+            // headers.set("X-CAP-API-KEY", API);
+            // HttpEntity<String> request = new HttpEntity<String>(headers);
+            // ResponseEntity<String> encryption = restTemplate1.exchange(
+            // "https://api-capital.backend-capital.com/api/v1/session/encryptionKey",
+            // HttpMethod.GET, request,
+            // String.class);
+            // JSONObject encryption_body = new JSONObject(encryption.getBody());
+            // String encryptionKey =
+            // Utils.getStringValue(encryption_body.get("encryptionKey"));
+            // String timeStamp = Utils.getStringValue(encryption_body.get("timeStamp"));
+
+            // --------------------------------------------------------------
+
+            // https://capital.com/api-request-examples
+            // https://open-api.capital.com/#tag/Session
+            headers = new HttpHeaders();
+            headers.set("X-CAP-API-KEY", API);
+            headers.set("Content-Type", "application/json");
+
+            JSONObject personJsonObject = new JSONObject();
+            personJsonObject.put("encryptedPassword", "false");
+            personJsonObject.put("identifier", "khanhduyapt@gmail.com");
+            personJsonObject.put("password", "Capital123$");
+
+            request = new HttpEntity<String>(personJsonObject.toString(), headers);
+
+            ResponseEntity<String> responseEntityStr = restTemplate
+                    .postForEntity("https://api-capital.backend-capital.com/api/v1/session", request, String.class);
+
+            HttpHeaders res_header = responseEntityStr.getHeaders();
+            Utils.CST = Utils.getStringValue(res_header.get("CST").get(0));
+            Utils.X_SECURITY_TOKEN = Utils.getStringValue(res_header.get("X-SECURITY-TOKEN").get(0));
+
+            // ------------------------------------------------------------------------------------
+            // String nodeId = "hierarchy_v1.oil_markets_group";
+            // String marketnavigation = "marketnavigation/" + nodeId;
+            // String url_markets = "https://api-capital.backend-capital.com/api/v1/" +
+            // marketnavigation;
+            // headers = new HttpHeaders();
+            // MediaType mediaType = MediaType.parseMediaType("text/plain");
+            // headers.setContentType(mediaType);
+            // headers.set("X-SECURITY-TOKEN", Utils.X_SECURITY_TOKEN);
+            // headers.set("CST", Utils.CST);
+            // request = new HttpEntity<String>(headers);
+            // ResponseEntity<String> response = restTemplate.exchange(url_markets,
+            // HttpMethod.GET, request, String.class);
+
         } catch (Exception e) {
             String result = "initCapital: " + e.getMessage();
             Utils.logWritelnWithTime(result, false);
 
-            String date_time = LocalDateTime.now().toString();
-            String time_out_id = Utils.TEXT_CONNECTION_TIMED_OUT + "_" + Utils.CAPITAL_TIME_HOUR;
-            Orders entity_time_out = new Orders(time_out_id, date_time, "", BigDecimal.ZERO, BigDecimal.ZERO,
-                    BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "Connection timed out");
+            Orders entity_time_out = new Orders(CONNECTION_TIMED_OUT_ID, TEXT_CONNECTION_TIMED_OUT);
             ordersRepository.save(entity_time_out);
         }
-        String API = "G1fTHbEak0kDE5mg";
-        HttpHeaders headers = new HttpHeaders();
-        HttpEntity<String> request;
-        RestTemplate restTemplate = new RestTemplate();
-
-        // https://api-capital.backend-capital.com/api/v1/session/encryptionKey
-        // headers.set("X-CAP-API-KEY", API);
-        // HttpEntity<String> request = new HttpEntity<String>(headers);
-        // ResponseEntity<String> encryption = restTemplate1.exchange(
-        // "https://api-capital.backend-capital.com/api/v1/session/encryptionKey",
-        // HttpMethod.GET, request,
-        // String.class);
-        // JSONObject encryption_body = new JSONObject(encryption.getBody());
-        // String encryptionKey =
-        // Utils.getStringValue(encryption_body.get("encryptionKey"));
-        // String timeStamp = Utils.getStringValue(encryption_body.get("timeStamp"));
-
-        // --------------------------------------------------------------
-
-        // https://capital.com/api-request-examples
-        // https://open-api.capital.com/#tag/Session
-        headers = new HttpHeaders();
-        headers.set("X-CAP-API-KEY", API);
-        headers.set("Content-Type", "application/json");
-
-        JSONObject personJsonObject = new JSONObject();
-        personJsonObject.put("encryptedPassword", "false");
-        personJsonObject.put("identifier", "khanhduyapt@gmail.com");
-        personJsonObject.put("password", "Capital123$");
-
-        request = new HttpEntity<String>(personJsonObject.toString(), headers);
-
-        ResponseEntity<String> responseEntityStr = restTemplate
-                .postForEntity("https://api-capital.backend-capital.com/api/v1/session", request, String.class);
-
-        HttpHeaders res_header = responseEntityStr.getHeaders();
-        Utils.CST = Utils.getStringValue(res_header.get("CST").get(0));
-        Utils.X_SECURITY_TOKEN = Utils.getStringValue(res_header.get("X-SECURITY-TOKEN").get(0));
-
-        // ------------------------------------------------------------------------------------
-        // String nodeId = "hierarchy_v1.oil_markets_group";
-        // String marketnavigation = "marketnavigation/" + nodeId;
-        // String url_markets = "https://api-capital.backend-capital.com/api/v1/" +
-        // marketnavigation;
-        // headers = new HttpHeaders();
-        // MediaType mediaType = MediaType.parseMediaType("text/plain");
-        // headers.setContentType(mediaType);
-        // headers.set("X-SECURITY-TOKEN", Utils.X_SECURITY_TOKEN);
-        // headers.set("CST", Utils.CST);
-        // request = new HttpEntity<String>(headers);
-        // ResponseEntity<String> response = restTemplate.exchange(url_markets,
-        // HttpMethod.GET, request, String.class);
-
     }
 
     // https://open-api.capital.com/#section/Authentication/How-to-start-new-session
@@ -517,11 +514,17 @@ public class Utils {
             }
 
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             if (e.getMessage().contains("Connection timed out")) {
                 Utils.logWritelnWithTime(epic + ": " + e.getMessage(), false);
                 initCapital();
+            } else {
+                String result = "loadCapitalData: " + e.getMessage();
+                Utils.logWritelnWithTime(result, false);
+
+                Orders entity_time_out = new Orders(CONNECTION_TIMED_OUT_ID, TEXT_CONNECTION_TIMED_OUT);
+                ordersRepository.save(entity_time_out);
             }
-            System.out.println(e.getMessage());
         }
 
         return results;
@@ -1971,9 +1974,9 @@ public class Utils {
             } else if (symbol.contains("_4h_")) {
                 result = "(H4)";
             } else if (symbol.contains("_1d_")) {
-                result = "(D5)";
+                result = "(D1)";
             } else if (symbol.contains("_1w_")) {
-                result = "(W3)";
+                result = "(W1)";
             } else {
                 // symbol = symbol.replace("_00", "");
                 // symbol = symbol.substring(symbol.indexOf("_"), symbol.length()).replace("_",

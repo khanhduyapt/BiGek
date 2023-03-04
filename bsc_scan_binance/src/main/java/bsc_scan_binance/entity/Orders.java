@@ -1,6 +1,7 @@
 package bsc_scan_binance.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +19,12 @@ import lombok.NoArgsConstructor;
 @Table(name = "orders")
 
 public class Orders {
+    public Orders(String _id, String _note) {
+        this.id = _id;
+        this.note = _note;
+        this.insertTime = LocalDateTime.now().toString();
+    }
+
     @Id
     @Column(name = "gecko_id")
     private String id;

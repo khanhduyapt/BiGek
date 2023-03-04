@@ -3005,24 +3005,32 @@ public class BinanceServiceImpl implements BinanceService {
             isFoundData = false;
             String msg = "BinanceNotFound:" + symbol + "(" + TIME + ")" + gecko_id;
 
+            System.out.println(msg);
             Utils.logWritelnWithTime(msg, true);
-            BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS * 10);
         }
 
         String note = "";
         String switch_trend = "";
+        BigDecimal sl_long = BigDecimal.ZERO;
+        BigDecimal sl_shot = BigDecimal.ZERO;
         if (isFoundData) {
-            curr_trend_byMa = Utils.isUptrendByMaIndex(list, 6) ? Utils.TREND_LONG : Utils.TREND_SHORT;
             switch_trend = Utils.switchTrendByMa(list);
 
+            curr_trend_byMa = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
             if (Utils.isNotBlank(switch_trend)) {
-                curr_trend_byMa = switch_trend;
                 note += "Ma3x6x8(ChangeTo:" + switch_trend + ")";
             }
 
+            List<BigDecimal> body = Utils.getOpenCloseCandle(list);
+            List<BigDecimal> low_high = Utils.getLowHighCandle(list);
+
+            BigDecimal bread = Utils.calcMaxBread(list);
+            sl_long = Utils.roundDefault(low_high.get(0).subtract(bread));
+            sl_shot = Utils.roundDefault(low_high.get(1).add(bread));
+
             String date_time = LocalDateTime.now().toString();
-            Orders entity = new Orders(EPIC + "_" + TIME, date_time, curr_trend_byMa, BigDecimal.ZERO, BigDecimal.ZERO,
-                    BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, note);
+            Orders entity = new Orders(EPIC + "_" + TIME, date_time, curr_trend_byMa, list.get(0).getCurrPrice(),
+                    body.get(0), body.get(1), sl_long, sl_shot, note);
 
             ordersRepository.save(entity);
         }
@@ -3052,15 +3060,23 @@ public class BinanceServiceImpl implements BinanceService {
             if (allow_short || (Objects.equals(Utils.TREND_LONG, switch_trend))) {
                 allow_write_log = true;
             }
+            if (Objects.equals(TIME, Utils.CRYPTO_TIME_1D)) {
+                // allow_write_log = true;
+            }
 
             if (allow_write_log) {
+                String sl = " (";
+                sl += "SL_Buy:" + Utils.appendLeft(Utils.removeLastZero(sl_long), 8);
+                sl += "   SL_Sell:" + Utils.appendLeft(Utils.removeLastZero(sl_shot), 8);
+                sl += ")  ";
                 String wdh4 = getPrepareOrderTrend_WDH4(EPIC, false);
-                String msg = type + wdh4 + char_name + Utils.appendSpace(symbol, 8) + Utils.getCurrentPrice(list);
+                String msg = type + wdh4 + char_name + Utils.appendSpace(symbol, 8) + Utils.getCurrentPrice(list) + sl;
 
-                Utils.logWritelnWithTime(Utils.appendSpace(Utils.appendSpace(msg, 35) + url, 125) + note, true);
+                Utils.logWritelnWithTime(Utils.appendSpace(Utils.appendSpace(msg, 35) + url, 165) + note, true);
             }
         }
-        return curr_trend_byMa;
+
+        return switch_trend;
     }
 
     @Override
@@ -3118,9 +3134,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String result = "initForexTrend(" + EPIC + ") Size:" + list.size();
                     Utils.logWritelnDraft(result);
 
-                    String date_time = LocalDateTime.now().toString();
-                    Orders entity_time_out = new Orders(Utils.CONNECTION_TIMED_OUT_ID, date_time, "", BigDecimal.ZERO,
-                            BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "Connection timed out");
+                    Orders entity_time_out = new Orders(Utils.CONNECTION_TIMED_OUT_ID, Utils.TEXT_CONNECTION_TIMED_OUT);
                     ordersRepository.save(entity_time_out);
 
                     return result;
@@ -3238,9 +3252,7 @@ public class BinanceServiceImpl implements BinanceService {
             String result = "initForexTrend(" + EPIC + ") " + e.getMessage();
             Utils.logWritelnDraft(result);
 
-            String date_time = LocalDateTime.now().toString();
-            Orders entity_time_out = new Orders(Utils.CONNECTION_TIMED_OUT_ID, date_time, "", BigDecimal.ZERO,
-                    BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "Connection timed out");
+            Orders entity_time_out = new Orders(Utils.CONNECTION_TIMED_OUT_ID, Utils.TEXT_CONNECTION_TIMED_OUT);
             ordersRepository.save(entity_time_out);
 
             return result;
