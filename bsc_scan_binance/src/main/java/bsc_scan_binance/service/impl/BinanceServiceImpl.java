@@ -2944,126 +2944,123 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initCryptoTrend(String TIME, String gecko_id, String symbol) {
-        boolean isScapH = false;
-        String trend_day = "";
+        String url = "";
+        String type = "";
+        String curr_trend_byMa = "";
+        String pre_trend_day = "";
         String EPIC = "CRYPTO_" + symbol;
-
+        boolean isScapH = false;
         if (!isReloadPrepareOrderTrend(EPIC, TIME)) {
             return "";
+        }
+
+        Orders entity_day = ordersRepository.findById(EPIC + "_" + Utils.CRYPTO_TIME_1D).orElse(null);
+        if (Objects.nonNull(entity_day)) {
+            pre_trend_day = Utils.getStringValue(entity_day.getTrend());
+            if (Utils.isBlank(pre_trend_day)) {
+                return "";
+            }
         }
 
         boolean allow_short = true;
         if (!BTC_ETH_BNB.contains(symbol)) {
             allow_short = false;
         }
-
-        if (Objects.equals(TIME, Utils.CRYPTO_TIME_4H)) {
-            Orders entity_day = ordersRepository.findById(EPIC + "_" + Utils.CRYPTO_TIME_1D).orElse(null);
-            if (Objects.isNull(entity_day)) {
-                return "";
-            }
-
-            if (!allow_short && Objects.equals(Utils.TREND_SHORT, entity_day.getTrend())) {
-                return "";
-            }
-
-            isScapH = true;
-            trend_day = entity_day.getTrend();
+        if (binanceFuturesRepository.existsById(gecko_id)) {
+            type = Utils.appendSpace("Futures", 10);
+            url = Utils.getCryptoLink_Future(symbol);
+        } else {
+            type = Utils.appendSpace("Spot", 10);
+            url = Utils.getCryptoLink_Spot(symbol);
         }
 
-        if (Objects.equals(TIME, Utils.CRYPTO_TIME_1H)) {
-            Orders entity_day = ordersRepository.findById(EPIC + "_" + Utils.CRYPTO_TIME_1D).orElse(null);
-            if (Objects.isNull(entity_day)) {
-                return "";
-            }
-            Orders entity_h4 = ordersRepository.findById(EPIC + "_" + Utils.CRYPTO_TIME_4H).orElse(null);
-            if (Objects.isNull(entity_h4)) {
+        if (Objects.equals(TIME, Utils.CRYPTO_TIME_4H) || Objects.equals(TIME, Utils.CRYPTO_TIME_1H)) {
+            isScapH = true;
+        }
+
+        if (isScapH) {
+            if (Objects.isNull(entity_day) || Utils.isBlank(entity_day.getTrend())) {
                 return "";
             }
 
-            if (!Objects.equals(entity_day.getTrend(), entity_h4.getTrend())) {
+            if (!allow_short && Objects.equals(Utils.TREND_SHORT, pre_trend_day)) {
                 return "";
             }
-            isScapH = true;
-            trend_day = entity_day.getTrend();
+
+            if (Objects.equals(TIME, Utils.CRYPTO_TIME_1H)) {
+                Orders entity_h4 = ordersRepository.findById(EPIC + "_" + Utils.CRYPTO_TIME_4H).orElse(null);
+                if (Objects.isNull(entity_h4)) {
+                    return "";
+                }
+
+                if (!Objects.equals(pre_trend_day, entity_h4.getTrend())) {
+                    return "";
+                }
+            }
         }
 
         boolean isFoundData = true;
         List<BtcFutures> list = Utils.loadData(symbol, TIME, 15);
         if (CollectionUtils.isEmpty(list)) {
             isFoundData = false;
-            String msg = "BinanceNotFound:" + symbol + "(" + TIME + ")";
+            String msg = "BinanceNotFound:" + symbol + "(" + TIME + ")" + gecko_id;
 
-            String EVENT_ID = EVENT_PUMP + symbol + Utils.getCurrentYyyyMmDd_HH();
-            sendMsgPerHour(EVENT_ID, msg, true);
             Utils.logWritelnWithTime(msg, true);
-            BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS * 100);
+            BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS * 10);
         }
 
         String note = "";
-        String trend = "";
         String switch_trend = "";
         if (isFoundData) {
-            trend = Utils.isUptrendByMaIndex(list, 6) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-            if (Objects.equals(TIME, Utils.CRYPTO_TIME_1D)) {
-                trend_day = trend;
-            }
+            curr_trend_byMa = Utils.isUptrendByMaIndex(list, 6) ? Utils.TREND_LONG : Utils.TREND_SHORT;
             switch_trend = Utils.switchTrendByMa(list);
-        }
 
-        {
             if (Utils.isNotBlank(switch_trend)) {
+                curr_trend_byMa = switch_trend;
                 note += "Ma3x6x8(ChangeTo:" + switch_trend + ")";
             }
+
             String date_time = LocalDateTime.now().toString();
-            Orders entity = new Orders(EPIC + "_" + TIME, date_time, trend, BigDecimal.ZERO, BigDecimal.ZERO,
+            Orders entity = new Orders(EPIC + "_" + TIME, date_time, curr_trend_byMa, BigDecimal.ZERO, BigDecimal.ZERO,
                     BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, note);
 
             ordersRepository.save(entity);
         }
-        if (!isScapH || !isFoundData) {
-            return trend; // End
-        }
+
         // ---------------------------------------------------------------
-
-        boolean allow_send_msg = false;
-        if (Objects.equals(TIME, Utils.CRYPTO_TIME_1H) && Objects.equals(trend_day, switch_trend)) {
-            if (BTC_ETH_BNB.contains(symbol)) {
-                allow_send_msg = true;
-            }
-            if (Objects.equals(trend, Utils.TREND_LONG) && !BTC_ETH_BNB.contains(symbol)) {
-                allow_send_msg = true;
-            }
-        }
-
-        if (Objects.equals(trend_day, switch_trend)) {
+        if (Utils.isNotBlank(switch_trend)) {
             String char_name = Utils.getChartName(list);
 
+            boolean allow_send_msg = false;
+            if (Objects.equals(TIME, Utils.CRYPTO_TIME_1H)) {
+                if (Objects.equals(pre_trend_day, switch_trend)) {
+                    if (BTC_ETH_BNB.contains(symbol)) {
+                        allow_send_msg = true;
+                    }
+                    if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
+                        allow_send_msg = true;
+                    }
+                }
+            }
             if (allow_send_msg) {
                 String msg = "(" + switch_trend + ")" + char_name + symbol + Utils.getCurrentPrice(list);
                 String EVENT_ID = EVENT_PUMP + symbol + char_name + Utils.getCurrentYyyyMmDdHHByChart(list);
                 sendMsgPerHour(EVENT_ID, msg, true);
             }
+            // -----------------------
+            boolean allow_write_log = false;
+            if (allow_short || (Objects.equals(Utils.TREND_LONG, switch_trend))) {
+                allow_write_log = true;
+            }
 
-            if (allow_short || (!allow_short && Objects.equals(Utils.TREND_LONG, switch_trend))) {
-                String url = "";
-                String type = "";
-                if (binanceFuturesRepository.existsById(gecko_id)) {
-                    type = Utils.appendSpace("Futures", 10);
-                    url = Utils.getCryptoLink_Future(symbol);
-                } else {
-                    type = Utils.appendSpace("Spot", 10);
-                    url = Utils.getCryptoLink_Spot(symbol);
-                }
-
+            if (allow_write_log) {
                 String wdh4 = getPrepareOrderTrend_WDH4(EPIC, false);
                 String msg = type + wdh4 + char_name + Utils.appendSpace(symbol, 8) + Utils.getCurrentPrice(list);
 
                 Utils.logWritelnWithTime(Utils.appendSpace(Utils.appendSpace(msg, 35) + url, 125) + note, true);
             }
         }
-
-        return trend;
+        return curr_trend_byMa;
     }
 
     @Override
