@@ -2962,8 +2962,6 @@ public class BinanceServiceImpl implements BinanceService {
             allow_short = false;
         }
         if (binanceFuturesRepository.existsById(gecko_id)) {
-            // TODO: Debug
-            allow_short = true;
             type = Utils.appendSpace("Futures", 10);
             url = Utils.getCryptoLink_Future(symbol);
         } else {
