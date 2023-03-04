@@ -29,7 +29,7 @@ public class BscScanBinanceApplication {
 
     public static String callFormBinance = "";
     public static String TAKER_TOKENS = "_";
-    public static int SLEEP_MINISECONDS = 10000;
+    public static int SLEEP_MINISECONDS = 8000;
     private static Hashtable<String, LocalTime> keys_dict = new Hashtable<String, LocalTime>();
     public static Hashtable<String, String> forex_naming_dict = new Hashtable<String, String>();
     public static String hostname = " ";
@@ -124,7 +124,8 @@ public class BscScanBinanceApplication {
 
                     try {
                         if (Utils.isBusinessTime_6h_to_17h()) {
-                            if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
+                            if (isReloadAfter(Utils.MINUTES_OF_15M, "RE_CHECK_FOREX") && !Utils.isWeekend()
+                                    && Utils.isAllowSendMsg()) {
                                 for (int index = 0; index < forex_size; index++) {
                                     sleepWhenExceptionTimeOut(binance_service);
 
@@ -230,15 +231,30 @@ public class BscScanBinanceApplication {
             wait(SLEEP_MINISECONDS);
         }
         // ----------------------------------------------
-        String init = "";
+
         String GECKOID = coin.getGeckoid();
         String SYMBOL = coin.getSymbol();
-        init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1D, GECKOID, SYMBOL);
-        wait(SLEEP_MINISECONDS);
-        init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4H, GECKOID, SYMBOL);
-        wait(SLEEP_MINISECONDS);
-        init = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1H, GECKOID, SYMBOL);
-        wait(SLEEP_MINISECONDS);
+        String trend_d = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1D, GECKOID, SYMBOL);
+        if (Utils.isNotBlank(trend_d)) {
+            wait(SLEEP_MINISECONDS);
+        }
+
+        String trend_h4 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4H, GECKOID, SYMBOL);
+        if (Utils.isNotBlank(trend_h4)) {
+            wait(SLEEP_MINISECONDS);
+        }
+
+        String trend_h1 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1H, GECKOID, SYMBOL);
+        if (Utils.isNotBlank(trend_h1)) {
+            wait(SLEEP_MINISECONDS);
+        }
+
+        String init = "";
+        init += "D:" + Utils.appendSpace(trend_d, 6);
+        init += "H4:" + Utils.appendSpace(trend_h4, 6);
+        init += "H1:" + Utils.appendSpace(trend_h1, 6);
+        System.out.println(Utils.appendSpace(SYMBOL, 10) + init);
+
         // ----------------------------------------------
         // if ((round_count > 0) && Utils.isWorkingTime()) {
         // if (isReloadAfter(Utils.MINUTES_OF_4H, "COIN_GECKO_" + SYMBOL)) {

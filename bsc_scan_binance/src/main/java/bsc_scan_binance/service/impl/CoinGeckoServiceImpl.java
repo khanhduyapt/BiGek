@@ -57,7 +57,7 @@ public class CoinGeckoServiceImpl implements CoinGeckoService {
         if ((BscScanBinanceApplication.app_flag == Utils.const_app_flag_all_coin)
                 || (BscScanBinanceApplication.app_flag == Utils.const_app_flag_all_and_msg)) {
 
-            return candidateCoinRepository.findAllByOrderByVolumnDivMarketcapDesc();
+            return candidateCoinRepository.findAllByOrderBySymbolAsc();
 
         } else {
 

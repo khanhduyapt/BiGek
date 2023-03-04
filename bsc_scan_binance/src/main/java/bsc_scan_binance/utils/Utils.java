@@ -143,12 +143,11 @@ public class Utils {
             "HK50", "BTCUSD", "SILVER", "OIL_CRUDE", "SP35", "DE40", "AU200");
     // MFF ko co: "EU50", "US100", "NATURALGAS",
 
-    public static final List<String> EPICS_FOREXS = Arrays.asList("AUDUSD", "AUDCHF", "CADJPY", "CHFJPY", "EURAUD",
-            "EURCAD", "EURCHF", "EURCZK", "EURDKK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNOK", "EURNZD",
-            "EURPLN", "EURRON", "EURSEK", "EURSGD", "EURTRY", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY",
-            "GBPNZD", "GBPTRY", "GBPUSD", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDCNH", "USDCZK", "USDDKK",
-            "USDHKD", "USDHUF", "USDILS", "USDJPY", "USDMXN", "USDNOK", "USDRON", "USDSEK", "USDSGD", "USDTRY",
-            "USDZAR");
+    public static final List<String> EPICS_FOREXS = Arrays.asList("AUDUSD", "CADJPY", "CHFJPY", "EURAUD", "EURCAD",
+            "EURCHF", "EURCZK", "EURDKK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNOK", "EURNZD", "EURPLN",
+            "EURRON", "EURSEK", "EURSGD", "EURTRY", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD",
+            "GBPTRY", "GBPUSD", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDCNH", "USDCZK", "USDDKK", "USDHKD",
+            "USDHUF", "USDILS", "USDJPY", "USDMXN", "USDNOK", "USDRON", "USDSEK", "USDSGD", "USDTRY", "USDZAR");
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
