@@ -828,7 +828,7 @@ public class Utils {
 
     public static String getForexLogFile() {
         String PATH = "crypto_forex_result/";
-        String fileName = getToday_YyyyMMdd() + "_Forex.log";
+        String fileName = getToday_YyyyMMdd() + "_Report.log";
 
         File directory = new File(PATH);
         if (!directory.exists()) {

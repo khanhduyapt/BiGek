@@ -2954,19 +2954,13 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        Orders entity_day = ordersRepository.findById(EPIC + "_" + Utils.CRYPTO_TIME_1D).orElse(null);
-        if (Objects.nonNull(entity_day)) {
-            pre_trend_day = Utils.getStringValue(entity_day.getTrend());
-            if (Utils.isBlank(pre_trend_day)) {
-                return "";
-            }
-        }
-
         boolean allow_short = true;
         if (!BTC_ETH_BNB.contains(symbol)) {
             allow_short = false;
         }
         if (binanceFuturesRepository.existsById(gecko_id)) {
+            // TODO: Debug
+            allow_short = true;
             type = Utils.appendSpace("Futures", 10);
             url = Utils.getCryptoLink_Future(symbol);
         } else {
@@ -2979,7 +2973,13 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (isScapH) {
-            if (Objects.isNull(entity_day) || Utils.isBlank(entity_day.getTrend())) {
+            Orders entity_day = ordersRepository.findById(EPIC + "_" + Utils.CRYPTO_TIME_1D).orElse(null);
+            if (Objects.isNull(entity_day)) {
+                return "";
+            }
+
+            pre_trend_day = Utils.getStringValue(entity_day.getTrend());
+            if (Utils.isBlank(pre_trend_day)) {
                 return "";
             }
 
@@ -3018,7 +3018,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             curr_trend_byMa = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
             if (Utils.isNotBlank(switch_trend)) {
-                note += "Ma3x6x8(ChangeTo:" + switch_trend + ")";
+                note += "(ChangeTo:" + switch_trend + ")";
             }
 
             List<BigDecimal> body = Utils.getOpenCloseCandle(list);
@@ -3060,8 +3060,11 @@ public class BinanceServiceImpl implements BinanceService {
             if (allow_short || (Objects.equals(Utils.TREND_LONG, switch_trend))) {
                 allow_write_log = true;
             }
-            if (Objects.equals(TIME, Utils.CRYPTO_TIME_1D)) {
-                // allow_write_log = true;
+            if (!Objects.equals(TIME, Utils.CRYPTO_TIME_1H)) {
+                // allow_write_log = false;
+            }
+            if (isScapH && Objects.equals(pre_trend_day, switch_trend)) {
+                allow_write_log = false;
             }
 
             if (allow_write_log) {
@@ -3070,9 +3073,13 @@ public class BinanceServiceImpl implements BinanceService {
                 sl += "   SL_Sell:" + Utils.appendLeft(Utils.removeLastZero(sl_shot), 8);
                 sl += ")  ";
                 String wdh4 = getPrepareOrderTrend_WDH4(EPIC, false);
-                String msg = type + wdh4 + char_name + Utils.appendSpace(symbol, 8) + Utils.getCurrentPrice(list) + sl;
+                String msg = type + wdh4 + char_name + Utils.appendSpace(symbol, 8);
+                msg += Utils.getCurrentPrice(list) + sl + Utils.appendSpace(note, 20);
+                Utils.logWritelnWithTime(Utils.appendSpace(Utils.appendSpace(msg, 35) + url, 185), true);
 
-                Utils.logWritelnWithTime(Utils.appendSpace(Utils.appendSpace(msg, 35) + url, 165) + note, true);
+                if (!Objects.equals(TIME, Utils.CRYPTO_TIME_1H)) {
+                    Utils.logWritelnDraft(msg);
+                }
             }
         }
 
@@ -3189,7 +3196,7 @@ public class BinanceServiceImpl implements BinanceService {
                 BigDecimal sl_shot = low_high.get(1).add(bread);
 
                 if (isScapH1M15 && Utils.isNotBlank(switch_trend)) {
-                    note += "Ma3x6x8(ChangeTo:" + switch_trend + ")";
+                    note += "(ChangeTo:" + switch_trend + ")";
                 }
 
                 Orders entity = new Orders(id, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
