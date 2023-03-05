@@ -2983,10 +2983,11 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        boolean allow_short = true;
-        if (!BTC_ETH_BNB.contains(symbol)) {
-            allow_short = false;
+        boolean allow_short = false;
+        if (BTC_ETH_BNB.contains(symbol)) {
+            allow_short = true;
         }
+
         if (Objects.equals(TIME, Utils.CRYPTO_TIME_1D)) {
             isD1 = true;
         }
@@ -3083,13 +3084,10 @@ public class BinanceServiceImpl implements BinanceService {
         // History
         boolean allow_save_history = false;
         if ((Utils.isNotBlank(switch_trend) || Utils.isNotBlank(note))) {
-            if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
-                allow_save_history = true;
-            }
             if (allow_short) {
                 allow_save_history = true;
             }
-            if (Objects.equals(Utils.TREND_LONG, trend_by_ma) && note.contains(Utils.TEXT_TREND_REVERSAL)) {
+            if (Objects.equals(Utils.TREND_LONG, trend_by_ma)) {
                 allow_save_history = true;
             }
         }
@@ -3107,11 +3105,11 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
                 sl += Utils.appendLeft(Utils.removeLastZero(en_long), 8);
                 sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(sl_long), 8);
-                sl += "   Qty:" + Utils.appendLeft(Utils.removeLastZero(qty_long), 5);
+                sl += "   Qty:" + Utils.appendLeft(Utils.removeLastZero(qty_long), 8);
             } else {
                 sl += Utils.appendLeft(Utils.removeLastZero(en_shot), 8);
                 sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(sl_shot), 8);
-                sl += "   Qty:" + Utils.appendLeft(Utils.removeLastZero(qty_short), 5);
+                sl += "   Qty:" + Utils.appendLeft(Utils.removeLastZero(qty_short), 8);
             }
 
             sl += ")  ";
