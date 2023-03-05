@@ -933,7 +933,7 @@ public class Utils {
     public static void writelnLogFooter_Forex() {
         try {
             FileWriter fw = new FileWriter(getForexLogFile(), true);
-            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("-", 216, "-") + "\n");
+            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("-", 175, "-") + "\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -943,7 +943,7 @@ public class Utils {
     public static void writelnLogFooter() {
         try {
             FileWriter fw = new FileWriter(getCryptoLogFile(), true);
-            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("", 216, "-") + "\n");
+            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("", 175, "-") + "\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());

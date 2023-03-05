@@ -212,26 +212,29 @@ public class BscScanBinanceApplication {
     private static void checkCrypto(BinanceService binance_service, CandidateCoin coin, String str_index) {
         if (isReloadAfter(Utils.MINUTES_OF_15M, "KILL_BTC")) {
             System.out.println(Utils.getTimeHHmm() + "checkKillLongShort BTC(15m)");
-            binance_service.sendMsgKillLongShort("bitcoin", "BTC");
-            wait(SLEEP_MINISECONDS);
+            if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("bitcoin", "BTC"))) {
+                wait(SLEEP_MINISECONDS);
+            }
         }
 
         if (isReloadAfter(Utils.MINUTES_OF_15M, "KILL_ETH")) {
             System.out.println(Utils.getTimeHHmm() + "checkKillLongShort ETH(15m)");
-            binance_service.sendMsgKillLongShort("ethereum", "ETH");
-            wait(SLEEP_MINISECONDS);
+            if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("ethereum", "ETH"))) {
+                wait(SLEEP_MINISECONDS);
+            }
         }
 
         if (isReloadAfter(Utils.MINUTES_OF_15M, "KILL_BNB")) {
             System.out.println(Utils.getTimeHHmm() + "checkKillLongShort BNB(15m)");
-            binance_service.sendMsgKillLongShort("binancecoin", "BNB");
-            wait(SLEEP_MINISECONDS);
+            if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("binancecoin", "BNB"))) {
+                wait(SLEEP_MINISECONDS);
+            }
         }
 
         // ----------------------------------------------
-        if (isReloadAfter(Utils.MINUTES_OF_1H, "RE_CHECK_CRYPTO")) {
-            String GECKOID = coin.getGeckoid();
-            String SYMBOL = coin.getSymbol();
+        String GECKOID = coin.getGeckoid();
+        String SYMBOL = coin.getSymbol();
+        if (isReloadAfter(Utils.MINUTES_OF_1H, "RE_CHECK_CRYPTO_" + SYMBOL + GECKOID)) {
             String trend_d = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1D, GECKOID, SYMBOL);
             if (Utils.isNotBlank(trend_d)) {
                 wait(SLEEP_MINISECONDS);
