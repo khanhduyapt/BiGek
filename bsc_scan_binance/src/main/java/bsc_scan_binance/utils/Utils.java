@@ -2801,6 +2801,26 @@ public class Utils {
         return "";
     }
 
+    public static String checkTrendReversal(List<BtcFutures> list) {
+        if (CollectionUtils.isEmpty(list)) {
+            return "";
+        }
+
+        BigDecimal ma3_1 = calcMA(list, 3, 1);
+        BigDecimal ma3_2 = calcMA(list, 3, 2);
+        BigDecimal ma3_3 = calcMA(list, 3, 3);
+
+        if ((ma3_1.compareTo(ma3_2) > 0) && (ma3_3.compareTo(ma3_2) > 0)) {
+            return TEXT_TREND_REVERSAL;
+        }
+
+        if ((ma3_1.compareTo(ma3_2) < 0) && (ma3_3.compareTo(ma3_2) < 0)) {
+            return TEXT_TREND_REVERSAL;
+        }
+
+        return "";
+    }
+
     public static String switchTrendByMa(List<BtcFutures> list, boolean isRequired368) {
         if (CollectionUtils.isEmpty(list)) {
             return "";
