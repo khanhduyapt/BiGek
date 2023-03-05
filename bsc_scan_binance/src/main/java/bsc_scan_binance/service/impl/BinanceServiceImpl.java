@@ -2967,6 +2967,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_by_ma = "";
         String trend_day = "";
         boolean isD1 = false;
+        boolean isAllowH1 = false;
         String EPIC = "CRYPTO_" + symbol;
         String orderId = EPIC + "_" + TIME;
 
@@ -3013,6 +3014,8 @@ public class BinanceServiceImpl implements BinanceService {
                 if (!Objects.equals(trend_day, entity_h4.getTrend())) {
                     return "";
                 }
+
+                isAllowH1 = true;
             }
         }
 
@@ -3121,20 +3124,13 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         boolean allow_send_msg = false;
-        if (Objects.equals(trend_day, switch_trend)) {
-            if (BTC_ETH_BNB.contains(symbol)) {
-                allow_send_msg = true;
-            }
-            if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
-                allow_send_msg = true;
-            }
+        if (isAllowH1 && allow_save_history) {
+            allow_send_msg = true;
         }
         if (allow_send_msg) {
-            // String temp_msg = "(" + switch_trend + ")" + char_name + symbol +
-            // Utils.getCurrentPrice(list);
-            // String EVENT_ID = EVENT_PUMP + symbol + char_name +
-            // Utils.getCurrentYyyyMmDd_HH_Blog4h();
-            // sendMsgPerHour(EVENT_ID, temp_msg, true);
+            String temp_msg = "(D_H4_H1)(" + switch_trend + ")" + char_name + symbol + Utils.getCurrentPrice(list);
+            String EVENT_ID = EVENT_PUMP + symbol + char_name + Utils.getCurrentYyyyMmDd_HH_Blog4h();
+            sendMsgPerHour(EVENT_ID, temp_msg, true);
         }
 
         return switch_trend;
