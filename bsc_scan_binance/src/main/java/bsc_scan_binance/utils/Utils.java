@@ -127,11 +127,40 @@ public class Utils {
     public static final long MINUTES_OF_1H = 30;
     public static final long MINUTES_OF_15M = 15;
 
-    public static final List<String> BINANCE_PRICE_BTC_LIST = Arrays.asList("OAX", "AST");
-    public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT");
+    public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
+            "GAS", "GFT", "GLM", "IDRT", "IQ", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
+            "WABI");
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
+
+    // Delete:
+    // "BIDR", "IDRT", "NEM", "PIVX", "QLC", "WABI"
+    public static final List<String> coins = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ACM", "ADA", "ADX", "AERGO",
+            "AGIX", "AGLD", "AKRO", "ALCX", "ALGO", "ALICE", "ALPACA", "ALPHA", "ALPINE", "AMB", "AMP", "ANKR", "ANT",
+            "APE", "API3", "APT", "AR", "ARDR", "ARK", "ARPA", "ASR", "ASTR", "ATA", "ATM", "ATOM", "AUCTION", "AUD",
+            "AUDIO", "AUTO", "AVA", "AVAX", "AXS", "BADGER", "BAKE", "BAL", "BAND", "BAR", "BAT", "BCH", "BEL", "BETA",
+            "BETH", "BICO", "BIFI", "BLZ", "BNB", "BNT", "BNX", "BOND", "BSW", "BTC", "BTS", "BTTC", "BURGER", "C98",
+            "CAKE", "CELO", "CELR", "CFX", "CHESS", "CHR", "CHZ", "CITY", "CKB", "CLV", "COCOS", "COMP", "COS", "COTI",
+            "CREAM", "CRV", "CTK", "CTSI", "CTXC", "CVC", "CVP", "CVX", "DAR", "DASH", "DATA", "DCR", "DEGO", "DENT",
+            "DEXE", "DF", "DGB", "DIA", "DOCK", "DODO", "DOGE", "DOT", "DREP", "DUSK", "DYDX", "EGLD", "ELF", "ENJ",
+            "ENS", "EOS", "EPX", "ERN", "ETC", "ETH", "EUR", "FARM", "FET", "FIDA", "FIL", "FIO", "FIRO", "FIS", "FLM",
+            "FLOW", "FLUX", "FOR", "FORTH", "FRONT", "FTM", "FTT", "FUN", "FXS", "GAL", "GALA", "GAS", "GBP", "GFT",
+            "GHST", "GLM", "GLMR", "GMT", "GMX", "GNS", "GRT", "GTC", "HARD", "HBAR", "HFT", "HIFI", "HIGH", "HIVE",
+            "HNT", "HOOK", "HOT", "ICP", "ICX", "IDEX", "ILV", "IMX", "INJ", "IOST", "IOTA", "IOTX", "IQ", "IRIS",
+            "JASMY", "JOE", "JST", "JUV", "KAVA", "KDA", "KEY", "KLAY", "KMD", "KNC", "KP3R", "KSM", "LAZIO", "LEVER",
+            "LINA", "LINK", "LIT", "LOKA", "LOOM", "LPT", "LQTY", "LRC", "LSK", "LTC", "LTO", "LUNA", "LUNC", "MAGIC",
+            "MANA", "MASK", "MATIC", "MBOX", "MC", "MDT", "MDX", "MINA", "MKR", "MLN", "MOB", "MOVR", "MTL", "MULTI",
+            "NEAR", "NEBL", "NEO", "NEXO", "NKN", "NMR", "NULS", "OCEAN", "OG", "OGN", "OMG", "ONE", "ONG", "ONT",
+            "OOKI", "OP", "ORN", "OSMO", "OXT", "PAXG", "PEOPLE", "PERL", "PERP", "PHA", "PHB", "PLA", "PNT", "POLS",
+            "POLYX", "POND", "PORTO", "POWR", "PROM", "PROS", "PSG", "PUNDIX", "PYR", "QI", "QKC", "QNT", "QTUM",
+            "QUICK", "RAD", "RARE", "RAY", "REEF", "REI", "REN", "REQ", "RIF", "RLC", "RNDR", "ROSE", "RPL", "RSR",
+            "RUNE", "RVN", "SAND", "SANTOS", "SC", "SCRT", "SFP", "SHIB", "SKL", "SLP", "SNM", "SNT", "SNX", "SOL",
+            "SPELL", "SRM", "SSV", "STEEM", "STG", "STMX", "STORJ", "STPT", "STRAX", "STX", "SUN", "SUPER", "SUSHI",
+            "SXP", "SYN", "SYS", "T", "TFUEL", "THETA", "TKO", "TLM", "TOMO", "TORN", "TRB", "TROY", "TRU", "TRX",
+            "TVK", "TWT", "UFT", "UMA", "UNFI", "UNI", "UTK", "VET", "VGX", "VIB", "VIDT", "VITE", "VOXEL", "VTHO",
+            "WAN", "WAVES", "WAXP", "WIN", "WING", "WNXM", "WOO", "WRX", "WTC", "XEC", "XLM", "XMR", "XNO", "XRP",
+            "XTZ", "XVG", "XVS", "YFI", "YFII", "YGG", "ZEC", "ZEN", "ZIL", "ZRX");
 
     public static final List<String> EPICS_SCAP = Arrays.asList("GOLD", "SILVER", "FR40", "US30", "US500", "UK100");
 
@@ -236,9 +265,7 @@ public class Utils {
 
     public static List<BtcFutures> loadData(String symbol, String TIME, int LIMIT_DATA) {
         String currency = "USDT";
-        if (BINANCE_PRICE_BTC_LIST.contains(symbol)) {
-            currency = "BTC";
-        } else if (BINANCE_PRICE_BUSD_LIST.contains(symbol)) {
+        if (BINANCE_PRICE_BUSD_LIST.contains(symbol)) {
             currency = "BUSD";
         }
 

@@ -45,7 +45,7 @@ public interface BinanceService {
 
     public String sendMsgKillLongShort(String gecko_id, String symbol);
 
-    public String initCryptoTrend(String TIME, String gecko_id, String symbol);
+    public String initCryptoTrend(String TIME, String symbol);
 
     public boolean hasConnectTimeOutException();
 

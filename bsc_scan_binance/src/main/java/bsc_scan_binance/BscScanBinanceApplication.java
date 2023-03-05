@@ -133,16 +133,15 @@ public class BscScanBinanceApplication {
                                     checkCapital(binance_service, EPIC);
                                 }
                             }
-                            // ---------------------------------------------------------
-                            CandidateCoin coin = token_list.get(index_crypto);
-                            String str_index = Utils.appendLeft(String.valueOf(index_crypto + 1), 3) + "/"
-                                    + Utils.appendLeft(String.valueOf(total), 3) + "   ";
+                        }
+                        // ---------------------------------------------------------
 
-                            checkCrypto(binance_service, coin, str_index);
+                        checkCrypto(binance_service);
 
-                            if (isReloadAfter((Utils.MINUTES_OF_1H), "CREATE_REPORT")) {
-                                binance_service.createReport();
-                            }
+                        // ---------------------------------------------------------
+
+                        if (isReloadAfter((Utils.MINUTES_OF_1H), "CREATE_REPORT")) {
+                            binance_service.createReport();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -209,7 +208,7 @@ public class BscScanBinanceApplication {
         }
     }
 
-    private static void checkCrypto(BinanceService binance_service, CandidateCoin coin, String str_index) {
+    private static void checkCrypto(BinanceService binance_service) {
         if (isReloadAfter(Utils.MINUTES_OF_15M, "KILL_BTC")) {
             System.out.println(Utils.getTimeHHmm() + "checkKillLongShort BTC(15m)");
             if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("bitcoin", "BTC"))) {
@@ -232,23 +231,38 @@ public class BscScanBinanceApplication {
         }
 
         // ----------------------------------------------
-        String GECKOID = coin.getGeckoid();
-        String SYMBOL = coin.getSymbol();
-        if (isReloadAfter(Utils.MINUTES_OF_1H, "RE_CHECK_CRYPTO_" + SYMBOL + GECKOID)) {
-            String trend_d = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1D, GECKOID, SYMBOL);
-            if (Utils.isNotBlank(trend_d)) {
-                wait(SLEEP_MINISECONDS);
-            }
+        int index_crypto = 0;
+        int total = Utils.coins.size();
+        for (String SYMBOL : Utils.coins) {
+            index_crypto += 1;
+            if (isReloadAfter(Utils.MINUTES_OF_4H, "RE_CHECK_CRYPTO_" + SYMBOL)) {
+                String trend_d = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1D, SYMBOL);
+                if (Utils.isNotBlank(trend_d)) {
+                    wait(SLEEP_MINISECONDS);
+                }
 
-            String trend_h4 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4H, GECKOID, SYMBOL);
-            if (Utils.isNotBlank(trend_h4)) {
-                wait(SLEEP_MINISECONDS);
-            }
+                String trend_h4 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4H, SYMBOL);
+                if (Utils.isNotBlank(trend_h4)) {
+                    wait(SLEEP_MINISECONDS);
+                }
 
-            String init = "";
-            init += "D:" + Utils.appendSpace(trend_d, 6);
-            init += "H4:" + Utils.appendSpace(trend_h4, 6);
-            System.out.println(Utils.getTimeHHmm() + str_index + Utils.appendSpace(SYMBOL, 10) + init);
+                String trend_h1 = "";
+                if ("_BTC_ETH_BNB_LTC_".contains(SYMBOL)) {
+                    trend_h1 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1H, SYMBOL);
+                    if (Utils.isNotBlank(trend_h1)) {
+                        wait(SLEEP_MINISECONDS);
+                    }
+                }
+
+                String init = "";
+                init += "D:" + Utils.appendSpace(trend_d, 6);
+                init += "H4:" + Utils.appendSpace(trend_h4, 6);
+                init += (Utils.isNotBlank(trend_h1) ? "H1:" + Utils.appendSpace(trend_h1, 6) : "");
+
+                String str_index = Utils.appendLeft(String.valueOf(index_crypto), 3) + "/"
+                        + Utils.appendLeft(String.valueOf(total), 3) + "   ";
+                System.out.println(Utils.getTimeHHmm() + str_index + Utils.appendSpace(SYMBOL, 10) + init);
+            }
 
             // ----------------------------------------------
             // if ((round_count > 0) && Utils.isWorkingTime()) {
