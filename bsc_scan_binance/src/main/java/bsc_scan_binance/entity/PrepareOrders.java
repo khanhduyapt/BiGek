@@ -18,15 +18,14 @@ import lombok.NoArgsConstructor;
 public class PrepareOrders {
     @Id
     @Column(name = "gecko_id")
-    private String geckoid;
+    private String id;
 
     @Column(name = "symbol")
-    private String symbol;
+    private String orders_id;
 
     @Column(name = "name")
-    private String name;
+    private String note;
 
     @Column(name = "data_type")
     private String dataType;
-
 }

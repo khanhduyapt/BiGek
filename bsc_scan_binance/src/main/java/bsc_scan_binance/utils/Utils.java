@@ -79,12 +79,6 @@ public class Utils {
     public static final int const_app_flag_all_coin = 4;
     public static final int const_app_flag_all_and_msg = 5;
 
-    public static final String PREPARE_ORDERS_DATA_TYPE_BOT = "1";
-    public static final String PREPARE_ORDERS_DATA_TYPE_BINANCE_VOL_UP = "2";
-    public static final String PREPARE_ORDERS_DATA_TYPE_GECKO_VOL_UP = "3";
-    public static final String PREPARE_ORDERS_DATA_TYPE_MIN14D = "4";
-    public static final String PREPARE_ORDERS_DATA_TYPE_MAX14D = "5";
-
     public static final String TREND_LONG = "BUY";
     public static final String TREND_SHORT = "SELL";
 
@@ -131,8 +125,8 @@ public class Utils {
     public static final long MINUTES_OF_1H = 30;
     public static final long MINUTES_OF_15M = 15;
 
-    public static final List<String> BINANCE_PRICE_AT_BTC_LIST = Arrays.asList("OAX", "AST");
-    public static final List<String> BINANCE_PRICE_AT_BUSD_LIST = Arrays.asList("");
+    public static final List<String> BINANCE_PRICE_BTC_LIST = Arrays.asList("OAX", "AST");
+    public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT");
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
@@ -143,12 +137,12 @@ public class Utils {
             "HK50", "BTCUSD", "SILVER", "OIL_CRUDE", "SP35", "DE40", "AU200");
     // MFF ko co: "EU50", "US100", "NATURALGAS",
 
-    // bad: "EURDKK",
+    // bad: "EURDKK", USDTRY, "USDHKD", "EURRON",
     public static final List<String> EPICS_FOREXS = Arrays.asList("AUDUSD", "CADJPY", "CHFJPY", "EURAUD", "EURCAD",
-            "EURCHF", "EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNOK", "EURNZD", "EURPLN", "EURRON",
-            "EURSEK", "EURSGD", "EURTRY", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPTRY",
-            "GBPUSD", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDCNH", "USDCZK", "USDDKK", "USDHKD", "USDHUF",
-            "USDILS", "USDJPY", "USDMXN", "USDNOK", "USDRON", "USDSEK", "USDSGD", "USDTRY", "USDZAR");
+            "EURCHF", "EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNOK", "EURNZD", "EURPLN", "EURSEK",
+            "EURSGD", "EURTRY", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPTRY", "GBPUSD",
+            "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDCNH", "USDCZK", "USDDKK", "USDHUF", "USDILS", "USDJPY",
+            "USDMXN", "USDNOK", "USDRON", "USDSEK", "USDSGD", "USDZAR");
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
@@ -240,9 +234,9 @@ public class Utils {
 
     public static List<BtcFutures> loadData(String symbol, String TIME, int LIMIT_DATA) {
         String currency = "USDT";
-        if (BINANCE_PRICE_AT_BTC_LIST.contains(symbol)) {
+        if (BINANCE_PRICE_BTC_LIST.contains(symbol)) {
             currency = "BTC";
-        } else if (BINANCE_PRICE_AT_BUSD_LIST.contains(symbol)) {
+        } else if (BINANCE_PRICE_BUSD_LIST.contains(symbol)) {
             currency = "BUSD";
         }
 
@@ -605,32 +599,6 @@ public class Utils {
                 + Utils.toPercent(hight_price, curr_price, 1) + "%)" + "$";
     }
 
-    public static String getDataType(PrepareOrders entity) {
-        String result = "";
-
-        switch (getStringValue(entity.getDataType())) {
-        case PREPARE_ORDERS_DATA_TYPE_BOT:
-            result = "(Bot)";
-            break;
-        case PREPARE_ORDERS_DATA_TYPE_BINANCE_VOL_UP:
-            result = "(BinanceVol)";
-            break;
-        case PREPARE_ORDERS_DATA_TYPE_GECKO_VOL_UP:
-            result = "(GeckoVol)";
-            break;
-        case PREPARE_ORDERS_DATA_TYPE_MIN14D:
-            result = "(Min14d)";
-            break;
-        case PREPARE_ORDERS_DATA_TYPE_MAX14D:
-            result = "(Max14d)";
-            break;
-        default:
-            break;
-        }
-
-        return result;
-    }
-
     public static boolean isUptrend(List<BtcFutures> list) {
         BtcFutures item00 = list.get(0);
         BtcFutures item99 = list.get(list.size() - 1);
@@ -737,6 +705,33 @@ public class Utils {
         return result;
     }
 
+    public static String appendSpace(String value, int length, String charactor) {
+        String result = value;
+        int len = value.length();
+        if (len < length) {
+            for (int i = len; i < length; i++) {
+                result += charactor;
+            }
+        }
+        return result;
+    }
+
+    public static String appendLeft(String value, int length, String charactor) {
+        int len = value.length();
+        if (len < length) {
+            String result = value;
+            len = result.length();
+
+            for (int i = len; i < length; i++) {
+                result = charactor + result;
+            }
+
+            return result;
+        }
+
+        return value;
+    }
+
     public static String appendLeft(String value, int length) {
         String result = value;
         int len = value.length();
@@ -805,15 +800,15 @@ public class Utils {
     }
 
     public static String getCryptoLink_Spot(String symbol) {
-        return " https://vn.tradingview.com/chart/?symbol=BINANCE%3A" + symbol + "USDT";
+        return " https://vn.tradingview.com/chart/?symbol=BINANCE%3A" + symbol + "USDT" + " ";
     }
 
     public static String getCryptoLink_Future(String symbol) {
-        return " https://vn.tradingview.com/chart/?symbol=BINANCE%3A" + symbol + "USDTPERP";
+        return " https://vn.tradingview.com/chart/?symbol=BINANCE%3A" + symbol + "USDTPERP" + " ";
     }
 
     public static String getCapitalLink(String epic) {
-        return " https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + epic;
+        return " https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + epic + " ";
     }
 
     public static String getDraftLogFile() {
@@ -936,8 +931,7 @@ public class Utils {
     public static void writelnLogFooter_Forex() {
         try {
             FileWriter fw = new FileWriter(getForexLogFile(), true);
-            fw.write(BscScanBinanceApplication.hostname
-                    + "-------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("-", 217) + "\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -947,8 +941,7 @@ public class Utils {
     public static void writelnLogFooter() {
         try {
             FileWriter fw = new FileWriter(getCryptoLogFile(), true);
-            fw.write(BscScanBinanceApplication.hostname
-                    + "------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("", 217, "-") + "\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -2806,7 +2799,7 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrendByMa(List<BtcFutures> list, boolean isRequest368) {
+    public static String switchTrendByMa(List<BtcFutures> list, boolean isRequired368) {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
@@ -2864,7 +2857,7 @@ public class Utils {
 
         String result = "";
         if (trend.contains(Utils.TREND_LONG)) {
-            if (isRequest368) {
+            if (isRequired368) {
                 if ((ma3_1.compareTo(ma4_1) >= 0) && (ma4_1.compareTo(ma5_1) >= 0) && (ma5_1.compareTo(ma6_1) >= 0)
                         && (ma6_1.compareTo(ma8_1) >= 0)) {
                     result = Utils.TREND_LONG;
@@ -2875,7 +2868,7 @@ public class Utils {
         }
 
         if (trend.contains(Utils.TREND_SHORT)) {
-            if (isRequest368) {
+            if (isRequired368) {
                 if ((ma3_1.compareTo(ma4_1) <= 0) && (ma4_1.compareTo(ma5_1) <= 0) && (ma5_1.compareTo(ma6_1) <= 0)
                         && (ma6_1.compareTo(ma8_1) <= 0)) {
                     result = Utils.TREND_SHORT;

@@ -126,18 +126,27 @@ public class BscScanBinanceApplication {
                             if (isReloadAfter(Utils.MINUTES_OF_1H, "RE_CHECK_FOREX") && !Utils.isWeekend()
                                     && Utils.isAllowSendMsg()) {
 
-                                Utils.initCapital();
-                                for (int index = 0; index < forex_size; index++) {
-                                    sleepWhenExceptionTimeOut(binance_service);
-
-                                    String EPIC = capital_list.get(index);
-                                    checkCapital(binance_service, EPIC);
-                                }
-                                if (isReloadAfter((Utils.MINUTES_OF_1H), "INIT_FOREX_W_D_H")) {
-                                    binance_service.createReport();
-                                }
+//                                Utils.initCapital();
+//                                for (int index = 0; index < forex_size; index++) {
+//                                    sleepWhenExceptionTimeOut(binance_service);
+//
+//                                    String EPIC = capital_list.get(index);
+//                                    checkCapital(binance_service, EPIC);
+//                                }
+//                                if (isReloadAfter((Utils.MINUTES_OF_1H), "INIT_FOREX_W_D_H")) {
+//                                    binance_service.createReport();
+//                                }
                             }
+                          Utils.initCapital();
+                          for (int index = 0; index < forex_size; index++) {
+                              sleepWhenExceptionTimeOut(binance_service);
 
+                              String EPIC = capital_list.get(index);
+                              checkCapital(binance_service, EPIC);
+                          }
+                          if (isReloadAfter((Utils.MINUTES_OF_1H), "INIT_FOREX_W_D_H")) {
+                              binance_service.createReport();
+                          }
                             // ---------------------------------------------------------
                             CandidateCoin coin = token_list.get(index_crypto);
                             String str_index = Utils.appendLeft(String.valueOf(index_crypto + 1), 3) + "/"
@@ -228,38 +237,40 @@ public class BscScanBinanceApplication {
             binance_service.sendMsgKillLongShort("binancecoin", "BNB");
             wait(SLEEP_MINISECONDS);
         }
-        // ----------------------------------------------
-
-        String GECKOID = coin.getGeckoid();
-        String SYMBOL = coin.getSymbol();
-        String trend_d = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1D, GECKOID, SYMBOL);
-        if (Utils.isNotBlank(trend_d)) {
-            wait(SLEEP_MINISECONDS);
-        }
-
-        String trend_h4 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4H, GECKOID, SYMBOL);
-        if (Utils.isNotBlank(trend_h4)) {
-            wait(SLEEP_MINISECONDS);
-        }
-
-        String init = "";
-        init += "D:" + Utils.appendSpace(trend_d, 6);
-        init += "H4:" + Utils.appendSpace(trend_h4, 6);
-        System.out.println(Utils.getTimeHHmm() + str_index + Utils.appendSpace(SYMBOL, 10) + init);
 
         // ----------------------------------------------
-        // if ((round_count > 0) && Utils.isWorkingTime()) {
-        // if (isReloadAfter(Utils.MINUTES_OF_4H, "COIN_GECKO_" + SYMBOL)) {
-        // gecko_service.loadData(GECKOID);
-        // }
-        //
-        // if (isReloadAfter(Utils.MINUTES_OF_4H, "INIT_CRYPTO_" + GECKOID)) {
-        // binance_service.initCrypto(GECKOID, SYMBOL);
-        // }
-        //
-        // wait(SLEEP_MINISECONDS);
-        // }
-        //
+        if (isReloadAfter(Utils.MINUTES_OF_1H, "RE_CHECK_CRYPTO")) {
+            String GECKOID = coin.getGeckoid();
+            String SYMBOL = coin.getSymbol();
+            String trend_d = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1D, GECKOID, SYMBOL);
+            if (Utils.isNotBlank(trend_d)) {
+                wait(SLEEP_MINISECONDS);
+            }
+
+            String trend_h4 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4H, GECKOID, SYMBOL);
+            if (Utils.isNotBlank(trend_h4)) {
+                wait(SLEEP_MINISECONDS);
+            }
+
+            String init = "";
+            init += "D:" + Utils.appendSpace(trend_d, 6);
+            init += "H4:" + Utils.appendSpace(trend_h4, 6);
+            System.out.println(Utils.getTimeHHmm() + str_index + Utils.appendSpace(SYMBOL, 10) + init);
+
+            // ----------------------------------------------
+            // if ((round_count > 0) && Utils.isWorkingTime()) {
+            // if (isReloadAfter(Utils.MINUTES_OF_4H, "COIN_GECKO_" + SYMBOL)) {
+            // gecko_service.loadData(GECKOID);
+            // }
+            //
+            // if (isReloadAfter(Utils.MINUTES_OF_4H, "INIT_CRYPTO_" + GECKOID)) {
+            // binance_service.initCrypto(GECKOID, SYMBOL);
+            // }
+            //
+            // wait(SLEEP_MINISECONDS);
+            // }
+            //
+        }
     }
 
     public static boolean isReloadAfter(long minutes, String geckoid_or_epic) {
