@@ -3098,52 +3098,43 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // ---------------------------------------------------------------
-        if (Utils.isNotBlank(switch_trend)) {
-            String char_name = Utils.getChartName(list);
-
-            boolean allow_send_msg = false;
-            if (Objects.equals(trend_day, switch_trend)) {
-                if (BTC_ETH_BNB.contains(symbol)) {
-                    allow_send_msg = true;
-                }
-                if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
-                    allow_send_msg = true;
-                }
-            }
-            if (allow_send_msg) {
-                // String temp_msg = "(" + switch_trend + ")" + char_name + symbol +
-                // Utils.getCurrentPrice(list);
-                // String EVENT_ID = EVENT_PUMP + symbol + char_name +
-                // Utils.getCurrentYyyyMmDd_HH_Blog4h();
-                // sendMsgPerHour(EVENT_ID, temp_msg, true);
-            }
-            // -----------------------
-            boolean allow_write_log = false;
-            if (Objects.equals(trend_day, switch_trend)
-                    && (allow_short || Objects.equals(Utils.TREND_LONG, switch_trend))) {
-                allow_write_log = true;
+        String char_name = Utils.getChartName(list);
+        if (allow_save_history) {
+            String sl = " (Entry:";
+            if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
+                sl += Utils.appendLeft(Utils.removeLastZero(en_long), 8);
+                sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(sl_long), 8);
+                sl += "   Qty:" + Utils.appendLeft(Utils.removeLastZero(qty_long), 5);
+            } else {
+                sl += Utils.appendLeft(Utils.removeLastZero(en_shot), 8);
+                sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(sl_shot), 8);
+                sl += "   Qty:" + Utils.appendLeft(Utils.removeLastZero(qty_short), 5);
             }
 
-            if (allow_write_log) {
-                String sl = " (Entry:";
-                if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
-                    sl += Utils.appendLeft(Utils.removeLastZero(en_long), 8);
-                    sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(sl_long), 8);
-                    sl += "   Qty:" + Utils.appendLeft(Utils.removeLastZero(qty_long), 5);
-                } else {
-                    sl += Utils.appendLeft(Utils.removeLastZero(en_shot), 8);
-                    sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(sl_shot), 8);
-                    sl += "   Qty:" + Utils.appendLeft(Utils.removeLastZero(qty_short), 5);
-                }
+            sl += ")  ";
+            String wdh4 = getPrepareOrderTrend_WDH4(EPIC, false);
+            String tmp_msg = wdh4 + char_name + Utils.appendSpace(note, 20) + Utils.appendSpace(symbol, 8);
+            tmp_msg += Utils.getCurrentPrice(list) + sl;
+            Utils.logWritelnWithTime(Utils.appendSpace(Utils.appendSpace(tmp_msg, 35) + url, 200), true);
 
-                sl += ")  ";
-                String wdh4 = getPrepareOrderTrend_WDH4(EPIC, false);
-                String tmp_msg = wdh4 + char_name + Utils.appendSpace(note, 20) + Utils.appendSpace(symbol, 8);
-                tmp_msg += Utils.getCurrentPrice(list) + sl;
-                Utils.logWritelnWithTime(Utils.appendSpace(Utils.appendSpace(tmp_msg, 35) + url, 200), true);
+            Utils.logWritelnDraft(tmp_msg);
+        }
 
-                Utils.logWritelnDraft(tmp_msg);
+        boolean allow_send_msg = false;
+        if (Objects.equals(trend_day, switch_trend)) {
+            if (BTC_ETH_BNB.contains(symbol)) {
+                allow_send_msg = true;
             }
+            if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
+                allow_send_msg = true;
+            }
+        }
+        if (allow_send_msg) {
+            // String temp_msg = "(" + switch_trend + ")" + char_name + symbol +
+            // Utils.getCurrentPrice(list);
+            // String EVENT_ID = EVENT_PUMP + symbol + char_name +
+            // Utils.getCurrentYyyyMmDd_HH_Blog4h();
+            // sendMsgPerHour(EVENT_ID, temp_msg, true);
         }
 
         return switch_trend;
