@@ -89,6 +89,8 @@ public class Utils {
     public static final String TEXT_MIN_DAY_AREA = "(Min_Day_Area_Wait_buy. )";
     public static final String TEXT_MAX_DAY_AREA = "(Max_DAY_Area_Wait_sell.)";
 
+    public static final String TEXT_TREND_REVERSAL = "(***REVERSAL***)";
+
     public static final String TEXT_CONNECTION_TIMED_OUT = "CONNECTION_TIMED_OUT";
     public static final String CONNECTION_TIMED_OUT_ID = "CONNECTION_TIMED_OUT_MINUTE_15";
     public static final String THE_TREND_NOT_REVERSED_YET = "The trend not reversed yet.";
@@ -120,8 +122,8 @@ public class Utils {
     public static final String CRYPTO_TIME_1D = "1d";
     public static final String CRYPTO_TIME_1w = "1w";
 
-    public static final long MINUTES_OF_D = 1440;
-    public static final long MINUTES_OF_4H = 240;
+    public static final long MINUTES_OF_D = 720;
+    public static final long MINUTES_OF_4H = 120;
     public static final long MINUTES_OF_1H = 30;
     public static final long MINUTES_OF_15M = 15;
 
@@ -931,7 +933,7 @@ public class Utils {
     public static void writelnLogFooter_Forex() {
         try {
             FileWriter fw = new FileWriter(getForexLogFile(), true);
-            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("-", 217) + "\n");
+            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("-", 216, "-") + "\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -941,7 +943,7 @@ public class Utils {
     public static void writelnLogFooter() {
         try {
             FileWriter fw = new FileWriter(getCryptoLogFile(), true);
-            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("", 217, "-") + "\n");
+            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("", 216, "-") + "\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());

@@ -125,34 +125,24 @@ public class BscScanBinanceApplication {
                         if (Utils.isBusinessTime_6h_to_17h()) {
                             if (isReloadAfter(Utils.MINUTES_OF_1H, "RE_CHECK_FOREX") && !Utils.isWeekend()
                                     && Utils.isAllowSendMsg()) {
+                                Utils.initCapital();
+                                for (int index = 0; index < forex_size; index++) {
+                                    sleepWhenExceptionTimeOut(binance_service);
 
-//                                Utils.initCapital();
-//                                for (int index = 0; index < forex_size; index++) {
-//                                    sleepWhenExceptionTimeOut(binance_service);
-//
-//                                    String EPIC = capital_list.get(index);
-//                                    checkCapital(binance_service, EPIC);
-//                                }
-//                                if (isReloadAfter((Utils.MINUTES_OF_1H), "INIT_FOREX_W_D_H")) {
-//                                    binance_service.createReport();
-//                                }
+                                    String EPIC = capital_list.get(index);
+                                    checkCapital(binance_service, EPIC);
+                                }
                             }
-                          Utils.initCapital();
-                          for (int index = 0; index < forex_size; index++) {
-                              sleepWhenExceptionTimeOut(binance_service);
-
-                              String EPIC = capital_list.get(index);
-                              checkCapital(binance_service, EPIC);
-                          }
-                          if (isReloadAfter((Utils.MINUTES_OF_1H), "INIT_FOREX_W_D_H")) {
-                              binance_service.createReport();
-                          }
                             // ---------------------------------------------------------
                             CandidateCoin coin = token_list.get(index_crypto);
                             String str_index = Utils.appendLeft(String.valueOf(index_crypto + 1), 3) + "/"
                                     + Utils.appendLeft(String.valueOf(total), 3) + "   ";
 
                             checkCrypto(binance_service, coin, str_index);
+
+                            if (isReloadAfter((Utils.MINUTES_OF_1H), "CREATE_REPORT")) {
+                                binance_service.createReport();
+                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

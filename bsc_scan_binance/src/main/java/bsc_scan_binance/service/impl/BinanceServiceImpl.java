@@ -2797,6 +2797,20 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     @Override
+    @Transactional
+    public void clearTrash() {
+        List<FundingHistory> list = fundingHistoryRepository.clearTrash();
+        if (!CollectionUtils.isEmpty(list)) {
+            fundingHistoryRepository.deleteAll(list);
+        }
+
+        List<Orders> orders = ordersRepository.clearTrash();
+        if (!CollectionUtils.isEmpty(orders)) {
+            ordersRepository.deleteAll(orders);
+        }
+    }
+
+    @Override
     public boolean isFutureCoin(String gecko_id) {
         if (binanceFuturesRepository.existsById(gecko_id)) {
             return true;
@@ -3228,17 +3242,17 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String note = "";
-            String orderId = EPIC + "_" + CAPITAL_TIME_XXX;
             if (Utils.isNotBlank(switch_trend)) {
                 note += "(ChangeTo:" + switch_trend + ")";
             }
             String pre_trend = "";
+            String orderId = EPIC + "_" + CAPITAL_TIME_XXX;
             Orders pre_entity = ordersRepository.findById(orderId).orElse(null);
             if (Objects.nonNull(pre_entity)) {
                 pre_trend = Utils.getStringValue(pre_entity.getTrend());
             }
             if (Utils.isNotBlank(pre_trend) && !Objects.equals(trend, pre_trend)) {
-                note = "(***REVERSAL***)" + note.trim();
+                note = Utils.TEXT_TREND_REVERSAL + note.trim();
             }
 
             if (allow_update) {
@@ -3257,7 +3271,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // History
-            if (Utils.isNotBlank(switch_trend)) {
+            if ((isD1 || isH4) && (Utils.isNotBlank(switch_trend) || (isD1 && Utils.isNotBlank(note)))) {
                 String his_id = Utils.getYYYYMMDD(0) + "_" + orderId;
                 String dataType = (Objects.equals(Utils.TREND_LONG, switch_trend) ? "L" : "S");
                 PrepareOrders his = new PrepareOrders(his_id, orderId, note, dataType);
@@ -3345,16 +3359,32 @@ public class BinanceServiceImpl implements BinanceService {
 
         // --------------------------------------------------------------------------
         List<Orders> orders_list = new ArrayList<Orders>();
-        orders_list.addAll(ordersRepository.getTrend_30mList());
-        orders_list.add(null);
+        List<Orders> today_list = ordersRepository.getTrend_Reversal_Today();
+        List<Orders> h4_today_list = ordersRepository.getTrend_Reversal_H4today();
+        if (!CollectionUtils.isEmpty(today_list)) {
+            orders_list.addAll(today_list);
+            orders_list.add(null);
+            orders_list.add(null);
+            orders_list.add(null);
+        }
+        if (!CollectionUtils.isEmpty(h4_today_list)) {
+            orders_list.addAll(h4_today_list);
+            orders_list.add(null);
+            orders_list.add(null);
+            orders_list.add(null);
+        }
         orders_list.addAll(ordersRepository.getTrend_DayEqualH1List());
         orders_list.add(null);
         orders_list.addAll(ordersRepository.getTrend_DayNotEqualH1List());
-        orders_list.add(null);
-        orders_list.addAll(ordersRepository.getTrend_H1_Others());
 
         if (!CollectionUtils.isEmpty(orders_list)) {
             Utils.logWritelnReport("");
+
+            if (!CollectionUtils.isEmpty(today_list)) {
+                Utils.logWritelnReport(
+                        Utils.appendSpace(Utils.appendLeft(Utils.TEXT_TREND_REVERSAL + " (D) ", 50, "="), 79, "="));
+            }
+
             for (Orders entity : orders_list) {
                 if (Objects.isNull(entity)) {
                     Utils.logWritelnReport("");
@@ -3383,7 +3413,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Orders dto_h1 = null;
                 boolean isScap15m = false;
                 if (entity.getId().contains(Utils.CAPITAL_TIME_DAY)) {
-                    chart = "(D5: ";
+                    chart = "(D_: ";
                     if (Utils.isNotBlank(entity.getNote())) {
                         note += " Check_Day ";
                     }
@@ -3392,7 +3422,6 @@ public class BinanceServiceImpl implements BinanceService {
 
                 } else if (entity.getId().contains(Utils.CAPITAL_TIME_HOUR)) {
                     chart = "(H1: ";
-
                 } else if (entity.getId().contains(Utils.CAPITAL_TIME_MINUTE_15)) {
                     chart = "(15: ";
                     isScap15m = true;
@@ -3468,20 +3497,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
         Utils.writelnLogFooter_Forex();
-    }
-
-    @Override
-    @Transactional
-    public void clearTrash() {
-        List<FundingHistory> list = fundingHistoryRepository.clearTrash();
-        if (!CollectionUtils.isEmpty(list)) {
-            fundingHistoryRepository.deleteAll(list);
-        }
-
-        List<Orders> orders = ordersRepository.clearTrash();
-        if (!CollectionUtils.isEmpty(orders)) {
-            ordersRepository.deleteAll(orders);
-        }
     }
 
 }
