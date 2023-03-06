@@ -56,6 +56,10 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
             + " ORDER BY gecko_id ", nativeQuery = true)
     public List<Orders> getH4List();
 
+    @Query(value = " SELECT * FROM orders mst WHERE (COALESCE(mst.note, '') <> '') and (mst.gecko_id like '%_HOUR') "
+            + " ORDER BY gecko_id ", nativeQuery = true)
+    public List<Orders> getH1List();
+
     @Query(value = "  SELECT * FROM orders det  " +
             "  WHERE (det.gecko_id like 'CRYPTO_%_4h') AND (COALESCE(det.note, '') <> '')  " +
             "   AND det.trend = (SELECT trend FROM orders mst WHERE mst.gecko_id = REPLACE (det.gecko_id, '_4h', '_1d')) "
