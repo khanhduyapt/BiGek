@@ -2656,14 +2656,16 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (isForex) {
             trend_d = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_DAY);
-            trend_h = getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+            trend_h = "";//getPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+
+            trend_d_h4 = "   D:" + Utils.appendSpace(trend_d, 8);
         } else {
             trend_d = getPrepareOrderTrend(EPIC, Utils.CRYPTO_TIME_1D);
             trend_h = getPrepareOrderTrend(EPIC, Utils.CRYPTO_TIME_4H);
+            trend_d_h4 = Utils
+                    .appendSpace("(D:" + Utils.appendSpace(trend_d, 4) + "  H4:" + Utils.appendSpace(trend_h, 4) + ")",
+                            20);
         }
-
-        trend_d_h4 = Utils
-                .appendSpace("(D:" + Utils.appendSpace(trend_d, 4) + "  H4:" + Utils.appendSpace(trend_h, 4) + ")", 20);
 
         return trend_d_h4.replace(Utils.TREND_LONG, "BUY").replace(Utils.TREND_SHORT, "SELL");
     }
@@ -2963,6 +2965,12 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initCryptoTrend(String TIME, String symbol) {
+        //TODO: check Forex first!
+        //boolean exit = true;
+        //if (exit) {
+        //    return "";
+        //}
+
         String url = Utils.getCryptoLink_Spot(symbol);
         String trend_by_ma = "";
         String trend_day = "";
@@ -3015,6 +3023,9 @@ public class BinanceServiceImpl implements BinanceService {
                 BigDecimal h4_price = entity_h4.getCurrent_price();
                 if (h4_price.compareTo(entity_day.getStr_body_price()) < 0) {
                     isAllowH1 = true;// Utils.TEXT_MIN_DAY_AREA;
+
+                } else if (allow_short && h4_price.compareTo(entity_day.getEnd_body_price()) > 0) {
+                    isAllowH1 = true;// Utils.TEXT_MAX_DAY_AREA;
                 } else if (!Objects.equals(trend_day, entity_h4.getTrend())) {
                     return "";
                 }
@@ -3308,13 +3319,11 @@ public class BinanceServiceImpl implements BinanceService {
                 // ----------------------------------------------------
 
                 Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-                Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
-                if (Objects.nonNull(dto_h1) && Objects.nonNull(dto_h4)) {
+                if (Objects.nonNull(dto_h4)) {
                     BigDecimal sl_long = Utils.getBigDecimal(dto_h4.getLow_price());
                     BigDecimal sl_shot = Utils.getBigDecimal(dto_h4.getHigh_price());
-
-                    BigDecimal tp_long = Utils.getBigDecimal(dto_h1.getEnd_body_price());
-                    BigDecimal tp_shot = Utils.getBigDecimal(dto_h1.getStr_body_price());
+                    BigDecimal tp_long = Utils.getBigDecimal(dto_h4.getEnd_body_price());
+                    BigDecimal tp_shot = Utils.getBigDecimal(dto_h4.getStr_body_price());
 
                     List<BigDecimal> body = Utils.getOpenCloseCandle(list);
 
@@ -3397,6 +3406,7 @@ public class BinanceServiceImpl implements BinanceService {
         orders_list.addAll(ordersRepository.getTrend_DayEqualH1List());
         orders_list.add(null);
         orders_list.addAll(ordersRepository.getTrend_DayNotEqualH1List());
+
         if (!CollectionUtils.isEmpty(orders_list)) {
             Utils.logWritelnReport("");
 
@@ -3488,7 +3498,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String log_h1 = "";
                     if (Objects.nonNull(dto_h1)) {
-                        String buffer_h1 = "           " + Utils.appendSpace(EPIC, 15) + "  H1: "
+                        String buffer_h1 = "           " + Utils.appendSpace(EPIC, 20) + "  H1: "
                                 + Utils.appendSpace(dto_h1.getTrend(), 7)
                                 + Utils.calc_BUF_LO_HI_BUF_Forex(false, buf_trend, EPIC, dto_h1.getStr_body_price(),
                                         dto_h1.getEnd_body_price(), dto_h4.getLow_price(), dto_h4.getHigh_price(),
@@ -3504,11 +3514,11 @@ public class BinanceServiceImpl implements BinanceService {
                                 && Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
 
                             msg_forex += EPIC + ",";
-                            count_h1 += 1;
+
                         }
                     }
 
-                    String buffer_h4 = "           " + Utils.appendSpace(EPIC, 15) + "  H4: "
+                    String buffer_h4 = "           " + Utils.appendSpace(EPIC, 20) + "  H4: "
                             + Utils.appendSpace(dto_h4.getTrend(), 7)
                             + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_h4.getTrend(), EPIC, dto_h4.getStr_body_price(),
                                     dto_h4.getEnd_body_price(), dto_h4.getLow_price(), dto_h4.getHigh_price(),
@@ -3524,6 +3534,7 @@ public class BinanceServiceImpl implements BinanceService {
                     if (isD1) {
                         log += log_h4;
                     } else if (isH4) {
+                        count_h1 += 1;
                         log += log_h4;
                     } else {
                         log += log_h1;
@@ -3613,4 +3624,5 @@ public class BinanceServiceImpl implements BinanceService {
 
         }
     }
+
 }
