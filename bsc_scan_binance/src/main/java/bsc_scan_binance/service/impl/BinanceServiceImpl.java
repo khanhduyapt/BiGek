@@ -3147,6 +3147,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             int lengh = 5;
             String trend_day = "";
+            String day_range = "";
             boolean isD1 = false;
             boolean isH1 = false;
             boolean isH4 = false;
@@ -3172,12 +3173,25 @@ public class BinanceServiceImpl implements BinanceService {
                     return "";
                 }
 
-                if (!Objects.equals(entity_day.getTrend(), entity_h4.getTrend())) {
-                    return "";
+                boolean allow_h1 = false;
+                BigDecimal h4_cur_price = entity_h4.getCurrent_price();
+                if (h4_cur_price.compareTo(entity_day.getStr_body_price()) < 0) {
+                    allow_h1 = true;
+                    day_range = Utils.TEXT_MIN_DAY_AREA;
+                }
+                if (h4_cur_price.compareTo(entity_day.getEnd_body_price()) > 0) {
+                    allow_h1 = true;
+                    day_range = Utils.TEXT_MAX_DAY_AREA;
                 }
 
-                if (Utils.isBlank(entity_h4.getNote())) {
-                    return "";
+                if (!allow_h1) {
+                    if (!Objects.equals(entity_day.getTrend(), entity_h4.getTrend())) {
+                        return "";
+                    }
+
+                    if (Utils.isBlank(entity_h4.getNote())) {
+                        return "";
+                    }
                 }
 
                 trend_day = entity_day.getTrend();
@@ -3284,7 +3298,8 @@ public class BinanceServiceImpl implements BinanceService {
                 String char_name = Utils.getChartName(list);
                 // ----------------------------------------------------
                 String EVENT_ID = EVENT_PUMP + "_ma_3579_" + EPIC + Utils.getCurrentYyyyMmDd_HH();
-                String msg = char_name + "Ma3579.(" + switch_trend + ")" + EPIC + "(H4:" + trend_day + ")";
+                String msg = "(Forex)" + char_name + "(" + switch_trend + ")" + EPIC + "(H4:" + trend_day + ")"
+                        + day_range;
                 sendMsgPerHour(EVENT_ID, msg, true);
                 // ----------------------------------------------------
 
@@ -3309,7 +3324,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String log = wdh4 + char_name.replace(")", "").trim();
                     log += ": " + Utils.appendSpace(switch_trend, 4) + ") ";
                     log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
-                    log += buffer + note;
+                    log += buffer + note + day_range;
                     Utils.logWritelnDraft(log);
                 }
             }
