@@ -3420,13 +3420,13 @@ public class BinanceServiceImpl implements BinanceService {
             orders_list.add(null);
         }
 
-        List<Orders> h4_list = ordersRepository.getH4List();
-        if (!CollectionUtils.isEmpty(h4_list)) {
-            orders_list.addAll(h4_list);
-            orders_list.add(null);
-            orders_list.add(null);
-            orders_list.add(null);
-        }
+        //List<Orders> h4_list = ordersRepository.getH4List();
+        //if (!CollectionUtils.isEmpty(h4_list)) {
+        //    orders_list.addAll(h4_list);
+        //    orders_list.add(null);
+        //    orders_list.add(null);
+        //    orders_list.add(null);
+        //}
 
         if (!CollectionUtils.isEmpty(orders_list)) {
             Utils.logWritelnReport("");
