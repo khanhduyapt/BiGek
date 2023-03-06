@@ -3202,11 +3202,12 @@ public class BinanceServiceImpl implements BinanceService {
                     allow_h1 = true;
                     day_range = Utils.TEXT_MAX_DAY_AREA;
                 }
-
+                if (Utils.isNotBlank(entity_day.getNote()) || Utils.isNotBlank(entity_h4.getNote())) {
+                    allow_h1 = true;
+                }
+                //H4 hoac D1 dieu chinh moi di tim H1
                 if (!allow_h1) {
-                    if (Utils.isBlank(entity_h4.getNote())) {
-                        return "";
-                    }
+                    return "";
                 }
 
                 trend_day = entity_day.getTrend();
@@ -3283,21 +3284,26 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
             }
-            if ((isD1 || isH4) && note.contains(Utils.TEXT_TREND_REVERSAL)) {
+            if (Utils.isNotBlank(note)) {
                 allow_update = true;
             }
 
             if (allow_update) {
                 String date_time = LocalDateTime.now().toString();
-                List<BigDecimal> body = Utils.getOpenCloseCandle(list);
                 List<BigDecimal> low_high = Utils.getLowHighCandle(list);
 
                 BigDecimal bread = Utils.calcMaxBread(list);
+                if (isH1) {
+                    bread = bread.multiply(BigDecimal.valueOf(3));
+                } else {
+                    bread = bread.multiply(BigDecimal.valueOf(2));
+                }
+
                 BigDecimal sl_long = low_high.get(0).subtract(bread);
                 BigDecimal sl_shot = low_high.get(1).add(bread);
 
-                Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), body.get(0),
-                        body.get(1), sl_long, sl_shot, note.trim());
+                Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), low_high.get(0),
+                        low_high.get(1), sl_long, sl_shot, note.trim());
 
                 ordersRepository.save(entity);
             }
@@ -3405,29 +3411,14 @@ public class BinanceServiceImpl implements BinanceService {
         String msg_crypto = "";
         List<Orders> orders_list = new ArrayList<Orders>();
         List<Orders> today_list = ordersRepository.getTrend_Reversal_Today();
-        List<Orders> h4_today_list = ordersRepository.getTrend_Reversal_H4today();
-        if (!CollectionUtils.isEmpty(today_list)) {
-            orders_list.addAll(today_list);
+
+        List<Orders> h1_list = ordersRepository.getTrend_Reversal_Today();
+        if (!CollectionUtils.isEmpty(h1_list)) {
+            orders_list.addAll(h1_list);
+            orders_list.add(null);
             orders_list.add(null);
             orders_list.add(null);
         }
-
-        if (!CollectionUtils.isEmpty(h4_today_list)) {
-            orders_list.addAll(h4_today_list);
-            orders_list.add(null);
-            orders_list.add(null);
-        }
-
-        List<Orders> h4_others_list = ordersRepository.getTrend_Reversal_H4NotEqD1();
-        if (!CollectionUtils.isEmpty(h4_others_list)) {
-            orders_list.addAll(h4_others_list);
-            orders_list.add(null);
-            orders_list.add(null);
-        }
-
-        orders_list.addAll(ordersRepository.getTrend_DayEqualH1List());
-        orders_list.add(null);
-        orders_list.addAll(ordersRepository.getTrend_DayNotEqualH1List());
 
         if (!CollectionUtils.isEmpty(orders_list)) {
             Utils.logWritelnReport("");
@@ -3559,24 +3550,29 @@ public class BinanceServiceImpl implements BinanceService {
                     String log_h4 = "\n" + Utils.appendSpace(buffer_h4, LENGTH);
                     String log_d1 = "\n" + Utils.appendSpace(buffer_d1, LENGTH);
 
-                    String log = header;
+                    String log = "";
                     if (isD1) {
-                        log += log_h4;
+                        log += header + log_h4;
+                        log = Utils.appendSpace(log, 250);
                     } else if (isH4) {
                         count_h1 += 1;
-                        log += log_h4 + log_d1;
-                    } else {
-                        log += log_h1;
-                    }
-                    log = Utils.appendSpace(log, 250);
+                        log += header + log_h4 + log_d1;
 
-                    Utils.logWritelnReport(log);
-                    //Utils.logWritelnDraft(log);
+                        log = Utils.appendSpace(log, 250);
+                    } else {
+                        log += header + log_h1;
+                        log = Utils.appendSpace(log, 250);
+                    }
+
+                    if (Utils.isNotBlank(log)) {
+                        Utils.logWritelnReport(log);
+                        //Utils.logWritelnDraft(log);
+                    }
                 }
             }
             Utils.writelnLogFooter_Forex();
 
-            List<Orders> crypto_list = ordersRepository.getCrypto_Reversal_Today();
+            List<Orders> crypto_list = ordersRepository.getCrypto_H4();
             if (!CollectionUtils.isEmpty(crypto_list)) {
                 Utils.logWritelnReport(
                         Utils.appendSpace(Utils.appendLeft(Utils.TEXT_TREND_REVERSAL + " (D) ", 50, "="), 79, "="));
