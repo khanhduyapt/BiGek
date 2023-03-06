@@ -3173,55 +3173,13 @@ public class BinanceServiceImpl implements BinanceService {
                 lengh = 6;
                 isD1 = true;
             }
-            // to test the market trend change
             if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
                 lengh = 8;
                 isH4 = true;
             }
-
-            // enter order at H1
             if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
                 lengh = 10;
                 isH1 = true;
-                // boolean isDelH1 = false;
-                // Orders entity_day = ordersRepository.findById(EPIC + "_" +
-                // Utils.CAPITAL_TIME_DAY).orElse(null);
-                // Orders entity_h4 = ordersRepository.findById(EPIC + "_" +
-                // Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-                //
-                // if (Objects.isNull(entity_day) || Objects.isNull(entity_h4)) {
-                // isDelH1 = true;
-                // } else {
-                // boolean allow_h1 = false;
-                // BigDecimal h4_cur_price = entity_h4.getCurrent_price();
-                // if (h4_cur_price.compareTo(entity_day.getStr_body_price()) < 0) {
-                // allow_h1 = true;
-                // day_range = Utils.TEXT_MIN_DAY_AREA;
-                // }
-                // if (h4_cur_price.compareTo(entity_day.getEnd_body_price()) > 0) {
-                // allow_h1 = true;
-                // day_range = Utils.TEXT_MAX_DAY_AREA;
-                // }
-                // if (Utils.isNotBlank(entity_day.getNote()) ||
-                // Utils.isNotBlank(entity_h4.getNote())) {
-                // allow_h1 = true;
-                // }
-                // // H4 hoac D1 dieu chinh moi di tim H1
-                // if (!allow_h1) {
-                // isDelH1 = true;
-                // }
-                // }
-                //
-                // if (isDelH1) {
-                // Orders entity_h1 = ordersRepository.findById(EPIC + "_" +
-                // Utils.CAPITAL_TIME_HOUR).orElse(null);
-                // if (Objects.isNull(entity_h1)) {
-                // ordersRepository.delete(entity_h1);
-                // }
-                // return "";
-                // }
-
-                // trend_day = entity_day.getTrend();
             }
             // --------------------------------------------------------------
 
@@ -3249,9 +3207,10 @@ public class BinanceServiceImpl implements BinanceService {
 
             String switch_trend = Utils.switchTrendByMa(list, true);
             if (Utils.isNotBlank(switch_trend)) {
+
                 trend_priority += Utils.TEXT_TREND_No1_MA34568;
 
-            } else if (Utils.isBlank(switch_trend)) {
+            } else {
 
                 switch_trend = Utils.switchTrendByMa(list, false);
 
@@ -3319,12 +3278,9 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // History FOREX
-            boolean isSaveHistory = false;
             String his_id = Utils.getYYYYMMDD(0) + "_" + orderId;
             if ((isH4 || isH1) && Objects.equals(trend_day, trend)
                     && (Utils.isNotBlank(switch_trend) || Utils.isNotBlank(trend_priority))) {
-                isSaveHistory = true;
-
                 String dataType = (Objects.equals(Utils.TREND_LONG, switch_trend) ? "L" : "S");
                 PrepareOrders his = new PrepareOrders(his_id, orderId, trend_priority, dataType);
                 prepareOrdersRepository.save(his);
@@ -3336,17 +3292,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // --------------------------------------------------------
-            if (isSaveHistory) {
+            if (Utils.isNotBlank(switch_trend)) {
                 String char_name = Utils.getChartName(list);
-                // ----------------------------------------------------
-                if (isH1) {
-                    String EVENT_ID = EVENT_PUMP + "_ma_3579_" + EPIC + Utils.getCurrentYyyyMmDd_HH();
-                    String msg = "(Forex)" + char_name + "(" + switch_trend + ")" + EPIC + "(H4:" + trend_day + ")"
-                            + day_range;
-                    // sendMsgPerHour(EVENT_ID, msg, true);
-                }
-                // ----------------------------------------------------
-
                 Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
                 if (Objects.nonNull(dto_h4)) {
                     BigDecimal sl_long = Utils.getBigDecimal(dto_h4.getLow_price());

@@ -2916,8 +2916,8 @@ public class Utils {
         String result = "";
         if (trend.contains(Utils.TREND_LONG)) {
             if (isRequired368) {
-                if ((ma3_1.compareTo(ma4_1) >= 0) && (ma4_1.compareTo(ma5_1) >= 0) && (ma5_1.compareTo(ma6_1) >= 0)
-                        && (ma6_1.compareTo(ma8_1) >= 0)) {
+                if ((ma3_1.compareTo(ma4_1) > 0) && (ma4_1.compareTo(ma5_1) > 0) && (ma5_1.compareTo(ma6_1) > 0)
+                        && (ma6_1.compareTo(ma8_1) > 0)) {
                     result = Utils.TREND_LONG;
                 }
             } else {
@@ -2927,8 +2927,8 @@ public class Utils {
 
         if (trend.contains(Utils.TREND_SHORT)) {
             if (isRequired368) {
-                if ((ma3_1.compareTo(ma4_1) <= 0) && (ma4_1.compareTo(ma5_1) <= 0) && (ma5_1.compareTo(ma6_1) <= 0)
-                        && (ma6_1.compareTo(ma8_1) <= 0)) {
+                if ((ma3_1.compareTo(ma4_1) < 0) && (ma4_1.compareTo(ma5_1) < 0) && (ma5_1.compareTo(ma6_1) < 0)
+                        && (ma6_1.compareTo(ma8_1) < 0)) {
                     result = Utils.TREND_SHORT;
                 }
             } else {
