@@ -87,7 +87,9 @@ public class Utils {
     public static final String TEXT_MIN_DAY_AREA = "(Min_Day_Area_Wait_buy. )";
     public static final String TEXT_MAX_DAY_AREA = "(Max_DAY_Area_Wait_sell.)";
 
-    public static final String TEXT_TREND_REVERSAL = "(***REVERSAL***)";
+    public static final String TEXT_TREND_No1_MA34568 = "No.1(Ma34568)";
+    public static final String TEXT_TREND_No2_ADJUSTING = "No.2(Adjusting)";
+    public static final String TEXT_TREND_No3_REVERSAL = "No.3(Reversal)";
 
     public static final String TEXT_CONNECTION_TIMED_OUT = "CONNECTION_TIMED_OUT";
     public static final String CONNECTION_TIMED_OUT_ID = "CONNECTION_TIMED_OUT_MINUTE_15";
@@ -2836,11 +2838,11 @@ public class Utils {
         BigDecimal ma3_3 = calcMA(list, 3, 3);
 
         if ((ma3_1.compareTo(ma3_2) > 0) && (ma3_3.compareTo(ma3_2) > 0)) {
-            return TEXT_TREND_REVERSAL;
+            return TEXT_TREND_No3_REVERSAL;
         }
 
         if ((ma3_1.compareTo(ma3_2) < 0) && (ma3_3.compareTo(ma3_2) < 0)) {
-            return TEXT_TREND_REVERSAL;
+            return TEXT_TREND_No3_REVERSAL;
         }
 
         return "";

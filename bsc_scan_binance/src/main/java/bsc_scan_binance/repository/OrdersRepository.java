@@ -39,10 +39,9 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
             + " order by det.gecko_id ", nativeQuery = true)
     public List<Orders> getTrend_Reversal_Today();
 
-    @Query(value = " SELECT * FROM orders det where 1=1 " +
-            " and det.gecko_id in (SELECT symbol FROM prepare_orders where (gecko_id like concat(TO_CHAR(NOW(), 'yyyyMMdd'), '%CRYPTO_%'))) "
-            +
-            " order by det.gecko_id ", nativeQuery = true)
+    @Query(value = " SELECT * FROM orders det where 1=1 "
+            + " and det.gecko_id in (SELECT symbol FROM prepare_orders where (gecko_id like concat(TO_CHAR(NOW(), 'yyyyMMdd'), '%CRYPTO_%'))) "
+            + " order by det.gecko_id ", nativeQuery = true)
     public List<Orders> getCrypto_Reversal_Today();
 
     // --------------------------------------------------------
@@ -57,14 +56,13 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
     public List<Orders> getH4List();
 
     @Query(value = " SELECT * FROM orders mst WHERE (COALESCE(mst.note, '') <> '') and (mst.gecko_id like '%_HOUR') "
-            + " ORDER BY gecko_id ", nativeQuery = true)
+            + " ORDER BY mst.note, mst.gecko_id ", nativeQuery = true)
     public List<Orders> getH1List();
 
-    @Query(value = "  SELECT * FROM orders det  " +
-            "  WHERE (det.gecko_id like 'CRYPTO_%_4h') AND (COALESCE(det.note, '') <> '')  " +
-            "   AND det.trend = (SELECT trend FROM orders mst WHERE mst.gecko_id = REPLACE (det.gecko_id, '_4h', '_1d')) "
-            +
-            "  ORDER BY det.gecko_id ", nativeQuery = true)
+    @Query(value = "  SELECT * FROM orders det  "
+            + "  WHERE (det.gecko_id like 'CRYPTO_%_4h') AND (COALESCE(det.note, '') <> '')  "
+            + "   AND det.trend = (SELECT trend FROM orders mst WHERE mst.gecko_id = REPLACE (det.gecko_id, '_4h', '_1d')) "
+            + "  ORDER BY det.gecko_id ", nativeQuery = true)
     public List<Orders> getCrypto_H4();
 
 }
