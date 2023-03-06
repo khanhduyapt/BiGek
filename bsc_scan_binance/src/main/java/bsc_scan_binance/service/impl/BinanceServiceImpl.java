@@ -3284,8 +3284,11 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // History FOREX
-            if ((isD1 || (isH4 && Objects.equals(trend_day, trend)))
-                    && (Utils.isNotBlank(switch_trend) || (isD1 && Utils.isNotBlank(note)))) {
+            boolean isSaveHistory = false;
+            if ((isH4 || isH1) && Objects.equals(trend_day, trend)
+                    && (Utils.isNotBlank(switch_trend) || Utils.isNotBlank(note))) {
+                isSaveHistory = true;
+
                 String his_id = Utils.getYYYYMMDD(0) + "_" + orderId;
                 String dataType = (Objects.equals(Utils.TREND_LONG, switch_trend) ? "L" : "S");
                 PrepareOrders his = new PrepareOrders(his_id, orderId, note, dataType);
@@ -3293,19 +3296,19 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // --------------------------------------------------------
-
-            if (isH1 && Utils.isNotBlank(switch_trend) && Objects.equals(trend_day, switch_trend)) {
+            if (isSaveHistory) {
                 String char_name = Utils.getChartName(list);
                 // ----------------------------------------------------
-                String EVENT_ID = EVENT_PUMP + "_ma_3579_" + EPIC + Utils.getCurrentYyyyMmDd_HH();
-                String msg = "(Forex)" + char_name + "(" + switch_trend + ")" + EPIC + "(H4:" + trend_day + ")"
-                        + day_range;
-                sendMsgPerHour(EVENT_ID, msg, true);
+                if (isH1) {
+                    String EVENT_ID = EVENT_PUMP + "_ma_3579_" + EPIC + Utils.getCurrentYyyyMmDd_HH();
+                    String msg = "(Forex)" + char_name + "(" + switch_trend + ")" + EPIC + "(H4:" + trend_day + ")"
+                            + day_range;
+                    sendMsgPerHour(EVENT_ID, msg, true);
+                }
                 // ----------------------------------------------------
 
                 Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
                 Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
-
                 if (Objects.nonNull(dto_h1) && Objects.nonNull(dto_h4)) {
                     BigDecimal sl_long = Utils.getBigDecimal(dto_h4.getLow_price());
                     BigDecimal sl_shot = Utils.getBigDecimal(dto_h4.getHigh_price());
