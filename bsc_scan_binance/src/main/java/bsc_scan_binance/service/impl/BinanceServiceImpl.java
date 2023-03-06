@@ -3420,6 +3420,14 @@ public class BinanceServiceImpl implements BinanceService {
             orders_list.add(null);
         }
 
+        List<Orders> h4_list = ordersRepository.getH4List();
+        if (!CollectionUtils.isEmpty(h4_list)) {
+            orders_list.addAll(h4_list);
+            orders_list.add(null);
+            orders_list.add(null);
+            orders_list.add(null);
+        }
+
         if (!CollectionUtils.isEmpty(orders_list)) {
             Utils.logWritelnReport("");
 
@@ -3556,7 +3564,7 @@ public class BinanceServiceImpl implements BinanceService {
                         log = Utils.appendSpace(log, 250);
                     } else if (isH4) {
                         count_h1 += 1;
-                        log += header + log_h4 + log_d1;
+                        log += header + log_h4;//+ log_d1
 
                         log = Utils.appendSpace(log, 250);
                     } else {
