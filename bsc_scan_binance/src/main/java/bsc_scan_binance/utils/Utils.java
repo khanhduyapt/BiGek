@@ -16,7 +16,6 @@ import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,7 +47,6 @@ import org.springframework.web.servlet.LocaleResolver;
 import bsc_scan_binance.BscScanBinanceApplication;
 import bsc_scan_binance.entity.BtcFutures;
 import bsc_scan_binance.entity.Orders;
-import bsc_scan_binance.entity.PrepareOrders;
 import bsc_scan_binance.repository.OrdersRepository;
 import bsc_scan_binance.response.BtcFuturesResponse;
 import bsc_scan_binance.response.CandidateTokenCssResponse;
@@ -144,7 +142,7 @@ public class Utils {
             "CAKE", "CELO", "CELR", "CFX", "CHESS", "CHR", "CHZ", "CITY", "CKB", "CLV", "COCOS", "COMP", "COS", "COTI",
             "CREAM", "CRV", "CTK", "CTSI", "CTXC", "CVC", "CVP", "CVX", "DAR", "DASH", "DATA", "DCR", "DEGO", "DENT",
             "DEXE", "DF", "DGB", "DIA", "DOCK", "DODO", "DOGE", "DOT", "DREP", "DUSK", "DYDX", "EGLD", "ELF", "ENJ",
-            "ENS", "EOS", "EPX", "ERN", "ETC", "ETH", "EUR", "FARM", "FET", "FIDA", "FIL", "FIO", "FIRO", "FIS", "FLM",
+            "ENS", "EOS", "EPX", "ERN", "ETC", "ETH", "FARM", "FET", "FIDA", "FIL", "FIO", "FIRO", "FIS", "FLM",
             "FLOW", "FLUX", "FOR", "FORTH", "FRONT", "FTM", "FTT", "FUN", "FXS", "GAL", "GALA", "GAS", "GBP", "GFT",
             "GHST", "GLM", "GLMR", "GMT", "GMX", "GNS", "GRT", "GTC", "HARD", "HBAR", "HFT", "HIFI", "HIGH", "HIVE",
             "HNT", "HOOK", "HOT", "ICP", "ICX", "IDEX", "ILV", "IMX", "INJ", "IOST", "IOTA", "IOTX", "IQ", "IRIS",
@@ -2882,14 +2880,23 @@ public class Utils {
         temp_shot += Utils.checkXCutDnY(ma3_1, ma3_2, ma5_1, ma5_2) + "_";
         temp_long += Utils.checkXCutUpY(ma3_1, ma3_2, ma6_1, ma6_2) + "_";
         temp_shot += Utils.checkXCutDnY(ma3_1, ma3_2, ma6_1, ma6_2) + "_";
+        temp_long += Utils.checkXCutUpY(ma3_1, ma3_2, ma8_1, ma8_2) + "_";
+        temp_shot += Utils.checkXCutDnY(ma3_1, ma3_2, ma8_1, ma8_2) + "_";
 
         temp_long += Utils.checkXCutUpY(ma4_1, ma4_2, ma5_1, ma5_2) + "_";
         temp_shot += Utils.checkXCutDnY(ma4_1, ma4_2, ma5_1, ma5_2) + "_";
         temp_long += Utils.checkXCutUpY(ma4_1, ma4_2, ma6_1, ma6_2) + "_";
         temp_shot += Utils.checkXCutDnY(ma4_1, ma4_2, ma6_1, ma6_2) + "_";
+        temp_long += Utils.checkXCutUpY(ma4_1, ma4_2, ma8_1, ma8_2) + "_";
+        temp_shot += Utils.checkXCutDnY(ma4_1, ma4_2, ma8_1, ma8_2) + "_";
 
         temp_long += Utils.checkXCutUpY(ma5_1, ma5_2, ma6_1, ma6_2) + "_";
         temp_shot += Utils.checkXCutDnY(ma5_1, ma5_2, ma6_1, ma6_2) + "_";
+        temp_long += Utils.checkXCutUpY(ma5_1, ma5_2, ma8_1, ma8_2) + "_";
+        temp_shot += Utils.checkXCutDnY(ma5_1, ma5_2, ma8_1, ma8_2) + "_";
+
+        temp_long += Utils.checkXCutUpY(ma6_1, ma6_2, ma8_1, ma8_2) + "_";
+        temp_shot += Utils.checkXCutDnY(ma6_1, ma6_2, ma8_1, ma8_2) + "_";
 
         String trend = "";
         trend += "_" + temp_long + "_";

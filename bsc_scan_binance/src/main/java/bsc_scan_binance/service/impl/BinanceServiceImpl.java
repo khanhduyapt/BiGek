@@ -3116,8 +3116,9 @@ public class BinanceServiceImpl implements BinanceService {
             String wdh4 = getPrepareOrderTrend_WDH4(EPIC, false);
             String tmp_msg = wdh4 + char_name + Utils.appendSpace(note, 20) + Utils.appendSpace(symbol, 8);
             tmp_msg += Utils.getCurrentPrice(list) + sl;
-            Utils.logWritelnWithTime(Utils.appendSpace(Utils.appendSpace(tmp_msg, 35) + url, 200), true);
+            tmp_msg = Utils.appendSpace(Utils.appendSpace(tmp_msg, 35) + url, 200);
 
+            Utils.logWritelnWithTime(tmp_msg, true);
             Utils.logWritelnDraft(tmp_msg);
         }
 
@@ -3266,7 +3267,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // History
-            if ((isD1 || isH4) && (Utils.isNotBlank(switch_trend) || (isD1 && Utils.isNotBlank(note)))) {
+            if ((isD1 || (isH4 && Objects.equals(trend_day, trend)))
+                    && (Utils.isNotBlank(switch_trend) || (isD1 && Utils.isNotBlank(note)))) {
                 String his_id = Utils.getYYYYMMDD(0) + "_" + orderId;
                 String dataType = (Objects.equals(Utils.TREND_LONG, switch_trend) ? "L" : "S");
                 PrepareOrders his = new PrepareOrders(his_id, orderId, note, dataType);
@@ -3508,7 +3510,7 @@ public class BinanceServiceImpl implements BinanceService {
                 for (Orders entity : crypto_list) {
                     BigDecimal qty = BigDecimal.ZERO;
 
-                    String sl = " (Entry:";
+                    String sl = "   (Entry:";
                     if (Objects.equals(Utils.TREND_LONG, entity.getTrend())) {
 
                         BigDecimal pip = (entity.getStr_body_price().subtract(entity.getLow_price())).abs();
@@ -3530,12 +3532,14 @@ public class BinanceServiceImpl implements BinanceService {
                         sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getHigh_price()), 8);
                         sl += "   Qty:" + Utils.appendLeft(Utils.removeLastZero(qty), 5);
                     }
-
                     sl += ")  ";
-                    String symbol = entity.getId().replace("CRYPTO_", "").replace("_1d", "").replace("_4h", "");
 
-                    String tmp_msg = entity.getId().replace("CRYPTO_" + symbol, "").replace("_", "").toUpperCase()
-                            + "    " + Utils.appendSpace(symbol, 15);
+                    String symbol = entity.getId().replace("CRYPTO_", "").replace("_1d", "").replace("_4h", "")
+                            .replace("_1h", "");
+                    String chart = entity.getId().replace("CRYPTO_" + symbol, "").replace("_", "").toUpperCase();
+
+                    String tmp_msg = Utils.appendSpace(chart, 8) + Utils.appendSpace(symbol, 10);
+
                     tmp_msg += Utils.appendLeft(Utils.removeLastZero(entity.getCurrent_price()), 8) + sl;
                     String url = Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 68)
                             + Utils.appendLeft(entity.getNote(), 20);
