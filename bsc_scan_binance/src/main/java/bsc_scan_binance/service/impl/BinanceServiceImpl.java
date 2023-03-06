@@ -3305,7 +3305,6 @@ public class BinanceServiceImpl implements BinanceService {
             // History FOREX
             boolean isSaveHistory = false;
             String his_id = Utils.getYYYYMMDD(0) + "_" + orderId;
-
             if ((isH4 || isH1) && Objects.equals(trend_day, trend)
                     && (Utils.isNotBlank(switch_trend) || Utils.isNotBlank(note))) {
                 isSaveHistory = true;
@@ -3547,18 +3546,25 @@ public class BinanceServiceImpl implements BinanceService {
                                     dto_h4.getEnd_body_price(), dto_h4.getLow_price(), dto_h4.getHigh_price(),
                                     dto_h4.getEnd_body_price(), dto_h4.getStr_body_price());
 
+                    String buffer_d1 = "           " + Utils.appendSpace(EPIC, 20) + "  D1: "
+                            + Utils.appendSpace(dto_d1.getTrend(), 7)
+                            + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_d1.getTrend(), EPIC, dto_d1.getStr_body_price(),
+                                    dto_d1.getEnd_body_price(), dto_d1.getLow_price(), dto_d1.getHigh_price(),
+                                    dto_d1.getEnd_body_price(), dto_d1.getStr_body_price());
+
                     if (!Objects.equals(entity.getId(), dto_h4.getId())) {
                         buffer_h4 += dto_h4.getNote().trim();
                     }
 
                     String log_h4 = "\n" + Utils.appendSpace(buffer_h4, LENGTH);
+                    String log_d1 = "\n" + Utils.appendSpace(buffer_d1, LENGTH);
 
                     String log = header;
                     if (isD1) {
                         log += log_h4;
                     } else if (isH4) {
                         count_h1 += 1;
-                        log += log_h4;
+                        log += log_h4 + log_d1;
                     } else {
                         log += log_h1;
                     }
