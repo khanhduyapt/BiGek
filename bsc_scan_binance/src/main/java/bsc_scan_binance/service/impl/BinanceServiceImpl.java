@@ -2964,7 +2964,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initCryptoTrend(String TIME, String symbol) {
-        String trend_by = "";
+        String trend = "";
         String EPIC = "CRYPTO_" + symbol;
         String orderId = EPIC + "_" + TIME;
 
@@ -2992,7 +2992,7 @@ public class BinanceServiceImpl implements BinanceService {
         String switch_trend = "";
         if (isFoundData) {
             trendType = Utils.getTrendType(list);
-            trend_by = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+            trend = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
             BigDecimal bread = Utils.calcMaxBread(list);
             BigDecimal cur_price = list.get(0).getCurrPrice();
@@ -3013,7 +3013,7 @@ public class BinanceServiceImpl implements BinanceService {
             BigDecimal en_shot = body.get(1);
 
             String date_time = LocalDateTime.now().toString();
-            Orders entity = new Orders(orderId, date_time, trend_by, cur_price, en_long, en_shot, sl_long, sl_shot,
+            Orders entity = new Orders(orderId, date_time, trend, cur_price, en_long, en_shot, sl_long, sl_shot,
                     trendType);
 
             ordersRepository.save(entity);
@@ -3022,7 +3022,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && trendType.contains(Utils.TEXT_TREND_No1_MA34568)) {
                 String EVENT_ID = EVENT_PUMP + "_EPICS_SCAP_" + Utils.getCurrentYyyyMmDd_HH();
                 if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
-                    String msg = "(Scap_H1)" + symbol + "(" + trendType + ")";
+                    String msg = "(Scap_H1)" + symbol + "(" + trend + ")" + trendType;
                     sendMsgPerHour(EVENT_ID, msg, true);
                 }
             }
@@ -3105,7 +3105,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (isH1 && Utils.EPICS_SCAP.contains(EPIC) && trendType.contains(Utils.TEXT_TREND_No1_MA34568)) {
                 String EVENT_ID = EVENT_PUMP + "_EPICS_SCAP_" + Utils.getCurrentYyyyMmDd_HH();
                 if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
-                    String msg = "(Scap_H1)" + EPIC + "(" + trendType + ")";
+                    String msg = "(Scap_H1)" + EPIC + "(" + trend + ")" + trendType;
                     sendMsgPerHour(EVENT_ID, msg, true);
                 }
             }
