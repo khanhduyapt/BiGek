@@ -122,7 +122,7 @@ public class Utils {
     public static final String CRYPTO_TIME_1D = "1d";
     public static final String CRYPTO_TIME_1w = "1w";
 
-    public static final long MINUTES_OF_D = 720;
+    public static final long MINUTES_OF_D = 600;
     public static final long MINUTES_OF_4H = 120;
     public static final long MINUTES_OF_1H = 30;
     public static final long MINUTES_OF_15M = 15;
@@ -2847,6 +2847,42 @@ public class Utils {
         }
 
         return "";
+    }
+
+    public static String switchTrend(List<BtcFutures> list) {
+        String id = list.get(0).getId();
+
+        boolean isD1 = false;
+        boolean isH4 = false;
+
+        if (id.contains("_1d_")) {
+            isD1 = true;
+        }
+        if (id.contains("_4h_")) {
+            isH4 = true;
+        }
+
+        String trend = "";
+        String switch_trend = Utils.switchTrendByMa(list, true);
+        if (Utils.isNotBlank(switch_trend)) {
+
+            trend = Utils.TEXT_TREND_No1_MA34568;
+
+        } else {
+
+            switch_trend = Utils.switchTrendByMa(list, false);
+
+            if (Utils.isNotBlank(switch_trend)) {
+
+                trend = Utils.TEXT_TREND_No2_ADJUSTING;
+
+            } else if ((isD1 || isH4) && Utils.isNotBlank(Utils.checkTrendReversal(list))) {
+
+                trend = Utils.TEXT_TREND_No3_REVERSAL;
+            }
+        }
+
+        return trend;
     }
 
     public static String switchTrendByMa(List<BtcFutures> list, boolean isRequired368) {
