@@ -84,12 +84,12 @@ public class Utils {
     public static final String TEXT_DANGER = "(Danger)";
     public static final String TEXT_START_LONG = "Start:Long";
     public static final String TEXT_STOP_LONG = "Stop:Long";
-    public static final String TEXT_MIN_DAY_AREA = "(Min_Day_Area_Wait_buy. )";
-    public static final String TEXT_MAX_DAY_AREA = "(Max_DAY_Area_Wait_sell.)";
+    public static final String TEXT_MIN_DAY_AREA = "(Min_Day)";
+    public static final String TEXT_MAX_DAY_AREA = "(Max_Day)";
 
-    public static final String TEXT_TREND_No1_MA34568 = "No.1(Ma34568)";
+    public static final String TEXT_TREND_No1_MA34568 = "No.1(Ma34568)  ";
     public static final String TEXT_TREND_No2_ADJUSTING = "No.2(Adjusting)";
-    public static final String TEXT_TREND_No3_REVERSAL = "No.3(Reversal)";
+    public static final String TEXT_TREND_No3_REVERSAL = "No.3(Reversal) ";
 
     public static final String TEXT_CONNECTION_TIMED_OUT = "CONNECTION_TIMED_OUT";
     public static final String CONNECTION_TIMED_OUT_ID = "CONNECTION_TIMED_OUT_MINUTE_15";
@@ -169,11 +169,12 @@ public class Utils {
     // MFF ko co: "EU50", "US100", "NATURALGAS",
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
+    // "EURNOK",
     public static final List<String> EPICS_FOREXS = Arrays.asList("AUDUSD", "CADJPY", "CHFJPY", "EURAUD", "EURCAD",
-            "EURCHF", "EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNOK", "EURNZD", "EURPLN", "EURSEK",
-            "EURSGD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDJPY", "NZDUSD",
-            "USDCAD", "USDCHF", "USDCNH", "USDCZK", "USDDKK", "USDHUF", "USDILS", "USDJPY", "USDMXN", "USDNOK",
-            "USDSEK", "USDSGD", "USDZAR");
+            "EURCHF", "EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNZD", "EURPLN", "EURSEK", "EURSGD",
+            "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDJPY", "NZDUSD", "USDCAD",
+            "USDCHF", "USDCNH", "USDCZK", "USDDKK", "USDHUF", "USDILS", "USDJPY", "USDMXN", "USDNOK", "USDSEK",
+            "USDSGD", "USDZAR");
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
@@ -3012,7 +3013,7 @@ public class Utils {
         temp += Utils.appendLeft(removeLastZero(lot_long), 8) + "(lot/" + entry_long.subtract(sl_long) + ")";
         result += Utils.appendSpace((Objects.equals(trend, TREND_LONG) ? "*" : " ") + "(BUY )" + temp, 38);
 
-        result += "     ";
+        result = appendSpace(result, 80);
 
         MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, entry_short, sl_short, tp_short);
         BigDecimal lot_shot = money_short.calcLot();
@@ -3022,7 +3023,7 @@ public class Utils {
         temp += Utils.appendLeft(removeLastZero(lot_shot), 8) + "(lot/" + sl_short.subtract(entry_short) + ")";
         result += Utils.appendSpace((Objects.equals(trend, TREND_SHORT) ? "*" : " ") + "(SELL)" + temp, 38);
 
-        result = Utils.appendSpace(result, 120);
+        result = Utils.appendSpace(result, 140);
         return result;
     }
 

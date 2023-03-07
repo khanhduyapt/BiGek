@@ -3455,10 +3455,11 @@ public class BinanceServiceImpl implements BinanceService {
                         header = header.replace(" (30", "*(30").replace(" (15", "*(15");
                     }
                     header += Utils.appendSpace(buf_trend, 4) + ") ";
-                    header += Utils.appendSpace(EPIC, 15);
-                    header += Utils.appendSpace(Utils.getCapitalLink(EPIC), 91) + day_range + entity.getNote();
+                    header += Utils.appendSpace(EPIC, 15, "-");
+                    header += Utils.appendSpace(Utils.appendSpace(Utils.getCapitalLink(EPIC), 66), 120, "_") + "     "
+                            + entity.getNote().trim() + day_range;
                     header = Utils.appendSpace(header, LENGTH - 12);
-
+                    // TODO
                     String log_h1 = "";
                     if (Objects.nonNull(dto_h1)) {
                         String buffer_h1 = "           " + Utils.appendSpace(EPIC, 20) + "  H1: "
@@ -3472,13 +3473,6 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         log_h1 = "\n" + Utils.appendSpace(buffer_h1, LENGTH);
-
-                        if (Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())
-                                && Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
-
-                            msg_forex += EPIC + ",";
-
-                        }
                     }
 
                     String buffer_h4 = "           " + Utils.appendSpace(EPIC, 20) + "  H4: "
@@ -3487,18 +3481,19 @@ public class BinanceServiceImpl implements BinanceService {
                                     dto_h4.getEnd_body_price(), dto_h4.getLow_price(), dto_h4.getHigh_price(),
                                     dto_h4.getEnd_body_price(), dto_h4.getStr_body_price());
 
-                    String buffer_d1 = "           " + Utils.appendSpace(EPIC, 20) + "  D1: "
-                            + Utils.appendSpace(dto_d1.getTrend(), 7)
-                            + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_d1.getTrend(), EPIC, dto_d1.getStr_body_price(),
-                                    dto_d1.getEnd_body_price(), dto_d1.getLow_price(), dto_d1.getHigh_price(),
-                                    dto_d1.getEnd_body_price(), dto_d1.getStr_body_price());
+                    // String buffer_d1 = " " + Utils.appendSpace(EPIC, 20) + " D1: "
+                    // + Utils.appendSpace(dto_d1.getTrend(), 7)
+                    // + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_d1.getTrend(), EPIC,
+                    // dto_d1.getStr_body_price(),
+                    // dto_d1.getEnd_body_price(), dto_d1.getLow_price(), dto_d1.getHigh_price(),
+                    // dto_d1.getEnd_body_price(), dto_d1.getStr_body_price());
 
                     if (!Objects.equals(entity.getId(), dto_h4.getId())) {
                         buffer_h4 += dto_h4.getNote().trim();
                     }
 
                     String log_h4 = "\n" + Utils.appendSpace(buffer_h4, LENGTH);
-                    String log_d1 = "\n" + Utils.appendSpace(buffer_d1, LENGTH);
+                    // String log_d1 = "\n" + Utils.appendSpace(buffer_d1, LENGTH);
 
                     String log = "";
                     if (isD1) {
@@ -3510,7 +3505,10 @@ public class BinanceServiceImpl implements BinanceService {
 
                         log = Utils.appendSpace(log, 250);
                     } else {
-                        count_h1 += 1;
+                        if (entity.getNote().contains(Utils.TEXT_TREND_No1_MA34568)) {
+                            count_h1 += 1;
+                            msg_forex += EPIC + ",";
+                        }
                         log += header + log_h1;
                         log = Utils.appendSpace(log, 250);
                     }
