@@ -60,7 +60,7 @@ public class Utils {
     private static OrdersRepository ordersRepository;
 
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0025);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0015);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -162,7 +162,7 @@ public class Utils {
             "WNXM", "WOO", "WRX", "WTC", "XEC", "XLM", "XMR", "XNO", "XRP", "XTZ", "XVG", "XVS", "YFI", "YFII", "YGG",
             "ZEC", "ZEN", "ZIL", "ZRX");
 
-    public static final List<String> EPICS_SCAP = Arrays.asList("GOLD", "SILVER", "FR40", "US30", "US500", "UK100");
+    public static final List<String> EPICS_SCAP = Arrays.asList("GOLD", "SILVER", "FR40", "US30", "US100", "US500", "UK100");
 
     public static final List<String> EPICS_STOCKS = Arrays.asList("DXY", "GOLD", "US30", "US100", "US500", "J225",
             "UK100", "FR40", "HK50", "BTCUSD", "SILVER", "OIL_CRUDE", "SP35", "DE40", "AU200");
@@ -2854,7 +2854,7 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrend(List<BtcFutures> list) {
+    public static String getTrendType(List<BtcFutures> list) {
         String id = list.get(0).getId();
 
         boolean isD1 = false;
@@ -2890,7 +2890,7 @@ public class Utils {
         return trend;
     }
 
-    public static String switchTrendByMa(List<BtcFutures> list, boolean isRequired368) {
+    private static String switchTrendByMa(List<BtcFutures> list, boolean isRequired368) {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
