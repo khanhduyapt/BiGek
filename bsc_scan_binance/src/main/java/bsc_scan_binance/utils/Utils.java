@@ -3064,6 +3064,9 @@ public class Utils {
         String temp = "";
         int moneny_length = 8;
 
+        BigDecimal pip_long = entry_long.subtract(sl_long);
+        BigDecimal pip_shot = sl_short.subtract(entry_short);
+
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 8);
 
         MoneyAtRiskResponse money_long = new MoneyAtRiskResponse(EPIC, risk, entry_long, sl_long, tp_long);
@@ -3071,8 +3074,8 @@ public class Utils {
 
         temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry_long, 5)) + " ", 10);
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), moneny_length);
-        temp += Utils.appendLeft(removeLastZero(lot_long), 8) + "(lot/"
-                + appendSpace(removeLastZero(entry_long.subtract(sl_long)), 8) + ")";
+        temp += Utils.appendLeft(removeLastZero(lot_long), 8)
+                + "(lot/" + appendSpace(removeLastZero(pip_long), 8) + ")";
         result += Utils.appendSpace((Objects.equals(trend, TREND_LONG) ? "*" : " ") + "(BUY )" + temp, 38);
 
         result = appendSpace(result, 80);
@@ -3082,8 +3085,8 @@ public class Utils {
         temp = "";
         temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry_short, 5)) + " ", 10);
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_short, 5)), moneny_length);
-        temp += Utils.appendLeft(removeLastZero(lot_shot), 8) + "(lot/"
-                + appendSpace(removeLastZero(sl_short.subtract(entry_short)), 8) + ")";
+        temp += Utils.appendLeft(removeLastZero(lot_shot), 8)
+                + "(lot/" + appendSpace(removeLastZero(pip_shot), 8) + ")";
         result += Utils.appendSpace((Objects.equals(trend, TREND_SHORT) ? "*" : " ") + "(SELL)" + temp, 38);
 
         result = Utils.appendSpace(result, 140);

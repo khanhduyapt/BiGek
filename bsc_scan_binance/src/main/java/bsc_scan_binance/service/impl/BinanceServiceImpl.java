@@ -2683,7 +2683,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_DAY)) {
             orders_list = ordersRepository.getTrend_DayList();
         } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_HOUR)) {
-            orders_list = ordersRepository.getTrend_HList();
+            orders_list = ordersRepository.getAllH4();
         } else {
             return result;
         }
@@ -3116,7 +3116,6 @@ public class BinanceServiceImpl implements BinanceService {
                 isH1 = true;
             }
             // --------------------------------------------------------------
-
             List<BtcFutures> list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, lengh);
             if (CollectionUtils.isEmpty(list)) {
                 BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS * 5);
@@ -3164,21 +3163,15 @@ public class BinanceServiceImpl implements BinanceService {
                 long time = Utils.MINUTES_OF_4H;
                 if (isH1) {
                     entity_h = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
-                    time = Utils.MINUTES_OF_4H;
-                }
-                if (isH4) {
-                    entity_h = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-                    time = Utils.MINUTES_OF_4H * 3;
-                }
+                    if (Objects.nonNull(entity_h)) {
+                        LocalDateTime curr_time = LocalDateTime.now();
+                        String insert_time = Utils.getStringValue(entity_h.getInsertTime());
+                        LocalDateTime pre_time = LocalDateTime.parse(insert_time);
+                        long elapsedMinutes = Duration.between(pre_time, curr_time).toMinutes();
 
-                if (Objects.nonNull(entity_h)) {
-                    LocalDateTime curr_time = LocalDateTime.now();
-                    String insert_time = Utils.getStringValue(entity_h.getInsertTime());
-                    LocalDateTime pre_time = LocalDateTime.parse(insert_time);
-                    long elapsedMinutes = Duration.between(pre_time, curr_time).toMinutes();
-
-                    if ((time > elapsedMinutes) && (Utils.isNotBlank(entity_h.getNote()))) {
-                        allow_update = false;
+                        if ((time > elapsedMinutes) && (Utils.isNotBlank(entity_h.getNote()))) {
+                            allow_update = false;
+                        }
                     }
                 }
             }
@@ -3188,16 +3181,14 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (allow_update) {
                 String date_time = LocalDateTime.now().toString();
-                if (isH1) {
-                    bread = bread.multiply(BigDecimal.valueOf(3));
-                } else {
-                    bread = bread.multiply(BigDecimal.valueOf(2));
-                }
-                BigDecimal sl_long = low_high.get(0).subtract(bread);
-                BigDecimal sl_shot = low_high.get(1).add(bread);
 
-                Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), low_high.get(0),
-                        low_high.get(1), sl_long, sl_shot, note.trim());
+                BigDecimal str_body_price = low_high.get(0).subtract(bread);
+                BigDecimal end_body_price = low_high.get(1).add(bread);
+                BigDecimal sl_long = low_high.get(0).subtract(bread.multiply(BigDecimal.valueOf(3)));
+                BigDecimal sl_shot = low_high.get(1).add(bread.multiply(BigDecimal.valueOf(3)));
+
+                Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), str_body_price,
+                        end_body_price, sl_long, sl_shot, note.trim());
 
                 ordersRepository.save(entity);
             }
@@ -3338,6 +3329,16 @@ public class BinanceServiceImpl implements BinanceService {
             orders_list.addAll(temp_list);
         }
 
+        temp_list = ordersRepository.getAllH4();
+        if (!CollectionUtils.isEmpty(temp_list)) {
+            orders_list.add(null);
+            orders_list.add(null);
+            orders_list.add(null);
+            orders_list.add(null);
+            orders_list.add(null);
+            orders_list.addAll(temp_list);
+        }
+
         if (!CollectionUtils.isEmpty(orders_list)) {
             Utils.logWritelnReport("");
             String done_epics = "";
@@ -3362,7 +3363,6 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
                 done_epics += "_" + EPIC + "_";
-
                 if (str_long.contains(EPIC)) {
                     note += " Check_Long ";
                 }
@@ -3391,9 +3391,8 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
-                dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
                 dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
-
+                dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
                 if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1)) {
                     String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
                     String note_d_h4_h1 = "(D1):" + dto_d1.getNote() + "(H4):" + dto_h4.getNote() + "(H1):"
