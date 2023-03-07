@@ -3193,7 +3193,7 @@ public class BinanceServiceImpl implements BinanceService {
                 ordersRepository.save(entity);
             }
 
-            //// History FOREX
+            // History FOREX
             String his_id = Utils.getYYYYMMDD(0) + "_" + orderId;
             if (isD1 && Utils.isNotBlank(switch_trend)) {
                 String dataType = (Objects.equals(Utils.TREND_LONG, switch_trend) ? "L" : "S");
@@ -3211,18 +3211,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String char_name = Utils.getChartName(list);
                 Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
                 if (Objects.nonNull(dto_h4)) {
-                    BigDecimal sl_long = Utils.getBigDecimal(dto_h4.getLow_price());
-                    BigDecimal sl_shot = Utils.getBigDecimal(dto_h4.getHigh_price());
-                    BigDecimal tp_long = Utils.getBigDecimal(dto_h4.getEnd_body_price());
-                    BigDecimal tp_shot = Utils.getBigDecimal(dto_h4.getStr_body_price());
-
-                    List<BigDecimal> body = Utils.getOpenCloseCandle(list);
-
-                    String buf_trend = switch_trend;
-
-                    String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(false, buf_trend, EPIC, body.get(0), body.get(1),
-                            sl_long, sl_shot, tp_long, tp_shot);
-
+                    String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(false, switch_trend, EPIC, dto_h4);
                     String wdh4 = getPrepareOrderTrend_WDH4(EPIC, false);
                     String log = wdh4 + char_name.replace(")", "").trim();
                     log += ": " + Utils.appendSpace(switch_trend, 4) + ") ";
@@ -3420,22 +3409,15 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String buffer_h1 = "           " + Utils.appendSpace(EPIC, 20) + "  H1: "
                             + Utils.appendSpace(dto_h1.getTrend(), 7)
-                            + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_h1.getTrend(), EPIC,
-                                    dto_h1.getStr_body_price(),
-                                    dto_h1.getEnd_body_price(), dto_h4.getLow_price(), dto_h4.getHigh_price(),
-                                    dto_h4.getEnd_body_price(), dto_h4.getStr_body_price());
+                            + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_h1.getTrend(), EPIC, dto_h4);
 
                     String buffer_h4 = "           " + Utils.appendSpace(EPIC, 20) + "  H4: "
                             + Utils.appendSpace(dto_h4.getTrend(), 7)
-                            + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_h4.getTrend(), EPIC, dto_h4.getStr_body_price(),
-                                    dto_h4.getEnd_body_price(), dto_h4.getLow_price(), dto_h4.getHigh_price(),
-                                    dto_h4.getEnd_body_price(), dto_h4.getStr_body_price());
+                            + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_h4.getTrend(), EPIC, dto_h4);
 
                     String buffer_d1 = "           " + Utils.appendSpace(EPIC, 20) + "  D1: "
                             + Utils.appendSpace(dto_d1.getTrend(), 7)
-                            + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_d1.getTrend(), EPIC, dto_h4.getLow_price(),
-                                    dto_h4.getHigh_price(), dto_d1.getLow_price(), dto_d1.getHigh_price(),
-                                    dto_d1.getEnd_body_price(), dto_d1.getStr_body_price());
+                            + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_d1.getTrend(), EPIC, dto_d1);
 
                     String log_h1 = "\n" + Utils.appendSpace(buffer_h1 + note_d_h4_h1, LENGTH);
                     String log_h4 = "\n" + Utils.appendSpace(buffer_h4 + note_d_h4_h1, LENGTH);

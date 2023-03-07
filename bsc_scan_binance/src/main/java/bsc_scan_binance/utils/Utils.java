@@ -3052,8 +3052,7 @@ public class Utils {
         return "(" + check + " )";
     }
 
-    public static String calc_BUF_LO_HI_BUF_Forex(boolean isScap15m, String trend, String EPIC, BigDecimal entry_long,
-            BigDecimal entry_short, BigDecimal sl_long, BigDecimal sl_short, BigDecimal tp_long, BigDecimal tp_short) {
+    public static String calc_BUF_LO_HI_BUF_Forex(boolean isScap15m, String trend, String EPIC, Orders dto_h4) {
 
         String result = "";
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
@@ -3061,11 +3060,18 @@ public class Utils {
             risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
 
+        BigDecimal sl_long = Utils.getBigDecimal(dto_h4.getLow_price());
+        BigDecimal sl_shot = Utils.getBigDecimal(dto_h4.getHigh_price());
+        BigDecimal tp_long = Utils.getBigDecimal(dto_h4.getEnd_body_price());
+        BigDecimal tp_shot = Utils.getBigDecimal(dto_h4.getStr_body_price());
+        BigDecimal entry_long = Utils.getBigDecimal(dto_h4.getStr_body_price());
+        BigDecimal entry_shot = Utils.getBigDecimal(dto_h4.getEnd_body_price());
+
         String temp = "";
         int moneny_length = 8;
 
         BigDecimal pip_long = entry_long.subtract(sl_long);
-        BigDecimal pip_shot = sl_short.subtract(entry_short);
+        BigDecimal pip_shot = sl_shot.subtract(entry_shot);
 
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 8);
 
@@ -3080,11 +3086,11 @@ public class Utils {
 
         result = appendSpace(result, 80);
 
-        MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, entry_short, sl_short, tp_short);
+        MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, entry_shot, sl_shot, tp_shot);
         BigDecimal lot_shot = money_short.calcLot();
         temp = "";
-        temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry_short, 5)) + " ", 10);
-        temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_short, 5)), moneny_length);
+        temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry_shot, 5)) + " ", 10);
+        temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), moneny_length);
         temp += Utils.appendLeft(removeLastZero(lot_shot), 8)
                 + "(lot/" + appendSpace(removeLastZero(pip_shot), 8) + ")";
         result += Utils.appendSpace((Objects.equals(trend, TREND_SHORT) ? "*" : " ") + "(SELL)" + temp, 38);
