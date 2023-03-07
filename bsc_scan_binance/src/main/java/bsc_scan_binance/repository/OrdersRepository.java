@@ -56,12 +56,26 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
             + " ORDER BY gecko_id ", nativeQuery = true)
     public List<Orders> getH4List();
 
-    @Query(value = " SELECT * FROM orders WHERE (COALESCE(note, '') like '%Ma34568%') and (gecko_id like '%_HOUR') "
+    @Query(value = " SELECT * FROM orders det "
+            + " WHERE (COALESCE(det.note, '') like '%Ma34568%') and (det.gecko_id like '%_HOUR') "
+            + " AND det.gecko_id in (SELECT REPLACE(mst.gecko_id, '_DAY', '_HOUR') FROM orders mst WHERE (COALESCE(mst.note, '') <> '') and mst.trend = det.trend ) "
             + " ORDER BY gecko_id ", nativeQuery = true)
-    public List<Orders> getH1List();
+    public List<Orders> getH1ListNo1();
+
+    @Query(value = " SELECT * FROM orders det  "
+            + " WHERE (COALESCE(det.note, '') like '%Adjusting%') and (det.gecko_id like '%_HOUR') "
+            + " AND det.gecko_id in (SELECT REPLACE(mst.gecko_id, '_DAY', '_HOUR') FROM orders mst WHERE (COALESCE(mst.note, '') <> '') and mst.trend = det.trend ) "
+            + " ORDER BY gecko_id ", nativeQuery = true)
+    public List<Orders> getH1ListNo2();
 
     @Query(value = "  SELECT * FROM orders det  "
-            + "  WHERE (det.gecko_id like 'CRYPTO_%_4h') AND (COALESCE(det.note, '') <> '')  "
+            + "  WHERE (det.gecko_id like 'CRYPTO_%_1h') AND (COALESCE(det.note, '') like '%Ma34568%') AND det.trend = 'BUY' "
+            + "   AND det.trend = (SELECT trend FROM orders mst WHERE mst.gecko_id = REPLACE (det.gecko_id, '_1h', '_1d')) "
+            + "  ORDER BY det.gecko_id ", nativeQuery = true)
+    public List<Orders> getCrypto_H1();
+
+    @Query(value = "  SELECT * FROM orders det  "
+            + "  WHERE (det.gecko_id like 'CRYPTO_%_4h') AND (COALESCE(det.note, '') like '%Ma34568%') AND det.trend = 'BUY' "
             + "   AND det.trend = (SELECT trend FROM orders mst WHERE mst.gecko_id = REPLACE (det.gecko_id, '_4h', '_1d')) "
             + "  ORDER BY det.gecko_id ", nativeQuery = true)
     public List<Orders> getCrypto_H4();

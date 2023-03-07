@@ -3300,9 +3300,17 @@ public class BinanceServiceImpl implements BinanceService {
         String msg_crypto = "";
         List<Orders> orders_list = new ArrayList<Orders>();
 
-        List<Orders> h1_list = ordersRepository.getH1List();
-        if (!CollectionUtils.isEmpty(h1_list)) {
-            orders_list.addAll(h1_list);
+        List<Orders> h1_list_no1 = ordersRepository.getH1ListNo1();
+        if (!CollectionUtils.isEmpty(h1_list_no1)) {
+            orders_list.addAll(h1_list_no1);
+            orders_list.add(null);
+            orders_list.add(null);
+            orders_list.add(null);
+        }
+
+        List<Orders> h1_list_no2 = ordersRepository.getH1ListNo2();
+        if (!CollectionUtils.isEmpty(h1_list_no2)) {
+            orders_list.addAll(h1_list_no2);
             orders_list.add(null);
             orders_list.add(null);
             orders_list.add(null);
@@ -3453,12 +3461,24 @@ public class BinanceServiceImpl implements BinanceService {
             }
             Utils.writelnLogFooter_Forex();
 
-            List<Orders> crypto_list = ordersRepository.getCrypto_H4();
+            List<Orders> crypto_list = new ArrayList<Orders>();
+
+            List<Orders> crypto_list_h4 = ordersRepository.getCrypto_H4();
+            List<Orders> crypto_list_h1 = ordersRepository.getCrypto_H1();
+            crypto_list.addAll(crypto_list_h4);
+            crypto_list.add(null);
+            crypto_list.add(null);
+            crypto_list.addAll(crypto_list_h1);
+
             if (!CollectionUtils.isEmpty(crypto_list)) {
                 BigDecimal risk = BigDecimal.valueOf(10);
                 for (Orders entity : crypto_list) {
-                    BigDecimal qty = BigDecimal.ZERO;
+                    if (Objects.isNull(entity)) {
+                        Utils.logWritelnReport("");
+                        continue;
+                    }
 
+                    BigDecimal qty = BigDecimal.ZERO;
                     String sl = "   (Entry:";
                     if (Objects.equals(Utils.TREND_LONG, entity.getTrend())) {
 

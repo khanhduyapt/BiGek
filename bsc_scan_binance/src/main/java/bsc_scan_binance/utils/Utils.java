@@ -129,7 +129,7 @@ public class Utils {
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
-            "WABI");
+            "WABI", "IQ");
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
@@ -830,7 +830,12 @@ public class Utils {
     }
 
     public static String getCryptoLink_Spot(String symbol) {
-        return " https://vn.tradingview.com/chart/?symbol=BINANCE%3A" + symbol + "USDT" + " ";
+        String currency = "USDT";
+        if (BINANCE_PRICE_BUSD_LIST.contains(symbol)) {
+            currency = "BUSD";
+        }
+
+        return " https://vn.tradingview.com/chart/?symbol=BINANCE%3A" + symbol + currency + " ";
     }
 
     public static String getCryptoLink_Future(String symbol) {
