@@ -24,11 +24,11 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
     public List<Orders> getTrend_30mList();
 
     // -------------------------------------------------------------
-
+    //, 'GOLD_HOUR_4', 'SILVER_HOUR_4', 'FR40_HOUR_4', 'US30_HOUR_4', 'US500_HOUR_4', 'UK100_HOUR_4', 'AU200_HOUR_4', 'J225_HOUR_4'
     @Query(value = " SELECT * FROM ( "
             + "     SELECT * FROM orders det  "
             + "      WHERE (COALESCE(det.note, '') LIKE '%Ma34568%')  "
-            + "      AND det.gecko_id IN ('GOLD_HOUR', 'SILVER_HOUR', 'FR40_HOUR', 'US30_HOUR', 'US500_HOUR', 'UK100_HOUR', 'AU200_HOUR', 'J225_HOUR', 'GOLD_HOUR_4', 'SILVER_HOUR_4', 'FR40_HOUR_4', 'US30_HOUR_4', 'US500_HOUR_4', 'UK100_HOUR_4', 'AU200_HOUR_4', 'J225_HOUR_4') "
+            + "      AND det.gecko_id IN ('GOLD_HOUR', 'SILVER_HOUR', 'FR40_HOUR', 'US30_HOUR', 'US500_HOUR', 'UK100_HOUR', 'AU200_HOUR', 'J225_HOUR') "
             + " ) abc  "
             + " ORDER BY abc.gecko_id ", nativeQuery = true)
     public List<Orders> getH1ListNo1();

@@ -162,7 +162,8 @@ public class Utils {
             "WNXM", "WOO", "WRX", "WTC", "XEC", "XLM", "XMR", "XNO", "XRP", "XTZ", "XVG", "XVS", "YFI", "YFII", "YGG",
             "ZEC", "ZEN", "ZIL", "ZRX");
 
-    public static final List<String> EPICS_SCAP = Arrays.asList("GOLD", "SILVER", "FR40", "US30", "US100", "US500", "UK100");
+    public static final List<String> EPICS_SCAP = Arrays.asList("GOLD", "SILVER", "FR40", "US30", "US500", "UK100",
+            "AU200", "J225");
 
     public static final List<String> EPICS_STOCKS = Arrays.asList("DXY", "GOLD", "US30", "US100", "US500", "J225",
             "UK100", "FR40", "HK50", "BTCUSD", "SILVER", "OIL_CRUDE", "SP35", "DE40", "AU200");

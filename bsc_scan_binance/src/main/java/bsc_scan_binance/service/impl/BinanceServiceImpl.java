@@ -3017,6 +3017,15 @@ public class BinanceServiceImpl implements BinanceService {
                     trendType);
 
             ordersRepository.save(entity);
+
+            if (Objects.equals(Utils.CRYPTO_TIME_1H, TIME) && BTC_ETH_BNB.contains(symbol)
+                    && trendType.contains(Utils.TEXT_TREND_No1_MA34568)) {
+                String EVENT_ID = EVENT_PUMP + "_EPICS_SCAP_" + Utils.getCurrentYyyyMmDd_HH();
+                if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
+                    String msg = "(Scap_H1)" + symbol + "(" + trendType + ")";
+                    sendMsgPerHour(EVENT_ID, msg, true);
+                }
+            }
         }
 
         // History CRYPTO
@@ -3090,6 +3099,14 @@ public class BinanceServiceImpl implements BinanceService {
                 }
                 if (cur_price.compareTo(entity_day.getEnd_body_price().subtract(bread)) > 0) {
                     trendType += Utils.TEXT_MAX_DAY_AREA;
+                }
+            }
+
+            if (isH1 && Utils.EPICS_SCAP.contains(EPIC) && trendType.contains(Utils.TEXT_TREND_No1_MA34568)) {
+                String EVENT_ID = EVENT_PUMP + "_EPICS_SCAP_" + Utils.getCurrentYyyyMmDd_HH();
+                if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
+                    String msg = "(Scap_H1)" + EPIC + "(" + trendType + ")";
+                    sendMsgPerHour(EVENT_ID, msg, true);
                 }
             }
 
