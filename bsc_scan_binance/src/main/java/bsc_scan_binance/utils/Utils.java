@@ -164,9 +164,9 @@ public class Utils {
 
     public static final List<String> EPICS_SCAP = Arrays.asList("GOLD", "SILVER", "FR40", "US30", "US500", "UK100");
 
-    public static final List<String> EPICS_STOCKS = Arrays.asList("GOLD", "US30", "US500", "J225", "UK100", "FR40",
-            "HK50", "BTCUSD", "SILVER", "OIL_CRUDE", "SP35", "DE40", "AU200");
-    // MFF ko co: "EU50", "US100", "NATURALGAS",
+    public static final List<String> EPICS_STOCKS = Arrays.asList("DXY", "GOLD", "US30", "US100", "US500", "J225",
+            "UK100", "FR40", "HK50", "BTCUSD", "SILVER", "OIL_CRUDE", "SP35", "DE40", "AU200");
+    // MFF ko co: "EU50", "NATURALGAS",
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK",
@@ -3019,6 +3019,12 @@ public class Utils {
             return is0_1_uptrend;
         }
 
+        is0_1_uptrend = isUptrendByMa(list, maIndex * 4, 0, 1);
+        is1_2_uptrend = isUptrendByMa(list, maIndex * 4, 1, 2);
+        if (is0_1_uptrend == is1_2_uptrend) {
+            return is0_1_uptrend;
+        }
+
         return is1_2_uptrend;
     }
 
@@ -3065,7 +3071,8 @@ public class Utils {
 
         temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry_long, 5)) + " ", 10);
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), moneny_length);
-        temp += Utils.appendLeft(removeLastZero(lot_long), 8) + "(lot/" + entry_long.subtract(sl_long) + ")";
+        temp += Utils.appendLeft(removeLastZero(lot_long), 8) + "(lot/"
+                + appendSpace(removeLastZero(entry_long.subtract(sl_long)), 8) + ")";
         result += Utils.appendSpace((Objects.equals(trend, TREND_LONG) ? "*" : " ") + "(BUY )" + temp, 38);
 
         result = appendSpace(result, 80);
@@ -3075,7 +3082,8 @@ public class Utils {
         temp = "";
         temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry_short, 5)) + " ", 10);
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_short, 5)), moneny_length);
-        temp += Utils.appendLeft(removeLastZero(lot_shot), 8) + "(lot/" + sl_short.subtract(entry_short) + ")";
+        temp += Utils.appendLeft(removeLastZero(lot_shot), 8) + "(lot/"
+                + appendSpace(removeLastZero(sl_short.subtract(entry_short)), 8) + ")";
         result += Utils.appendSpace((Objects.equals(trend, TREND_SHORT) ? "*" : " ") + "(SELL)" + temp, 38);
 
         result = Utils.appendSpace(result, 140);

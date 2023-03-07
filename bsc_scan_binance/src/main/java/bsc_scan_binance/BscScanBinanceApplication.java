@@ -131,7 +131,6 @@ public class BscScanBinanceApplication {
                                     String EPIC = capital_list.get(index);
                                     checkCapital(binance_service, EPIC);
                                 }
-                                binance_service.createReport();
                             }
                         }
                         // ---------------------------------------------------------

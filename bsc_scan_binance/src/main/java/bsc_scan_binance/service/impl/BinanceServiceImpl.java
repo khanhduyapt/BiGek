@@ -3293,6 +3293,13 @@ public class BinanceServiceImpl implements BinanceService {
         String msg_crypto_futu = "";
         List<Orders> orders_list = new ArrayList<Orders>();
         List<Orders> temp_list;
+
+        Orders DXY_H4 = ordersRepository.findById("DXY_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+        if (Objects.nonNull(DXY_H4)) {
+            orders_list.add(DXY_H4);
+            orders_list.add(null);
+        }
+
         temp_list = ordersRepository.getH1ListNo5();
         if (!CollectionUtils.isEmpty(temp_list)) {
             orders_list.addAll(temp_list);
@@ -3322,6 +3329,13 @@ public class BinanceServiceImpl implements BinanceService {
         if (!CollectionUtils.isEmpty(temp_list)) {
             orders_list.addAll(temp_list);
             orders_list.add(null);
+        }
+
+        temp_list = ordersRepository.getH4List();
+        if (!CollectionUtils.isEmpty(temp_list)) {
+            orders_list.add(null);
+            orders_list.add(null);
+            orders_list.addAll(temp_list);
         }
 
         if (!CollectionUtils.isEmpty(orders_list)) {
@@ -3418,27 +3432,25 @@ public class BinanceServiceImpl implements BinanceService {
                                     dto_h4.getEnd_body_price(), dto_h4.getLow_price(), dto_h4.getHigh_price(),
                                     dto_h4.getEnd_body_price(), dto_h4.getStr_body_price());
 
+                    String buffer_d1 = "           " + Utils.appendSpace(EPIC, 20) + "  D1: "
+                            + Utils.appendSpace(dto_d1.getTrend(), 7)
+                            + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_d1.getTrend(), EPIC, dto_h4.getLow_price(),
+                                    dto_h4.getHigh_price(), dto_d1.getLow_price(), dto_d1.getHigh_price(),
+                                    dto_d1.getEnd_body_price(), dto_d1.getStr_body_price());
+
                     String log_h1 = "\n" + Utils.appendSpace(buffer_h1 + note_d_h4_h1, LENGTH);
                     String log_h4 = "\n" + Utils.appendSpace(buffer_h4 + note_d_h4_h1, LENGTH);
+                    String log_d1 = "\n" + Utils.appendSpace(buffer_d1 + note_d_h4_h1, LENGTH);
 
                     String log = "";
                     if (isD1) {
-                        log += header + log_h4;
-                        log = Utils.appendSpace(log, 250);
+                        log += header + log_d1;
                     } else if (isH4) {
-
-                        log += header + log_h4;// + log_d1
-
-                        log = Utils.appendSpace(log, 250);
+                        log += header + log_h4;
                     } else {
                         log += header + log_h1;
-                        log = Utils.appendSpace(log, 250);
                     }
-
-                    if (Utils.isNotBlank(log)) {
-                        Utils.logWritelnReport(log);
-                        // Utils.logWritelnDraft(log);
-                    }
+                    Utils.logWritelnReport(Utils.appendSpace(log, 250));
                 }
             }
             Utils.writelnLogFooter_Forex();
