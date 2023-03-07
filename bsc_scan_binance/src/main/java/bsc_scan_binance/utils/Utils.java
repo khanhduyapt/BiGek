@@ -3006,9 +3006,22 @@ public class Utils {
         if (CollectionUtils.isEmpty(list)) {
             return false;
         }
-        // quyet dinh: khong lay 0 vi can su chac chan.
-        int str = 1;
-        int end = 2;
+        boolean is0_1_uptrend = isUptrendByMa(list, maIndex, 0, 1);
+        boolean is1_2_uptrend = isUptrendByMa(list, maIndex, 1, 2);
+        if (is0_1_uptrend == is1_2_uptrend) {
+            return is0_1_uptrend;
+        }
+
+        is0_1_uptrend = isUptrendByMa(list, maIndex * 2, 0, 1);
+        is1_2_uptrend = isUptrendByMa(list, maIndex * 2, 1, 2);
+        if (is0_1_uptrend == is1_2_uptrend) {
+            return is0_1_uptrend;
+        }
+
+        return is1_2_uptrend;
+    }
+
+    private static boolean isUptrendByMa(List<BtcFutures> list, int maIndex, int str, int end) {
         BigDecimal ma_c = calcMA(list, maIndex, str);
         BigDecimal ma_p = calcMA(list, maIndex, end);
         if (ma_c.compareTo(ma_p) > 0) {
