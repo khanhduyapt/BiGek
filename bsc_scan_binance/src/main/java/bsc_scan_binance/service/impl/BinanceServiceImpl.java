@@ -3024,11 +3024,13 @@ public class BinanceServiceImpl implements BinanceService {
             sl_long = Utils.roundDefault(low_high.get(0).subtract(bread));
             sl_shot = Utils.roundDefault(low_high.get(1).add(bread));
 
-            if (cur_price.compareTo(entity_day.getStr_body_price().add(bread)) < 0) {
-                note += Utils.TEXT_MIN_DAY_AREA;
-            }
-            if (cur_price.compareTo(entity_day.getEnd_body_price().subtract(bread)) > 0) {
-                note += Utils.TEXT_MAX_DAY_AREA;
+            if (Objects.nonNull(entity_day)) {
+                if (cur_price.compareTo(entity_day.getStr_body_price().add(bread)) < 0) {
+                    note += Utils.TEXT_MIN_DAY_AREA;
+                }
+                if (cur_price.compareTo(entity_day.getEnd_body_price().subtract(bread)) > 0) {
+                    note += Utils.TEXT_MAX_DAY_AREA;
+                }
             }
 
             en_long = body.get(0);

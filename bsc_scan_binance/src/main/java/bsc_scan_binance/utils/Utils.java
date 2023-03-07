@@ -124,7 +124,7 @@ public class Utils {
 
     public static final long MINUTES_OF_D = 600;
     public static final long MINUTES_OF_4H = 120;
-    public static final long MINUTES_OF_1H = 30;
+    public static final long MINUTES_OF_1H = 60;
     public static final long MINUTES_OF_15M = 15;
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
