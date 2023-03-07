@@ -3006,6 +3006,7 @@ public class Utils {
         if (CollectionUtils.isEmpty(list)) {
             return false;
         }
+
         boolean is0_1_uptrend = isUptrendByMa(list, maIndex, 0, 1);
         boolean is1_2_uptrend = isUptrendByMa(list, maIndex, 1, 2);
         if (is0_1_uptrend == is1_2_uptrend) {
