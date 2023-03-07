@@ -2964,14 +2964,6 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initCryptoTrend(String TIME, String symbol) {
-        // TODO: check Forex first!
-        // boolean exit = true;
-        // if (exit) {
-        // return "";
-        // }
-        // symbol = "PERL";
-        // TIME = Utils.CRYPTO_TIME_1H;
-
         String url = Utils.getCryptoLink_Spot(symbol);
         String trend_by_ma3 = "";
         String EPIC = "CRYPTO_" + symbol;
@@ -3297,7 +3289,8 @@ public class BinanceServiceImpl implements BinanceService {
         int LENGTH = 210;
         int count_h1 = 0;
         String msg_forex = "";
-        String msg_crypto = "";
+        String msg_crypto_spot = "";
+        String msg_crypto_futu = "";
         List<Orders> orders_list = new ArrayList<Orders>();
 
         List<Orders> h1_list_no1 = ordersRepository.getH1ListNo1();
@@ -3311,9 +3304,6 @@ public class BinanceServiceImpl implements BinanceService {
         List<Orders> h1_list_no2 = ordersRepository.getH1ListNo2();
         if (!CollectionUtils.isEmpty(h1_list_no2)) {
             orders_list.addAll(h1_list_no2);
-            orders_list.add(null);
-            orders_list.add(null);
-            orders_list.add(null);
         }
 
         if (!CollectionUtils.isEmpty(orders_list)) {
@@ -3461,13 +3451,13 @@ public class BinanceServiceImpl implements BinanceService {
             }
             Utils.writelnLogFooter_Forex();
 
+            // ==================================================================================
             List<Orders> crypto_list = new ArrayList<Orders>();
-
-            List<Orders> crypto_list_h4 = ordersRepository.getCrypto_H4();
+            //List<Orders> crypto_list_h4 = ordersRepository.getCrypto_H4();
             List<Orders> crypto_list_h1 = ordersRepository.getCrypto_H1();
-            crypto_list.addAll(crypto_list_h4);
-            crypto_list.add(null);
-            crypto_list.add(null);
+            //crypto_list.addAll(crypto_list_h4);
+            //crypto_list.add(null);
+            //crypto_list.add(null);
             crypto_list.addAll(crypto_list_h1);
 
             if (!CollectionUtils.isEmpty(crypto_list)) {
@@ -3475,6 +3465,10 @@ public class BinanceServiceImpl implements BinanceService {
                 for (Orders entity : crypto_list) {
                     if (Objects.isNull(entity)) {
                         Utils.logWritelnReport("");
+                        continue;
+                    }
+
+                    if (entity.getNote().contains(Utils.TEXT_MAX_DAY_AREA)) {
                         continue;
                     }
 
@@ -3507,7 +3501,16 @@ public class BinanceServiceImpl implements BinanceService {
                             .replace("_1h", "");
                     String chart = entity.getId().replace("CRYPTO_" + symbol, "").replace("_", "").toUpperCase();
 
-                    String tmp_msg = Utils.appendSpace(chart, 8) + Utils.appendSpace(entity.getTrend(), 8)
+                    String type = "";
+                    boolean isFutu = false;
+                    if (binanceFuturesRepository.existsBySymbol(symbol)) {
+                        isFutu = true;
+                        type = "  (Futures)   ";
+                    } else {
+                        type = "  (Spot)      ";
+                    }
+
+                    String tmp_msg = type + Utils.appendSpace(chart, 8) + Utils.appendSpace(entity.getTrend(), 8)
                             + Utils.appendSpace(symbol, 10);
 
                     tmp_msg += Utils.appendLeft(Utils.removeLastZero(entity.getCurrent_price()), 8) + sl;
@@ -3518,7 +3521,12 @@ public class BinanceServiceImpl implements BinanceService {
                     Utils.logWritelnReport(tmp_msg);
 
                     if (entity.getId().contains("_1h")) {
-                        msg_crypto += symbol + ",";
+                        if (isFutu) {
+                            msg_crypto_futu += symbol + ",";
+                        } else {
+                            msg_crypto_spot += symbol + ",";
+                        }
+
                         // Utils.logWritelnDraft(tmp_msg);
                     }
                 }
@@ -3528,24 +3536,31 @@ public class BinanceServiceImpl implements BinanceService {
 
         Utils.writelnLogFooter_Forex();
 
-        if (count_h1 > 0) {
-            String msg = "(H1)";
-            msg += Utils.new_line_from_service;
-            msg += "(Forex):" + msg_forex;
-
-            if (Utils.isNotBlank(msg_crypto)) {
-                msg += Utils.new_line_from_service;
-                msg += "(Crypto):" + msg_crypto;
-            }
-
-            String EVENT_ID = EVENT_PUMP + "_REPORT_" + count_h1 + Utils.getCurrentYyyyMmDd_HH_Blog4h();
+        if (Utils.isNotBlank(msg_forex)) {
+            String EVENT_ID = EVENT_PUMP + "_REPORT_FOREX_" + Utils.getCurrentYyyyMmDd_HH_Blog2h();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
-                Utils.logWritelnDraft(msg.replace(Utils.new_line_from_service, "\n"));
+                String msg = "(H1)";
+                msg += Utils.new_line_from_service;
+                msg += "(Forex):" + msg_forex;
 
+                Utils.logWritelnDraft(msg.replace(Utils.new_line_from_service, "\n"));
                 sendMsgPerHour(EVENT_ID, msg, true);
             }
-
         }
+
+        if (Utils.isNotBlank(msg_crypto_spot + msg_crypto_futu)) {
+            String EVENT_ID = EVENT_PUMP + "_REPORT_CRYPTO_" + Utils.getCurrentYyyyMmDd_HH_Blog4h();
+            if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
+                String msg_crypto = "";
+                msg_crypto += "(Crypto):" + Utils.new_line_from_service;
+                msg_crypto += "(Futu)" + msg_crypto_futu + Utils.new_line_from_service;
+                msg_crypto += "(Spot)" + msg_crypto_spot + Utils.new_line_from_service;
+
+                Utils.logWritelnDraft(msg_crypto.replace(Utils.new_line_from_service, "\n"));
+                sendMsgPerHour(EVENT_ID, msg_crypto, false);
+            }
+        }
+
     }
 
 }

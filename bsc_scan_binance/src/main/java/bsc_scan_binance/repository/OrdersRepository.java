@@ -71,7 +71,8 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
     @Query(value = "  SELECT * FROM orders det  "
             + "  WHERE (det.gecko_id like 'CRYPTO_%_1h') AND (COALESCE(det.note, '') like '%Ma34568%') AND det.trend = 'BUY' "
             + "   AND det.trend = (SELECT trend FROM orders mst WHERE mst.gecko_id = REPLACE (det.gecko_id, '_1h', '_1d')) "
-            + "  ORDER BY det.gecko_id ", nativeQuery = true)
+            + "   AND det.trend = (SELECT trend FROM orders mst WHERE mst.gecko_id = REPLACE (det.gecko_id, '_1h', '_4h')) "
+            + "  ORDER BY (case when (select count(symbol) from binance_futures where symbol = REPLACE(REPLACE(REPLACE(REPLACE(det.gecko_id, '_1h', ''), '_4h', ''), '_1d', ''), 'CRYPTO_', '')) > 0 then 1 else 2 end) asc ", nativeQuery = true)
     public List<Orders> getCrypto_H1();
 
     @Query(value = "  SELECT * FROM orders det  "
