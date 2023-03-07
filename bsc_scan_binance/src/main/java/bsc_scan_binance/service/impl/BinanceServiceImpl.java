@@ -3533,7 +3533,6 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.writelnLogFooter_Forex();
             }
         }
-
         Utils.writelnLogFooter_Forex();
 
         if (Utils.isNotBlank(msg_forex)) {
@@ -3557,10 +3556,9 @@ public class BinanceServiceImpl implements BinanceService {
                 msg_crypto += "(Spot)" + msg_crypto_spot + Utils.new_line_from_service;
 
                 Utils.logWritelnDraft(msg_crypto.replace(Utils.new_line_from_service, "\n"));
-                sendMsgPerHour(EVENT_ID, msg_crypto, false);
+                sendMsgPerHour(EVENT_ID, msg_crypto, true);
             }
         }
-
     }
 
 }
