@@ -56,15 +56,24 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
             + " ORDER BY gecko_id ", nativeQuery = true)
     public List<Orders> getH4List();
 
-    @Query(value = " SELECT * FROM orders det "
-            + " WHERE (COALESCE(det.note, '') like '%Ma34568%') and (det.gecko_id like '%_HOUR') "
-            + " AND det.gecko_id in (SELECT REPLACE(mst.gecko_id, '_DAY', '_HOUR') FROM orders mst WHERE (COALESCE(mst.note, '') <> '') and mst.trend = det.trend ) "
-            + " ORDER BY gecko_id ", nativeQuery = true)
+    @Query(value = " SELECT * FROM ( " +
+            "     SELECT * FROM orders det  " +
+            "      WHERE (COALESCE(det.note, '') like '%Ma34568%') and (det.gecko_id like '%_HOUR')  " +
+            "      AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR', '_DAY'))   "
+            +
+            "      AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR', '_HOUR_4'))   "
+
+            //            + "     union  " +
+            //            "     SELECT * FROM orders det  " +
+            //            "      WHERE (COALESCE(det.note, '') like '%Ma34568%') and (det.gecko_id like '%_HOUR')  " +
+            //            "      AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR', '_HOUR_4'))   "
+            + " ) abc  " +
+            " ORDER BY abc.gecko_id ", nativeQuery = true)
     public List<Orders> getH1ListNo1();
 
     @Query(value = " SELECT * FROM orders det  "
             + " WHERE (COALESCE(det.note, '') like '%Adjusting%') and (det.gecko_id like '%_HOUR') "
-            + " AND det.gecko_id in (SELECT REPLACE(mst.gecko_id, '_DAY', '_HOUR') FROM orders mst WHERE (COALESCE(mst.note, '') <> '') and mst.trend = det.trend ) "
+            + "  AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR', '_DAY'))  "
             + " ORDER BY gecko_id ", nativeQuery = true)
     public List<Orders> getH1ListNo2();
 

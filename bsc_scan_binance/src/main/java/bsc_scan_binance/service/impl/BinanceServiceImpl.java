@@ -3356,14 +3356,7 @@ public class BinanceServiceImpl implements BinanceService {
                 dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
 
                 if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)) {
-                    String buf_trend = entity.getTrend();
                     String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
-                    if (Utils.getStringValue(entity.getNote()).contains(Utils.TEXT_MIN_DAY_AREA)) {
-                        buf_trend = Utils.TREND_LONG;
-                    }
-                    if (Utils.getStringValue(entity.getNote()).contains(Utils.TEXT_MAX_DAY_AREA)) {
-                        buf_trend = Utils.TREND_SHORT;
-                    }
 
                     String day_range = "";
                     BigDecimal cur_price = entity.getCurrent_price();
@@ -3384,7 +3377,7 @@ public class BinanceServiceImpl implements BinanceService {
                         header = header.replace(" (D5", "*(D5").replace(" (H", "*(H");
                         header = header.replace(" (30", "*(30").replace(" (15", "*(15");
                     }
-                    header += Utils.appendSpace(buf_trend, 4) + ") ";
+                    header += Utils.appendSpace(entity.getTrend(), 4) + ") ";
                     header += Utils.appendSpace(EPIC, 15, "-");
                     header += Utils.appendSpace(Utils.appendSpace(Utils.getCapitalLink(EPIC), 66), 120, "_") + "     "
                             + entity.getNote().trim() + day_range;
@@ -3394,7 +3387,8 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.nonNull(dto_h1)) {
                         String buffer_h1 = "           " + Utils.appendSpace(EPIC, 20) + "  H1: "
                                 + Utils.appendSpace(dto_h1.getTrend(), 7)
-                                + Utils.calc_BUF_LO_HI_BUF_Forex(false, buf_trend, EPIC, dto_h1.getStr_body_price(),
+                                + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_h1.getTrend(), EPIC,
+                                        dto_h1.getStr_body_price(),
                                         dto_h1.getEnd_body_price(), dto_h4.getLow_price(), dto_h4.getHigh_price(),
                                         dto_h4.getEnd_body_price(), dto_h4.getStr_body_price());
 
@@ -3536,7 +3530,7 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.writelnLogFooter_Forex();
 
         if (Utils.isNotBlank(msg_forex)) {
-            String EVENT_ID = EVENT_PUMP + "_REPORT_FOREX_" + Utils.getCurrentYyyyMmDd_HH_Blog2h();
+            String EVENT_ID = EVENT_PUMP + "_REPORT_FOREX_" + count_h1 + Utils.getCurrentYyyyMmDd_HH_Blog2h();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
                 String msg = "(H1)";
                 msg += Utils.new_line_from_service;
