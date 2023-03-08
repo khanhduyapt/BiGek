@@ -124,7 +124,7 @@ public class BscScanBinanceApplication {
 
                         if (Utils.isBusinessTime_6h_to_17h()) {
                             if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
-                                if (isReloadAfter(Utils.MINUTES_OF_15M * 2, "RE_CHECK_FOREX")) {
+                                if (isReloadAfter(Utils.MINUTES_OF_15M, "RE_CHECK_FOREX")) {
                                     Utils.initCapital();
                                     for (int index = 0; index < forex_size; index++) {
                                         sleepWhenExceptionTimeOut(binance_service);

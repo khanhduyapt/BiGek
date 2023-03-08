@@ -2927,20 +2927,10 @@ public class Utils {
         temp_long += Utils.checkXCutUpY(ma3_1, ma3_2, ma8_1, ma8_2) + "_";
         temp_shot += Utils.checkXCutDnY(ma3_1, ma3_2, ma8_1, ma8_2) + "_";
 
-        temp_long += Utils.checkXCutUpY(ma4_1, ma4_2, ma5_1, ma5_2) + "_";
-        temp_shot += Utils.checkXCutDnY(ma4_1, ma4_2, ma5_1, ma5_2) + "_";
-        temp_long += Utils.checkXCutUpY(ma4_1, ma4_2, ma6_1, ma6_2) + "_";
-        temp_shot += Utils.checkXCutDnY(ma4_1, ma4_2, ma6_1, ma6_2) + "_";
-        temp_long += Utils.checkXCutUpY(ma4_1, ma4_2, ma8_1, ma8_2) + "_";
-        temp_shot += Utils.checkXCutDnY(ma4_1, ma4_2, ma8_1, ma8_2) + "_";
-
         temp_long += Utils.checkXCutUpY(ma5_1, ma5_2, ma6_1, ma6_2) + "_";
         temp_shot += Utils.checkXCutDnY(ma5_1, ma5_2, ma6_1, ma6_2) + "_";
         temp_long += Utils.checkXCutUpY(ma5_1, ma5_2, ma8_1, ma8_2) + "_";
         temp_shot += Utils.checkXCutDnY(ma5_1, ma5_2, ma8_1, ma8_2) + "_";
-
-        temp_long += Utils.checkXCutUpY(ma6_1, ma6_2, ma8_1, ma8_2) + "_";
-        temp_shot += Utils.checkXCutDnY(ma6_1, ma6_2, ma8_1, ma8_2) + "_";
 
         String trend = "";
         trend += "_" + temp_long + "_";
