@@ -138,7 +138,7 @@ public class BscScanBinanceApplication {
                         checkCrypto(binance_service);
                         // ---------------------------------------------------------
 
-                        if (isReloadAfter((Utils.MINUTES_OF_1H), "CREATE_REPORT")) {
+                        if (isReloadAfter((Utils.MINUTES_OF_15M), "CREATE_REPORT")) {
                             binance_service.createReport();
                         }
 

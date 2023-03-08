@@ -3440,11 +3440,18 @@ public class BinanceServiceImpl implements BinanceService {
             //String log_h1 = "\n" + Utils.appendSpace(buffer_h1 + note_d_h4_h1, LENGTH);
 
             String buffer_h4 = Utils.appendSpace("", 12) + Utils.appendSpace(EPIC, 10);
-            if (note_d_h4_h1.contains(Utils.TEXT_TREND_No1_MA34568)) {
-                buffer_h4 += Utils.appendSpace("Ma3_8", 10);
-            } else {
-                buffer_h4 += Utils.appendSpace("", 10);
+            String type = "";
+            if (note_d_h4_h1.contains(Utils.TEXT_MIN_DAY_AREA)) {
+                type += " Min ";
             }
+            if (note_d_h4_h1.contains(Utils.TEXT_MAX_DAY_AREA)) {
+                type += " Max ";
+            }
+            if (note_d_h4_h1.contains(Utils.TEXT_TREND_No1_MA34568)) {
+                type += " Ma3 ";
+            }
+            buffer_h4 += Utils.appendSpace(type.trim(), 10);
+
             buffer_h4 += " H4: " + Utils.appendSpace(dto_h4.getTrend(), 7);
             buffer_h4 += Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_h4.getTrend(), EPIC, dto_h4);
 
