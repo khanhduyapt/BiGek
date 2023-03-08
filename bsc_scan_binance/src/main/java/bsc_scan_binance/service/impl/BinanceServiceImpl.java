@@ -2760,8 +2760,8 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> candidate_long_list = new ArrayList<String>();
         List<String> candidate_shot_list = new ArrayList<String>();
         List<String> capital_list = new ArrayList<String>();
-        capital_list.addAll(Utils.EPICS_STOCKS);
-        capital_list.addAll(Utils.EPICS_FOREXS);
+        capital_list.addAll(Utils.EPICS_SCAP);
+        capital_list.addAll(Utils.EPICS_SCAP);
         for (String epic : capital_list) {
             if (long_list.contains(epic)) {
 
@@ -3241,6 +3241,12 @@ public class BinanceServiceImpl implements BinanceService {
             list_h1.add(null);
         }
 
+        temp_list = ordersRepository.getListM15();
+        if (!CollectionUtils.isEmpty(temp_list)) {
+            list_h1.addAll(temp_list);
+            list_h1.add(null);
+        }
+
         temp_list = ordersRepository.getH1ListNo5();
         if (!CollectionUtils.isEmpty(temp_list)) {
             list_h1.addAll(temp_list);
@@ -3301,30 +3307,29 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        List<Orders> list_d1 = ordersRepository.getD1List();
-        if (!CollectionUtils.isEmpty(list_d1)) {
-            Utils.logWritelnReport("");
-            Utils.logWritelnReport(
-                    Utils.appendSpace(Utils.appendLeft(Utils.TEXT_TREND_No1_MA34568 + (" (D1) "), 80, "="), 268, "="));
-
-            for (Orders entity : list_d1) {
-                String log = createLineForex(entity, str_long_suggest, str_shot_suggest);
-                Utils.logWritelnReport(log);
-            }
-        }
-
-        List<Orders> list_h4 = ordersRepository.getH4ByMa34568List();
-        if (!CollectionUtils.isEmpty(list_h4)) {
-            Utils.logWritelnReport("");
-            Utils.logWritelnReport(
-                    Utils.appendSpace(Utils.appendLeft(" " + Utils.TEXT_TREND_No1_MA34568 + ("(H4) "), 80, "="), 268,
-                            "="));
-
-            for (Orders entity : list_h4) {
-                String log = createLineForex(entity, str_long_suggest, str_shot_suggest);
-                Utils.logWritelnReport(log);
-            }
-        }
+        //List<Orders> list_d1 = ordersRepository.getD1List();
+        //if (!CollectionUtils.isEmpty(list_d1)) {
+        //    Utils.logWritelnReport("");
+        //    Utils.logWritelnReport(
+        //            Utils.appendSpace(Utils.appendLeft(Utils.TEXT_TREND_No1_MA34568 + (" (D1) "), 80, "="), 268, "="));
+        //
+        //    for (Orders entity : list_d1) {
+        //        String log = createLineForex(entity, str_long_suggest, str_shot_suggest);
+        //        Utils.logWritelnReport(log);
+        //    }
+        //}
+        //List<Orders> list_h4 = ordersRepository.getH4ByMa34568List();
+        //if (!CollectionUtils.isEmpty(list_h4)) {
+        //    Utils.logWritelnReport("");
+        //    Utils.logWritelnReport(
+        //            Utils.appendSpace(Utils.appendLeft(" " + Utils.TEXT_TREND_No1_MA34568 + ("(H4) "), 80, "="), 268,
+        //                    "="));
+        //
+        //    for (Orders entity : list_h4) {
+        //        String log = createLineForex(entity, str_long_suggest, str_shot_suggest);
+        //        Utils.logWritelnReport(log);
+        //    }
+        //}
 
         List<Orders> list_All_H4 = ordersRepository.getAllH4();
         if (!CollectionUtils.isEmpty(list_All_H4)) {
@@ -3483,13 +3488,15 @@ public class BinanceServiceImpl implements BinanceService {
             String log_h4 = "\n" + Utils.appendSpace(buffer_h4 + note_d_h4_h1, LENGTH);
             String log_d1 = "\n" + Utils.appendSpace(buffer_d1 + note_d_h4_h1, LENGTH);
 
-            if (isD1) {
-                log += header + log_d1;
-            } else if (isH4) {
-                log += header + log_h4;
-            } else {
-                log += header + log_h1;
-            }
+            //if (isD1) {
+            //    log += header + log_d1;
+            //} else if (isH1) {
+            //    log += header + log_h4;
+            //} else {
+            //    //log += header + log_h1;
+            //}
+
+            log = header + log_h4;
         }
 
         return Utils.appendSpace(log, 250);

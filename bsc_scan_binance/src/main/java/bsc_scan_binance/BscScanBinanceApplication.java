@@ -96,9 +96,9 @@ public class BscScanBinanceApplication {
             binance_service.createReport();
             // ----------------------------------------
             List<String> capital_list = new ArrayList<String>();
-            capital_list.addAll(Utils.EPICS_STOCKS);
-            capital_list.addAll(Utils.EPICS_FOREXS);
-
+            //capital_list.addAll(Utils.EPICS_STOCKS);
+            //capital_list.addAll(Utils.EPICS_FOREXS);
+            capital_list.addAll(Utils.EPICS_SCAP);
             if (app_flag != Utils.const_app_flag_webonly) {
                 List<CandidateCoin> token_list = gecko_service.getList(callFormBinance);
                 int total = token_list.size();

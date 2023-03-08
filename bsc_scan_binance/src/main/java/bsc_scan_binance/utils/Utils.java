@@ -134,19 +134,20 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final List<String> EPICS_SCAP = Arrays.asList("DXY", "GOLD", "SILVER", "US30", "US100", "US500",
-            "UK100", "EURUSD", "GBPUSD", "USDCHF", "USDJPY", "AUDUSD", "NZDUSD", "USDCAD");
+    public static final List<String> EPICS_SCAP = Arrays.asList("DXY", "GOLD", "SILVER", "OIL_CRUDE", "US30", "US100",
+            "US500", "UK100", "J225", "SP35", "DE40", "FR40", "AU200", "EURUSD", "GBPUSD", "USDCHF", "USDJPY", "AUDUSD",
+            "NZDUSD", "USDCAD");
 
-    public static final List<String> EPICS_STOCKS = Arrays.asList("GOLD", "US30", "US100", "US500", "J225",
-            "UK100", "FR40", "HK50", "BTCUSD", "SILVER", "OIL_CRUDE", "SP35", "DE40", "AU200");
-    // MFF ko co: "EU50", "NATURALGAS",
-
-    // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON", "EURNOK",
-    public static final List<String> EPICS_FOREXS = Arrays.asList("AUDUSD", "CADJPY", "CHFJPY", "EURAUD", "EURCAD",
-            "EURCHF", "EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNZD", "EURPLN", "EURSEK", "EURSGD",
-            "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDJPY", "NZDUSD", "USDCAD",
-            "USDCHF", "USDCNH", "USDCZK", "USDDKK", "USDHUF", "USDILS", "USDJPY", "USDMXN", "USDNOK", "USDSEK",
-            "USDSGD", "USDZAR");
+    //public static final List<String> EPICS_STOCKS = Arrays.asList("GOLD", "US30", "US100", "US500",
+    //        "UK100", "FR40", "HK50", "BTCUSD", "SILVER", "OIL_CRUDE", "SP35", "DE40", "AU200");
+    //// MFF ko co: "EU50", "NATURALGAS",
+    //
+    //// bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON", "EURNOK",
+    //public static final List<String> EPICS_FOREXS = Arrays.asList("AUDUSD", "CADJPY", "CHFJPY", "EURAUD", "EURCAD",
+    //        "EURCHF", "EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNZD", "EURPLN", "EURSEK", "EURSGD",
+    //        "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDJPY", "NZDUSD", "USDCAD",
+    //        "USDCHF", "USDCNH", "USDCZK", "USDDKK", "USDHUF", "USDILS", "USDJPY", "USDMXN", "USDNOK", "USDSEK",
+    //        "USDSGD", "USDZAR");
 
     // Delete: "BIDR", "IDRT", "NEM", "PIVX", "QLC", "WABI"
     public static final List<String> coins = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ACM", "ADA", "ADX", "AERGO",
