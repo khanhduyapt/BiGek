@@ -3140,8 +3140,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (is15 && trendType.contains(Utils.TEXT_TREND_No1_MA34568)) {
                 Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
                 Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-                if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)
-                        && (Objects.equals(trend, dto_d1.getTrend()) || Objects.equals(trend, dto_h4.getTrend()))) {
+                if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)) {
                     // -------------------------------------Log-------------------------------------
                     String char_name = Utils.getChartName(list);
                     String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(false, trend, EPIC, dto_h4);
@@ -3155,10 +3154,12 @@ public class BinanceServiceImpl implements BinanceService {
                     Utils.logWritelnDraft(log);
 
                     // -------------------------------------SendMsg-------------------------------------
-                    String EVENT_ID = EVENT_PUMP + "_EPICS_SCAP_" + Utils.getCurrentYyyyMmDd_HH();
-                    if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
-                        String msg = "(Scap)" + Utils.getChartName(list) + EPIC + "(" + trend + ")" + trendType;
-                        sendMsgPerHour(EVENT_ID, msg, true);
+                    if (Objects.equals(trend, dto_d1.getTrend()) && Objects.equals(trend, dto_h4.getTrend())) {
+                        String EVENT_ID = EVENT_PUMP + "_EPICS_SCAP_" + Utils.getCurrentYyyyMmDd_HH();
+                        if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
+                            String msg = "(Scap)" + Utils.getChartName(list) + EPIC + "(" + trend + ")" + trendType;
+                            sendMsgPerHour(EVENT_ID, msg, true);
+                        }
                     }
                 }
             }
