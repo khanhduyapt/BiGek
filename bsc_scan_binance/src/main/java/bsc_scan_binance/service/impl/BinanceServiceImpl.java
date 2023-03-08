@@ -3137,40 +3137,31 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.nonNull(entity_time_out)) {
                 ordersRepository.delete(entity_time_out);
             }
-
-            // -------------------------------------Log-------------------------------------
-            //isH1 ||
-            if ((is15) && trendType.contains(Utils.TEXT_TREND_No1_MA34568)) {
-                String char_name = Utils.getChartName(list);
+            if (is15 && trendType.contains(Utils.TEXT_TREND_No1_MA34568)) {
+                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
                 Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-                if (Objects.nonNull(dto_h4)) {
+                if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)
+                        && (Objects.equals(trend, dto_d1.getTrend()) || Objects.equals(trend, dto_h4.getTrend()))) {
+                    // -------------------------------------Log-------------------------------------
+                    String char_name = Utils.getChartName(list);
                     String buffer = Utils.calc_BUF_LO_HI_BUF_Forex(false, trend, EPIC, dto_h4);
-                    String log = "   " + char_name.replace(")", "").trim();
+                    String log = "";
+                    log += "   D:" + Utils.appendSpace(dto_d1.getTrend(), 5);
+                    log += "   H4:" + Utils.appendSpace(dto_h4.getTrend(), 5);
+                    log += char_name.replace(")", "").trim();
                     log += ": " + Utils.appendSpace(trend, 4) + ") ";
                     log += Utils.appendSpace(Utils.appendSpace(EPIC, 12) + Utils.getCapitalLink(EPIC), 80);
                     log += buffer + trendType;
                     Utils.logWritelnDraft(log);
-                }
-            }
-            // -------------------------------------SendMsg-------------------------------------
-            if (is15) {
-                Orders entity_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-                if (trendType.contains(Utils.TEXT_TREND_No1_MA34568) && Objects.nonNull(entity_h4)
-                        && Objects.equals(trend, entity_h4.getTrend())) {
-                    // Allow sendMsg M15
-                } else {
-                    return "";
-                }
-            }
-            //isH1 ||
-            if ((is15) && Utils.EPICS_SCAP.contains(EPIC) && trendType.contains(Utils.TEXT_TREND_No1_MA34568)) {
-                String EVENT_ID = EVENT_PUMP + "_EPICS_SCAP_" + Utils.getCurrentYyyyMmDd_HH();
-                if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
-                    String msg = "(Scap)" + Utils.getChartName(list) + EPIC + "(" + trend + ")" + trendType;
-                    sendMsgPerHour(EVENT_ID, msg, true);
-                }
-            }
 
+                    // -------------------------------------SendMsg-------------------------------------
+                    String EVENT_ID = EVENT_PUMP + "_EPICS_SCAP_" + Utils.getCurrentYyyyMmDd_HH();
+                    if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
+                        String msg = "(Scap)" + Utils.getChartName(list) + EPIC + "(" + trend + ")" + trendType;
+                        sendMsgPerHour(EVENT_ID, msg, true);
+                    }
+                }
+            }
             return trend;
         } catch (Exception e) {
             String result = "initForexTrend(" + EPIC + ") " + e.getMessage();
@@ -3398,7 +3389,6 @@ public class BinanceServiceImpl implements BinanceService {
         Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
         Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-        //if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1)) {
 
         if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)) {
             boolean isD1 = false;
@@ -3434,12 +3424,6 @@ public class BinanceServiceImpl implements BinanceService {
             header += Utils.appendSpace(Utils.appendSpace(Utils.getCapitalLink(EPIC), 66), 120, "_");
             header = Utils.appendSpace(header, LENGTH - 12);
 
-            //String buffer_h1 = Utils.appendSpace("", 12) + Utils.appendSpace(EPIC, 20) + " H1: "
-            //        + Utils.appendSpace(dto_h1.getTrend(), 7)
-            //        + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_h1.getTrend(), EPIC, dto_h4);
-            //String log_h1 = "\n" + Utils.appendSpace(buffer_h1 + note_d_h4_h1, LENGTH);
-
-            String buffer_h4 = Utils.appendSpace("", 12) + Utils.appendSpace(EPIC, 10);
             String type = "";
             if (note_d_h4_h1.contains(Utils.TEXT_MIN_DAY_AREA)) {
                 type += " Min ";
@@ -3450,25 +3434,12 @@ public class BinanceServiceImpl implements BinanceService {
             if (note_d_h4_h1.contains(Utils.TEXT_TREND_No1_MA34568)) {
                 type += " Ma3 ";
             }
-            buffer_h4 += Utils.appendSpace(type.trim(), 10);
 
+            String buffer_h4 = Utils.appendSpace(type.trim(), 12) + Utils.appendSpace(EPIC, 20);
             buffer_h4 += " H4: " + Utils.appendSpace(dto_h4.getTrend(), 7);
             buffer_h4 += Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_h4.getTrend(), EPIC, dto_h4);
 
             String log_h4 = "\n" + Utils.appendSpace(buffer_h4 + note_d_h4_h1, LENGTH);
-
-            //String buffer_d1 = Utils.appendSpace("", 12) + Utils.appendSpace(EPIC, 20) + " D1: "
-            //        + Utils.appendSpace(dto_d1.getTrend(), 7)
-            //        + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_d1.getTrend(), EPIC, dto_d1);
-            // String log_d1 = "\n" + Utils.appendSpace(buffer_d1 + note_d_h4_h1, LENGTH);
-
-            //if (isD1) {
-            //    log += header + log_d1;
-            //} else if (isH1) {
-            //    log += header + log_h4;
-            //} else {
-            //    //log += header + log_h1;
-            //}
 
             log = header + log_h4;
         }
