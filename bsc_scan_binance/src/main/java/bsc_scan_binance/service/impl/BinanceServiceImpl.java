@@ -3023,7 +3023,8 @@ public class BinanceServiceImpl implements BinanceService {
                 && trendType.contains(Utils.TEXT_TREND_No1_MA34568)) {
             String EVENT_ID = EVENT_PUMP + "_EPICS_SCAP_" + Utils.getCurrentYyyyMmDd_HH();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
-                String msg = "(Scap_H1)" + symbol + "(" + trend + ")" + trendType;
+                String msg = "(Scap_H1)" + symbol + "(" + trend + ")"
+                        + trendType.replace(Utils.TEXT_TREND_No1_MA34568, "");
                 sendMsgPerHour(EVENT_ID, msg, true);
             }
         }
@@ -3240,11 +3241,23 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.nonNull(DXY_H4)) {
             list_h1.add(DXY_H4);
             list_h1.add(null);
+            list_h1.add(null);
+            list_h1.add(null);
         }
 
         temp_list = ordersRepository.getListM15();
         if (!CollectionUtils.isEmpty(temp_list)) {
             list_h1.addAll(temp_list);
+            list_h1.add(null);
+            list_h1.add(null);
+            list_h1.add(null);
+        }
+
+        temp_list = ordersRepository.getListM15All();
+        if (!CollectionUtils.isEmpty(temp_list)) {
+            list_h1.addAll(temp_list);
+            list_h1.add(null);
+            list_h1.add(null);
             list_h1.add(null);
         }
 
@@ -3443,7 +3456,9 @@ public class BinanceServiceImpl implements BinanceService {
         Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
         Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-        if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1)) {
+        //if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1)) {
+
+        if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)) {
             boolean isD1 = false;
             boolean isH4 = false;
             if (entity.getId().contains(Utils.CAPITAL_TIME_DAY)) {
@@ -3454,8 +3469,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
-            String note_d_h4_h1 = "(D1):" + dto_d1.getNote() + "(H4):" + dto_h4.getNote() + "(H1):"
-                    + dto_h1.getNote();
+            String note_d_h4_h1 = "(D1):" + dto_d1.getNote() + "(H4):" + dto_h4.getNote();
+            //+ "(H1):" + dto_h1.getNote();
 
             String insert_time = Utils.getStringValue(entity.getInsertTime());
             LocalDateTime pre_time = LocalDateTime.parse(insert_time);
@@ -3473,21 +3488,20 @@ public class BinanceServiceImpl implements BinanceService {
             header += Utils.appendSpace(Utils.appendSpace(Utils.getCapitalLink(EPIC), 66), 120, "_");
             header = Utils.appendSpace(header, LENGTH - 12);
 
-            String buffer_h1 = Utils.appendSpace("", 12) + Utils.appendSpace(EPIC, 20) + " H1: "
-                    + Utils.appendSpace(dto_h1.getTrend(), 7)
-                    + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_h1.getTrend(), EPIC, dto_h4);
+            //String buffer_h1 = Utils.appendSpace("", 12) + Utils.appendSpace(EPIC, 20) + " H1: "
+            //        + Utils.appendSpace(dto_h1.getTrend(), 7)
+            //        + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_h1.getTrend(), EPIC, dto_h4);
+            //String log_h1 = "\n" + Utils.appendSpace(buffer_h1 + note_d_h4_h1, LENGTH);
 
             String buffer_h4 = Utils.appendSpace("", 12) + Utils.appendSpace(EPIC, 20) + " H4: "
                     + Utils.appendSpace(dto_h4.getTrend(), 7)
                     + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_h4.getTrend(), EPIC, dto_h4);
-
-            String buffer_d1 = Utils.appendSpace("", 12) + Utils.appendSpace(EPIC, 20) + " D1: "
-                    + Utils.appendSpace(dto_d1.getTrend(), 7)
-                    + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_d1.getTrend(), EPIC, dto_d1);
-
-            String log_h1 = "\n" + Utils.appendSpace(buffer_h1 + note_d_h4_h1, LENGTH);
             String log_h4 = "\n" + Utils.appendSpace(buffer_h4 + note_d_h4_h1, LENGTH);
-            String log_d1 = "\n" + Utils.appendSpace(buffer_d1 + note_d_h4_h1, LENGTH);
+
+            //String buffer_d1 = Utils.appendSpace("", 12) + Utils.appendSpace(EPIC, 20) + " D1: "
+            //        + Utils.appendSpace(dto_d1.getTrend(), 7)
+            //        + Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_d1.getTrend(), EPIC, dto_d1);
+            // String log_d1 = "\n" + Utils.appendSpace(buffer_d1 + note_d_h4_h1, LENGTH);
 
             //if (isD1) {
             //    log += header + log_d1;

@@ -23,11 +23,18 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
     @Query(value = "SELECT * FROM public.orders det where (det.gecko_id like '%MINUTE%')  AND (COALESCE(det.note, '') <> '') AND (COALESCE(det.trend, '') <> '') ORDER BY det.insert_time ", nativeQuery = true)
     public List<Orders> getTrend_30mList();
 
-    @Query(value = "     SELECT * FROM orders det  "
-            + "      WHERE (COALESCE(det.note, '') like '%Ma34568%') and (det.gecko_id like '%MINUTE_15')  "
-            + "      AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR', '_DAY'   ) ) "
-            + " ORDER BY gecko_id ", nativeQuery = true)
+    @Query(value = "  SELECT * FROM orders det   "
+            + "       WHERE (COALESCE(det.note, '') like '%Ma34568%') and (det.gecko_id like '%MINUTE_15')   "
+            + "       AND (det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, 'MINUTE_15', '_DAY'))  "
+            + "         or det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, 'MINUTE_15', '_HOUR_4'))  "
+            + "     ) "
+            + "  ORDER BY gecko_id  ", nativeQuery = true)
     public List<Orders> getListM15();
+
+    @Query(value = "  SELECT * FROM orders det   "
+            + "       WHERE (COALESCE(det.note, '') like '%Ma34568%') and (det.gecko_id like '%MINUTE_15')   "
+            + "  ORDER BY gecko_id  ", nativeQuery = true)
+    public List<Orders> getListM15All();
 
     // -------------------------------------------------------------
     //, 'GOLD_HOUR_4', 'SILVER_HOUR_4', 'FR40_HOUR_4', 'US30_HOUR_4', 'US500_HOUR_4', 'UK100_HOUR_4', 'AU200_HOUR_4', 'J225_HOUR_4'
