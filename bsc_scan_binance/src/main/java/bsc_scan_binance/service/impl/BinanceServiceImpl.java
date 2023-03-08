@@ -3041,7 +3041,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        return trendType;
+        return trend;
     }
 
     @Override
