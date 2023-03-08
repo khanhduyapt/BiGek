@@ -3096,6 +3096,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trendType = Utils.getTrendType(list);
             BigDecimal bread = Utils.calcMaxBread(list);
             List<BigDecimal> low_high = Utils.getLowHighCandle(list);
+
             Orders entity_day = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
             if (Objects.nonNull(entity_day)) {
                 BigDecimal cur_price = list.get(0).getCurrPrice();
