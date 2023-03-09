@@ -132,10 +132,6 @@ public class Utils {
     public static final long MINUTES_OF_1H = 60;
     public static final long MINUTES_OF_15M = 15;
 
-    public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
-            "GAS", "GFT", "GLM", "IDRT", "IQ", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
-            "WABI", "IQ");
-
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
@@ -143,13 +139,20 @@ public class Utils {
             "US500", "UK100", "J225", "SP35", "DE40", "FR40", "AU200", "HK50", "EURUSD", "GBPUSD", "USDCHF", "USDJPY",
             "AUDUSD", "NZDUSD", "USDCAD");
 
-    // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON", "EURNOK",
+    // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
+    // "EURNOK",
     public static final List<String> EPICS_FOREXS = Arrays.asList(
-    //"CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF",
-    //"EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNZD", "EURPLN", "EURSEK", "EURSGD", "GBPAUD",
-    //"GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDJPY", "USDCNH", "USDCZK", "USDDKK", "USDHUF", "USDILS",
-    //"USDMXN", "USDNOK", "USDSEK", "USDSGD", "USDZAR"
+    // "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF",
+    // "EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNZD", "EURPLN",
+    // "EURSEK", "EURSGD", "GBPAUD",
+    // "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDJPY", "USDCNH", "USDCZK",
+    // "USDDKK", "USDHUF", "USDILS",
+    // "USDMXN", "USDNOK", "USDSEK", "USDSGD", "USDZAR"
     );
+
+    public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
+            "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
+            "WABI", "IQ");
 
     // Delete: "BIDR", "IDRT", "NEM", "PIVX", "QLC", "WABI"
     public static final List<String> coins = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ACM", "ADA", "ADX", "AERGO",
@@ -3050,6 +3053,51 @@ public class Utils {
         return "(" + check + " )";
     }
 
+    public static String createLogLine(Orders dto, String main_trend) {
+        String log = "";
+        if (Objects.nonNull(dto)) {
+            String EPIC = dto.getId();
+            EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_DAY, "");
+            EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
+            EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");
+            EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_15, "");
+            EPIC = EPIC.replace("_", "");
+
+            String chart = "";
+            if (dto.getId().contains(Utils.CAPITAL_TIME_DAY)) {
+                chart = "(D1:)";
+            } else if (dto.getId().contains(Utils.CAPITAL_TIME_HOUR_4)) {
+                chart = "(H4):";
+            } else if (dto.getId().contains(Utils.CAPITAL_TIME_HOUR)) {
+                chart = "(H1):";
+            } else if (dto.getId().contains(Utils.CAPITAL_TIME_MINUTE_15)) {
+                chart = "(15):";
+            }
+
+            String type = "";
+            String trend = dto.getTrend();
+            if (dto.getNote().contains(Utils.TEXT_TREND_HEKEN_LONG)) {
+                trend = Utils.TREND_LONG;
+                type = Utils.TEXT_TREND_HEKEN_LONG.replace("eken_", "_");
+            }
+            if (dto.getNote().contains(Utils.TEXT_TREND_HEKEN_SHORT)) {
+                trend = Utils.TREND_SHORT;
+                type = Utils.TEXT_TREND_HEKEN_SHORT.replace("eken_", "_");
+            }
+            if (type.contains(main_trend)) {
+                type = Utils.appendSpace(type, 6) + " * ";
+            }
+
+            String buffer = Utils.appendSpace("", 12)
+                    + Utils.appendSpace(Utils.appendSpace(EPIC, 10) + type.trim(), 20);
+            buffer += chart + Utils.appendSpace(dto.getTrend(), 7);
+            buffer += Utils.calc_BUF_LO_HI_BUF_Forex(false, trend, EPIC, dto);
+            log = Utils.appendSpace(buffer + Utils.appendSpace(chart + dto.getNote(), 30), 280);
+        }
+
+        return log;
+    }
+
     public static String checkHekenAshiTrend(List<BtcFutures> list) {
         if (list.size() < 8) {
             return "";
@@ -3096,7 +3144,7 @@ public class Utils {
         }
         Collections.reverse(heken_list);
 
-        //----------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------
         if (heken_list.get(0).isUptrend() && heken_list.get(1).isDown()) {
             return Utils.appendSpace(TEXT_TREND_HEKEN_LONG, 10) + " i0";
         }
@@ -3111,14 +3159,16 @@ public class Utils {
             return Utils.appendSpace(TEXT_TREND_HEKEN_SHORT, 10) + " i1";
         }
 
-        //if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(2).isUptrend()
-        //        && heken_list.get(3).isDown()) {
-        //    return Utils.appendSpace("Heken_" + TREND_LONG, 10) + " i2";
-        //}
-        //if (heken_list.get(0).isDown() && heken_list.get(1).isDown() && heken_list.get(2).isDown()
-        //        && heken_list.get(3).isUptrend()) {
-        //    return Utils.appendSpace("Heken_" + TREND_SHORT, 10) + " i2";
-        //}
+        // if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() &&
+        // heken_list.get(2).isUptrend()
+        // && heken_list.get(3).isDown()) {
+        // return Utils.appendSpace("Heken_" + TREND_LONG, 10) + " i2";
+        // }
+        // if (heken_list.get(0).isDown() && heken_list.get(1).isDown() &&
+        // heken_list.get(2).isDown()
+        // && heken_list.get(3).isUptrend()) {
+        // return Utils.appendSpace("Heken_" + TREND_SHORT, 10) + " i2";
+        // }
         return "";
     }
 
@@ -3148,8 +3198,8 @@ public class Utils {
 
         temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)) + " ", 10);
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), moneny_length);
-        temp += Utils.appendLeft(removeLastZero(lot_long), 8)
-                + "(lot/" + appendSpace(removeLastZero(pip_long), 8) + ")";
+        temp += Utils.appendLeft(removeLastZero(lot_long), 8) + "(lot/" + appendSpace(removeLastZero(pip_long), 8)
+                + ")";
         result += Utils.appendSpace((Objects.equals(trend, TREND_LONG) ? "*" : " ") + "(BUY )" + temp, 38);
 
         result = appendSpace(result, 80);
@@ -3159,8 +3209,8 @@ public class Utils {
         temp = "";
         temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)) + " ", 10);
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), moneny_length);
-        temp += Utils.appendLeft(removeLastZero(lot_shot), 8)
-                + "(lot/" + appendSpace(removeLastZero(pip_shot), 8) + ")";
+        temp += Utils.appendLeft(removeLastZero(lot_shot), 8) + "(lot/" + appendSpace(removeLastZero(pip_shot), 8)
+                + ")";
         result += Utils.appendSpace((Objects.equals(trend, TREND_SHORT) ? "*" : " ") + "(SELL)" + temp, 38);
 
         result = Utils.appendSpace(result, 140);
