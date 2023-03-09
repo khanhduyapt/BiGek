@@ -116,7 +116,7 @@ public class BtcFutures {
         String amplitude = Utils
                 .removeLastZero(Utils.getBigDecimalValue(Utils.toPercent(hight_price, low_price, 2)).abs().toString());
 
-        return id + "[O:" + Utils.removeLastZero(price_open_candle.toString()) + ", H:"
+        return id + " Up:" + uptrend + "[O:" + Utils.removeLastZero(price_open_candle.toString()) + ", H:"
                 + Utils.removeLastZero(hight_price.toString()) + ", L:=" + Utils.removeLastZero(low_price.toString())
                 + ", C:" + Utils.removeLastZero(price_close_candle.toString()) + ", Change:"
                 + Utils.removeLastZero(change.toString()) + "%, Amplitude: " + amplitude + "]";
@@ -165,5 +165,9 @@ public class BtcFutures {
         BigDecimal change = (Utils.getBigDecimal(price_open_candle).subtract(price_close_candle)).abs();
 
         return change;
+    }
+
+    public boolean isDown() {
+        return !uptrend;
     }
 }

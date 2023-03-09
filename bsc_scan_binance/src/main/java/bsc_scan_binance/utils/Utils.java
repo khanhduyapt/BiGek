@@ -20,6 +20,7 @@ import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.Iterator;
@@ -135,19 +136,14 @@ public class Utils {
             "PLN", "SEK");
 
     public static final List<String> EPICS_SCAP = Arrays.asList("DXY", "GOLD", "SILVER", "OIL_CRUDE", "US30", "US100",
-            "US500", "UK100", "J225", "SP35", "DE40", "FR40", "AU200", "EURUSD", "GBPUSD", "USDCHF", "USDJPY", "AUDUSD",
-            "NZDUSD", "USDCAD");
+            "US500", "UK100", "J225", "SP35", "DE40", "FR40", "AU200", "HK50", "EURUSD", "GBPUSD", "USDCHF", "USDJPY",
+            "AUDUSD", "NZDUSD", "USDCAD");
 
-    //public static final List<String> EPICS_STOCKS = Arrays.asList("GOLD", "US30", "US100", "US500",
-    //        "UK100", "FR40", "HK50", "BTCUSD", "SILVER", "OIL_CRUDE", "SP35", "DE40", "AU200");
-    //// MFF ko co: "EU50", "NATURALGAS",
-    //
-    //// bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON", "EURNOK",
-    //public static final List<String> EPICS_FOREXS = Arrays.asList("AUDUSD", "CADJPY", "CHFJPY", "EURAUD", "EURCAD",
-    //        "EURCHF", "EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNZD", "EURPLN", "EURSEK", "EURSGD",
-    //        "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDJPY", "NZDUSD", "USDCAD",
-    //        "USDCHF", "USDCNH", "USDCZK", "USDDKK", "USDHUF", "USDILS", "USDJPY", "USDMXN", "USDNOK", "USDSEK",
-    //        "USDSGD", "USDZAR");
+    // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON", "EURNOK",
+    public static final List<String> EPICS_FOREXS = Arrays.asList("CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF",
+            "EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNZD", "EURPLN", "EURSEK", "EURSGD", "GBPAUD",
+            "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDJPY", "USDCNH", "USDCZK", "USDDKK", "USDHUF", "USDILS",
+            "USDMXN", "USDNOK", "USDSEK", "USDSGD", "USDZAR");
 
     // Delete: "BIDR", "IDRT", "NEM", "PIVX", "QLC", "WABI"
     public static final List<String> coins = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ACM", "ADA", "ADX", "AERGO",
@@ -3042,33 +3038,104 @@ public class Utils {
         return "(" + check + " )";
     }
 
-    public static String calc_BUF_LO_HI_BUF_Forex(boolean isScap15m, String trend, String EPIC, Orders dto_h4) {
+    public static String checkHekenAshiTrend(List<BtcFutures> list) {
+        if (list.size() < 8) {
+            return "";
+        }
 
+        int heken_index = 0;
+        List<BtcFutures> heken_list = new ArrayList<BtcFutures>();
+        for (int index = list.size() - 1; index >= 0; index--) {
+            BtcFutures dto = list.get(index);
+
+            // https://admiralmarkets.sc/vn/education/articles/forex-indicators/what-is-heiken-ashi
+
+            BigDecimal ope = BigDecimal.ZERO; // (giá mở cửa của nến trước đó + giá đóng cửa của nến trước đó)/2
+            if (index == list.size() - 1) {
+                ope = list.get(list.size() - 1).getPrice_open_candle()
+                        .add(list.get(list.size() - 1).getPrice_close_candle());
+                ope = ope.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+            } else {
+                BtcFutures dto_pre = heken_list.get(heken_index - 1);
+                ope = dto_pre.getPrice_open_candle().add(dto_pre.getPrice_close_candle());
+                ope = ope.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+            }
+
+            BigDecimal clo = BigDecimal.ZERO; // (giá mở cửa + giá đỉnh + giá đáy + giá đóng cửa)/4
+            clo = dto.getPrice_open_candle().add(dto.getPrice_close_candle()).add(dto.getHight_price())
+                    .add(dto.getLow_price());
+            clo = clo.divide(BigDecimal.valueOf(4), 10, RoundingMode.CEILING);
+
+            BigDecimal hig = dto.getHight_price(); // max (giá đỉnh, giá mở, giá đóng);
+            hig = (hig.compareTo(dto.getPrice_open_candle()) < 0) ? dto.getPrice_open_candle() : hig;
+            hig = (hig.compareTo(dto.getPrice_close_candle()) < 0) ? dto.getPrice_close_candle() : hig;
+
+            BigDecimal low = dto.getLow_price(); // min (giá đáy, giá mở, giá đóng)
+            low = (low.compareTo(dto.getPrice_open_candle()) > 0) ? dto.getPrice_open_candle() : low;
+            low = (low.compareTo(dto.getPrice_close_candle()) > 0) ? dto.getPrice_close_candle() : low;
+
+            boolean uptrend = (ope.compareTo(clo) < 0) ? true : false;
+
+            BtcFutures heken = new BtcFutures(dto.getId(), dto.getCurrPrice(), low, hig, ope, clo, BigDecimal.ZERO,
+                    BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, uptrend);
+
+            heken_list.add(heken);
+            heken_index += 1;
+        }
+        Collections.reverse(heken_list);
+
+        //----------------------------------------------------------------------------------------------------
+
+        if (heken_list.get(0).isUptrend() && heken_list.get(1).isDown()) {
+            return Utils.appendSpace("Heken_" + TREND_LONG, 10) + " i0";
+        }
+        if (heken_list.get(0).isDown() && heken_list.get(1).isUptrend()) {
+            return Utils.appendSpace("Heken_" + TREND_SHORT, 10) + " i0";
+        }
+
+        if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(2).isDown()) {
+            return Utils.appendSpace("Heken_" + TREND_LONG, 10) + " i1";
+        }
+        if (heken_list.get(0).isDown() && heken_list.get(1).isDown() && heken_list.get(2).isUptrend()) {
+            return Utils.appendSpace("Heken_" + TREND_SHORT, 10) + " i1";
+        }
+
+        //if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(2).isUptrend()
+        //        && heken_list.get(3).isDown()) {
+        //    return Utils.appendSpace("Heken_" + TREND_LONG, 10) + " i2";
+        //}
+        //if (heken_list.get(0).isDown() && heken_list.get(1).isDown() && heken_list.get(2).isDown()
+        //        && heken_list.get(3).isUptrend()) {
+        //    return Utils.appendSpace("Heken_" + TREND_SHORT, 10) + " i2";
+        //}
+        return "";
+    }
+
+    public static String calc_BUF_LO_HI_BUF_Forex(boolean isScap15m, String trend, String EPIC, Orders dto_h4) {
         String result = "";
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
         if (isScap15m) {
             risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
-
         BigDecimal sl_long = Utils.getBigDecimal(dto_h4.getLow_price());
         BigDecimal sl_shot = Utils.getBigDecimal(dto_h4.getHigh_price());
         BigDecimal tp_long = Utils.getBigDecimal(dto_h4.getEnd_body_price());
         BigDecimal tp_shot = Utils.getBigDecimal(dto_h4.getStr_body_price());
-        BigDecimal entry_long = Utils.getBigDecimal(dto_h4.getStr_body_price());
-        BigDecimal entry_shot = Utils.getBigDecimal(dto_h4.getEnd_body_price());
+        BigDecimal en_long = Utils.getBigDecimal(dto_h4.getStr_body_price());
+        BigDecimal en_shot = Utils.getBigDecimal(dto_h4.getEnd_body_price());
 
         String temp = "";
         int moneny_length = 8;
 
-        BigDecimal pip_long = entry_long.subtract(sl_long);
-        BigDecimal pip_shot = sl_shot.subtract(entry_shot);
+        BigDecimal pip_long = en_long.subtract(sl_long);
+        BigDecimal pip_shot = sl_shot.subtract(en_shot);
 
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 8);
 
-        MoneyAtRiskResponse money_long = new MoneyAtRiskResponse(EPIC, risk, entry_long, sl_long, tp_long);
+        MoneyAtRiskResponse money_long = new MoneyAtRiskResponse(EPIC, risk, en_long, sl_long, tp_long);
         BigDecimal lot_long = money_long.calcLot();
 
-        temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry_long, 5)) + " ", 10);
+        temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)) + " ", 10);
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), moneny_length);
         temp += Utils.appendLeft(removeLastZero(lot_long), 8)
                 + "(lot/" + appendSpace(removeLastZero(pip_long), 8) + ")";
@@ -3076,10 +3143,10 @@ public class Utils {
 
         result = appendSpace(result, 80);
 
-        MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, entry_shot, sl_shot, tp_shot);
+        MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, en_shot, sl_shot, tp_shot);
         BigDecimal lot_shot = money_short.calcLot();
         temp = "";
-        temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(entry_shot, 5)) + " ", 10);
+        temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)) + " ", 10);
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), moneny_length);
         temp += Utils.appendLeft(removeLastZero(lot_shot), 8)
                 + "(lot/" + appendSpace(removeLastZero(pip_shot), 8) + ")";
