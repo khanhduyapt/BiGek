@@ -46,6 +46,18 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
             + " ORDER BY abc.gecko_id ", nativeQuery = true)
     public List<Orders> getH1ListNo1();
 
+    @Query(value = " SELECT * FROM orders det "
+            + " WHERE (COALESCE(det.note, '') like '%Heken_%') AND (det.gecko_id like '%_HOUR') "
+            + "      AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR', '_DAY')) "
+            + " ORDER BY det.gecko_id ", nativeQuery = true)
+    public List<Orders> getListH1_Heken1();
+
+    @Query(value = " SELECT * FROM orders det "
+            + " WHERE (COALESCE(det.note, '') like '%Heken_%') AND (det.gecko_id like '%_HOUR') "
+            + "      AND det.trend <> (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR', '_DAY')) "
+            + " ORDER BY det.gecko_id ", nativeQuery = true)
+    public List<Orders> getListH1_Heken2();
+
     @Query(value = " SELECT * FROM ( "
             + "     SELECT * FROM orders det  "
             + "      WHERE (COALESCE(det.note, '') like '%Ma34568%') and (det.gecko_id like '%_HOUR')  "
