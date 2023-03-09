@@ -145,10 +145,11 @@ public class Utils {
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON", "EURNOK",
     public static final List<String> EPICS_FOREXS = Arrays.asList(
-            "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF",
-            "EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNZD", "EURPLN", "EURSEK", "EURSGD", "GBPAUD",
-            "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDJPY", "USDCNH", "USDCZK", "USDDKK", "USDHUF", "USDILS",
-            "USDMXN", "USDNOK", "USDSEK", "USDSGD", "USDZAR");
+    //"CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF",
+    //"EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNZD", "EURPLN", "EURSEK", "EURSGD", "GBPAUD",
+    //"GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDJPY", "USDCNH", "USDCZK", "USDDKK", "USDHUF", "USDILS",
+    //"USDMXN", "USDNOK", "USDSEK", "USDSGD", "USDZAR"
+    );
 
     // Delete: "BIDR", "IDRT", "NEM", "PIVX", "QLC", "WABI"
     public static final List<String> coins = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ACM", "ADA", "ADX", "AERGO",
