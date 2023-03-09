@@ -3065,24 +3065,18 @@ public class BinanceServiceImpl implements BinanceService {
             }
             int lengh = 5;
             boolean isD1 = false;
-            boolean isH4 = false;
-            boolean isH1 = false;
-            boolean is15 = false;
             if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
                 lengh = 10;
                 isD1 = true;
             }
             if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
                 lengh = 10;
-                isH4 = true;
             }
             if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
                 lengh = 10;
-                isH1 = true;
             }
             if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XXX)) {
                 lengh = 10;
-                is15 = true;
                 if (!Utils.EPICS_SCAP.contains(EPIC)) {
                     return "";
                 }
@@ -3126,14 +3120,22 @@ public class BinanceServiceImpl implements BinanceService {
             ordersRepository.save(entity);
 
             String heken = Utils.checkHekenAshiTrend(list);
-            if (Utils.isNotBlank(heken)) {
-                String EVENT_ID = EVENT_PUMP + "_EPICS_HEKEN_" + Utils.getCurrentYyyyMmDd_HH();
-                if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
-                    String content = Utils.getChartName(list) + Utils.appendSpace(EPIC, 10) + " (" + heken + ")";
-                    String msg = Utils.appendSpace("(HekenAshi)  " + content, 60)
-                            + Utils.appendSpace(Utils.getCapitalLink(EPIC), 70);
+            if (!isD1 && Utils.isNotBlank(heken)) {
+                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+                if (Objects.nonNull(dto_d1)) {
 
-                    Utils.logWritelnDraft(msg);
+                    if (heken.contains(Utils.TEXT_TREND_HEKEN_ + dto_d1.getTrend())) {
+                        String EVENT_ID = EVENT_PUMP + "_EPICS_HEKEN_" + Utils.getCurrentYyyyMmDd_HH();
+                        if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
+                            String content = Utils.getChartName(list) + Utils.appendSpace(EPIC, 10) + " (" + heken
+                                    + ")";
+                            String msg = Utils.appendSpace("(HekenAshi)  " + content, 60)
+                                    + Utils.appendSpace(Utils.getCapitalLink(EPIC), 70);
+
+                            Utils.logWritelnDraft(msg);
+                        }
+                    }
+
                 }
             }
 

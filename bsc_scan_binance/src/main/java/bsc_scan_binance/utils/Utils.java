@@ -92,8 +92,9 @@ public class Utils {
     public static final String TEXT_TREND_No2_ADJUSTING = "No.2(Adjusting)";
     public static final String TEXT_TREND_No3_REVERSAL = "No.3(Reversal) ";
 
-    public static final String TEXT_TREND_HEKEN_BUY = "Heken_" + TREND_LONG;
-    public static final String TEXT_TREND_HEKEN_SELL = "Heken_" + TREND_SHORT;
+    public static final String TEXT_TREND_HEKEN_ = "Heken_";
+    public static final String TEXT_TREND_HEKEN_BUY = TEXT_TREND_HEKEN_ + TREND_LONG;
+    public static final String TEXT_TREND_HEKEN_SELL = TEXT_TREND_HEKEN_ + TREND_SHORT;
 
     public static final String TEXT_CONNECTION_TIMED_OUT = "CONNECTION_TIMED_OUT";
     public static final String CONNECTION_TIMED_OUT_ID = "CONNECTION_TIMED_OUT_MINUTE_15";
