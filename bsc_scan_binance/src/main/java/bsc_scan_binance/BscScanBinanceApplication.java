@@ -120,20 +120,20 @@ public class BscScanBinanceApplication {
 
                 while (index_crypto < total) {
                     try {
-//                        checkKillLongShort(binance_service);
-//
-//                        if (Utils.isBusinessTime_6h_to_17h()) {
-//                            if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
-//                                if (isReloadAfter(Utils.MINUTES_OF_15M, "RE_CHECK_FOREX")) {
-//                                    Utils.initCapital();
-//                                    for (int index = 0; index < forex_size; index++) {
-//                                        sleepWhenExceptionTimeOut(binance_service);
-//                                        String EPIC = capital_list.get(index);
-//                                        checkCapital(binance_service, EPIC);
-//                                    }
-//                                }
-//                            }
-//                        }
+                        checkKillLongShort(binance_service);
+
+                        if (Utils.isBusinessTime_6h_to_17h()) {
+                            if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
+                                if (isReloadAfter(Utils.MINUTES_OF_15M, "RE_CHECK_FOREX")) {
+                                    Utils.initCapital();
+                                    for (int index = 0; index < forex_size; index++) {
+                                        sleepWhenExceptionTimeOut(binance_service);
+                                        String EPIC = capital_list.get(index);
+                                        checkCapital(binance_service, EPIC);
+                                    }
+                                }
+                            }
+                        }
                         // ---------------------------------------------------------
                         checkCrypto(binance_service);
                         // ---------------------------------------------------------

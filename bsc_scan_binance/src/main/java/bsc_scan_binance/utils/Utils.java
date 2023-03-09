@@ -92,6 +92,9 @@ public class Utils {
     public static final String TEXT_TREND_No2_ADJUSTING = "No.2(Adjusting)";
     public static final String TEXT_TREND_No3_REVERSAL = "No.3(Reversal) ";
 
+    public static final String TEXT_TREND_HEKEN_BUY = "Heken_" + TREND_LONG;
+    public static final String TEXT_TREND_HEKEN_SELL = "Heken_" + TREND_SHORT;
+
     public static final String TEXT_CONNECTION_TIMED_OUT = "CONNECTION_TIMED_OUT";
     public static final String CONNECTION_TIMED_OUT_ID = "CONNECTION_TIMED_OUT_MINUTE_15";
     public static final String THE_TREND_NOT_REVERSED_YET = "The trend not reversed yet.";
@@ -2864,22 +2867,28 @@ public class Utils {
         }
 
         String trend = "";
-        String switch_trend = Utils.switchTrendByMa(list, true);
-        if (Utils.isNotBlank(switch_trend)) {
 
-            trend = Utils.TEXT_TREND_No1_MA34568;
-
+        String heken = Utils.checkHekenAshiTrend(list);
+        if (Utils.isNotBlank(heken)) {
+            trend = heken;
         } else {
-
-            switch_trend = Utils.switchTrendByMa(list, false);
-
+            String switch_trend = Utils.switchTrendByMa(list, true);
             if (Utils.isNotBlank(switch_trend)) {
 
-                trend = Utils.TEXT_TREND_No2_ADJUSTING;
+                trend = Utils.TEXT_TREND_No1_MA34568;
 
-            } else if ((isD1 || isH4) && Utils.isNotBlank(Utils.checkTrendReversal(list))) {
+            } else {
 
-                trend = Utils.TEXT_TREND_No3_REVERSAL;
+                switch_trend = Utils.switchTrendByMa(list, false);
+
+                if (Utils.isNotBlank(switch_trend)) {
+
+                    trend = Utils.TEXT_TREND_No2_ADJUSTING;
+
+                } else if ((isD1 || isH4) && Utils.isNotBlank(Utils.checkTrendReversal(list))) {
+
+                    trend = Utils.TEXT_TREND_No3_REVERSAL;
+                }
             }
         }
 
@@ -3085,19 +3094,18 @@ public class Utils {
         Collections.reverse(heken_list);
 
         //----------------------------------------------------------------------------------------------------
-
         if (heken_list.get(0).isUptrend() && heken_list.get(1).isDown()) {
-            return Utils.appendSpace("Heken_" + TREND_LONG, 10) + " i0";
+            return Utils.appendSpace(TEXT_TREND_HEKEN_BUY, 10) + " i0";
         }
         if (heken_list.get(0).isDown() && heken_list.get(1).isUptrend()) {
-            return Utils.appendSpace("Heken_" + TREND_SHORT, 10) + " i0";
+            return Utils.appendSpace(TEXT_TREND_HEKEN_SELL, 10) + " i0";
         }
 
         if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(2).isDown()) {
-            return Utils.appendSpace("Heken_" + TREND_LONG, 10) + " i1";
+            return Utils.appendSpace(TEXT_TREND_HEKEN_BUY, 10) + " i1";
         }
         if (heken_list.get(0).isDown() && heken_list.get(1).isDown() && heken_list.get(2).isUptrend()) {
-            return Utils.appendSpace("Heken_" + TREND_SHORT, 10) + " i1";
+            return Utils.appendSpace(TEXT_TREND_HEKEN_SELL, 10) + " i1";
         }
 
         //if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(2).isUptrend()
