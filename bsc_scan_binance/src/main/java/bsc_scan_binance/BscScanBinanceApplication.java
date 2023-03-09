@@ -200,18 +200,13 @@ public class BscScanBinanceApplication {
             wait(SLEEP_MINISECONDS * 3);
         }
 
-        String trend_h1 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
-        if (Utils.isNotBlank(trend_h1)) {
-            wait(SLEEP_MINISECONDS * 3);
+        String trend_h1 = "";
+        if (Utils.EPICS_SCAP.contains(EPIC)) {
+            trend_h1 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
+            if (Utils.isNotBlank(trend_h1)) {
+                wait(SLEEP_MINISECONDS * 3);
+            }
         }
-
-        //String trend_15 = "";
-        //if (Utils.EPICS_SCAP.contains(EPIC)) {
-        //    trend_15 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
-        //    if (Utils.isNotBlank(trend_15)) {
-        //        wait(SLEEP_MINISECONDS * 3);
-        //    }
-        //}
 
         String init = "";
         init += "D1:" + Utils.appendSpace(trend_d, 6);
