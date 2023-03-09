@@ -254,13 +254,14 @@ public class BscScanBinanceApplication {
                     wait(SLEEP_MINISECONDS);
                 }
 
-                String trend_h4 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4H, SYMBOL);
+                String trend_h4 = "";
+                // trend_h4 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4H, SYMBOL);
                 if (Utils.isNotBlank(trend_h4)) {
                     wait(SLEEP_MINISECONDS);
                 }
 
                 String trend_h1 = "";
-                trend_h1 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1H, SYMBOL);
+                // trend_h1 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1H, SYMBOL);
                 if (Utils.isNotBlank(trend_h1)) {
                     wait(SLEEP_MINISECONDS);
                 }
