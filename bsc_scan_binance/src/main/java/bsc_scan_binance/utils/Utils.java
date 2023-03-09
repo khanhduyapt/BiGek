@@ -93,8 +93,8 @@ public class Utils {
     public static final String TEXT_TREND_No3_REVERSAL = "No.3(Reversal) ";
 
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
-    public static final String TEXT_TREND_HEKEN_BUY = TEXT_TREND_HEKEN_ + TREND_LONG;
-    public static final String TEXT_TREND_HEKEN_SELL = TEXT_TREND_HEKEN_ + TREND_SHORT;
+    public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
+    public static final String TEXT_TREND_HEKEN_SHORT = TEXT_TREND_HEKEN_ + TREND_SHORT;
 
     public static final String TEXT_CONNECTION_TIMED_OUT = "CONNECTION_TIMED_OUT";
     public static final String CONNECTION_TIMED_OUT_ID = "CONNECTION_TIMED_OUT_MINUTE_15";
@@ -3097,17 +3097,17 @@ public class Utils {
 
         //----------------------------------------------------------------------------------------------------
         if (heken_list.get(0).isUptrend() && heken_list.get(1).isDown()) {
-            return Utils.appendSpace(TEXT_TREND_HEKEN_BUY, 10) + " i0";
+            return Utils.appendSpace(TEXT_TREND_HEKEN_LONG, 10) + " i0";
         }
         if (heken_list.get(0).isDown() && heken_list.get(1).isUptrend()) {
-            return Utils.appendSpace(TEXT_TREND_HEKEN_SELL, 10) + " i0";
+            return Utils.appendSpace(TEXT_TREND_HEKEN_SHORT, 10) + " i0";
         }
 
         if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(2).isDown()) {
-            return Utils.appendSpace(TEXT_TREND_HEKEN_BUY, 10) + " i1";
+            return Utils.appendSpace(TEXT_TREND_HEKEN_LONG, 10) + " i1";
         }
         if (heken_list.get(0).isDown() && heken_list.get(1).isDown() && heken_list.get(2).isUptrend()) {
-            return Utils.appendSpace(TEXT_TREND_HEKEN_SELL, 10) + " i1";
+            return Utils.appendSpace(TEXT_TREND_HEKEN_SHORT, 10) + " i1";
         }
 
         //if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(2).isUptrend()
@@ -3121,11 +3121,11 @@ public class Utils {
         return "";
     }
 
-    public static String calc_BUF_LO_HI_BUF_Forex(boolean isScap15m, String trend, String EPIC, Orders dto_h4) {
+    public static String calc_BUF_LO_HI_BUF_Forex(boolean isD1, String trend, String EPIC, Orders dto_h4) {
         String result = "";
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
-        if (isScap15m) {
-            risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+        if (isD1) {
+            risk = risk.multiply(BigDecimal.valueOf(2));
         }
         BigDecimal sl_long = Utils.getBigDecimal(dto_h4.getLow_price());
         BigDecimal sl_shot = Utils.getBigDecimal(dto_h4.getHigh_price());

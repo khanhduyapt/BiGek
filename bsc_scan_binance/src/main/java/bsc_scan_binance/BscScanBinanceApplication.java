@@ -123,14 +123,17 @@ public class BscScanBinanceApplication {
                         checkKillLongShort(binance_service);
 
                         if (Utils.isBusinessTime_6h_to_17h()) {
-                            if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
-                                if (isReloadAfter(Utils.MINUTES_OF_15M, "RE_CHECK_FOREX")) {
+                            if (isReloadAfter(Utils.MINUTES_OF_1H, "RE_CHECK_FOREX")) {
+                                if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
+
                                     Utils.initCapital();
                                     for (int index = 0; index < forex_size; index++) {
                                         sleepWhenExceptionTimeOut(binance_service);
                                         String EPIC = capital_list.get(index);
                                         checkCapital(binance_service, EPIC);
                                     }
+
+                                    binance_service.createReport();
                                 }
                             }
                         }
