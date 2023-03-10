@@ -3019,7 +3019,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (BTC_ETH_BNB.contains(symbol) || Objects.equals(Utils.TREND_LONG, trend_by_heken)) {
                     String log = Utils.appendSpace("(HekenAshi)  " + Utils.getChartName(list)
-                            + Utils.appendSpace(symbol, 10) + " (" + trendType + ")", 60)
+                            + Utils.appendSpace(symbol, 10) + " (" + trendType + ")"
+                            + Utils.appendLeft(list.get(0).getCurrPrice().toString(), 10), 60)
                             + Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 75);
                     Utils.logWritelnDraft(log);
 
@@ -3145,9 +3146,10 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         String log = Utils.appendSpace(EPIC, 15) + "(D:" + Utils.appendSpace(dto_d1.getTrend(), 4)
-                                + ")   " + Utils.appendSpace(orderId.replace(EPIC + "_", ""), 8) + "  " + str_entry
+                                + ")   " + Utils.appendSpace(orderId.replace(EPIC + "_", ""), 8) + "  "
+                                + Utils.appendSpace(heken, 20) + str_entry
                                 + "   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66)
-                                + Utils.appendSpace(heken, 20) + temp_note;
+                                + temp_note;
 
                         Utils.logWritelnDraft(log);
 
