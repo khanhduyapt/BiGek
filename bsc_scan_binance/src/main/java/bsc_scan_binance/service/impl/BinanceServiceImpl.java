@@ -3127,13 +3127,9 @@ public class BinanceServiceImpl implements BinanceService {
                 + Utils.appendSpace(heken_trend, 20) + str_entry + "   "
                 + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 
-        count_drap_line += 1;
-        if (count_drap_line == 10) {
-            count_drap_line = 0;
-            Utils.logWritelnReport("");
-        }
-
+        Utils.logWritelnReport("");
         Utils.logWritelnDraft(log);
+        Utils.logWritelnReport("");
     }
 
     @Override
