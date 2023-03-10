@@ -173,6 +173,7 @@ public class BinanceServiceImpl implements BinanceService {
     List<DepthResponse> list_bids_ok = new ArrayList<DepthResponse>();
     List<DepthResponse> list_asks_ok = new ArrayList<DepthResponse>();
 
+    private int count_drap_line = 0;
     private int pre_HH = 0;
     private String sp500 = "";
 
@@ -3024,6 +3025,12 @@ public class BinanceServiceImpl implements BinanceService {
                             + Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 75);
                     Utils.logWritelnDraft(log);
 
+                    count_drap_line += 1;
+                    if (count_drap_line == 10) {
+                        count_drap_line = 0;
+                        Utils.logWritelnReport("");
+                    }
+
                     //if (BTC_ETH_BNB.contains("_" + symbol + "_")) {}
                     String EVENT_ID = EVENT_PUMP + "_EPICS_SCAP_" + symbol + Utils.getCurrentYyyyMmDdHHByChart(list);
                     String msg = "(" + Utils.getChartName(list) + ")" + symbol + "(" + trendType + ")";
@@ -3046,6 +3053,80 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         return trend;
+    }
+
+    @Override
+    @Transactional
+    public void scapForex15M(String EPIC) {
+        if (!isReloadPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_15)) {
+            return;
+        }
+
+        // ----------------------------TREND------------------------
+        List<BtcFutures> list = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 10);
+        if (CollectionUtils.isEmpty(list)) {
+            BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS * 5);
+
+            Utils.initCapital();
+            list = Utils.loadCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15, 10);
+
+            if (CollectionUtils.isEmpty(list)) {
+                String result = "initForexTrend(" + EPIC + ") Size:" + list.size();
+                Utils.logWritelnDraft(result);
+
+                Orders entity_time_out = new Orders(Utils.CONNECTION_TIMED_OUT_ID, Utils.TEXT_CONNECTION_TIMED_OUT);
+                ordersRepository.save(entity_time_out);
+
+                return;
+            }
+        }
+
+        String heken_trend = Utils.checkHekenAshiTrend(list);
+        if (Utils.isBlank(heken_trend)) {
+            return;
+        }
+
+        BigDecimal bread = Utils.calcMaxBread(list);
+        List<BigDecimal> low_high = Utils.getLowHighCandle(list);
+        BigDecimal en_long = low_high.get(0);
+        BigDecimal sl_long = low_high.get(0).subtract(bread.multiply(BigDecimal.valueOf(2)));
+
+        BigDecimal en_shot = low_high.get(1);
+        BigDecimal sl_shot = low_high.get(1).add(bread.multiply(BigDecimal.valueOf(2)));
+
+        String trend = "";
+        String str_entry = "";
+        if (heken_trend.contains(Utils.TEXT_TREND_HEKEN_LONG)) {
+            trend = Utils.TREND_LONG;
+            str_entry += Utils.calc_BUF_Long_Forex(EPIC, en_long, sl_long, en_shot);
+        } else {
+            trend = Utils.TREND_SHORT;
+            str_entry += Utils.calc_BUF_Shot_Forex(EPIC, en_shot, sl_shot, en_long);
+        }
+
+        // -----------------------------DATABASE---------------------------
+        String orderId = EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15;
+        String date_time = LocalDateTime.now().toString();
+
+        Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), en_long,
+                en_shot, sl_long, sl_shot, heken_trend);
+        ordersRepository.save(entity);
+        // -----------------------------LOG---------------------------
+
+        Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+
+        String log = Utils.appendSpace(EPIC, 15) + "(D:" + Utils.appendSpace(dto_h4.getTrend(), 4)
+                + ")   " + Utils.appendSpace(orderId.replace(EPIC + "_", ""), 8) + "  "
+                + Utils.appendSpace(heken_trend, 20) + str_entry + "   "
+                + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
+
+        count_drap_line += 1;
+        if (count_drap_line == 10) {
+            count_drap_line = 0;
+            Utils.logWritelnReport("");
+        }
+
+        Utils.logWritelnDraft(log);
     }
 
     @Override
@@ -3150,6 +3231,12 @@ public class BinanceServiceImpl implements BinanceService {
                                 + Utils.appendSpace(heken, 20) + str_entry
                                 + "   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66)
                                 + temp_note;
+
+                        count_drap_line += 1;
+                        if (count_drap_line == 10) {
+                            count_drap_line = 0;
+                            Utils.logWritelnReport("");
+                        }
 
                         Utils.logWritelnDraft(log);
 

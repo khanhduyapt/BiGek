@@ -131,6 +131,10 @@ public class BscScanBinanceApplication {
                                         checkCapital(binance_service, EPIC);
                                     }
 
+                                    for (String EPIC : Utils.EPICS_15M) {
+                                        binance_service.scapForex15M(EPIC);
+                                    }
+
                                     binance_service.createReport();
                                 }
                             }

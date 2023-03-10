@@ -135,6 +135,8 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
+    public static final List<String> EPICS_15M = Arrays.asList("GOLD", "US30", "UK100", "J225", "GBPUSD");
+
     public static final List<String> EPICS_SCAP = Arrays.asList("DXY", "GOLD", "SILVER", "OIL_CRUDE", "US30", "US100",
             "US500", "UK100", "J225", "SP35", "DE40", "FR40", "AU200", "HK50", "EURUSD", "GBPUSD", "USDCHF", "USDJPY",
             "AUDUSD", "NZDUSD", "USDCAD");
@@ -142,12 +144,13 @@ public class Utils {
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK",
     public static final List<String> EPICS_FOREXS = Arrays.asList(
-            "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF",
-            "EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNZD", "EURPLN",
-            "EURSEK", "EURSGD", "GBPAUD",
-            "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDJPY", "USDCNH", "USDCZK",
-            "USDDKK", "USDHUF", "USDILS",
-            "USDMXN", "USDNOK", "USDSEK", "USDSGD", "USDZAR");
+    //            "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF",
+    //            "EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNZD", "EURPLN",
+    //            "EURSEK", "EURSGD", "GBPAUD",
+    //            "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDJPY", "USDCNH", "USDCZK",
+    //            "USDDKK", "USDHUF", "USDILS",
+    //            "USDMXN", "USDNOK", "USDSEK", "USDSGD", "USDZAR"
+    );
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
