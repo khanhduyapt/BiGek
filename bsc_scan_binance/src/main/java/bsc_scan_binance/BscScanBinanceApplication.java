@@ -107,15 +107,13 @@ public class BscScanBinanceApplication {
                 int index_crypto = 0;
                 int forex_size = capital_list.size();
                 Date start_time = Calendar.getInstance().getTime();
-                Utils.writelnLogFooter_Forex();
-                System.out.println();
-                File log = new File(Utils.getCryptoLogFile());
+
+                File log = new File(Utils.getForexLogFile());
                 System.out.println(log.getAbsolutePath());
-                log = new File(Utils.getForexLogFile());
-                System.out.println(log.getAbsolutePath());
+
                 log = new File(Utils.getDraftLogFile());
-                Utils.logWritelnDraft("");
                 System.out.println(log.getAbsolutePath());
+
                 System.out.println();
 
                 while (index_crypto < total) {

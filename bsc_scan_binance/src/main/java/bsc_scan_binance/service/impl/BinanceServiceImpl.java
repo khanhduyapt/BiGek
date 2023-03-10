@@ -3121,7 +3121,7 @@ public class BinanceServiceImpl implements BinanceService {
                         if (Utils.EPICS_FOREXS.contains(EPIC)) {
                             sl_buy = dto_d1.getLow_price();
                             sl_sel = dto_d1.getHigh_price();
-                            temp_note = "stop loss on Daily chart";
+                            temp_note = "Stop loss on Daily chart.";
                         }
 
                         if (heken.contains(Utils.TEXT_TREND_HEKEN_LONG)) {
@@ -3135,8 +3135,10 @@ public class BinanceServiceImpl implements BinanceService {
                         String log = Utils.appendSpace(EPIC, 15) + "(D:" + Utils.appendSpace(dto_d1.getTrend(), 4)
                                 + ")   " + Utils.appendSpace(orderId.replace(EPIC + "_", ""), 8) + "  " + str_entry
                                 + "   "
-                                + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
-                        Utils.logWritelnDraft(log + temp_note);
+                                + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + Utils.appendSpace(heken, 20)
+                                + temp_note;
+
+                        Utils.logWritelnDraft(log);
 
                         if (isH4 && Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())) {
                             String EVENT_ID = EVENT_PUMP + "_EPICS_HEKEN_" + EPIC
