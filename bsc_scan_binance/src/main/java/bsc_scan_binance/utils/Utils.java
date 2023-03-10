@@ -2864,18 +2864,6 @@ public class Utils {
     }
 
     public static String getTrendType(List<BtcFutures> list) {
-        String id = list.get(0).getId();
-
-        boolean isD1 = false;
-        boolean isH4 = false;
-
-        if (id.contains("_1d_")) {
-            isD1 = true;
-        }
-        if (id.contains("_4h_")) {
-            isH4 = true;
-        }
-
         String trend = "";
 
         String heken = Utils.checkHekenAshiTrend(list);
@@ -2884,20 +2872,11 @@ public class Utils {
         } else {
             String switch_trend = Utils.switchTrendByMa(list, true);
             if (Utils.isNotBlank(switch_trend)) {
-
                 trend = Utils.TEXT_TREND_No1_MA34568;
-
             } else {
-
                 switch_trend = Utils.switchTrendByMa(list, false);
-
                 if (Utils.isNotBlank(switch_trend)) {
-
                     trend = Utils.TEXT_TREND_No2_ADJUSTING;
-
-                } else if ((isD1 || isH4) && Utils.isNotBlank(Utils.checkTrendReversal(list))) {
-
-                    trend = Utils.TEXT_TREND_No3_REVERSAL;
                 }
             }
         }
@@ -3162,16 +3141,6 @@ public class Utils {
             return Utils.appendSpace(TEXT_TREND_HEKEN_SHORT, 10) + " i1";
         }
 
-        // if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() &&
-        // heken_list.get(2).isUptrend()
-        // && heken_list.get(3).isDown()) {
-        // return Utils.appendSpace("Heken_" + TREND_LONG, 10) + " i2";
-        // }
-        // if (heken_list.get(0).isDown() && heken_list.get(1).isDown() &&
-        // heken_list.get(2).isDown()
-        // && heken_list.get(3).isUptrend()) {
-        // return Utils.appendSpace("Heken_" + TREND_SHORT, 10) + " i2";
-        // }
         return "";
     }
 

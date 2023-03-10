@@ -3146,12 +3146,13 @@ public class BinanceServiceImpl implements BinanceService {
 
                         String log = Utils.appendSpace(EPIC, 15) + "(D:" + Utils.appendSpace(dto_d1.getTrend(), 4)
                                 + ")   " + Utils.appendSpace(orderId.replace(EPIC + "_", ""), 8) + "  " + str_entry
-                                + "   "
-                                + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + Utils.appendSpace(heken, 20)
-                                + temp_note;
+                                + "   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66)
+                                + Utils.appendSpace(heken, 20) + temp_note;
+
                         Utils.logWritelnDraft(log);
 
-                        if (isH4 || Objects.equals(dto_d1.getTrend(), trend_by_heken)) {
+                        if (isH4 || Objects.equals(dto_d1.getTrend(), trend_by_heken)
+                                || Objects.equals(dto_h4.getTrend(), trend_by_heken)) {
                             String EVENT_ID = EVENT_PUMP + "_EPICS_HEKEN_" + EPIC
                                     + Utils.getCurrentYyyyMmDdHHByChart(list);
                             String content = Utils.getChartName(list) + Utils.appendSpace(EPIC, 10) + " (" + heken
