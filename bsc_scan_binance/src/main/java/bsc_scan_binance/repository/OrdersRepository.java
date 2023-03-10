@@ -14,10 +14,10 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
     @Query(value = "SELECT m.* FROM orders m WHERE ((gecko_id like '%HOUR%') or (gecko_id like '%MINUTE_30%')) AND (TO_CHAR(created_at, 'YYYY-MM-DD HH24:mm') < TO_CHAR(NOW() - interval '2 hours', 'YYYY-MM-DD HH24:mm'))  ", nativeQuery = true)
     public List<Orders> clearTrash();
 
-    @Query(value = "SELECT * FROM public.orders mst where (mst.gecko_id like '%DAY%')    ORDER BY mst.insert_time  ", nativeQuery = true)
+    @Query(value = "SELECT * FROM public.orders mst where (mst.gecko_id like '%DAY%')    ORDER BY mst.gecko_id  ", nativeQuery = true)
     public List<Orders> getTrend_DayList();
 
-    @Query(value = "SELECT * FROM public.orders mst where (mst.gecko_id like '%DAY%')        AND (COALESCE(mst.note, '') <> '')  ORDER BY mst.insert_time ", nativeQuery = true)
+    @Query(value = "SELECT * FROM public.orders mst where (mst.gecko_id like '%DAY%')     AND (COALESCE(mst.note, '') <> '')  ORDER BY mst.insert_time ", nativeQuery = true)
     public List<Orders> getSwitchTrend_DayList();
 
     @Query(value = "SELECT * FROM public.orders det where (det.gecko_id like '%MINUTE%')  AND (COALESCE(det.note, '') <> '') AND (COALESCE(det.trend, '') <> '') ORDER BY det.insert_time ", nativeQuery = true)
@@ -57,6 +57,15 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
             + "      AND det.trend <> (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR', '_DAY')) "
             + " ORDER BY det.gecko_id ", nativeQuery = true)
     public List<Orders> getListH1_Heken2();
+
+    @Query(value = " SELECT * FROM orders det                                                           "
+            + " WHERE (COALESCE(det.note, '') like '%Heken_%') AND (det.gecko_id like '%_HOUR')    "
+            + " AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR', '_DAY'))    "
+            + " union                                                                              "
+            + " SELECT * FROM orders det                                                           "
+            + " WHERE (COALESCE(det.note, '') like '%Heken_%') AND (det.gecko_id like '%_HOUR_4')  "
+            + " AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR_4', '_DAY'))  ", nativeQuery = true)
+    public List<Orders> getListH1_H4_Heken();
 
     @Query(value = " SELECT * FROM ( "
             + "     SELECT * FROM orders det  "

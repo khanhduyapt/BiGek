@@ -6,7 +6,6 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -3106,35 +3105,51 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (isH4 || isH1 || is15) {
                 String heken = Utils.checkHekenAshiTrend(list);
-                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
-                Orders dto_h4 = entity;
-                if (!isH4) {
-                    dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-                }
+                if (heken.contains(Utils.TEXT_TREND_HEKEN_)) {
 
-                if (Utils.isNotBlank(heken) && Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)) {
-                    String str_entry = "";
-                    if (heken.contains(Utils.TEXT_TREND_HEKEN_LONG)) {
-                        str_entry += Utils.calc_BUF_Long_Forex(EPIC, Utils.appendSpace(heken, 20),
-                                dto_h4.getStr_body_price(),
-                                dto_h4.getLow_price(),
-                                dto_h4.getEnd_body_price());
-                    } else {
-                        str_entry += Utils.calc_BUF_Shot_Forex(EPIC, Utils.appendSpace(heken, 20),
-                                dto_h4.getEnd_body_price(),
-                                dto_h4.getHigh_price(),
-                                dto_h4.getStr_body_price());
+                    Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+                    Orders dto_h4 = entity;
+                    if (!isH4) {
+                        dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
                     }
+                    if (Utils.isNotBlank(heken) && Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)) {
+                        String str_entry = "";
 
-                    String log = Utils.appendSpace(EPIC, 15) + "(D:" + Utils.appendSpace(dto_d1.getTrend(), 4)
-                            + ")   " + Utils.appendSpace(orderId.replace(EPIC + "_", ""), 8) + "  " + str_entry + "   "
-                            + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
-                    Utils.logWritelnDraft(log);
+                        String temp_note = "";
+                        BigDecimal sl_buy = dto_h4.getLow_price();
+                        BigDecimal sl_sel = dto_h4.getHigh_price();
+                        if (Utils.EPICS_FOREXS.contains(EPIC)) {
+                            sl_buy = dto_d1.getLow_price();
+                            sl_sel = dto_d1.getHigh_price();
+                            temp_note = "stop loss on Daily chart";
+                        }
 
-                    if (isH4) {
-                        String EVENT_ID = EVENT_PUMP + "_EPICS_HEKEN_" + EPIC + Utils.getCurrentYyyyMmDdHHByChart(list);
-                        String content = Utils.getChartName(list) + Utils.appendSpace(EPIC, 10) + " (" + heken + ")";
-                        sendMsgPerHour(EVENT_ID, content, true);
+                        if (heken.contains(Utils.TEXT_TREND_HEKEN_LONG)) {
+                            str_entry += Utils.calc_BUF_Long_Forex(EPIC, Utils.appendSpace(heken, 20),
+                                    dto_h4.getStr_body_price(),
+                                    sl_buy,
+                                    dto_h4.getEnd_body_price());
+                        } else {
+                            str_entry += Utils.calc_BUF_Shot_Forex(EPIC, Utils.appendSpace(heken, 20),
+                                    dto_h4.getEnd_body_price(),
+                                    sl_sel,
+                                    dto_h4.getStr_body_price());
+                        }
+
+                        String log = Utils.appendSpace(EPIC, 15) + "(D:" + Utils.appendSpace(dto_d1.getTrend(), 4)
+                                + ")   " + Utils.appendSpace(orderId.replace(EPIC + "_", ""), 8) + "  " + str_entry
+                                + "   "
+                                + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
+                        Utils.logWritelnDraft(log + temp_note);
+
+                        if (isH4 && Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())) {
+                            String EVENT_ID = EVENT_PUMP + "_EPICS_HEKEN_" + EPIC
+                                    + Utils.getCurrentYyyyMmDdHHByChart(list);
+                            String content = Utils.getChartName(list) + Utils.appendSpace(EPIC, 10) + " (" + heken
+                                    + ")";
+                            sendMsgPerHour(EVENT_ID, content, true);
+                        }
+
                     }
                 }
             }
@@ -3200,35 +3215,54 @@ public class BinanceServiceImpl implements BinanceService {
         String msg_scap = "";
         // --------------------------------------------------------------------------
         List<Orders> list_h1 = new ArrayList<Orders>();
-        list_h1.addAll(ordersRepository.getListH1_Heken1());
-        list_h1.add(null);
-        list_h1.add(null);
-        list_h1.addAll(ordersRepository.getListH1_Heken2());
+        list_h1.addAll(ordersRepository.getListH1_H4_Heken());
         if (!CollectionUtils.isEmpty(list_h1)) {
             Utils.logWritelnReport("");
             Utils.logWritelnReport(Utils.appendSpace(Utils.appendLeft(" (H1 Heken) ", 80, "="), 268, "="));
-            for (Orders entity : list_h1) {
-                if (Objects.isNull(entity)) {
+
+            for (Orders dto_entry : list_h1) {
+                if (Objects.isNull(dto_entry)) {
                     Utils.logWritelnReport("");
                     continue;
                 }
 
-                String log = createLineForex(entity);
-                Utils.logWritelnReport(log);
+                String EPIC = dto_entry.getId();
+                EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_DAY, "");
+                EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
+                EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");
+                EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_15, "");
+                EPIC = EPIC.replace("_", "");
 
-                if (entity.getNote().contains(Utils.TEXT_TREND_HEKEN_)) {
-                    msg_forx += entity.getId().replace("_HOUR", "") + ",";
+                Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+                String log = Utils.createLineForex(dto_entry, dto_sl);
+
+                Utils.logWritelnReport(log);
+                if (dto_entry.getNote().contains(Utils.TEXT_TREND_HEKEN_)) {
+                    msg_forx += dto_entry.getId().replace("_HOUR", "") + ",";
                 }
             }
         }
+
+        Utils.logWritelnReport("");
+        Utils.logWritelnReport("");
+        Utils.logWritelnReport("");
 
         List<Orders> list_all_d1 = ordersRepository.getTrend_DayList();
         if (!CollectionUtils.isEmpty(list_all_d1)) {
             Utils.logWritelnReport("");
             Utils.logWritelnReport(Utils.appendSpace(Utils.appendLeft(" (All) ", 80, "="), 268, "="));
 
-            for (Orders entity : list_all_d1) {
-                String log = createLineForex(entity);
+            for (Orders dto_d1 : list_all_d1) {
+                String EPIC = dto_d1.getId();
+                EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_DAY, "");
+                EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
+                EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");
+                EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_15, "");
+                EPIC = EPIC.replace("_", "");
+
+                Orders dto_entry = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+                String log = Utils.createLineForex(dto_entry, dto_d1);
+
                 Utils.logWritelnReport(log);
                 Utils.logWritelnReport("");
             }
@@ -3269,10 +3303,9 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                String tmp_msg = createLineCrypto(entity, symbol, type);
+                String tmp_msg = Utils.createLineCrypto(entity, symbol, type);
                 Utils.logWritelnReport(tmp_msg);
             }
-
         }
         if (Utils.isNotBlank(msg_futu + msg_scap)) {
             String EVENT_ID = EVENT_PUMP + "_REPORT_CRYPTO_" + Utils.getCurrentYyyyMmDd_HH_Blog4h();
@@ -3288,86 +3321,6 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         Utils.writelnLogFooter_Forex();
-    }
-
-    private String createLineForex(Orders entity) {
-        String log = "";
-        int LENGTH = 280;
-
-        String EPIC = entity.getId();
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_DAY, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_15, "");
-        EPIC = EPIC.replace("_", "");
-
-        String chart = "";
-        if (entity.getId().contains(Utils.CAPITAL_TIME_DAY)) {
-            chart = "(D_: ";
-        } else if (entity.getId().contains(Utils.CAPITAL_TIME_HOUR_4)) {
-            chart = "(H4: ";
-        } else if (entity.getId().contains(Utils.CAPITAL_TIME_HOUR)) {
-            chart = "(H1: ";
-        } else if (entity.getId().contains(Utils.CAPITAL_TIME_MINUTE_15)) {
-            chart = "(15: ";
-        }
-
-        Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
-        if (Objects.nonNull(dto_d1)) {
-            String wdh4 = getPrepareOrderTrend_WDH4(EPIC, true);
-            String insert_time = Utils.getStringValue(entity.getInsertTime());
-            LocalDateTime pre_time = LocalDateTime.parse(insert_time);
-            String time = pre_time.format(DateTimeFormatter.ofPattern("HH:mm"));
-
-            String header = "";
-            header = time + "  " + (wdh4 + chart);
-            header += Utils.appendSpace(entity.getTrend(), 4) + ") ";
-            header += Utils.appendSpace(EPIC, 15, "-");
-            header += Utils.appendSpace(Utils.appendSpace(Utils.getCapitalLink(EPIC), 66), 120, "_");
-            header = Utils.appendSpace(header, LENGTH - 12);
-            // ----------------------------------------------------------------------------------
-            log = header + "\n" + Utils.createLogLine(entity, dto_d1.getTrend());
-        }
-        return log;
-    }
-
-    private String createLineCrypto(Orders entity, String symbol, String type) {
-        int LENGTH = 280;
-        BigDecimal risk = BigDecimal.valueOf(10);
-        String chart = entity.getId().replace("CRYPTO_" + symbol, "").replace("_", "").toUpperCase();
-
-        BigDecimal qty = BigDecimal.ZERO;
-        String sl = "   (Entry:";
-        if (Objects.equals(Utils.TREND_LONG, entity.getTrend())) {
-            BigDecimal pip = (entity.getStr_body_price().subtract(entity.getLow_price())).abs();
-            if (pip.compareTo(BigDecimal.ZERO) > 0) {
-                qty = Utils.roundDefault(risk.divide(pip, 10, RoundingMode.CEILING));
-            }
-
-            sl += Utils.appendLeft(Utils.removeLastZero(entity.getStr_body_price()), 10);
-            sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getLow_price()), 10);
-            sl += "   Qty:" + Utils.appendLeft(Utils.removeLastZero(qty), 10);
-        } else {
-            BigDecimal pip = (entity.getHigh_price().subtract(entity.getEnd_body_price())).abs();
-            if (pip.compareTo(BigDecimal.ZERO) > 0) {
-                qty = Utils.roundDefault(risk.divide(pip, 10, RoundingMode.CEILING));
-            }
-
-            sl += Utils.appendLeft(Utils.removeLastZero(entity.getEnd_body_price()), 10);
-            sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getHigh_price()), 10);
-            sl += "   Qty:" + Utils.appendLeft(Utils.removeLastZero(qty), 10);
-        }
-        sl += ")  ";
-
-        String tmp_msg = type + Utils.appendSpace(chart, 8) + Utils.appendSpace(entity.getTrend(), 8)
-                + Utils.appendSpace(symbol, 10);
-
-        tmp_msg += Utils.appendLeft(Utils.removeLastZero(entity.getCurrent_price()), 8) + sl;
-        String url = Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70);
-
-        tmp_msg = Utils.appendSpace(Utils.appendSpace(tmp_msg, 35) + url + entity.getNote(), LENGTH - 12);
-
-        return tmp_msg;
     }
 
 }
