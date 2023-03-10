@@ -86,6 +86,8 @@ public class Utils {
     public static final String TEXT_MIN_DAY_AREA = "(Min_Day)";
     public static final String TEXT_MAX_DAY_AREA = "(Max_Day)";
 
+    public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
+
     public static final String TEXT_TREND_No1_MA34568 = "No.1(Ma34568)  ";
     public static final String TEXT_TREND_No2_ADJUSTING = "No.2(Adjusting)";
     public static final String TEXT_TREND_No3_REVERSAL = "No.3(Reversal) ";

@@ -3005,17 +3005,29 @@ public class BinanceServiceImpl implements BinanceService {
 
         // ------------------------------------SendMsg------------------------------------
         if (trendType.contains(Utils.TEXT_TREND_HEKEN_)) {
-            if (BTC_ETH_BNB.contains(symbol) || trendType.contains(Utils.TEXT_TREND_HEKEN_LONG)) {
-                String log = Utils.appendSpace("(HekenAshi)  " + Utils.getChartName(list)
-                        + Utils.appendSpace(symbol, 10) + " (" + trendType + ")", 60)
-                        + Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 75);
-                Utils.logWritelnDraft(log);
+            String trend_by_heken = "";
+            if (trendType.contains(Utils.TEXT_TREND_HEKEN_LONG)) {
+                trend_by_heken = Utils.TREND_LONG;
+            } else {
+                trend_by_heken = Utils.TREND_SHORT;
             }
 
-            if (BTC_ETH_BNB.contains("_" + symbol + "_")) {
-                String EVENT_ID = EVENT_PUMP + "_EPICS_SCAP_" + symbol + Utils.getCurrentYyyyMmDdHHByChart(list);
-                String msg = "(" + Utils.getChartName(list) + ")" + symbol + "(" + trendType + ")";
-                sendMsgPerHour(EVENT_ID, msg, true);
+            Orders entity_h4 = ordersRepository.findById(EPIC + "_" + Utils.CRYPTO_TIME_4H).orElse(null);
+
+            if (Objects.equals(entity_day.getTrend(), trend_by_heken)
+                    || (Objects.nonNull(entity_h4) && Objects.equals(entity_h4.getTrend(), trend_by_heken))) {
+
+                if (BTC_ETH_BNB.contains(symbol) || Objects.equals(Utils.TREND_LONG, trend_by_heken)) {
+                    String log = Utils.appendSpace("(HekenAshi)  " + Utils.getChartName(list)
+                            + Utils.appendSpace(symbol, 10) + " (" + trendType + ")", 60)
+                            + Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 75);
+                    Utils.logWritelnDraft(log);
+
+                    //if (BTC_ETH_BNB.contains("_" + symbol + "_")) {}
+                    String EVENT_ID = EVENT_PUMP + "_EPICS_SCAP_" + symbol + Utils.getCurrentYyyyMmDdHHByChart(list);
+                    String msg = "(" + Utils.getChartName(list) + ")" + symbol + "(" + trendType + ")";
+                    sendMsgPerHour(EVENT_ID, msg, true);
+                }
             }
         }
 
@@ -3111,19 +3123,23 @@ public class BinanceServiceImpl implements BinanceService {
                     Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
                     if (Utils.isNotBlank(heken) && Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)) {
                         String str_entry = "";
-                        String temp_note = "SL: Daily chart.";
+                        String temp_note = "";
 
                         BigDecimal sl_long_2 = dto_h4.getLow_price();
                         BigDecimal sl_shot_2 = dto_h4.getHigh_price();
                         if (Utils.EPICS_FOREXS.contains(EPIC)) {
                             sl_long_2 = dto_d1.getLow_price();
                             sl_shot_2 = dto_d1.getHigh_price();
+                            temp_note = Utils.TEXT_SL_DAILY_CHART;
                         }
 
+                        String trend_by_heken = "";
                         if (heken.contains(Utils.TEXT_TREND_HEKEN_LONG)) {
+                            trend_by_heken = Utils.TREND_LONG;
                             str_entry += Utils.calc_BUF_Long_Forex(EPIC,
                                     entity.getStr_body_price(), sl_long_2, entity.getEnd_body_price());
                         } else {
+                            trend_by_heken = Utils.TREND_SHORT;
                             str_entry += Utils.calc_BUF_Shot_Forex(EPIC,
                                     entity.getEnd_body_price(), sl_shot_2, entity.getStr_body_price());
                         }
@@ -3135,7 +3151,7 @@ public class BinanceServiceImpl implements BinanceService {
                                 + temp_note;
                         Utils.logWritelnDraft(log);
 
-                        if (isH4 && Objects.equals(dto_d1.getTrend(), entity.getTrend())) {
+                        if (isH4 || Objects.equals(dto_d1.getTrend(), trend_by_heken)) {
                             String EVENT_ID = EVENT_PUMP + "_EPICS_HEKEN_" + EPIC
                                     + Utils.getCurrentYyyyMmDdHHByChart(list);
                             String content = Utils.getChartName(list) + Utils.appendSpace(EPIC, 10) + " (" + heken
@@ -3223,14 +3239,16 @@ public class BinanceServiceImpl implements BinanceService {
                 EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_15, "");
                 EPIC = EPIC.replace("_", "");
 
+                String str_note_sl = "";
                 Orders dto_sl;
                 if (Utils.EPICS_FOREXS.contains(EPIC)) {
+                    str_note_sl = Utils.TEXT_SL_DAILY_CHART;
                     dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
                 } else {
                     dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
                 }
 
-                String log = Utils.createLineForex(dto_entry, dto_sl);
+                String log = Utils.createLineForex(dto_entry, dto_sl) + str_note_sl;
                 Utils.logWritelnReport(log);
                 if (dto_entry.getNote().contains(Utils.TEXT_TREND_HEKEN_)) {
                     msg_forx += dto_entry.getId().replace("_HOUR", "") + ",";
@@ -3255,8 +3273,13 @@ public class BinanceServiceImpl implements BinanceService {
                 EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_15, "");
                 EPIC = EPIC.replace("_", "");
 
+                String log = "";
                 Orders dto_entry = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-                String log = Utils.createLineForex(dto_entry, dto_d1);
+                if (Utils.EPICS_FOREXS.contains(EPIC)) {
+                    log = Utils.createLineForex(dto_entry, dto_d1) + Utils.TEXT_SL_DAILY_CHART;
+                } else {
+                    log = Utils.createLineForex(dto_entry, dto_entry);
+                }
 
                 Utils.logWritelnReport(log);
                 Utils.logWritelnReport("");
@@ -3304,6 +3327,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnReport(tmp_msg);
             }
         }
+
         if (Utils.isNotBlank(msg_futu + msg_scap)) {
             String EVENT_ID = EVENT_PUMP + "_REPORT_CRYPTO_" + Utils.getCurrentYyyyMmDd_HH_Blog4h();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
