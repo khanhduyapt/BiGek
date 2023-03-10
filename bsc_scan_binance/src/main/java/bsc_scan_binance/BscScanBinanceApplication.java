@@ -144,7 +144,7 @@ public class BscScanBinanceApplication {
                         }
                         // ---------------------------------------------------------
                         if (isReloadAfter(Utils.MINUTES_OF_1H, "CHECK_CRYPTO")) {
-                            checkCrypto(binance_service);
+                            // TODO: het tien danh coin: checkCrypto(binance_service);
                         }
                         // ---------------------------------------------------------
 

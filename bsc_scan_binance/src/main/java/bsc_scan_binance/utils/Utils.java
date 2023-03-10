@@ -137,20 +137,20 @@ public class Utils {
 
     public static final List<String> EPICS_15M = Arrays.asList("GOLD", "US30", "UK100", "J225", "GBPUSD");
 
-    public static final List<String> EPICS_SCAP = Arrays.asList("DXY", "GOLD", "SILVER", "OIL_CRUDE", "US30", "US100",
-            "US500", "UK100", "J225", "SP35", "DE40", "FR40", "AU200", "HK50", "EURUSD", "GBPUSD", "USDCHF", "USDJPY",
+    //"SP35", "HK50", "OIL_CRUDE",
+    public static final List<String> EPICS_SCAP = Arrays.asList("DXY", "GOLD", "SILVER", "US30", "US100",
+            "US500", "UK100", "J225", "DE40", "FR40", "AU200", "EURUSD", "GBPUSD", "USDCHF", "USDJPY",
             "AUDUSD", "NZDUSD", "USDCAD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK",
     public static final List<String> EPICS_FOREXS = Arrays.asList(
-    //            "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF",
-    //            "EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNZD", "EURPLN",
-    //            "EURSEK", "EURSGD", "GBPAUD",
-    //            "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDJPY", "USDCNH", "USDCZK",
-    //            "USDDKK", "USDHUF", "USDILS",
-    //            "USDMXN", "USDNOK", "USDSEK", "USDSGD", "USDZAR"
-    );
+            "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF",
+            "EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNZD", "EURPLN",
+            "EURSEK", "EURSGD", "GBPAUD",
+            "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDJPY", "USDCNH", "USDCZK",
+            "USDDKK", "USDHUF", "USDILS",
+            "USDMXN", "USDNOK", "USDSEK", "USDSGD", "USDZAR");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
@@ -874,14 +874,16 @@ public class Utils {
     }
 
     public static String getCryptoLogFile() {
-        String PATH = "crypto_forex_result/";
-        String fileName = getToday_YyyyMMdd() + "_Crypto.log";
+        return getDraftLogFile();
 
-        File directory = new File(PATH);
-        if (!directory.exists()) {
-            directory.mkdir();
-        }
-        return PATH + fileName;
+        //String PATH = "crypto_forex_result/";
+        //String fileName = getToday_YyyyMMdd() + "_Crypto.log";
+        //
+        //File directory = new File(PATH);
+        //if (!directory.exists()) {
+        //    directory.mkdir();
+        //}
+        //return PATH + fileName;
     }
 
     public static void writeBlogCrypto(String symbol, String long_short_content, boolean isFuturesCoin) {
@@ -3254,7 +3256,6 @@ public class Utils {
         if (is15m) {
             risk = risk.divide(BigDecimal.valueOf(5), 10, RoundingMode.CEILING);
         }
-        String str_risk = " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 3);
 
         MoneyAtRiskResponse money_long = new MoneyAtRiskResponse(EPIC, risk, en_long, sl_long, tp_long);
         BigDecimal lot_long = money_long.calcLot();
@@ -3264,8 +3265,9 @@ public class Utils {
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 8);
         temp += Utils.appendLeft(removeLastZero(lot_long), 8) + "(lot/" + appendSpace(removeLastZero(pip_long), 8)
                 + ")";
+        temp += "/" + removeLastZero(risk).replace(".0", "") + "$";
 
-        String result = Utils.appendSpace("(BUY )" + temp + (is15m ? str_risk : ""), 38);
+        String result = Utils.appendSpace("(BUY )" + temp, 38);
         return result;
     }
 
@@ -3275,7 +3277,6 @@ public class Utils {
         if (is15m) {
             risk = risk.divide(BigDecimal.valueOf(5), 10, RoundingMode.CEILING);
         }
-        String str_risk = " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 3);
 
         BigDecimal pip_shot = sl_shot.subtract(en_shot);
         MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, en_shot, sl_shot, tp_shot);
@@ -3285,8 +3286,9 @@ public class Utils {
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 8);
         temp += Utils.appendLeft(removeLastZero(lot_shot), 8) + "(lot/" + appendSpace(removeLastZero(pip_shot), 8)
                 + ")";
+        temp += "/" + removeLastZero(risk).replace(".0", "") + "$";
 
-        String result = Utils.appendSpace("(SELL)" + temp + (is15m ? str_risk : ""), 38);
+        String result = Utils.appendSpace("(SELL)" + temp, 38);
         return result;
     }
 }

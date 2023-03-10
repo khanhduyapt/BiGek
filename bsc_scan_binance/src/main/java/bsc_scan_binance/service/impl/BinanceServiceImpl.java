@@ -3148,7 +3148,6 @@ public class BinanceServiceImpl implements BinanceService {
             boolean isD1 = false;
             boolean isH4 = false;
             boolean isH1 = false;
-            boolean is15 = false;
             if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
                 lengh = 10;
                 isD1 = true;
@@ -3158,15 +3157,12 @@ public class BinanceServiceImpl implements BinanceService {
                 isH4 = true;
             }
             if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
-                lengh = 10;
-                isH1 = true;
-            }
-            if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XXX)) {
-                lengh = 10;
-                is15 = true;
                 if (!Utils.EPICS_SCAP.contains(EPIC)) {
                     return "";
                 }
+
+                lengh = 10;
+                isH1 = true;
             }
 
             // ----------------------------TREND------------------------
@@ -3205,7 +3201,7 @@ public class BinanceServiceImpl implements BinanceService {
             Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), str_body_price,
                     end_body_price, sl_long, sl_shot, trendType.trim());
 
-            if (isH4 || isH1 || is15) {
+            if (isH4 || isH1) {
                 String heken = Utils.checkHekenAshiTrend(list);
                 if (heken.contains(Utils.TEXT_TREND_HEKEN_)) {
 
@@ -3241,11 +3237,12 @@ public class BinanceServiceImpl implements BinanceService {
                                 + temp_note;
 
                         count_drap_line += 1;
-                        if (count_drap_line == 10) {
+                        if (count_drap_line > 10) {
                             count_drap_line = 0;
                             Utils.logWritelnReport("");
+                            Utils.logWritelnReport("");
+                            Utils.logWritelnReport("");
                         }
-
                         Utils.logWritelnDraft(log);
 
                         if (isH4 || Objects.equals(dto_d1.getTrend(), trend_by_heken)
@@ -3338,15 +3335,16 @@ public class BinanceServiceImpl implements BinanceService {
                 EPIC = EPIC.replace("_", "");
 
                 String str_note_sl = "";
-                Orders dto_sl;
+                Orders dto_ls;
+                Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
                 if (Utils.EPICS_FOREXS.contains(EPIC)) {
                     str_note_sl = Utils.TEXT_SL_DAILY_CHART;
-                    dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+                    dto_ls = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
                 } else {
-                    dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+                    dto_ls = dto_h4;
                 }
 
-                String log = Utils.createLineForex(dto_entry, dto_sl) + str_note_sl;
+                String log = Utils.createLineForex(dto_h4, dto_ls) + str_note_sl;
                 Utils.logWritelnReport(log);
                 if (dto_entry.getNote().contains(Utils.TEXT_TREND_HEKEN_)) {
                     msg_forx += dto_entry.getId().replace("_HOUR", "") + ",";
