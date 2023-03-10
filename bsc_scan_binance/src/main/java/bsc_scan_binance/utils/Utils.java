@@ -142,13 +142,12 @@ public class Utils {
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK",
     public static final List<String> EPICS_FOREXS = Arrays.asList(
-    // "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF",
-    // "EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNZD", "EURPLN",
-    // "EURSEK", "EURSGD", "GBPAUD",
-    // "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDJPY", "USDCNH", "USDCZK",
-    // "USDDKK", "USDHUF", "USDILS",
-    // "USDMXN", "USDNOK", "USDSEK", "USDSGD", "USDZAR"
-    );
+            "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF",
+            "EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNZD", "EURPLN",
+            "EURSEK", "EURSGD", "GBPAUD",
+            "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDJPY", "USDCNH", "USDCZK",
+            "USDDKK", "USDHUF", "USDILS",
+            "USDMXN", "USDNOK", "USDSEK", "USDSGD", "USDZAR");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
@@ -1260,6 +1259,13 @@ public class Utils {
 
     public static String getCurrentYyyyMmDd_HH_Blog15m() {
         String result = getCurrentYyyyMmDd_HH() + "_" + getCurrentMinute_Blog15minutes();
+        return result;
+    }
+
+    public static String getCurrentYyyyMmDd_HH_Blog30m() {
+        int mm = getCurrentMinute();
+        mm = mm / 30;
+        String result = getCurrentYyyyMmDd_HH() + "_" + String.valueOf(mm);
         return result;
     }
 

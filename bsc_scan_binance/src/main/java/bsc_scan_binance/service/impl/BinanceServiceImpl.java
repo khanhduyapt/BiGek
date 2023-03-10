@@ -2562,7 +2562,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public String sendMsgKillLongShort(String gecko_id, String symbol) {
         String EVENT_ID = EVENT_DANGER_CZ_KILL_LONG + "_" + gecko_id + "_" + symbol + "_"
-                + Utils.getCurrentYyyyMmDd_HH();
+                + Utils.getCurrentYyyyMmDd_HH_Blog30m();
 
         if (fundingHistoryRepository.existsPumDump(gecko_id, EVENT_ID)) {
             return "";
@@ -2579,14 +2579,13 @@ public class BinanceServiceImpl implements BinanceService {
 
         String chartname = Utils.getChartName(list_15m);
         boolean onlyMe = false;
-        if (heken.contains(Utils.TEXT_TREND_No1_MA34568)) {
+        if (heken.contains(Utils.TEXT_TREND_HEKEN_)) {
             onlyMe = true;
-            msg = Utils.getTimeHHmm() + symbol + " " + chartname + "(" + heken + " 💔 )";
+            msg = Utils.getTimeHHmm() + chartname + "(" + heken + ")" + symbol;
         } else {
             if (ido.isBtcKillLongCandle()) {
                 msg = Utils.getTimeHHmm() + " 🔻  " + symbol + " " + chartname + " kill Long 💔 ";
             }
-
             if (ido.isBtcKillShortCandle()) {
                 msg = Utils.getTimeHHmm() + " 💹 " + symbol + " " + chartname + " kill Short 💔 ";
             }
