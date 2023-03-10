@@ -3058,6 +3058,12 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public void scapForex15M(String EPIC) {
+        Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+        Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
+        if (Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Utils.isBlank(dto_h4.getNote() + dto_h4.getNote())) {
+            return;
+        }
+
         if (!isReloadPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_15)) {
             return;
         }
@@ -3120,7 +3126,6 @@ public class BinanceServiceImpl implements BinanceService {
                 en_shot, sl_long, sl_shot, heken_trend);
         ordersRepository.save(entity);
         // -----------------------------LOG---------------------------
-        Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
 
         String log = Utils.appendSpace(EPIC, 15) + "(D:" + Utils.appendSpace(dto_h4.getTrend(), 4)
                 + ")   " + Utils.appendSpace(orderId.replace(EPIC + "_", ""), 8) + "  "
