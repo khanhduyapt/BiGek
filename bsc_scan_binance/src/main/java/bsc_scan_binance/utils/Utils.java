@@ -3185,36 +3185,47 @@ public class Utils {
         BigDecimal en_long = Utils.getBigDecimal(dto_h4.getStr_body_price());
         BigDecimal en_shot = Utils.getBigDecimal(dto_h4.getEnd_body_price());
 
-        String temp = "";
-        int moneny_length = 8;
-
-        BigDecimal pip_long = en_long.subtract(sl_long);
-        BigDecimal pip_shot = sl_shot.subtract(en_shot);
-
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 8);
-
-        MoneyAtRiskResponse money_long = new MoneyAtRiskResponse(EPIC, risk, en_long, sl_long, tp_long);
-        BigDecimal lot_long = money_long.calcLot();
-
-        temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)) + " ", 10);
-        temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), moneny_length);
-        temp += Utils.appendLeft(removeLastZero(lot_long), 8) + "(lot/" + appendSpace(removeLastZero(pip_long), 8)
-                + ")";
-        result += Utils.appendSpace((Objects.equals(trend, TREND_LONG) ? "*" : " ") + "(BUY )" + temp, 38);
-
+        String str_long = calc_BUF_Long_Forex(EPIC, trend, en_long, sl_long, tp_long);
+        result += str_long;
         result = appendSpace(result, 80);
-
-        MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, en_shot, sl_shot, tp_shot);
-        BigDecimal lot_shot = money_short.calcLot();
-        temp = "";
-        temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)) + " ", 10);
-        temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), moneny_length);
-        temp += Utils.appendLeft(removeLastZero(lot_shot), 8) + "(lot/" + appendSpace(removeLastZero(pip_shot), 8)
-                + ")";
-        result += Utils.appendSpace((Objects.equals(trend, TREND_SHORT) ? "*" : " ") + "(SELL)" + temp, 38);
+        String str_shot = calc_BUF_Shot_Forex(EPIC, trend, en_shot, sl_shot, tp_shot);
+        result += str_shot;
 
         result = Utils.appendSpace(result, 140);
         return result;
     }
 
+    public static String calc_BUF_Long_Forex(String EPIC, String trend, BigDecimal en_long, BigDecimal sl_long,
+            BigDecimal tp_long) {
+        BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
+
+        MoneyAtRiskResponse money_long = new MoneyAtRiskResponse(EPIC, risk, en_long, sl_long, tp_long);
+        BigDecimal lot_long = money_long.calcLot();
+        BigDecimal pip_long = en_long.subtract(sl_long);
+        String temp = "";
+        temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)) + " ", 10);
+        temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 8);
+        temp += Utils.appendLeft(removeLastZero(lot_long), 8) + "(lot/" + appendSpace(removeLastZero(pip_long), 8)
+                + ")";
+        String result = Utils.appendSpace((Objects.equals(trend, TREND_LONG) ? "*" : " ") + "(BUY )" + temp, 38);
+
+        return result;
+    }
+
+    public static String calc_BUF_Shot_Forex(String EPIC, String trend, BigDecimal en_shot, BigDecimal sl_shot,
+            BigDecimal tp_shot) {
+        BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
+        BigDecimal pip_shot = sl_shot.subtract(en_shot);
+        MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, en_shot, sl_shot, tp_shot);
+        BigDecimal lot_shot = money_short.calcLot();
+        String temp = "";
+        temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)) + " ", 10);
+        temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 8);
+        temp += Utils.appendLeft(removeLastZero(lot_shot), 8) + "(lot/" + appendSpace(removeLastZero(pip_shot), 8)
+                + ")";
+        String result = Utils.appendSpace(trend + "(SELL)" + temp, 38);
+
+        return result;
+    }
 }
