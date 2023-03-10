@@ -3203,8 +3203,7 @@ public class Utils {
         String time = pre_time.format(DateTimeFormatter.ofPattern("HH:mm"));
 
         String header = "";
-        header = time + "  " + (Utils.appendSpace("D:" + dto_entry.getTrend(), 6) + chart);
-        header += Utils.appendSpace(dto_entry.getTrend(), 4) + ") ";
+        header = time + "  " + (Utils.appendSpace("D:" + dto_entry.getTrend(), 10));
         header += Utils.appendSpace(EPIC, 15, "-");
         header += Utils.appendSpace(Utils.appendSpace(Utils.getCapitalLink(EPIC), 66), 120, "_");
         header = Utils.appendSpace(header, LENGTH - 12);

@@ -261,7 +261,7 @@ public class BscScanBinanceApplication {
             }
 
             String trend_h1 = "";
-            if ("_BTC_ETH_BNB_LTC_".contains(SYMBOL)) {
+            if ("_BTC_ETH_BNB_LTC_".contains("_" + SYMBOL + "_")) {
                 trend_h1 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1H, SYMBOL);
                 if (Utils.isNotBlank(trend_h1)) {
                     wait(SLEEP_MINISECONDS);
