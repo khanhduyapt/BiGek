@@ -3238,19 +3238,23 @@ public class Utils {
         BigDecimal en_shot = Utils.getBigDecimal(dto_entry_h4.getEnd_body_price());
 
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 8);
-        String str_long = calc_BUF_Long_Forex(EPIC, en_long, sl_long, tp_long);
+        String str_long = calc_BUF_Long_Forex(false, EPIC, en_long, sl_long, tp_long);
         result += str_long;
         result = appendSpace(result, 80);
-        String str_shot = calc_BUF_Shot_Forex(EPIC, en_shot, sl_shot, tp_shot);
+        String str_shot = calc_BUF_Shot_Forex(false, EPIC, en_shot, sl_shot, tp_shot);
         result += str_shot;
 
         result = Utils.appendSpace(result, 140);
         return result;
     }
 
-    public static String calc_BUF_Long_Forex(String EPIC, BigDecimal en_long, BigDecimal sl_long,
+    public static String calc_BUF_Long_Forex(boolean is15m, String EPIC, BigDecimal en_long, BigDecimal sl_long,
             BigDecimal tp_long) {
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
+        if (is15m) {
+            risk = risk.divide(BigDecimal.valueOf(5), 10, RoundingMode.CEILING);
+        }
+        String str_risk = " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 3);
 
         MoneyAtRiskResponse money_long = new MoneyAtRiskResponse(EPIC, risk, en_long, sl_long, tp_long);
         BigDecimal lot_long = money_long.calcLot();
@@ -3260,14 +3264,19 @@ public class Utils {
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 8);
         temp += Utils.appendLeft(removeLastZero(lot_long), 8) + "(lot/" + appendSpace(removeLastZero(pip_long), 8)
                 + ")";
-        String result = Utils.appendSpace("(BUY )" + temp, 38);
 
+        String result = Utils.appendSpace("(BUY )" + temp + (is15m ? str_risk : ""), 38);
         return result;
     }
 
-    public static String calc_BUF_Shot_Forex(String EPIC, BigDecimal en_shot, BigDecimal sl_shot,
+    public static String calc_BUF_Shot_Forex(boolean is15m, String EPIC, BigDecimal en_shot, BigDecimal sl_shot,
             BigDecimal tp_shot) {
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
+        if (is15m) {
+            risk = risk.divide(BigDecimal.valueOf(5), 10, RoundingMode.CEILING);
+        }
+        String str_risk = " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 3);
+
         BigDecimal pip_shot = sl_shot.subtract(en_shot);
         MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, en_shot, sl_shot, tp_shot);
         BigDecimal lot_shot = money_short.calcLot();
@@ -3276,8 +3285,8 @@ public class Utils {
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 8);
         temp += Utils.appendLeft(removeLastZero(lot_shot), 8) + "(lot/" + appendSpace(removeLastZero(pip_shot), 8)
                 + ")";
-        String result = Utils.appendSpace("(SELL)" + temp, 38);
 
+        String result = Utils.appendSpace("(SELL)" + temp + (is15m ? str_risk : ""), 38);
         return result;
     }
 }

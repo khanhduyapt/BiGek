@@ -121,22 +121,25 @@ public class BscScanBinanceApplication {
                         checkKillLongShort(binance_service);
 
                         if (Utils.isBusinessTime_6h_to_17h()) {
-                            if (isReloadAfter(Utils.MINUTES_OF_1H, "RE_CHECK_FOREX")) {
-                                if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
+                            if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
 
+                                if (isReloadAfter(Utils.MINUTES_OF_15M, "FOREX_15M")) {
+                                    Utils.initCapital();
+                                    for (String EPIC : Utils.EPICS_15M) {
+                                        binance_service.scapForex15M(EPIC);
+                                    }
+                                }
+
+                                if (isReloadAfter(Utils.MINUTES_OF_1H, "RE_CHECK_FOREX")) {
                                     Utils.initCapital();
                                     for (int index = 0; index < forex_size; index++) {
                                         sleepWhenExceptionTimeOut(binance_service);
                                         String EPIC = capital_list.get(index);
                                         checkCapital(binance_service, EPIC);
                                     }
-
-                                    for (String EPIC : Utils.EPICS_15M) {
-                                        binance_service.scapForex15M(EPIC);
-                                    }
-
                                     binance_service.createReport();
                                 }
+
                             }
                         }
                         // ---------------------------------------------------------
@@ -258,7 +261,7 @@ public class BscScanBinanceApplication {
             }
 
             String trend_h4 = "";
-            trend_h4 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4H, SYMBOL);
+            //trend_h4 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4H, SYMBOL);
             if (Utils.isNotBlank(trend_h4)) {
                 wait(SLEEP_MINISECONDS);
             }

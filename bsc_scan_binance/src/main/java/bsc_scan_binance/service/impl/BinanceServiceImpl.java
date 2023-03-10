@@ -3088,20 +3088,28 @@ public class BinanceServiceImpl implements BinanceService {
 
         BigDecimal bread = Utils.calcMaxBread(list);
         List<BigDecimal> low_high = Utils.getLowHighCandle(list);
+        BigDecimal ma8 = Utils.calcMA(list, 8, 1);
+
         BigDecimal en_long = low_high.get(0);
         BigDecimal sl_long = low_high.get(0).subtract(bread.multiply(BigDecimal.valueOf(2)));
+        BigDecimal tp_long = (ma8.subtract(en_long)).multiply(BigDecimal.valueOf(3));
+        tp_long = ma8.add(tp_long);
 
         BigDecimal en_shot = low_high.get(1);
         BigDecimal sl_shot = low_high.get(1).add(bread.multiply(BigDecimal.valueOf(2)));
+        BigDecimal tp_shot = (sl_shot.subtract(ma8)).multiply(BigDecimal.valueOf(3));
+        tp_shot = ma8.subtract(tp_shot);
 
         String trend = "";
         String str_entry = "";
         if (heken_trend.contains(Utils.TEXT_TREND_HEKEN_LONG)) {
             trend = Utils.TREND_LONG;
-            str_entry += Utils.calc_BUF_Long_Forex(EPIC, en_long, sl_long, en_shot);
+            str_entry += Utils.calc_BUF_Long_Forex(true, EPIC, en_long, sl_long, en_shot);
+            str_entry += "   TP: " + Utils.appendSpace(Utils.removeLastZero(tp_long), 8);
         } else {
             trend = Utils.TREND_SHORT;
-            str_entry += Utils.calc_BUF_Shot_Forex(EPIC, en_shot, sl_shot, en_long);
+            str_entry += Utils.calc_BUF_Shot_Forex(true, EPIC, en_shot, sl_shot, en_long);
+            str_entry += "   TP: " + Utils.appendSpace(Utils.removeLastZero(tp_shot), 8);
         }
 
         // -----------------------------DATABASE---------------------------
@@ -3112,7 +3120,6 @@ public class BinanceServiceImpl implements BinanceService {
                 en_shot, sl_long, sl_shot, heken_trend);
         ordersRepository.save(entity);
         // -----------------------------LOG---------------------------
-
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
 
         String log = Utils.appendSpace(EPIC, 15) + "(D:" + Utils.appendSpace(dto_h4.getTrend(), 4)
@@ -3218,11 +3225,11 @@ public class BinanceServiceImpl implements BinanceService {
                         String trend_by_heken = "";
                         if (heken.contains(Utils.TEXT_TREND_HEKEN_LONG)) {
                             trend_by_heken = Utils.TREND_LONG;
-                            str_entry += Utils.calc_BUF_Long_Forex(EPIC,
+                            str_entry += Utils.calc_BUF_Long_Forex(false, EPIC,
                                     entity.getStr_body_price(), sl_long_2, entity.getEnd_body_price());
                         } else {
                             trend_by_heken = Utils.TREND_SHORT;
-                            str_entry += Utils.calc_BUF_Shot_Forex(EPIC,
+                            str_entry += Utils.calc_BUF_Shot_Forex(false, EPIC,
                                     entity.getEnd_body_price(), sl_shot_2, entity.getStr_body_price());
                         }
 
@@ -3246,7 +3253,7 @@ public class BinanceServiceImpl implements BinanceService {
                                     + Utils.getCurrentYyyyMmDdHHByChart(list);
                             String content = Utils.getChartName(list) + Utils.appendSpace(EPIC, 10) + " (" + heken
                                     + ")";
-                            sendMsgPerHour(EVENT_ID, content, true);
+                            // sendMsgPerHour(EVENT_ID, content, true);
                         }
                     }
                 }
