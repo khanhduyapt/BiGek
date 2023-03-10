@@ -3027,7 +3027,7 @@ public class BinanceServiceImpl implements BinanceService {
                     //if (BTC_ETH_BNB.contains("_" + symbol + "_")) {}
                     String EVENT_ID = EVENT_PUMP + "_EPICS_SCAP_" + symbol + Utils.getCurrentYyyyMmDdHHByChart(list);
                     String msg = "(" + Utils.getChartName(list) + ")" + symbol + "(" + trendType + ")";
-                    sendMsgPerHour(EVENT_ID, msg, true);
+                    // sendMsgPerHour(EVENT_ID, msg, true);
                 }
             }
         }
