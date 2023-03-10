@@ -3318,7 +3318,7 @@ public class BinanceServiceImpl implements BinanceService {
         String msg_scap = "";
         // --------------------------------------------------------------------------
         List<Orders> list_h1 = new ArrayList<Orders>();
-        list_h1.addAll(ordersRepository.getListH1_H4_Heken());
+        //list_h1.addAll(ordersRepository.getListH1_H4_Heken());
         if (!CollectionUtils.isEmpty(list_h1)) {
             Utils.logWritelnReport(Utils.appendSpace(Utils.appendLeft(" (H1_H4 Heken) ", 80, "="), 268, "="));
             for (Orders dto_entry : list_h1) {

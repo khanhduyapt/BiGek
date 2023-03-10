@@ -3077,7 +3077,7 @@ public class Utils {
             }
 
             String buffer = Utils.appendSpace("", 12) + Utils.appendSpace(type.trim(), 20);
-            buffer += chart + Utils.appendSpace(dto_entry.getTrend(), 7);
+            //buffer += chart + Utils.appendSpace(dto_entry.getTrend(), 7);
             buffer += Utils.calc_BUF_LO_HI_BUF_Forex(false, trend, EPIC, dto_entry, dto_sl);
             log = Utils.appendSpace(buffer + Utils.appendSpace(chart + dto_entry.getNote(), 30), 280);
         }

@@ -123,7 +123,7 @@ public class BscScanBinanceApplication {
                         if (Utils.isBusinessTime_6h_to_17h()) {
                             if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
 
-                                if (isReloadAfter(Utils.MINUTES_OF_1H, "RE_CHECK_FOREX")) {
+                                if (isReloadAfter(Utils.MINUTES_OF_15M, "RE_CHECK_FOREX")) {
                                     Utils.initCapital();
                                     for (int index = 0; index < forex_size; index++) {
                                         sleepWhenExceptionTimeOut(binance_service);
@@ -143,7 +143,7 @@ public class BscScanBinanceApplication {
                             }
                         }
                         // ---------------------------------------------------------
-                        if (isReloadAfter(Utils.MINUTES_OF_1H, "CHECK_CRYPTO")) {
+                        if (isReloadAfter(Utils.MINUTES_OF_15M, "CHECK_CRYPTO")) {
                             // TODO: het tien danh coin: checkCrypto(binance_service);
                         }
                         // ---------------------------------------------------------
