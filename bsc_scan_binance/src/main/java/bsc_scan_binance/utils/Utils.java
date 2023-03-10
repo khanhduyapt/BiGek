@@ -3090,8 +3090,7 @@ public class Utils {
                 type = Utils.appendSpace(type, 6) + " * ";
             }
 
-            String buffer = Utils.appendSpace("", 12)
-                    + Utils.appendSpace(type.trim(), 20);
+            String buffer = Utils.appendSpace("", 12) + Utils.appendSpace(type.trim(), 20);
             buffer += chart + Utils.appendSpace(dto_entry.getTrend(), 7);
             buffer += Utils.calc_BUF_LO_HI_BUF_Forex(false, trend, EPIC, dto_entry, dto_sl);
             log = Utils.appendSpace(buffer + Utils.appendSpace(chart + dto_entry.getNote(), 30), 280);
@@ -3266,17 +3265,17 @@ public class Utils {
         BigDecimal en_shot = Utils.getBigDecimal(dto_entry_h4.getEnd_body_price());
 
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 8);
-        String str_long = calc_BUF_Long_Forex(EPIC, trend, en_long, sl_long, tp_long);
+        String str_long = calc_BUF_Long_Forex(EPIC, en_long, sl_long, tp_long);
         result += str_long;
         result = appendSpace(result, 80);
-        String str_shot = calc_BUF_Shot_Forex(EPIC, trend, en_shot, sl_shot, tp_shot);
+        String str_shot = calc_BUF_Shot_Forex(EPIC, en_shot, sl_shot, tp_shot);
         result += str_shot;
 
         result = Utils.appendSpace(result, 140);
         return result;
     }
 
-    public static String calc_BUF_Long_Forex(String EPIC, String trend, BigDecimal en_long, BigDecimal sl_long,
+    public static String calc_BUF_Long_Forex(String EPIC, BigDecimal en_long, BigDecimal sl_long,
             BigDecimal tp_long) {
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
@@ -3288,12 +3287,12 @@ public class Utils {
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 8);
         temp += Utils.appendLeft(removeLastZero(lot_long), 8) + "(lot/" + appendSpace(removeLastZero(pip_long), 8)
                 + ")";
-        String result = Utils.appendSpace((Objects.equals(trend, TREND_LONG) ? "*" : " ") + "(BUY )" + temp, 38);
+        String result = Utils.appendSpace("(BUY )" + temp, 38);
 
         return result;
     }
 
-    public static String calc_BUF_Shot_Forex(String EPIC, String trend, BigDecimal en_shot, BigDecimal sl_shot,
+    public static String calc_BUF_Shot_Forex(String EPIC, BigDecimal en_shot, BigDecimal sl_shot,
             BigDecimal tp_shot) {
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
         BigDecimal pip_shot = sl_shot.subtract(en_shot);
@@ -3304,7 +3303,7 @@ public class Utils {
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 8);
         temp += Utils.appendLeft(removeLastZero(lot_shot), 8) + "(lot/" + appendSpace(removeLastZero(pip_shot), 8)
                 + ")";
-        String result = Utils.appendSpace(trend + "(SELL)" + temp, 38);
+        String result = Utils.appendSpace("(SELL)" + temp, 38);
 
         return result;
     }

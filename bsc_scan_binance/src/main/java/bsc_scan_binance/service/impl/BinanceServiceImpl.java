@@ -3125,15 +3125,11 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         if (heken.contains(Utils.TEXT_TREND_HEKEN_LONG)) {
-                            str_entry += Utils.calc_BUF_Long_Forex(EPIC, Utils.appendSpace(heken, 20),
-                                    dto_h4.getStr_body_price(),
-                                    sl_buy,
-                                    dto_h4.getEnd_body_price());
+                            str_entry += Utils.calc_BUF_Long_Forex(EPIC,
+                                    dto_h4.getStr_body_price(), sl_buy, dto_h4.getEnd_body_price());
                         } else {
-                            str_entry += Utils.calc_BUF_Shot_Forex(EPIC, Utils.appendSpace(heken, 20),
-                                    dto_h4.getEnd_body_price(),
-                                    sl_sel,
-                                    dto_h4.getStr_body_price());
+                            str_entry += Utils.calc_BUF_Shot_Forex(EPIC,
+                                    dto_h4.getEnd_body_price(), sl_sel, dto_h4.getStr_body_price());
                         }
 
                         String log = Utils.appendSpace(EPIC, 15) + "(D:" + Utils.appendSpace(dto_d1.getTrend(), 4)
@@ -3217,9 +3213,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<Orders> list_h1 = new ArrayList<Orders>();
         list_h1.addAll(ordersRepository.getListH1_H4_Heken());
         if (!CollectionUtils.isEmpty(list_h1)) {
-            Utils.logWritelnReport("");
-            Utils.logWritelnReport(Utils.appendSpace(Utils.appendLeft(" (H1 Heken) ", 80, "="), 268, "="));
-
+            Utils.logWritelnReport(Utils.appendSpace(Utils.appendLeft(" (H1_H4 Heken) ", 80, "="), 268, "="));
             for (Orders dto_entry : list_h1) {
                 if (Objects.isNull(dto_entry)) {
                     Utils.logWritelnReport("");
@@ -3243,9 +3237,9 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        Utils.logWritelnReport("");
-        Utils.logWritelnReport("");
-        Utils.logWritelnReport("");
+        Utils.writelnLogFooter_Forex();
+        Utils.writelnLogFooter_Forex();
+        Utils.writelnLogFooter_Forex();
 
         List<Orders> list_all_d1 = ordersRepository.getTrend_DayList();
         if (!CollectionUtils.isEmpty(list_all_d1)) {
@@ -3269,11 +3263,13 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         Utils.writelnLogFooter_Forex();
-
+        Utils.writelnLogFooter_Forex();
+        Utils.writelnLogFooter_Forex();
+        // ==================================================================================
+        // ==================================================================================
         // ==================================================================================
         List<Orders> crypto_list = new ArrayList<Orders>();
         crypto_list.addAll(ordersRepository.getCrypto_D1());
-
         if (!CollectionUtils.isEmpty(crypto_list)) {
             for (Orders entity : crypto_list) {
                 if (Objects.isNull(entity)) {
