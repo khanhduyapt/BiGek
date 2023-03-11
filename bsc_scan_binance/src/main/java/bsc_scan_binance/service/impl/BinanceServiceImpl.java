@@ -3392,7 +3392,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                     Utils.logWritelnDraft(log);
 
-                    if (isH4 && allow_send_msg) {
+                    if (isH4 && Utils.isNotBlank(temp_note)) {
                         String EVENT_ID = EVENT_PUMP + "_EPICS_HEKEN_" + EPIC + Utils.getCurrentYyyyMmDdHHByChart(list);
                         String content = Utils.getChartName(list) + Utils.appendSpace(EPIC, 10) + " ("
                                 + switch_trend_by_heken + ")";
