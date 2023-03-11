@@ -135,15 +135,15 @@ public class BscScanBinanceApplication {
 
                             }
                         }
-                        // ---------------------------------------------------------
-                        if (isReloadAfter(Utils.MINUTES_OF_15M, "CHECK_CRYPTO")) {
-                            // TODO: het tien danh coin: checkCrypto(binance_service);
-                        }
-                        // ---------------------------------------------------------
-
                         if (isReloadAfter((Utils.MINUTES_OF_15M), "CREATE_REPORT")) {
                             binance_service.createReport();
                         }
+
+                        // ---------------------------------------------------------
+                        if (isReloadAfter(Utils.MINUTES_OF_15M, "CHECK_CRYPTO")) {
+                            checkCrypto(binance_service);
+                        }
+                        // ---------------------------------------------------------
 
                         wait(SLEEP_MINISECONDS);
                     } catch (Exception e) {
@@ -253,34 +253,33 @@ public class BscScanBinanceApplication {
         for (String SYMBOL : Utils.coins) {
             index_crypto += 1;
 
-            String trend_d = "";
-            // trend_d = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1D, SYMBOL);
+            String trend_d = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1D, SYMBOL);
             if (Utils.isNotBlank(trend_d)) {
                 wait(SLEEP_MINISECONDS);
             }
 
-            String trend_h4 = "";
-            // trend_h4 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4H, SYMBOL);
+            String trend_h4 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4H, SYMBOL);
             if (Utils.isNotBlank(trend_h4)) {
                 wait(SLEEP_MINISECONDS);
             }
 
-            String trend_h1 = "";
-            if ("_BTC_ETH_BNB_LTC_".contains("_" + SYMBOL + "_")) {
-                trend_h1 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1H, SYMBOL);
-                if (Utils.isNotBlank(trend_h1)) {
-                    wait(SLEEP_MINISECONDS);
-                }
+            String trend_h1 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1H, SYMBOL);
+            if (Utils.isNotBlank(trend_h1)) {
+                wait(SLEEP_MINISECONDS);
             }
 
             String init = "";
-            init += "D:" + Utils.appendSpace(trend_d, 6);
+            init += "D1:" + Utils.appendSpace(trend_d, 6);
             init += "H4:" + Utils.appendSpace(trend_h4, 6);
             init += "H1:" + Utils.appendSpace(trend_h1, 6);
 
             String str_index = Utils.appendLeft(String.valueOf(index_crypto), 3) + "/"
                     + Utils.appendLeft(String.valueOf(total), 3) + "   ";
             System.out.println(Utils.getTimeHHmm() + str_index + Utils.appendSpace(SYMBOL, 10) + init);
+
+            if (isReloadAfter((Utils.MINUTES_OF_15M), "CREATE_REPORT")) {
+                binance_service.createReport();
+            }
         }
 
         // ----------------------------------------------

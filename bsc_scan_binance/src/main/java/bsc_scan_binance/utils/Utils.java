@@ -3153,33 +3153,13 @@ public class Utils {
         return "";
     }
 
-    public static String getTrendByHeken(List<BtcFutures> list, int candleIndex) {
+    public static String getTrendByHeken(List<BtcFutures> list) {
         List<BtcFutures> heken_list = getHekenList(list);
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
         }
 
-        if (candleIndex > heken_list.size() - 1) {
-            return heken_list.get(0).isUptrend() ? Utils.TREND_LONG : Utils.TREND_SHORT;
-        }
-
-        boolean cur_isUptrend = heken_list.get(candleIndex).isUptrend();
-        boolean pre_isUptrend = heken_list.get(candleIndex - 1).isUptrend();
-
-        if (cur_isUptrend == pre_isUptrend) {
-            return cur_isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
-        }
-
-        boolean isUptrendByMa = isUptrendByMaIndex(list, 3);
-        if (cur_isUptrend == isUptrendByMa) {
-            return cur_isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
-        }
-
-        if (cur_isUptrend == list.get(1).isUptrend()) {
-            return cur_isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
-        }
-
-        return cur_isUptrend ? Utils.TREND_LONG : Utils.TREND_SHORT;
+        return heken_list.get(0).isUptrend() ? Utils.TREND_LONG : Utils.TREND_SHORT;
     }
 
     public static String createLineForex(Orders dto_entry, Orders dto_sl) {
