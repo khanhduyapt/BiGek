@@ -17,9 +17,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 
-import bsc_scan_binance.entity.CandidateCoin;
 import bsc_scan_binance.service.BinanceService;
-import bsc_scan_binance.service.CoinGeckoService;
 import bsc_scan_binance.service.impl.WandaBot;
 import bsc_scan_binance.utils.Utils;
 
@@ -69,7 +67,6 @@ public class BscScanBinanceApplication {
             System.out.println("app_flag:" + app_flag + " (1: msg_on; 2: msg_off; 3: web only; 4: all coin)");
             // --------------------Init--------------------
             applicationContext = SpringApplication.run(BscScanBinanceApplication.class, args);
-            CoinGeckoService gecko_service = applicationContext.getBean(CoinGeckoService.class);
             BinanceService binance_service = applicationContext.getBean(BinanceService.class);
 
             if (app_flag == Utils.const_app_flag_msg_on || app_flag == Utils.const_app_flag_all_and_msg) {
@@ -100,11 +97,9 @@ public class BscScanBinanceApplication {
             capital_list.addAll(Utils.EPICS_FOREXS);
 
             if (app_flag != Utils.const_app_flag_webonly) {
-                List<CandidateCoin> token_list = gecko_service.getList(callFormBinance);
-                int total = token_list.size();
-
-                int round_crypto = 0;
+                int total = Utils.coins.size();
                 int index_crypto = 0;
+                int round_crypto = 0;
                 int forex_size = capital_list.size();
                 Date start_time = Calendar.getInstance().getTime();
 
@@ -122,7 +117,6 @@ public class BscScanBinanceApplication {
 
                         if (Utils.isBusinessTime_6h_to_17h()) {
                             if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
-
                                 if (isReloadAfter(Utils.MINUTES_OF_15M, "RE_CHECK_FOREX")) {
                                     Utils.initCapital();
                                     for (int index = 0; index < forex_size; index++) {
@@ -132,19 +126,18 @@ public class BscScanBinanceApplication {
                                     }
                                     binance_service.createReport();
                                 }
-
                             }
                         }
+
+                        // ---------------------------------------------------------
+                        String SYMBOL = Utils.coins.get(index_crypto);
+                        if (isReloadAfter(Utils.MINUTES_OF_15M, "CHECK_CRYPTO_" + SYMBOL)) {
+                            checkCrypto(binance_service, SYMBOL, index_crypto, total);
+                        }
+                        // ---------------------------------------------------------
                         if (isReloadAfter((Utils.MINUTES_OF_15M), "CREATE_REPORT")) {
                             binance_service.createReport();
                         }
-
-                        // ---------------------------------------------------------
-                        if (isReloadAfter(Utils.MINUTES_OF_15M, "CHECK_CRYPTO")) {
-                            checkCrypto(binance_service);
-                        }
-                        // ---------------------------------------------------------
-
                         wait(SLEEP_MINISECONDS);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -247,40 +240,31 @@ public class BscScanBinanceApplication {
         }
     }
 
-    private static void checkCrypto(BinanceService binance_service) {
-        int index_crypto = 0;
-        int total = Utils.coins.size();
-        for (String SYMBOL : Utils.coins) {
-            index_crypto += 1;
+    private static void checkCrypto(BinanceService binance_service, String SYMBOL, int index_crypto, int total) {
 
-            String trend_d = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1D, SYMBOL);
-            if (Utils.isNotBlank(trend_d)) {
-                wait(SLEEP_MINISECONDS);
-            }
-
-            String trend_h4 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4H, SYMBOL);
-            if (Utils.isNotBlank(trend_h4)) {
-                wait(SLEEP_MINISECONDS);
-            }
-
-            String trend_h1 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1H, SYMBOL);
-            if (Utils.isNotBlank(trend_h1)) {
-                wait(SLEEP_MINISECONDS);
-            }
-
-            String init = "";
-            init += "D1:" + Utils.appendSpace(trend_d, 6);
-            init += "H4:" + Utils.appendSpace(trend_h4, 6);
-            init += "H1:" + Utils.appendSpace(trend_h1, 6);
-
-            String str_index = Utils.appendLeft(String.valueOf(index_crypto), 3) + "/"
-                    + Utils.appendLeft(String.valueOf(total), 3) + "   ";
-            System.out.println(Utils.getTimeHHmm() + str_index + Utils.appendSpace(SYMBOL, 10) + init);
-
-            if (isReloadAfter((Utils.MINUTES_OF_15M), "CREATE_REPORT")) {
-                binance_service.createReport();
-            }
+        String trend_d = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1D, SYMBOL);
+        if (Utils.isNotBlank(trend_d)) {
+            wait(SLEEP_MINISECONDS);
         }
+
+        String trend_h4 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4H, SYMBOL);
+        if (Utils.isNotBlank(trend_h4)) {
+            wait(SLEEP_MINISECONDS);
+        }
+
+        String trend_h1 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1H, SYMBOL);
+        if (Utils.isNotBlank(trend_h1)) {
+            wait(SLEEP_MINISECONDS);
+        }
+
+        String init = "";
+        init += "D1:" + Utils.appendSpace(trend_d, 6);
+        init += "H4:" + Utils.appendSpace(trend_h4, 6);
+        init += "H1:" + Utils.appendSpace(trend_h1, 6);
+
+        String str_index = Utils.appendLeft(String.valueOf(index_crypto), 3) + "/"
+                + Utils.appendLeft(String.valueOf(total), 3) + "   ";
+        System.out.println(Utils.getTimeHHmm() + str_index + Utils.appendSpace(SYMBOL, 10) + init);
 
         // ----------------------------------------------
         // if ((round_count > 0) && Utils.isWorkingTime()) {

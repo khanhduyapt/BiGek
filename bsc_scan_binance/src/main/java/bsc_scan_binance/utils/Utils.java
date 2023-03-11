@@ -59,7 +59,7 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 public class Utils {
 
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0025);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0015);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -2865,23 +2865,23 @@ public class Utils {
         return "";
     }
 
-    public static String getTrendType(List<BtcFutures> list) {
+    public static String getTrendTypeForNote(List<BtcFutures> list) {
         String trend = "";
 
         String heken = Utils.switchTrenByHekenAshi(list);
         if (Utils.isNotBlank(heken)) {
-            trend = heken;
+            trend += heken;
+        }
+        String switch_trend = Utils.switchTrendByMa(list, true);
+        if (Utils.isNotBlank(switch_trend)) {
+            trend += Utils.TEXT_TREND_No1_MA34568;
         } else {
-            String switch_trend = Utils.switchTrendByMa(list, true);
+            switch_trend = Utils.switchTrendByMa(list, false);
             if (Utils.isNotBlank(switch_trend)) {
-                trend = Utils.TEXT_TREND_No1_MA34568;
-            } else {
-                switch_trend = Utils.switchTrendByMa(list, false);
-                if (Utils.isNotBlank(switch_trend)) {
-                    trend = Utils.TEXT_TREND_No2_ADJUSTING;
-                }
+                trend += Utils.TEXT_TREND_No2_ADJUSTING;
             }
         }
+        trend += ", Ma3:" + (isUptrendByMaIndex(list, 3) ? TREND_LONG : TREND_SHORT);
 
         return trend;
     }
