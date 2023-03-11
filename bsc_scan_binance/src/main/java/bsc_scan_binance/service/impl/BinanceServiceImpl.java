@@ -2951,9 +2951,9 @@ public class BinanceServiceImpl implements BinanceService {
 
         boolean isH1 = false;
         if (Objects.equals(Utils.CRYPTO_TIME_1H, TIME)) {
-            if (!binanceFuturesRepository.existsBySymbol(symbol)) {
-                return "";
-            }
+            // if (!binanceFuturesRepository.existsBySymbol(symbol)) {
+            // return "";
+            // }
 
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CRYPTO_TIME_1D).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CRYPTO_TIME_4H).orElse(null);
@@ -2991,7 +2991,7 @@ public class BinanceServiceImpl implements BinanceService {
         ordersRepository.save(entity);
 
         // ------------------------------------SendMsg------------------------------------
-        if (!Objects.equals(Utils.CRYPTO_TIME_1D, TIME) && Utils.isNotBlank(switch_trend)
+        if (isH1 && Utils.isNotBlank(switch_trend)
                 && (BTC_ETH_BNB.contains(symbol) || Objects.equals(Utils.TREND_LONG, trend_i0))) {
 
             Orders entity_d1 = ordersRepository.findById(EPIC + "_" + Utils.CRYPTO_TIME_1D).orElse(null);
@@ -3015,7 +3015,8 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // binanceFuturesRepository.existsBySymbol(symbol)
-                if (isH1 && BTC_ETH_BNB.contains("_" + symbol + "_")) {
+                // BTC_ETH_BNB.contains("_" + symbol + "_")
+                if (isH1 && Objects.equals(Utils.TREND_LONG, trend_i0)) {
                     String EVENT_ID = EVENT_PUMP + "_EPICS_SCAP_" + symbol + Utils.getCurrentYyyyMmDdHHByChart(list);
                     String msg = "(" + Utils.getChartName(list) + ")" + symbol + "(" + trend_i0 + ")";
                     sendMsgPerHour(EVENT_ID, msg, true);
@@ -3346,11 +3347,15 @@ public class BinanceServiceImpl implements BinanceService {
                 Orders dto_h4_entry = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
                 Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
 
-                String note = Utils.appendSpace("D1:" + Utils.getStringValue(dto_d1.getNote()), 30);
-                if (Objects.nonNull(dto_h4_entry)) {
+                String note = "";
+
+                if (Utils.isNotBlank(dto_d1.getNote())) {
+                    note += Utils.appendSpace("D1:" + Utils.getStringValue(dto_d1.getNote()), 30);
+                }
+                if (Objects.nonNull(dto_h4_entry) && Utils.isNotBlank(dto_h4_entry.getNote())) {
                     note += Utils.appendSpace("H4:" + Utils.getStringValue(dto_h4_entry.getNote()), 30);
                 }
-                if (Objects.nonNull(dto_h1)) {
+                if (Objects.nonNull(dto_h1) && Utils.isNotBlank(dto_h1.getNote())) {
                     note += Utils.appendSpace("H1:" + Utils.getStringValue(dto_h1.getNote()), 30);
                 }
 
