@@ -91,6 +91,7 @@ public class BscScanBinanceApplication {
             // ----------------------------------------
             // binance_service.clearTrash();
             binance_service.createReport();
+            binance_service.deleteConnectTimeOutException();
             // ----------------------------------------
             List<String> capital_list = new ArrayList<String>();
             capital_list.addAll(Utils.EPICS_SCAP);
@@ -178,9 +179,10 @@ public class BscScanBinanceApplication {
         if (binance_service.hasConnectTimeOutException()) {
             for (int loop = 1; loop < 15; loop++) {
                 System.out.println("Connection timed out");
-                wait(SLEEP_MINISECONDS * 5);
+                wait(SLEEP_MINISECONDS * 10);
             }
 
+            binance_service.deleteConnectTimeOutException();
             Utils.initCapital();
         }
     }

@@ -2938,6 +2938,15 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     @Transactional
+    public void deleteConnectTimeOutException() {
+        Orders entity_time_out = ordersRepository.findById(Utils.CONNECTION_TIMED_OUT_ID).orElse(null);
+        if (Objects.nonNull(entity_time_out)) {
+            ordersRepository.delete(entity_time_out);
+        }
+    }
+
+    @Override
+    @Transactional
     public String initCryptoTrend(String TIME, String symbol) {
         String EPIC = "CRYPTO_" + symbol;
         String orderId = EPIC + "_" + TIME;

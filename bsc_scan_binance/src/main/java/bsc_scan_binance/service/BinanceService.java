@@ -55,4 +55,6 @@ public interface BinanceService {
 
     public String scapForex15M(String EPIC);
 
+    public void deleteConnectTimeOutException();
+
 }
