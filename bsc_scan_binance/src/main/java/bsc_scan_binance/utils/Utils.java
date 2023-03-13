@@ -144,13 +144,13 @@ public class Utils {
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK",
-    public static final List<String> EPICS_FOREXS = Arrays.asList(
-            "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF",
-            "EURGBP", "EURJPY", "EURNZD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY"
+    public static final List<String> EPICS_FOREXS = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF",
+            "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "GBPAUD", "GBPCAD",
+            "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY"
 
-    //            "EURCZK", "EURHUF", "EURMXN", "EURPLN", "EURSEK", "EURSGD",
-    //             "USDCNH", "USDCZK", "USDDKK", "USDHUF", "USDILS",
-    //            "USDMXN", "USDNOK", "USDSEK", "USDSGD", "USDZAR"
+    // "EURCZK", "EURHUF", "EURMXN", "EURPLN", "EURSEK", "EURSGD",
+    // "USDCNH", "USDCZK", "USDDKK", "USDHUF", "USDILS",
+    // "USDMXN", "USDNOK", "USDSEK", "USDSGD", "USDZAR"
     );
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
@@ -2890,7 +2890,7 @@ public class Utils {
         return trend;
     }
 
-    private static String switchTrendByMa(List<BtcFutures> list, boolean isRequired368) {
+    public static String switchTrendByMa(List<BtcFutures> list, boolean isRequired368) {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
