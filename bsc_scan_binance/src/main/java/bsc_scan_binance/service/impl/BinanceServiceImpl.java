@@ -3050,16 +3050,13 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String scapForex15M(String EPIC) {
-        if (!Utils.EPICS_15M.contains(EPIC)) {
+        if (!Utils.EPICS_SCAP.contains(EPIC)) {
             return "";
         }
 
         Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-        Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
-        if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
-                || !Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())
-                || !Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
+        if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || !Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())) {
             return "";
         }
 
@@ -3091,9 +3088,6 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
         String trend_i0 = Utils.getTrendByHeken(list);
-        if (!Objects.equals(dto_d1.getTrend(), trend_i0)) {
-            return "";
-        }
 
         BigDecimal bread = Utils.calcMaxBread(list);
         List<BigDecimal> low_high = Utils.getLowHighCandle(list);
@@ -3121,23 +3115,19 @@ public class BinanceServiceImpl implements BinanceService {
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15;
         String date_time = LocalDateTime.now().toString();
-
         Orders entity = new Orders(orderId, date_time, trend_i0, list.get(0).getCurrPrice(), en_long, en_shot, sl_long,
                 sl_shot, heken_trend);
         ordersRepository.save(entity);
         // -----------------------------LOG---------------------------
+        if (Objects.equals(dto_d1.getTrend(), trend_i0)) {
+            String log = Utils.appendSpace(EPIC, 15) + "(D:" + Utils.appendSpace(dto_h4.getTrend(), 4) + ")   "
+                    + Utils.appendSpace(orderId.replace(EPIC + "_", ""), 8) + "  " + Utils.appendSpace(heken_trend, 20)
+                    + str_entry + "   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 
-        String log = Utils.appendSpace(EPIC, 15) + "(D:" + Utils.appendSpace(dto_h4.getTrend(), 4) + ")   "
-                + Utils.appendSpace(orderId.replace(EPIC + "_", ""), 8) + "  " + Utils.appendSpace(heken_trend, 20)
-                + str_entry + "   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
-
-        Utils.logWritelnReport("");
-        Utils.logWritelnDraft(log);
-        Utils.logWritelnReport("");
-
-        String EVENT_ID = EVENT_PUMP + "_EPICS_HEKEN_15M_" + EPIC + Utils.getCurrentYyyyMmDdHHByChart(list);
-        String content = Utils.getChartName(list) + Utils.appendSpace(EPIC, 10) + " (" + trend_i0 + ")";
-        sendMsgPerHour(EVENT_ID, content, true);
+            Utils.logWritelnReport("");
+            Utils.logWritelnDraft(log);
+            Utils.logWritelnReport("");
+        }
 
         return trend_i0;
     }
@@ -3350,13 +3340,14 @@ public class BinanceServiceImpl implements BinanceService {
                     str_body_price, end_body_price, sl_long, sl_shot, note.trim());
 
             // -----------------------------SEND MSG/LOG---------------------------
-            if (Utils.isNotBlank(switch_trend_by_heken) && (isH4 || isH1)) {
+            if (Utils.isNotBlank(switch_trend_by_heken) && !isD1) {
                 Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
                 Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
 
-                if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)) {
-                    String str_entry = "";
+                if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)
+                        && Objects.equals(dto_d1.getTrend(), trend_i0_by_heken)) {
 
+                    String str_entry = "";
                     BigDecimal sl_long_2 = dto_h4.getLow_price();
                     BigDecimal sl_shot_2 = dto_h4.getHigh_price();
 

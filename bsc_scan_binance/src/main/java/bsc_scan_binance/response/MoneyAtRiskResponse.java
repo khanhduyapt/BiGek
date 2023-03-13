@@ -274,7 +274,7 @@ public class MoneyAtRiskResponse {
             unit_risk_per_pip = BigDecimal.valueOf(5000);
             break;
         case "J225":
-            standard_lot = BigDecimal.valueOf(68);
+            standard_lot = BigDecimal.valueOf(6.8);
             unit_risk_per_pip = BigDecimal.valueOf(0.5);
             break;
 
