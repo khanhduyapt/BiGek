@@ -191,12 +191,14 @@ public class BscScanBinanceApplication {
     }
 
     public static void checkCapital(BinanceService binance_service, String EPIC, int index, int total) {
-        String trend_d = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
+        String trend_d = "";
+        // trend_d = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
         if (Utils.isNotBlank(trend_d)) {
             wait(SLEEP_MINISECONDS * 3);
         }
 
-        String trend_h4 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+        String trend_h4 = "";
+        // trend_h4 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
         if (Utils.isNotBlank(trend_h4)) {
             wait(SLEEP_MINISECONDS * 3);
         }

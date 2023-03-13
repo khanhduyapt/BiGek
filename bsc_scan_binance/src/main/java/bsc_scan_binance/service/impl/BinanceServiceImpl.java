@@ -3189,10 +3189,10 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Utils.EPICS_FOREXS.contains(EPIC)) {
-                    log = Utils.createLineForex(dto_h4_entry, dto_d1);
+                    log = Utils.createLineForex(dto_h1, dto_h1);
                     note += Utils.TEXT_SL_DAILY_CHART;
                 } else {
-                    log = Utils.createLineForex(dto_h4_entry, dto_h4_entry);
+                    log = Utils.createLineForex(dto_h1, dto_h1);
                 }
 
                 Utils.logWritelnReport(log + Utils.appendSpace(note, 110));
@@ -3336,39 +3336,42 @@ public class BinanceServiceImpl implements BinanceService {
 
             // -----------------------------SEND MSG/LOG---------------------------
             if (Utils.isNotBlank(switch_trend) && (isH4 || isH1)) {
-                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
-                if (Objects.nonNull(dto_d1)) {
-                    String str_entry = "";
-                    BigDecimal sl_long_2 = entity.getLow_price();
-                    BigDecimal sl_shot_2 = entity.getHigh_price();
+                // Orders dto_d1 = ordersRepository.findById(EPIC + "_" +
+                // Utils.CAPITAL_TIME_DAY).orElse(null);
+                // if (Objects.nonNull(dto_d1)) {
+                String str_entry = "";
+                BigDecimal sl_long_2 = entity.getLow_price();
+                BigDecimal sl_shot_2 = entity.getHigh_price();
 
-                    if (Objects.equals(Utils.TREND_LONG, trend)) {
-                        str_entry += Utils.calc_BUF_Long_Forex(false, EPIC, entity.getStr_body_price(), sl_long_2,
-                                entity.getEnd_body_price());
-                    } else {
-                        str_entry += Utils.calc_BUF_Shot_Forex(false, EPIC, entity.getEnd_body_price(), sl_shot_2,
-                                entity.getStr_body_price());
-                    }
-
-                    String log = Utils.appendSpace(EPIC, 15) + "(D:" + Utils.appendSpace(dto_d1.getTrend(), 4) + ")   "
-                            + Utils.appendSpace(orderId.replace(EPIC + "_", ""), 8) + "  " + "H4:"
-                            + Utils.appendSpace(trend, 20) + str_entry + "   "
-                            + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
-
-                    if (isH1) {
-                        log += Utils.TEXT_TREND_No1_MA34568;
-                    }
-
-                    Utils.logWritelnDraft(log);
-
-                    if (Objects.equals(dto_d1.getTrend(), trend)) {
-                        String EVENT_ID = EVENT_PUMP + "_EPICS_HEKEN_" + EPIC + Utils.getCurrentYyyyMmDdHHByChart(list);
-                        String content = Utils.getChartName(list) + Utils.appendSpace(EPIC, 10) + " (" + switch_trend
-                                + ")";
-                        // sendMsgPerHour(EVENT_ID, content, true);
-                    }
-
+                if (Objects.equals(Utils.TREND_LONG, trend)) {
+                    str_entry += Utils.calc_BUF_Long_Forex(false, EPIC, entity.getStr_body_price(), sl_long_2,
+                            entity.getEnd_body_price());
+                } else {
+                    str_entry += Utils.calc_BUF_Shot_Forex(false, EPIC, entity.getEnd_body_price(), sl_shot_2,
+                            entity.getStr_body_price());
                 }
+
+                String log = Utils.appendSpace(EPIC, 15) // + "(D:" + Utils.appendSpace(dto_d1.getTrend(), 4) + ") "
+                        + Utils.appendSpace(orderId.replace(EPIC + "_", ""), 8) + "  " + "H4:"
+                        + Utils.appendSpace(trend, 20) + str_entry + "   "
+                        + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
+
+                if (isH1) {
+                    log += Utils.TEXT_TREND_No1_MA34568;
+                }
+
+                Utils.logWritelnDraft(log);
+
+                // if (Objects.equals(dto_d1.getTrend(), trend)) {
+                // String EVENT_ID = EVENT_PUMP + "_EPICS_HEKEN_" + EPIC +
+                // Utils.getCurrentYyyyMmDdHHByChart(list);
+                // String content = Utils.getChartName(list) + Utils.appendSpace(EPIC, 10) + "
+                // (" + switch_trend
+                // + ")";
+                // sendMsgPerHour(EVENT_ID, content, true);
+                // }
+                //
+                // }
             }
 
             // History forex
