@@ -3354,25 +3354,12 @@ public class BinanceServiceImpl implements BinanceService {
                 Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
                 Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
 
-                boolean allow_send_msg = false;
                 if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)) {
-                    if (Objects.equals(dto_d1.getTrend(), trend_i0_by_heken)) {
-                        allow_send_msg = true;
-                    }
-                }
-
-                allow_send_msg = true;
-                if (allow_send_msg) {
                     String str_entry = "";
                     String temp_note = "";
 
                     BigDecimal sl_long_2 = dto_h4.getLow_price();
                     BigDecimal sl_shot_2 = dto_h4.getHigh_price();
-                    if (Utils.EPICS_FOREXS.contains(EPIC)) {
-                        sl_long_2 = dto_d1.getLow_price();
-                        sl_shot_2 = dto_d1.getHigh_price();
-                        temp_note = Utils.TEXT_SL_DAILY_CHART;
-                    }
 
                     if (Objects.equals(Utils.TREND_LONG, trend_i0_by_heken)) {
                         str_entry += Utils.calc_BUF_Long_Forex(false, EPIC, entity.getStr_body_price(), sl_long_2,
