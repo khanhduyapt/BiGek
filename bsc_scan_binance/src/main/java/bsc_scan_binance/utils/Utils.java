@@ -145,9 +145,11 @@ public class Utils {
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK",
     public static final List<String> EPICS_FOREXS = Arrays.asList(
-    //            "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF",
-    //            "EURCZK", "EURGBP", "EURHUF", "EURJPY", "EURMXN", "EURNZD", "EURPLN", "EURSEK", "EURSGD", "GBPAUD",
-    //            "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDJPY", "USDCNH", "USDCZK", "USDDKK", "USDHUF", "USDILS",
+            "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF",
+            "EURGBP", "EURJPY", "EURNZD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY"
+
+    //            "EURCZK", "EURHUF", "EURMXN", "EURPLN", "EURSEK", "EURSGD",
+    //             "USDCNH", "USDCZK", "USDDKK", "USDHUF", "USDILS",
     //            "USDMXN", "USDNOK", "USDSEK", "USDSGD", "USDZAR"
     );
 
