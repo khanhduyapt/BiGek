@@ -3356,7 +3356,6 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)) {
                     String str_entry = "";
-                    String temp_note = "";
 
                     BigDecimal sl_long_2 = dto_h4.getLow_price();
                     BigDecimal sl_shot_2 = dto_h4.getHigh_price();
@@ -3372,9 +3371,16 @@ public class BinanceServiceImpl implements BinanceService {
                     String log = Utils.appendSpace(EPIC, 15) + "(D:" + Utils.appendSpace(dto_d1.getTrend(), 4) + ")   "
                             + Utils.appendSpace(orderId.replace(EPIC + "_", ""), 8) + "  "
                             + Utils.appendSpace(trend_i0_by_heken, 20) + str_entry + "   "
-                            + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + temp_note;
+                            + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 
                     Utils.logWritelnDraft(log);
+
+                    if (isH4) {
+                        String EVENT_ID = EVENT_PUMP + "_EPICS_HEKEN_" + EPIC + Utils.getCurrentYyyyMmDdHHByChart(list);
+                        String content = Utils.getChartName(list) + Utils.appendSpace(EPIC, 10) + " ("
+                                + switch_trend_by_heken + ")";
+                        sendMsgPerHour(EVENT_ID, content, true);
+                    }
                 }
             }
             ordersRepository.save(entity);

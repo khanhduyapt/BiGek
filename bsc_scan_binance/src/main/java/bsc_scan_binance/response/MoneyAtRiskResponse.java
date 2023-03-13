@@ -122,26 +122,26 @@ public class MoneyAtRiskResponse {
             break;
         case "US30":
             standard_lot = BigDecimal.valueOf(0.0833);
-            unit_risk_per_pip = BigDecimal.valueOf(0.0833333333333333);
+            unit_risk_per_pip = BigDecimal.valueOf(0.833333333333333);
             break;
         case "US500":
-            standard_lot = BigDecimal.valueOf(0.5);
+            standard_lot = BigDecimal.valueOf(0.05);
             unit_risk_per_pip = BigDecimal.valueOf(0.5);
             break;
         case "SP35":
-            standard_lot = BigDecimal.valueOf(0.234);
+            standard_lot = BigDecimal.valueOf(0.0234);
             unit_risk_per_pip = BigDecimal.valueOf(0.25);
             break;
         case "UK100":
-            standard_lot = BigDecimal.valueOf(0.208);
+            standard_lot = BigDecimal.valueOf(0.0208);
             unit_risk_per_pip = BigDecimal.valueOf(0.25);
             break;
         case "FR40":
-            standard_lot = BigDecimal.valueOf(0.234);
+            standard_lot = BigDecimal.valueOf(0.0234);
             unit_risk_per_pip = BigDecimal.valueOf(0.25);
             break;
         case "HK50":
-            standard_lot = BigDecimal.valueOf(0.98);
+            standard_lot = BigDecimal.valueOf(0.098);
             unit_risk_per_pip = BigDecimal.valueOf(0.125);
             break;
         case "EURUSD":
