@@ -3143,12 +3143,12 @@ public class Utils {
             return Utils.appendSpace(TEXT_TREND_HEKEN_SHORT, 10) + " i0";
         }
 
-        if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(2).isDown()) {
-            return Utils.appendSpace(TEXT_TREND_HEKEN_LONG, 10) + " i1";
-        }
-        if (heken_list.get(0).isDown() && heken_list.get(1).isDown() && heken_list.get(2).isUptrend()) {
-            return Utils.appendSpace(TEXT_TREND_HEKEN_SHORT, 10) + " i1";
-        }
+        //if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(2).isDown()) {
+        //    return Utils.appendSpace(TEXT_TREND_HEKEN_LONG, 10) + " i1";
+        //}
+        //if (heken_list.get(0).isDown() && heken_list.get(1).isDown() && heken_list.get(2).isUptrend()) {
+        //    return Utils.appendSpace(TEXT_TREND_HEKEN_SHORT, 10) + " i1";
+        //}
 
         return "";
     }

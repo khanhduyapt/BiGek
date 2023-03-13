@@ -3026,7 +3026,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (isH1 && Objects.equals(Utils.TREND_LONG, trend_i0)) {
                     String EVENT_ID = EVENT_PUMP + "_EPICS_SCAP_" + symbol + Utils.getCurrentYyyyMmDdHHByChart(list);
                     String msg = "(" + Utils.getChartName(list) + ")" + symbol + "(" + trend_i0 + ")";
-                    sendMsgPerHour(EVENT_ID, msg, true);
+                    //sendMsgPerHour(EVENT_ID, msg, true);
                 }
             }
         }
