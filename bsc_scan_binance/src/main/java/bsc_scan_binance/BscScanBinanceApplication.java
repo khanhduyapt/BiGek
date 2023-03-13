@@ -109,7 +109,6 @@ public class BscScanBinanceApplication {
 
                 log = new File(Utils.getDraftLogFile());
                 System.out.println(log.getAbsolutePath());
-
                 System.out.println();
 
                 while (index_crypto < total) {
@@ -127,7 +126,7 @@ public class BscScanBinanceApplication {
                                     for (int index = 0; index < forex_size; index++) {
                                         sleepWhenExceptionTimeOut(binance_service);
                                         String EPIC = capital_list.get(index);
-                                        checkCapital(binance_service, EPIC);
+                                        checkCapital(binance_service, EPIC, index + 1, forex_size);
                                     }
                                     binance_service.createReport();
                                 }
@@ -191,7 +190,7 @@ public class BscScanBinanceApplication {
         }
     }
 
-    public static void checkCapital(BinanceService binance_service, String EPIC) {
+    public static void checkCapital(BinanceService binance_service, String EPIC, int index, int total) {
         String trend_d = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
         if (Utils.isNotBlank(trend_d)) {
             wait(SLEEP_MINISECONDS);
@@ -220,7 +219,9 @@ public class BscScanBinanceApplication {
         init += "H1:" + Utils.appendSpace(trend_h1, 6);
         // init += "15:" + Utils.appendSpace(trend_15, 6);
 
-        System.out.println(Utils.getTimeHHmm() + Utils.appendSpace(EPIC, 15) + init);
+        String str_index = Utils.appendLeft(String.valueOf(index), 3) + "/"
+                + Utils.appendLeft(String.valueOf(total), 3) + "   ";
+        System.out.println(Utils.getTimeHHmm() + str_index + Utils.appendSpace(EPIC, 15) + init);
     }
 
     private static void checkKillLongShort(BinanceService binance_service) {
