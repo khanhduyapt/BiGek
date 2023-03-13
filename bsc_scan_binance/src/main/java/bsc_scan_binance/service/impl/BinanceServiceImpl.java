@@ -173,7 +173,6 @@ public class BinanceServiceImpl implements BinanceService {
     List<DepthResponse> list_bids_ok = new ArrayList<DepthResponse>();
     List<DepthResponse> list_asks_ok = new ArrayList<DepthResponse>();
 
-    private int count_drap_line = 0;
     private int pre_HH = 0;
     private String sp500 = "";
 
@@ -3022,12 +3021,6 @@ public class BinanceServiceImpl implements BinanceService {
                         + Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 75);
                 Utils.logWritelnDraft(log);
 
-                count_drap_line += 1;
-                if (count_drap_line == 10) {
-                    count_drap_line = 0;
-                    Utils.logWritelnReport("");
-                }
-
                 // binanceFuturesRepository.existsBySymbol(symbol)
                 // BTC_ETH_BNB.contains("_" + symbol + "_")
                 if (isH1 && Objects.equals(Utils.TREND_LONG, trend_i0)) {
@@ -3298,16 +3291,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
             if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
                 if (!Utils.EPICS_SCAP.contains(EPIC)) {
-                    return "";
+                    //return "";
                 }
-
-                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
-                Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-                if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4)
-                        || !Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())) {
-                    return "";
-                }
-
                 lengh = 10;
                 isH1 = true;
             }
@@ -3332,6 +3317,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String note = Utils.getTrendTypeForNote(list);
+
             String trend_i0_by_heken = Utils.getTrendByHeken(list);
             String switch_trend_by_heken = Utils.switchTrenByHekenAshi(list);
 
@@ -3346,6 +3332,20 @@ public class BinanceServiceImpl implements BinanceService {
             BigDecimal sl_long = low_high.get(0).subtract(bread);
             BigDecimal sl_shot = low_high.get(1).add(bread);
 
+            if (isH4) {
+                sl_long = sl_long.subtract(bread);
+                sl_shot = sl_shot.add(bread);
+            }
+
+            if (isH1 || isH4) {
+                BigDecimal curr_price = list.get(0).getCurrPrice();
+                if (curr_price.compareTo((str_body_price.add(bread))) < 0) {
+                    note += Utils.TEXT_MIN_DAY_AREA;
+                } else if (curr_price.compareTo((end_body_price.subtract(bread))) > 0) {
+                    note += Utils.TEXT_MAX_DAY_AREA;
+                }
+            }
+
             Orders entity = new Orders(orderId, date_time, trend_i0_by_heken, list.get(0).getCurrPrice(),
                     str_body_price, end_body_price, sl_long, sl_shot, note.trim());
 
@@ -3356,17 +3356,12 @@ public class BinanceServiceImpl implements BinanceService {
 
                 boolean allow_send_msg = false;
                 if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)) {
-                    if (isH4 && Objects.equals(dto_d1.getTrend(), trend_i0_by_heken)) {
-                        allow_send_msg = true;
-                    }
-
-                    // bỏ lỡ H4 thì tìm lệnh trên H1 để vào.
-                    if (isH1 && Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())
-                            && Objects.equals(dto_h4.getTrend(), trend_i0_by_heken)) {
+                    if (Objects.equals(dto_d1.getTrend(), trend_i0_by_heken)) {
                         allow_send_msg = true;
                     }
                 }
 
+                allow_send_msg = true;
                 if (allow_send_msg) {
                     String str_entry = "";
                     String temp_note = "";
@@ -3392,22 +3387,7 @@ public class BinanceServiceImpl implements BinanceService {
                             + Utils.appendSpace(trend_i0_by_heken, 20) + str_entry + "   "
                             + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + temp_note;
 
-                    count_drap_line += 1;
-                    if (count_drap_line > 10) {
-                        count_drap_line = 0;
-                        Utils.logWritelnReport("");
-                        Utils.logWritelnReport("");
-                        Utils.logWritelnReport("");
-                    }
                     Utils.logWritelnDraft(log);
-
-                    if (isH4 && Utils.isNotBlank(temp_note)) {
-                        String EVENT_ID = EVENT_PUMP + "_EPICS_HEKEN_" + EPIC + Utils.getCurrentYyyyMmDdHHByChart(list);
-                        String content = Utils.getChartName(list) + Utils.appendSpace(EPIC, 10) + " ("
-                                + switch_trend_by_heken + ")";
-                        sendMsgPerHour(EVENT_ID, content, true);
-                    }
-
                 }
             }
             ordersRepository.save(entity);

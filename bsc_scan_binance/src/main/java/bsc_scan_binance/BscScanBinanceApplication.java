@@ -114,6 +114,10 @@ public class BscScanBinanceApplication {
 
                 while (index_crypto < total) {
                     try {
+                        if (isReloadAfter(Utils.MINUTES_OF_1H, "WRITELN_DRAFT")) {
+                            Utils.logWritelnDraft("");
+                        }
+
                         checkKillLongShort(binance_service);
 
                         if (Utils.isBusinessTime_6h_to_17h()) {
