@@ -130,7 +130,7 @@ public class Utils {
     public static final String CRYPTO_TIME_1D = "1d";
     public static final String CRYPTO_TIME_1w = "1w";
 
-    public static final long MINUTES_OF_D = 120;//600;
+    public static final long MINUTES_OF_D = 120;// 600;
     public static final long MINUTES_OF_4H = 120;
     public static final long MINUTES_OF_1H = 60;
     public static final long MINUTES_OF_15M = 15;
@@ -139,15 +139,15 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final List<String> EPICS_15M = Arrays.asList("BTCUSD", "XAUUSD", "XAGUSD", "US30", "NAS100",
+    public static final List<String> EPICS_15M = Arrays.asList("BTCUSD", "ETHUSD", "XAUUSD", "XAGUSD", "US30", "NAS100",
             "SP500", "UK100", "JPY225");
 
-    //CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
-    //FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200
+    // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
+    // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200
 
     // "SP35", "HK50", "OIL_CRUDE",
-    public static final List<String> EPICS_SCAP = Arrays.asList("BTCUSD", "XAUUSD", "XAGUSD", "US30", "NAS100",
-            "SP500", "UK100", "JPY225", "GER30", "FRA40", "AUS200");
+    public static final List<String> EPICS_SCAP = Arrays.asList("BTCUSD", "ETHUSD", "XAUUSD", "XAGUSD", "US30",
+            "NAS100", "SP500", "UK100", "JPY225", "GER30", "FRA40", "AUS200");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK",
@@ -868,7 +868,7 @@ public class Utils {
 
     public static String getForexLogFile() {
         String PATH = "crypto_forex_result/";
-        String fileName = getToday_YyyyMMdd() + "_Report.log";
+        String fileName = "Report.log"; // getToday_YyyyMMdd() +
 
         File directory = new File(PATH);
         if (!directory.exists()) {
@@ -1365,10 +1365,7 @@ public class Utils {
     }
 
     public static String formatDateTime(FileTime fileTime) {
-        LocalDateTime localDateTime = fileTime
-                .toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
+        LocalDateTime localDateTime = fileTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 
         DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
 

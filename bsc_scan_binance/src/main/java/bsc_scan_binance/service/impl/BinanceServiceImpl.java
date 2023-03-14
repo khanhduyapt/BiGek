@@ -3234,16 +3234,14 @@ public class BinanceServiceImpl implements BinanceService {
         ordersRepository.save(entity);
 
         if (Utils.isNotBlank(switch_trend)) {
-            if (Objects.equals(dto_h4.getTrend(), trend) || Objects.equals(dto_d1.getTrend(), trend)) {
-                String log = Utils.appendSpace(EPIC, 15) + "(H4:" + Utils.appendSpace(dto_h4.getTrend(), 4) + ")   "
-                        + Utils.appendSpace(
-                                orderId.replace(EPIC + "_", "") + " (" + Utils.appendSpace(switch_trend, 4) + ")", 20)
-                        + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
+            String log = Utils.appendSpace(EPIC, 15);
+            log += "(D1:" + Utils.appendSpace(dto_d1.getTrend(), 10);
+            log += "H4:" + Utils.appendSpace(dto_h4.getTrend(), 4) + ")   ";
+            log += Utils.appendSpace(orderId.replace(EPIC + "_", ""), 10);
+            log += " (" + Utils.appendSpace(switch_trend, 4) + ")";
+            log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 
-                Utils.logWritelnReport("");
-                Utils.logWritelnDraft(log);
-                Utils.logWritelnReport("");
-            }
+            Utils.logWritelnDraft(log);
         }
 
         return trend;

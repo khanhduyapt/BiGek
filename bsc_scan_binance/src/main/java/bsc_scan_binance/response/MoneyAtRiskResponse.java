@@ -103,6 +103,10 @@ public class MoneyAtRiskResponse {
             standard_lot = BigDecimal.valueOf(0.05);
             unit_risk_per_pip = BigDecimal.valueOf(0.05);
             break;
+        case "ETHUSD":
+            standard_lot = BigDecimal.valueOf(0.714);
+            unit_risk_per_pip = BigDecimal.valueOf(0.714285714285714);
+            break;
         case "GOLD":
         case "XAUUSD":
             standard_lot = BigDecimal.valueOf(0.0125);
