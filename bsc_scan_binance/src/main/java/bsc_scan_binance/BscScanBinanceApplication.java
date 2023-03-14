@@ -120,19 +120,19 @@ public class BscScanBinanceApplication {
 
                         checkKillLongShort(binance_service);
 
-                        if (Utils.isBusinessTime_6h_to_17h()) {
-                            if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
-                                if (isReloadAfter(Utils.MINUTES_OF_15M, "RE_CHECK_FOREX")) {
-                                    Utils.initCapital();
-                                    for (int index = 0; index < forex_size; index++) {
-                                        sleepWhenExceptionTimeOut(binance_service);
-                                        String EPIC = capital_list.get(index);
-                                        checkCapital(binance_service, EPIC, index + 1, forex_size);
-                                    }
-                                    binance_service.createReport();
+                        // if (Utils.isBusinessTime_6h_to_17h()) {
+                        if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
+                            if (isReloadAfter(Utils.MINUTES_OF_15M, "RE_CHECK_FOREX")) {
+                                Utils.initCapital();
+                                for (int index = 0; index < forex_size; index++) {
+                                    sleepWhenExceptionTimeOut(binance_service);
+                                    String EPIC = capital_list.get(index);
+                                    checkCapital(binance_service, EPIC, index + 1, forex_size);
                                 }
+                                binance_service.createReport();
                             }
                         }
+                        // }
 
                         // ---------------------------------------------------------
                         String SYMBOL = Utils.coins.get(index_crypto);
@@ -195,28 +195,28 @@ public class BscScanBinanceApplication {
         String trend_d = "";
         // trend_d = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
         if (Utils.isNotBlank(trend_d)) {
-            //wait(SLEEP_MINISECONDS * 3);
+            // wait(SLEEP_MINISECONDS * 3);
         }
 
         String trend_h4 = "";
         trend_h4 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
         if (Utils.isNotBlank(trend_h4)) {
-            //wait(SLEEP_MINISECONDS * 3);
+            // wait(SLEEP_MINISECONDS * 3);
         }
 
         String trend_h1 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
         if (Utils.isNotBlank(trend_h1)) {
-            //wait(SLEEP_MINISECONDS * 3);
+            // wait(SLEEP_MINISECONDS * 3);
         }
 
         String trend_15 = binance_service.scapForex15M(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
         if (Utils.isNotBlank(trend_15)) {
-            //wait(SLEEP_MINISECONDS * 3);
+            // wait(SLEEP_MINISECONDS * 3);
         }
 
         String trend_5 = binance_service.scapForex15M(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
         if (Utils.isNotBlank(trend_5)) {
-            //wait(SLEEP_MINISECONDS * 3);
+            // wait(SLEEP_MINISECONDS * 3);
         }
 
         String init = "";
