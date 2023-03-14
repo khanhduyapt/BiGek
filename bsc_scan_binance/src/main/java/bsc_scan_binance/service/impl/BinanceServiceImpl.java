@@ -3203,8 +3203,9 @@ public class BinanceServiceImpl implements BinanceService {
             // return "";
         }
 
+        Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-        if (Objects.isNull(dto_h4) || Utils.isBlank(dto_h4.getNote())) {
+        if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Utils.isBlank(dto_h4.getNote())) {
             return "";
         }
 
@@ -3230,9 +3231,9 @@ public class BinanceServiceImpl implements BinanceService {
         ordersRepository.save(entity);
 
         if (Utils.isNotBlank(switch_trend)) {
-            if (Objects.equals(dto_h4.getTrend(), trend)) {
+            if (Objects.equals(dto_h4.getTrend(), trend) || Objects.equals(dto_d1.getTrend(), trend)) {
                 String log = Utils.appendSpace(EPIC, 15) + "(H4:" + Utils.appendSpace(dto_h4.getTrend(), 4) + ")   "
-                        + Utils.appendSpace(orderId.replace(EPIC + "_", ""), 20) + switch_trend + "     "
+                        + Utils.appendSpace(orderId.replace(EPIC + "_", "") + Utils.appendSpace(switch_trend, 4), 20)
                         + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 
                 Utils.logWritelnReport("");
@@ -3430,42 +3431,6 @@ public class BinanceServiceImpl implements BinanceService {
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), str_body_price,
                 end_body_price, sl_long, sl_shot, note.trim());
         ordersRepository.save(entity);
-
-        // -----------------------------SEND MSG/LOG---------------------------
-        if (Utils.isNotBlank(switch_trend) && (isH1)) {
-            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-            if (Objects.nonNull(dto_h4)) {
-                BigDecimal sl_long_2 = dto_h4.getLow_price();
-                BigDecimal sl_shot_2 = dto_h4.getHigh_price();
-
-                String str_entry = "";
-                str_entry += Utils.calc_BUF_Long_Forex(false, EPIC, entity.getStr_body_price(), sl_long_2,
-                        entity.getEnd_body_price());
-                str_entry += "     ";
-                str_entry += Utils.calc_BUF_Shot_Forex(false, EPIC, entity.getEnd_body_price(), sl_shot_2,
-                        entity.getStr_body_price());
-
-                String log = Utils.appendSpace(EPIC, 15)
-                        + Utils.appendSpace(orderId.replace(EPIC + "_", ""), 8)
-                        + Utils.appendSpace(trend, 20)
-                        + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + str_entry;
-                if (isH1) {
-                    log += "     " + Utils.TEXT_TREND_No1_MA34568;
-                }
-
-                Utils.logWritelnDraft(log);
-
-                // if (Objects.equals(dto_d1.getTrend(), trend)) {
-                // String EVENT_ID = EVENT_PUMP + "_EPICS_HEKEN_" + EPIC +
-                // Utils.getCurrentYyyyMmDdHHByChart(list);
-                // String content = Utils.getChartName(list) + Utils.appendSpace(EPIC, 10) + "
-                // (" + switch_trend
-                // + ")";
-                // sendMsgPerHour(EVENT_ID, content, true);
-                // }
-                // }
-            }
-        }
 
         // History forex
         String his_id = Utils.getYYYYMMDD(0) + "_" + orderId;
