@@ -104,6 +104,7 @@ public class MoneyAtRiskResponse {
             unit_risk_per_pip = BigDecimal.valueOf(0.05);
             break;
         case "GOLD":
+        case "XAUUSD":
             standard_lot = BigDecimal.valueOf(0.0125);
             unit_risk_per_pip = BigDecimal.valueOf(1.25);
             break;
@@ -113,6 +114,7 @@ public class MoneyAtRiskResponse {
             unit_risk_per_pip = BigDecimal.valueOf(25);
             break;
         case "SILVER":
+        case "XAGUSD":
             standard_lot = BigDecimal.valueOf(0.02);
             unit_risk_per_pip = BigDecimal.valueOf(100);
             break;
@@ -125,6 +127,7 @@ public class MoneyAtRiskResponse {
             unit_risk_per_pip = BigDecimal.valueOf(0.833333333333333);
             break;
         case "US500":
+        case "SP500":
             standard_lot = BigDecimal.valueOf(0.05);
             unit_risk_per_pip = BigDecimal.valueOf(0.5);
             break;
@@ -137,6 +140,7 @@ public class MoneyAtRiskResponse {
             unit_risk_per_pip = BigDecimal.valueOf(0.25);
             break;
         case "FR40":
+        case "FRA40":
             standard_lot = BigDecimal.valueOf(0.0234);
             unit_risk_per_pip = BigDecimal.valueOf(0.25);
             break;
@@ -274,15 +278,17 @@ public class MoneyAtRiskResponse {
             unit_risk_per_pip = BigDecimal.valueOf(5000);
             break;
         case "J225":
+        case "JPY225":
             standard_lot = BigDecimal.valueOf(6.8);
             unit_risk_per_pip = BigDecimal.valueOf(0.5);
             break;
-
         case "AU200":
+        case "AUS200":
             standard_lot = BigDecimal.valueOf(0.746);
             unit_risk_per_pip = BigDecimal.valueOf(0.5);
             break;
         case "DE40":
+        case "GER30":
             standard_lot = BigDecimal.valueOf(0.158);
             unit_risk_per_pip = BigDecimal.valueOf(0.166666666666667);
             break;
@@ -299,6 +305,7 @@ public class MoneyAtRiskResponse {
             unit_risk_per_pip = BigDecimal.valueOf(2500.00000000005);
             break;
         case "US100":
+        case "NAS100":
             standard_lot = BigDecimal.valueOf(0.167);
             unit_risk_per_pip = BigDecimal.valueOf(0.166666666666667);
             break;

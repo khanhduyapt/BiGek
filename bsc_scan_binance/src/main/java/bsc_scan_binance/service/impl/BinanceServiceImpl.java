@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.net.InetAddress;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -2590,6 +2592,7 @@ public class BinanceServiceImpl implements BinanceService {
         String chartname = Utils.getChartName(list_15m);
         boolean onlyMe = false;
         if (Utils.isNotBlank(switch_trend)) {
+            onlyMe = true;
             msg = Utils.getTimeHHmm() + chartname + "(" + switch_trend + ")" + symbol;
         }
 
@@ -2641,6 +2644,8 @@ public class BinanceServiceImpl implements BinanceService {
             time = Utils.MINUTES_OF_1H;
         } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_15)) {
             time = Utils.MINUTES_OF_15M;
+        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_5)) {
+            time = Utils.MINUTES_OF_5M;
         }
 
         if (time <= elapsedMinutes) {
@@ -3056,59 +3061,6 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     @Transactional
-    public void saveMt5Data() {
-        if (!isReloadPrepareOrderTrend("MT5_DATA", Utils.CAPITAL_TIME_MINUTE_15)) {
-            //return;
-        }
-        try {
-            String mt5_data_file = "";
-            if (Objects.equals(InetAddress.getLocalHost().getHostName().toLowerCase(), "pc")) {
-                mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.csv";
-            }
-
-            File file = new File(mt5_data_file);
-            if (file.exists()) {
-                Utils.logWritelnDraft(file.getAbsolutePath());
-                List<Mt5DataCandle> list = new ArrayList<Mt5DataCandle>();
-
-                Reader reader = new InputStreamReader(
-                        new FileInputStream(mt5_data_file), "UTF-8");
-                BufferedReader fin = new BufferedReader(reader);
-                String s;
-                while ((s = fin.readLine()) != null) {
-                    String[] tempArr = s.split("\\t");
-
-                    if (tempArr.length == 7) {
-
-                        Mt5DataCandle dto = new Mt5DataCandle(new Mt5DataCandleKey(tempArr[0], tempArr[1], tempArr[2]),
-                                Utils.getBigDecimal(tempArr[3]), Utils.getBigDecimal(tempArr[4]),
-                                Utils.getBigDecimal(tempArr[5]), Utils.getBigDecimal(tempArr[6]));
-                        list.add(dto);
-                    }
-                }
-
-                //Remember to call close.
-                //calling close on a BufferedReader/BufferedWriter
-                // will automatically call close on its underlying stream
-                fin.close();
-
-                //------------------------------------------------------------------------
-                mt5DataCandleRepository.deleteAll();
-                mt5DataCandleRepository.saveAll(list);
-
-                String orderId = "MT5_DATA_" + Utils.CAPITAL_TIME_MINUTE_15;
-                String date_time = LocalDateTime.now().toString();
-                Orders entity = new Orders(orderId, date_time, "", BigDecimal.ZERO, BigDecimal.ZERO,
-                        BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "");
-                ordersRepository.save(entity);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    @Transactional
     public String scapForex15M(String EPIC) {
         if (!Utils.EPICS_15M.contains(EPIC)) {
             return "";
@@ -3177,6 +3129,65 @@ public class BinanceServiceImpl implements BinanceService {
         return trend;
     }
 
+    @Override
+    @Transactional
+    public void saveMt5Data() {
+        if (!isReloadPrepareOrderTrend("MT5_DATA", Utils.CAPITAL_TIME_MINUTE_5)) {
+            return;
+        }
+
+        try {
+            String mt5_data_file = "";
+            if (Objects.equals(InetAddress.getLocalHost().getHostName().toLowerCase(), "pc")) {
+                mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.csv";
+            }
+            mt5DataCandleRepository.deleteAll();
+            File file = new File(mt5_data_file);
+            if (!file.exists()) {
+                Utils.logWritelnDraft("[saveMt5Data_FileNotFound]: " + mt5_data_file);
+                return;
+            }
+
+            BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+            Utils.logWritelnDraft(
+                    "LastModifiedTime:" + Utils.formatDateTime(attr.lastModifiedTime()) + "     Mt5Data: "
+                            + file.getAbsolutePath());
+
+            List<Mt5DataCandle> list = new ArrayList<Mt5DataCandle>();
+
+            Reader reader = new InputStreamReader(new FileInputStream(mt5_data_file), "UTF-8");
+            BufferedReader fin = new BufferedReader(reader);
+
+            String s;
+            while ((s = fin.readLine()) != null) {
+                String[] tempArr = s.split("\\t");
+                if (tempArr.length == 7) {
+                    Mt5DataCandle dto = new Mt5DataCandle(new Mt5DataCandleKey(tempArr[0], tempArr[1], tempArr[2]),
+                            Utils.getBigDecimal(tempArr[3]), Utils.getBigDecimal(tempArr[4]),
+                            Utils.getBigDecimal(tempArr[5]), Utils.getBigDecimal(tempArr[6]));
+                    list.add(dto);
+                }
+            }
+
+            //Remember to call close.
+            //calling close on a BufferedReader/BufferedWriter
+            // will automatically call close on its underlying stream
+            fin.close();
+            reader.close();
+            //------------------------------------------------------------------------
+            mt5DataCandleRepository.saveAll(list);
+
+            String orderId = "MT5_DATA_" + Utils.CAPITAL_TIME_MINUTE_5;
+            String date_time = LocalDateTime.now().toString();
+            Orders entity = new Orders(orderId, date_time, "", BigDecimal.ZERO, BigDecimal.ZERO,
+                    BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "");
+            ordersRepository.save(entity);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private List<BtcFutures> getCapitalData(String EPIC, String CAPITAL_TIME_XXX) {
         List<BtcFutures> list = new ArrayList<BtcFutures>();
         try {
@@ -3206,38 +3217,41 @@ public class BinanceServiceImpl implements BinanceService {
                 return list;
 
             } else {
-
+                boolean debug = true;
+                if (debug) {
+                    Utils.logWritelnDraft("[mt5_data_candle] NotFound: " + EPIC);
+                    return list;
+                }
                 //------------------------------------------------------------------------
-
-                int lengh = 5;
-                if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
-                    lengh = 10;
-                }
-                if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
-                    lengh = 10;
-                }
-                if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
-                    lengh = 10;
-                }
-                // ----------------------------TREND------------------------
-                list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, lengh);
-                if (CollectionUtils.isEmpty(list)) {
-                    BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS * 5);
-
-                    Utils.initCapital();
-                    list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, lengh);
-
-                    if (CollectionUtils.isEmpty(list)) {
-                        String result = "initForexTrend(" + EPIC + ") Size:" + list.size();
-                        Utils.logWritelnDraft(result);
-
-                        Orders entity_time_out = new Orders(Utils.CONNECTION_TIMED_OUT_ID,
-                                Utils.TEXT_CONNECTION_TIMED_OUT);
-                        ordersRepository.save(entity_time_out);
-
-                        return new ArrayList<BtcFutures>();
-                    }
-                }
+                //int lengh = 5;
+                //if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
+                //    lengh = 10;
+                //}
+                //if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
+                //    lengh = 10;
+                //}
+                //if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
+                //    lengh = 10;
+                //}
+                //// ----------------------------TREND------------------------
+                //list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, lengh);
+                //if (CollectionUtils.isEmpty(list)) {
+                //    BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS * 5);
+                //
+                //    Utils.initCapital();
+                //    list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, lengh);
+                //
+                //    if (CollectionUtils.isEmpty(list)) {
+                //        String result = "initForexTrend(" + EPIC + ") Size:" + list.size();
+                //        Utils.logWritelnDraft(result);
+                //
+                //        Orders entity_time_out = new Orders(Utils.CONNECTION_TIMED_OUT_ID,
+                //                Utils.TEXT_CONNECTION_TIMED_OUT);
+                //        ordersRepository.save(entity_time_out);
+                //
+                //        return new ArrayList<BtcFutures>();
+                //    }
+                //}
             }
         } catch (Exception e) {
             String result = "initForexTrend(" + EPIC + ") " + e.getMessage();

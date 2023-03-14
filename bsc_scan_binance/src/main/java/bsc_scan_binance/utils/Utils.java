@@ -10,6 +10,7 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
+import java.nio.file.attribute.FileTime;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -17,6 +18,7 @@ import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
@@ -115,6 +117,7 @@ public class Utils {
     public static String CST = "";
     public static String X_SECURITY_TOKEN = "";
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
+    public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
     public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_HOUR = "HOUR";
     public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
@@ -127,19 +130,24 @@ public class Utils {
     public static final String CRYPTO_TIME_1D = "1d";
     public static final String CRYPTO_TIME_1w = "1w";
 
-    public static final long MINUTES_OF_D = 600;
+    public static final long MINUTES_OF_D = 120;//600;
     public static final long MINUTES_OF_4H = 120;
     public static final long MINUTES_OF_1H = 60;
     public static final long MINUTES_OF_15M = 15;
+    public static final long MINUTES_OF_5M = 5;
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final List<String> EPICS_15M = Arrays.asList("GOLD", "US30", "UK100", "J225", "GBPUSD");
+    public static final List<String> EPICS_15M = Arrays.asList("BTCUSD", "XAUUSD", "XAGUSD", "US30", "NAS100",
+            "SP500", "UK100", "JPY225");
+
+    //CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
+    //FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200
 
     // "SP35", "HK50", "OIL_CRUDE",
-    public static final List<String> EPICS_SCAP = Arrays.asList("DXY", "BTCUSD", "GOLD", "SILVER", "US30", "US100",
-            "US500", "UK100", "J225", "DE40", "FR40", "AU200");
+    public static final List<String> EPICS_SCAP = Arrays.asList("BTCUSD", "XAUUSD", "XAGUSD", "US30", "NAS100",
+            "SP500", "UK100", "JPY225", "GER30", "FRA40", "AUS200");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK",
@@ -1354,6 +1362,17 @@ public class Utils {
     public static Integer getCurrentSeconds() {
         int ss = Utils.getIntValue(Utils.convertDateToString("ss", Calendar.getInstance().getTime()));
         return ss;
+    }
+
+    public static String formatDateTime(FileTime fileTime) {
+        LocalDateTime localDateTime = fileTime
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+
+        DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
+
+        return localDateTime.format(DATE_FORMATTER);
     }
 
     public static Integer getIntValue(Object value) {

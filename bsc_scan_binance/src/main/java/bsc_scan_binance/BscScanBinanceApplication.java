@@ -39,7 +39,6 @@ public class BscScanBinanceApplication {
         try {
             initForex_naming_dict();
             hostname = InetAddress.getLocalHost().getHostName().toLowerCase();
-
             if (hostname.length() > 2) {
                 hostname = hostname.substring(0, 2);
             }
@@ -119,7 +118,7 @@ public class BscScanBinanceApplication {
                         }
                         binance_service.saveMt5Data();
 
-                        // checkKillLongShort(binance_service);
+                        checkKillLongShort(binance_service);
 
                         if (Utils.isBusinessTime_6h_to_17h()) {
                             if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
@@ -196,30 +195,30 @@ public class BscScanBinanceApplication {
         String trend_d = "";
         // trend_d = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
         if (Utils.isNotBlank(trend_d)) {
-            wait(SLEEP_MINISECONDS * 3);
+            //wait(SLEEP_MINISECONDS * 3);
         }
 
         String trend_h4 = "";
         trend_h4 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
         if (Utils.isNotBlank(trend_h4)) {
-            wait(SLEEP_MINISECONDS * 3);
+            //wait(SLEEP_MINISECONDS * 3);
         }
 
         String trend_h1 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
         if (Utils.isNotBlank(trend_h1)) {
-            wait(SLEEP_MINISECONDS * 3);
+            //wait(SLEEP_MINISECONDS * 3);
         }
 
-        String trend_15 = "";
-        // trend_15 = binance_service.scapForex15M(EPIC);
+        String trend_15 = binance_service.scapForex15M(EPIC);
         if (Utils.isNotBlank(trend_15)) {
-            wait(SLEEP_MINISECONDS * 3);
+            //wait(SLEEP_MINISECONDS * 3);
         }
 
         String init = "";
         init += "D1:" + Utils.appendSpace(trend_d, 6);
         init += "H4:" + Utils.appendSpace(trend_h4, 6);
         init += "H1:" + Utils.appendSpace(trend_h1, 6);
+        init += "15:" + Utils.appendSpace(trend_15, 6);
 
         String str_index = Utils.appendLeft(String.valueOf(index), 3) + "/" + Utils.appendLeft(String.valueOf(total), 3)
                 + "   ";
