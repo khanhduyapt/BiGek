@@ -3068,9 +3068,13 @@ public class BinanceServiceImpl implements BinanceService {
 
         try {
             String mt5_data_file = "";
-            if (Objects.equals(InetAddress.getLocalHost().getHostName().toLowerCase(), "pc")) {
+            String pcname = InetAddress.getLocalHost().getHostName().toLowerCase();
+            if (Objects.equals(pcname, "pc")) {
                 mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.csv";
+            } else if (Objects.equals(pcname, "desktop-l4m1ju2")) {
+                mt5_data_file = "C:\\Users\\DellE5270\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.csv";
             }
+
             mt5DataCandleRepository.deleteAll();
             File file = new File(mt5_data_file);
             if (!file.exists()) {
@@ -3080,9 +3084,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             Utils.logWritelnReport("");
             BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-            Utils.logWritelnDraft(
-                    "(MT5_DATA)LastModifiedTime:" + Utils.formatDateTime(attr.lastModifiedTime()) + "     "
-                            + file.getAbsolutePath());
+            Utils.logWritelnDraft("(MT5_DATA)      LastModifiedTime: " + Utils.formatDateTime(attr.lastModifiedTime())
+                    + "     " + file.getAbsolutePath() + "\n");
             Utils.logWritelnReport("");
 
             List<Mt5DataCandle> list = new ArrayList<Mt5DataCandle>();
@@ -3099,18 +3102,18 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            //Remember to call close.
-            //calling close on a BufferedReader/BufferedWriter
+            // Remember to call close.
+            // calling close on a BufferedReader/BufferedWriter
             // will automatically call close on its underlying stream
             fin.close();
             reader.close();
-            //------------------------------------------------------------------------
+            // ------------------------------------------------------------------------
             mt5DataCandleRepository.saveAll(list);
 
             String orderId = "MT5_DATA_" + Utils.CAPITAL_TIME_MINUTE_5;
             String date_time = LocalDateTime.now().toString();
-            Orders entity = new Orders(orderId, date_time, "", BigDecimal.ZERO, BigDecimal.ZERO,
-                    BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "");
+            Orders entity = new Orders(orderId, date_time, "", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+                    BigDecimal.ZERO, BigDecimal.ZERO, "");
             ordersRepository.save(entity);
 
         } catch (Exception e) {
@@ -3121,8 +3124,8 @@ public class BinanceServiceImpl implements BinanceService {
     private List<BtcFutures> getCapitalData(String EPIC, String CAPITAL_TIME_XXX) {
         List<BtcFutures> list = new ArrayList<BtcFutures>();
         try {
-            List<Mt5DataCandle> list_mt5 = mt5DataCandleRepository.findAllByIdEpicAndIdCandleOrderByIdCandleTimeDesc(
-                    EPIC, CAPITAL_TIME_XXX);
+            List<Mt5DataCandle> list_mt5 = mt5DataCandleRepository
+                    .findAllByIdEpicAndIdCandleOrderByIdCandleTimeDesc(EPIC, CAPITAL_TIME_XXX);
             int id = 0;
             for (Mt5DataCandle dto : list_mt5) {
                 boolean uptrend = (dto.getOpe_price().compareTo(dto.getClo_price()) < 0) ? true : false;
@@ -3152,36 +3155,37 @@ public class BinanceServiceImpl implements BinanceService {
                     Utils.logWritelnDraft("[mt5_data_candle] NotFound: " + EPIC);
                     return list;
                 }
-                //------------------------------------------------------------------------
-                //int lengh = 5;
-                //if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
-                //    lengh = 10;
-                //}
-                //if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
-                //    lengh = 10;
-                //}
-                //if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
-                //    lengh = 10;
-                //}
+                // ------------------------------------------------------------------------
+                // int lengh = 5;
+                // if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
+                // lengh = 10;
+                // }
+                // if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
+                // lengh = 10;
+                // }
+                // if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
+                // lengh = 10;
+                // }
                 //// ----------------------------TREND------------------------
-                //list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, lengh);
-                //if (CollectionUtils.isEmpty(list)) {
-                //    BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS * 5);
+                // list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, lengh);
+                // if (CollectionUtils.isEmpty(list)) {
+                // BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS *
+                // 5);
                 //
-                //    Utils.initCapital();
-                //    list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, lengh);
+                // Utils.initCapital();
+                // list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, lengh);
                 //
-                //    if (CollectionUtils.isEmpty(list)) {
-                //        String result = "initForexTrend(" + EPIC + ") Size:" + list.size();
-                //        Utils.logWritelnDraft(result);
+                // if (CollectionUtils.isEmpty(list)) {
+                // String result = "initForexTrend(" + EPIC + ") Size:" + list.size();
+                // Utils.logWritelnDraft(result);
                 //
-                //        Orders entity_time_out = new Orders(Utils.CONNECTION_TIMED_OUT_ID,
-                //                Utils.TEXT_CONNECTION_TIMED_OUT);
-                //        ordersRepository.save(entity_time_out);
+                // Orders entity_time_out = new Orders(Utils.CONNECTION_TIMED_OUT_ID,
+                // Utils.TEXT_CONNECTION_TIMED_OUT);
+                // ordersRepository.save(entity_time_out);
                 //
-                //        return new ArrayList<BtcFutures>();
-                //    }
-                //}
+                // return new ArrayList<BtcFutures>();
+                // }
+                // }
             }
         } catch (Exception e) {
             String result = "initForexTrend(" + EPIC + ") " + e.getMessage();
@@ -3226,14 +3230,14 @@ public class BinanceServiceImpl implements BinanceService {
         String orderId = EPIC + "_" + CAPITAL_TIME_XXX;
         String date_time = LocalDateTime.now().toString();
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), BigDecimal.ZERO,
-                BigDecimal.ZERO, BigDecimal.ZERO,
-                BigDecimal.ZERO, switch_trend);
+                BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, switch_trend);
         ordersRepository.save(entity);
 
         if (Utils.isNotBlank(switch_trend)) {
             if (Objects.equals(dto_h4.getTrend(), trend) || Objects.equals(dto_d1.getTrend(), trend)) {
                 String log = Utils.appendSpace(EPIC, 15) + "(H4:" + Utils.appendSpace(dto_h4.getTrend(), 4) + ")   "
-                        + Utils.appendSpace(orderId.replace(EPIC + "_", "") + Utils.appendSpace(switch_trend, 4), 20)
+                        + Utils.appendSpace(
+                                orderId.replace(EPIC + "_", "") + " (" + Utils.appendSpace(switch_trend, 4) + ")", 20)
                         + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 
                 Utils.logWritelnReport("");
