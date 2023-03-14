@@ -17,6 +17,9 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
     @Query(value = "SELECT * FROM public.orders mst where (mst.gecko_id like '%DAY%')    ORDER BY mst.gecko_id  ", nativeQuery = true)
     public List<Orders> getTrend_DayList();
 
+    @Query(value = "SELECT * FROM public.orders mst where (mst.gecko_id like '%_HOUR_4')    ORDER BY mst.gecko_id  ", nativeQuery = true)
+    public List<Orders> getTrend_H4List();
+
     @Query(value = "SELECT * FROM public.orders mst where (mst.gecko_id like '%DAY%')     AND (COALESCE(mst.note, '') <> '')  ORDER BY mst.insert_time ", nativeQuery = true)
     public List<Orders> getSwitchTrend_DayList();
 

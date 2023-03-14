@@ -57,4 +57,6 @@ public interface BinanceService {
 
     public void deleteConnectTimeOutException();
 
+    public void saveMt5Data();
+
 }

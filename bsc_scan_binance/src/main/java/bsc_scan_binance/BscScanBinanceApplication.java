@@ -39,6 +39,7 @@ public class BscScanBinanceApplication {
         try {
             initForex_naming_dict();
             hostname = InetAddress.getLocalHost().getHostName().toLowerCase();
+
             if (hostname.length() > 2) {
                 hostname = hostname.substring(0, 2);
             }
@@ -116,6 +117,7 @@ public class BscScanBinanceApplication {
                         if (isReloadAfter(Utils.MINUTES_OF_1H, "WRITELN_DRAFT")) {
                             Utils.logWritelnDraft("");
                         }
+                        binance_service.saveMt5Data();
 
                         // checkKillLongShort(binance_service);
 
@@ -198,7 +200,7 @@ public class BscScanBinanceApplication {
         }
 
         String trend_h4 = "";
-        // trend_h4 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+        trend_h4 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
         if (Utils.isNotBlank(trend_h4)) {
             wait(SLEEP_MINISECONDS * 3);
         }

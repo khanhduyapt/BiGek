@@ -59,7 +59,7 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 public class Utils {
 
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0025);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0015);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -138,20 +138,15 @@ public class Utils {
     public static final List<String> EPICS_15M = Arrays.asList("GOLD", "US30", "UK100", "J225", "GBPUSD");
 
     // "SP35", "HK50", "OIL_CRUDE",
-    public static final List<String> EPICS_SCAP = Arrays.asList("DXY", "GOLD", "SILVER", "US30", "US100", "US500",
-            "UK100", "J225", "DE40", "FR40", "AU200", "EURUSD", "GBPUSD", "USDCHF", "USDJPY", "AUDUSD", "NZDUSD",
-            "USDCAD");
+    public static final List<String> EPICS_SCAP = Arrays.asList("DXY", "BTCUSD", "GOLD", "SILVER", "US30", "US100",
+            "US500", "UK100", "J225", "DE40", "FR40", "AU200");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK",
     public static final List<String> EPICS_FOREXS = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF",
-            "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "GBPAUD", "GBPCAD",
-            "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY"
-
-    // "EURCZK", "EURHUF", "EURMXN", "EURPLN", "EURSEK", "EURSGD",
-    // "USDCNH", "USDCZK", "USDDKK", "USDHUF", "USDILS",
-    // "USDMXN", "USDNOK", "USDSEK", "USDSGD", "USDZAR"
-    );
+            "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPUSD",
+            "USDCHF", "USDJPY", "AUDUSD", "NZDUSD", "USDCAD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD",
+            "NZDCAD", "NZDCHF", "NZDJPY");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
@@ -2869,27 +2864,6 @@ public class Utils {
         return "";
     }
 
-    public static String getTrendTypeForNote(List<BtcFutures> list) {
-        String trend = "";
-
-        String heken = Utils.switchTrenByHekenAshi(list);
-        if (Utils.isNotBlank(heken)) {
-            trend += heken;
-        }
-        String switch_trend = Utils.switchTrendByMa(list, true);
-        if (Utils.isNotBlank(switch_trend)) {
-            trend += Utils.TEXT_TREND_No1_MA34568;
-        } else {
-            switch_trend = Utils.switchTrendByMa(list, false);
-            if (Utils.isNotBlank(switch_trend)) {
-                trend += Utils.TEXT_TREND_No2_ADJUSTING;
-            }
-        }
-        trend += ", Ma3:" + (isUptrendByMaIndex(list, 3) ? TREND_LONG : TREND_SHORT);
-
-        return trend;
-    }
-
     public static String switchTrendByMa(List<BtcFutures> list, boolean isRequired368) {
         if (CollectionUtils.isEmpty(list)) {
             return "";
@@ -3052,17 +3026,6 @@ public class Utils {
             EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_15, "");
             EPIC = EPIC.replace("_", "");
 
-            String chart = "";
-            if (dto_entry.getId().contains(Utils.CAPITAL_TIME_DAY)) {
-                chart = "(D1:)";
-            } else if (dto_entry.getId().contains(Utils.CAPITAL_TIME_HOUR_4)) {
-                chart = "(H4):";
-            } else if (dto_entry.getId().contains(Utils.CAPITAL_TIME_HOUR)) {
-                chart = "(H1):";
-            } else if (dto_entry.getId().contains(Utils.CAPITAL_TIME_MINUTE_15)) {
-                chart = "(15):";
-            }
-
             String type = "";
             String trend = dto_entry.getTrend();
             if (dto_entry.getNote().contains(Utils.TEXT_TREND_HEKEN_LONG)) {
@@ -3132,6 +3095,23 @@ public class Utils {
         Collections.reverse(heken_list);
 
         return heken_list;
+    }
+
+    public static String switchTrend(List<BtcFutures> list) {
+        String trend = "";
+
+        String heken = Utils.switchTrenByHekenAshi(list);
+        if (Utils.isNotBlank(heken)) {
+            trend += heken;
+        }
+        String switch_trend = Utils.switchTrendByMa(list, true);
+        if (Utils.isNotBlank(switch_trend)) {
+            trend += Utils.TEXT_TREND_No1_MA34568;
+        } else {
+            switch_trend = Utils.switchTrendByMa(list, false);
+        }
+
+        return trend;
     }
 
     public static String switchTrenByHekenAshi(List<BtcFutures> list) {
