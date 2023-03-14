@@ -209,8 +209,13 @@ public class BscScanBinanceApplication {
             //wait(SLEEP_MINISECONDS * 3);
         }
 
-        String trend_15 = binance_service.scapForex15M(EPIC);
+        String trend_15 = binance_service.scapForex15M(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
         if (Utils.isNotBlank(trend_15)) {
+            //wait(SLEEP_MINISECONDS * 3);
+        }
+
+        String trend_5 = binance_service.scapForex15M(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
+        if (Utils.isNotBlank(trend_5)) {
             //wait(SLEEP_MINISECONDS * 3);
         }
 
@@ -219,6 +224,7 @@ public class BscScanBinanceApplication {
         init += "H4:" + Utils.appendSpace(trend_h4, 6);
         init += "H1:" + Utils.appendSpace(trend_h1, 6);
         init += "15:" + Utils.appendSpace(trend_15, 6);
+        init += "05:" + Utils.appendSpace(trend_5, 6);
 
         String str_index = Utils.appendLeft(String.valueOf(index), 3) + "/" + Utils.appendLeft(String.valueOf(total), 3)
                 + "   ";

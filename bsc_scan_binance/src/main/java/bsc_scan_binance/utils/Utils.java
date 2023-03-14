@@ -2922,6 +2922,7 @@ public class Utils {
 
         temp_long += Utils.checkXCutUpY(ma5_1, ma5_2, ma6_1, ma6_2) + "_";
         temp_shot += Utils.checkXCutDnY(ma5_1, ma5_2, ma6_1, ma6_2) + "_";
+
         temp_long += Utils.checkXCutUpY(ma5_1, ma5_2, ma8_1, ma8_2) + "_";
         temp_shot += Utils.checkXCutDnY(ma5_1, ma5_2, ma8_1, ma8_2) + "_";
 
