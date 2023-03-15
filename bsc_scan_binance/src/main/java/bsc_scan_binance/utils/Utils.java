@@ -135,7 +135,7 @@ public class Utils {
     public static final long MINUTES_OF_D = 120;// 600;
     public static final long MINUTES_OF_1H = 60;
 
-    public static final long MINUTES_OF_4H = 15;//120;
+    public static final long MINUTES_OF_4H = 120;
     public static final long MINUTES_OF_15M = 15;
     public static final long MINUTES_OF_5M = 5;
 
@@ -3234,7 +3234,7 @@ public class Utils {
         String header = "";
         header = time + "  " + chart + ":" + Utils.appendSpace(dto_entry.getTrend(), 4) + "  ";
         header += Utils.appendSpace(EPIC, 12);
-        header += Utils.appendSpace("   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66), 110, "-");
+        header += Utils.appendSpace("   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 68), 112, "-");
         header = Utils.appendSpace(header, LENGTH - 12, "-");
         // ----------------------------------------------------------------------------------
         log = header + "\n" + Utils.createLogLine(dto_entry, dto_sl, dto_sl.getTrend());

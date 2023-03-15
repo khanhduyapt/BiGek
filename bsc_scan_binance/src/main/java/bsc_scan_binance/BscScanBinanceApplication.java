@@ -128,7 +128,6 @@ public class BscScanBinanceApplication {
                                     String EPIC = capital_list.get(index);
                                     checkCapital(binance_service, EPIC, index + 1, forex_size);
                                 }
-                                binance_service.createReport();
                             }
                         }
 
@@ -212,13 +211,8 @@ public class BscScanBinanceApplication {
             // wait(SLEEP_MINISECONDS * 3);
         }
 
-        String trend_5 = binance_service.scapForex15M(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
+        String trend_5 = binance_service.scapForex15M(EPIC);
         if (Utils.isNotBlank(trend_5)) {
-            // wait(SLEEP_MINISECONDS * 3);
-        }
-
-        String trend_3 = binance_service.scapForex15M(EPIC, Utils.CAPITAL_TIME_MINUTE_3);
-        if (Utils.isNotBlank(trend_3)) {
             // wait(SLEEP_MINISECONDS * 3);
         }
 
@@ -228,7 +222,6 @@ public class BscScanBinanceApplication {
         init += "H1:" + Utils.appendSpace(trend_h1, 6);
         init += "15:" + Utils.appendSpace(trend_15, 6);
         init += "05:" + Utils.appendSpace(trend_5, 6);
-        init += "03:" + Utils.appendSpace(trend_3, 6);
 
         String str_index = Utils.appendLeft(String.valueOf(index), 3) + "/" + Utils.appendLeft(String.valueOf(total), 3)
                 + "   ";
