@@ -2644,7 +2644,8 @@ public class BinanceServiceImpl implements BinanceService {
             time = Utils.MINUTES_OF_1H;
         } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_15)) {
             time = Utils.MINUTES_OF_15M;
-        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_5)) {
+        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_5)
+                || Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_3)) {
             time = Utils.MINUTES_OF_5M;
         }
 
@@ -3152,7 +3153,7 @@ public class BinanceServiceImpl implements BinanceService {
             } else {
                 boolean debug = true;
                 if (debug) {
-                    Utils.logWritelnDraft("[mt5_data_candle] NotFound: " + EPIC);
+                    Utils.logWritelnDraft("[mt5_data_candle] NotFound: " + EPIC + " (" + CAPITAL_TIME_XXX + ")");
                     return list;
                 }
                 // ------------------------------------------------------------------------
@@ -3207,9 +3208,9 @@ public class BinanceServiceImpl implements BinanceService {
             // return "";
         }
 
-        Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+        //Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-        if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Utils.isBlank(dto_h4.getNote())) {
+        if (Objects.isNull(dto_h4)) { //|| Utils.isBlank(dto_h4.getNote())
             return "";
         }
 
@@ -3233,13 +3234,12 @@ public class BinanceServiceImpl implements BinanceService {
                 BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, switch_trend);
         ordersRepository.save(entity);
 
-        if (Utils.isNotBlank(switch_trend)) {
+        if (Utils.isNotBlank(switch_trend) && Objects.equals(dto_h4.getTrend(), trend)) {
             String log = Utils.appendSpace(EPIC, 15);
-            log += "(D1:" + Utils.appendSpace(dto_d1.getTrend(), 10);
-            log += "H4:" + Utils.appendSpace(dto_h4.getTrend(), 4) + ")   ";
+            log += "(H4:" + Utils.appendSpace(dto_h4.getTrend(), 4) + ")   ";
             log += Utils.appendSpace(orderId.replace(EPIC + "_", ""), 10);
-            log += " (" + Utils.appendSpace(switch_trend, 4) + ")";
-            log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
+            log += " (" + Utils.appendSpace(switch_trend, 4) + ")     ";
+            log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + dto_h4.getNote();
 
             Utils.logWritelnDraft(log);
         }
@@ -3257,7 +3257,7 @@ public class BinanceServiceImpl implements BinanceService {
         String str_long_suggest = "";
         String str_shot_suggest = "";
         for (String CUR : compare_list) {
-            getSummaryCurrencies(CUR, Utils.CAPITAL_TIME_DAY);
+            getSummaryCurrencies(CUR, Utils.CAPITAL_TIME_HOUR_4);
         }
         if (!CollectionUtils.isEmpty(GLOBAL_LONG_LIST)) {
             for (String s : GLOBAL_LONG_LIST) {
@@ -3294,7 +3294,6 @@ public class BinanceServiceImpl implements BinanceService {
                 Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
 
                 String note = "";
-
                 if (Utils.isNotBlank(dto_d1.getNote())) {
                     note += Utils.appendSpace("D1:" + Utils.getStringValue(dto_d1.getNote()), 30);
                 }
@@ -3408,6 +3407,7 @@ public class BinanceServiceImpl implements BinanceService {
         String note = Utils.switchTrend(list);
 
         BigDecimal bread = Utils.calcMaxBread(list);
+        List<BigDecimal> body = Utils.getOpenCloseCandle(list);
         List<BigDecimal> low_high = Utils.getLowHighCandle(list);
         String trend = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
         // -----------------------------DATABASE---------------------------
@@ -3423,9 +3423,9 @@ public class BinanceServiceImpl implements BinanceService {
             // sl_shot = sl_shot.add(bread);
 
             BigDecimal curr_price = list.get(0).getCurrPrice();
-            if (curr_price.compareTo((str_body_price.add(bread))) < 0) {
+            if (curr_price.compareTo((body.get(0))) < 0) {
                 note += Utils.TEXT_MIN_DAY_AREA;
-            } else if (curr_price.compareTo((end_body_price.subtract(bread))) > 0) {
+            } else if (curr_price.compareTo(body.get(1)) > 0) {
                 note += Utils.TEXT_MAX_DAY_AREA;
             }
         }

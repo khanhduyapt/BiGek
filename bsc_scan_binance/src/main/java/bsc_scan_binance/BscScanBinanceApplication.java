@@ -120,9 +120,8 @@ public class BscScanBinanceApplication {
 
                         checkKillLongShort(binance_service);
 
-                        // if (Utils.isBusinessTime_6h_to_17h()) {
-                        if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
-                            if (isReloadAfter(Utils.MINUTES_OF_15M, "RE_CHECK_FOREX")) {
+                        if (Utils.isBusinessTime_6h_to_17h()) {
+                            if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
                                 Utils.initCapital();
                                 for (int index = 0; index < forex_size; index++) {
                                     sleepWhenExceptionTimeOut(binance_service);
@@ -132,7 +131,6 @@ public class BscScanBinanceApplication {
                                 binance_service.createReport();
                             }
                         }
-                        // }
 
                         // ---------------------------------------------------------
                         String SYMBOL = Utils.coins.get(index_crypto);
@@ -204,12 +202,12 @@ public class BscScanBinanceApplication {
             // wait(SLEEP_MINISECONDS * 3);
         }
 
-        String trend_h1 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
+        String trend_h1 = "";//binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
         if (Utils.isNotBlank(trend_h1)) {
             // wait(SLEEP_MINISECONDS * 3);
         }
 
-        String trend_15 = binance_service.scapForex15M(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+        String trend_15 = "";//binance_service.scapForex15M(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
         if (Utils.isNotBlank(trend_15)) {
             // wait(SLEEP_MINISECONDS * 3);
         }
@@ -219,12 +217,18 @@ public class BscScanBinanceApplication {
             // wait(SLEEP_MINISECONDS * 3);
         }
 
+        String trend_3 = binance_service.scapForex15M(EPIC, Utils.CAPITAL_TIME_MINUTE_3);
+        if (Utils.isNotBlank(trend_3)) {
+            // wait(SLEEP_MINISECONDS * 3);
+        }
+
         String init = "";
         init += "D1:" + Utils.appendSpace(trend_d, 6);
         init += "H4:" + Utils.appendSpace(trend_h4, 6);
         init += "H1:" + Utils.appendSpace(trend_h1, 6);
         init += "15:" + Utils.appendSpace(trend_15, 6);
         init += "05:" + Utils.appendSpace(trend_5, 6);
+        init += "03:" + Utils.appendSpace(trend_3, 6);
 
         String str_index = Utils.appendLeft(String.valueOf(index), 3) + "/" + Utils.appendLeft(String.valueOf(total), 3)
                 + "   ";

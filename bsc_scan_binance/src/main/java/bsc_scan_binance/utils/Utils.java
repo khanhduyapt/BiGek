@@ -117,6 +117,7 @@ public class Utils {
     public static String CST = "";
     public static String X_SECURITY_TOKEN = "";
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
+    public static final String CAPITAL_TIME_MINUTE_3 = "MINUTE_3";
     public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
     public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_HOUR = "HOUR";
@@ -131,8 +132,8 @@ public class Utils {
     public static final String CRYPTO_TIME_1w = "1w";
 
     public static final long MINUTES_OF_D = 120;// 600;
-    public static final long MINUTES_OF_4H = 120;
     public static final long MINUTES_OF_1H = 60;
+    public static final long MINUTES_OF_4H = 15;//120;
     public static final long MINUTES_OF_15M = 15;
     public static final long MINUTES_OF_5M = 5;
 
@@ -143,7 +144,7 @@ public class Utils {
             "SP500", "UK100", "JPY225");
 
     // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
-    // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200
+    // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
 
     // "SP35", "HK50", "OIL_CRUDE",
     public static final List<String> EPICS_SCAP = Arrays.asList("BTCUSD", "ETHUSD", "XAUUSD", "XAGUSD", "US30",
@@ -852,7 +853,16 @@ public class Utils {
     }
 
     public static String getCapitalLink(String epic) {
-        return " https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + epic + " ";
+        List<String> capital_list = Arrays.asList("NAS100", "SP500", "JPY225", "GER30", "FRA40", "AUS200", "XAUUSD",
+                "XAGUSD");
+        // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
+        // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
+
+        if (capital_list.contains(epic)) {
+            return "https://vn.tradingview.com/chart/?symbol=%3A" + epic + " ";
+        } else {
+            return "https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + epic + " ";
+        }
     }
 
     public static String getDraftLogFile() {
@@ -1048,7 +1058,7 @@ public class Utils {
     public static boolean isBusinessTime_6h_to_17h() {
         // Sang 6-8h, Trua: 1h-3h, Chieu 5h-6h, toi 8h-9h: la khung gio gia ro rang
         // nhat, sau khung gio nay gia moi chay.
-        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22);
+        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -2043,6 +2053,39 @@ public class Utils {
         }
 
         return Utils.appendSpace(result, 6);
+    }
+
+    public static String getChartName(Orders dto) {
+        String result = "";
+
+        try {
+            if (Objects.isNull(dto)) {
+                return "";
+            }
+
+            String symbol = dto.getId().toUpperCase();
+
+            if (symbol.contains(CAPITAL_TIME_MINUTE_15)) {
+                result = "(15)";
+            } else if (symbol.contains(CAPITAL_TIME_MINUTE_5)) {
+                result = "(05)";
+            } else if (symbol.contains(CAPITAL_TIME_HOUR_4)) {
+                result = "(H4)";
+            } else if (symbol.contains(CAPITAL_TIME_HOUR)) {
+                result = "(H1)";
+            } else if (symbol.contains(CAPITAL_TIME_DAY)) {
+                result = "(D1)";
+            } else {
+                // symbol = symbol.replace("_00", "");
+                // symbol = symbol.substring(symbol.indexOf("_"), symbol.length()).replace("_",
+                // "");
+                result = "(" + symbol + ")";
+            }
+        } catch (Exception e) {
+            return "";
+        }
+
+        return result;
     }
 
     public static List<BigDecimal> calcFiboTakeProfit(BigDecimal low_heigh, BigDecimal entry) {
@@ -3043,24 +3086,17 @@ public class Utils {
             EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_15, "");
             EPIC = EPIC.replace("_", "");
 
-            String type = "";
             String trend = dto_entry.getTrend();
             if (dto_entry.getNote().contains(Utils.TEXT_TREND_HEKEN_LONG)) {
                 trend = Utils.TREND_LONG;
-                type = dto_entry.getNote();
             }
             if (dto_entry.getNote().contains(Utils.TEXT_TREND_HEKEN_SHORT)) {
                 trend = Utils.TREND_SHORT;
-                type = dto_entry.getNote();
-            }
-            if (type.contains(main_trend)) {
-                type = Utils.appendSpace(type, 6) + " * ";
             }
 
-            String buffer = Utils.appendSpace("", 12) + Utils.appendSpace(type.trim(), 20);
-            // buffer += chart + Utils.appendSpace(dto_entry.getTrend(), 7);
+            String buffer = Utils.appendSpace("", 14);
             buffer += Utils.calc_BUF_LO_HI_BUF_Forex(false, trend, EPIC, dto_entry, dto_sl);
-            log = Utils.appendSpace(buffer, 180);
+            log = Utils.appendSpace(buffer, 170);
         }
 
         return log;
@@ -3177,15 +3213,17 @@ public class Utils {
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_15, "");
         EPIC = EPIC.replace("_", "");
 
+        String chart = getChartName(dto_entry);
+
         String insert_time = Utils.getStringValue(dto_entry.getInsertTime());
         LocalDateTime pre_time = LocalDateTime.parse(insert_time);
         String time = pre_time.format(DateTimeFormatter.ofPattern("HH:mm"));
 
         String header = "";
-        header = time + "  " + (Utils.appendSpace("D:" + dto_entry.getTrend(), 10));
+        header = time + "  " + chart + ":" + Utils.appendSpace(dto_entry.getTrend(), 4) + " ";
         header += Utils.appendSpace(EPIC, 15, "-");
-        header += Utils.appendSpace(Utils.appendSpace(Utils.getCapitalLink(EPIC), 66), 120, "_");
-        header = Utils.appendSpace(header, LENGTH - 12);
+        header += Utils.appendSpace(" " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66), 120, "-");
+        header = Utils.appendSpace(header, LENGTH - 12, "-");
         // ----------------------------------------------------------------------------------
         log = header + "\n" + Utils.createLogLine(dto_entry, dto_sl, dto_sl.getTrend());
 
