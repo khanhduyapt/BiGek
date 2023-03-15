@@ -3271,8 +3271,8 @@ public class BinanceServiceImpl implements BinanceService {
                 str_shot_suggest += s + "    ";
             }
         }
-        Utils.logWritelnReport("(BUY ) " + str_long_suggest.trim());
-        Utils.logWritelnReport("(SELL) " + str_shot_suggest.trim());
+        //Utils.logWritelnReport("(BUY ) " + str_long_suggest.trim());
+        //Utils.logWritelnReport("(SELL) " + str_shot_suggest.trim());
 
         String msg_forx = "";
         String msg_futu = "";
@@ -3281,8 +3281,6 @@ public class BinanceServiceImpl implements BinanceService {
         List<Orders> list_all_d1 = ordersRepository.getTrend_H4List();
         if (!CollectionUtils.isEmpty(list_all_d1)) {
             Utils.logWritelnReport("");
-            Utils.logWritelnReport(Utils.appendSpace(Utils.appendLeft(" (All) ", 80, "="), 268, "="));
-
             for (Orders dto_d1 : list_all_d1) {
                 String EPIC = dto_d1.getId();
                 EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_DAY, "");
@@ -3313,7 +3311,7 @@ public class BinanceServiceImpl implements BinanceService {
                     log = Utils.createLineForex(dto_h4_entry, dto_h4_entry);
                 }
 
-                Utils.logWritelnReport(log + Utils.appendSpace(note, 110));
+                Utils.logWritelnReport(log); //+ Utils.appendSpace(note, 110)
                 Utils.logWritelnReport("");
             }
         }

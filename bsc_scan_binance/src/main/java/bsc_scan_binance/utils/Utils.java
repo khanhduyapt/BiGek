@@ -3107,7 +3107,7 @@ public class Utils {
 
             String buffer = Utils.appendSpace("", 14);
             buffer += Utils.calc_BUF_LO_HI_BUF_Forex(false, trend, EPIC, dto_entry, dto_sl);
-            log = Utils.appendSpace(buffer, 170);
+            log = buffer;//Utils.appendSpace(buffer, 170);
         }
 
         return log;
@@ -3216,7 +3216,7 @@ public class Utils {
             return "";
         }
         String log = "";
-        int LENGTH = 280;
+        int LENGTH = 150;
 
         String EPIC = dto_entry.getId();
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_DAY, "");
@@ -3232,9 +3232,9 @@ public class Utils {
         String time = pre_time.format(DateTimeFormatter.ofPattern("HH:mm"));
 
         String header = "";
-        header = time + "  " + chart + ":" + Utils.appendSpace(dto_entry.getTrend(), 4) + " ";
-        header += Utils.appendSpace(EPIC, 15, "-");
-        header += Utils.appendSpace(" " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66), 120, "-");
+        header = time + "  " + chart + ":" + Utils.appendSpace(dto_entry.getTrend(), 4) + "  ";
+        header += Utils.appendSpace(EPIC, 12);
+        header += Utils.appendSpace("   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66), 110, "-");
         header = Utils.appendSpace(header, LENGTH - 12, "-");
         // ----------------------------------------------------------------------------------
         log = header + "\n" + Utils.createLogLine(dto_entry, dto_sl, dto_sl.getTrend());
