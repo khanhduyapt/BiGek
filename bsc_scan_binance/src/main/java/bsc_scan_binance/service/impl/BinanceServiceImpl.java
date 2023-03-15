@@ -3210,7 +3210,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         //Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-        if (Objects.isNull(dto_h4)) { //|| Utils.isBlank(dto_h4.getNote())
+        if (Objects.isNull(dto_h4)) {
             return "";
         }
 
@@ -3234,7 +3234,9 @@ public class BinanceServiceImpl implements BinanceService {
                 BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, switch_trend);
         ordersRepository.save(entity);
 
-        if (Utils.isNotBlank(switch_trend) && Objects.equals(dto_h4.getTrend(), trend)) {
+        if (Utils.isNotBlank(switch_trend)
+                && (Objects.equals(dto_h4.getTrend(), trend) || Utils.isNotBlank(dto_h4.getNote()))) {
+
             String log = Utils.appendSpace(EPIC, 15);
             log += "(H4:" + Utils.appendSpace(dto_h4.getTrend(), 4) + ")   ";
             log += Utils.appendSpace(orderId.replace(EPIC + "_", ""), 10);

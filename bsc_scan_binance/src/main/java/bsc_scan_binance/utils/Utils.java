@@ -27,6 +27,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Formatter;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -90,9 +91,9 @@ public class Utils {
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
-    public static final String TEXT_TREND_No1_MA34568 = "No.1(Ma34568)  ";
-    public static final String TEXT_TREND_No2_ADJUSTING = "No.2(Adjusting)";
-    public static final String TEXT_TREND_No3_REVERSAL = "No.3(Reversal) ";
+    public static final String TEXT_TREND_No1_MA34568 = "(Ma34568)  ";
+    public static final String TEXT_TREND_No2_ADJUSTING = "(Adjusting)";
+    public static final String TEXT_TREND_No3_REVERSAL = "(Reversal) ";
 
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
@@ -133,6 +134,7 @@ public class Utils {
 
     public static final long MINUTES_OF_D = 120;// 600;
     public static final long MINUTES_OF_1H = 60;
+
     public static final long MINUTES_OF_4H = 15;//120;
     public static final long MINUTES_OF_15M = 15;
     public static final long MINUTES_OF_5M = 5;
@@ -853,13 +855,22 @@ public class Utils {
     }
 
     public static String getCapitalLink(String epic) {
-        List<String> capital_list = Arrays.asList("NAS100", "SP500", "JPY225", "GER30", "FRA40", "AUS200", "XAUUSD",
-                "XAGUSD");
-        // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
         // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
+        // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
 
-        if (capital_list.contains(epic)) {
-            return "https://vn.tradingview.com/chart/?symbol=%3A" + epic + " ";
+        Hashtable<String, String> forex_naming_dict = new Hashtable<String, String>();
+        forex_naming_dict.put("NAS100", "US100");
+        forex_naming_dict.put("SP500", "US500");
+        forex_naming_dict.put("JPY225", "J225");
+        forex_naming_dict.put("GER30", "DE40");
+        forex_naming_dict.put("FRA40", "FR40");
+        forex_naming_dict.put("AUS200", "AU200");
+        forex_naming_dict.put("XAUUSD", "GOLD");
+        forex_naming_dict.put("XAGUSD", "SILVER");
+
+        if (forex_naming_dict.containsKey(epic)) {
+            String epic2 = forex_naming_dict.get(epic);
+            return "https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + epic2 + " ";
         } else {
             return "https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + epic + " ";
         }
@@ -3159,6 +3170,7 @@ public class Utils {
         }
         String switch_trend = Utils.switchTrendByMa(list, true);
         if (Utils.isNotBlank(switch_trend)) {
+            trend += isUptrendByMaIndex(list, 3) ? TREND_LONG : TREND_SHORT;
             trend += Utils.TEXT_TREND_No1_MA34568;
         } else {
             switch_trend = Utils.switchTrendByMa(list, false);
@@ -3174,17 +3186,17 @@ public class Utils {
         }
         // ----------------------------------------------------------------------------------------------------
         if (heken_list.get(1).isUptrend() && heken_list.get(2).isDown()) {
-            return Utils.appendSpace(TEXT_TREND_HEKEN_LONG, 10) + " i0";
+            return Utils.appendSpace(TEXT_TREND_HEKEN_LONG, 10) + "_i0";
         }
         if (heken_list.get(1).isDown() && heken_list.get(2).isUptrend()) {
-            return Utils.appendSpace(TEXT_TREND_HEKEN_SHORT, 10) + " i0";
+            return Utils.appendSpace(TEXT_TREND_HEKEN_SHORT, 10) + "_i0";
         }
 
         if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(2).isDown()) {
-            return Utils.appendSpace(TEXT_TREND_HEKEN_LONG, 10) + " i1";
+            return Utils.appendSpace(TEXT_TREND_HEKEN_LONG, 10) + "_i1";
         }
         if (heken_list.get(0).isDown() && heken_list.get(1).isDown() && heken_list.get(2).isUptrend()) {
-            return Utils.appendSpace(TEXT_TREND_HEKEN_SHORT, 10) + " i1";
+            return Utils.appendSpace(TEXT_TREND_HEKEN_SHORT, 10) + "_i1";
         }
 
         return "";
