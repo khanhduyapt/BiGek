@@ -118,7 +118,6 @@ public class Utils {
     public static String CST = "";
     public static String X_SECURITY_TOKEN = "";
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
-    public static final String CAPITAL_TIME_MINUTE_3 = "MINUTE_3";
     public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
     public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_HOUR = "HOUR";
@@ -132,10 +131,9 @@ public class Utils {
     public static final String CRYPTO_TIME_1D = "1d";
     public static final String CRYPTO_TIME_1w = "1w";
 
-    public static final long MINUTES_OF_D = 120;// 600;
+    public static final long MINUTES_OF_D = 60;// 600;
     public static final long MINUTES_OF_1H = 60;
-
-    public static final long MINUTES_OF_4H = 120;
+    public static final long MINUTES_OF_4H = 60;
     public static final long MINUTES_OF_15M = 15;
     public static final long MINUTES_OF_5M = 5;
 
@@ -571,9 +569,9 @@ public class Utils {
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE)) {
         // return "_1m_";
         // }
-        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
-        // return "_5m_";
-        // }
+        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
+            return "_5m_";
+        }
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
             return "_15m_";
         }
@@ -600,11 +598,11 @@ public class Utils {
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE)) {
         // return "(1m)";
         // }
-        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
-        // return "(5m)";
-        // }
+        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
+            return "(05)";
+        }
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
-            return "(15m)";
+            return "(15)";
         }
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
         // return "(30m)";
@@ -998,7 +996,7 @@ public class Utils {
     public static void writelnLogFooter_Forex() {
         try {
             FileWriter fw = new FileWriter(getForexLogFile(), true);
-            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("-", 175, "-") + "\n");
+            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("-", 151, "-") + "\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -1008,7 +1006,7 @@ public class Utils {
     public static void writelnLogFooter() {
         try {
             FileWriter fw = new FileWriter(getCryptoLogFile(), true);
-            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("", 175, "-") + "\n");
+            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("", 151, "-") + "\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -3048,6 +3046,10 @@ public class Utils {
             return is0_1_uptrend;
         }
 
+        if (list.get(0).getId().contains("_1d_")) {
+            return is0_1_uptrend;
+        }
+
         is0_1_uptrend = isUptrendByMa(list, maIndex * 2, 0, 1);
         is1_2_uptrend = isUptrendByMa(list, maIndex * 2, 1, 2);
         if (is0_1_uptrend == is1_2_uptrend) {
@@ -3087,15 +3089,22 @@ public class Utils {
         return "(" + check + " )";
     }
 
-    public static String createLogLine(Orders dto_entry, Orders dto_sl, String main_trend) {
+    public static String getEpicFromId(String id) {
+        String EPIC = id;
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_DAY, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_15, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_5, "");
+        EPIC = EPIC.replace("_", "");
+
+        return EPIC;
+    }
+
+    public static String createLineForex_Body(Orders dto_entry, Orders dto_sl) {
         String log = "";
         if (Objects.nonNull(dto_entry) && Objects.nonNull(dto_sl)) {
-            String EPIC = dto_entry.getId();
-            EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_DAY, "");
-            EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
-            EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");
-            EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_15, "");
-            EPIC = EPIC.replace("_", "");
+            String EPIC = getEpicFromId(dto_entry.getId());
 
             String trend = dto_entry.getTrend();
             if (dto_entry.getNote().contains(Utils.TEXT_TREND_HEKEN_LONG)) {
@@ -3211,35 +3220,26 @@ public class Utils {
         return heken_list.get(0).isUptrend() ? Utils.TREND_LONG : Utils.TREND_SHORT;
     }
 
-    public static String createLineForex(Orders dto_entry, Orders dto_sl) {
+    public static String createLineForex_Header(Orders dto_entry, Orders dto_sl, String trend_d1) {
         if (Objects.isNull(dto_entry) || Objects.isNull(dto_sl)) {
             return "";
         }
-        String log = "";
         int LENGTH = 150;
-
-        String EPIC = dto_entry.getId();
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_DAY, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_15, "");
-        EPIC = EPIC.replace("_", "");
-
-        String chart = getChartName(dto_entry);
+        String EPIC = getEpicFromId(dto_entry.getId());
+        String chart_h4 = getChartName(dto_entry);
 
         String insert_time = Utils.getStringValue(dto_entry.getInsertTime());
         LocalDateTime pre_time = LocalDateTime.parse(insert_time);
         String time = pre_time.format(DateTimeFormatter.ofPattern("HH:mm"));
 
-        String header = "";
-        header = time + "  " + chart + ":" + Utils.appendSpace(dto_entry.getTrend(), 4) + "  ";
+        String header = time + "  ";
+        header += Utils.appendSpace(trend_d1, 8) + "   ";
+        header += chart_h4 + ":" + Utils.appendSpace(dto_entry.getTrend(), 4) + "    ";
         header += Utils.appendSpace(EPIC, 12);
-        header += Utils.appendSpace("   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 68), 112, "-");
-        header = Utils.appendSpace(header, LENGTH - 12, "-");
-        // ----------------------------------------------------------------------------------
-        log = header + "\n" + Utils.createLogLine(dto_entry, dto_sl, dto_sl.getTrend());
+        header += Utils.appendSpace("   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 68), 111, "-");
+        header = Utils.appendSpace(header, LENGTH - 11, "-");
 
-        return log;
+        return header;
     }
 
     public static String createLineCrypto(Orders entity, String symbol, String type) {
