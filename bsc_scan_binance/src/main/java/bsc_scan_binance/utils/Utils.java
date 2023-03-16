@@ -145,17 +145,20 @@ public class Utils {
 
     // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
     // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
+    // Main Forex:
 
-    // "SP35", "HK50", "OIL_CRUDE",
-    public static final List<String> EPICS_SCAP = Arrays.asList("BTCUSD", "ETHUSD", "XAUUSD", "XAGUSD", "US30",
-            "NAS100", "SP500", "UK100", "JPY225", "GER30", "FRA40", "AUS200");
+    // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", , "AUS200", "JPY225", "GER30", "FRA40",
+    public static final List<String> EPICS_SCAP = Arrays.asList("BTCUSD", "ETHUSD", "XAUUSD", "XAGUSD", "US30", "UK100",
+            "JPY225", "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK",
-    public static final List<String> EPICS_FOREXS = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF",
-            "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPUSD",
-            "USDCHF", "USDJPY", "AUDUSD", "NZDUSD", "USDCAD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD",
-            "NZDCAD", "NZDCHF", "NZDJPY");
+    public static final List<String> EPICS_FOREXS = Arrays.asList(
+    //"AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF",
+    //"CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD",
+    //"GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD",
+    //"NZDCAD", "NZDCHF", "NZDJPY"
+    );
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
@@ -456,6 +459,39 @@ public class Utils {
     // https://open-api.capital.com/#section/Authentication/How-to-start-new-session
     // https://open-api.capital.com/#tag/Markets-Info-greater-Prices
     // https://api-capital.backend-capital.com/api/v1/markets/{epic}
+
+    // ------------------------------------------------------------------------
+    // int lengh = 5;
+    // if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
+    // lengh = 10;
+    // }
+    // if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
+    // lengh = 10;
+    // }
+    // if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
+    // lengh = 10;
+    // }
+    //// ----------------------------TREND------------------------
+    // list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, lengh);
+    // if (CollectionUtils.isEmpty(list)) {
+    // BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS *
+    // 5);
+    //
+    // Utils.initCapital();
+    // list = Utils.loadCapitalData(EPIC, CAPITAL_TIME_XXX, lengh);
+    //
+    // if (CollectionUtils.isEmpty(list)) {
+    // String result = "initForexTrend(" + EPIC + ") Size:" + list.size();
+    // Utils.logWritelnDraft(result);
+    //
+    // Orders entity_time_out = new Orders(Utils.CONNECTION_TIMED_OUT_ID,
+    // Utils.TEXT_CONNECTION_TIMED_OUT);
+    // ordersRepository.save(entity_time_out);
+    //
+    // return new ArrayList<BtcFutures>();
+    // }
+    // }
+
     public static List<BtcFutures> loadCapitalData(String epic, String TIME, int length) {
         List<BtcFutures> results = new ArrayList<BtcFutures>();
         try {
@@ -2940,40 +2976,32 @@ public class Utils {
             return "";
         }
 
-        int str = 1;
-        int end = 3;
         String temp_long = "";
         String temp_shot = "";
 
-        BigDecimal ma3_1 = calcMA(list, 3, str);
-        BigDecimal ma3_2 = calcMA(list, 3, end);
+        BigDecimal ma3_0 = calcMA(list, 3, 0);
+        BigDecimal ma3_3 = calcMA(list, 3, 3);
 
-        BigDecimal ma4_1 = calcMA(list, 4, str);
-        BigDecimal ma4_2 = calcMA(list, 4, end);
+        BigDecimal ma6_0 = calcMA(list, 6, 0);
+        BigDecimal ma6_3 = calcMA(list, 6, 3);
 
-        BigDecimal ma5_1 = calcMA(list, 5, str);
-        BigDecimal ma5_2 = calcMA(list, 5, end);
+        BigDecimal ma8_0 = calcMA(list, 8, 0);
+        BigDecimal ma8_3 = calcMA(list, 8, 3);
 
-        BigDecimal ma6_1 = calcMA(list, 6, str);
-        BigDecimal ma6_2 = calcMA(list, 6, end);
+        BigDecimal ma10_0 = calcMA(list, 10, 0);
+        BigDecimal ma10_3 = calcMA(list, 10, 3);
 
-        BigDecimal ma8_1 = calcMA(list, 8, str);
-        BigDecimal ma8_2 = calcMA(list, 8, end);
+        temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma6_0, ma6_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma6_0, ma6_3) + "_";
 
-        temp_long += Utils.checkXCutUpY(ma3_1, ma3_2, ma4_1, ma4_2) + "_";
-        temp_shot += Utils.checkXCutDnY(ma3_1, ma3_2, ma4_1, ma4_2) + "_";
-        temp_long += Utils.checkXCutUpY(ma3_1, ma3_2, ma5_1, ma5_2) + "_";
-        temp_shot += Utils.checkXCutDnY(ma3_1, ma3_2, ma5_1, ma5_2) + "_";
-        temp_long += Utils.checkXCutUpY(ma3_1, ma3_2, ma6_1, ma6_2) + "_";
-        temp_shot += Utils.checkXCutDnY(ma3_1, ma3_2, ma6_1, ma6_2) + "_";
-        temp_long += Utils.checkXCutUpY(ma3_1, ma3_2, ma8_1, ma8_2) + "_";
-        temp_shot += Utils.checkXCutDnY(ma3_1, ma3_2, ma8_1, ma8_2) + "_";
+        temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma8_0, ma8_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma8_0, ma8_3) + "_";
 
-        temp_long += Utils.checkXCutUpY(ma5_1, ma5_2, ma6_1, ma6_2) + "_";
-        temp_shot += Utils.checkXCutDnY(ma5_1, ma5_2, ma6_1, ma6_2) + "_";
+        temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma10_0, ma10_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma10_0, ma10_3) + "_";
 
-        temp_long += Utils.checkXCutUpY(ma5_1, ma5_2, ma8_1, ma8_2) + "_";
-        temp_shot += Utils.checkXCutDnY(ma5_1, ma5_2, ma8_1, ma8_2) + "_";
+        temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma8_0, ma8_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma8_0, ma8_3) + "_";
 
         String trend = "";
         trend += "_" + temp_long + "_";
@@ -2988,12 +3016,19 @@ public class Utils {
             return "";
         }
 
+        BigDecimal ma3_1 = calcMA(list, 3, 1);
+        BigDecimal ma6_1 = calcMA(list, 6, 1);
+        BigDecimal ma8_1 = calcMA(list, 8, 1);
+        BigDecimal ma10_1 = calcMA(list, 10, 1);
+
         String result = "";
         if (trend.contains(Utils.TREND_LONG)) {
             if (isRequired368) {
-                if ((ma3_1.compareTo(ma4_1) > 0) && (ma4_1.compareTo(ma5_1) > 0) && (ma5_1.compareTo(ma6_1) > 0)
-                        && (ma6_1.compareTo(ma8_1) > 0)) {
-                    result = Utils.TREND_LONG;
+                if ((ma3_1.compareTo(ma6_1) > 0) && (ma6_1.compareTo(ma8_1) > 0) && (ma8_1.compareTo(ma10_1) > 0)) {
+                    if ((ma3_0.compareTo(ma3_1) > 0) && (ma6_0.compareTo(ma6_1) > 0) && (ma8_0.compareTo(ma8_1) > 0)
+                            && (ma8_0.compareTo(ma10_1) > 0)) {
+                        result = Utils.TREND_LONG;
+                    }
                 }
             } else {
                 result = Utils.TREND_LONG;
@@ -3002,9 +3037,11 @@ public class Utils {
 
         if (trend.contains(Utils.TREND_SHORT)) {
             if (isRequired368) {
-                if ((ma3_1.compareTo(ma4_1) < 0) && (ma4_1.compareTo(ma5_1) < 0) && (ma5_1.compareTo(ma6_1) < 0)
-                        && (ma6_1.compareTo(ma8_1) < 0)) {
-                    result = Utils.TREND_SHORT;
+                if ((ma3_1.compareTo(ma6_1) < 0) && (ma6_1.compareTo(ma8_1) < 0) && (ma8_1.compareTo(ma10_1) < 0)) {
+                    if ((ma3_0.compareTo(ma3_1) < 0) && (ma6_0.compareTo(ma6_1) < 0) && (ma8_0.compareTo(ma8_1) < 0)
+                            && (ma8_0.compareTo(ma10_1) < 0)) {
+                        result = Utils.TREND_SHORT;
+                    }
                 }
             } else {
                 result = Utils.TREND_SHORT;
