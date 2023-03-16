@@ -2947,6 +2947,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
     }
 
+    @SuppressWarnings("unused")
     @Override
     @Transactional
     public String initCryptoTrend(String TIME, String symbol) {
@@ -3146,12 +3147,14 @@ public class BinanceServiceImpl implements BinanceService {
 
             //TODO saveMt5Data
             required_update_bars_csv = false;
-            if (elapsedMinutes > 6) {
+            if (elapsedMinutes > 10) {
                 required_update_bars_csv = true;
                 Utils.logWritelnDraft(
                         "Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! \n");
-            }
 
+                String EVENT_ID = EVENT_PUMP + "_UPDATE_BARS_CSV_" + Utils.getCurrentYyyyMmDd_HH();
+                sendMsgPerHour(EVENT_ID, "Update_Bars.csv", true);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -3231,7 +3234,6 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.logWritelnReport("(BUY ) " + str_long_suggest.trim());
         Utils.logWritelnReport("(SELL) " + str_shot_suggest.trim());
 
-        //TODO createReport
         String msg_forx = "";
         String msg_futu = "";
         String msg_scap = "";
@@ -3250,6 +3252,7 @@ public class BinanceServiceImpl implements BinanceService {
                     trend_d1 = chart + ":" + Utils.appendSpace(dto_d1.getTrend(), 4);
                 }
 
+                //TODO createReport
                 String log = Utils.createLineForex_Header(dto_h4, dto_h4, trend_d1);
                 log += "\n" + Utils.createLineForex_Body(dto_h4, dto_h4);
                 log += "     " + Utils.appendSpace((note_d1 + " " + dto_h4.getNote()).trim(), 8);
@@ -3340,7 +3343,7 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal bread = Utils.calcMaxBread(list);
         List<BigDecimal> body = Utils.getOpenCloseCandle(list);
 
-        String trend = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+        String trend = Utils.isUptrendByMaIndex(list, 6) ? Utils.TREND_LONG : Utils.TREND_SHORT;
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + CAPITAL_TIME_XXX;
         String date_time = LocalDateTime.now().toString();
@@ -3371,7 +3374,8 @@ public class BinanceServiceImpl implements BinanceService {
                 log += "(H4:" + Utils.appendSpace(trend, 4) + ")   ";
                 log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + "    Note(H4): " + switch_trend;
 
-                // Utils.logWritelnDraft(log);
+                //TODO: scapForex15M
+                Utils.logWritelnDraft(log);
             }
         }
 
@@ -3408,7 +3412,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
 
         String switch_trend_5 = Utils.switchTrendByMa(list, true);
-        String trend = Utils.isUptrendByMaIndex(list, 3) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+        String trend = Utils.isUptrendByMaIndex(list, 6) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_5;
@@ -3448,6 +3452,12 @@ public class BinanceServiceImpl implements BinanceService {
             // log += Utils.createLineForex_Body(entity, entity);
 
             Utils.logWritelnDraft(log);
+
+            //TODO: scapForex15M
+            if (Objects.equals(trend_d1, trend) && Objects.equals(trend_h4, trend)) {
+                String EVENT_ID = EVENT_PUMP + EPIC + Utils.getCurrentYyyyMmDd_HH_Blog2h();
+                sendMsgPerHour(EVENT_ID, "(" + trend + ")" + EPIC, true);
+            }
         }
 
         return trend;
