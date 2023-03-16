@@ -2979,6 +2979,69 @@ public class Utils {
         String temp_long = "";
         String temp_shot = "";
 
+        BigDecimal ma6_0 = calcMA(list, 6, 0);
+        BigDecimal ma6_3 = calcMA(list, 6, 3);
+
+        BigDecimal ma10_0 = calcMA(list, 10, 0);
+        BigDecimal ma10_3 = calcMA(list, 10, 3);
+
+        BigDecimal ma15_0 = calcMA(list, 8, 0);
+        BigDecimal ma15_3 = calcMA(list, 8, 3);
+
+        temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
+
+        temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma15_0, ma15_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma15_0, ma15_3) + "_";
+
+        temp_long += Utils.checkXCutUpY(ma10_0, ma10_3, ma15_0, ma15_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma10_0, ma10_3, ma15_0, ma15_3) + "_";
+
+        String trend = "";
+        trend += "_" + temp_long + "_";
+        trend += "_____";
+        trend += "_" + temp_shot + "_";
+
+        if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHORT)) {
+            return "";
+        }
+
+        if (isBlank(trend.replace("_", ""))) {
+            return "";
+        }
+
+        String result = "";
+        if (trend.contains(Utils.TREND_LONG)) {
+            if (isRequired368 && (ma6_0.compareTo(ma10_0) > 0) && (ma10_0.compareTo(ma15_0) > 0)) {
+                result = Utils.TREND_LONG;
+            } else {
+                result = Utils.TREND_LONG;
+            }
+        }
+
+        if (trend.contains(Utils.TREND_SHORT)) {
+            if (isRequired368 && (ma6_0.compareTo(ma10_0) < 0) && (ma10_0.compareTo(ma15_0) < 0)) {
+                result = Utils.TREND_SHORT;
+            } else {
+                result = Utils.TREND_SHORT;
+            }
+        }
+
+        return result;
+
+    }
+
+    public static String switchTrendByMa36810(List<BtcFutures> list, boolean isRequired368) {
+        if (CollectionUtils.isEmpty(list)) {
+            return "";
+        }
+        if (Utils.getStringValue(list.get(0).getCurrPrice()).contains("E")) {
+            return "";
+        }
+
+        String temp_long = "";
+        String temp_shot = "";
+
         BigDecimal ma3_0 = calcMA(list, 3, 0);
         BigDecimal ma3_3 = calcMA(list, 3, 3);
 
@@ -3021,34 +3084,44 @@ public class Utils {
         BigDecimal ma8_1 = calcMA(list, 8, 1);
         BigDecimal ma10_1 = calcMA(list, 10, 1);
 
+        BigDecimal ma3_2 = calcMA(list, 3, 2);
+        BigDecimal ma6_2 = calcMA(list, 6, 2);
+        BigDecimal ma8_2 = calcMA(list, 8, 2);
+        BigDecimal ma10_2 = calcMA(list, 10, 2);
+
         String result = "";
         if (trend.contains(Utils.TREND_LONG)) {
-            if (isRequired368) {
-                if ((ma3_1.compareTo(ma6_1) > 0) && (ma6_1.compareTo(ma8_1) > 0) && (ma8_1.compareTo(ma10_1) > 0)) {
-                    if ((ma3_0.compareTo(ma3_1) > 0) && (ma6_0.compareTo(ma6_1) > 0) && (ma8_0.compareTo(ma8_1) > 0)
-                            && (ma8_0.compareTo(ma10_1) > 0)) {
+            if ((ma3_1.compareTo(ma3_2) > 0) && (ma6_1.compareTo(ma6_2) > 0) && (ma8_1.compareTo(ma8_2) > 0)
+                    && (ma10_1.compareTo(ma10_2) > 0)) {
+
+                if (isRequired368) {
+                    if ((ma3_0.compareTo(ma6_0) > 0) && (ma6_0.compareTo(ma8_0) > 0) && (ma8_0.compareTo(ma10_0) > 0)) {
+
                         result = Utils.TREND_LONG;
+
                     }
+                } else {
+                    result = Utils.TREND_LONG;
                 }
-            } else {
-                result = Utils.TREND_LONG;
+
             }
         }
 
         if (trend.contains(Utils.TREND_SHORT)) {
-            if (isRequired368) {
-                if ((ma3_1.compareTo(ma6_1) < 0) && (ma6_1.compareTo(ma8_1) < 0) && (ma8_1.compareTo(ma10_1) < 0)) {
-                    if ((ma3_0.compareTo(ma3_1) < 0) && (ma6_0.compareTo(ma6_1) < 0) && (ma8_0.compareTo(ma8_1) < 0)
-                            && (ma8_0.compareTo(ma10_1) < 0)) {
+            if ((ma3_1.compareTo(ma3_2) < 0) && (ma6_1.compareTo(ma6_2) < 0) && (ma8_1.compareTo(ma8_2) < 0)
+                    && (ma10_1.compareTo(ma10_2) < 0)) {
+                if (isRequired368) {
+                    if ((ma3_0.compareTo(ma6_0) < 0) && (ma6_0.compareTo(ma8_0) < 0) && (ma8_0.compareTo(ma10_0) < 0)) {
                         result = Utils.TREND_SHORT;
                     }
+                } else {
+                    result = Utils.TREND_SHORT;
                 }
-            } else {
-                result = Utils.TREND_SHORT;
             }
         }
 
         return result;
+
     }
 
     public static boolean checkClosePriceAndMa_StartFindLong(List<BtcFutures> list) {
@@ -3083,7 +3156,7 @@ public class Utils {
             return is0_1_uptrend;
         }
 
-        if (list.get(0).getId().contains("_1d_")) {
+        if (list.get(0).getId().contains("_1d_") || list.get(0).getId().contains("_4h_")) {
             return is0_1_uptrend;
         }
 
@@ -3153,7 +3226,7 @@ public class Utils {
 
             String buffer = Utils.appendSpace("", 14);
             buffer += Utils.calc_BUF_LO_HI_BUF_Forex(false, trend, EPIC, dto_entry, dto_sl);
-            log = buffer;//Utils.appendSpace(buffer, 170);
+            log = buffer;
         }
 
         return log;
@@ -3324,10 +3397,12 @@ public class Utils {
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
         BigDecimal sl_long = Utils.getBigDecimal(dto_sl_d1.getLow_price());
         BigDecimal sl_shot = Utils.getBigDecimal(dto_sl_d1.getHigh_price());
-        BigDecimal tp_long = Utils.getBigDecimal(dto_entry_h4.getEnd_body_price());
-        BigDecimal tp_shot = Utils.getBigDecimal(dto_entry_h4.getStr_body_price());
+
         BigDecimal en_long = Utils.getBigDecimal(dto_entry_h4.getStr_body_price());
         BigDecimal en_shot = Utils.getBigDecimal(dto_entry_h4.getEnd_body_price());
+
+        BigDecimal tp_long = Utils.getBigDecimal(dto_entry_h4.getEnd_body_price());
+        BigDecimal tp_shot = Utils.getBigDecimal(dto_entry_h4.getStr_body_price());
 
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 8);
         String str_long = calc_BUF_Long_Forex(false, EPIC, en_long, sl_long, tp_long);
@@ -3347,7 +3422,11 @@ public class Utils {
             risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
 
+        BigDecimal entry_calc = en_long.add(tp_long);
+        entry_calc = entry_calc.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+
         MoneyAtRiskResponse money_long = new MoneyAtRiskResponse(EPIC, risk, en_long, sl_long, tp_long);
+
         BigDecimal lot_long = money_long.calcLot();
         BigDecimal pip_long = en_long.subtract(sl_long);
         String temp = "";
@@ -3368,8 +3447,12 @@ public class Utils {
             risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
 
+        BigDecimal entry_calc = en_shot.add(tp_shot);
+        entry_calc = entry_calc.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+
         BigDecimal pip_shot = sl_shot.subtract(en_shot);
         MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, en_shot, sl_shot, tp_shot);
+
         BigDecimal lot_shot = money_short.calcLot();
         String temp = "";
         temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)) + " ", 10);

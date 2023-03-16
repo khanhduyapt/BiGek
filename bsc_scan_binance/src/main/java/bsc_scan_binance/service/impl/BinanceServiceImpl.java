@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -176,6 +177,7 @@ public class BinanceServiceImpl implements BinanceService {
     private static final String CSS_PRICE_WHITE = "text-white bg-info rounded-lg px-1";
     private static final String CSS_MIN28_DAYS = "text-white rounded-lg bg-info px-1";
 
+    private boolean required_update_bars_csv = false;
     @SuppressWarnings("unused")
     private String pre_monitorBtcPrice_mm = "";
     List<String> monitorBtcPrice_results = new ArrayList<String>();
@@ -3138,6 +3140,18 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnDraft(log);
             Utils.logWritelnDraft("\n\n\n");
 
+            LocalDateTime created_time = attr.lastModifiedTime().toInstant().atZone(ZoneId.systemDefault())
+                    .toLocalDateTime();
+            long elapsedMinutes = Duration.between(created_time, LocalDateTime.now()).toMinutes();
+
+            //TODO saveMt5Data
+            required_update_bars_csv = false;
+            if (elapsedMinutes > 6) {
+                required_update_bars_csv = true;
+                Utils.logWritelnDraft(
+                        "Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! \n");
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -3194,6 +3208,7 @@ public class BinanceServiceImpl implements BinanceService {
     @SuppressWarnings("unused")
     @Override
     public void createReport() {
+
         File myObj = new File(Utils.getForexLogFile());
         myObj.delete();
         // --------------------------------------------------------------------------
@@ -3216,10 +3231,10 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.logWritelnReport("(BUY ) " + str_long_suggest.trim());
         Utils.logWritelnReport("(SELL) " + str_shot_suggest.trim());
 
+        //TODO createReport
         String msg_forx = "";
         String msg_futu = "";
         String msg_scap = "";
-
         List<Orders> list_all = ordersRepository.getTrend_H4List();
         if (!CollectionUtils.isEmpty(list_all)) {
             Utils.logWritelnReport("");
@@ -3369,8 +3384,11 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     @Transactional
-    @SuppressWarnings("unused")
     public String scapForex15M(String EPIC) {
+        if (required_update_bars_csv) {
+            return "";
+        }
+
         if (!isReloadPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_5)) {
             return "";
         }
@@ -3381,6 +3399,11 @@ public class BinanceServiceImpl implements BinanceService {
             trend_d1 = dto_d1.getTrend();
         }
 
+        String trend_h4 = "";
+        Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+        if (Objects.nonNull(dto_h4)) {
+            trend_h4 = dto_h4.getTrend();
+        }
         // ----------------------------TREND------------------------
         List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
 
@@ -3404,14 +3427,11 @@ public class BinanceServiceImpl implements BinanceService {
         ordersRepository.save(entity);
 
         // -----------------------------LOG---------------------------
+        // && Objects.equals(trend_d1, trend)
         if (Utils.isNotBlank(switch_trend_5)) {
-            String trend_ma50 = "Ma" + list.size() + ":"
-                    + Utils.appendSpace(
-                            Utils.isUptrendByMaIndex(list, list.size()) ? Utils.TREND_LONG : Utils.TREND_SHORT, 4);
-
             String log = Utils.appendSpace(EPIC, 15);
             log += "(D1:" + Utils.appendSpace(trend_d1, 4) + ")   ";
-            //log += "(H4:" + Utils.appendSpace(trend_h4, 4) + ")   ";
+            log += "(H4:" + Utils.appendSpace(trend_h4, 4) + ")   ";
             log += "(05:" + Utils.appendSpace(trend, 4) + ")   ";
 
             String vsMa = "";
