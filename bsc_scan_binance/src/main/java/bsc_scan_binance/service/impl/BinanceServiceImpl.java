@@ -3254,6 +3254,52 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.writelnLogFooter_Forex();
         Utils.writelnLogFooter_Forex();
         Utils.writelnLogFooter_Forex();
+
+        List<Orders> list_d1 = ordersRepository.getD1List();
+        if (!CollectionUtils.isEmpty(list_d1)) {
+            Utils.logWritelnReport("");
+            for (Orders dto_d1 : list_d1) {
+                String EPIC = Utils.getEpicFromId(dto_d1.getId());
+
+                String log = Utils.createLineForex_Header(dto_d1, dto_d1, dto_d1.getNote());
+                log += Utils.createLineForex_Body(dto_d1, dto_d1);
+
+                if (dto_d1.getNote().contains(Utils.TREND_LONG)) {
+                    log = log.replace("   (BUY )", "***(BUY )");
+                }
+                if (dto_d1.getNote().contains(Utils.TREND_SHORT)) {
+                    log = log.replace("   (SELL)", "***(SELL)");
+                }
+
+                Utils.logWritelnReport(log);
+            }
+        }
+        Utils.writelnLogFooter_Forex();
+        Utils.writelnLogFooter_Forex();
+        Utils.writelnLogFooter_Forex();
+
+        list_d1 = ordersRepository.getD1List_Others();
+        if (!CollectionUtils.isEmpty(list_d1)) {
+            Utils.logWritelnReport("");
+            for (Orders dto_d1 : list_d1) {
+                String EPIC = Utils.getEpicFromId(dto_d1.getId());
+
+                String log = Utils.createLineForex_Header(dto_d1, dto_d1, dto_d1.getNote());
+                log += Utils.createLineForex_Body(dto_d1, dto_d1);
+
+                if (dto_d1.getTrend().contains(Utils.TREND_LONG)) {
+                    log = log.replace("   (BUY )", "***(BUY )");
+                }
+                if (dto_d1.getTrend().contains(Utils.TREND_SHORT)) {
+                    log = log.replace("   (SELL)", "***(SELL)");
+                }
+
+                Utils.logWritelnReport(log);
+            }
+        }
+        Utils.writelnLogFooter_Forex();
+        Utils.writelnLogFooter_Forex();
+        Utils.writelnLogFooter_Forex();
         // ==================================================================================
         // ==================================================================================
         // ==================================================================================
@@ -3320,6 +3366,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
+        String log = Utils.appendSpace(EPIC, 15);
 
         String switch_trend = Utils.switchTrend(list);
         BigDecimal bread = Utils.calcMaxBread(list);
@@ -3337,11 +3384,12 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
 
+        if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XXX)) {
+            log += "(D1:" + Utils.appendSpace(trend, 4) + ")   ";
+        }
         if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
-            String trend_d1 = "";
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
             if (Objects.nonNull(dto_d1)) {
-                trend_d1 = dto_d1.getTrend();
 
                 BigDecimal curr_price = list.get(0).getCurrPrice();
                 if (curr_price.compareTo((dto_d1.getStr_body_price())) < 0) {
@@ -3349,17 +3397,17 @@ public class BinanceServiceImpl implements BinanceService {
                 } else if (curr_price.compareTo(dto_d1.getEnd_body_price()) > 0) {
                     switch_trend += Utils.TEXT_MAX_DAY_AREA;
                 }
-            }
 
-            if (Utils.isNotBlank(switch_trend)) {
-                String log = Utils.appendSpace(EPIC, 15);
-                log += "(D1:" + Utils.appendSpace(trend_d1, 4) + ")   ";
+                log += "(D1:" + Utils.appendSpace(dto_d1.getTrend(), 4) + ")   ";
                 log += "(H4:" + Utils.appendSpace(trend, 4) + ")   ";
-                log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + "    Note(H4): " + switch_trend;
-
-                //TODO: initForexTrend
-                Utils.logWritelnDraft(log);
             }
+        }
+
+        //TODO: initForexTrend
+        if (Utils.isNotBlank(switch_trend)) {
+            log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + "    Note: " + switch_trend;
+
+            Utils.logWritelnDraft(log);
         }
 
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), str_body_price,

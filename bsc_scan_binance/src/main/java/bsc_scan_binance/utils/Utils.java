@@ -3301,8 +3301,8 @@ public class Utils {
         header += Utils.appendSpace(trend_d1, 8) + "   ";
         header += chart_h4 + ":" + Utils.appendSpace(dto_entry.getTrend(), 4) + "    ";
         header += Utils.appendSpace(EPIC, 12);
-        header += Utils.appendSpace("   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 68), 111, "-");
-        header = Utils.appendSpace(header, LENGTH - 11, "-");
+        header += Utils.appendSpace(Utils.getCapitalLink(EPIC), 68);
+        //header = Utils.appendSpace(header, LENGTH - 11, "-");
 
         return header;
     }

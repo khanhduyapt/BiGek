@@ -123,13 +123,20 @@ public class BscScanBinanceApplication {
                         if (Utils.isBusinessTime_6h_to_17h()) {
                             if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
                                 for (int index = 0; index < forex_size; index++) {
-                                    sleepWhenExceptionTimeOut(binance_service);
+                                    String EPIC = capital_list.get(index);
+
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
+
+                                }
+
+                                for (int index = 0; index < forex_size; index++) {
                                     String EPIC = capital_list.get(index);
                                     checkCapital(binance_service, EPIC, index + 1, forex_size);
+
                                 }
+
                                 // Utils.logWritelnDraft("");
                                 for (int index = 0; index < forex_size; index++) {
-                                    sleepWhenExceptionTimeOut(binance_service);
                                     String EPIC = capital_list.get(index);
                                     binance_service.scapForex15M(EPIC);
                                 }
@@ -142,9 +149,10 @@ public class BscScanBinanceApplication {
                             // checkCrypto(binance_service, SYMBOL, index_crypto, total);
                         }
                         // ---------------------------------------------------------
-                        if (isReloadAfter((Utils.MINUTES_OF_15M), "CREATE_REPORT")) {
+                        if (isReloadAfter((Utils.MINUTES_OF_1H), "CREATE_REPORT")) {
                             binance_service.createReport();
                         }
+
                         wait(SLEEP_MINISECONDS);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -193,14 +201,8 @@ public class BscScanBinanceApplication {
     }
 
     public static void checkCapital(BinanceService binance_service, String EPIC, int index, int total) {
-        String trend_d1 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
-
         String trend_h4 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-
-        String init = "";
-        init += "D1:" + Utils.appendSpace(trend_d1, 6);
-        init += "H4:" + Utils.appendSpace(trend_h4, 6);
-
+        String init = "H4:" + Utils.appendSpace(trend_h4, 6);
         String str_index = Utils.appendLeft(String.valueOf(index), 3) + "/" + Utils.appendLeft(String.valueOf(total), 3)
                 + "   ";
         System.out.println(Utils.getTimeHHmm() + str_index + Utils.appendSpace(EPIC, 15) + init);
