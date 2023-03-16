@@ -2646,8 +2646,8 @@ public class BinanceServiceImpl implements BinanceService {
             time = Utils.MINUTES_OF_1H;
         } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_15)) {
             time = Utils.MINUTES_OF_15M;
-        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_5)) {
-            time = Utils.MINUTES_OF_5M;
+            //} else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_5)) {
+            //    time = Utils.MINUTES_OF_5M;
         }
 
         if (time <= elapsedMinutes) {
@@ -3054,7 +3054,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public void saveMt5Data() {
-        if (!isReloadPrepareOrderTrend("MT5_DATA", Utils.CAPITAL_TIME_MINUTE_5)) {
+        if (!isReloadPrepareOrderTrend("MT5_DATA", Utils.CAPITAL_TIME_MINUTE_15)) {
             return;
         }
 
@@ -3072,6 +3072,8 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnDraft("[saveMt5Data_FileNotFound]: " + mt5_data_file);
                 return;
             }
+
+            mt5DataCandleRepository.deleteAll();
 
             List<String> epics_time = new ArrayList<String>();
             List<Mt5DataCandle> list = new ArrayList<Mt5DataCandle>();
@@ -3110,18 +3112,18 @@ public class BinanceServiceImpl implements BinanceService {
             fin.close();
             reader.close();
             // ------------------------------------------------------------------------
-            for (Mt5DataCandle dto : list_delete) {
-                List<Mt5DataCandle> temp = mt5DataCandleRepository.findAllByIdEpicAndIdCandleOrderByIdCandleTimeDesc(
-                        dto.getId().getEpic(), dto.getId().getCandle());
-
-                if (!CollectionUtils.isEmpty(temp)) {
-                    mt5DataCandleRepository.deleteAll(temp);
-                }
-            }
+            //for (Mt5DataCandle dto : list_delete) {
+            //    List<Mt5DataCandle> temp = mt5DataCandleRepository.findAllByIdEpicAndIdCandleOrderByIdCandleTimeDesc(
+            //            dto.getId().getEpic(), dto.getId().getCandle());
+            //
+            //    if (!CollectionUtils.isEmpty(temp)) {
+            //        mt5DataCandleRepository.deleteAll(temp);
+            //    }
+            //}
             //mt5DataCandleRepository.deleteAll();
             mt5DataCandleRepository.saveAll(list);
 
-            String orderId = "MT5_DATA_" + Utils.CAPITAL_TIME_MINUTE_5;
+            String orderId = "MT5_DATA_" + Utils.CAPITAL_TIME_MINUTE_15;
             String date_time = LocalDateTime.now().toString();
             Orders entity = new Orders(orderId, date_time, "", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
                     BigDecimal.ZERO, BigDecimal.ZERO, "");
@@ -3147,7 +3149,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             //TODO saveMt5Data
             required_update_bars_csv = false;
-            if (elapsedMinutes > 10) {
+            if (elapsedMinutes > Utils.MINUTES_OF_15M) {
                 required_update_bars_csv = true;
                 Utils.logWritelnDraft(
                         "Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! \n");
@@ -3162,47 +3164,28 @@ public class BinanceServiceImpl implements BinanceService {
 
     private List<BtcFutures> getCapitalData(String EPIC, String CAPITAL_TIME_XXX) {
         List<BtcFutures> list = new ArrayList<BtcFutures>();
-        try {
-            List<Mt5DataCandle> list_mt5 = mt5DataCandleRepository
-                    .findAllByIdEpicAndIdCandleOrderByIdCandleTimeDesc(EPIC, CAPITAL_TIME_XXX);
-            int id = 0;
-            for (Mt5DataCandle dto : list_mt5) {
-                boolean uptrend = (dto.getOpe_price().compareTo(dto.getClo_price()) < 0) ? true : false;
 
-                String strid = Utils.getStringValue(id);
-                if (strid.length() < 2) {
-                    strid = "0" + strid;
-                }
-                strid = dto.getId().getEpic() + Utils.getChartNameCapital_(dto.getId().getCandle()) + strid;
-                BigDecimal currPrice = dto.getOpe_price().add(dto.getClo_price()).add(dto.getLow_price())
-                        .add(dto.getHig_price());
-                currPrice = currPrice.divide(BigDecimal.valueOf(4), 10, RoundingMode.CEILING);
+        List<Mt5DataCandle> list_mt5 = mt5DataCandleRepository
+                .findAllByIdEpicAndIdCandleOrderByIdCandleTimeDesc(EPIC, CAPITAL_TIME_XXX);
+        int id = 0;
+        for (Mt5DataCandle dto : list_mt5) {
+            boolean uptrend = (dto.getOpe_price().compareTo(dto.getClo_price()) < 0) ? true : false;
 
-                BtcFutures entity = new BtcFutures(strid, currPrice, dto.getLow_price(), dto.getHig_price(),
-                        dto.getOpe_price(), dto.getClo_price(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-                        BigDecimal.ZERO, uptrend);
-                list.add(entity);
-
-                id += 1;
+            String strid = Utils.getStringValue(id);
+            if (strid.length() < 2) {
+                strid = "0" + strid;
             }
-            if (list.size() > 0) {
-                return list;
+            strid = dto.getId().getEpic() + Utils.getChartNameCapital_(dto.getId().getCandle()) + strid;
+            BigDecimal currPrice = dto.getOpe_price().add(dto.getClo_price()).add(dto.getLow_price())
+                    .add(dto.getHig_price());
+            currPrice = currPrice.divide(BigDecimal.valueOf(4), 10, RoundingMode.CEILING);
 
-            } else {
-                boolean debug = true;
-                if (debug) {
-                    Utils.logWritelnDraft("[mt5_data_candle] NotFound: " + EPIC + " (" + CAPITAL_TIME_XXX + ")");
-                    return list;
-                }
-            }
-        } catch (Exception e) {
-            String result = "initForexTrend(" + EPIC + ") " + e.getMessage();
-            Utils.logWritelnDraft(result);
+            BtcFutures entity = new BtcFutures(strid, currPrice, dto.getLow_price(), dto.getHig_price(),
+                    dto.getOpe_price(), dto.getClo_price(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+                    BigDecimal.ZERO, uptrend);
+            list.add(entity);
 
-            Orders entity_time_out = new Orders(Utils.CONNECTION_TIMED_OUT_ID, Utils.TEXT_CONNECTION_TIMED_OUT);
-            ordersRepository.save(entity_time_out);
-
-            return new ArrayList<BtcFutures>();
+            id += 1;
         }
 
         return list;
@@ -3328,7 +3311,6 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     @Transactional
-    @SuppressWarnings("unused")
     public String initForexTrend(String EPIC, String CAPITAL_TIME_XXX) {
         if (!isReloadPrepareOrderTrend(EPIC, CAPITAL_TIME_XXX)) {
             return "";
@@ -3343,7 +3325,7 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal bread = Utils.calcMaxBread(list);
         List<BigDecimal> body = Utils.getOpenCloseCandle(list);
 
-        String trend = Utils.isUptrendByMaIndex(list, 6) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+        String trend = Utils.isUptrendByMaIndex(list) ? Utils.TREND_LONG : Utils.TREND_SHORT;
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + CAPITAL_TIME_XXX;
         String date_time = LocalDateTime.now().toString();
@@ -3393,7 +3375,7 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        if (!isReloadPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_5)) {
+        if (!isReloadPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_15)) {
             return "";
         }
 
@@ -3409,13 +3391,16 @@ public class BinanceServiceImpl implements BinanceService {
             trend_h4 = dto_h4.getTrend();
         }
         // ----------------------------TREND------------------------
-        List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
+        List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+        if (CollectionUtils.isEmpty(list)) {
+            return "";
+        }
 
         String switch_trend_5 = Utils.switchTrendByMa(list, true);
-        String trend = Utils.isUptrendByMaIndex(list, 6) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+        String trend = Utils.isUptrendByMaIndex(list) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
         // -----------------------------DATABASE---------------------------
-        String orderId = EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_5;
+        String orderId = EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15;
         String date_time = LocalDateTime.now().toString();
 
         BigDecimal bread = Utils.calcMaxBread(list);
@@ -3432,11 +3417,10 @@ public class BinanceServiceImpl implements BinanceService {
 
         // -----------------------------LOG---------------------------
         // && Objects.equals(trend_d1, trend)
-        if (Utils.isNotBlank(switch_trend_5)) {
+        if (Utils.isNotBlank(switch_trend_5) && Objects.equals(trend_d1, trend)) {
             String log = Utils.appendSpace(EPIC, 15);
             log += "(D1:" + Utils.appendSpace(trend_d1, 4) + ")   ";
-            log += "(H4:" + Utils.appendSpace(trend_h4, 4) + ")   ";
-            log += "(05:" + Utils.appendSpace(trend, 4) + ")   ";
+            log += "(15:" + Utils.appendSpace(trend, 4) + ")   ";
 
             String vsMa = "";
             boolean isAboveMa50 = Utils.isAboveMALine(list, list.size(), 1);
@@ -3455,8 +3439,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             //TODO: scapForex15M
             if (Objects.equals(trend_d1, trend) && Objects.equals(trend_h4, trend)) {
-                String EVENT_ID = EVENT_PUMP + EPIC + Utils.getCurrentYyyyMmDd_HH_Blog2h();
-                sendMsgPerHour(EVENT_ID, "(" + trend + ")" + EPIC, true);
+                //String EVENT_ID = EVENT_PUMP + EPIC + Utils.getCurrentYyyyMmDd_HH_Blog2h();
+                //sendMsgPerHour(EVENT_ID, "(" + trend + ")" + EPIC, true);
             }
         }
 

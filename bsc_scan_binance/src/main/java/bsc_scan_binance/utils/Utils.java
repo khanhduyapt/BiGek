@@ -91,9 +91,7 @@ public class Utils {
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
-    public static final String TEXT_TREND_No1_MA34568 = "(Ma34568)  ";
-    public static final String TEXT_TREND_No2_ADJUSTING = "(Adjusting)";
-    public static final String TEXT_TREND_No3_REVERSAL = "(Reversal) ";
+    public static final String TEXT_TREND_No1_MA34568 = "(Ma)  ";
 
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
@@ -118,7 +116,7 @@ public class Utils {
     public static String CST = "";
     public static String X_SECURITY_TOKEN = "";
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
-    public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
+    //public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
     public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_HOUR = "HOUR";
     public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
@@ -135,7 +133,7 @@ public class Utils {
     public static final long MINUTES_OF_1H = 60;
     public static final long MINUTES_OF_4H = 60;
     public static final long MINUTES_OF_15M = 15;
-    public static final long MINUTES_OF_5M = 5;
+    //public static final long MINUTES_OF_5M = 15;
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
@@ -154,11 +152,9 @@ public class Utils {
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK",
     public static final List<String> EPICS_FOREXS = Arrays.asList(
-    //"AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF",
-    //"CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD",
-    //"GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD",
-    //"NZDCAD", "NZDCHF", "NZDJPY"
-    );
+            "GER30", "FRA40", "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD",
+            "EURCHF", "EURGBP", "EURJPY", "EURNZD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD",
+            "NZDCHF", "NZDJPY");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
@@ -605,9 +601,9 @@ public class Utils {
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE)) {
         // return "_1m_";
         // }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
-            return "_5m_";
-        }
+        //if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
+        //     return "_5m_";
+        //}
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
             return "_15m_";
         }
@@ -634,9 +630,9 @@ public class Utils {
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE)) {
         // return "(1m)";
         // }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
-            return "(05)";
-        }
+        //if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
+        //    return "(05)";
+        //}
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
             return "(15)";
         }
@@ -2112,8 +2108,8 @@ public class Utils {
 
             if (symbol.contains(CAPITAL_TIME_MINUTE_15)) {
                 result = "(15)";
-            } else if (symbol.contains(CAPITAL_TIME_MINUTE_5)) {
-                result = "(05)";
+                //} else if (symbol.contains(CAPITAL_TIME_MINUTE_5)) {
+                //    result = "(05)";
             } else if (symbol.contains(CAPITAL_TIME_HOUR_4)) {
                 result = "(H4)";
             } else if (symbol.contains(CAPITAL_TIME_HOUR)) {
@@ -2948,26 +2944,6 @@ public class Utils {
         return "";
     }
 
-    public static String checkTrendReversal(List<BtcFutures> list) {
-        if (CollectionUtils.isEmpty(list)) {
-            return "";
-        }
-
-        BigDecimal ma3_1 = calcMA(list, 3, 1);
-        BigDecimal ma3_2 = calcMA(list, 3, 2);
-        BigDecimal ma3_3 = calcMA(list, 3, 3);
-
-        if ((ma3_1.compareTo(ma3_2) > 0) && (ma3_3.compareTo(ma3_2) > 0)) {
-            return TEXT_TREND_No3_REVERSAL;
-        }
-
-        if ((ma3_1.compareTo(ma3_2) < 0) && (ma3_3.compareTo(ma3_2) < 0)) {
-            return TEXT_TREND_No3_REVERSAL;
-        }
-
-        return "";
-    }
-
     public static String switchTrendByMa(List<BtcFutures> list, boolean isRequired368) {
         if (CollectionUtils.isEmpty(list)) {
             return "";
@@ -2985,8 +2961,8 @@ public class Utils {
         BigDecimal ma10_0 = calcMA(list, 10, 0);
         BigDecimal ma10_3 = calcMA(list, 10, 3);
 
-        BigDecimal ma15_0 = calcMA(list, 8, 0);
-        BigDecimal ma15_3 = calcMA(list, 8, 3);
+        BigDecimal ma15_0 = calcMA(list, 15, 0);
+        BigDecimal ma15_3 = calcMA(list, 15, 3);
 
         temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
@@ -3028,10 +3004,10 @@ public class Utils {
         }
 
         return result;
-
     }
 
-    public static String switchTrendByMa36810(List<BtcFutures> list, boolean isRequired368) {
+    @SuppressWarnings("unused")
+    private static String switchTrendByMa36810(List<BtcFutures> list, boolean isRequired368) {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
@@ -3145,34 +3121,13 @@ public class Utils {
         return false;
     }
 
-    public static boolean isUptrendByMaIndex(List<BtcFutures> list, int maIndex) {
+    public static boolean isUptrendByMaIndex(List<BtcFutures> list) {
         if (CollectionUtils.isEmpty(list)) {
             return false;
         }
 
-        boolean is0_1_uptrend = isUptrendByMa(list, maIndex, 0, 1);
-        boolean is1_2_uptrend = isUptrendByMa(list, maIndex, 1, 2);
-        if (is0_1_uptrend == is1_2_uptrend) {
-            return is0_1_uptrend;
-        }
-
-        if (list.get(0).getId().contains("_1d_") || list.get(0).getId().contains("_4h_")) {
-            return is0_1_uptrend;
-        }
-
-        is0_1_uptrend = isUptrendByMa(list, maIndex * 2, 0, 1);
-        is1_2_uptrend = isUptrendByMa(list, maIndex * 2, 1, 2);
-        if (is0_1_uptrend == is1_2_uptrend) {
-            return is0_1_uptrend;
-        }
-
-        is0_1_uptrend = isUptrendByMa(list, maIndex * 4, 0, 1);
-        is1_2_uptrend = isUptrendByMa(list, maIndex * 4, 1, 2);
-        if (is0_1_uptrend == is1_2_uptrend) {
-            return is0_1_uptrend;
-        }
-
-        return is1_2_uptrend;
+        int maIndex = 6;
+        return isUptrendByMa(list, maIndex, 0, 1);
     }
 
     private static boolean isUptrendByMa(List<BtcFutures> list, int maIndex, int str, int end) {
@@ -3205,7 +3160,7 @@ public class Utils {
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_15, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_5, "");
+        //EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_5, "");
         EPIC = EPIC.replace("_", "");
 
         return EPIC;
@@ -3289,7 +3244,7 @@ public class Utils {
         }
         String switch_trend = Utils.switchTrendByMa(list, true);
         if (Utils.isNotBlank(switch_trend)) {
-            trend += isUptrendByMaIndex(list, 3) ? TREND_LONG : TREND_SHORT;
+            trend += isUptrendByMaIndex(list) ? TREND_LONG : TREND_SHORT;
             trend += Utils.TEXT_TREND_No1_MA34568;
         } else {
             switch_trend = Utils.switchTrendByMa(list, false);

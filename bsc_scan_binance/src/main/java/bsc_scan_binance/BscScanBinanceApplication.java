@@ -127,7 +127,7 @@ public class BscScanBinanceApplication {
                                     String EPIC = capital_list.get(index);
                                     checkCapital(binance_service, EPIC, index + 1, forex_size);
                                 }
-
+                                Utils.logWritelnDraft("");
                                 for (int index = 0; index < forex_size; index++) {
                                     sleepWhenExceptionTimeOut(binance_service);
                                     String EPIC = capital_list.get(index);
