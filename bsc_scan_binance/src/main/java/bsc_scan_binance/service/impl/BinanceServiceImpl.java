@@ -3481,10 +3481,8 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String note_h4 = "";
-        String trend_h4 = "";
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
         if (Objects.nonNull(dto_h4)) {
-            trend_h4 = dto_h4.getTrend();
             if (curr_price.compareTo((dto_h4.getStr_body_price())) < 0) {
                 note_h4 += "H4:" + Utils.TEXT_MIN_DAY_AREA;
             } else if (curr_price.compareTo(dto_h4.getEnd_body_price()) > 0) {
@@ -3493,11 +3491,12 @@ public class BinanceServiceImpl implements BinanceService {
             note_h4 += dto_h4.getNote();
         }
 
+        String result = "";
         // TODO: scapForex15M
-        if (Utils.isNotBlank(switch_trend) && (Objects.equals(trend_d1, trend) || Objects.equals(trend_h4, trend))) {
+        if (Utils.isNotBlank(switch_trend)) {
             String log = Utils.appendSpace(EPIC, 15);
             log += "(D1:" + Utils.appendSpace(trend_d1, 4) + ")   ";
-            log += "(15:" + Utils.appendSpace(trend, 4) + ")   ";
+            log += "(05:" + Utils.appendSpace(switch_trend, 4) + ")   ";
 
             String vsMa = "";
             boolean isAboveMa50 = Utils.isAboveMALine(list, list.size(), 1);
@@ -3521,14 +3520,13 @@ public class BinanceServiceImpl implements BinanceService {
 
             Utils.logWritelnDraft(log);
 
-            //String EVENT_ID = EVENT_PUMP + "_FX_15M_" + EPIC + Utils.getCurrentYyyyMmDd_HH();
-            //if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
-            //    fundingHistoryRepository
-            //            .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
-            //}
+            //String EVENT_ID = EVENT_PUMP + "_FX_15M_" + EPIC + trend + Utils.getCurrentYyyyMmDd_HH();
+            //sendMsgPerHour(EVENT_ID, "(FX_15M)" + EPIC + "(" + trend + ")", true);
+
+            result = EPIC;
         }
 
-        return switch_trend;
+        return result;
     }
 
 }

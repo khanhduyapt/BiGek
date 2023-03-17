@@ -132,7 +132,7 @@ public class Utils {
     public static final long MINUTES_OF_D = 60;// 600;
     public static final long MINUTES_OF_1H = 60;
     public static final long MINUTES_OF_4H = 60;
-    public static final long MINUTES_OF_15M = 15;
+    public static final long MINUTES_OF_15M = 5;
     // public static final long MINUTES_OF_5M = 15;
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
@@ -2955,23 +2955,32 @@ public class Utils {
         String temp_long = "";
         String temp_shot = "";
 
+        BigDecimal ma3_0 = calcMA(list, 3, 0);
+        BigDecimal ma3_3 = calcMA(list, 3, 3);
+
+        BigDecimal ma5_0 = calcMA(list, 5, 0);
+        BigDecimal ma5_3 = calcMA(list, 5, 3);
+
         BigDecimal ma6_0 = calcMA(list, 6, 0);
         BigDecimal ma6_3 = calcMA(list, 6, 3);
 
-        BigDecimal ma1x_0 = calcMA(list, 15, 0);
-        BigDecimal ma1x_3 = calcMA(list, 15, 3);
-
-        BigDecimal ma2x_0 = calcMA(list, 20, 0);
-        BigDecimal ma2x_3 = calcMA(list, 20, 3);
+        BigDecimal ma8_0 = calcMA(list, 8, 0);
+        BigDecimal ma8_3 = calcMA(list, 8, 3);
 
         BigDecimal ma5x_0 = calcMA(list, 50, 0);
         BigDecimal ma5x_3 = calcMA(list, 50, 3);
 
+        temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma5x_0, ma5x_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma5x_0, ma5x_3) + "_";
+
+        temp_long += Utils.checkXCutUpY(ma5_0, ma5_3, ma5x_0, ma5x_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma5_0, ma5_3, ma5x_0, ma5x_3) + "_";
+
         temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma5x_0, ma5x_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma5x_0, ma5x_3) + "_";
 
-        temp_long += Utils.checkXCutUpY(ma1x_0, ma1x_3, ma2x_0, ma2x_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma1x_0, ma1x_3, ma2x_0, ma2x_3) + "_";
+        temp_long += Utils.checkXCutUpY(ma8_0, ma8_3, ma5x_0, ma5x_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma8_0, ma8_3, ma5x_0, ma5x_3) + "_";
 
         String trend = "";
         trend += "_" + temp_long + "_";
