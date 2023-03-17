@@ -2733,8 +2733,8 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> candidate_long_list = new ArrayList<String>();
         List<String> candidate_shot_list = new ArrayList<String>();
         List<String> capital_list = new ArrayList<String>();
-        capital_list.addAll(Utils.EPICS_SCAP);
-        capital_list.addAll(Utils.EPICS_FOREXS);
+        capital_list.addAll(Utils.EPICS_MAIN);
+        capital_list.addAll(Utils.EPICS_FOREXS_OTHERS);
         for (String epic : capital_list) {
             if (long_list.contains(epic)) {
 
@@ -3430,17 +3430,16 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     @Transactional
-    public String scapForex15M(String EPIC) {
+    public String scapForex15M(String EPIC, String CAPITAL_TIME_XXX) {
         if (required_update_bars_csv) {
             return "";
         }
-
-        if (!isReloadPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_15)) {
+        if (!isReloadPrepareOrderTrend(EPIC, CAPITAL_TIME_XXX)) {
             return "";
         }
 
         // ----------------------------TREND------------------------
-        List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+        List<BtcFutures> list = getCapitalData(EPIC, CAPITAL_TIME_XXX);
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
@@ -3449,7 +3448,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend = Utils.isUptrendByMaIndex(list) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
         // -----------------------------DATABASE---------------------------
-        String orderId = EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15;
+        String orderId = EPIC + "_" + CAPITAL_TIME_XXX;
         String date_time = LocalDateTime.now().toString();
 
         BigDecimal bread = Utils.calcMaxBread(list);
@@ -3477,7 +3476,7 @@ public class BinanceServiceImpl implements BinanceService {
             BigDecimal cur_price = list.get(0).getCurrPrice();
             String str_price = Utils.removeLastZero(cur_price);
             String log = Utils.appendSpace(EPIC, 15) + Utils.appendSpace(str_price, 15);
-            log += "(05:" + Utils.appendSpace(switch_trend, 4) + ")   ";
+            log += Utils.appendLeft(CAPITAL_TIME_XXX, 10) + ":" + Utils.appendSpace(switch_trend, 4) + ")   ";
 
             String vsMa = "";
             boolean isAboveMa50 = Utils.isUptrendByMa(list, list.size(), 1, 3);

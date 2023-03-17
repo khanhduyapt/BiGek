@@ -130,8 +130,8 @@ public class Utils {
     public static final String CRYPTO_TIME_1w = "1w";
 
     public static final long MINUTES_OF_D = 60;// 600;
-    public static final long MINUTES_OF_1H = 60;
     public static final long MINUTES_OF_4H = 60;
+    public static final long MINUTES_OF_1H = 30;
     public static final long MINUTES_OF_15M = 5;
     // public static final long MINUTES_OF_5M = 15;
 
@@ -143,18 +143,17 @@ public class Utils {
 
     // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
     // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
-    // Main Forex:
+    // Main: "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD"
 
-    // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", , "AUS200", "JPY225",
-    // "GER30", "FRA40",
-    public static final List<String> EPICS_SCAP = Arrays.asList("BTCUSD", "ETHUSD", "XAUUSD", "XAGUSD", "US30", "UK100",
+    // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", "AUS200", "JPY225",
+    public static final List<String> EPICS_MAIN = Arrays.asList("BTCUSD", "ETHUSD", "XAUUSD", "XAGUSD", "US30", "UK100",
             "JPY225", "GER30", "FRA40", "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK",
-    public static final List<String> EPICS_FOREXS = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF",
-            "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "GBPAUD", "GBPCAD",
-            "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY");
+    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD",
+            "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "GBPAUD",
+            "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",

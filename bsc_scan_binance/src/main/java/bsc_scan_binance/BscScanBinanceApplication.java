@@ -93,15 +93,11 @@ public class BscScanBinanceApplication {
             binance_service.createReport();
             binance_service.deleteConnectTimeOutException();
             // ----------------------------------------
-            List<String> capital_list = new ArrayList<String>();
-            capital_list.addAll(Utils.EPICS_SCAP);
-            capital_list.addAll(Utils.EPICS_FOREXS);
 
             if (app_flag != Utils.const_app_flag_webonly) {
                 int total = Utils.coins.size();
                 int index_crypto = 0;
                 int round_crypto = 0;
-                int forex_size = capital_list.size();
                 Date start_time = Calendar.getInstance().getTime();
 
                 File log = new File(Utils.getForexLogFile());
@@ -120,26 +116,41 @@ public class BscScanBinanceApplication {
 
                         if (Utils.isBusinessTime_6h_to_17h()) {
                             if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
-                                for (int index = 0; index < forex_size; index++) {
-                                    String EPIC = capital_list.get(index);
+                                for (int index = 0; index < Utils.EPICS_MAIN.size(); index++) {
+                                    String EPIC = Utils.EPICS_MAIN.get(index);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
                                 }
 
-                                for (int index = 0; index < forex_size; index++) {
-                                    String EPIC = capital_list.get(index);
+                                for (int index = 0; index < Utils.EPICS_MAIN.size(); index++) {
+                                    String EPIC = Utils.EPICS_MAIN.get(index);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
                                 }
 
                                 String result = "";
-                                for (int index = 0; index < forex_size; index++) {
-                                    String EPIC = capital_list.get(index);
-                                    String trend = binance_service.scapForex15M(EPIC);
+                                for (int index = 0; index < Utils.EPICS_MAIN.size(); index++) {
+                                    String EPIC = Utils.EPICS_MAIN.get(index);
+                                    String trend = binance_service.scapForex15M(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
                                     if (Utils.isNotBlank(trend)) {
                                         result += trend + ", ";
 
                                         String init = "05:" + Utils.appendSpace(trend, 6);
                                         String str_index = Utils.appendLeft(String.valueOf(index + 1), 3) + "/"
-                                                + Utils.appendLeft(String.valueOf(forex_size), 3) + "   ";
+                                                + Utils.appendLeft(String.valueOf(Utils.EPICS_MAIN.size()), 3) + "   ";
+                                        System.out.println(
+                                                Utils.getTimeHHmm() + str_index + Utils.appendSpace(EPIC, 15) + init);
+                                    }
+                                }
+
+                                for (int index = 0; index < Utils.EPICS_FOREXS_OTHERS.size(); index++) {
+                                    String EPIC = Utils.EPICS_FOREXS_OTHERS.get(index);
+                                    String trend = binance_service.scapForex15M(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                    if (Utils.isNotBlank(trend)) {
+                                        result += trend + ", ";
+
+                                        String init = "05:" + Utils.appendSpace(trend, 6);
+                                        String str_index = Utils.appendLeft(String.valueOf(index + 1), 3) + "/"
+                                                + Utils.appendLeft(String.valueOf(Utils.EPICS_FOREXS_OTHERS.size()), 3)
+                                                + "   ";
                                         System.out.println(
                                                 Utils.getTimeHHmm() + str_index + Utils.appendSpace(EPIC, 15) + init);
                                     }
