@@ -3475,28 +3475,31 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO: scapForex15M
         if (Utils.isNotBlank(switch_trend)) {
             BigDecimal cur_price = list.get(0).getCurrPrice();
-
-            String log = Utils.appendSpace(EPIC, 15) + Utils.appendSpace(Utils.removeLastZero(cur_price), 15);
+            String str_price = Utils.removeLastZero(cur_price);
+            String log = Utils.appendSpace(EPIC, 15) + Utils.appendSpace(str_price, 15);
             log += "(05:" + Utils.appendSpace(switch_trend, 4) + ")   ";
 
             String vsMa = "";
             boolean isAboveMa50 = Utils.isUptrendByMa(list, list.size(), 1, 3);
             if (isAboveMa50) {
-                vsMa = "Ma" + list.size() + "_Uptrend";
+                vsMa = "Ma" + list.size() + "_Up";
             } else {
-                vsMa = "Ma" + list.size() + "_Downtrend";
+                vsMa = "Ma" + list.size() + "_Down";
             }
-            log += Utils.appendSpace(vsMa, 20);
+            log += Utils.appendSpace(vsMa, 15);
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 
-            String msg = "(" + switch_trend + ")" + EPIC + "(" + cur_price + ")";
+            String msg = "";
             if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
-                msg = Utils.getTimeHHmm() + " 💹 _" + EPIC + "_kill_Short 💔 " + "(" + cur_price + ")";
+                msg = Utils.getTimeHHmm() + " 💹 _" + EPIC + "_kill_Short 💔 " + "(" + str_price + ")";
                 log += Utils.calc_BUF_Long_Forex(false, EPIC, cur_price, sl_long, low_high.get(1));
             }
             if (Objects.equals(Utils.TREND_SHORT, switch_trend)) {
-                msg = Utils.getTimeHHmm() + " 🔻  _" + EPIC + "_kill_Long 💔 " + "(" + cur_price + ")";
+                msg = Utils.getTimeHHmm() + " 🔻  _" + EPIC + "_kill_Long 💔 " + "(" + str_price + ")";
                 log += Utils.calc_BUF_Shot_Forex(false, EPIC, cur_price, sl_shot, low_high.get(0));
+            }
+            if (!"_BTCUSD_ETHUSD_".contains(EPIC)) {
+                msg = "(" + switch_trend + ")" + EPIC + "(" + str_price + ")";
             }
 
             String EVENT_ID = EVENT_PUMP + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
