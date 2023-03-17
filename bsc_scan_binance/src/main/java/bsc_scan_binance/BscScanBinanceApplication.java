@@ -118,8 +118,6 @@ public class BscScanBinanceApplication {
                         }
                         binance_service.saveMt5Data();
 
-                        checkKillLongShort(binance_service);
-
                         if (Utils.isBusinessTime_6h_to_17h()) {
                             if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
                                 for (int index = 0; index < forex_size; index++) {
@@ -149,8 +147,8 @@ public class BscScanBinanceApplication {
 
                                 if (Utils.isNotBlank(result)) {
                                     String msg = "(FX_5M)(Ma50):" + result;
-                                    //String EVENT_ID = "FX_15M_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
-                                    //binance_service.sendMsgPerHour(EVENT_ID, msg, true);
+                                    // String EVENT_ID = "FX_15M_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
+                                    // binance_service.sendMsgPerHour(EVENT_ID, msg, true);
 
                                     Utils.logWritelnDraft(msg.replaceAll(" +", " ") + "\n\n");
                                 }

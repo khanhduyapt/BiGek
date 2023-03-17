@@ -2579,7 +2579,6 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String sendMsgKillLongShort(String gecko_id, String symbol) {
-
         String EVENT_ID = EVENT_DANGER_CZ_KILL_LONG + "_" + gecko_id + "_" + symbol + "_"
                 + Utils.getCurrentYyyyMmDd_HH();
 
@@ -3470,6 +3469,8 @@ public class BinanceServiceImpl implements BinanceService {
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
         if (Objects.nonNull(dto_h4)) {
             trend_h4 = dto_h4.getTrend();
+            sl_long = dto_h4.getLow_price();
+            sl_shot = dto_h4.getHigh_price();
         }
 
         String result = "";
@@ -3477,8 +3478,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.isNotBlank(switch_trend)) {
             BigDecimal cur_price = list.get(0).getCurrPrice();
 
-            String log = Utils.appendSpace(EPIC, 15)
-                    + Utils.appendSpace(Utils.removeLastZero(cur_price), 15);
+            String log = Utils.appendSpace(EPIC, 15) + Utils.appendSpace(Utils.removeLastZero(cur_price), 15);
 
             log += "(H4:" + Utils.appendSpace(trend_h4, 4) + ")   ";
             log += "(05:" + Utils.appendSpace(switch_trend, 4) + ")   ";
@@ -3494,14 +3494,28 @@ public class BinanceServiceImpl implements BinanceService {
             log += Utils.appendSpace(vsMa, 15);
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 
+            String msg = "(" + switch_trend + ")" + EPIC + "(" + cur_price + ")";
             if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
-                log += Utils.calc_BUF_Long_Forex(false, EPIC, cur_price, sl_long, sl_shot);
+                msg = Utils.getTimeHHmm() + " 💹 BTC kill Short 💔 ";
+                log += Utils.calc_BUF_Long_Forex(false, EPIC, cur_price, sl_long, low_high.get(1));
             }
             if (Objects.equals(Utils.TREND_SHORT, switch_trend)) {
-                log += Utils.calc_BUF_Shot_Forex(false, EPIC, cur_price, sl_shot, sl_long);
+                msg = Utils.getTimeHHmm() + " 🔻   BTC kill Long 💔 ";
+                log += Utils.calc_BUF_Shot_Forex(false, EPIC, cur_price, sl_shot, low_high.get(0));
             }
 
-            Utils.logWritelnDraft(log);
+            String EVENT_ID = EVENT_PUMP + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog15m();
+            if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
+                Utils.logWritelnDraft(log);
+            }
+
+            if (Utils.EPICS_15M.contains(EPIC)) {
+                if (Objects.equals("BTCUSD", EPIC) && Utils.isNotBlank(msg)) {
+                    sendMsgPerHour(EVENT_ID, msg, false);
+                } else {
+                    sendMsgPerHour(EVENT_ID, msg, true);
+                }
+            }
 
             result = "(" + switch_trend + ") " + Utils.appendSpace(EPIC, 15) + " ("
                     + Utils.removeLastZero(list.get(0).getCurrPrice()) + ")";

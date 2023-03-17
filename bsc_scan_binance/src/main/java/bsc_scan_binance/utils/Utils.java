@@ -138,8 +138,7 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final List<String> EPICS_15M = Arrays.asList("BTCUSD", "ETHUSD", "XAUUSD", "XAGUSD", "US30", "NAS100",
-            "SP500", "UK100", "JPY225");
+    public static final List<String> EPICS_15M = Arrays.asList("BTCUSD", "XAUUSD", "US30", "UK100", "GER30", "JPY225");
 
     // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
     // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
@@ -148,13 +147,13 @@ public class Utils {
     // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", , "AUS200", "JPY225",
     // "GER30", "FRA40",
     public static final List<String> EPICS_SCAP = Arrays.asList("BTCUSD", "ETHUSD", "XAUUSD", "XAGUSD", "US30", "UK100",
-            "JPY225", "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
+            "JPY225", "GER30", "FRA40", "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK",
-    public static final List<String> EPICS_FOREXS = Arrays.asList("GER30", "FRA40", "AUDCAD", "AUDCHF", "AUDJPY",
-            "AUDNZD", "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD",
-            "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY");
+    public static final List<String> EPICS_FOREXS = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF",
+            "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "GBPAUD", "GBPCAD",
+            "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
@@ -3400,8 +3399,8 @@ public class Utils {
         String temp = "";
         temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)) + " ", 10);
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 8);
-        temp += Utils.appendLeft(removeLastZero(lot_long), 8) + "(lot/" + appendSpace(removeLastZero(pip_long), 8)
-                + ")";
+        temp += Utils.appendLeft(removeLastZero(lot_long), 8) + "(lot/"
+                + appendSpace(removeLastZero(formatPrice(pip_long, 5)), 8) + ")";
         temp += "/" + removeLastZero(risk).replace(".0", "") + "$";
 
         String result = Utils.appendSpace("(BUY )" + temp, 38);
@@ -3425,8 +3424,8 @@ public class Utils {
         String temp = "";
         temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)) + " ", 10);
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 8);
-        temp += Utils.appendLeft(removeLastZero(lot_shot), 8) + "(lot/" + appendSpace(removeLastZero(pip_shot), 8)
-                + ")";
+        temp += Utils.appendLeft(removeLastZero(lot_shot), 8) + "(lot/"
+                + appendSpace(removeLastZero(formatPrice(pip_shot, 5)), 8) + ")";
         temp += "/" + removeLastZero(risk).replace(".0", "") + "$";
 
         String result = Utils.appendSpace("(SELL)" + temp, 38);
