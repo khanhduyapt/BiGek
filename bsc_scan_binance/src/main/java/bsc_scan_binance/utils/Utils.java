@@ -2994,24 +2994,37 @@ public class Utils {
             return "";
         }
 
-        String result = "";
         if (trend.contains(Utils.TREND_LONG)) {
             if (isRequired368 && (ma6_0.compareTo(ma6_3) > 0)) {
-                result = Utils.TREND_LONG;
+                return Utils.TREND_LONG;
             } else {
-                result = Utils.TREND_LONG;
+                return Utils.TREND_LONG;
             }
         }
 
         if (trend.contains(Utils.TREND_SHORT)) {
             if (isRequired368 && (ma6_0.compareTo(ma6_3) < 0)) {
-                result = Utils.TREND_SHORT;
+                return Utils.TREND_SHORT;
             } else {
-                result = Utils.TREND_SHORT;
+                return Utils.TREND_SHORT;
             }
         }
 
-        return result;
+        if ((ma6_0.compareTo(ma6_3) > 0) && (ma5x_0.compareTo(ma5x_3) > 0)) {
+            List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(0, 5));
+            if ((ma5x_0.compareTo(body.get(0)) > 0) && (ma5x_0.compareTo(body.get(1)) < 0)) {
+                return Utils.TREND_LONG;
+            }
+        }
+
+        if ((ma6_0.compareTo(ma6_3) < 0) && (ma5x_0.compareTo(ma5x_3) < 0)) {
+            List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(0, 5));
+            if ((ma5x_0.compareTo(body.get(0)) > 0) && (ma5x_0.compareTo(body.get(1)) < 0)) {
+                return Utils.TREND_SHORT;
+            }
+        }
+
+        return "";
     }
 
     @SuppressWarnings("unused")
@@ -3142,7 +3155,7 @@ public class Utils {
         return isUptrendByMa(list, maIndex, 0, 1);
     }
 
-    private static boolean isUptrendByMa(List<BtcFutures> list, int maIndex, int str, int end) {
+    public static boolean isUptrendByMa(List<BtcFutures> list, int maIndex, int str, int end) {
         BigDecimal ma_c = calcMA(list, maIndex, str);
         BigDecimal ma_p = calcMA(list, maIndex, end);
         if (ma_c.compareTo(ma_p) > 0) {
