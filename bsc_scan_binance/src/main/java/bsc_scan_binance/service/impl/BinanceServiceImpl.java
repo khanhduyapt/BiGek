@@ -3362,6 +3362,8 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initForexTrend(String EPIC, String CAPITAL_TIME_XXX) {
+        // EPIC = "GBPUSD";
+        // CAPITAL_TIME_XXX = Utils.CAPITAL_TIME_DAY;
         if (required_update_bars_csv) {
             return "";
         }
@@ -3418,7 +3420,13 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.isNotBlank(switch_trend) && Objects.equals(trend_d1, trend)) {
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + "    Note: " + switch_trend;
 
-            Utils.logWritelnDraft(log);
+            String EVENT_ID = EVENT_PUMP + "_FX_4H_" + EPIC + Utils.getCurrentYyyyMmDd_HH_Blog4h();
+            if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
+                Utils.logWritelnDraft(log);
+
+                fundingHistoryRepository
+                        .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
+            }
         }
 
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), str_body_price,
@@ -3445,7 +3453,7 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        String switch_trend_5 = Utils.switchTrendByMa(list, true);
+        String switch_trend = Utils.switchTrendByMa(list, true);
         String trend = Utils.isUptrendByMaIndex(list) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
         // -----------------------------DATABASE---------------------------
@@ -3461,7 +3469,7 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal sl_shot = low_high.get(1).add(bread);
 
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), middle, middle, sl_long,
-                sl_shot, switch_trend_5.trim());
+                sl_shot, switch_trend.trim());
         ordersRepository.save(entity);
 
         // -----------------------------LOG---------------------------
@@ -3492,7 +3500,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // TODO: scapForex15M
-        if (Utils.isNotBlank(switch_trend_5) && Objects.equals(trend_d1, trend)) {
+        if (Utils.isNotBlank(switch_trend) && Objects.equals(trend_d1, trend)) {
             String log = Utils.appendSpace(EPIC, 15);
             log += "(D1:" + Utils.appendSpace(trend_d1, 4) + ")   ";
             log += "(15:" + Utils.appendSpace(trend, 4) + ")   ";
@@ -3510,10 +3518,16 @@ public class BinanceServiceImpl implements BinanceService {
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
             log += Utils.appendSpace(note_d1, 15) + "     " + Utils.appendSpace(note_h4, 15);
 
-            Utils.logWritelnDraft(log);
+            String EVENT_ID = EVENT_PUMP + "_FX_15M_" + EPIC + Utils.getCurrentYyyyMmDd_HH();
+            if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
+                Utils.logWritelnDraft(log);
+
+                fundingHistoryRepository
+                        .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
+            }
         }
 
-        return trend;
+        return switch_trend;
     }
 
 }

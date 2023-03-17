@@ -116,7 +116,7 @@ public class Utils {
     public static String CST = "";
     public static String X_SECURITY_TOKEN = "";
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
-    //public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
+    // public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
     public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_HOUR = "HOUR";
     public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
@@ -133,7 +133,7 @@ public class Utils {
     public static final long MINUTES_OF_1H = 60;
     public static final long MINUTES_OF_4H = 60;
     public static final long MINUTES_OF_15M = 15;
-    //public static final long MINUTES_OF_5M = 15;
+    // public static final long MINUTES_OF_5M = 15;
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
@@ -145,16 +145,16 @@ public class Utils {
     // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
     // Main Forex:
 
-    // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", , "AUS200", "JPY225", "GER30", "FRA40",
+    // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", , "AUS200", "JPY225",
+    // "GER30", "FRA40",
     public static final List<String> EPICS_SCAP = Arrays.asList("BTCUSD", "ETHUSD", "XAUUSD", "XAGUSD", "US30", "UK100",
             "JPY225", "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK",
-    public static final List<String> EPICS_FOREXS = Arrays.asList(
-            "GER30", "FRA40", "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD",
-            "EURCHF", "EURGBP", "EURJPY", "EURNZD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD",
-            "NZDCHF", "NZDJPY");
+    public static final List<String> EPICS_FOREXS = Arrays.asList("GER30", "FRA40", "AUDCAD", "AUDCHF", "AUDJPY",
+            "AUDNZD", "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD",
+            "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
@@ -601,9 +601,9 @@ public class Utils {
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE)) {
         // return "_1m_";
         // }
-        //if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
-        //     return "_5m_";
-        //}
+        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
+        // return "_5m_";
+        // }
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
             return "_15m_";
         }
@@ -630,9 +630,9 @@ public class Utils {
         // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE)) {
         // return "(1m)";
         // }
-        //if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
-        //    return "(05)";
-        //}
+        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
+        // return "(05)";
+        // }
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
             return "(15)";
         }
@@ -2108,8 +2108,8 @@ public class Utils {
 
             if (symbol.contains(CAPITAL_TIME_MINUTE_15)) {
                 result = "(15)";
-                //} else if (symbol.contains(CAPITAL_TIME_MINUTE_5)) {
-                //    result = "(05)";
+                // } else if (symbol.contains(CAPITAL_TIME_MINUTE_5)) {
+                // result = "(05)";
             } else if (symbol.contains(CAPITAL_TIME_HOUR_4)) {
                 result = "(H4)";
             } else if (symbol.contains(CAPITAL_TIME_HOUR)) {
@@ -3122,11 +3122,15 @@ public class Utils {
     }
 
     public static boolean isUptrendByMaIndex(List<BtcFutures> list) {
-        if (CollectionUtils.isEmpty(list)) {
+        if (CollectionUtils.isEmpty(list) || (list.size() < 5)) {
             return false;
         }
 
         int maIndex = 6;
+        if (maIndex >= list.size()) {
+            maIndex = list.size() - 2;
+        }
+
         return isUptrendByMa(list, maIndex, 0, 1);
     }
 
@@ -3160,7 +3164,7 @@ public class Utils {
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_15, "");
-        //EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_5, "");
+        // EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_5, "");
         EPIC = EPIC.replace("_", "");
 
         return EPIC;
@@ -3302,7 +3306,7 @@ public class Utils {
         header += chart_h4 + ":" + Utils.appendSpace(dto_entry.getTrend(), 4) + "    ";
         header += Utils.appendSpace(EPIC, 12);
         header += Utils.appendSpace(Utils.getCapitalLink(EPIC), 68);
-        //header = Utils.appendSpace(header, LENGTH - 11, "-");
+        // header = Utils.appendSpace(header, LENGTH - 11, "-");
 
         return header;
     }

@@ -124,21 +124,17 @@ public class BscScanBinanceApplication {
                             if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
                                 for (int index = 0; index < forex_size; index++) {
                                     String EPIC = capital_list.get(index);
-
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
+                                }
 
+                                for (int index = 0; index < forex_size; index++) {
+                                    String EPIC = capital_list.get(index);
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
                                 }
 
                                 for (int index = 0; index < forex_size; index++) {
                                     String EPIC = capital_list.get(index);
                                     checkCapital(binance_service, EPIC, index + 1, forex_size);
-
-                                }
-
-                                // Utils.logWritelnDraft("");
-                                for (int index = 0; index < forex_size; index++) {
-                                    String EPIC = capital_list.get(index);
-                                    binance_service.scapForex15M(EPIC);
                                 }
                             }
                         }
@@ -201,11 +197,14 @@ public class BscScanBinanceApplication {
     }
 
     public static void checkCapital(BinanceService binance_service, String EPIC, int index, int total) {
-        String trend_h4 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-        String init = "H4:" + Utils.appendSpace(trend_h4, 6);
-        String str_index = Utils.appendLeft(String.valueOf(index), 3) + "/" + Utils.appendLeft(String.valueOf(total), 3)
-                + "   ";
-        System.out.println(Utils.getTimeHHmm() + str_index + Utils.appendSpace(EPIC, 15) + init);
+        String trend = binance_service.scapForex15M(EPIC);
+
+        if (Utils.isNotBlank(trend)) {
+            String init = "H4:" + Utils.appendSpace(trend, 6);
+            String str_index = Utils.appendLeft(String.valueOf(index), 3) + "/"
+                    + Utils.appendLeft(String.valueOf(total), 3) + "   ";
+            System.out.println(Utils.getTimeHHmm() + str_index + Utils.appendSpace(EPIC, 15) + init);
+        }
     }
 
     private static void checkKillLongShort(BinanceService binance_service) {
