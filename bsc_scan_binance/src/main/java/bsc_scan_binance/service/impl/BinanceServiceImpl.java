@@ -3503,7 +3503,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             Utils.logWritelnDraft(log);
 
-            result = "(" + switch_trend + ")" + Utils.appendSpace(EPIC, 15) + "("
+            result = "(" + switch_trend + ") " + Utils.appendSpace(EPIC, 15) + " ("
                     + Utils.removeLastZero(list.get(0).getCurrPrice()) + ")";
         }
 

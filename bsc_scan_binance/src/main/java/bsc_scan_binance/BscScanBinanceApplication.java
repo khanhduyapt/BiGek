@@ -137,7 +137,7 @@ public class BscScanBinanceApplication {
                                     String EPIC = capital_list.get(index);
                                     String trend = binance_service.scapForex15M(EPIC);
                                     if (Utils.isNotBlank(trend)) {
-                                        result += trend + ",";
+                                        result += trend + ", ";
 
                                         String init = "05:" + Utils.appendSpace(trend, 6);
                                         String str_index = Utils.appendLeft(String.valueOf(index + 1), 3) + "/"
