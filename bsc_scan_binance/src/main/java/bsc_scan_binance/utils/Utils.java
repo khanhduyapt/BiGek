@@ -3011,14 +3011,14 @@ public class Utils {
             }
         }
 
-        if ((ma6_0.compareTo(ma6_3) > 0) && (ma6_0.compareTo(ma5x_0) > 0)) {
+        if ((ma3_0.compareTo(ma3_3) > 0) && (ma3_0.compareTo(ma5x_0) > 0)) {
             List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(0, 5));
             if ((ma5x_0.compareTo(body.get(0)) > 0) && (ma5x_0.compareTo(body.get(1)) < 0)) {
                 return Utils.TREND_LONG;
             }
         }
 
-        if ((ma6_0.compareTo(ma6_3) < 0) && (ma6_0.compareTo(ma5x_0) < 0)) {
+        if ((ma3_0.compareTo(ma3_3) < 0) && (ma3_0.compareTo(ma5x_0) < 0)) {
             List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(0, 5));
             if ((ma5x_0.compareTo(body.get(0)) > 0) && (ma5x_0.compareTo(body.get(1)) < 0)) {
                 return Utils.TREND_SHORT;
