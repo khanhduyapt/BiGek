@@ -3409,17 +3409,20 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // TODO: initForexTrend
-        if (Utils.isNotBlank(switch_trend) && Objects.equals(trend_d1, trend)) {
-            log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + "    Note: " + switch_trend;
-
-            String EVENT_ID = EVENT_PUMP + "_FX_4H_" + EPIC + Utils.getCurrentYyyyMmDd_HH_Blog4h();
-            if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
-                Utils.logWritelnDraft(log);
-
-                fundingHistoryRepository
-                        .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
-            }
-        }
+        // if (Utils.isNotBlank(switch_trend) && Objects.equals(trend_d1, trend)) {
+        // log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " Note: " +
+        // switch_trend;
+        //
+        // String EVENT_ID = EVENT_PUMP + "_FX_4H_" + EPIC +
+        // Utils.getCurrentYyyyMmDd_HH_Blog4h();
+        // if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
+        // Utils.logWritelnDraft(log);
+        //
+        // fundingHistoryRepository
+        // .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR,
+        // "", false));
+        // }
+        // }
 
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), str_body_price,
                 end_body_price, sl_long, sl_shot, switch_trend.trim());
@@ -3476,7 +3479,7 @@ public class BinanceServiceImpl implements BinanceService {
             BigDecimal cur_price = list.get(0).getCurrPrice();
             String str_price = Utils.removeLastZero(cur_price);
             String log = Utils.appendSpace(EPIC, 15) + Utils.appendSpace(str_price, 15);
-            log += Utils.appendLeft(CAPITAL_TIME_XXX, 10) + ":" + Utils.appendSpace(switch_trend, 4) + ")   ";
+            log += Utils.appendLeft(CAPITAL_TIME_XXX, 10) + ":" + Utils.appendSpace(switch_trend, 4) + "   ";
 
             String vsMa = "";
             boolean isAboveMa50 = Utils.isUptrendByMa(list, list.size(), 1, 3);
