@@ -3475,8 +3475,10 @@ public class BinanceServiceImpl implements BinanceService {
         String result = "";
         // TODO: scapForex15M
         if (Utils.isNotBlank(switch_trend)) {
+            BigDecimal cur_price = list.get(0).getCurrPrice();
+
             String log = Utils.appendSpace(EPIC, 15)
-                    + Utils.appendSpace(Utils.removeLastZero(list.get(0).getCurrPrice()), 15);
+                    + Utils.appendSpace(Utils.removeLastZero(cur_price), 15);
 
             log += "(H4:" + Utils.appendSpace(trend_h4, 4) + ")   ";
             log += "(05:" + Utils.appendSpace(switch_trend, 4) + ")   ";
@@ -3493,10 +3495,10 @@ public class BinanceServiceImpl implements BinanceService {
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 
             if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
-                log += Utils.calc_BUF_Long_Forex(true, EPIC, body.get(1), sl_long, sl_shot);
+                log += Utils.calc_BUF_Long_Forex(false, EPIC, cur_price, sl_long, sl_shot);
             }
             if (Objects.equals(Utils.TREND_SHORT, switch_trend)) {
-                log += Utils.calc_BUF_Shot_Forex(true, EPIC, body.get(0), sl_shot, sl_long);
+                log += Utils.calc_BUF_Shot_Forex(false, EPIC, cur_price, sl_shot, sl_long);
             }
 
             Utils.logWritelnDraft(log);
