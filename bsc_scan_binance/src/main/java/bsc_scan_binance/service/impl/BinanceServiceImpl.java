@@ -2557,7 +2557,8 @@ public class BinanceServiceImpl implements BinanceService {
         return result;
     }
 
-    private void sendMsgPerHour(String EVENT_ID, String msg_content, boolean isOnlyMe) {
+    @Override
+    public void sendMsgPerHour(String EVENT_ID, String msg_content, boolean isOnlyMe) {
         String msg = Utils.getTimeHHmm();
         msg += msg_content;
         msg = msg.replace(" ", "").replace(",", ", ");
@@ -3481,6 +3482,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String note_h4 = "";
+        String trend_h4 = "";
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
         if (Objects.nonNull(dto_h4)) {
             if (curr_price.compareTo((dto_h4.getStr_body_price())) < 0) {
@@ -3488,14 +3490,17 @@ public class BinanceServiceImpl implements BinanceService {
             } else if (curr_price.compareTo(dto_h4.getEnd_body_price()) > 0) {
                 note_h4 += "H4:" + Utils.TEXT_MAX_DAY_AREA;
             }
+            trend_h4 = dto_h4.getTrend();
             note_h4 += dto_h4.getNote();
         }
 
         String result = "";
         // TODO: scapForex15M
         if (Utils.isNotBlank(switch_trend)) {
-            String log = Utils.appendSpace(EPIC, 15);
-            log += "(D1:" + Utils.appendSpace(trend_d1, 4) + ")   ";
+            String log = Utils.appendSpace(EPIC, 15)
+                    + Utils.appendSpace(Utils.removeLastZero(list.get(0).getCurrPrice()), 15);
+
+            log += "(H4:" + Utils.appendSpace(trend_h4, 4) + ")   ";
             log += "(05:" + Utils.appendSpace(switch_trend, 4) + ")   ";
 
             String vsMa = "";
@@ -3520,10 +3525,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             Utils.logWritelnDraft(log);
 
-            //String EVENT_ID = EVENT_PUMP + "_FX_15M_" + EPIC + trend + Utils.getCurrentYyyyMmDd_HH();
-            //sendMsgPerHour(EVENT_ID, "(FX_15M)" + EPIC + "(" + trend + ")", true);
-
-            result = EPIC;
+            result = "(" + switch_trend + ")" + Utils.appendSpace(EPIC, 15) + "("
+                    + Utils.removeLastZero(list.get(0).getCurrPrice()) + ")";
         }
 
         return result;

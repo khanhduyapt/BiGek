@@ -132,9 +132,27 @@ public class BscScanBinanceApplication {
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
                                 }
 
+                                String result = "";
                                 for (int index = 0; index < forex_size; index++) {
                                     String EPIC = capital_list.get(index);
-                                    checkCapital(binance_service, EPIC, index + 1, forex_size);
+                                    String trend = binance_service.scapForex15M(EPIC);
+                                    if (Utils.isNotBlank(trend)) {
+                                        result += trend + ",";
+
+                                        String init = "05:" + Utils.appendSpace(trend, 6);
+                                        String str_index = Utils.appendLeft(String.valueOf(index + 1), 3) + "/"
+                                                + Utils.appendLeft(String.valueOf(forex_size), 3) + "   ";
+                                        System.out.println(
+                                                Utils.getTimeHHmm() + str_index + Utils.appendSpace(EPIC, 15) + init);
+                                    }
+                                }
+
+                                if (Utils.isNotBlank(result)) {
+                                    String msg = "(FX_5M)(Ma50):" + result;
+                                    //String EVENT_ID = "FX_15M_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
+                                    //binance_service.sendMsgPerHour(EVENT_ID, msg, true);
+
+                                    Utils.logWritelnDraft(msg.replaceAll(" +", " ") + "\n\n");
                                 }
                             }
                         }
@@ -193,17 +211,6 @@ public class BscScanBinanceApplication {
             }
 
             binance_service.deleteConnectTimeOutException();
-        }
-    }
-
-    public static void checkCapital(BinanceService binance_service, String EPIC, int index, int total) {
-        String trend = binance_service.scapForex15M(EPIC);
-
-        if (Utils.isNotBlank(trend)) {
-            String init = "H4:" + Utils.appendSpace(trend, 6);
-            String str_index = Utils.appendLeft(String.valueOf(index), 3) + "/"
-                    + Utils.appendLeft(String.valueOf(total), 3) + "   ";
-            System.out.println(Utils.getTimeHHmm() + str_index + Utils.appendSpace(EPIC, 15) + init);
         }
     }
 

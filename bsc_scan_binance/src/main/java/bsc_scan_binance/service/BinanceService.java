@@ -59,4 +59,6 @@ public interface BinanceService {
 
     public void saveMt5Data();
 
+    public void sendMsgPerHour(String EVENT_ID, String msg_content, boolean isOnlyMe);
+
 }
