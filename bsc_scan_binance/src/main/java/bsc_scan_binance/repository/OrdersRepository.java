@@ -129,9 +129,14 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
     public List<Orders> getH4ByMa34568List();
 
     @Query(value = " SELECT * FROM orders det  "
-            + " WHERE (COALESCE(det.note, '') <> '') and (det.gecko_id like '%_DAY') "
+            + " WHERE (COALESCE(det.note, '') like '%Heken%' ) and (det.gecko_id like '%_DAY') "
             + " ORDER BY gecko_id ", nativeQuery = true)
     public List<Orders> getD1List();
+
+    @Query(value = " SELECT * FROM orders det "
+            + " WHERE (det.gecko_id like '%HOUR_4') AND (COALESCE(det.note, '') like '%Heken%') "
+            + " ORDER BY det.gecko_id ", nativeQuery = true)
+    public List<Orders> getTrend_Reversal_H4today();
 
     @Query(value = " SELECT * FROM orders det  "
             + " WHERE (COALESCE(det.note, '') = '') and (det.gecko_id like '%_DAY') "
@@ -180,11 +185,5 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
     public List<Orders> getCrypto_Reversal_Today();
 
     // --------------------------------------------------------
-
-    @Query(value = " SELECT * FROM orders det "
-            + " WHERE (det.gecko_id like '%HOUR_4') AND (COALESCE(det.note, '') <> '') "
-            + "       AND det.trend = (SELECT trend FROM orders mst WHERE mst.gecko_id = REPLACE (det.gecko_id, '_HOUR_4', '_DAY')) "
-            + " ORDER BY det.gecko_id ", nativeQuery = true)
-    public List<Orders> getTrend_Reversal_H4today();
 
 }

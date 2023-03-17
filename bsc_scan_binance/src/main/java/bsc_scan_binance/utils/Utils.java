@@ -2967,14 +2967,14 @@ public class Utils {
         BigDecimal ma5x_0 = calcMA(list, 50, 0);
         BigDecimal ma5x_3 = calcMA(list, 50, 3);
 
-        temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma2x_0, ma2x_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma2x_0, ma2x_3) + "_";
-
         temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma5x_0, ma5x_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma5x_0, ma5x_3) + "_";
 
-        temp_long += Utils.checkXCutUpY(ma1x_0, ma1x_3, ma2x_0, ma2x_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma1x_0, ma1x_3, ma2x_0, ma2x_3) + "_";
+        temp_long += Utils.checkXCutUpY(ma1x_0, ma1x_3, ma5x_0, ma5x_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma1x_0, ma1x_3, ma5x_0, ma5x_3) + "_";
+
+        temp_long += Utils.checkXCutUpY(ma2x_0, ma2x_3, ma5x_0, ma5x_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma2x_0, ma2x_3, ma5x_0, ma5x_3) + "_";
 
         String trend = "";
         trend += "_" + temp_long + "_";
@@ -2991,7 +2991,7 @@ public class Utils {
 
         String result = "";
         if (trend.contains(Utils.TREND_LONG)) {
-            if (isRequired368 && (ma6_0.compareTo(ma1x_0) > 0) && (ma1x_0.compareTo(ma2x_0) > 0)) {
+            if (isRequired368 && (ma6_0.compareTo(ma6_3) > 0)) {
                 result = Utils.TREND_LONG;
             } else {
                 result = Utils.TREND_LONG;
@@ -2999,7 +2999,7 @@ public class Utils {
         }
 
         if (trend.contains(Utils.TREND_SHORT)) {
-            if (isRequired368 && (ma6_0.compareTo(ma1x_0) < 0) && (ma1x_0.compareTo(ma2x_0) < 0)) {
+            if (isRequired368 && (ma6_0.compareTo(ma6_3) < 0)) {
                 result = Utils.TREND_SHORT;
             } else {
                 result = Utils.TREND_SHORT;
