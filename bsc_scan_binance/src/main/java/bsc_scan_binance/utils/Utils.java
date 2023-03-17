@@ -138,7 +138,8 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final List<String> EPICS_15M = Arrays.asList("BTCUSD", "XAUUSD", "US30", "UK100", "GER30", "JPY225");
+    public static final List<String> EPICS_15M = Arrays.asList("BTCUSD", "ETHUSD", "XAUUSD", "US30", "UK100", "GER30",
+            "JPY225");
 
     // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
     // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
@@ -3010,14 +3011,14 @@ public class Utils {
             }
         }
 
-        if ((ma6_0.compareTo(ma6_3) > 0) && (ma5x_0.compareTo(ma5x_3) > 0)) {
+        if ((ma6_0.compareTo(ma6_3) > 0) && (ma6_0.compareTo(ma5x_0) > 0)) {
             List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(0, 5));
             if ((ma5x_0.compareTo(body.get(0)) > 0) && (ma5x_0.compareTo(body.get(1)) < 0)) {
                 return Utils.TREND_LONG;
             }
         }
 
-        if ((ma6_0.compareTo(ma6_3) < 0) && (ma5x_0.compareTo(ma5x_3) < 0)) {
+        if ((ma6_0.compareTo(ma6_3) < 0) && (ma6_0.compareTo(ma5x_0) < 0)) {
             List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(0, 5));
             if ((ma5x_0.compareTo(body.get(0)) > 0) && (ma5x_0.compareTo(body.get(1)) < 0)) {
                 return Utils.TREND_SHORT;

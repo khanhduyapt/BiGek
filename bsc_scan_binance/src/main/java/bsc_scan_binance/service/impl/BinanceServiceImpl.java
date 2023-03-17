@@ -3491,11 +3491,11 @@ public class BinanceServiceImpl implements BinanceService {
 
             String msg = "";
             if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
-                msg = Utils.getTimeHHmm() + " 💹 _" + EPIC + "_kill_Short 💔 " + "(" + str_price + ")";
+                msg = Utils.getTimeHHmm() + " 💹 " + EPIC + "_kill_Short 💔 " + "(" + str_price + ")";
                 log += Utils.calc_BUF_Long_Forex(false, EPIC, cur_price, sl_long, low_high.get(1));
             }
             if (Objects.equals(Utils.TREND_SHORT, switch_trend)) {
-                msg = Utils.getTimeHHmm() + " 🔻  _" + EPIC + "_kill_Long 💔 " + "(" + str_price + ")";
+                msg = Utils.getTimeHHmm() + " 🔻  " + EPIC + "_kill_Long 💔 " + "(" + str_price + ")";
                 log += Utils.calc_BUF_Shot_Forex(false, EPIC, cur_price, sl_shot, low_high.get(0));
             }
             if (!"_BTCUSD_ETHUSD_".contains(EPIC)) {
