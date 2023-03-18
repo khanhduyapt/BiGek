@@ -220,8 +220,6 @@ public class BscScanBinanceApplication {
     private static void checkCrypto(BinanceService binance_service, String SYMBOL, int index_crypto, int total) {
         String trend = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1H, SYMBOL);
         if (Utils.isNotBlank(trend)) {
-            wait(SLEEP_MINISECONDS);
-
             String init = Utils.CRYPTO_TIME_1H.toUpperCase() + ":" + Utils.appendSpace(trend, 6);
             String str_index = Utils.appendLeft(String.valueOf(index_crypto), 3) + "/"
                     + Utils.appendLeft(String.valueOf(total), 3) + "   ";
