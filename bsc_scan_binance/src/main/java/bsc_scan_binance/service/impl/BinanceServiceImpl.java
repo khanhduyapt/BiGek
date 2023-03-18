@@ -2976,7 +2976,7 @@ public class BinanceServiceImpl implements BinanceService {
         String result = "";
         if (Utils.isNotBlank(switch_trend) && Objects.equals(Utils.TREND_LONG, switch_trend)
                 && Utils.isUptrendByMa(list, 50, 0, 1)) {
-            result = "(H1:" + switch_trend + ")" + symbol;
+            result = switch_trend;
 
             String log = Utils.getChartName(list) + Utils.appendSpace(symbol, 10);
             log += "(" + switch_trend + ")";
