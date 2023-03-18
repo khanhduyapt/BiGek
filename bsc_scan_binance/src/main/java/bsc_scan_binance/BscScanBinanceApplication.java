@@ -113,18 +113,14 @@ public class BscScanBinanceApplication {
 
                 while (index_crypto < total) {
                     try {
-                        if (isReloadAfter(Utils.MINUTES_OF_1H, "WRITELN_DRAFT")) {
-                            Utils.logWritelnDraft("");
-                        }
-
-                        binance_service.saveMt5Data();
-                        wait(SLEEP_MINISECONDS);
-                        binance_service.scapForex15M("BTCUSD", Utils.CAPITAL_TIME_MINUTE_15);
-                        wait(SLEEP_MINISECONDS);
-                        binance_service.scapForex15M("ETHUSD", Utils.CAPITAL_TIME_MINUTE_15);
+                        checkKillLongShort(binance_service);
 
                         if (Utils.isBusinessTime_6h_to_17h()) {
                             if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
+                                binance_service.saveMt5Data();
+                                binance_service.scapForex15M("BTCUSD", Utils.CAPITAL_TIME_MINUTE_15);
+                                binance_service.scapForex15M("ETHUSD", Utils.CAPITAL_TIME_MINUTE_15);
+
                                 for (int index = 0; index < forex_size; index++) {
                                     String EPIC = capital_list.get(index);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
@@ -162,9 +158,10 @@ public class BscScanBinanceApplication {
 
                         // ---------------------------------------------------------
                         String SYMBOL = Utils.coins.get(index_crypto);
-                        if (isReloadAfter(Utils.MINUTES_OF_15M, "CHECK_CRYPTO_" + SYMBOL)) {
-                            // checkCrypto(binance_service, SYMBOL, index_crypto, total);
+                        if (isReloadAfter(Utils.MINUTES_OF_1H, "CHECK_CRYPTO_" + SYMBOL)) {
+                            checkCrypto(binance_service, SYMBOL, index_crypto, total);
                         }
+
                         // ---------------------------------------------------------
                         if (isReloadAfter((Utils.MINUTES_OF_1H), "CREATE_REPORT")) {
                             binance_service.createReport();
@@ -206,65 +203,30 @@ public class BscScanBinanceApplication {
         System.out.println("____________________initTelegramBotsApi" + Utils.getTimeHHmm() + "____________________");
     }
 
-    public static void sleepWhenExceptionTimeOut(BinanceService binance_service) {
-        if (binance_service.hasConnectTimeOutException()) {
-            for (int loop = 1; loop < 15; loop++) {
-                System.out.println("Connection timed out");
-                wait(SLEEP_MINISECONDS * 10);
-            }
-
-            binance_service.deleteConnectTimeOutException();
-        }
-    }
-
     private static void checkKillLongShort(BinanceService binance_service) {
-        if (isReloadAfter(Utils.MINUTES_OF_15M, "KILL_BTC")) {
-            System.out.println(Utils.getTimeHHmm() + "sendMsgKillLongShort BTC(15m)");
-            if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("bitcoin", "BTC"))) {
-                wait(SLEEP_MINISECONDS);
-            }
+        if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("bitcoin", "BTC"))) {
+            wait(SLEEP_MINISECONDS);
         }
 
-        if (isReloadAfter(Utils.MINUTES_OF_15M, "KILL_ETH")) {
-            System.out.println(Utils.getTimeHHmm() + "sendMsgKillLongShort ETH(15m)");
-            if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("ethereum", "ETH"))) {
-                wait(SLEEP_MINISECONDS);
-            }
+        if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("ethereum", "ETH"))) {
+            wait(SLEEP_MINISECONDS);
         }
 
-        if (isReloadAfter(Utils.MINUTES_OF_15M, "KILL_BNB")) {
-            System.out.println(Utils.getTimeHHmm() + "sendMsgKillLongShort BNB(15m)");
-            if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("binancecoin", "BNB"))) {
-                wait(SLEEP_MINISECONDS);
-            }
+        if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("binancecoin", "BNB"))) {
+            wait(SLEEP_MINISECONDS);
         }
     }
 
     private static void checkCrypto(BinanceService binance_service, String SYMBOL, int index_crypto, int total) {
-
-        String trend_d = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1D, SYMBOL);
-        if (Utils.isNotBlank(trend_d)) {
+        String trend = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1H, SYMBOL);
+        if (Utils.isNotBlank(trend)) {
             wait(SLEEP_MINISECONDS);
+
+            String init = Utils.CRYPTO_TIME_1H.toUpperCase() + ":" + Utils.appendSpace(trend, 6);
+            String str_index = Utils.appendLeft(String.valueOf(index_crypto), 3) + "/"
+                    + Utils.appendLeft(String.valueOf(total), 3) + "   ";
+            System.out.println(Utils.getTimeHHmm() + str_index + Utils.appendSpace(SYMBOL, 10) + init);
         }
-
-        String trend_h4 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_4H, SYMBOL);
-        if (Utils.isNotBlank(trend_h4)) {
-            wait(SLEEP_MINISECONDS);
-        }
-
-        String trend_h1 = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1H, SYMBOL);
-        if (Utils.isNotBlank(trend_h1)) {
-            wait(SLEEP_MINISECONDS);
-        }
-
-        String init = "";
-        init += "D1:" + Utils.appendSpace(trend_d, 6);
-        init += "H4:" + Utils.appendSpace(trend_h4, 6);
-        init += "H1:" + Utils.appendSpace(trend_h1, 6);
-
-        String str_index = Utils.appendLeft(String.valueOf(index_crypto), 3) + "/"
-                + Utils.appendLeft(String.valueOf(total), 3) + "   ";
-        System.out.println(Utils.getTimeHHmm() + str_index + Utils.appendSpace(SYMBOL, 10) + init);
 
         // ----------------------------------------------
         // if ((round_count > 0) && Utils.isWorkingTime()) {

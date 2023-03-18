@@ -91,7 +91,7 @@ public class Utils {
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
-    public static final String TEXT_TREND_No1_MA34568 = "(Ma)  ";
+    public static final String TEXT_TREND_BY_MA = "(Ma)";
 
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
@@ -122,7 +122,7 @@ public class Utils {
     public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
     public static final String CAPITAL_TIME_DAY = "DAY";
 
-    public static final String CRYPTO_TIME_5m = "5m";
+    // public static final String CRYPTO_TIME_5m = "5m";
     public static final String CRYPTO_TIME_15m = "15m";
     public static final String CRYPTO_TIME_1H = "1h";
     public static final String CRYPTO_TIME_4H = "4h";
@@ -131,7 +131,7 @@ public class Utils {
 
     public static final long MINUTES_OF_D = 60;// 600;
     public static final long MINUTES_OF_4H = 60;
-    public static final long MINUTES_OF_1H = 30;
+    public static final long MINUTES_OF_1H = 60;
     public static final long MINUTES_OF_15M = 15;
     // public static final long MINUTES_OF_5M = 15;
 
@@ -2943,9 +2943,13 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrendByMa(List<BtcFutures> list, boolean isRequired368) {
+    public static String switchTrendByMa50(List<BtcFutures> list) {
         if (CollectionUtils.isEmpty(list)) {
+            Utils.logWritelnDraft("(switchTrendByMa50)list Empty");
             return "";
+        }
+        if (list.size() < 30) {
+            Utils.logWritelnDraft("(switchTrendByMa50)list.size()<50)" + list.size());
         }
         if (Utils.getStringValue(list.get(0).getCurrPrice()).contains("E")) {
             return "";
@@ -2995,29 +2999,25 @@ public class Utils {
         }
 
         if (trend.contains(Utils.TREND_LONG)) {
-            if (isRequired368 && (ma6_0.compareTo(ma6_3) > 0)) {
-                return Utils.TREND_LONG;
-            } else {
+            if ((ma6_0.compareTo(ma6_3) > 0)) {
                 return Utils.TREND_LONG;
             }
         }
 
         if (trend.contains(Utils.TREND_SHORT)) {
-            if (isRequired368 && (ma6_0.compareTo(ma6_3) < 0)) {
-                return Utils.TREND_SHORT;
-            } else {
+            if ((ma6_0.compareTo(ma6_3) < 0)) {
                 return Utils.TREND_SHORT;
             }
         }
 
-        if ((ma3_0.compareTo(ma3_3) > 0) && (ma3_0.compareTo(ma5x_0) > 0)) {
+        if (ma5x_0.compareTo(ma5x_3) > 0) {
             List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(0, 5));
             if ((ma5x_0.compareTo(body.get(0)) > 0) && (ma5x_0.compareTo(body.get(1)) < 0)) {
                 return Utils.TREND_LONG;
             }
         }
 
-        if ((ma3_0.compareTo(ma3_3) < 0) && (ma3_0.compareTo(ma5x_0) < 0)) {
+        if (ma5x_0.compareTo(ma5x_3) < 0) {
             List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(0, 5));
             if ((ma5x_0.compareTo(body.get(0)) > 0) && (ma5x_0.compareTo(body.get(1)) < 0)) {
                 return Utils.TREND_SHORT;
@@ -3142,17 +3142,20 @@ public class Utils {
         return false;
     }
 
-    public static boolean isUptrendByMaIndex(List<BtcFutures> list) {
-        if (CollectionUtils.isEmpty(list) || (list.size() < 5)) {
-            return false;
+    public static String getTrendByMa(List<BtcFutures> list) {
+        if (CollectionUtils.isEmpty(list) || (list.size() < 6)) {
+            Utils.logWritelnDraft("(getTrendByMa)list.size() < 6");
+            return "";
         }
 
-        int maIndex = 6;
-        if (maIndex >= list.size()) {
-            maIndex = list.size() - 2;
+        boolean trend_ma3 = isUptrendByMa(list, 3, 0, 1);
+        boolean trend_ma6 = isUptrendByMa(list, 6, 0, 1);
+
+        if (trend_ma3 == trend_ma6) {
+            return trend_ma6 ? TREND_LONG : TREND_SHORT;
         }
 
-        return isUptrendByMa(list, maIndex, 0, 1);
+        return "";
     }
 
     public static boolean isUptrendByMa(List<BtcFutures> list, int maIndex, int str, int end) {
@@ -3263,16 +3266,15 @@ public class Utils {
     public static String switchTrend(List<BtcFutures> list) {
         String trend = "";
 
-        String heken = Utils.switchTrenByHekenAshi(list);
-        if (Utils.isNotBlank(heken)) {
-            trend += heken;
+        String switch_trend_by_heken = Utils.switchTrenByHekenAshi(list);
+        if (Utils.isNotBlank(switch_trend_by_heken)) {
+            trend += switch_trend_by_heken;
         }
-        String switch_trend = Utils.switchTrendByMa(list, true);
-        if (Utils.isNotBlank(switch_trend)) {
-            trend += isUptrendByMaIndex(list) ? TREND_LONG : TREND_SHORT;
-            trend += Utils.TEXT_TREND_No1_MA34568;
-        } else {
-            switch_trend = Utils.switchTrendByMa(list, false);
+
+        String switch_trend_by_ma = Utils.switchTrendByMa50(list);
+        if (Utils.isNotBlank(switch_trend_by_ma)) {
+            trend += getTrendByMa(list);
+            trend += Utils.TEXT_TREND_BY_MA;
         }
 
         return trend;
@@ -3314,7 +3316,6 @@ public class Utils {
         if (Objects.isNull(dto_entry) || Objects.isNull(dto_sl)) {
             return "";
         }
-        int LENGTH = 150;
         String EPIC = getEpicFromId(dto_entry.getId());
         String chart_h4 = getChartName(dto_entry);
 
@@ -3327,7 +3328,6 @@ public class Utils {
         header += chart_h4 + ":" + Utils.appendSpace(dto_entry.getTrend(), 4) + "    ";
         header += Utils.appendSpace(EPIC, 12);
         header += Utils.appendSpace(Utils.getCapitalLink(EPIC), 68);
-        // header = Utils.appendSpace(header, LENGTH - 11, "-");
 
         return header;
     }
