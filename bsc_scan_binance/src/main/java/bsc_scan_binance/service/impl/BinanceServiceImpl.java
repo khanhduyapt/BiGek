@@ -2973,7 +2973,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         // ------------------------------------SendMsg------------------------------------
         // TODO: initCryptoTrend
-        if (Utils.isNotBlank(switch_trend) && Objects.equals(Utils.TREND_LONG, switch_trend)) {
+        if (Utils.isNotBlank(switch_trend) && Objects.equals(Utils.TREND_LONG, switch_trend)
+                && Utils.isUptrendByMa(list, 50, 0, 1)) {
             String log = Utils.getChartName(list) + Utils.appendSpace(symbol, 10);
             log += "(" + switch_trend + ")";
             log += " E: " + Utils.appendSpace(Utils.removeLastZero(cur_price), 10);
