@@ -159,7 +159,7 @@ public class BscScanBinanceApplication {
                         // ---------------------------------------------------------
                         String SYMBOL = Utils.coins.get(index_crypto);
                         if (isReloadAfter(Utils.MINUTES_OF_1H, "CHECK_CRYPTO_" + SYMBOL)) {
-                            checkCrypto(binance_service, SYMBOL, index_crypto, total);
+                            // checkCrypto(binance_service, SYMBOL, index_crypto, total);
                         }
 
                         // ---------------------------------------------------------

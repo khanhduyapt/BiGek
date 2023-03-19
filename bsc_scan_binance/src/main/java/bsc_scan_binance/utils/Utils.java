@@ -2985,6 +2985,15 @@ public class Utils {
         temp_long += Utils.checkXCutUpY(ma8_0, ma8_3, ma5x_0, ma5x_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma8_0, ma8_3, ma5x_0, ma5x_3) + "_";
 
+        if (ma6_0.compareTo(ma5x_0) > 0) {
+            temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma8_0, ma8_3) + "_";
+            temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma8_0, ma8_3) + "_";
+        }
+        if (ma6_0.compareTo(ma5x_0) < 0) {
+            temp_long += Utils.checkXCutDnY(ma3_0, ma3_3, ma8_0, ma8_3) + "_";
+            temp_long += Utils.checkXCutDnY(ma6_0, ma6_3, ma8_0, ma8_3) + "_";
+        }
+
         String trend = "";
         trend += "_" + temp_long + "_";
         trend += "_____";
@@ -3006,20 +3015,6 @@ public class Utils {
 
         if (trend.contains(Utils.TREND_SHORT)) {
             if ((ma6_0.compareTo(ma6_3) < 0)) {
-                return Utils.TREND_SHORT;
-            }
-        }
-
-        if (ma5x_0.compareTo(ma5x_3) > 0) {
-            List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(0, 5));
-            if ((ma5x_0.compareTo(body.get(0)) > 0) && (ma5x_0.compareTo(body.get(1)) < 0)) {
-                return Utils.TREND_LONG;
-            }
-        }
-
-        if (ma5x_0.compareTo(ma5x_3) < 0) {
-            List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(0, 5));
-            if ((ma5x_0.compareTo(body.get(0)) > 0) && (ma5x_0.compareTo(body.get(1)) < 0)) {
                 return Utils.TREND_SHORT;
             }
         }

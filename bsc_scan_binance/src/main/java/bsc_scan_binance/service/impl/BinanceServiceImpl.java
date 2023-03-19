@@ -2974,15 +2974,22 @@ public class BinanceServiceImpl implements BinanceService {
         // ------------------------------------SendMsg------------------------------------
         // TODO: initCryptoTrend
         String result = "";
+
+        String log = Utils.getChartName(list) + Utils.appendSpace(symbol, 10);
+        log += "(" + switch_trend + ")";
+        log += " E: " + Utils.appendSpace(Utils.removeLastZero(cur_price), 10);
+        log += " SL: " + Utils.getPercentToEntry(cur_price, low_high.get(0), true);
+        log += Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 75);
+
         if (Utils.isNotBlank(switch_trend) && Objects.equals(Utils.TREND_LONG, switch_trend)
                 && Utils.isUptrendByMa(list, 50, 0, 1)) {
             result = switch_trend;
 
-            String log = Utils.getChartName(list) + Utils.appendSpace(symbol, 10);
-            log += "(" + switch_trend + ")";
-            log += " E: " + Utils.appendSpace(Utils.removeLastZero(cur_price), 10);
-            log += " SL: " + Utils.getPercentToEntry(cur_price, low_high.get(0), true);
-            log += Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 75);
+            Utils.logWritelnDraft(log);
+        }
+
+        if (Utils.isNotBlank(switch_trend) && Objects.equals(Utils.TREND_SHORT, switch_trend)) {
+            result = switch_trend;
 
             Utils.logWritelnDraft(log);
         }
