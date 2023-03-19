@@ -2943,6 +2943,46 @@ public class Utils {
         return "";
     }
 
+    public static String stopTrendByMa50(List<BtcFutures> list) {
+        if (CollectionUtils.isEmpty(list)) {
+            Utils.logWritelnDraft("(stopTrendByMa50)list Empty");
+            return "";
+        }
+        if (list.size() < 30) {
+            Utils.logWritelnDraft("(stopTrendByMa50)list.size()<50)" + list.size());
+        }
+        BigDecimal ma3_0 = calcMA(list, 3, 0);
+        BigDecimal ma3_3 = calcMA(list, 3, 3);
+
+        BigDecimal ma6_0 = calcMA(list, 6, 0);
+        BigDecimal ma6_3 = calcMA(list, 6, 3);
+
+        BigDecimal ma8_0 = calcMA(list, 8, 0);
+        BigDecimal ma8_3 = calcMA(list, 8, 3);
+
+        BigDecimal ma5x_0 = calcMA(list, 50, 0);
+
+        String stop_long = "";
+        if (ma6_0.compareTo(ma5x_0) > 0) {
+            stop_long += Utils.checkXCutDnY(ma3_0, ma3_3, ma8_0, ma8_3) + "_";
+            stop_long += Utils.checkXCutDnY(ma6_0, ma6_3, ma8_0, ma8_3) + "_";
+        }
+        if (Utils.isNotBlank(stop_long)) {
+            return "STOP:" + TREND_LONG;
+        }
+
+        String stop_short = "";
+        if (ma6_0.compareTo(ma5x_0) < 0) {
+            stop_short += Utils.checkXCutUpY(ma3_0, ma3_3, ma8_0, ma8_3) + "_";
+            stop_short += Utils.checkXCutUpY(ma6_0, ma6_3, ma8_0, ma8_3) + "_";
+        }
+        if (Utils.isNotBlank(stop_short)) {
+            return "STOP:" + TREND_SHORT;
+        }
+
+        return "";
+    }
+
     public static String switchTrendByMa50(List<BtcFutures> list) {
         if (CollectionUtils.isEmpty(list)) {
             Utils.logWritelnDraft("(switchTrendByMa50)list Empty");
@@ -2990,8 +3030,8 @@ public class Utils {
             temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma8_0, ma8_3) + "_";
         }
         if (ma6_0.compareTo(ma5x_0) < 0) {
-            temp_long += Utils.checkXCutDnY(ma3_0, ma3_3, ma8_0, ma8_3) + "_";
-            temp_long += Utils.checkXCutDnY(ma6_0, ma6_3, ma8_0, ma8_3) + "_";
+            temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma8_0, ma8_3) + "_";
+            temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma8_0, ma8_3) + "_";
         }
 
         String trend = "";

@@ -3358,6 +3358,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String switch_trend = Utils.switchTrendByMa50(list);
+        String stop_trend = Utils.stopTrendByMa50(list);
 
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + CAPITAL_TIME_XXX;
@@ -3385,10 +3386,11 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String result = "";
+        BigDecimal cur_price = list.get(0).getCurrPrice();
+        String str_price = Utils.removeLastZero(cur_price);
         // TODO: scapForex15M
         if (Utils.isNotBlank(switch_trend) && Objects.equals(trend_h4, switch_trend)) {
-            BigDecimal cur_price = list.get(0).getCurrPrice();
-            String str_price = Utils.removeLastZero(cur_price);
+
             String log = Utils.appendSpace(EPIC, 15) + Utils.appendSpace(str_price, 15);
             log += Utils.appendLeft(CAPITAL_TIME_XXX, 10) + ":" + Utils.appendSpace(switch_trend, 4) + "   ";
 
@@ -3430,6 +3432,16 @@ public class BinanceServiceImpl implements BinanceService {
 
             result = "(" + switch_trend + ") " + Utils.appendSpace(EPIC, 15) + " ("
                     + Utils.removeLastZero(list.get(0).getCurrPrice()) + ")";
+        }
+
+        if (Utils.isNotBlank(stop_trend)) {
+            String log = Utils.appendSpace(EPIC, 15) + Utils.appendSpace(str_price, 15);
+            log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
+
+            String EVENT_ID = EVENT_PUMP + EPIC + stop_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
+            if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
+                Utils.logWritelnDraft(log);
+            }
         }
 
         return result;
