@@ -3349,9 +3349,6 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
         String switch_trend = Utils.switchTrend(list);
-        if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
-            switch_trend += Utils.switchTrendByMa50(list);
-        }
 
         BigDecimal bread = Utils.calcMaxBread(list);
         if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
@@ -3379,14 +3376,7 @@ public class BinanceServiceImpl implements BinanceService {
                     + Utils.appendSpace(switch_trend, 30);
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 
-            if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
-                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-                if (Objects.nonNull(dto_d1) && switch_trend.contains(dto_d1.getTrend())) {
-                    Utils.logWritelnDraft(log);
-                }
-            } else {
-                Utils.logWritelnDraft(log);
-            }
+            Utils.logWritelnDraft(log);
         }
 
         return trend;
@@ -3454,7 +3444,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.isNotBlank(switch_trend) && Objects.equals(trend_d1, switch_trend)) {
 
             String log = Utils.appendSpace(EPIC, 15) + Utils.appendSpace(str_price, 15);
-            log += Utils.appendLeft(CAPITAL_TIME_XXX, 10) + ":" + Utils.appendSpace(switch_trend, 4) + "   ";
+            log += Utils.appendLeft(Utils.getChartName(entity), 10) + ":" + Utils.appendSpace(switch_trend, 4) + "   ";
 
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 

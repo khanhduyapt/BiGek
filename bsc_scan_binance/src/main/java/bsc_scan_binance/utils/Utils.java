@@ -895,6 +895,7 @@ public class Utils {
         forex_naming_dict.put("JPY225", "J225");
         forex_naming_dict.put("JPN225", "J225");
         forex_naming_dict.put("GER30", "DE40");
+        forex_naming_dict.put("DAX40", "DE40");
         forex_naming_dict.put("FRA40", "FR40");
         forex_naming_dict.put("AUS200", "AU200");
         forex_naming_dict.put("XAUUSD", "GOLD");
@@ -3051,7 +3052,6 @@ public class Utils {
         return "";
     }
 
-    @SuppressWarnings("unused")
     private static String switchTrendByMa36810(List<BtcFutures> list) {
         if (CollectionUtils.isEmpty(list)) {
             return "";
@@ -3069,23 +3069,14 @@ public class Utils {
         BigDecimal ma6_0 = calcMA(list, 6, 0);
         BigDecimal ma6_3 = calcMA(list, 6, 3);
 
-        BigDecimal ma8_0 = calcMA(list, 8, 0);
-        BigDecimal ma8_3 = calcMA(list, 8, 3);
-
         BigDecimal ma10_0 = calcMA(list, 10, 0);
         BigDecimal ma10_3 = calcMA(list, 10, 3);
-
-        temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma6_0, ma6_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma6_0, ma6_3) + "_";
-
-        temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma8_0, ma8_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma8_0, ma8_3) + "_";
 
         temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma10_0, ma10_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma10_0, ma10_3) + "_";
 
-        temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma8_0, ma8_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma8_0, ma8_3) + "_";
+        temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
 
         String trend = "";
         trend += "_" + temp_long + "_";
@@ -3127,7 +3118,6 @@ public class Utils {
         }
 
         return result;
-
     }
 
     public static boolean checkClosePriceAndMa_StartFindLong(List<BtcFutures> list) {
