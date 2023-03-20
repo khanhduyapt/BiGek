@@ -2911,10 +2911,6 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        if (!isReloadPrepareOrderTrend(symbol + "USD", Utils.CAPITAL_TIME_MINUTE_15)) {
-            return "";
-        }
-
         List<BtcFutures> list = Utils.loadData(symbol, Utils.CRYPTO_TIME_15m, 50);
         if (CollectionUtils.isEmpty(list)) {
             return "";
@@ -2929,6 +2925,7 @@ public class BinanceServiceImpl implements BinanceService {
         ordersRepository.save(entity);
 
         // --------------------MSG--------------------
+        //TODO sendMsgKillLongShort
         String msg = "";
         if (Utils.isNotBlank(switch_trend)) {
             String str_price = Utils.removeLastZero(list.get(0).getCurrPrice());
@@ -2940,7 +2937,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String EVENT_ID = EVENT_PUMP + symbol + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog15m();
-            sendMsgPerHour(EVENT_ID, msg, true);
+            sendMsgPerHour(EVENT_ID, msg, false);
+
+            String url = Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70);
+            Utils.logWritelnDraft(msg + "     " + url);
         }
 
         return msg;
@@ -3404,17 +3404,18 @@ public class BinanceServiceImpl implements BinanceService {
         String result = "";
         BigDecimal cur_price = list.get(0).getCurrPrice();
         String str_price = Utils.removeLastZero(cur_price);
+
         // TODO: scapForex15M
         if (Utils.isNotBlank(switch_trend)
-                && (Objects.equals(trend_h4, switch_trend) || note_h4.contains(switch_trend)
-                        || Objects.equals(trend_d1, switch_trend) || note_d1.contains(switch_trend))) {
+                && (Objects.equals(trend_d1, switch_trend) || note_d1.contains(switch_trend)
+                        || note_h4.contains(switch_trend))) {
 
             String log = Utils.appendSpace(EPIC, 15) + Utils.appendSpace(str_price, 15);
             log += Utils.appendLeft(CAPITAL_TIME_XXX, 10) + ":" + Utils.appendSpace(switch_trend, 4) + "   ";
 
             String EVENT_ID = EVENT_PUMP + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
             if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, switch_trend)) {
-                sendMsgPerHour(EVENT_ID, "(D_H4_M15)(" + switch_trend + ")" + EPIC, false);
+                sendMsgPerHour(EVENT_ID, "(D_H4_M15)(" + switch_trend + ")" + EPIC, true);
 
                 log += "(D_H4_M15)";
             }
