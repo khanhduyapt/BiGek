@@ -152,11 +152,10 @@ public class Utils {
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK",
     public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList(
-    // "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD",
-    // "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP",
-    // "EURJPY", "EURNZD", "GBPAUD",
-    // "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY"
-    );
+            "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD",
+            "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP",
+            "EURJPY", "EURNZD", "GBPAUD",
+            "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
@@ -2970,7 +2969,7 @@ public class Utils {
             stop_long += Utils.checkXCutDnY(ma3_0, ma3_3, ma8_0, ma8_3) + "_";
             stop_long += Utils.checkXCutDnY(ma6_0, ma6_3, ma8_0, ma8_3) + "_";
         }
-        if (Utils.isNotBlank(stop_long)) {
+        if (stop_long.contains(TREND_SHORT)) {
             return "STOP:" + TREND_LONG;
         }
 
@@ -2979,7 +2978,7 @@ public class Utils {
             stop_short += Utils.checkXCutUpY(ma3_0, ma3_3, ma8_0, ma8_3) + "_";
             stop_short += Utils.checkXCutUpY(ma6_0, ma6_3, ma8_0, ma8_3) + "_";
         }
-        if (Utils.isNotBlank(stop_short)) {
+        if (stop_short.contains(TREND_LONG)) {
             return "STOP:" + TREND_SHORT;
         }
 
@@ -3066,7 +3065,7 @@ public class Utils {
     }
 
     @SuppressWarnings("unused")
-    private static String switchTrendByMa36810(List<BtcFutures> list, boolean isRequired368) {
+    private static String switchTrendByMa36810(List<BtcFutures> list) {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
@@ -3129,29 +3128,14 @@ public class Utils {
             if ((ma3_1.compareTo(ma3_2) > 0) && (ma6_1.compareTo(ma6_2) > 0) && (ma8_1.compareTo(ma8_2) > 0)
                     && (ma10_1.compareTo(ma10_2) > 0)) {
 
-                if (isRequired368) {
-                    if ((ma3_0.compareTo(ma6_0) > 0) && (ma6_0.compareTo(ma8_0) > 0) && (ma8_0.compareTo(ma10_0) > 0)) {
-
-                        result = Utils.TREND_LONG;
-
-                    }
-                } else {
-                    result = Utils.TREND_LONG;
-                }
-
+                result = Utils.TREND_LONG;
             }
         }
 
         if (trend.contains(Utils.TREND_SHORT)) {
             if ((ma3_1.compareTo(ma3_2) < 0) && (ma6_1.compareTo(ma6_2) < 0) && (ma8_1.compareTo(ma8_2) < 0)
                     && (ma10_1.compareTo(ma10_2) < 0)) {
-                if (isRequired368) {
-                    if ((ma3_0.compareTo(ma6_0) < 0) && (ma6_0.compareTo(ma8_0) < 0) && (ma8_0.compareTo(ma10_0) < 0)) {
-                        result = Utils.TREND_SHORT;
-                    }
-                } else {
-                    result = Utils.TREND_SHORT;
-                }
+                result = Utils.TREND_SHORT;
             }
         }
 
@@ -3309,11 +3293,11 @@ public class Utils {
             trend += switch_trend_by_heken;
         }
 
-        // String switch_trend_by_ma = Utils.switchTrendByMa50(list);
-        // if (Utils.isNotBlank(switch_trend_by_ma)) {
-        // trend += getTrendByMa(list);
-        // trend += Utils.TEXT_TREND_BY_MA;
-        // }
+        String switch_trend_by_ma = Utils.switchTrendByMa36810(list);
+        if (Utils.isNotBlank(switch_trend_by_ma)) {
+            trend += getTrendByMa(list);
+            trend += Utils.TEXT_TREND_BY_MA;
+        }
 
         return trend;
     }

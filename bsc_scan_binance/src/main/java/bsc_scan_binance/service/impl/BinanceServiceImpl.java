@@ -57,7 +57,6 @@ import bsc_scan_binance.entity.GeckoVolumeUpPre4h;
 import bsc_scan_binance.entity.Mt5DataCandle;
 import bsc_scan_binance.entity.Mt5DataCandleKey;
 import bsc_scan_binance.entity.Orders;
-import bsc_scan_binance.entity.PrepareOrders;
 import bsc_scan_binance.entity.PriorityCoinHistory;
 import bsc_scan_binance.repository.BinanceFuturesRepository;
 import bsc_scan_binance.repository.BinanceVolumeDateTimeRepository;
@@ -2934,10 +2933,10 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.isNotBlank(switch_trend)) {
             String str_price = Utils.removeLastZero(list.get(0).getCurrPrice());
             if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
-                msg = Utils.getTimeHHmm() + " 💹 " + symbol + "_kill_Short 💔 " + "(" + str_price + ")";
+                msg = " 💹 " + symbol + "_kill_Short 💔 " + "(" + str_price + ")";
             }
             if (Objects.equals(Utils.TREND_SHORT, switch_trend)) {
-                msg = Utils.getTimeHHmm() + " 🔻  " + symbol + "_kill_Long 💔 " + "(" + str_price + ")";
+                msg = " 🔻  " + symbol + "_kill_Long 💔 " + "(" + str_price + ")";
             }
 
             String EVENT_ID = EVENT_PUMP + symbol + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog15m();
@@ -3348,6 +3347,9 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String scapForex15M(String EPIC, String CAPITAL_TIME_XXX) {
+        //EPIC = "UK100";
+        //CAPITAL_TIME_XXX = Utils.CAPITAL_TIME_MINUTE_15;
+
         if (required_update_bars_csv) {
             return "";
         }
@@ -3382,9 +3384,11 @@ public class BinanceServiceImpl implements BinanceService {
 
         // -----------------------------LOG---------------------------
         String trend_h4 = "";
+        String note_h4 = "";
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
         if (Objects.nonNull(dto_h4)) {
             trend_h4 = dto_h4.getTrend();
+            note_h4 = dto_h4.getNote();
             sl_long = dto_h4.getLow_price();
             sl_shot = dto_h4.getHigh_price();
         }
@@ -3393,7 +3397,7 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal cur_price = list.get(0).getCurrPrice();
         String str_price = Utils.removeLastZero(cur_price);
         // TODO: scapForex15M
-        if (Utils.isNotBlank(switch_trend) && Objects.equals(trend_h4, switch_trend)) {
+        if (Utils.isNotBlank(switch_trend) && (Objects.equals(trend_h4, switch_trend) || Utils.isNotBlank(note_h4))) {
 
             String log = Utils.appendSpace(EPIC, 15) + Utils.appendSpace(str_price, 15);
             log += Utils.appendLeft(CAPITAL_TIME_XXX, 10) + ":" + Utils.appendSpace(switch_trend, 4) + "   ";
@@ -3405,22 +3409,23 @@ public class BinanceServiceImpl implements BinanceService {
             } else {
                 vsMa = "Ma" + list.size() + "_Down";
             }
-            log += Utils.appendSpace(vsMa, 15);
+            log += " " + Utils.appendSpace(vsMa, 15);
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 
             String msg = "";
             if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
-                msg = Utils.getTimeHHmm() + " 💹 " + EPIC + "_kill_Short 💔 " + "(" + str_price + ")";
+                msg = " 💹 " + EPIC + "_kill_Short 💔 " + "(" + str_price + ")";
                 log += Utils.calc_BUF_Long_Forex(false, EPIC, cur_price, sl_long, low_high.get(1));
             }
             if (Objects.equals(Utils.TREND_SHORT, switch_trend)) {
-                msg = Utils.getTimeHHmm() + " 🔻  " + EPIC + "_kill_Long 💔 " + "(" + str_price + ")";
+                msg = " 🔻  " + EPIC + "_kill_Long 💔 " + "(" + str_price + ")";
                 log += Utils.calc_BUF_Shot_Forex(false, EPIC, cur_price, sl_shot, low_high.get(0));
             }
+            log += "     " + Utils.appendSpace(note_h4, 20);
+
             if (!"_BTCUSD_ETHUSD_".contains(EPIC)) {
                 msg = "(" + switch_trend + ")" + EPIC + "(" + str_price + ")";
             }
-
             String EVENT_ID = EVENT_PUMP + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
                 Utils.logWritelnDraft(log);
@@ -3445,7 +3450,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String EVENT_ID = EVENT_PUMP + EPIC + stop_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
-                Utils.logWritelnDraft(log);
+                //Utils.logWritelnDraft(log);
             }
         }
 
