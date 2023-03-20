@@ -3402,6 +3402,9 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String switch_trend = Utils.switchTrendByMa50(list);
+        if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX) && Utils.isBlank(switch_trend)) {
+            switch_trend = Utils.switchTrendByMa36810(list);
+        }
 
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + CAPITAL_TIME_XXX;

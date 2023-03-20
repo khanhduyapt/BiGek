@@ -3053,7 +3053,7 @@ public class Utils {
         return "";
     }
 
-    private static String switchTrendByMa36810(List<BtcFutures> list) {
+    public static String switchTrendByMa36810(List<BtcFutures> list) {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
