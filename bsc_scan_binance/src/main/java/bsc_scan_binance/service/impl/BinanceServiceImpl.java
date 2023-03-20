@@ -3349,6 +3349,10 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
         String switch_trend = Utils.switchTrend(list);
+        if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
+            switch_trend += Utils.switchTrendByMa50(list);
+        }
+
         BigDecimal bread = Utils.calcMaxBread(list);
         if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
             bread = bread.multiply(BigDecimal.valueOf(2));
@@ -3370,12 +3374,19 @@ public class BinanceServiceImpl implements BinanceService {
                 end_body_price, sl_long, sl_shot, switch_trend.trim());
         ordersRepository.save(entity);
 
-        if (switch_trend.contains(Utils.TEXT_TREND_HEKEN_)) {
+        if (Utils.isNotBlank(switch_trend)) {
             String log = Utils.appendSpace(EPIC, 10) + Utils.getChartName(entity) + ":"
                     + Utils.appendSpace(switch_trend, 30);
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 
-            Utils.logWritelnDraft(log);
+            if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
+                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+                if (Objects.nonNull(dto_d1) && switch_trend.contains(dto_d1.getTrend())) {
+                    Utils.logWritelnDraft(log);
+                }
+            } else {
+                Utils.logWritelnDraft(log);
+            }
         }
 
         return trend;
