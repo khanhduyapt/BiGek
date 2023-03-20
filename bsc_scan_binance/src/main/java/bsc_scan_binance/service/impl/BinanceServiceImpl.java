@@ -3350,7 +3350,9 @@ public class BinanceServiceImpl implements BinanceService {
         }
         String switch_trend = Utils.switchTrend(list);
         BigDecimal bread = Utils.calcMaxBread(list);
-
+        if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XXX)) {
+            bread = bread.multiply(BigDecimal.valueOf(2));
+        }
         String trend = Utils.getTrendByMa(list);
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + CAPITAL_TIME_XXX;
@@ -3369,7 +3371,8 @@ public class BinanceServiceImpl implements BinanceService {
         ordersRepository.save(entity);
 
         if (switch_trend.contains(Utils.TEXT_TREND_HEKEN_)) {
-            String log = Utils.appendSpace(orderId, 15) + ":" + Utils.appendSpace(switch_trend, 30);
+            String log = Utils.appendSpace(EPIC, 10) + Utils.getChartName(entity) + ":"
+                    + Utils.appendSpace(switch_trend, 30);
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 
             Utils.logWritelnDraft(log);
