@@ -3440,6 +3440,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (Utils.isNotBlank(stop_trend)) {
             String log = Utils.appendSpace(EPIC, 15) + Utils.appendSpace(str_price, 15);
+            log += Utils.appendLeft(CAPITAL_TIME_XXX, 10) + ":" + Utils.appendSpace(stop_trend, 20) + "   ";
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 
             String EVENT_ID = EVENT_PUMP + EPIC + stop_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
