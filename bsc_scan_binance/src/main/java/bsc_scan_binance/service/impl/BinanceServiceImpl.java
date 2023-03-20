@@ -3454,7 +3454,8 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(Utils.TREND_SHORT, switch_trend)) {
                 log += Utils.calc_BUF_Shot_Forex(false, EPIC, cur_price, sl_shot, low_high.get(0));
             }
-            log += "     H4: " + Utils.appendSpace(trend_h4, 4) + Utils.appendSpace(note_h4, 20);
+            log += "     D1: " + Utils.appendSpace(trend_d1, 4) + "     H4: " + Utils.appendSpace(trend_h4, 4)
+                    + Utils.appendSpace(note_h4, 20);
 
             Utils.logWritelnDraft(log);
 

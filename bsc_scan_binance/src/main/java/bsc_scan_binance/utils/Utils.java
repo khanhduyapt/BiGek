@@ -3003,6 +3003,7 @@ public class Utils {
         String temp_shot = "";
 
         BigDecimal ma6_0 = calcMA(list, 6, 0);
+        BigDecimal ma6_1 = calcMA(list, 6, 1);
         BigDecimal ma6_3 = calcMA(list, 6, 3);
 
         BigDecimal ma10_0 = calcMA(list, 10, 0);
@@ -3038,13 +3039,13 @@ public class Utils {
         }
 
         if (trend.contains(Utils.TREND_LONG)) {
-            if ((ma6_0.compareTo(ma6_3) > 0) && (ma6_0.compareTo(ma5x_0) > 0)) {
+            if ((ma6_0.compareTo(ma6_1) > 0) && (ma6_0.compareTo(ma5x_0) > 0)) {
                 return Utils.TREND_LONG;
             }
         }
 
         if (trend.contains(Utils.TREND_SHORT)) {
-            if ((ma6_0.compareTo(ma6_3) < 0) && (ma6_0.compareTo(ma5x_0) < 0)) {
+            if ((ma6_0.compareTo(ma6_1) < 0) && (ma6_0.compareTo(ma5x_0) < 0)) {
                 return Utils.TREND_SHORT;
             }
         }
