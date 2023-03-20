@@ -2912,6 +2912,10 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
+        if (!isReloadPrepareOrderTrend(symbol + "USD", Utils.CAPITAL_TIME_MINUTE_15)) {
+            return "";
+        }
+
         List<BtcFutures> list = Utils.loadData(symbol, Utils.CRYPTO_TIME_15m, 50);
         if (CollectionUtils.isEmpty(list)) {
             return "";
