@@ -138,24 +138,23 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final List<String> EPICS_15M = Arrays.asList("BTCUSD", "XAUUSD", "US30", "UK100", "GER30",
-            "JPY225");
+    public static final List<String> EPICS_15M = Arrays.asList("BTCUSD", "XAUUSD", "US30", "UK100", "DAX40", "JPY225");
 
     // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
     // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
     // Main: "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD"
 
     // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", "AUS200", "JPY225",
-    public static final List<String> EPICS_MAIN = Arrays.asList("BTCUSD", "ETHUSD", "XAUUSD", "XAGUSD", "US30", "UK100",
-            "JPY225", "GER30", "FRA40", "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
+    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "US30", "UK100", "JPN225", "DAX40",
+            "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK",
     public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList(
-    //            "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD",
-    //            "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP",
-    //            "EURJPY", "EURNZD", "GBPAUD",
-    //            "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY"
+    // "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD",
+    // "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP",
+    // "EURJPY", "EURNZD", "GBPAUD",
+    // "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY"
     );
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
@@ -894,6 +893,7 @@ public class Utils {
         forex_naming_dict.put("NAS100", "US100");
         forex_naming_dict.put("SP500", "US500");
         forex_naming_dict.put("JPY225", "J225");
+        forex_naming_dict.put("JPN225", "J225");
         forex_naming_dict.put("GER30", "DE40");
         forex_naming_dict.put("FRA40", "FR40");
         forex_naming_dict.put("AUS200", "AU200");
@@ -3001,9 +3001,6 @@ public class Utils {
         String temp_long = "";
         String temp_shot = "";
 
-        BigDecimal ma3_0 = calcMA(list, 3, 0);
-        BigDecimal ma3_3 = calcMA(list, 3, 3);
-
         BigDecimal ma6_0 = calcMA(list, 6, 0);
         BigDecimal ma6_3 = calcMA(list, 6, 3);
 
@@ -3013,9 +3010,6 @@ public class Utils {
         BigDecimal ma5x_0 = calcMA(list, 50, 0);
         BigDecimal ma5x_3 = calcMA(list, 50, 3);
 
-        temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma5x_0, ma5x_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma5x_0, ma5x_3) + "_";
-
         temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma5x_0, ma5x_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma5x_0, ma5x_3) + "_";
 
@@ -3023,11 +3017,9 @@ public class Utils {
         temp_shot += Utils.checkXCutDnY(ma10_0, ma10_3, ma5x_0, ma5x_3) + "_";
 
         if (ma6_0.compareTo(ma5x_0) > 0) {
-            temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma10_0, ma10_3) + "_";
             temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
         }
         if (ma6_0.compareTo(ma5x_0) < 0) {
-            temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma10_0, ma10_3) + "_";
             temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
         }
 
@@ -3045,13 +3037,13 @@ public class Utils {
         }
 
         if (trend.contains(Utils.TREND_LONG)) {
-            if ((ma3_0.compareTo(ma3_3) > 0) && (ma3_0.compareTo(ma5x_0) > 0)) {
+            if ((ma6_0.compareTo(ma6_3) > 0) && (ma6_0.compareTo(ma5x_0) > 0)) {
                 return Utils.TREND_LONG;
             }
         }
 
         if (trend.contains(Utils.TREND_SHORT)) {
-            if ((ma3_0.compareTo(ma3_3) < 0) && (ma3_0.compareTo(ma5x_0) < 0)) {
+            if ((ma6_0.compareTo(ma6_3) < 0) && (ma6_0.compareTo(ma5x_0) < 0)) {
                 return Utils.TREND_SHORT;
             }
         }

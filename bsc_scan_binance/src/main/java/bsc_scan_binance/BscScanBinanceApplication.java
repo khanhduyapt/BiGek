@@ -131,15 +131,15 @@ public class BscScanBinanceApplication {
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
                                 }
 
-                                //for (int index = 0; index < forex_size; index++) {
-                                //    String EPIC = capital_list.get(index);
-                                //    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                //}
+                                for (int index = 0; index < forex_size; index++) {
+                                    String EPIC = capital_list.get(index);
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                }
 
                                 String result = "";
                                 for (int index = 0; index < forex_size; index++) {
                                     String EPIC = capital_list.get(index);
-                                    String trend = binance_service.scapForex15M(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                    String trend = binance_service.scapForex15M(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
                                     if (Utils.isNotBlank(trend)) {
                                         result += trend + ", ";
 

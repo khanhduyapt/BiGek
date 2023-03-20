@@ -283,6 +283,7 @@ public class MoneyAtRiskResponse {
             break;
         case "J225":
         case "JPY225":
+        case "JPN225":
             standard_lot = BigDecimal.valueOf(6.8);
             unit_risk_per_pip = BigDecimal.valueOf(0.5);
             break;
@@ -293,6 +294,7 @@ public class MoneyAtRiskResponse {
             break;
         case "DE40":
         case "GER30":
+        case "DAX40":
             standard_lot = BigDecimal.valueOf(0.158);
             unit_risk_per_pip = BigDecimal.valueOf(0.166666666666667);
             break;

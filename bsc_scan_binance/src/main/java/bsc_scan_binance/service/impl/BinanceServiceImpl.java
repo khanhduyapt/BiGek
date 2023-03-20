@@ -2925,7 +2925,7 @@ public class BinanceServiceImpl implements BinanceService {
         ordersRepository.save(entity);
 
         // --------------------MSG--------------------
-        //TODO sendMsgKillLongShort
+        // TODO sendMsgKillLongShort
         String msg = "";
         if (Utils.isNotBlank(switch_trend)) {
             String str_price = Utils.removeLastZero(list.get(0).getCurrPrice());
@@ -3013,7 +3013,9 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(pcname, "pc")) {
                 mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.csv";
             } else if (Objects.equals(pcname, "desktop-l4m1ju2")) {
-                mt5_data_file = "C:\\Users\\DellE5270\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.csv";
+                // MFF: mt5_data_file =
+                // "C:\\Users\\DellE5270\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.csv";
+                mt5_data_file = "C:\\Users\\DellE5270\\AppData\\Roaming\\MetaQuotes\\Terminal\\10CE948A1DFC9A8C27E56E827008EBD4\\MQL5\\Files\\Data\\Bars.csv";
             }
 
             File file = new File(mt5_data_file);
@@ -3366,24 +3368,11 @@ public class BinanceServiceImpl implements BinanceService {
                 end_body_price, sl_long, sl_shot, switch_trend.trim());
         ordersRepository.save(entity);
 
-        if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)
-                && switch_trend.contains(Utils.TEXT_TREND_HEKEN_)) {
+        if (switch_trend.contains(Utils.TEXT_TREND_HEKEN_)) {
+            String log = Utils.appendSpace(orderId, 15) + ":" + Utils.appendSpace(switch_trend, 30);
+            log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 
-            String heken_trend = Utils.TREND_LONG;
-            if (switch_trend.contains(Utils.TEXT_TREND_HEKEN_SHORT)) {
-                heken_trend = Utils.TREND_SHORT;
-            }
-
-            Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-            if (Objects.nonNull(dto_d1) && (dto_d1.getNote() + dto_d1.getTrend()).contains(heken_trend)) {
-
-                String log = "(H1)" + Utils.appendSpace(EPIC, 15);
-                log += Utils.appendLeft(CAPITAL_TIME_XXX, 10) + ":" + Utils.appendSpace(switch_trend, 30);
-                log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
-
-                Utils.logWritelnDraft(log);
-            }
-
+            Utils.logWritelnDraft(log);
         }
 
         return trend;
@@ -3392,8 +3381,8 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String scapForex15M(String EPIC, String CAPITAL_TIME_XXX) {
-        //EPIC = "UK100";
-        //CAPITAL_TIME_XXX = Utils.CAPITAL_TIME_MINUTE_15;
+        // EPIC = "UK100";
+        // CAPITAL_TIME_XXX = Utils.CAPITAL_TIME_MINUTE_15;
 
         if (required_update_bars_csv) {
             return "";
@@ -3428,10 +3417,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         // -----------------------------LOG---------------------------
         Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-        String note_d1 = "";
         String trend_d1 = "";
         if (Objects.nonNull(dto_d1)) {
-            note_d1 = dto_d1.getNote();
             trend_d1 = dto_d1.getTrend();
         }
 
@@ -3450,9 +3437,7 @@ public class BinanceServiceImpl implements BinanceService {
         String str_price = Utils.removeLastZero(cur_price);
 
         // TODO: scapForex15M
-        if (Utils.isNotBlank(switch_trend)
-                && (Objects.equals(trend_d1, switch_trend) || note_d1.contains(switch_trend)
-                        || note_h4.contains(switch_trend))) {
+        if (Utils.isNotBlank(switch_trend) && Objects.equals(trend_d1, switch_trend)) {
 
             String log = Utils.appendSpace(EPIC, 15) + Utils.appendSpace(str_price, 15);
             log += Utils.appendLeft(CAPITAL_TIME_XXX, 10) + ":" + Utils.appendSpace(switch_trend, 4) + "   ";
