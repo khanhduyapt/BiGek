@@ -131,14 +131,19 @@ public class BscScanBinanceApplication {
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
                                 }
 
+                                //for (int index = 0; index < forex_size; index++) {
+                                //    String EPIC = capital_list.get(index);
+                                //    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                //}
+
                                 String result = "";
                                 for (int index = 0; index < forex_size; index++) {
                                     String EPIC = capital_list.get(index);
-                                    String trend = binance_service.scapForex15M(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+                                    String trend = binance_service.scapForex15M(EPIC, Utils.CAPITAL_TIME_HOUR);
                                     if (Utils.isNotBlank(trend)) {
                                         result += trend + ", ";
 
-                                        String init = "05:" + Utils.appendSpace(trend, 6);
+                                        String init = "H1:" + Utils.appendSpace(trend, 6);
                                         String str_index = Utils.appendLeft(String.valueOf(index + 1), 3) + "/"
                                                 + Utils.appendLeft(String.valueOf(forex_size), 3) + "   ";
                                         System.out.println(
@@ -147,11 +152,10 @@ public class BscScanBinanceApplication {
                                 }
 
                                 if (Utils.isNotBlank(result)) {
-                                    String msg = "(FX_5M)(Ma50):" + result;
+                                    // String msg = "(FX_5M)(Ma50):" + result;
                                     // String EVENT_ID = "FX_15M_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
                                     // binance_service.sendMsgPerHour(EVENT_ID, msg, true);
-
-                                    Utils.logWritelnDraft(msg.replaceAll(" +", " ") + "\n\n");
+                                    // Utils.logWritelnDraft(msg.replaceAll(" +", " ") + "\n\n");
                                 }
                             }
                         }

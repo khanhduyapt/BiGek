@@ -138,6 +138,11 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
             + " ORDER BY det.gecko_id ", nativeQuery = true)
     public List<Orders> getTrend_Reversal_H4today();
 
+    @Query(value = " SELECT * FROM orders det "
+            + " WHERE (det.gecko_id like '%HOUR') AND (COALESCE(det.note, '') like '%Heken%') "
+            + " ORDER BY det.gecko_id ", nativeQuery = true)
+    public List<Orders> getTrend_Reversal_H1today();
+
     @Query(value = " SELECT * FROM orders det  "
             + " WHERE (COALESCE(det.note, '') = '') and (det.gecko_id like '%_DAY') "
             + " ORDER BY gecko_id ", nativeQuery = true)

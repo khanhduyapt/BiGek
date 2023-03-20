@@ -138,7 +138,7 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final List<String> EPICS_15M = Arrays.asList("BTCUSD", "ETHUSD", "XAUUSD", "US30", "UK100", "GER30",
+    public static final List<String> EPICS_15M = Arrays.asList("BTCUSD", "XAUUSD", "US30", "UK100", "GER30",
             "JPY225");
 
     // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
@@ -152,10 +152,11 @@ public class Utils {
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK",
     public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList(
-            "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD",
-            "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP",
-            "EURJPY", "EURNZD", "GBPAUD",
-            "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY");
+    //            "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD",
+    //            "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP",
+    //            "EURJPY", "EURNZD", "GBPAUD",
+    //            "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY"
+    );
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
