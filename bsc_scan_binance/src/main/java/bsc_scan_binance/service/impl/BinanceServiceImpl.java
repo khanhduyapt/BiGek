@@ -3383,6 +3383,12 @@ public class BinanceServiceImpl implements BinanceService {
         ordersRepository.save(entity);
 
         // -----------------------------LOG---------------------------
+        Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+        String trend_d1 = "";
+        if (Objects.nonNull(dto_d1)) {
+            trend_d1 = dto_d1.getTrend();
+        }
+
         String trend_h4 = "";
         String note_h4 = "";
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
@@ -3429,7 +3435,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.EPICS_FOREXS_OTHERS.contains(EPIC)) {
-                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
                 if (Objects.nonNull(dto_d1) && (Objects.equals(dto_d1.getTrend(), switch_trend)
                         || dto_d1.getNote().contains(switch_trend))) {
 
@@ -3442,10 +3447,15 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnDraft(log);
             }
 
+            String EVENT_ID = EVENT_PUMP + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
             if ("_BTCUSD_ETHUSD_".contains(EPIC) && Utils.isNotBlank(msg)) {
-                String EVENT_ID = EVENT_PUMP + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
                 sendMsgPerHour(EVENT_ID, msg.replace("USD", ""), false);
             }
+
+            if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, switch_trend)) {
+                sendMsgPerHour(EVENT_ID, "(D_H4_M15)(" + switch_trend + ")" + EPIC, false);
+            }
+
             result = "(" + switch_trend + ") " + Utils.appendSpace(EPIC, 15) + " ("
                     + Utils.removeLastZero(list.get(0).getCurrPrice()) + ")";
         }
