@@ -3384,8 +3384,10 @@ public class BinanceServiceImpl implements BinanceService {
 
         // -----------------------------LOG---------------------------
         Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+        String note_d1 = "";
         String trend_d1 = "";
         if (Objects.nonNull(dto_d1)) {
+            note_d1 = dto_d1.getNote();
             trend_d1 = dto_d1.getTrend();
         }
 
@@ -3404,10 +3406,18 @@ public class BinanceServiceImpl implements BinanceService {
         String str_price = Utils.removeLastZero(cur_price);
         // TODO: scapForex15M
         if (Utils.isNotBlank(switch_trend)
-                && (Objects.equals(trend_h4, switch_trend) || note_h4.contains(switch_trend))) {
+                && (Objects.equals(trend_h4, switch_trend) || note_h4.contains(switch_trend)
+                        || Objects.equals(trend_d1, switch_trend) || note_d1.contains(switch_trend))) {
 
             String log = Utils.appendSpace(EPIC, 15) + Utils.appendSpace(str_price, 15);
             log += Utils.appendLeft(CAPITAL_TIME_XXX, 10) + ":" + Utils.appendSpace(switch_trend, 4) + "   ";
+
+            String EVENT_ID = EVENT_PUMP + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
+            if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, switch_trend)) {
+                sendMsgPerHour(EVENT_ID, "(D_H4_M15)(" + switch_trend + ")" + EPIC, false);
+
+                log += "(D_H4_M15)";
+            }
 
             String vsMa = "";
             boolean isAboveMa50 = Utils.isUptrendByMa(list, list.size(), 1, 3);
@@ -3433,27 +3443,10 @@ public class BinanceServiceImpl implements BinanceService {
             if (!"_BTCUSD_ETHUSD_".contains(EPIC)) {
                 msg = "(" + switch_trend + ")" + EPIC + "(" + str_price + ")";
             }
+            Utils.logWritelnDraft(log);
 
-            if (Utils.EPICS_FOREXS_OTHERS.contains(EPIC)) {
-                if (Objects.nonNull(dto_d1) && (Objects.equals(dto_d1.getTrend(), switch_trend)
-                        || dto_d1.getNote().contains(switch_trend))) {
-
-                    log += "     D1: " + Utils.appendSpace(switch_trend, 4)
-                            + Utils.appendSpace(dto_d1.getNote(), 20);
-
-                    Utils.logWritelnDraft(log);
-                }
-            } else {
-                Utils.logWritelnDraft(log);
-            }
-
-            String EVENT_ID = EVENT_PUMP + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
             if ("_BTCUSD_ETHUSD_".contains(EPIC) && Utils.isNotBlank(msg)) {
                 sendMsgPerHour(EVENT_ID, msg.replace("USD", ""), false);
-            }
-
-            if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, switch_trend)) {
-                sendMsgPerHour(EVENT_ID, "(D_H4_M15)(" + switch_trend + ")" + EPIC, false);
             }
 
             result = "(" + switch_trend + ") " + Utils.appendSpace(EPIC, 15) + " ("
