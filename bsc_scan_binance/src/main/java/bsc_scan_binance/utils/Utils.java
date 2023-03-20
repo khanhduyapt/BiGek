@@ -3306,11 +3306,11 @@ public class Utils {
             trend += switch_trend_by_heken;
         }
 
-        String switch_trend_by_ma = Utils.switchTrendByMa50(list);
-        if (Utils.isNotBlank(switch_trend_by_ma)) {
-            trend += getTrendByMa(list);
-            trend += Utils.TEXT_TREND_BY_MA;
-        }
+        // String switch_trend_by_ma = Utils.switchTrendByMa50(list);
+        // if (Utils.isNotBlank(switch_trend_by_ma)) {
+        // trend += getTrendByMa(list);
+        // trend += Utils.TEXT_TREND_BY_MA;
+        // }
 
         return trend;
     }
