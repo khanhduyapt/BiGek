@@ -3397,7 +3397,8 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal cur_price = list.get(0).getCurrPrice();
         String str_price = Utils.removeLastZero(cur_price);
         // TODO: scapForex15M
-        if (Utils.isNotBlank(switch_trend) && (Objects.equals(trend_h4, switch_trend) || Utils.isNotBlank(note_h4))) {
+        if (Utils.isNotBlank(switch_trend)
+                && (Objects.equals(trend_h4, switch_trend) || note_h4.contains(switch_trend))) {
 
             String log = Utils.appendSpace(EPIC, 15) + Utils.appendSpace(str_price, 15);
             log += Utils.appendLeft(CAPITAL_TIME_XXX, 10) + ":" + Utils.appendSpace(switch_trend, 4) + "   ";
@@ -3421,24 +3422,30 @@ public class BinanceServiceImpl implements BinanceService {
                 msg = " 🔻  " + EPIC + "_kill_Long 💔 " + "(" + str_price + ")";
                 log += Utils.calc_BUF_Shot_Forex(false, EPIC, cur_price, sl_shot, low_high.get(0));
             }
-            log += "     " + Utils.appendSpace(note_h4, 20);
+            log += "     H4: " + Utils.appendSpace(trend_h4, 4) + Utils.appendSpace(note_h4, 20);
 
             if (!"_BTCUSD_ETHUSD_".contains(EPIC)) {
                 msg = "(" + switch_trend + ")" + EPIC + "(" + str_price + ")";
             }
-            String EVENT_ID = EVENT_PUMP + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
-            if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
+
+            if (Utils.EPICS_FOREXS_OTHERS.contains(EPIC)) {
+                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+                if (Objects.nonNull(dto_d1) && (Objects.equals(dto_d1.getTrend(), switch_trend)
+                        || dto_d1.getNote().contains(switch_trend))) {
+
+                    log += "     D1: " + Utils.appendSpace(switch_trend, 4)
+                            + Utils.appendSpace(dto_d1.getNote(), 20);
+
+                    Utils.logWritelnDraft(log);
+                }
+            } else {
                 Utils.logWritelnDraft(log);
             }
 
-            if (Utils.EPICS_15M.contains(EPIC)) {
-                if ("_BTCUSD_ETHUSD_".contains(EPIC) && Utils.isNotBlank(msg)) {
-                    sendMsgPerHour(EVENT_ID, msg.replace("USD", ""), false);
-                } else {
-                    sendMsgPerHour(EVENT_ID, msg, true);
-                }
+            if ("_BTCUSD_ETHUSD_".contains(EPIC) && Utils.isNotBlank(msg)) {
+                String EVENT_ID = EVENT_PUMP + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
+                sendMsgPerHour(EVENT_ID, msg.replace("USD", ""), false);
             }
-
             result = "(" + switch_trend + ") " + Utils.appendSpace(EPIC, 15) + " ("
                     + Utils.removeLastZero(list.get(0).getCurrPrice()) + ")";
         }
