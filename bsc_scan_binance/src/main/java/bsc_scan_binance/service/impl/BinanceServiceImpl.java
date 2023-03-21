@@ -3374,14 +3374,17 @@ public class BinanceServiceImpl implements BinanceService {
                 end_body_price, sl_long, sl_shot, note);
         ordersRepository.save(entity);
 
+        String result = "";
         if (Utils.isNotBlank(switch_trend)) {
             String log = Utils.appendSpace(EPIC, 15);
             log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":" + Utils.appendSpace(note, 50) + "   ";
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
             Utils.logWritelnDraft(log);
+
+            result = EPIC;
         }
 
-        return trend;
+        return result;
     }
 
     @Override

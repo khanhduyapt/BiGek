@@ -118,29 +118,37 @@ public class BscScanBinanceApplication {
                         if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
                             binance_service.saveMt5Data();
 
+                            String result_h4 = "";
                             for (int index = 0; index < forex_size; index++) {
                                 String EPIC = capital_list.get(index);
-                                binance_service.initForexTrend(EPIC);
+                                String trend = binance_service.initForexTrend(EPIC);
+                                if (Utils.isNotBlank(trend)) {
+                                    result_h4 += trend + ", ";
+                                }
                             }
 
-                            String result = "";
+                            String result_h1 = "";
                             for (int index = 0; index < forex_size; index++) {
                                 String EPIC = capital_list.get(index);
                                 String trend = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR);
                                 if (Utils.isNotBlank(trend)) {
-                                    result += trend + ", ";
+                                    result_h1 += trend + ", ";
                                     String init = "H4:" + Utils.appendSpace(trend, 6);
                                     String str_index = Utils.appendLeft(String.valueOf(index + 1), 3) + "/"
                                             + Utils.appendLeft(String.valueOf(forex_size), 3) + "   ";
+
                                     System.out.println(
                                             Utils.getTimeHHmm() + str_index + Utils.appendSpace(EPIC, 15) + init);
                                 }
                             }
 
-                            if (Utils.isNotBlank(result)) {
-                                String msg = "(FX_H1):" + result;
-                                String EVENT_ID = "FX_H1_" + Utils.getCurrentYyyyMmDd_HH();
+                            if (Utils.isNotBlank(result_h4 + result_h1)) {
+                                String msg = "(FX_H4):" + result_h4 + Utils.new_line_from_service;
+                                msg += "(FX_H1):" + result_h1;
+
+                                String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH_Blog4h();
                                 binance_service.sendMsgPerHour(EVENT_ID, msg, true);
+
                                 Utils.logWritelnDraft(msg.replaceAll(" +", " ") + "\n\n");
                             }
                         }
