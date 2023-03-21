@@ -3402,23 +3402,10 @@ public class BinanceServiceImpl implements BinanceService {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
+
         int fastIndex = 6;
-        int slowIndex = 20;
-        if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX)) {
-            fastIndex = 10;
-            slowIndex = 30;
-        }
+        int slowIndex = 50;
 
-        String trend_h1 = "";
-        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XXX)) {
-            fastIndex = 15;
-            slowIndex = 50;
-
-            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
-            if (Objects.nonNull(dto_h1)) {
-                trend_h1 = dto_h1.getTrend();
-            }
-        }
         boolean isUp_trend_by_ma6 = Utils.isUptrendByMa(list, 6, 1, 3);
         boolean isUp_trend_by_ma50 = Utils.isUptrendByMa(list, 50, 1, 3);
         String trend = "";
@@ -3457,14 +3444,7 @@ public class BinanceServiceImpl implements BinanceService {
             String log = Utils.appendSpace(EPIC, 15);
             log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":" + Utils.appendSpace(note, 50) + "   ";
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
-
-            if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XXX)) {
-                if (Objects.equals(switch_trend_Ma50, trend_h1)) {
-                    Utils.logWritelnDraft(log);
-                }
-            } else {
-                Utils.logWritelnDraft(log);
-            }
+            Utils.logWritelnDraft(log);
 
             result = Utils.appendSpace(EPIC, 15);
         }
