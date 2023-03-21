@@ -2601,8 +2601,8 @@ public class BinanceServiceImpl implements BinanceService {
             time = Utils.MINUTES_OF_1H;
         } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_15)) {
             time = Utils.MINUTES_OF_15M;
-            // } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_5)) {
-            // time = Utils.MINUTES_OF_5M;
+        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_5)) {
+            time = Utils.MINUTES_OF_5M;
         }
 
         if (time <= elapsedMinutes) {
@@ -3010,7 +3010,8 @@ public class BinanceServiceImpl implements BinanceService {
             String mt5_data_file = "";
             String pcname = InetAddress.getLocalHost().getHostName().toLowerCase();
             if (Objects.equals(pcname, "pc")) {
-                //mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.csv";
+                // mt5_data_file =
+                // "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.csv";
                 mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\10CE948A1DFC9A8C27E56E827008EBD4\\MQL5\\Files\\Data\\Bars.csv";
             } else if (Objects.equals(pcname, "desktop-l4m1ju2")) {
                 // MFF: mt5_data_file =
@@ -3351,10 +3352,14 @@ public class BinanceServiceImpl implements BinanceService {
         String note = "";
         String switch_trend = Utils.switchTrendByMa610(list);
         if (Utils.isNotBlank(switch_trend)) {
-            note = "byMa610: " + Utils.appendSpace(switch_trend, 15);
+            note += "byMa610:" + Utils.appendSpace(switch_trend, 15);
         }
 
-        String trend = Utils.getTrendByMa6_10(list);
+        String trend = Utils.getTrendByMa3_8(list);
+        if (Utils.isBlank(trend)) {
+            note += "Ma3:" + (Utils.isUptrendByMa(list, 3, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHORT);
+        }
+
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4;
         String date_time = LocalDateTime.now().toString();
@@ -3372,17 +3377,7 @@ public class BinanceServiceImpl implements BinanceService {
                 end_body_price, sl_long, sl_shot, note);
         ordersRepository.save(entity);
 
-        String result = "";
-        if (Utils.isNotBlank(switch_trend)) {
-            String log = Utils.appendSpace(EPIC, 15);
-            log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":" + Utils.appendSpace(note, 50) + "   ";
-            log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
-            Utils.logWritelnDraft(log);
-
-            result = EPIC;
-        }
-
-        return result;
+        return "";
     }
 
     @Override
@@ -3402,24 +3397,14 @@ public class BinanceServiceImpl implements BinanceService {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
-        String trend = Utils.getTrendByMa6_10(list);
+        String trend = Utils.getTrendByMa3_8(list);
         int fastIndex = 6;
         int slowIndex = 50;
         String switch_trend_Ma50 = Utils.switchTrendByMaXX(list, fastIndex, slowIndex);
 
-        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XXX)) {
-            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
-            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-            if (Objects.isNull(dto_h4) || Objects.isNull(dto_h4)
-                    || !Objects.equals(dto_h1.getTrend(), dto_h4.getTrend())
-                    || !Objects.equals(dto_h4.getTrend(), switch_trend_Ma50)) {
-                return "";
-            }
-        }
-
         String note = "";
         if (Utils.isNotBlank(switch_trend_Ma50)) {
-            note += "byMa50 : " + Utils.appendSpace(switch_trend_Ma50, 15);
+            note += "byMa50:" + Utils.appendSpace(switch_trend_Ma50, 15);
         }
 
         // -----------------------------DATABASE---------------------------
@@ -3433,20 +3418,36 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
 
-        Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), body.get(0),
-                body.get(1), sl_long, sl_shot, note);
+        Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
+                sl_long, sl_shot, note);
 
         ordersRepository.save(entity);
 
         // -----------------------------LOG---------------------------
+        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XXX)) {
+            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+            if (Objects.isNull(dto_h4)) {
+                return ""; // not play
+            }
+            String trend_source = dto_h4.getTrend();
+            if (Utils.isBlank(trend_source)) {
+                Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
+                if (Objects.nonNull(dto_h1)) {
+                    trend_source = dto_h1.getTrend();
+                }
+            }
+            if (!Objects.equals(trend_source, switch_trend_Ma50)) {
+                return "";// not play
+            }
+        }
 
-        String result = "";
         // TODO: scapForex
-        if (Utils.isNotBlank(note)) {
-
+        String result = "";
+        if (Utils.isNotBlank(switch_trend_Ma50) && Utils.isNotBlank(trend)) {
             String log = Utils.appendSpace(EPIC, 15);
             log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":" + Utils.appendSpace(note, 50) + "   ";
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
+
             Utils.logWritelnDraft(log);
 
             result = Utils.appendSpace(EPIC, 15);
