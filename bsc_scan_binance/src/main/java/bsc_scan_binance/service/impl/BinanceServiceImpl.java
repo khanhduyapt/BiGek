@@ -2906,17 +2906,17 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public String sendMsgKillLongShort(String gecko_id, String symbol) {
         String EPIC = "CRYPTO_" + symbol;
-        String orderId = EPIC + "_" + Utils.CRYPTO_TIME_1H;
-        if (!isReloadPrepareOrderTrend(EPIC, Utils.CRYPTO_TIME_1H)) {
+        String orderId = EPIC + "_" + Utils.CRYPTO_TIME_15m;
+        if (!isReloadPrepareOrderTrend(EPIC, Utils.CRYPTO_TIME_15m)) {
             return "";
         }
 
-        List<BtcFutures> list = Utils.loadData(symbol, Utils.CRYPTO_TIME_1H, 50);
+        List<BtcFutures> list = Utils.loadData(symbol, Utils.CRYPTO_TIME_15m, 50);
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
-
-        String switch_trend = Utils.switchTrendByMa50(list);
+        int fastIndex = 8;
+        String switch_trend = Utils.switchTrendByMa50(list, fastIndex);
 
         // --------------------DATABASE--------------------
         String date_time = LocalDateTime.now().toString();
@@ -2937,7 +2937,7 @@ public class BinanceServiceImpl implements BinanceService {
                 msg = " 🔻  " + symbol + "_kill_Long 💔 " + str_price;
             }
 
-            String EVENT_ID = EVENT_PUMP + symbol + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog2h();
+            String EVENT_ID = EVENT_PUMP + symbol + switch_trend + Utils.getCurrentYyyyMmDd_HH();
             sendMsgPerHour(EVENT_ID, msg, false);
 
             String url = Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70);
@@ -2963,8 +2963,8 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnWithTime(not_found_msg, true);
             return "";
         }
-
-        String switch_trend = Utils.switchTrendByMa50(list);
+        int fastIndex = 6;
+        String switch_trend = Utils.switchTrendByMa50(list, fastIndex);
 
         // ------------------------------------Database------------------------------------
         String date_time = LocalDateTime.now().toString();
@@ -3404,9 +3404,13 @@ public class BinanceServiceImpl implements BinanceService {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
+        int fastIndex = 6;
+        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XXX)) {
+            fastIndex = 10;
+        }
 
         String trend_by_ma50 = Utils.isUptrendByMa(list, 50, 0, 1) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-        String switch_trend_Ma50 = Utils.switchTrendByMa50(list);
+        String switch_trend_Ma50 = Utils.switchTrendByMa50(list, fastIndex);
         String note = "";
         if (Utils.isNotBlank(switch_trend_Ma50)) {
             note += "byMa50 : " + Utils.appendSpace(switch_trend_Ma50, 15);
