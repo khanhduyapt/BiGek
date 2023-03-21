@@ -3148,11 +3148,11 @@ public class Utils {
             return "";
         }
 
-        boolean trend_ma3 = isUptrendByMa(list, 3, 0, 1);
         boolean trend_ma6 = isUptrendByMa(list, 6, 0, 1);
+        boolean trend_ma8 = isUptrendByMa(list, 8, 0, 1);
 
-        if (trend_ma3 == trend_ma6) {
-            return trend_ma6 ? TREND_LONG : TREND_SHORT;
+        if (trend_ma6 == trend_ma8) {
+            return trend_ma8 ? TREND_LONG : TREND_SHORT;
         }
 
         return "";
