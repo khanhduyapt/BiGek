@@ -91,7 +91,7 @@ public class Utils {
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
-    public static final String TEXT_TREND_BY_MA = "(Ma)";
+    public static final String TEXT_TREND_BY_MA = "(Ma6_10)";
 
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
@@ -130,7 +130,7 @@ public class Utils {
     public static final String CRYPTO_TIME_1w = "1w";
 
     public static final long MINUTES_OF_D = 240;// 600;
-    public static final long MINUTES_OF_4H = 120;
+    public static final long MINUTES_OF_4H = 60;
     public static final long MINUTES_OF_1H = 60;
     public static final long MINUTES_OF_15M = 15;
     // public static final long MINUTES_OF_5M = 15;
@@ -151,11 +151,9 @@ public class Utils {
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK",
     public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList(
-    // "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD",
-    // "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP",
-    // "EURJPY", "EURNZD", "GBPAUD",
-    // "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY"
-    );
+            "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF",
+            "EURGBP", "EURJPY", "EURNZD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF",
+            "NZDJPY");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
@@ -3053,7 +3051,7 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrendByMa36810(List<BtcFutures> list) {
+    public static String switchTrendByMa610(List<BtcFutures> list) {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
@@ -3064,20 +3062,20 @@ public class Utils {
         String temp_long = "";
         String temp_shot = "";
 
-        BigDecimal ma3_0 = calcMA(list, 3, 0);
-        BigDecimal ma3_3 = calcMA(list, 3, 3);
-
         BigDecimal ma6_0 = calcMA(list, 6, 0);
         BigDecimal ma6_3 = calcMA(list, 6, 3);
+
+        BigDecimal ma8_0 = calcMA(list, 8, 0);
+        BigDecimal ma8_3 = calcMA(list, 8, 3);
 
         BigDecimal ma10_0 = calcMA(list, 10, 0);
         BigDecimal ma10_3 = calcMA(list, 10, 3);
 
-        temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma10_0, ma10_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma10_0, ma10_3) + "_";
-
         temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
+
+        temp_long += Utils.checkXCutUpY(ma8_0, ma8_3, ma10_0, ma10_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma8_0, ma8_3, ma10_0, ma10_3) + "_";
 
         String trend = "";
         trend += "_" + temp_long + "_";
@@ -3092,28 +3090,22 @@ public class Utils {
             return "";
         }
 
-        BigDecimal ma3_1 = calcMA(list, 3, 1);
         BigDecimal ma6_1 = calcMA(list, 6, 1);
-        BigDecimal ma8_1 = calcMA(list, 8, 1);
-        BigDecimal ma10_1 = calcMA(list, 10, 1);
-
-        BigDecimal ma3_2 = calcMA(list, 3, 2);
         BigDecimal ma6_2 = calcMA(list, 6, 2);
-        BigDecimal ma8_2 = calcMA(list, 8, 2);
+
+        BigDecimal ma10_1 = calcMA(list, 10, 1);
         BigDecimal ma10_2 = calcMA(list, 10, 2);
 
         String result = "";
         if (trend.contains(Utils.TREND_LONG)) {
-            if ((ma3_1.compareTo(ma3_2) > 0) && (ma6_1.compareTo(ma6_2) > 0) && (ma8_1.compareTo(ma8_2) > 0)
-                    && (ma10_1.compareTo(ma10_2) > 0)) {
+            if ((ma6_1.compareTo(ma6_2) > 0) && (ma10_1.compareTo(ma10_2) > 0)) {
 
                 result = Utils.TREND_LONG;
             }
         }
 
         if (trend.contains(Utils.TREND_SHORT)) {
-            if ((ma3_1.compareTo(ma3_2) < 0) && (ma6_1.compareTo(ma6_2) < 0) && (ma8_1.compareTo(ma8_2) < 0)
-                    && (ma10_1.compareTo(ma10_2) < 0)) {
+            if ((ma6_1.compareTo(ma6_2) < 0) && (ma10_1.compareTo(ma10_2) < 0)) {
                 result = Utils.TREND_SHORT;
             }
         }
@@ -3271,7 +3263,7 @@ public class Utils {
             trend += switch_trend_by_heken;
         }
 
-        String switch_trend_by_ma = Utils.switchTrendByMa36810(list);
+        String switch_trend_by_ma = Utils.switchTrendByMa610(list);
         if (Utils.isNotBlank(switch_trend_by_ma)) {
             trend += getTrendByMa(list);
             trend += Utils.TEXT_TREND_BY_MA;

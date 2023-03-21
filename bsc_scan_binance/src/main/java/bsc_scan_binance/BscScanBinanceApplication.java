@@ -115,32 +115,16 @@ public class BscScanBinanceApplication {
                     try {
                         checkKillLongShort(binance_service);
 
-                        // if (Utils.isBusinessTime_6h_to_17h()) {
                         if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
                             binance_service.saveMt5Data();
-
-                            for (int index = 0; index < forex_size; index++) {
-                                String EPIC = capital_list.get(index);
-                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
-                            }
-
-                            for (int index = 0; index < forex_size; index++) {
-                                String EPIC = capital_list.get(index);
-                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-                            }
 
                             String result = "";
                             for (int index = 0; index < forex_size; index++) {
                                 String EPIC = capital_list.get(index);
-                                String trend = binance_service.scapForex15M(EPIC, Utils.CAPITAL_TIME_HOUR);
-
-                                if (Utils.isBlank(trend)) {
-                                    trend = binance_service.scapForex15M(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
-                                }
-
+                                String trend = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR_4);
                                 if (Utils.isNotBlank(trend)) {
                                     result += trend + ", ";
-                                    String init = "H1:" + Utils.appendSpace(trend, 6);
+                                    String init = "H4:" + Utils.appendSpace(trend, 6);
                                     String str_index = Utils.appendLeft(String.valueOf(index + 1), 3) + "/"
                                             + Utils.appendLeft(String.valueOf(forex_size), 3) + "   ";
                                     System.out.println(
@@ -149,13 +133,12 @@ public class BscScanBinanceApplication {
                             }
 
                             if (Utils.isNotBlank(result)) {
-                                // String msg = "(FX_5M)(Ma50):" + result;
-                                // String EVENT_ID = "FX_15M_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
-                                // binance_service.sendMsgPerHour(EVENT_ID, msg, true);
-                                // Utils.logWritelnDraft(msg.replaceAll(" +", " ") + "\n\n");
+                                String msg = "(FX_H4)(Ma50):" + result;
+                                String EVENT_ID = "FX_H4_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
+                                binance_service.sendMsgPerHour(EVENT_ID, msg, true);
+                                Utils.logWritelnDraft(msg.replaceAll(" +", " ") + "\n\n");
                             }
                         }
-                        // }
 
                         // ---------------------------------------------------------
                         String SYMBOL = Utils.coins.get(index_crypto);

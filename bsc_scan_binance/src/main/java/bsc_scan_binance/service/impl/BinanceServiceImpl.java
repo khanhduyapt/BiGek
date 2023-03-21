@@ -3011,7 +3011,8 @@ public class BinanceServiceImpl implements BinanceService {
             String mt5_data_file = "";
             String pcname = InetAddress.getLocalHost().getHostName().toLowerCase();
             if (Objects.equals(pcname, "pc")) {
-                mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.csv";
+                //mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.csv";
+                mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\10CE948A1DFC9A8C27E56E827008EBD4\\MQL5\\Files\\Data\\Bars.csv";
             } else if (Objects.equals(pcname, "desktop-l4m1ju2")) {
                 // MFF: mt5_data_file =
                 // "C:\\Users\\DellE5270\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.csv";
@@ -3097,7 +3098,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // TODO saveMt5Data
             required_update_bars_csv = false;
-            if (elapsedMinutes > (Utils.MINUTES_OF_15M + 5)) {
+            if (elapsedMinutes > (Utils.MINUTES_OF_15M * 3)) {
                 required_update_bars_csv = true;
                 Utils.logWritelnDraft(
                         "Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! \n");
@@ -3384,10 +3385,9 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     @Transactional
-    public String scapForex15M(String EPIC, String CAPITAL_TIME_XXX) {
+    public String scapForex(String EPIC, String CAPITAL_TIME_XXX) {
         // EPIC = "UK100";
         // CAPITAL_TIME_XXX = Utils.CAPITAL_TIME_MINUTE_15;
-
         if (required_update_bars_csv) {
             return "";
         }
@@ -3401,68 +3401,62 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        String switch_trend = Utils.switchTrendByMa50(list);
-        if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX) && Utils.isBlank(switch_trend)) {
-            switch_trend = Utils.switchTrendByMa36810(list);
+        String trend_by_ma50 = Utils.isUptrendByMa(list, 50, 0, 5) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+        String switch_trend_Ma50 = Utils.switchTrendByMa50(list);
+        String switch_trend_Ma610 = Utils.switchTrendByMa610(list);
+        String switch_trend_heken = Utils.switchTrenByHekenAshi(list);
+        String note = "";
+        if (Utils.isNotBlank(switch_trend_Ma50)) {
+            note += "byMa50: " + Utils.appendSpace(switch_trend_Ma50, 5);
+        }
+        if (Utils.isNotBlank(switch_trend_Ma610)) {
+            note += "byMa610: " + Utils.appendSpace(switch_trend_Ma610, 5);
+        }
+        if (Utils.isNotBlank(switch_trend_heken)) {
+            note += "byHeken: " + Utils.appendSpace(switch_trend_heken, 5);
         }
 
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + CAPITAL_TIME_XXX;
         String date_time = LocalDateTime.now().toString();
 
-        BigDecimal bread = Utils.calcMaxBread(list);
+        BigDecimal bread = Utils.calcMaxBread(list).multiply(BigDecimal.valueOf(2));
         List<BigDecimal> body = Utils.getOpenCloseCandle(list);
         List<BigDecimal> low_high = Utils.getLowHighCandle(list);
 
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
 
-        Orders entity = new Orders(orderId, date_time, switch_trend, list.get(0).getCurrPrice(), body.get(0),
-                body.get(1), sl_long, sl_shot, switch_trend.trim());
+        Orders entity = new Orders(orderId, date_time, trend_by_ma50, list.get(0).getCurrPrice(), body.get(0),
+                body.get(1), sl_long, sl_shot, note);
 
         ordersRepository.save(entity);
 
         // -----------------------------LOG---------------------------
-        Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-        String trend_d1 = "";
-        if (Objects.nonNull(dto_d1)) {
-            trend_d1 = dto_d1.getTrend();
-        }
-
-        String trend_h4 = "";
-        String note_h4 = "";
-        Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-        if (Objects.nonNull(dto_h4)) {
-            trend_h4 = dto_h4.getTrend();
-            note_h4 = dto_h4.getNote();
-            sl_long = dto_h4.getLow_price();
-            sl_shot = dto_h4.getHigh_price();
-        }
 
         String result = "";
         BigDecimal cur_price = list.get(0).getCurrPrice();
         String str_price = Utils.removeLastZero(cur_price);
 
         // TODO: scapForex15M
-        if (Utils.isNotBlank(switch_trend) && Objects.equals(trend_d1, switch_trend)) {
+        if (Utils.isNotBlank(note) && note.contains(trend_by_ma50)) {
 
             String log = Utils.appendSpace(EPIC, 15) + Utils.appendSpace(str_price, 15);
-            log += Utils.appendLeft(Utils.getChartName(entity), 10) + ":" + Utils.appendSpace(switch_trend, 4) + "   ";
+            log += Utils.appendLeft(Utils.getChartName(entity), 10) + ":" + Utils.appendSpace(trend_by_ma50, 4) + "   ";
 
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 
-            if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
+            if (Objects.equals(Utils.TREND_LONG, trend_by_ma50)) {
                 log += Utils.calc_BUF_Long_Forex(false, EPIC, cur_price, sl_long, low_high.get(1));
             }
-            if (Objects.equals(Utils.TREND_SHORT, switch_trend)) {
+            if (Objects.equals(Utils.TREND_SHORT, trend_by_ma50)) {
                 log += Utils.calc_BUF_Shot_Forex(false, EPIC, cur_price, sl_shot, low_high.get(0));
             }
-            log += "     D1: " + Utils.appendSpace(trend_d1, 4) + "     H4: " + Utils.appendSpace(trend_h4, 4)
-                    + Utils.appendSpace(note_h4, 20);
+            log += "     " + note;
 
             Utils.logWritelnDraft(log);
 
-            result = "(" + switch_trend + ") " + Utils.appendSpace(EPIC, 15) + " ("
+            result = "(" + trend_by_ma50 + ") " + Utils.appendSpace(EPIC, 15) + " ("
                     + Utils.removeLastZero(list.get(0).getCurrPrice()) + ")";
         }
 
