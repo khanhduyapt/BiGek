@@ -3135,17 +3135,17 @@ public class Utils {
         return false;
     }
 
-    public static String getTrendByMa(List<BtcFutures> list) {
+    public static String getTrendByMa6_10(List<BtcFutures> list) {
         if (CollectionUtils.isEmpty(list) || (list.size() < 6)) {
             Utils.logWritelnDraft("(getTrendByMa)list.size() < 6");
             return "";
         }
 
-        boolean trend_ma6 = isUptrendByMa(list, 6, 0, 1);
-        boolean trend_ma8 = isUptrendByMa(list, 8, 0, 1);
+        boolean trend_ma6 = isUptrendByMa(list, 3, 1, 2);
+        boolean trend_ma10 = isUptrendByMa(list, 8, 1, 2);
 
-        if (trend_ma6 == trend_ma8) {
-            return trend_ma8 ? TREND_LONG : TREND_SHORT;
+        if (trend_ma6 == trend_ma10) {
+            return trend_ma10 ? TREND_LONG : TREND_SHORT;
         }
 
         return "";
@@ -3266,8 +3266,7 @@ public class Utils {
 
         String switch_trend_by_ma = Utils.switchTrendByMa610(list);
         if (Utils.isNotBlank(switch_trend_by_ma)) {
-            trend += getTrendByMa(list);
-            trend += Utils.TEXT_TREND_BY_MA;
+            trend += Utils.TEXT_TREND_BY_MA + switch_trend_by_ma;
         }
 
         return trend;

@@ -3354,7 +3354,7 @@ public class BinanceServiceImpl implements BinanceService {
             note = "byMa610: " + Utils.appendSpace(switch_trend, 15);
         }
 
-        String trend = Utils.getTrendByMa(list);
+        String trend = Utils.getTrendByMa6_10(list);
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4;
         String date_time = LocalDateTime.now().toString();
@@ -3402,18 +3402,21 @@ public class BinanceServiceImpl implements BinanceService {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
-
+        String trend = Utils.getTrendByMa6_10(list);
         int fastIndex = 6;
         int slowIndex = 50;
+        String switch_trend_Ma50 = Utils.switchTrendByMaXX(list, fastIndex, slowIndex);
 
-        boolean isUp_trend_by_ma6 = Utils.isUptrendByMa(list, 6, 1, 3);
-        boolean isUp_trend_by_ma50 = Utils.isUptrendByMa(list, 50, 1, 3);
-        String trend = "";
-        if (isUp_trend_by_ma6 == isUp_trend_by_ma50) {
-            trend = isUp_trend_by_ma50 ? Utils.TREND_LONG : Utils.TREND_SHORT;
+        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XXX)) {
+            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
+            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+            if (Objects.isNull(dto_h4) || Objects.isNull(dto_h4)
+                    || !Objects.equals(dto_h1.getTrend(), dto_h4.getTrend())
+                    || !Objects.equals(dto_h4.getTrend(), switch_trend_Ma50)) {
+                return "";
+            }
         }
 
-        String switch_trend_Ma50 = Utils.switchTrendByMaXX(list, fastIndex, slowIndex);
         String note = "";
         if (Utils.isNotBlank(switch_trend_Ma50)) {
             note += "byMa50 : " + Utils.appendSpace(switch_trend_Ma50, 15);
