@@ -2928,12 +2928,13 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO sendMsgKillLongShort
         String msg = "";
         if (Utils.isNotBlank(switch_trend)) {
-            String str_price = Utils.removeLastZero(list.get(0).getCurrPrice());
+            String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list.get(0).getCurrPrice()), 5) + ")";
+
             if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
-                msg = " 💹 " + symbol + "_kill_Short 💔 " + "(" + str_price + ")";
+                msg = " 💹 " + symbol + "_kill_Short 💔 " + str_price;
             }
             if (Objects.equals(Utils.TREND_SHORT, switch_trend)) {
-                msg = " 🔻  " + symbol + "_kill_Long 💔 " + "(" + str_price + ")";
+                msg = " 🔻  " + symbol + "_kill_Long 💔 " + str_price;
             }
 
             String EVENT_ID = EVENT_PUMP + symbol + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog15m();
