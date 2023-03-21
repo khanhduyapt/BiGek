@@ -3397,7 +3397,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
-        String trend = Utils.getTrendByMa3_8(list);
+        String trend_ma38 = Utils.getTrendByMa3_8(list);
         int fastIndex = 6;
         int slowIndex = 50;
         String switch_trend_Ma50 = Utils.switchTrendByMaXX(list, fastIndex, slowIndex);
@@ -3418,32 +3418,14 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
 
-        Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
+        Orders entity = new Orders(orderId, date_time, trend_ma38, list.get(0).getCurrPrice(), body.get(0), body.get(1),
                 sl_long, sl_shot, note);
 
         ordersRepository.save(entity);
 
-        // -----------------------------LOG---------------------------
-        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XXX)) {
-            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-            if (Objects.isNull(dto_h4)) {
-                // return ""; // not play
-            }
-            String trend_source = dto_h4.getTrend();
-            if (Utils.isBlank(trend_source)) {
-                Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
-                if (Objects.nonNull(dto_h1)) {
-                    trend_source = dto_h1.getTrend();
-                }
-            }
-            if (!Objects.equals(trend_source, switch_trend_Ma50)) {
-                // return "";// not play
-            }
-        }
-
         // TODO: scapForex
         String result = "";
-        if (Utils.isNotBlank(switch_trend_Ma50) && Utils.isNotBlank(trend)) {
+        if (Utils.isNotBlank(switch_trend_Ma50) && Objects.equals(trend_ma38, switch_trend_Ma50)) {
             String log = Utils.appendSpace(EPIC, 15);
             log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":" + Utils.appendSpace(note, 50) + "   ";
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);

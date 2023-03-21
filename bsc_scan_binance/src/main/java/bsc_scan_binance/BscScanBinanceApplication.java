@@ -158,13 +158,13 @@ public class BscScanBinanceApplication {
                                 }
                             }
 
-                            if (Utils.isNotBlank(result_h1 + result_15)) {
+                            if (Utils.isNotBlank(result_15)) {
                                 String msg = "";
                                 msg += "(FX_H1):" + result_h1 + Utils.new_line_from_service
                                         + Utils.new_line_from_service;
                                 msg += "(FX_15):" + result_15;
 
-                                String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH_Blog4h();
+                                String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH();
                                 binance_service.sendMsgPerHour(EVENT_ID, msg, true);
 
                                 Utils.logWritelnDraft(msg.replaceAll(" +", " ") + "\n\n");
