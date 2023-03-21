@@ -3017,11 +3017,11 @@ public class Utils {
         temp_shot += Utils.checkXCutDnY(ma10_0, ma10_3, ma5x_0, ma5x_3) + "_";
 
         if ((ma6_0.compareTo(ma5x_0) > 0) && (ma5x_0.compareTo(ma5x_3) > 0)) {
-            //temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
+            temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
         }
 
         if ((ma6_0.compareTo(ma5x_0) < 0) && (ma5x_0.compareTo(ma5x_3) < 0)) {
-            //temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
+            temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
         }
 
         String trend = "";

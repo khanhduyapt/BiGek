@@ -135,6 +135,8 @@ public class BscScanBinanceApplication {
                             for (int index = 0; index < forex_size; index++) {
                                 String EPIC = capital_list.get(index);
                                 String trend = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+
                                 if (Utils.isNotBlank(trend)) {
                                     result_h1 += trend + ", ";
                                     String init = "H4:" + Utils.appendSpace(trend, 6);
@@ -144,10 +146,6 @@ public class BscScanBinanceApplication {
                                     System.out.println(
                                             Utils.getTimeHHmm() + str_index + Utils.appendSpace(EPIC, 15) + init);
                                 }
-                            }
-
-                            for (String EPIC : Utils.EPICS_15M) {
-                                binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
                             }
 
                             if (Utils.isNotBlank(result_h1)) {
