@@ -3402,16 +3402,12 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_by_ma50 = Utils.isUptrendByMa(list, 50, 0, 5) ? Utils.TREND_LONG : Utils.TREND_SHORT;
         String switch_trend_Ma50 = Utils.switchTrendByMa50(list);
         String switch_trend_Ma610 = Utils.switchTrendByMa610(list);
-        String switch_trend_heken = Utils.switchTrendByHekenAshi(list);
         String note = "";
         if (Utils.isNotBlank(switch_trend_Ma50)) {
             note += "byMa50 : " + Utils.appendSpace(switch_trend_Ma50, 15);
         }
         if (Utils.isNotBlank(switch_trend_Ma610)) {
             note += "byMa610: " + Utils.appendSpace(switch_trend_Ma610, 15);
-        }
-        if (Utils.isNotBlank(switch_trend_heken)) {
-            note += "byHeken: " + Utils.appendSpace(switch_trend_heken, 15);
         }
 
         // -----------------------------DATABASE---------------------------
