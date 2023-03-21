@@ -127,6 +127,10 @@ public class BscScanBinanceApplication {
                                 }
                             }
 
+                            if (Utils.isNotBlank(result_h4)) {
+                                Utils.logWritelnDraft("");
+                            }
+
                             String result_h1 = "";
                             for (int index = 0; index < forex_size; index++) {
                                 String EPIC = capital_list.get(index);
@@ -142,7 +146,11 @@ public class BscScanBinanceApplication {
                                 }
                             }
 
-                            if (Utils.isNotBlank(result_h4 + result_h1)) {
+                            for (String EPIC : Utils.EPICS_15M) {
+                                binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+                            }
+
+                            if (Utils.isNotBlank(result_h1)) {
                                 String msg = "(FX_H4):" + result_h4 + Utils.new_line_from_service;
                                 msg += "(FX_H1):" + result_h1;
 
@@ -151,6 +159,7 @@ public class BscScanBinanceApplication {
 
                                 Utils.logWritelnDraft(msg.replaceAll(" +", " ") + "\n\n");
                             }
+
                         }
 
                         // ---------------------------------------------------------

@@ -2937,7 +2937,7 @@ public class BinanceServiceImpl implements BinanceService {
                 msg = " 🔻  " + symbol + "_kill_Long 💔 " + str_price;
             }
 
-            String EVENT_ID = EVENT_PUMP + symbol + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog15m();
+            String EVENT_ID = EVENT_PUMP + symbol + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog2h();
             sendMsgPerHour(EVENT_ID, msg, false);
 
             String url = Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70);
@@ -3099,12 +3099,12 @@ public class BinanceServiceImpl implements BinanceService {
 
             // TODO saveMt5Data
             required_update_bars_csv = false;
-            if (elapsedMinutes > (Utils.MINUTES_OF_15M * 3)) {
+            if (elapsedMinutes > (Utils.MINUTES_OF_15M * 2)) {
                 required_update_bars_csv = true;
                 Utils.logWritelnDraft(
                         "Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! \n");
 
-                String EVENT_ID = EVENT_PUMP + "_UPDATE_BARS_CSV_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
+                String EVENT_ID = EVENT_PUMP + "_UPDATE_BARS_CSV_" + Utils.getCurrentYyyyMmDd_HH_Blog30m();
                 sendMsgPerHour(EVENT_ID, "Update_Bars.csv", true);
             }
         } catch (Exception e) {

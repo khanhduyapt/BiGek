@@ -138,7 +138,8 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final List<String> EPICS_15M = Arrays.asList("BTCUSD", "XAUUSD", "US30", "UK100", "DAX40", "JPY225");
+    public static final List<String> EPICS_15M = Arrays.asList("XAUUSD", "US30", "UK100", "JPN225", "DAX40", "EURUSD",
+            "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
 
     // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
     // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
@@ -3014,6 +3015,14 @@ public class Utils {
 
         temp_long += Utils.checkXCutUpY(ma10_0, ma10_3, ma5x_0, ma5x_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma10_0, ma10_3, ma5x_0, ma5x_3) + "_";
+
+        if ((ma6_0.compareTo(ma5x_0) > 0) && (ma5x_0.compareTo(ma5x_3) > 0)) {
+            //temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
+        }
+
+        if ((ma6_0.compareTo(ma5x_0) < 0) && (ma5x_0.compareTo(ma5x_3) < 0)) {
+            //temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
+        }
 
         String trend = "";
         trend += "_" + temp_long + "_";
