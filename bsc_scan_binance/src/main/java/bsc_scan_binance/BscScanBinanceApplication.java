@@ -126,7 +126,7 @@ public class BscScanBinanceApplication {
                             String result = "";
                             for (int index = 0; index < forex_size; index++) {
                                 String EPIC = capital_list.get(index);
-                                String trend = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+                                String trend = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR);
                                 if (Utils.isNotBlank(trend)) {
                                     result += trend + ", ";
                                     String init = "H4:" + Utils.appendSpace(trend, 6);
@@ -138,10 +138,10 @@ public class BscScanBinanceApplication {
                             }
 
                             if (Utils.isNotBlank(result)) {
-                                //String msg = "(FX_H4):" + result;
-                                //String EVENT_ID = "FX_H4_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
-                                //binance_service.sendMsgPerHour(EVENT_ID, msg, true);
-                                //Utils.logWritelnDraft(msg.replaceAll(" +", " ") + "\n\n");
+                                String msg = "(FX_H1):" + result;
+                                String EVENT_ID = "FX_H1_" + Utils.getCurrentYyyyMmDd_HH();
+                                binance_service.sendMsgPerHour(EVENT_ID, msg, true);
+                                Utils.logWritelnDraft(msg.replaceAll(" +", " ") + "\n\n");
                             }
                         }
 

@@ -3341,21 +3341,24 @@ public class BinanceServiceImpl implements BinanceService {
         if (required_update_bars_csv) {
             return "";
         }
-        if (!isReloadPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_DAY)) {
+        if (!isReloadPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4)) {
             return "";
         }
         // ----------------------------TREND------------------------
-        List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
+        List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
-        String switch_trend = Utils.switchTrendByHekenAshi(list);
-        switch_trend += Utils.switchTrendByMa610(list);
 
-        BigDecimal bread = Utils.calcMaxBread(list);
+        String note = "";
+        String switch_trend = Utils.switchTrendByMa610(list);
+        if (Utils.isNotBlank(switch_trend)) {
+            note = "byMa610: " + Utils.appendSpace(switch_trend, 15);
+        }
+
         String trend = Utils.getTrendByMa(list);
         // -----------------------------DATABASE---------------------------
-        String orderId = EPIC + "_" + Utils.CAPITAL_TIME_DAY;
+        String orderId = EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4;
         String date_time = LocalDateTime.now().toString();
 
         List<BigDecimal> body = Utils.getOpenCloseCandle(list);
@@ -3363,18 +3366,18 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal end_body_price = body.get(1);
 
         List<BigDecimal> low_high = Utils.getLowHighCandle(list);
+        BigDecimal bread = Utils.calcMaxBread(list).multiply(BigDecimal.valueOf(2));
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
 
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), str_body_price,
-                end_body_price, sl_long, sl_shot, switch_trend.trim());
+                end_body_price, sl_long, sl_shot, note);
         ordersRepository.save(entity);
 
         if (Utils.isNotBlank(switch_trend)) {
-            String log = Utils.appendSpace(EPIC, 10) + Utils.getChartName(entity) + ":"
-                    + Utils.appendSpace(switch_trend, 30);
+            String log = Utils.appendSpace(EPIC, 15);
+            log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":" + Utils.appendSpace(note, 50) + "   ";
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
-
             Utils.logWritelnDraft(log);
         }
 
@@ -3399,15 +3402,11 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        String trend_by_ma50 = Utils.isUptrendByMa(list, 50, 0, 5) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+        String trend_by_ma50 = Utils.isUptrendByMa(list, 50, 0, 1) ? Utils.TREND_LONG : Utils.TREND_SHORT;
         String switch_trend_Ma50 = Utils.switchTrendByMa50(list);
-        String switch_trend_Ma610 = Utils.switchTrendByMa610(list);
         String note = "";
         if (Utils.isNotBlank(switch_trend_Ma50)) {
             note += "byMa50 : " + Utils.appendSpace(switch_trend_Ma50, 15);
-        }
-        if (Utils.isNotBlank(switch_trend_Ma610)) {
-            note += "byMa610: " + Utils.appendSpace(switch_trend_Ma610, 15);
         }
 
         // -----------------------------DATABASE---------------------------

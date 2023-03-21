@@ -3001,11 +3001,10 @@ public class Utils {
         String temp_shot = "";
 
         BigDecimal ma6_0 = calcMA(list, 6, 0);
-        BigDecimal ma6_1 = calcMA(list, 6, 1);
         BigDecimal ma6_3 = calcMA(list, 6, 3);
 
-        BigDecimal ma10_0 = calcMA(list, 10, 0);
-        BigDecimal ma10_3 = calcMA(list, 10, 3);
+        BigDecimal ma10_0 = calcMA(list, 8, 0);
+        BigDecimal ma10_3 = calcMA(list, 8, 3);
 
         BigDecimal ma5x_0 = calcMA(list, 50, 0);
         BigDecimal ma5x_3 = calcMA(list, 50, 3);
@@ -3015,13 +3014,6 @@ public class Utils {
 
         temp_long += Utils.checkXCutUpY(ma10_0, ma10_3, ma5x_0, ma5x_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma10_0, ma10_3, ma5x_0, ma5x_3) + "_";
-
-        if (ma6_0.compareTo(ma5x_0) > 0) {
-            temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
-        }
-        if (ma6_0.compareTo(ma5x_0) < 0) {
-            temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
-        }
 
         String trend = "";
         trend += "_" + temp_long + "_";
@@ -3037,13 +3029,13 @@ public class Utils {
         }
 
         if (trend.contains(Utils.TREND_LONG)) {
-            if ((ma6_0.compareTo(ma6_1) > 0) && (ma6_0.compareTo(ma5x_0) > 0)) {
+            if ((ma6_0.compareTo(ma6_3) > 0) && (ma6_0.compareTo(ma5x_0) > 0)) {
                 return Utils.TREND_LONG;
             }
         }
 
         if (trend.contains(Utils.TREND_SHORT)) {
-            if ((ma6_0.compareTo(ma6_1) < 0) && (ma6_0.compareTo(ma5x_0) < 0)) {
+            if ((ma6_0.compareTo(ma6_3) < 0) && (ma6_0.compareTo(ma5x_0) < 0)) {
                 return Utils.TREND_SHORT;
             }
         }
