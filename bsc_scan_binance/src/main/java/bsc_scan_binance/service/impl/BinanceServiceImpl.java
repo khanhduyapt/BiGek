@@ -3427,7 +3427,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XXX)) {
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
             if (Objects.isNull(dto_h4)) {
-                return ""; // not play
+                // return ""; // not play
             }
             String trend_source = dto_h4.getTrend();
             if (Utils.isBlank(trend_source)) {
@@ -3437,7 +3437,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
             if (!Objects.equals(trend_source, switch_trend_Ma50)) {
-                return "";// not play
+                // return "";// not play
             }
         }
 
