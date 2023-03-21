@@ -2986,7 +2986,7 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrendByMa50(List<BtcFutures> list, int fastIndex) {
+    public static String switchTrendByMaXX(List<BtcFutures> list, int fastIndex, int slowIndex) {
         if (CollectionUtils.isEmpty(list)) {
             Utils.logWritelnDraft("(switchTrendByMa50)list Empty");
             return "";
@@ -3007,8 +3007,8 @@ public class Utils {
         BigDecimal ma10_0 = calcMA(list, fastIndex + 2, 0);
         BigDecimal ma10_3 = calcMA(list, fastIndex + 2, 3);
 
-        BigDecimal ma5x_0 = calcMA(list, 50, 0);
-        BigDecimal ma5x_3 = calcMA(list, 50, 3);
+        BigDecimal ma5x_0 = calcMA(list, slowIndex, 0);
+        BigDecimal ma5x_3 = calcMA(list, slowIndex, 3);
 
         temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma5x_0, ma5x_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma5x_0, ma5x_3) + "_";
