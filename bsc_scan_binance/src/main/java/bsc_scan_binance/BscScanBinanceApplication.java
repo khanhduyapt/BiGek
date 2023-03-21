@@ -118,6 +118,11 @@ public class BscScanBinanceApplication {
                         if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
                             binance_service.saveMt5Data();
 
+                            for (int index = 0; index < forex_size; index++) {
+                                String EPIC = capital_list.get(index);
+                                binance_service.initForexTrend(EPIC);
+                            }
+
                             String result = "";
                             for (int index = 0; index < forex_size; index++) {
                                 String EPIC = capital_list.get(index);
@@ -133,10 +138,10 @@ public class BscScanBinanceApplication {
                             }
 
                             if (Utils.isNotBlank(result)) {
-                                String msg = "(FX_H4)(Ma50):" + result;
-                                String EVENT_ID = "FX_H4_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
-                                binance_service.sendMsgPerHour(EVENT_ID, msg, true);
-                                Utils.logWritelnDraft(msg.replaceAll(" +", " ") + "\n\n");
+                                //String msg = "(FX_H4):" + result;
+                                //String EVENT_ID = "FX_H4_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
+                                //binance_service.sendMsgPerHour(EVENT_ID, msg, true);
+                                //Utils.logWritelnDraft(msg.replaceAll(" +", " ") + "\n\n");
                             }
                         }
 

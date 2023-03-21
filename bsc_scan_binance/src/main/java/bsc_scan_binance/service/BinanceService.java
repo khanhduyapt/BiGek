@@ -41,7 +41,7 @@ public interface BinanceService {
 
     boolean isFutureCoin(String gecko_id);
 
-    public String initForexTrend(String EPIC, String CAPITAL_TIME_XXX);
+    public String initForexTrend(String EPIC);
 
     public String sendMsgKillLongShort(String gecko_id, String symbol);
 
