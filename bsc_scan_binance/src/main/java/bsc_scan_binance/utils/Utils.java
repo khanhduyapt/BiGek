@@ -149,7 +149,8 @@ public class Utils {
             "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
-    // "EURNOK", "AUDJPY", "AUDNZD", "NZDCHF", "NZDJPY", "EURCHF", "EURGBP",  "CHFJPY", "AUDCHF", "CADCHF", "GBPAUD", "GBPCHF",
+    // "EURNOK", "AUDJPY", "AUDNZD", "NZDCHF", "NZDJPY", "EURCHF", "EURGBP",
+    // "CHFJPY", "AUDCHF", "CADCHF", "GBPAUD", "GBPCHF",
     public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("AUDCAD", "CADJPY", "EURAUD", "EURCAD",
             "EURJPY", "EURNZD", "GBPCAD", "GBPJPY", "GBPNZD", "NZDCAD");
 
@@ -3044,11 +3045,11 @@ public class Utils {
         String temp_long = "";
         String temp_shot = "";
 
-        BigDecimal ma6_0 = calcMA(list, 6, 0);
-        BigDecimal ma6_3 = calcMA(list, 6, 3);
+        BigDecimal ma6_0 = calcMA(list, 3, 0);
+        BigDecimal ma6_3 = calcMA(list, 3, 3);
 
-        BigDecimal ma8_0 = calcMA(list, 8, 0);
-        BigDecimal ma8_3 = calcMA(list, 8, 3);
+        BigDecimal ma8_0 = calcMA(list, 6, 0);
+        BigDecimal ma8_3 = calcMA(list, 6, 3);
 
         BigDecimal ma10_0 = calcMA(list, 10, 0);
         BigDecimal ma10_3 = calcMA(list, 10, 3);
@@ -3116,17 +3117,17 @@ public class Utils {
         return false;
     }
 
-    public static String getTrendByMa10_20(List<BtcFutures> list) {
+    public static String getTrendByMa3_8(List<BtcFutures> list) {
         if (CollectionUtils.isEmpty(list) || (list.size() < 6)) {
             Utils.logWritelnDraft("(getTrendByMa)list.size() < 6");
             return "";
         }
 
-        boolean trend_ma10 = isUptrendByMa(list, 10, 1, 2);
-        boolean trend_ma20 = isUptrendByMa(list, 20, 1, 2);
+        boolean trend_ma1 = isUptrendByMa(list, 3, 1, 2);
+        boolean trend_ma2 = isUptrendByMa(list, 8, 1, 2);
 
-        if (trend_ma10 == trend_ma20) {
-            return trend_ma20 ? TREND_LONG : TREND_SHORT;
+        if (trend_ma1 == trend_ma2) {
+            return trend_ma2 ? TREND_LONG : TREND_SHORT;
         }
 
         return "";

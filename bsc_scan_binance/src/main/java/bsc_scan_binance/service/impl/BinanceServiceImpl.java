@@ -3341,16 +3341,16 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     @Transactional
-    public String initForexTrend(String EPIC) {
-        //EPIC = "XAGUSD";
+    public String initForexTrend(String EPIC, String CAPITAL_TIME_XX) {
+        // EPIC = "XAGUSD";
         if (required_update_bars_csv) {
             return "";
         }
-        if (!isReloadPrepareOrderTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4)) {
+        if (!isReloadPrepareOrderTrend(EPIC, CAPITAL_TIME_XX)) {
             return "";
         }
         // ----------------------------TREND------------------------
-        List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+        List<BtcFutures> list = getCapitalData(EPIC, CAPITAL_TIME_XX);
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
@@ -3361,10 +3361,10 @@ public class BinanceServiceImpl implements BinanceService {
             note += switch_trend;
         }
 
-        String trend_ma = Utils.getTrendByMa10_20(list);
+        String trend_ma = Utils.getTrendByMa3_8(list);
 
         // -----------------------------DATABASE---------------------------
-        String orderId = EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4;
+        String orderId = EPIC + "_" + CAPITAL_TIME_XX;
         String date_time = LocalDateTime.now().toString();
 
         List<BigDecimal> body = Utils.getOpenCloseCandle(list);
@@ -3372,7 +3372,7 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal end_body_price = body.get(1);
 
         List<BigDecimal> low_high = Utils.getLowHighCandle(list);
-        BigDecimal bread = Utils.calcMaxBread(list);//.multiply(BigDecimal.valueOf(2));
+        BigDecimal bread = Utils.calcMaxBread(list);// .multiply(BigDecimal.valueOf(2));
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
 
@@ -3408,7 +3408,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
-        String trend_ma3 = Utils.getTrendByMa10_20(list);
+        String trend_ma3 = Utils.getTrendByMa3_8(list);
 
         int fastIndex = 3;
         int slowIndex = 20;
@@ -3447,7 +3447,7 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean is_uptrend_h4_ma3 = Utils.isUptrendByMa(list_h4, 3, 0, 1);
                 boolean is_uptrend_h1_ma3 = Utils.isUptrendByMa(list_h1, 3, 0, 1);
                 boolean is_uptrend_15_ma3 = Utils.isUptrendByMa(list, 6, 0, 1);
-                //(is_uptrend_h4_ma3 != is_uptrend_h1_ma3) ||
+                // (is_uptrend_h4_ma3 != is_uptrend_h1_ma3) ||
                 if ((is_uptrend_h1_ma3 != is_uptrend_15_ma3)) {
                     return " ";
                 }

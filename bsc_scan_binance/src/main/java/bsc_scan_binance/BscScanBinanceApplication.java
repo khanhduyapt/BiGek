@@ -118,10 +118,13 @@ public class BscScanBinanceApplication {
                         if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
                             binance_service.saveMt5Data();
 
+                            for (String EPIC : capital_list) {
+                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
+                            }
+
                             String result_h4 = "";
-                            for (int index = 0; index < forex_size; index++) {
-                                String EPIC = capital_list.get(index);
-                                String trend = binance_service.initForexTrend(EPIC);
+                            for (String EPIC : capital_list) {
+                                String trend = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
                                 if (Utils.isNotBlank(trend)) {
                                     result_h4 += trend + ", ";
                                 }
@@ -150,8 +153,8 @@ public class BscScanBinanceApplication {
                             }
 
                             String result_15 = "";
-                            for (String EPIC : Utils.EPICS_15M) { //Utils.EPICS_15M
-                                String item_15 = "";//binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+                            for (String EPIC : Utils.EPICS_15M) { // Utils.EPICS_15M
+                                String item_15 = "";// binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
                                 if (Utils.isNotBlank(item_15)) {
                                     result_15 += item_15 + ", ";
                                 }

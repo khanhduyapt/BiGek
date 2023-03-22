@@ -129,7 +129,7 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
     public List<Orders> getH4ByMa34568List();
 
     @Query(value = " SELECT * FROM orders det  "
-            + " WHERE (COALESCE(det.note, '') like '%Heken%' ) and (det.gecko_id like '%_DAY') "
+            + " WHERE (COALESCE(det.note, '') <> '' ) and (det.gecko_id like '%_DAY') "
             + " ORDER BY gecko_id ", nativeQuery = true)
     public List<Orders> getD1List();
 
