@@ -132,8 +132,8 @@ public class Utils {
     public static final long MINUTES_OF_D = 240;// 600;
     public static final long MINUTES_OF_4H = 60;
     public static final long MINUTES_OF_1H = 60;
-    public static final long MINUTES_OF_15M = 15;
-    public static final long MINUTES_OF_5M = 15;
+    public static final long MINUTES_OF_15M = 5;
+    public static final long MINUTES_OF_5M = 5;
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");

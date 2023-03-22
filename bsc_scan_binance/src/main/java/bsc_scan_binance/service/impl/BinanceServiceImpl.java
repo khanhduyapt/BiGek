@@ -2936,7 +2936,7 @@ public class BinanceServiceImpl implements BinanceService {
                 msg = " 🔻  " + symbol + "_kill_Long 💔 " + str_price;
             }
 
-            String EVENT_ID = EVENT_PUMP + symbol + switch_trend + Utils.getCurrentYyyyMmDd_HH();
+            String EVENT_ID = EVENT_PUMP + symbol + Utils.getCurrentYyyyMmDd_HH();
             sendMsgPerHour(EVENT_ID, msg, false);
 
             String url = Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70);
@@ -3088,9 +3088,9 @@ public class BinanceServiceImpl implements BinanceService {
             log += "      LastModifiedTime: " + Utils.formatDateTime(attr.lastModifiedTime());
             log += "      " + file.getAbsolutePath();
 
-            Utils.logWritelnDraft("\n\n\n");
+            //Utils.logWritelnDraft("\n\n\n");
             Utils.logWritelnDraft(log);
-            Utils.logWritelnDraft("\n\n\n");
+            //Utils.logWritelnDraft("\n\n\n");
 
             LocalDateTime created_time = attr.lastModifiedTime().toInstant().atZone(ZoneId.systemDefault())
                     .toLocalDateTime();
@@ -3103,7 +3103,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnDraft(
                         "Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! \n");
 
-                String EVENT_ID = EVENT_PUMP + "_UPDATE_BARS_CSV_" + Utils.getCurrentYyyyMmDd_HH_Blog30m();
+                String EVENT_ID = EVENT_PUMP + "_UPDATE_BARS_CSV_" + Utils.getCurrentYyyyMmDd_HH();
                 sendMsgPerHour(EVENT_ID, "Update_Bars.csv", true);
             }
         } catch (Exception e) {
