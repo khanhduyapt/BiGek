@@ -3245,6 +3245,11 @@ public class Utils {
     public static String switchTrend(List<BtcFutures> list) {
         String trend = "";
 
+        String swit_tren_by_ma012 = switchTrendByVector(list);
+        if (Utils.isNotBlank(swit_tren_by_ma012)) {
+            trend += "(Ma3_012)" + swit_tren_by_ma012 + " ";
+        }
+
         String switch_trend_by_heken = Utils.switchTrendByHekenAshi(list);
         if (Utils.isNotBlank(switch_trend_by_heken)) {
             trend += switch_trend_by_heken;
@@ -3252,7 +3257,7 @@ public class Utils {
 
         String switch_trend_by_ma = Utils.switchTrendByMa610(list);
         if (Utils.isNotBlank(switch_trend_by_ma)) {
-            trend += Utils.TEXT_TREND_BY_MA + switch_trend_by_ma;
+            trend += Utils.TEXT_TREND_BY_MA + switch_trend_by_ma + " ";
         }
 
         if (list.size() > 40) {
@@ -3263,6 +3268,22 @@ public class Utils {
         }
 
         return trend;
+    }
+
+    public static String switchTrendByVector(List<BtcFutures> list) {
+        BigDecimal ma3_0 = calcMA(list, 3, 0);
+        BigDecimal ma3_1 = calcMA(list, 3, 1);
+        BigDecimal ma3_2 = calcMA(list, 3, 2);
+
+        if ((ma3_0.compareTo(ma3_1) > 0) && (ma3_2.compareTo(ma3_1) > 0)) {
+            return TREND_LONG;
+        }
+
+        if ((ma3_0.compareTo(ma3_1) < 0) && (ma3_2.compareTo(ma3_1) < 0)) {
+            return TREND_SHORT;
+        }
+
+        return "";
     }
 
     public static String switchTrendByHekenAshi(List<BtcFutures> list) {

@@ -3213,9 +3213,21 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.writelnLogFooter_Forex();
 
         List<Orders> list_d1 = ordersRepository.getD1List();
+        list_d1.add(null);
+        list_d1.addAll(ordersRepository.getTrend_Reversal_H4today());
+        list_d1.add(null);
+        list_d1.addAll(ordersRepository.getTrend_Reversal_H1today());
+
         if (!CollectionUtils.isEmpty(list_d1)) {
             Utils.logWritelnReport("");
             for (Orders dto_d1 : list_d1) {
+                if (Objects.isNull(dto_d1)) {
+                    Utils.writelnLogFooter_Forex();
+                    Utils.writelnLogFooter_Forex();
+                    Utils.writelnLogFooter_Forex();
+                    continue;
+                }
+
                 String EPIC = Utils.getEpicFromId(dto_d1.getId());
 
                 String log = Utils.createLineForex_Header(dto_d1, dto_d1,
@@ -3226,54 +3238,6 @@ public class BinanceServiceImpl implements BinanceService {
                     log = log.replace("   (BUY )", "***(BUY )");
                 }
                 if (dto_d1.getNote().contains(Utils.TREND_SHORT)) {
-                    log = log.replace("   (SELL)", "***(SELL)");
-                }
-
-                Utils.logWritelnReport(log);
-            }
-        }
-        Utils.writelnLogFooter_Forex();
-        Utils.writelnLogFooter_Forex();
-        Utils.writelnLogFooter_Forex();
-
-        List<Orders> list_h4 = ordersRepository.getTrend_Reversal_H4today();
-        if (!CollectionUtils.isEmpty(list_h4)) {
-            Utils.logWritelnReport("");
-            for (Orders dto_h4 : list_h4) {
-                String EPIC = Utils.getEpicFromId(dto_h4.getId());
-
-                String log = Utils.createLineForex_Header(dto_h4, dto_h4, "");
-                log += Utils.createLineForex_Body(dto_h4, dto_h4);
-
-                if (dto_h4.getTrend().contains(Utils.TREND_LONG)) {
-                    log = log.replace("   (BUY )", "***(BUY )");
-                }
-                if (dto_h4.getTrend().contains(Utils.TREND_SHORT)) {
-                    log = log.replace("   (SELL)", "***(SELL)");
-                }
-                log += Utils.appendSpace("   " + dto_h4.getNote(), 30);
-                Utils.logWritelnReport(log);
-            }
-        }
-
-        Utils.writelnLogFooter_Forex();
-        Utils.writelnLogFooter_Forex();
-        Utils.writelnLogFooter_Forex();
-
-        List<Orders> list_h1 = ordersRepository.getTrend_Reversal_H1today();
-        if (!CollectionUtils.isEmpty(list_h1)) {
-            Utils.logWritelnReport("");
-            for (Orders dto_h1 : list_h1) {
-                String EPIC = Utils.getEpicFromId(dto_h1.getId());
-
-                String log = Utils.createLineForex_Header(dto_h1, dto_h1,
-                        Utils.appendSpace("   " + dto_h1.getNote(), 30));
-                log += Utils.createLineForex_Body(dto_h1, dto_h1);
-
-                if (dto_h1.getTrend().contains(Utils.TREND_LONG)) {
-                    log = log.replace("   (BUY )", "***(BUY )");
-                }
-                if (dto_h1.getTrend().contains(Utils.TREND_SHORT)) {
                     log = log.replace("   (SELL)", "***(SELL)");
                 }
 
