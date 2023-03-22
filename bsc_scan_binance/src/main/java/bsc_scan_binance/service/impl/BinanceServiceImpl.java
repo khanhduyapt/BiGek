@@ -3440,7 +3440,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // TODO: scapForex
         String result = "";
-        if (Utils.isNotBlank(switch_trend_by_ma) && Objects.equals(trend_ma3, switch_trend_by_ma)) {
+        if (Utils.isNotBlank(switch_trend_by_ma)) {
             if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XXX)) {
                 List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
                 List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);

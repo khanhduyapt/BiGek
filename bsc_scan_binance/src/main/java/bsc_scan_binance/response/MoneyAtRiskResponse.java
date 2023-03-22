@@ -295,7 +295,7 @@ public class MoneyAtRiskResponse {
         case "DE40":
         case "GER30":
         case "DAX40":
-            standard_lot = BigDecimal.valueOf(0.158);
+            standard_lot = BigDecimal.valueOf(0.0158);
             unit_risk_per_pip = BigDecimal.valueOf(0.166666666666667);
             break;
         case "EU50":
