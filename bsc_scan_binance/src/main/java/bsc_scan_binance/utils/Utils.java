@@ -132,14 +132,13 @@ public class Utils {
     public static final long MINUTES_OF_D = 240;// 600;
     public static final long MINUTES_OF_4H = 60;
     public static final long MINUTES_OF_1H = 60;
-    public static final long MINUTES_OF_15M = 5;
+    public static final long MINUTES_OF_15M = 15;
     public static final long MINUTES_OF_5M = 5;
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final List<String> EPICS_15M = Arrays.asList("XAUUSD", "XAGUSD", "US30", "UK100", "JPN225", "DAX40",
-            "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
+    public static final List<String> EPICS_15M = Arrays.asList("XAUUSD", "XAGUSD", "US30", "UK100", "JPN225", "DAX40");
 
     // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
     // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
@@ -3133,17 +3132,17 @@ public class Utils {
         return false;
     }
 
-    public static String getTrendByMa3_8(List<BtcFutures> list) {
+    public static String getTrendByMa10_20(List<BtcFutures> list) {
         if (CollectionUtils.isEmpty(list) || (list.size() < 6)) {
             Utils.logWritelnDraft("(getTrendByMa)list.size() < 6");
             return "";
         }
 
-        boolean trend_ma6 = isUptrendByMa(list, 3, 1, 2);
-        boolean trend_ma10 = isUptrendByMa(list, 8, 1, 2);
+        boolean trend_ma10 = isUptrendByMa(list, 10, 1, 2);
+        boolean trend_ma20 = isUptrendByMa(list, 20, 1, 2);
 
-        if (trend_ma6 == trend_ma10) {
-            return trend_ma10 ? TREND_LONG : TREND_SHORT;
+        if (trend_ma10 == trend_ma20) {
+            return trend_ma20 ? TREND_LONG : TREND_SHORT;
         }
 
         return "";
@@ -3198,8 +3197,12 @@ public class Utils {
                 trend = Utils.TREND_SHORT;
             }
 
+            boolean is15m = false;
+            if (dto_entry.getId().contains("_15")) {
+                is15m = true;
+            }
             String buffer = Utils.appendSpace("", 14);
-            buffer += Utils.calc_BUF_LO_HI_BUF_Forex(false, trend, EPIC, dto_entry, dto_sl);
+            buffer += Utils.calc_BUF_LO_HI_BUF_Forex(is15m, trend, EPIC, dto_entry, dto_sl);
             log = buffer;
         }
 
@@ -3257,10 +3260,10 @@ public class Utils {
     public static String switchTrend(List<BtcFutures> list) {
         String trend = "";
 
-        //String switch_trend_by_heken = Utils.switchTrendByHekenAshi(list);
-        //if (Utils.isNotBlank(switch_trend_by_heken)) {
-        //trend += switch_trend_by_heken;
-        //}
+        String switch_trend_by_heken = Utils.switchTrendByHekenAshi(list);
+        if (Utils.isNotBlank(switch_trend_by_heken)) {
+            trend += switch_trend_by_heken;
+        }
 
         String switch_trend_by_ma = Utils.switchTrendByMa610(list);
         if (Utils.isNotBlank(switch_trend_by_ma)) {
@@ -3368,10 +3371,13 @@ public class Utils {
         return tmp_msg;
     }
 
-    public static String calc_BUF_LO_HI_BUF_Forex(boolean isD1, String trend, String EPIC, Orders dto_entry_h4,
+    public static String calc_BUF_LO_HI_BUF_Forex(boolean is15m, String trend, String EPIC, Orders dto_entry_h4,
             Orders dto_sl_d1) {
         String result = "";
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
+        if (is15m) {
+            risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+        }
         BigDecimal sl_long = Utils.getBigDecimal(dto_sl_d1.getLow_price());
         BigDecimal sl_shot = Utils.getBigDecimal(dto_sl_d1.getHigh_price());
 
@@ -3382,10 +3388,10 @@ public class Utils {
         BigDecimal tp_shot = Utils.getBigDecimal(dto_entry_h4.getStr_body_price());
 
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 8);
-        String str_long = calc_BUF_Long_Forex(false, EPIC, en_long, sl_long, tp_long);
+        String str_long = calc_BUF_Long_Forex(is15m, EPIC, en_long, sl_long, tp_long);
         result += str_long;
         result = appendSpace(result, 80);
-        String str_shot = calc_BUF_Shot_Forex(false, EPIC, en_shot, sl_shot, tp_shot);
+        String str_shot = calc_BUF_Shot_Forex(is15m, EPIC, en_shot, sl_shot, tp_shot);
         result += str_shot;
 
         result = Utils.appendSpace(result, 140);
