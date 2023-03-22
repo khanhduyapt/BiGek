@@ -2985,12 +2985,10 @@ public class Utils {
 
     public static String switchTrendByMaXX(List<BtcFutures> list, int fastIndex, int slowIndex) {
         if (CollectionUtils.isEmpty(list)) {
-            Utils.logWritelnDraft("(switchTrendByMa50)list Empty");
+            Utils.logWritelnDraft("(switchTrendByMaXX)list Empty");
             return "";
         }
-        if (list.size() < 30) {
-            Utils.logWritelnDraft("(switchTrendByMa50)list.size()<50)" + list.size());
-        }
+
         if (Utils.getStringValue(list.get(0).getCurrPrice()).contains("E")) {
             return "";
         }
@@ -2998,28 +2996,14 @@ public class Utils {
         String temp_long = "";
         String temp_shot = "";
 
-        BigDecimal ma6_0 = calcMA(list, fastIndex, 0);
-        BigDecimal ma6_3 = calcMA(list, fastIndex, 3);
-
-        BigDecimal ma10_0 = calcMA(list, fastIndex + 2, 0);
-        BigDecimal ma10_3 = calcMA(list, fastIndex + 2, 3);
+        BigDecimal ma3_0 = calcMA(list, fastIndex, 0);
+        BigDecimal ma3_3 = calcMA(list, fastIndex, 3);
 
         BigDecimal ma5x_0 = calcMA(list, slowIndex, 0);
         BigDecimal ma5x_3 = calcMA(list, slowIndex, 3);
 
-        temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma5x_0, ma5x_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma5x_0, ma5x_3) + "_";
-
-        temp_long += Utils.checkXCutUpY(ma10_0, ma10_3, ma5x_0, ma5x_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma10_0, ma10_3, ma5x_0, ma5x_3) + "_";
-
-        if ((ma6_0.compareTo(ma5x_0) > 0) && (ma5x_0.compareTo(ma5x_3) > 0)) {
-            // temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
-        }
-
-        if ((ma6_0.compareTo(ma5x_0) < 0) && (ma5x_0.compareTo(ma5x_3) < 0)) {
-            // temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
-        }
+        temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma5x_0, ma5x_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma5x_0, ma5x_3) + "_";
 
         String trend = "";
         trend += "_" + temp_long + "_";
@@ -3035,13 +3019,13 @@ public class Utils {
         }
 
         if (trend.contains(Utils.TREND_LONG)) {
-            if ((ma6_0.compareTo(ma6_3) > 0) && (ma6_0.compareTo(ma5x_0) > 0)) {
+            if ((ma3_0.compareTo(ma3_3) > 0) && (ma3_0.compareTo(ma5x_0) > 0)) {
                 return Utils.TREND_LONG;
             }
         }
 
         if (trend.contains(Utils.TREND_SHORT)) {
-            if ((ma6_0.compareTo(ma6_3) < 0) && (ma6_0.compareTo(ma5x_0) < 0)) {
+            if ((ma3_0.compareTo(ma3_3) < 0) && (ma3_0.compareTo(ma5x_0) < 0)) {
                 return Utils.TREND_SHORT;
             }
         }
