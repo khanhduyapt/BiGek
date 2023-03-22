@@ -138,15 +138,15 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final List<String> EPICS_15M = Arrays.asList("XAUUSD", "XAGUSD", "US30", "UK100", "JPN225", "DAX40");
+    public static final List<String> EPICS_15M = Arrays.asList("XAUUSD", "US30", "UK100", "JPN225", "DAX40");
 
     // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
     // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
     // Main: "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD"
 
-    // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", "AUS200", "JPY225",
-    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "US30", "UK100", "JPN225", "DAX40",
-            "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
+    // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", "AUS200", "JPY225", "XAGUSD",
+    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "US30", "UK100", "JPN225", "DAX40", "EURUSD",
+            "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK", "AUDJPY", "AUDNZD", "NZDCHF", "NZDJPY", "EURCHF", "EURGBP",
