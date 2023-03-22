@@ -138,8 +138,8 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final List<String> EPICS_15M = Arrays.asList("XAUUSD", "US30", "UK100", "JPN225", "DAX40", "EURUSD",
-            "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
+    public static final List<String> EPICS_15M = Arrays.asList("XAUUSD", "XAGUSD", "US30", "UK100", "JPN225", "DAX40",
+            "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
 
     // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
     // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
@@ -150,10 +150,9 @@ public class Utils {
             "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
-    // "EURNOK", "AUDJPY", "AUDNZD", "NZDCHF", "NZDJPY"
-    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("AUDCAD", "AUDCHF", "CADCHF", "CADJPY",
-            "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "GBPAUD", "GBPCAD", "GBPCHF",
-            "GBPJPY", "GBPNZD", "NZDCAD");
+    // "EURNOK", "AUDJPY", "AUDNZD", "NZDCHF", "NZDJPY", "EURCHF", "EURGBP",  "CHFJPY", "AUDCHF", "CADCHF", "GBPAUD", "GBPCHF",
+    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("AUDCAD", "CADJPY", "EURAUD", "EURCAD",
+            "EURJPY", "EURNZD", "GBPCAD", "GBPJPY", "GBPNZD", "NZDCAD");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
@@ -3258,14 +3257,21 @@ public class Utils {
     public static String switchTrend(List<BtcFutures> list) {
         String trend = "";
 
-        String switch_trend_by_heken = Utils.switchTrendByHekenAshi(list);
-        if (Utils.isNotBlank(switch_trend_by_heken)) {
-            trend += switch_trend_by_heken;
-        }
+        //String switch_trend_by_heken = Utils.switchTrendByHekenAshi(list);
+        //if (Utils.isNotBlank(switch_trend_by_heken)) {
+        //trend += switch_trend_by_heken;
+        //}
 
         String switch_trend_by_ma = Utils.switchTrendByMa610(list);
         if (Utils.isNotBlank(switch_trend_by_ma)) {
             trend += Utils.TEXT_TREND_BY_MA + switch_trend_by_ma;
+        }
+
+        if (list.size() > 40) {
+            String switch_trend_ma50 = Utils.switchTrendByMaXX(list, 6, 50);
+            if (Utils.isNotBlank(switch_trend_ma50)) {
+                trend += "(Ma6_50)" + switch_trend_ma50;
+            }
         }
 
         return trend;
@@ -3277,10 +3283,10 @@ public class Utils {
             return "";
         }
         // ----------------------------------------------------------------------------------------------------
-        if (heken_list.get(1).isUptrend() && heken_list.get(2).isDown()) {
+        if (heken_list.get(0).isUptrend() && heken_list.get(1).isDown()) {
             return Utils.appendSpace(TEXT_TREND_HEKEN_LONG, 10);
         }
-        if (heken_list.get(1).isDown() && heken_list.get(2).isUptrend()) {
+        if (heken_list.get(0).isDown() && heken_list.get(1).isUptrend()) {
             return Utils.appendSpace(TEXT_TREND_HEKEN_SHORT, 10);
         }
 

@@ -3337,6 +3337,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initForexTrend(String EPIC) {
+        //EPIC = "XAGUSD";
         if (required_update_bars_csv) {
             return "";
         }
@@ -3350,15 +3351,12 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String note = "";
-        String switch_trend = Utils.switchTrendByMa610(list);
+        String switch_trend = Utils.switchTrend(list);
         if (Utils.isNotBlank(switch_trend)) {
-            note += "byMa610:" + Utils.appendSpace(switch_trend, 15);
+            note += switch_trend;
         }
 
-        String trend = Utils.getTrendByMa3_8(list);
-        if (Utils.isBlank(trend)) {
-            note += "Ma3:" + (Utils.isUptrendByMa(list, 3, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHORT);
-        }
+        String trend_ma38 = Utils.isUptrendByMa(list, 3, 0, 1) ? Utils.TREND_LONG : Utils.TREND_SHORT;// Utils.getTrendByMa3_8(list);
 
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4;
@@ -3369,13 +3367,21 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal end_body_price = body.get(1);
 
         List<BigDecimal> low_high = Utils.getLowHighCandle(list);
-        BigDecimal bread = Utils.calcMaxBread(list).multiply(BigDecimal.valueOf(2));
+        BigDecimal bread = Utils.calcMaxBread(list);//.multiply(BigDecimal.valueOf(2));
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
 
-        Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), str_body_price,
+        Orders entity = new Orders(orderId, date_time, trend_ma38, list.get(0).getCurrPrice(), str_body_price,
                 end_body_price, sl_long, sl_shot, note);
         ordersRepository.save(entity);
+
+        if (Utils.isNotBlank(switch_trend) && switch_trend.contains(trend_ma38)) {
+            String log = Utils.appendSpace(EPIC, 15);
+            log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":" + Utils.appendSpace(note, 30) + "   ";
+            log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
+
+            Utils.logWritelnDraft(log);
+        }
 
         return "";
     }
@@ -3397,14 +3403,22 @@ public class BinanceServiceImpl implements BinanceService {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
-        String trend_ma38 = Utils.getTrendByMa3_8(list);
+        String trend_m15_ma3 = Utils.isUptrendByMa(list, 3, 0, 1) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+
         int fastIndex = 6;
         int slowIndex = 50;
         String switch_trend_Ma50 = Utils.switchTrendByMaXX(list, fastIndex, slowIndex);
-
         String note = "";
         if (Utils.isNotBlank(switch_trend_Ma50)) {
             note += "byMa50:" + Utils.appendSpace(switch_trend_Ma50, 15);
+        } else {
+            if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XXX)) {
+                List<BtcFutures> list_m5 = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
+                switch_trend_Ma50 = Utils.switchTrendByMaXX(list_m5, fastIndex, slowIndex);
+                if (Utils.isNotBlank(switch_trend_Ma50)) {
+                    note += "(5M)byMa50:" + Utils.appendSpace(switch_trend_Ma50, 15);
+                }
+            }
         }
 
         // -----------------------------DATABASE---------------------------
@@ -3412,28 +3426,44 @@ public class BinanceServiceImpl implements BinanceService {
         String date_time = LocalDateTime.now().toString();
 
         BigDecimal bread = Utils.calcMaxBread(list).multiply(BigDecimal.valueOf(2));
-        List<BigDecimal> body = Utils.getOpenCloseCandle(list);
         List<BigDecimal> low_high = Utils.getLowHighCandle(list);
-
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
-
-        Orders entity = new Orders(orderId, date_time, trend_ma38, list.get(0).getCurrPrice(), body.get(0), body.get(1),
-                sl_long, sl_shot, note);
-
-        ordersRepository.save(entity);
+        Orders entity = new Orders(orderId, date_time, trend_m15_ma3, list.get(0).getCurrPrice(),
+                list.get(0).getCurrPrice(), list.get(0).getCurrPrice(), sl_long, sl_shot, note);
 
         // TODO: scapForex
         String result = "";
-        if (Utils.isNotBlank(switch_trend_Ma50) && Objects.equals(trend_ma38, switch_trend_Ma50)) {
+        if (Utils.isNotBlank(switch_trend_Ma50) && Objects.equals(trend_m15_ma3, switch_trend_Ma50)) {
+            List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+            List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);
+            boolean is_uptrend_h4_ma3 = Utils.isUptrendByMa(list_h4, 3, 0, 1);
+            boolean is_uptrend_h1_ma3 = Utils.isUptrendByMa(list_h1, 3, 0, 1);
+            if (is_uptrend_h4_ma3 != is_uptrend_h1_ma3) {
+                return "";
+            }
+
+            if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XXX)) {
+                List<BtcFutures> list_m5 = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
+                boolean is_uptrend_15_ma3 = Utils.isUptrendByMa(list, 6, 0, 1);
+                boolean is_uptrend_m5_ma3 = Utils.isUptrendByMa(list_m5, 6, 0, 1);
+
+                if ((is_uptrend_h1_ma3 != is_uptrend_15_ma3) || (is_uptrend_15_ma3 != is_uptrend_m5_ma3)) {
+                    return "";
+                }
+            }
+
             String log = Utils.appendSpace(EPIC, 15);
-            log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":" + Utils.appendSpace(note, 50) + "   ";
+            log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":" + Utils.appendSpace(note, 30) + "   ";
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
+            log += Utils.createLineForex_Body(entity, entity);
 
             Utils.logWritelnDraft(log);
 
             result = Utils.appendSpace(EPIC, 15);
         }
+
+        ordersRepository.save(entity);
 
         return result;
     }
