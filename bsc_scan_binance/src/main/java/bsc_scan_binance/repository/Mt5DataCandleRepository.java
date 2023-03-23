@@ -13,4 +13,6 @@ public interface Mt5DataCandleRepository
         extends JpaRepository<Mt5DataCandle, Mt5DataCandleKey> {
 
     List<Mt5DataCandle> findAllByIdEpicAndIdCandleOrderByIdCandleTimeDesc(String epic, String candle);
+
+    List<Mt5DataCandle> findAllByCreateddateNot(String createddate);
 }

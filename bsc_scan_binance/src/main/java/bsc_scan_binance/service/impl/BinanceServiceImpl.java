@@ -3045,7 +3045,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (tempArr.length == 7) {
                     Mt5DataCandle dto = new Mt5DataCandle(new Mt5DataCandleKey(tempArr[0], tempArr[1], tempArr[2]),
                             Utils.getBigDecimal(tempArr[3]), Utils.getBigDecimal(tempArr[4]),
-                            Utils.getBigDecimal(tempArr[5]), Utils.getBigDecimal(tempArr[6]));
+                            Utils.getBigDecimal(tempArr[5]), Utils.getBigDecimal(tempArr[6]), Utils.getYYYYMMDD(0));
                     list.add(dto);
 
                     total_data += 1;
@@ -3063,6 +3063,11 @@ public class BinanceServiceImpl implements BinanceService {
             fin.close();
             reader.close();
             // ------------------------------------------------------------------------
+            List<Mt5DataCandle> nottodaylist = mt5DataCandleRepository.findAllByCreateddateNot(Utils.getYYYYMMDD(0));
+            if (!CollectionUtils.isEmpty(nottodaylist)) {
+                mt5DataCandleRepository.deleteAll(nottodaylist);
+            }
+
             for (Mt5DataCandle dto : list_delete) {
                 List<Mt5DataCandle> temp = mt5DataCandleRepository.findAllByIdEpicAndIdCandleOrderByIdCandleTimeDesc(
                         dto.getId().getEpic(), dto.getId().getCandle());
