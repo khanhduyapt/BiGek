@@ -2912,11 +2912,19 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        List<BtcFutures> list = Utils.loadData(symbol, Utils.CRYPTO_TIME_15m, 50);
-        if (CollectionUtils.isEmpty(list)) {
+        List<BtcFutures> list_15 = Utils.loadData(symbol, Utils.CRYPTO_TIME_15m, 20);
+        if (CollectionUtils.isEmpty(list_15)) {
             return "";
         }
-        String switch_trend = Utils.switchTrendByMaXX(list, 8, 50);
+
+        int slowIndex = 20;
+        String switch_trend = Utils.switchTrendByMaXX(list_15, 3, slowIndex);
+        if (Utils.isBlank(switch_trend)) {
+            switch_trend = Utils.switchTrendByMaXX(list_15, 6, slowIndex);
+        }
+        if (Utils.isBlank(switch_trend)) {
+            switch_trend = Utils.switchTrendByMaXX(list_15, 8, slowIndex);
+        }
 
         // --------------------DATABASE--------------------
         String date_time = LocalDateTime.now().toString();
@@ -2924,11 +2932,28 @@ public class BinanceServiceImpl implements BinanceService {
                 BigDecimal.ZERO, BigDecimal.ZERO, switch_trend);
         ordersRepository.save(entity);
 
+        if (Utils.isBlank(switch_trend)) {
+            return "";
+        }
+
+        List<BtcFutures> list_h1 = Utils.loadData(symbol, Utils.CRYPTO_TIME_1H, 20);
+        boolean is_uptrend_15_ma3 = Utils.isUptrendByMa(list_15, 6, 1, 2);
+        boolean is_uptrend_h1_ma3 = Utils.isUptrendByMa(list_h1, 3, 0, 1);
+        if ((is_uptrend_h1_ma3 != is_uptrend_15_ma3)) {
+            return "";
+        }
+
+        List<BtcFutures> list_h4 = Utils.loadData(symbol, Utils.CRYPTO_TIME_4H, 20);
+        boolean is_uptrend_h4_ma3 = Utils.isUptrendByMa(list_h4, 3, 0, 1);
+        if ((is_uptrend_h4_ma3 != is_uptrend_h1_ma3)) {
+            return "";
+        }
+
         // --------------------MSG--------------------
         // TODO sendMsgKillLongShort
         String msg = "";
         if (Utils.isNotBlank(switch_trend)) {
-            String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list.get(0).getCurrPrice()), 5) + ")";
+            String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_15.get(0).getCurrPrice()), 5) + ")";
 
             if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
                 msg = " 💹 " + symbol + "_kill_Short 💔 " + str_price;
