@@ -164,8 +164,8 @@ public class BscScanBinanceApplication {
                                 }
                             }
 
-                            if (Utils.isNotBlank(result_h1 + result_15)) {
-                                String msg = "(FX):" + result_h1 + result_15;
+                            if (Utils.isNotBlank(result_15)) {
+                                String msg = "(FX):" + result_15;
                                 String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
                                 binance_service.sendMsgPerHour(EVENT_ID, msg, true);
                             }
