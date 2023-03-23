@@ -3197,7 +3197,6 @@ public class BinanceServiceImpl implements BinanceService {
                     trend_d1 = chart + ":" + Utils.appendSpace(dto_d1.getTrend(), 4);
                 }
 
-                // TODO createReport
                 String log = Utils.createLineForex_Header(dto_h4, dto_h4, trend_d1);
                 log += "\n" + Utils.createLineForex_Body(dto_h4, dto_h4);
                 if (str_long_suggest.contains(EPIC)) {
@@ -3217,6 +3216,7 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.writelnLogFooter_Forex();
         Utils.writelnLogFooter_Forex();
 
+        // TODO createReport
         List<Orders> list_d1 = ordersRepository.getD1List();
         list_d1.add(null);
         list_d1.addAll(ordersRepository.getTrend_Reversal_H4today());
