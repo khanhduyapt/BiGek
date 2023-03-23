@@ -3510,7 +3510,10 @@ public class BinanceServiceImpl implements BinanceService {
                 fundingHistoryRepository
                         .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
             }
-            result = Utils.appendSpace(EPIC, 15);
+
+            String type = Objects.equals(Utils.TREND_LONG, trend_ma3) ? "(B)" : "(S)";
+
+            result = Utils.appendSpace(type + EPIC, 15);
         }
 
         ordersRepository.save(entity);
