@@ -149,8 +149,8 @@ public class Utils {
             "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
-    // "EURNOK", "AUDJPY", "AUDNZD", "NZDJPY",  "EURGBP",
-    //  "GBPAUD", ,
+    // "EURNOK", "AUDJPY", "AUDNZD", "NZDJPY", "EURGBP",
+    // "GBPAUD", ,
     public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("AUDCAD", "CADJPY", "EURAUD", "EURCAD",
             "EURJPY", "EURNZD", "GBPCAD", "GBPJPY", "GBPNZD", "NZDCAD");
 
@@ -3196,10 +3196,10 @@ public class Utils {
 
             boolean is15m = false;
             if (dto_entry.getId().contains("_15")) {
-                //TODO: is15m = true;
+                // TODO: is15m = true;
             }
             String buffer = Utils.appendSpace("", 14);
-            buffer += Utils.calc_BUF_LO_HI_BUF_Forex(is15m, trend, EPIC, dto_entry, dto_sl);
+            buffer += Utils.calc_BUF_LO_HI_BUF_Forex(is15m, "", EPIC, dto_entry, dto_sl);
             log = buffer;
         }
 
@@ -3411,13 +3411,21 @@ public class Utils {
         BigDecimal tp_shot = Utils.getBigDecimal(dto_entry_h4.getStr_body_price());
 
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 8);
-        String str_long = calc_BUF_Long_Forex(is15m, EPIC, en_long, sl_long, tp_long);
-        result += str_long;
-        result = appendSpace(result, 80);
-        String str_shot = calc_BUF_Shot_Forex(is15m, EPIC, en_shot, sl_shot, tp_shot);
-        result += str_shot;
 
-        result = Utils.appendSpace(result, 140);
+        String str_long = calc_BUF_Long_Forex(is15m, EPIC, en_long, sl_long, tp_long);
+        String str_shot = calc_BUF_Shot_Forex(is15m, EPIC, en_shot, sl_shot, tp_shot);
+
+        if (Objects.equals(trend, Utils.TREND_LONG)) {
+            result += str_long;
+        } else if (Objects.equals(trend, Utils.TREND_SHORT)) {
+            result += str_shot;
+        } else {
+            result += str_long;
+            result = appendSpace(result, 80);
+            result += str_shot;
+            result = Utils.appendSpace(result, 140);
+        }
+
         return result;
     }
 

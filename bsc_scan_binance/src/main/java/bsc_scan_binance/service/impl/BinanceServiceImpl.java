@@ -3499,7 +3499,7 @@ public class BinanceServiceImpl implements BinanceService {
             String log = Utils.appendSpace(EPIC, 15);
             log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":" + Utils.appendSpace(note, 30) + "   ";
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
-            log += Utils.createLineForex_Body(entity, dto_h4);
+            log += Utils.calc_BUF_LO_HI_BUF_Forex(false, trend_ma3, EPIC, entity, dto_h4);
 
             String EVENT_ID = "FX_15M_" + EPIC + CAPITAL_TIME_XX + switch_trend_by_ma
                     + Utils.getCurrentYyyyMmDd_HH_Blog30m();
@@ -3512,7 +3512,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String type = Objects.equals(Utils.TREND_LONG, trend_ma3) ? "(B)" : "(S)";
-
             result = Utils.appendSpace(type + EPIC, 15);
         }
 
