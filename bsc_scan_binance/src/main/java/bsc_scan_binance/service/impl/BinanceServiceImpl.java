@@ -3320,6 +3320,14 @@ public class BinanceServiceImpl implements BinanceService {
             return false;
         }
 
+        List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
+        if (!CollectionUtils.isEmpty(list_d1)) {
+            boolean is_uptrend_d1_ma1 = Utils.isUptrendByMa(list_d1, 1, 0, 1);
+            if ((is_uptrend_h4_ma3 != is_uptrend_d1_ma1)) {
+                return false;
+            }
+        }
+
         List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);
         if (CollectionUtils.isEmpty(list_h1)) {
             return false;

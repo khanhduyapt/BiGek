@@ -3196,7 +3196,7 @@ public class Utils {
 
             boolean is15m = false;
             if (dto_entry.getId().contains("_15")) {
-                is15m = true;
+                //TODO: is15m = true;
             }
             String buffer = Utils.appendSpace("", 14);
             buffer += Utils.calc_BUF_LO_HI_BUF_Forex(is15m, trend, EPIC, dto_entry, dto_sl);
