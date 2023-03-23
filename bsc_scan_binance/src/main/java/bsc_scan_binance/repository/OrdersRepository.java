@@ -135,6 +135,7 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
 
     @Query(value = " SELECT * FROM orders det "
             + " WHERE (det.gecko_id like '%HOUR_4') AND (COALESCE(det.note, '') <> '') "
+            + "      AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR_4', '_DAY'))   "
             + " ORDER BY det.gecko_id ", nativeQuery = true)
     public List<Orders> getTrend_Reversal_H4today();
 

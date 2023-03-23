@@ -3159,7 +3159,7 @@ public class BinanceServiceImpl implements BinanceService {
         // --------------------------------------------------------------------------
         List<String> compare_list = Arrays.asList("USD", "CHF", "NZD", "EUR", "GBP", "AUD");
         for (String CUR : compare_list) {
-            getSummaryCurrencies(CUR, Utils.CAPITAL_TIME_HOUR_4);
+            getSummaryCurrencies(CUR, Utils.CAPITAL_TIME_DAY);
         }
         if (!CollectionUtils.isEmpty(GLOBAL_LONG_LIST)) {
             for (String s : GLOBAL_LONG_LIST) {
@@ -3344,15 +3344,28 @@ public class BinanceServiceImpl implements BinanceService {
                 end_body_price, sl_long, sl_shot, note);
         ordersRepository.save(entity);
 
+        String result = "";
         if (Utils.isNotBlank(switch_trend) && switch_trend.contains(trend_ma)) {
+            if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX)) {
+                List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
+                List<BtcFutures> list_h4 = getCapitalData(EPIC, CAPITAL_TIME_XX);
+                boolean is_uptrend_d1_ma3 = Utils.isUptrendByMa(list_d1, 3, 0, 1);
+                boolean is_uptrend_h4_ma3 = Utils.isUptrendByMa(list_h4, 3, 0, 1);
+
+                if ((is_uptrend_d1_ma3 != is_uptrend_h4_ma3)) {
+                    return "";
+                }
+            }
+
             String log = Utils.appendSpace(EPIC, 15);
             log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":" + Utils.appendSpace(note, 30) + "   ";
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 
             Utils.logWritelnDraft(log);
+            result = switch_trend;
         }
 
-        return "";
+        return result;
     }
 
     @Override
@@ -3374,21 +3387,18 @@ public class BinanceServiceImpl implements BinanceService {
         }
         String trend_ma3 = Utils.getTrendByMa3_8(list);
 
-        int fastIndex = 3;
         int slowIndex = 20;
-        String switch_trend_by_ma = Utils.switchTrendByMaXX(list, fastIndex, slowIndex);
+        String switch_trend_by_ma = Utils.switchTrendByMaXX(list, 3, slowIndex);
+        if (Utils.isBlank(switch_trend_by_ma)) {
+            switch_trend_by_ma = Utils.switchTrendByMaXX(list, 6, slowIndex);
+        }
+        if (Utils.isBlank(switch_trend_by_ma)) {
+            switch_trend_by_ma = Utils.switchTrendByMaXX(list, 8, slowIndex);
+        }
+
         String note = "";
         if (Utils.isNotBlank(switch_trend_by_ma)) {
             note += Utils.getChartNameCapital(CAPITAL_TIME_XXX) + "Ma20:" + Utils.appendSpace(switch_trend_by_ma, 15);
-        }
-
-        if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XXX) && Utils.isBlank(switch_trend_by_ma)) {
-            switch_trend_by_ma = Utils.switchTrendByMa610(list);
-
-            if (Utils.isNotBlank(switch_trend_by_ma)) {
-                note += Utils.getChartNameCapital(CAPITAL_TIME_XXX) + "Ma10:"
-                        + Utils.appendSpace(switch_trend_by_ma, 15);
-            }
         }
 
         // -----------------------------DATABASE---------------------------
@@ -3405,15 +3415,17 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO: scapForex
         String result = "";
         if (Utils.isNotBlank(switch_trend_by_ma)) {
-            if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XXX)) {
+            {
+                List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
                 List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-                List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);
+                List<BtcFutures> list_h1 = getCapitalData(EPIC, CAPITAL_TIME_XXX);
+
+                boolean is_uptrend_d1_ma3 = Utils.isUptrendByMa(list_d1, 3, 0, 1);
                 boolean is_uptrend_h4_ma3 = Utils.isUptrendByMa(list_h4, 3, 0, 1);
                 boolean is_uptrend_h1_ma3 = Utils.isUptrendByMa(list_h1, 3, 0, 1);
-                boolean is_uptrend_15_ma3 = Utils.isUptrendByMa(list, 6, 0, 1);
-                // (is_uptrend_h4_ma3 != is_uptrend_h1_ma3) ||
-                if ((is_uptrend_h1_ma3 != is_uptrend_15_ma3)) {
-                    return " ";
+
+                if ((is_uptrend_d1_ma3 != is_uptrend_h4_ma3) || (is_uptrend_h4_ma3 != is_uptrend_h1_ma3)) {
+                    return "";
                 }
             }
 

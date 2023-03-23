@@ -145,12 +145,12 @@ public class Utils {
     // Main: "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD"
 
     // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", "AUS200", "JPY225", "XAGUSD",
-    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "US30", "UK100", "JPN225", "DAX40", "EURUSD",
-            "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
+    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "US30", "UK100", "JPN225", "DAX40",
+            "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
-    // "EURNOK", "AUDJPY", "AUDNZD", "NZDCHF", "NZDJPY", "EURCHF", "EURGBP",
-    // "CHFJPY", "AUDCHF", "CADCHF", "GBPAUD", "GBPCHF",
+    // "EURNOK", "AUDJPY", "AUDNZD", "NZDJPY",  "EURGBP",
+    //  "GBPAUD", ,
     public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("AUDCAD", "CADJPY", "EURAUD", "EURCAD",
             "EURJPY", "EURNZD", "GBPCAD", "GBPJPY", "GBPNZD", "NZDCAD");
 
@@ -3142,7 +3142,7 @@ public class Utils {
             return trend_ma2 ? TREND_LONG : TREND_SHORT;
         }
 
-        return "";
+        return isUptrendByMa(list, 5, 1, 2) ? TREND_LONG : TREND_SHORT;
     }
 
     public static boolean isUptrendByMa(List<BtcFutures> list, int maIndex, int str, int end) {
