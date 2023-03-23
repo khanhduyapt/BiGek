@@ -145,8 +145,8 @@ public class Utils {
     // Main: "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD"
 
     // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", "AUS200", "JPY225", "XAGUSD",
-    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "US30", "UK100", "JPN225", "DAX40",
-            "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
+    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "US30", "NAS100", "SP500", "UK100",
+            "JPN225", "DAX40", "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK", "AUDJPY", "AUDNZD", "NZDJPY", "EURGBP",
