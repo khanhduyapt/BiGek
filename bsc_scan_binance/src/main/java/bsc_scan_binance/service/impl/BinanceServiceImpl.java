@@ -2936,15 +2936,16 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
+        int maSlow = 6;
         List<BtcFutures> list_h1 = Utils.loadData(symbol, Utils.CRYPTO_TIME_1H, 20);
-        boolean is_uptrend_15_ma3 = Utils.isUptrendByMa(list_15, 6, 1, 2);
-        boolean is_uptrend_h1_ma3 = Utils.isUptrendByMa(list_h1, 3, 0, 1);
+        boolean is_uptrend_15_ma3 = Utils.isUptrendByMa(list_15, maSlow, 0, 1);
+        boolean is_uptrend_h1_ma3 = Utils.isUptrendByMa(list_h1, maSlow, 0, 1);
         if ((is_uptrend_h1_ma3 != is_uptrend_15_ma3)) {
             return "";
         }
 
         List<BtcFutures> list_h4 = Utils.loadData(symbol, Utils.CRYPTO_TIME_4H, 20);
-        boolean is_uptrend_h4_ma3 = Utils.isUptrendByMa(list_h4, 3, 0, 1);
+        boolean is_uptrend_h4_ma3 = Utils.isUptrendByMa(list_h4, maSlow, 0, 1);
         if ((is_uptrend_h4_ma3 != is_uptrend_h1_ma3)) {
             return "";
         }
@@ -3010,7 +3011,7 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 75);
 
         if (Utils.isNotBlank(switch_trend) && Objects.equals(Utils.TREND_LONG, switch_trend)
-                && Utils.isUptrendByMa(list, 50, 0, 1)) {
+                && Utils.isUptrendByMa(list, 10, 0, 1)) {
             result = switch_trend;
 
             Utils.logWritelnDraft(log);
@@ -3334,12 +3335,13 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private boolean isSameTrendFromH4toM5(String EPIC, String trend_ref) {
+        int maSlow = 6;
         List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
         if (CollectionUtils.isEmpty(list_h4)) {
             return false;
         }
 
-        boolean is_uptrend_h4_ma3 = Utils.isUptrendByMa(list_h4, 3, 0, 1);
+        boolean is_uptrend_h4_ma3 = Utils.isUptrendByMa(list_h4, maSlow, 0, 1);
         String trend_h4 = is_uptrend_h4_ma3 ? Utils.TREND_LONG : Utils.TREND_SHORT;
         if (!Objects.equals(trend_ref, trend_h4)) {
             return false;
@@ -3347,7 +3349,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
         if (!CollectionUtils.isEmpty(list_d1)) {
-            boolean is_uptrend_d1_ma1 = Utils.isUptrendByMa(list_d1, 1, 0, 1);
+            boolean is_uptrend_d1_ma1 = Utils.isUptrendByMa(list_d1, maSlow, 0, 1);
             if ((is_uptrend_h4_ma3 != is_uptrend_d1_ma1)) {
                 return false;
             }
@@ -3358,14 +3360,14 @@ public class BinanceServiceImpl implements BinanceService {
             return false;
         }
 
-        boolean is_uptrend_h1_ma3 = Utils.isUptrendByMa(list_h1, 3, 0, 1);
+        boolean is_uptrend_h1_ma3 = Utils.isUptrendByMa(list_h1, maSlow, 0, 1);
         if ((is_uptrend_h4_ma3 != is_uptrend_h1_ma3)) {
             return false;
         }
 
         List<BtcFutures> list_15 = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
         if (!CollectionUtils.isEmpty(list_15)) {
-            boolean is_uptrend_15_ma3 = Utils.isUptrendByMa(list_15, 3, 0, 1);
+            boolean is_uptrend_15_ma3 = Utils.isUptrendByMa(list_15, maSlow, 0, 1);
             if ((is_uptrend_h1_ma3 != is_uptrend_15_ma3)) {
                 return false;
             }
@@ -3373,7 +3375,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         List<BtcFutures> list_5 = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
         if (!CollectionUtils.isEmpty(list_5)) {
-            boolean is_uptrend_5_ma3 = Utils.isUptrendByMa(list_5, 3, 0, 1);
+            boolean is_uptrend_5_ma3 = Utils.isUptrendByMa(list_5, maSlow, 0, 1);
             if ((is_uptrend_h1_ma3 != is_uptrend_5_ma3)) {
                 return false;
             }
@@ -3521,3 +3523,5 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
 }
+
+// 8-10-13-17-21-26-34
