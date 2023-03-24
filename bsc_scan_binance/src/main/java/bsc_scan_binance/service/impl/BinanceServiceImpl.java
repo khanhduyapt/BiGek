@@ -3464,18 +3464,18 @@ public class BinanceServiceImpl implements BinanceService {
         }
         String trend_ma3 = Utils.getTrendByMa3_8(list);
 
-        int slowIndex = 20;
-        String switch_trend_by_ma = Utils.switchTrendByMaXX(list, 3, slowIndex);
+        String switch_trend_by_ma = Utils.switchTrendByMaXX(list, 3, 20);
+
         if (Utils.isBlank(switch_trend_by_ma)) {
-            switch_trend_by_ma = Utils.switchTrendByMaXX(list, 6, slowIndex);
+            switch_trend_by_ma = Utils.switchTrendByMaXX(list, 6, 10);
         }
         if (Utils.isBlank(switch_trend_by_ma)) {
-            switch_trend_by_ma = Utils.switchTrendByMaXX(list, 8, slowIndex);
+            switch_trend_by_ma = Utils.switchTrendByMaXX(list, 8, 10);
         }
 
         String note = "";
         if (Utils.isNotBlank(switch_trend_by_ma)) {
-            note += Utils.getChartNameCapital(CAPITAL_TIME_XX) + "Ma20:" + Utils.appendSpace(switch_trend_by_ma, 15);
+            note += Utils.getChartNameCapital(CAPITAL_TIME_XX) + "Ma15:" + Utils.appendSpace(switch_trend_by_ma, 15);
         }
 
         // -----------------------------DATABASE---------------------------
