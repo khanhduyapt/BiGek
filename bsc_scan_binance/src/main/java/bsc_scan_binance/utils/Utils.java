@@ -131,7 +131,7 @@ public class Utils {
 
     public static final long MINUTES_OF_D = 240;// 600;
     public static final long MINUTES_OF_4H = 60;
-    public static final long MINUTES_OF_1H = 60;
+    public static final long MINUTES_OF_1H = 30;
     public static final long MINUTES_OF_15M = 15;
     public static final long MINUTES_OF_5M = 5;
 
@@ -145,14 +145,16 @@ public class Utils {
     // Main: "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD"
 
     // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", "AUS200", "JPY225", "XAGUSD",
-    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "US30", "NAS100", "SP500", "UK100",
+    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "US30", "NAS100", "UK100",
             "JPN225", "DAX40", "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK", "AUDJPY", "AUDNZD", "NZDJPY", "EURGBP",
     // "GBPAUD", ,
-    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("AUDCAD", "CADJPY", "EURAUD", "EURCAD",
-            "EURJPY", "EURNZD", "GBPCAD", "GBPJPY", "GBPNZD", "NZDCAD");
+    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList(
+    //"XAGUSD", "AUDCAD", "CADJPY", "EURAUD", "EURCAD",
+    // "EURJPY", "EURNZD", "GBPCAD", "GBPJPY", "GBPNZD", "NZDCAD"
+    );
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
@@ -2991,12 +2993,9 @@ public class Utils {
         }
 
         BigDecimal ma6_0 = calcMA(list, 6, 0);
+        BigDecimal ma6_1 = calcMA(list, 6, 3);
         BigDecimal ma10_0 = calcMA(list, 10, 0);
         BigDecimal ma20_0 = calcMA(list, 20, 0);
-
-        BigDecimal ma6_1 = calcMA(list, 6, 3);
-        BigDecimal ma10_1 = calcMA(list, 10, 3);
-        BigDecimal ma20_1 = calcMA(list, 20, 3);
 
         //LONG //&& (ma10_0.compareTo(ma10_1) > 0) && (ma20_0.compareTo(ma20_1) > 0)
         if ((ma6_0.compareTo(ma10_0) > 0) && (ma10_0.compareTo(ma20_0) > 0) && (ma6_0.compareTo(ma6_1) > 0)) {
