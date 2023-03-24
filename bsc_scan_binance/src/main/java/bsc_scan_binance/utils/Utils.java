@@ -62,7 +62,7 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 public class Utils {
 
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0025);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.005);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -2998,9 +2998,8 @@ public class Utils {
         BigDecimal ma10_1 = calcMA(list, 10, 3);
         BigDecimal ma20_1 = calcMA(list, 20, 3);
 
-        //LONG
-        if ((ma6_0.compareTo(ma10_0) > 0) && (ma10_0.compareTo(ma20_0) > 0) && (ma6_0.compareTo(ma6_1) > 0)
-                && (ma10_0.compareTo(ma10_1) > 0) && (ma20_0.compareTo(ma20_1) > 0)) {
+        //LONG //&& (ma10_0.compareTo(ma10_1) > 0) && (ma20_0.compareTo(ma20_1) > 0)
+        if ((ma6_0.compareTo(ma10_0) > 0) && (ma10_0.compareTo(ma20_0) > 0) && (ma6_0.compareTo(ma6_1) > 0)) {
             String trend = "";
             trend += switchTrendByMaXX(list, 6, 10);
             trend += switchTrendByMaXX(list, 6, 20);
@@ -3011,9 +3010,8 @@ public class Utils {
             }
         }
 
-        //Short
-        if ((ma6_0.compareTo(ma10_0) < 0) && (ma10_0.compareTo(ma20_0) < 0) && (ma6_0.compareTo(ma6_1) < 0)
-                && (ma10_0.compareTo(ma10_1) < 0) && (ma20_0.compareTo(ma20_1) < 0)) {
+        //Short && (ma10_0.compareTo(ma10_1) < 0) && (ma20_0.compareTo(ma20_1) < 0)
+        if ((ma6_0.compareTo(ma10_0) < 0) && (ma10_0.compareTo(ma20_0) < 0) && (ma6_0.compareTo(ma6_1) < 0)) {
             String trend = "";
             trend += switchTrendByMaXX(list, 6, 10);
             trend += switchTrendByMaXX(list, 6, 20);

@@ -3241,7 +3241,11 @@ public class BinanceServiceImpl implements BinanceService {
                 String EPIC = Utils.getEpicFromId(dto_d1.getId());
 
                 String log = Utils.createLineForex_Header(dto_d1, dto_d1,
-                        Utils.appendSpace("   " + dto_d1.getNote(), 30));
+                        Utils.appendSpace(
+                                dto_d1.getNote().substring(0,
+                                        dto_d1.getNote().length() > 40 ? 40 : dto_d1.getNote().length()),
+                                40));
+
                 log += Utils.createLineForex_Body(dto_d1, dto_d1);
 
                 if (dto_d1.getNote().contains(Utils.TREND_LONG)) {
@@ -3408,17 +3412,18 @@ public class BinanceServiceImpl implements BinanceService {
 
         String result = "";
         if (Utils.isNotBlank(switch_trend_type) && switch_trend_type.contains(trend_ma3)) {
-            if (!isSameTrendFromH4toM5(EPIC, trend_ma3)) {
-                return "";
+            String note = "";
+            if (isSameTrendFromH4toM5(EPIC, trend_ma3)) {
+                note = "    SameTrendFromH4toM5";
             }
 
             String log = Utils.appendSpace(EPIC, 10);
             log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":";
             log += Utils.appendSpace(
                     switch_trend_type.substring(0, switch_trend_type.length() > 30 ? 30 : switch_trend_type.length()),
-                    35);
+                    40);
 
-            log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
+            log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + note;
 
             Utils.logWritelnDraft(log);
             result = switch_trend_type;
@@ -3457,7 +3462,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Utils.isNotBlank(trend102050)) {
                     String log = Utils.appendSpace(EPIC, 10);
                     log += Utils.appendSpace(Utils.getChartName(list), 5) + ":";
-                    log += Utils.appendSpace("Ma6_10_20_50: " + trend102050, 35);
+                    log += Utils.appendSpace("Ma6_10_20: " + trend102050, 35);
                     log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
 
                     String EVENT_ID = "FX_15M_61020" + EPIC + CAPITAL_TIME_XX + trend102050
@@ -3527,7 +3532,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 String log = Utils.appendSpace(EPIC, 10);
                 log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":";
-                log += Utils.appendSpace(note.substring(0, note.length() > 30 ? 30 : note.length()), 35);
+                log += Utils.appendSpace(note.substring(0, note.length() > 30 ? 30 : note.length()), 40);
                 log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
                 log += Utils.calc_BUF_LO_HI_BUF_Forex(false, trend_ma3, EPIC, entity, dto_h4);
                 log += "   " + dto_h4.getNote();
