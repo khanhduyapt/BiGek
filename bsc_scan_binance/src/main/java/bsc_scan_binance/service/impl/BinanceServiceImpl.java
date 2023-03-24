@@ -3330,7 +3330,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (!CollectionUtils.isEmpty(list_d1)) {
             boolean is_uptrend_d1_ma1 = Utils.isUptrendByMa(list_d1, 3, 0, 1);
             if ((is_uptrend_h4_ma3 != is_uptrend_d1_ma1)) {
-                return false;
+                //return false;
             }
         }
 
@@ -3391,6 +3391,9 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal bread = Utils.calcMaxBread(list);
         if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX)) {
             bread = bread.multiply(BigDecimal.valueOf(2));
+        }
+        if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XX)) {
+            bread = bread.multiply(BigDecimal.valueOf(3));
         }
 
         BigDecimal str_body_price = low_high.get(0);
