@@ -156,7 +156,7 @@ public class BscScanBinanceApplication {
                             }
 
                             String result_15 = "";
-                            for (String EPIC : capital_list) {
+                            for (String EPIC : Utils.EPICS_15M) {
                                 String item_15 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
                                 if (Utils.isNotBlank(item_15)) {
                                     result_15 += item_15 + ", ";

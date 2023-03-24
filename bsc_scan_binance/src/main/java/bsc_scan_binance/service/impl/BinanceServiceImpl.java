@@ -3240,11 +3240,9 @@ public class BinanceServiceImpl implements BinanceService {
 
                 String EPIC = Utils.getEpicFromId(dto_d1.getId());
 
-                String log = Utils.createLineForex_Header(dto_d1, dto_d1,
-                        Utils.appendSpace(
-                                dto_d1.getNote().substring(0,
-                                        dto_d1.getNote().length() > 40 ? 40 : dto_d1.getNote().length()),
-                                40));
+                String log = Utils.createLineForex_Header(dto_d1, dto_d1, Utils.appendSpace(
+                        dto_d1.getNote().substring(0, dto_d1.getNote().length() > 40 ? 40 : dto_d1.getNote().length()),
+                        40));
 
                 log += Utils.createLineForex_Body(dto_d1, dto_d1);
 
@@ -3356,13 +3354,13 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        //List<BtcFutures> list_5 = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
-        //if (!CollectionUtils.isEmpty(list_5)) {
-        //    boolean is_uptrend_5_ma3 = Utils.isUptrendByMa(list_5, fastIndex, 0, 1);
-        //    if ((is_uptrend_h1_ma3 != is_uptrend_5_ma3)) {
-        //        return false;
-        //    }
-        //}
+        // List<BtcFutures> list_5 = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
+        // if (!CollectionUtils.isEmpty(list_5)) {
+        // boolean is_uptrend_5_ma3 = Utils.isUptrendByMa(list_5, fastIndex, 0, 1);
+        // if ((is_uptrend_h1_ma3 != is_uptrend_5_ma3)) {
+        // return false;
+        // }
+        // }
 
         return true;
     }
@@ -3469,8 +3467,8 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_ma3 = Utils.getTrendByMa3_8(list);
 
         String switch_trend_by_ma = Utils.switchTrend_6_10_20(list);
-
-        if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX) && Utils.isBlank(switch_trend_by_ma)) {
+        // Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX) &&
+        if (Utils.isBlank(switch_trend_by_ma)) {
             int index1 = 20;
             int index2 = 15;
             switch_trend_by_ma = Utils.switchTrendByMaXX(list, 3, index1);
@@ -3501,11 +3499,12 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO: scapForex
         String result = "";
 
-        //Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+        // Orders dto_d1 = ordersRepository.findById(EPIC + "_" +
+        // Utils.CAPITAL_TIME_DAY).orElse(null);
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
 
-        //if ((Objects.nonNull(dto_d1) && Utils.isNotBlank(dto_d1.getNote()))
-        //        || (Objects.nonNull(dto_h4) && Utils.isNotBlank(dto_h4.getNote()))) {
+        // if ((Objects.nonNull(dto_d1) && Utils.isNotBlank(dto_d1.getNote()))
+        // || (Objects.nonNull(dto_h4) && Utils.isNotBlank(dto_h4.getNote()))) {
 
         if (Utils.isNotBlank(switch_trend_by_ma)) {
             List<BtcFutures> list_h1 = getCapitalData(EPIC, CAPITAL_TIME_XX);
