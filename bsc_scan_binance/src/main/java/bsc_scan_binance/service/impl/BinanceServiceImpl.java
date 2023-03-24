@@ -3492,9 +3492,11 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO: scapForex
         String result = "";
 
+        Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
 
-        if (Objects.nonNull(dto_h4) && Utils.isNotBlank(dto_h4.getNote())) {
+        if ((Objects.nonNull(dto_d1) && Utils.isNotBlank(dto_d1.getNote()))
+                || (Objects.nonNull(dto_h4) && Utils.isNotBlank(dto_h4.getNote()))) {
 
             if (Utils.isNotBlank(switch_trend_by_ma) && Objects.equals(switch_trend_by_ma, trend_ma3)) {
                 if (!isSameTrendFromH4toM5(EPIC, trend_ma3)) {
