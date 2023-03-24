@@ -3218,9 +3218,9 @@ public class Utils {
             return "";
         }
 
-        boolean trend_ma1 = isUptrendByMa(list, 6, 1, 2);
-        boolean trend_ma2 = isUptrendByMa(list, 8, 1, 2);
-        boolean trend_ma3 = isUptrendByMa(list, 10, 1, 2);
+        boolean trend_ma1 = isUptrendByMa(list, 3, 1, 2);
+        boolean trend_ma2 = isUptrendByMa(list, 5, 1, 2);
+        boolean trend_ma3 = isUptrendByMa(list, 8, 1, 2);
 
         if ((trend_ma1 == trend_ma2) && (trend_ma2 == trend_ma3)) {
             return trend_ma2 ? TREND_LONG : TREND_SHORT;
