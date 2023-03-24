@@ -3057,20 +3057,20 @@ public class Utils {
         String temp_long = "";
         String temp_shot = "";
 
-        BigDecimal ma6_0 = calcMA(list, 3, 0);
-        BigDecimal ma6_3 = calcMA(list, 3, 3);
+        BigDecimal ma3_0 = calcMA(list, 3, 0);
+        BigDecimal ma3_3 = calcMA(list, 3, 3);
 
-        BigDecimal ma8_0 = calcMA(list, 6, 0);
-        BigDecimal ma8_3 = calcMA(list, 6, 3);
+        BigDecimal ma6_0 = calcMA(list, 6, 0);
+        BigDecimal ma6_3 = calcMA(list, 6, 3);
 
         BigDecimal ma10_0 = calcMA(list, 10, 0);
         BigDecimal ma10_3 = calcMA(list, 10, 3);
 
+        temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma10_0, ma10_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma10_0, ma10_3) + "_";
+
         temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
-
-        temp_long += Utils.checkXCutUpY(ma8_0, ma8_3, ma10_0, ma10_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma8_0, ma8_3, ma10_0, ma10_3) + "_";
 
         String trend = "";
         trend += "_" + temp_long + "_";
@@ -3254,7 +3254,7 @@ public class Utils {
         return heken_list;
     }
 
-    public static String switchTrend(List<BtcFutures> list) {
+    public static String switchTrendType(List<BtcFutures> list) {
         String trend = "";
 
         String swit_tren_by_ma012 = switchTrendByVector(list);
@@ -3264,23 +3264,43 @@ public class Utils {
 
         String switch_trend_by_heken = Utils.switchTrendByHekenAshi(list);
         if (Utils.isNotBlank(switch_trend_by_heken)) {
+            if (Utils.isNotBlank(trend)) {
+                trend += ", ";
+            }
             trend += switch_trend_by_heken;
         }
 
         String switch_trend_by_ma = Utils.switchTrendByMa610(list);
         if (Utils.isNotBlank(switch_trend_by_ma)) {
+            if (Utils.isNotBlank(trend)) {
+                trend += ", ";
+            }
             trend += Utils.TEXT_TREND_BY_MA + switch_trend_by_ma + " ";
         }
 
-        if (list.size() > 40) {
-            String switch_trend_ma50 = Utils.switchTrendByMaXX(list, 6, 50);
+        if (list.size() >= 20) {
+            String switch_trend_ma50 = Utils.switchTrendByMaXX(list, 3, 20);
             if (Utils.isNotBlank(switch_trend_ma50)) {
-                trend += "(Ma6_50)" + switch_trend_ma50;
-            }
-        } else if (list.size() > 15) {
-            String switch_trend_ma50 = Utils.switchTrendByMaXX(list, 6, 20);
-            if (Utils.isNotBlank(switch_trend_ma50)) {
-                trend += "(Ma6_20)" + switch_trend_ma50;
+                if (Utils.isNotBlank(trend)) {
+                    trend += ", ";
+                }
+                trend += "(Ma3_20)" + switch_trend_ma50;
+            } else {
+                switch_trend_ma50 = Utils.switchTrendByMaXX(list, 6, 20);
+                if (Utils.isNotBlank(switch_trend_ma50)) {
+                    if (Utils.isNotBlank(trend)) {
+                        trend += ", ";
+                    }
+                    trend += "(Ma6_20)" + switch_trend_ma50;
+                } else {
+                    switch_trend_ma50 = Utils.switchTrendByMaXX(list, 8, 20);
+                    if (Utils.isNotBlank(switch_trend_ma50)) {
+                        if (Utils.isNotBlank(trend)) {
+                            trend += ", ";
+                        }
+                        trend += "(Ma8_20)" + switch_trend_ma50;
+                    }
+                }
             }
         }
 
