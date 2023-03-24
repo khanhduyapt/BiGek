@@ -115,7 +115,7 @@ public class BscScanBinanceApplication {
                     try {
                         checkKillLongShort(binance_service);
 
-                        if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
+                        if (!Utils.isWeekend() && Utils.isAllowSendMsg() && Utils.isBusinessTime_6h_to_22h()) {
                             binance_service.saveMt5Data();
 
                             String result_d1 = "";
