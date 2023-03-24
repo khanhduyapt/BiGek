@@ -145,14 +145,14 @@ public class Utils {
     // Main: "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD"
 
     // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", "AUS200", "JPY225", "XAGUSD",
-    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "US30", "NAS100", "UK100",
-            "JPN225", "DAX40", "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
+    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "US30", "NAS100", "UK100", "JPN225", "DAX40",
+            "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK", "AUDJPY", "AUDNZD", "NZDJPY", "EURGBP",
     // "GBPAUD", ,
     public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList(
-    //"XAGUSD", "AUDCAD", "CADJPY", "EURAUD", "EURCAD",
+    // "XAGUSD", "AUDCAD", "CADJPY", "EURAUD", "EURCAD",
     // "EURJPY", "EURNZD", "GBPCAD", "GBPJPY", "GBPNZD", "NZDCAD"
     );
 
@@ -2986,6 +2986,56 @@ public class Utils {
         return "";
     }
 
+    public static String switchTrend_3_6_8(List<BtcFutures> list) {
+        String temp_long = "";
+        String temp_shot = "";
+
+        BigDecimal ma1_0 = calcMA(list, 3, 0);
+        BigDecimal ma1_3 = calcMA(list, 3, 2);
+
+        BigDecimal ma2_0 = calcMA(list, 6, 0);
+        BigDecimal ma2_3 = calcMA(list, 6, 2);
+
+        BigDecimal ma3_0 = calcMA(list, 8, 0);
+        BigDecimal ma3_3 = calcMA(list, 8, 2);
+
+        temp_long += Utils.checkXCutUpY(ma1_0, ma1_3, ma2_0, ma2_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma1_0, ma1_3, ma2_0, ma2_3) + "_";
+
+        temp_long += Utils.checkXCutUpY(ma1_0, ma1_3, ma3_0, ma3_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma1_0, ma1_3, ma3_0, ma3_3) + "_";
+
+        temp_long += Utils.checkXCutUpY(ma2_0, ma2_3, ma3_0, ma3_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma2_0, ma2_3, ma3_0, ma3_3) + "_";
+
+        String trend = "";
+        trend += "_" + temp_long + "_";
+        trend += "_____";
+        trend += "_" + temp_shot + "_";
+
+        if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHORT)) {
+            return "";
+        }
+
+        if (isBlank(trend.replace("_", ""))) {
+            return "";
+        }
+
+        if (trend.contains(Utils.TREND_LONG)) {
+            if ((ma1_0.compareTo(ma1_3) > 0) && (ma1_0.compareTo(ma3_0) > 0)) {
+                return Utils.TREND_LONG;
+            }
+        }
+
+        if (trend.contains(Utils.TREND_SHORT)) {
+            if ((ma1_0.compareTo(ma1_3) < 0) && (ma1_0.compareTo(ma3_0) < 0)) {
+                return Utils.TREND_SHORT;
+            }
+        }
+
+        return "";
+    }
+
     public static String switchTrend_6_10_20(List<BtcFutures> list) {
         String result = "";
         if (CollectionUtils.isEmpty(list) || (list.size() < 30)) {
@@ -2997,7 +3047,7 @@ public class Utils {
         BigDecimal ma10_0 = calcMA(list, 10, 0);
         BigDecimal ma20_0 = calcMA(list, 20, 0);
 
-        //LONG //&& (ma10_0.compareTo(ma10_1) > 0) && (ma20_0.compareTo(ma20_1) > 0)
+        // LONG //&& (ma10_0.compareTo(ma10_1) > 0) && (ma20_0.compareTo(ma20_1) > 0)
         if ((ma6_0.compareTo(ma10_0) > 0) && (ma10_0.compareTo(ma20_0) > 0) && (ma6_0.compareTo(ma6_1) > 0)) {
             String trend = "";
             trend += switchTrendByMaXX(list, 6, 10);
@@ -3009,7 +3059,7 @@ public class Utils {
             }
         }
 
-        //Short && (ma10_0.compareTo(ma10_1) < 0) && (ma20_0.compareTo(ma20_1) < 0)
+        // Short && (ma10_0.compareTo(ma10_1) < 0) && (ma20_0.compareTo(ma20_1) < 0)
         if ((ma6_0.compareTo(ma10_0) < 0) && (ma10_0.compareTo(ma20_0) < 0) && (ma6_0.compareTo(ma6_1) < 0)) {
             String trend = "";
             trend += switchTrendByMaXX(list, 6, 10);
@@ -3040,18 +3090,18 @@ public class Utils {
         BigDecimal ma3_0 = calcMA(list, fastIndex, 0);
         BigDecimal ma3_3 = calcMA(list, fastIndex, 3);
 
-        //BigDecimal ma5_0 = calcMA(list, fastIndex + 2, 0);
-        //BigDecimal ma5_3 = calcMA(list, fastIndex + 2, 3);
-        //BigDecimal ma8_0 = calcMA(list, fastIndex + 5, 0);
-        //BigDecimal ma8_3 = calcMA(list, fastIndex + 5, 3);
+        // BigDecimal ma5_0 = calcMA(list, fastIndex + 2, 0);
+        // BigDecimal ma5_3 = calcMA(list, fastIndex + 2, 3);
+        // BigDecimal ma8_0 = calcMA(list, fastIndex + 5, 0);
+        // BigDecimal ma8_3 = calcMA(list, fastIndex + 5, 3);
 
         BigDecimal ma5x_0 = calcMA(list, slowIndex, 0);
         BigDecimal ma5x_3 = calcMA(list, slowIndex, 3);
 
-        //temp_long += Utils.checkXCutUpY(ma5_0, ma5_3, ma5x_0, ma5x_3) + "_";
-        //temp_shot += Utils.checkXCutDnY(ma5_0, ma5_3, ma5x_0, ma5x_3) + "_";
-        //temp_long += Utils.checkXCutUpY(ma8_0, ma8_3, ma5x_0, ma5x_3) + "_";
-        //temp_shot += Utils.checkXCutDnY(ma8_0, ma8_3, ma5x_0, ma5x_3) + "_";
+        // temp_long += Utils.checkXCutUpY(ma5_0, ma5_3, ma5x_0, ma5x_3) + "_";
+        // temp_shot += Utils.checkXCutDnY(ma5_0, ma5_3, ma5x_0, ma5x_3) + "_";
+        // temp_long += Utils.checkXCutUpY(ma8_0, ma8_3, ma5x_0, ma5x_3) + "_";
+        // temp_shot += Utils.checkXCutDnY(ma8_0, ma8_3, ma5x_0, ma5x_3) + "_";
 
         temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma5x_0, ma5x_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma5x_0, ma5x_3) + "_";
@@ -3168,19 +3218,20 @@ public class Utils {
     }
 
     public static String getTrendByMa3_8(List<BtcFutures> list) {
-        if (CollectionUtils.isEmpty(list) || (list.size() < 6)) {
-            Utils.logWritelnDraft("(getTrendByMa)list.size() < 6");
+        if (CollectionUtils.isEmpty(list) || (list.size() < 10)) {
+            Utils.logWritelnDraft("(getTrendByMa)list.size() < 10");
             return "";
         }
 
-        boolean trend_ma1 = isUptrendByMa(list, 3, 1, 2);
+        boolean trend_ma1 = isUptrendByMa(list, 6, 1, 2);
         boolean trend_ma2 = isUptrendByMa(list, 8, 1, 2);
+        boolean trend_ma3 = isUptrendByMa(list, 10, 1, 2);
 
-        if (trend_ma1 == trend_ma2) {
+        if ((trend_ma1 == trend_ma2) && (trend_ma2 == trend_ma3)) {
             return trend_ma2 ? TREND_LONG : TREND_SHORT;
         }
 
-        return isUptrendByMa(list, 5, 1, 2) ? TREND_LONG : TREND_SHORT;
+        return isUptrendByMa(list, 3, 1, 2) ? TREND_LONG : TREND_SHORT;
     }
 
     public static boolean isUptrendByMa(List<BtcFutures> list, int maIndex, int str, int end) {
