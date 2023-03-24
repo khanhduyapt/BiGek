@@ -30,8 +30,7 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
             + "       WHERE (COALESCE(det.note, '') like '%Ma34568%') and (det.gecko_id like '%MINUTE_15')   "
             + "       AND (det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, 'MINUTE_15', '_DAY'))  "
             + "         or det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, 'MINUTE_15', '_HOUR_4'))  "
-            + "     ) "
-            + "  ORDER BY gecko_id  ", nativeQuery = true)
+            + "     ) " + "  ORDER BY gecko_id  ", nativeQuery = true)
     public List<Orders> getListM15();
 
     @Query(value = "  SELECT * FROM orders det   "
@@ -40,13 +39,12 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
     public List<Orders> getListM15All();
 
     // -------------------------------------------------------------
-    //, 'GOLD_HOUR_4', 'SILVER_HOUR_4', 'FR40_HOUR_4', 'US30_HOUR_4', 'US500_HOUR_4', 'UK100_HOUR_4', 'AU200_HOUR_4', 'J225_HOUR_4'
-    @Query(value = " SELECT * FROM ( "
-            + "     SELECT * FROM orders det  "
+    // , 'GOLD_HOUR_4', 'SILVER_HOUR_4', 'FR40_HOUR_4', 'US30_HOUR_4',
+    // 'US500_HOUR_4', 'UK100_HOUR_4', 'AU200_HOUR_4', 'J225_HOUR_4'
+    @Query(value = " SELECT * FROM ( " + "     SELECT * FROM orders det  "
             + "      WHERE (COALESCE(det.note, '') LIKE '%Ma34568%')  "
             + "      AND det.gecko_id IN ('GOLD_HOUR', 'SILVER_HOUR', 'FR40_HOUR', 'US30_HOUR', 'US500_HOUR', 'UK100_HOUR', 'AU200_HOUR', 'J225_HOUR') "
-            + " ) abc  "
-            + " ORDER BY abc.gecko_id ", nativeQuery = true)
+            + " ) abc  " + " ORDER BY abc.gecko_id ", nativeQuery = true)
     public List<Orders> getH1ListNo1();
 
     @Query(value = " SELECT * FROM orders det "
@@ -70,48 +68,38 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
             + " AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR_4', '_DAY'))  ", nativeQuery = true)
     public List<Orders> getListH1_H4_Heken();
 
-    @Query(value = " SELECT * FROM ( "
-            + "     SELECT * FROM orders det  "
+    @Query(value = " SELECT * FROM ( " + "     SELECT * FROM orders det  "
             + "      WHERE (COALESCE(det.note, '') like '%Ma34568%') and (det.gecko_id like '%_HOUR')  "
             + "      AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR', '_DAY'   ) AND (COALESCE(mst.note, '') like '%Ma34568%')  ) "
             + "      AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR', '_HOUR_4') AND (COALESCE(mst.note, '') like '%Ma34568%')  ) "
-            + " ) abc  "
-            + " ORDER BY abc.gecko_id ", nativeQuery = true)
+            + " ) abc  " + " ORDER BY abc.gecko_id ", nativeQuery = true)
     public List<Orders> getH1ListNo5();
 
-    @Query(value = " SELECT * FROM ( "
-            + "     SELECT * FROM orders det  "
+    @Query(value = " SELECT * FROM ( " + "     SELECT * FROM orders det  "
             + "      WHERE (COALESCE(det.note, '') like '%Ma34568%') and (det.gecko_id like '%_HOUR')  "
             + "      AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR', '_DAY'))   "
             + "      AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR', '_HOUR_4') AND (COALESCE(mst.note, '') like '%Ma34568%')  )   "
-            + " ) abc  "
-            + " ORDER BY abc.gecko_id ", nativeQuery = true)
+            + " ) abc  " + " ORDER BY abc.gecko_id ", nativeQuery = true)
     public List<Orders> getH1ListNo6();
 
-    @Query(value = " SELECT * FROM ( "
-            + "     SELECT * FROM orders det  "
+    @Query(value = " SELECT * FROM ( " + "     SELECT * FROM orders det  "
             + "      WHERE (COALESCE(det.note, '') like '%Ma34568%') and (det.gecko_id like '%_HOUR')  "
             + "      AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR', '_DAY'))   "
             + "      AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR', '_HOUR_4') AND (COALESCE(mst.note, '') <> '')  )   "
-            + " ) abc  "
-            + " ORDER BY abc.gecko_id ", nativeQuery = true)
+            + " ) abc  " + " ORDER BY abc.gecko_id ", nativeQuery = true)
     public List<Orders> getH1ListNo7();
 
-    @Query(value = " SELECT * FROM ( "
-            + "     SELECT * FROM orders det  "
+    @Query(value = " SELECT * FROM ( " + "     SELECT * FROM orders det  "
             + "      WHERE (COALESCE(det.note, '') like '%Ma34568%') and (det.gecko_id like '%_HOUR')  "
             + "      AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR', '_DAY'))   "
             + "      AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR', '_HOUR_4'))   "
-            + " ) abc  "
-            + " ORDER BY abc.gecko_id ", nativeQuery = true)
+            + " ) abc  " + " ORDER BY abc.gecko_id ", nativeQuery = true)
     public List<Orders> getH1ListNo8();
 
-    @Query(value = " SELECT * FROM ( "
-            + "     SELECT * FROM orders det  "
+    @Query(value = " SELECT * FROM ( " + "     SELECT * FROM orders det  "
             + "      WHERE (COALESCE(det.note, '') like '%Ma34568%') and (det.gecko_id like '%_HOUR')  "
             + "      AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR', '_DAY'))   "
-            + " ) abc  "
-            + " ORDER BY abc.gecko_id ", nativeQuery = true)
+            + " ) abc  " + " ORDER BY abc.gecko_id ", nativeQuery = true)
     public List<Orders> getH1ListNo9();
 
     @Query(value = " SELECT * FROM orders det  "
@@ -120,16 +108,13 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
             + " ORDER BY gecko_id ", nativeQuery = true)
     public List<Orders> getH1ListNo10();
 
-    @Query(value = " SELECT * FROM ( "
-            + "     SELECT * FROM orders det  "
+    @Query(value = " SELECT * FROM ( " + "     SELECT * FROM orders det  "
             + "      WHERE (COALESCE(det.note, '') like '%Ma34568%') and (det.gecko_id like '%_HOUR_4')  "
             + "      AND det.trend = (SELECT mst.trend FROM orders mst WHERE mst.gecko_id = REPLACE(det.gecko_id, '_HOUR_4', '_DAY'))   "
-            + " ) abc  "
-            + " ORDER BY abc.gecko_id ", nativeQuery = true)
+            + " ) abc  " + " ORDER BY abc.gecko_id ", nativeQuery = true)
     public List<Orders> getH4ByMa34568List();
 
-    @Query(value = " SELECT * FROM orders det  "
-            + " WHERE (COALESCE(det.note, '') <> '' ) and (det.gecko_id like '%_DAY') "
+    @Query(value = " SELECT * FROM orders det WHERE (det.gecko_id like '%_DAY') "
             + " ORDER BY gecko_id ", nativeQuery = true)
     public List<Orders> getD1List();
 
