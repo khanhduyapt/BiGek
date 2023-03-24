@@ -3426,18 +3426,19 @@ public class BinanceServiceImpl implements BinanceService {
                 note += "    SameTrendFromH4toM5";
             }
 
-            String log = Utils.appendSpace(EPIC, 10);
-            log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":";
-            log += Utils.appendSpace(switch_trend_type, 10);
-            log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + note;
-
             if (Utils.isBlank(note) && Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX)) {
                 List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
                 List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-                if ((Utils.isUptrendByMa(list_h4, 3, 0, 1) != Utils.isUptrendByMa(list_d1, 3, 0, 1))) {
-                    log += "h4_301 != d1_301";
+                if ((Utils.isUptrendByMa(list_h4, 3, 1, 2) != Utils.isUptrendByMa(list_d1, 3, 1, 2))) {
+                    return "";
                 }
             }
+
+            String log = Utils.appendSpace(EPIC, 10);
+            log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":";
+            log += Utils.appendSpace(switch_trend_type, 10);
+
+            log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + note;
 
             String type = Objects.equals(Utils.TREND_LONG, trend_ma3) ? "(B)" : "(S)";
             result = Utils.appendSpace(type + EPIC, 15);

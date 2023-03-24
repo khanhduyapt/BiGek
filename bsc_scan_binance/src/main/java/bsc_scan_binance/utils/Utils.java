@@ -151,10 +151,8 @@ public class Utils {
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK", "AUDJPY", "AUDNZD", "NZDJPY", "EURGBP",
     // "GBPAUD", ,
-    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList(
-    // "XAGUSD", "AUDCAD", "CADJPY", "EURAUD", "EURCAD",
-    // "EURJPY", "EURNZD", "GBPCAD", "GBPJPY", "GBPNZD", "NZDCAD"
-    );
+    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("XAGUSD", "AUDCAD", "CADJPY", "EURAUD",
+            "EURCAD", "EURJPY", "EURNZD", "GBPCAD", "GBPJPY", "GBPNZD", "NZDCAD");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
@@ -3004,9 +3002,6 @@ public class Utils {
 
         temp_long += Utils.checkXCutUpY(ma1_0, ma1_3, ma3_0, ma3_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma1_0, ma1_3, ma3_0, ma3_3) + "_";
-
-        temp_long += Utils.checkXCutUpY(ma2_0, ma2_3, ma3_0, ma3_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma2_0, ma2_3, ma3_0, ma3_3) + "_";
 
         String trend = "";
         trend += "_" + temp_long + "_";
