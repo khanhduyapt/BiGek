@@ -2912,19 +2912,12 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        List<BtcFutures> list_15 = Utils.loadData(symbol, Utils.CRYPTO_TIME_15m, 20);
+        List<BtcFutures> list_15 = Utils.loadData(symbol, Utils.CRYPTO_TIME_15m, 55);
         if (CollectionUtils.isEmpty(list_15)) {
             return "";
         }
 
-        int slowIndex = 20;
-        String switch_trend = Utils.switchTrendByMaXX(list_15, 3, slowIndex);
-        if (Utils.isBlank(switch_trend)) {
-            switch_trend = Utils.switchTrendByMaXX(list_15, 6, slowIndex);
-        }
-        if (Utils.isBlank(switch_trend)) {
-            switch_trend = Utils.switchTrendByMaXX(list_15, 8, slowIndex);
-        }
+        String switch_trend = Utils.switchTrend_6_10_20(list_15);
 
         // --------------------DATABASE--------------------
         String date_time = LocalDateTime.now().toString();
@@ -2933,20 +2926,6 @@ public class BinanceServiceImpl implements BinanceService {
         ordersRepository.save(entity);
 
         if (Utils.isBlank(switch_trend)) {
-            return "";
-        }
-
-        int maSlow = 6;
-        List<BtcFutures> list_h1 = Utils.loadData(symbol, Utils.CRYPTO_TIME_1H, 20);
-        boolean is_uptrend_15_ma3 = Utils.isUptrendByMa(list_15, maSlow, 0, 1);
-        boolean is_uptrend_h1_ma3 = Utils.isUptrendByMa(list_h1, maSlow, 0, 1);
-        if ((is_uptrend_h1_ma3 != is_uptrend_15_ma3)) {
-            return "";
-        }
-
-        List<BtcFutures> list_h4 = Utils.loadData(symbol, Utils.CRYPTO_TIME_4H, 20);
-        boolean is_uptrend_h4_ma3 = Utils.isUptrendByMa(list_h4, maSlow, 0, 1);
-        if ((is_uptrend_h4_ma3 != is_uptrend_h1_ma3)) {
             return "";
         }
 
@@ -3335,13 +3314,13 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private boolean isSameTrendFromH4toM5(String EPIC, String trend_ref) {
-        int fastIndex = 3;
+        int fastIndex = 8;
         List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
         if (CollectionUtils.isEmpty(list_h4)) {
             return false;
         }
 
-        boolean is_uptrend_h4_ma3 = Utils.isUptrendByMa(list_h4, fastIndex, 0, 1);
+        boolean is_uptrend_h4_ma3 = Utils.isUptrendByMa(list_h4, 3, 0, 1);
         String trend_h4 = is_uptrend_h4_ma3 ? Utils.TREND_LONG : Utils.TREND_SHORT;
         if (!Objects.equals(trend_ref, trend_h4)) {
             return false;
@@ -3349,7 +3328,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
         if (!CollectionUtils.isEmpty(list_d1)) {
-            boolean is_uptrend_d1_ma1 = Utils.isUptrendByMa(list_d1, 1, 0, 1);
+            boolean is_uptrend_d1_ma1 = Utils.isUptrendByMa(list_d1, 3, 0, 1);
             if ((is_uptrend_h4_ma3 != is_uptrend_d1_ma1)) {
                 return false;
             }
@@ -3373,13 +3352,13 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        List<BtcFutures> list_5 = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
-        if (!CollectionUtils.isEmpty(list_5)) {
-            boolean is_uptrend_5_ma3 = Utils.isUptrendByMa(list_5, fastIndex, 0, 1);
-            if ((is_uptrend_h1_ma3 != is_uptrend_5_ma3)) {
-                return false;
-            }
-        }
+        //List<BtcFutures> list_5 = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
+        //if (!CollectionUtils.isEmpty(list_5)) {
+        //    boolean is_uptrend_5_ma3 = Utils.isUptrendByMa(list_5, fastIndex, 0, 1);
+        //    if ((is_uptrend_h1_ma3 != is_uptrend_5_ma3)) {
+        //        return false;
+        //    }
+        //}
 
         return true;
     }
@@ -3464,13 +3443,53 @@ public class BinanceServiceImpl implements BinanceService {
         }
         String trend_ma3 = Utils.getTrendByMa3_8(list);
 
-        String switch_trend_by_ma = Utils.switchTrendByMaXX(list, 3, 20);
+        //if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX))
+        {
+            List<BtcFutures> list_h1 = getCapitalData(EPIC, CAPITAL_TIME_XX);
+            List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+            if ((Utils.isUptrendByMa(list_h4, 3, 0, 1) == Utils.isUptrendByMa(list_h1, 3, 0, 1))) {
+
+                String trend102050 = Utils.switchTrend_6_10_20(list);
+
+                if (Utils.isNotBlank(trend102050)) {
+                    String log = Utils.appendSpace(EPIC, 10);
+                    log += Utils.appendSpace(Utils.getChartName(list), 5) + ":";
+                    log += Utils.appendSpace("Ma6_10_20_50: " + trend102050, 35);
+                    log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
+
+                    String EVENT_ID = "FX_15M_61020" + EPIC + CAPITAL_TIME_XX + trend102050
+                            + Utils.getCurrentYyyyMmDd_HH();
+
+                    if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
+
+                        Utils.logWritelnDraft(log);
+
+                        fundingHistoryRepository
+                                .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "",
+                                        false));
+                    }
+                }
+            }
+        }
+
+        int index1 = 20;
+        int index2 = 15;
+        if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
+            index1 = 15;
+            index2 = 10;
+        }
+        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
+            index1 = 25;
+            index2 = 20;
+        }
+
+        String switch_trend_by_ma = Utils.switchTrendByMaXX(list, 3, index1);
 
         if (Utils.isBlank(switch_trend_by_ma)) {
-            switch_trend_by_ma = Utils.switchTrendByMaXX(list, 6, 10);
+            switch_trend_by_ma = Utils.switchTrendByMaXX(list, 6, index2);
         }
         if (Utils.isBlank(switch_trend_by_ma)) {
-            switch_trend_by_ma = Utils.switchTrendByMaXX(list, 8, 10);
+            switch_trend_by_ma = Utils.switchTrendByMaXX(list, 8, index2);
         }
 
         String note = "";

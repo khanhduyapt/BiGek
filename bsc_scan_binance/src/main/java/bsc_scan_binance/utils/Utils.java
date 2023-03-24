@@ -2984,6 +2984,49 @@ public class Utils {
         return "";
     }
 
+    public static String switchTrend_6_10_20(List<BtcFutures> list) {
+        String result = "";
+        if (CollectionUtils.isEmpty(list) || (list.size() < 30)) {
+            return "";
+        }
+
+        BigDecimal ma6_0 = calcMA(list, 6, 0);
+        BigDecimal ma10_0 = calcMA(list, 10, 0);
+        BigDecimal ma20_0 = calcMA(list, 20, 0);
+
+        BigDecimal ma6_1 = calcMA(list, 6, 1);
+        BigDecimal ma10_1 = calcMA(list, 10, 1);
+        BigDecimal ma20_1 = calcMA(list, 20, 1);
+
+        //LONG
+        if ((ma6_0.compareTo(ma10_0) > 0) && (ma10_0.compareTo(ma20_0) > 0) && (ma6_0.compareTo(ma6_1) > 0)
+                && (ma10_0.compareTo(ma10_1) > 0) && (ma20_0.compareTo(ma20_1) > 0)) {
+            String trend = "";
+            trend += switchTrendByMaXX(list, 6, 10);
+            trend += switchTrendByMaXX(list, 6, 20);
+            trend += switchTrendByMaXX(list, 10, 20);
+
+            if (trend.contains(TREND_LONG)) {
+                return TREND_LONG;
+            }
+        }
+
+        //Short
+        if ((ma6_0.compareTo(ma10_0) < 0) && (ma10_0.compareTo(ma20_0) < 0) && (ma6_0.compareTo(ma6_1) < 0)
+                && (ma10_0.compareTo(ma10_1) < 0) && (ma20_0.compareTo(ma20_1) < 0)) {
+            String trend = "";
+            trend += switchTrendByMaXX(list, 6, 10);
+            trend += switchTrendByMaXX(list, 6, 20);
+            trend += switchTrendByMaXX(list, 10, 20);
+
+            if (trend.contains(TREND_SHORT)) {
+                return TREND_SHORT;
+            }
+        }
+
+        return result;
+    }
+
     public static String switchTrendByMaXX(List<BtcFutures> list, int fastIndex, int slowIndex) {
         if (CollectionUtils.isEmpty(list)) {
             Utils.logWritelnDraft("(switchTrendByMaXX)list Empty");
@@ -3000,20 +3043,18 @@ public class Utils {
         BigDecimal ma3_0 = calcMA(list, fastIndex, 0);
         BigDecimal ma3_3 = calcMA(list, fastIndex, 3);
 
-        BigDecimal ma5_0 = calcMA(list, fastIndex + 2, 0);
-        BigDecimal ma5_3 = calcMA(list, fastIndex + 2, 3);
-
-        BigDecimal ma8_0 = calcMA(list, fastIndex + 5, 0);
-        BigDecimal ma8_3 = calcMA(list, fastIndex + 5, 3);
+        //BigDecimal ma5_0 = calcMA(list, fastIndex + 2, 0);
+        //BigDecimal ma5_3 = calcMA(list, fastIndex + 2, 3);
+        //BigDecimal ma8_0 = calcMA(list, fastIndex + 5, 0);
+        //BigDecimal ma8_3 = calcMA(list, fastIndex + 5, 3);
 
         BigDecimal ma5x_0 = calcMA(list, slowIndex, 0);
         BigDecimal ma5x_3 = calcMA(list, slowIndex, 3);
 
-        temp_long += Utils.checkXCutUpY(ma5_0, ma5_3, ma5x_0, ma5x_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma5_0, ma5_3, ma5x_0, ma5x_3) + "_";
-
-        temp_long += Utils.checkXCutUpY(ma8_0, ma8_3, ma5x_0, ma5x_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma8_0, ma8_3, ma5x_0, ma5x_3) + "_";
+        //temp_long += Utils.checkXCutUpY(ma5_0, ma5_3, ma5x_0, ma5x_3) + "_";
+        //temp_shot += Utils.checkXCutDnY(ma5_0, ma5_3, ma5x_0, ma5x_3) + "_";
+        //temp_long += Utils.checkXCutUpY(ma8_0, ma8_3, ma5x_0, ma5x_3) + "_";
+        //temp_shot += Utils.checkXCutDnY(ma8_0, ma8_3, ma5x_0, ma5x_3) + "_";
 
         temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma5x_0, ma5x_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma5x_0, ma5x_3) + "_";
@@ -3063,8 +3104,8 @@ public class Utils {
         BigDecimal ma6_0 = calcMA(list, 6, 0);
         BigDecimal ma6_3 = calcMA(list, 6, 3);
 
-        BigDecimal ma10_0 = calcMA(list, 10, 0);
-        BigDecimal ma10_3 = calcMA(list, 10, 3);
+        BigDecimal ma10_0 = calcMA(list, 8, 0);
+        BigDecimal ma10_3 = calcMA(list, 8, 3);
 
         temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma10_0, ma10_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma10_0, ma10_3) + "_";

@@ -158,7 +158,7 @@ public class BscScanBinanceApplication {
                             String result_15 = "";
                             for (String EPIC : capital_list) {
                                 String item_15 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
-                                item_15 += binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
+                                //item_15 += binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
                                 if (Utils.isNotBlank(item_15)) {
                                     result_15 += item_15 + ", ";
                                 }
@@ -166,7 +166,7 @@ public class BscScanBinanceApplication {
 
                             if (Utils.isNotBlank(result_15)) {
                                 String msg = "(FX):" + result_15;
-                                String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
+                                String EVENT_ID = "FX_H_" + result_15.length() + Utils.getCurrentYyyyMmDd_HH();
                                 binance_service.sendMsgPerHour(EVENT_ID, msg, true);
                             }
                         }
