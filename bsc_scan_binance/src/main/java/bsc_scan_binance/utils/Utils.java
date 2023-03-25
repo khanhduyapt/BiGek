@@ -2321,7 +2321,16 @@ public class Utils {
         return result;
     }
 
-    public static BigDecimal calcMaxBread(List<BtcFutures> list) {
+    public static BigDecimal calcBread(List<BtcFutures> list) {
+        List<BigDecimal> low_high = Utils.getLowHighCandle(list);
+        BigDecimal high = low_high.get(1).subtract(low_high.get(0)).abs();
+        BigDecimal bread = high.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
+
+        return bread;
+    }
+
+    @SuppressWarnings("unused")
+    private static BigDecimal calcMaxBread(List<BtcFutures> list) {
         BigDecimal max_bread = BigDecimal.ZERO;
 
         for (BtcFutures dto : list) {
