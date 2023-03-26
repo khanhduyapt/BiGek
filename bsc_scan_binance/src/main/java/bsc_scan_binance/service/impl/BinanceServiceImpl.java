@@ -3500,40 +3500,35 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
 
+        String note = "";
+        boolean isSameTrendh4D1 = false;
+        if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX)) {
+            List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
+            List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+            if ((Utils.isUptrendByMa(list_h4, 3, 1, 2) != Utils.isUptrendByMa(list_d1, 3, 1, 2))) {
+                isSameTrendh4D1 = true;
+                note += "    SameTrendH4_D1";
+            }
+
+            List<BigDecimal> body = Utils.getOpenCloseCandle(list_d1);
+            BigDecimal cur_price = list.get(0).getCurrPrice();
+
+            if (cur_price.compareTo(body.get(0)) < 0) {
+                note += "     " + Utils.TEXT_MIN_DAY_AREA;
+            }
+            if (cur_price.compareTo(body.get(0)) > 0) {
+                note += "     " + Utils.TEXT_MAX_DAY_AREA;
+            }
+        }
+
         Orders entity = new Orders(orderId, date_time, trend_ma3, list.get(0).getCurrPrice(), str_body_price,
-                end_body_price, sl_long, sl_shot, switch_trend_type);
+                end_body_price, sl_long, sl_shot, note);
         ordersRepository.save(entity);
 
         String result = "";
         if (Utils.isNotBlank(switch_trend_type)) {
-            String note = "";
-
-            if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX)) {
-                List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
-                if (!CollectionUtils.isEmpty(list_d1)) {
-
-                    List<BigDecimal> body = Utils.getOpenCloseCandle(list_d1);
-                    BigDecimal cur_price = list.get(0).getCurrPrice();
-
-                    if (cur_price.compareTo(body.get(0)) < 0) {
-                        note += "     " + Utils.TEXT_MIN_DAY_AREA;
-                    }
-                    if (cur_price.compareTo(body.get(0)) > 0) {
-                        note += "     " + Utils.TEXT_MAX_DAY_AREA;
-                    }
-                }
-            }
-
-            if (isSameTrendFromH4toM5(EPIC, trend_ma3)) {
-                note += "    SameTrendFromH4toM5";
-            }
-
-            if (Utils.isBlank(note) && Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX)) {
-                List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
-                List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-                if ((Utils.isUptrendByMa(list_h4, 3, 1, 2) != Utils.isUptrendByMa(list_d1, 3, 1, 2))) {
-                    return "";
-                }
+            if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX) && !isSameTrendh4D1) {
+                return "";
             }
 
             String log = Utils.appendSpace(EPIC, 10);
