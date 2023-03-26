@@ -3481,6 +3481,9 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String switch_trend_type = Utils.switchTrend_3_6_8(list);
+        if (Utils.isBlank(switch_trend_type)) {
+            switch_trend_type = Utils.switchTrendByHekenAshi(list);
+        }
 
         String trend_ma3 = Utils.getTrendByMa3_8(list);
 

@@ -111,6 +111,9 @@ public class BscScanBinanceApplication {
                 System.out.println(log.getAbsolutePath());
                 System.out.println();
 
+                // binance_service.initForexTrend("USDCAD", Utils.CAPITAL_TIME_DAY);
+                // binance_service.initForexTrend("USDCAD", Utils.CAPITAL_TIME_HOUR_4);
+
                 while (index_crypto < total) {
                     try {
                         checkKillLongShort(binance_service);

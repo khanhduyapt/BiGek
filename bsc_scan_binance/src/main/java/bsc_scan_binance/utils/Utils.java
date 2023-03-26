@@ -62,7 +62,7 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 public class Utils {
 
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.005);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.01);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -2323,8 +2323,13 @@ public class Utils {
 
     public static BigDecimal calcBread(List<BtcFutures> list) {
         List<BigDecimal> low_high = Utils.getLowHighCandle(list);
-        BigDecimal high = low_high.get(1).subtract(low_high.get(0)).abs();
-        BigDecimal bread = high.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
+        BigDecimal high_hl = low_high.get(1).subtract(low_high.get(0)).abs();
+        BigDecimal bread_hl = high_hl.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+
+        List<BigDecimal> body = Utils.getOpenCloseCandle(list);
+        BigDecimal high_body = body.get(1).subtract(body.get(0)).abs();
+
+        BigDecimal bread = bread_hl.compareTo(high_body) > 0 ? bread_hl : high_body;
 
         return bread;
     }
@@ -3417,31 +3422,16 @@ public class Utils {
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
         }
-        // ----------------------------------------------------------------------------------------------------
-        if (heken_list.get(0).isUptrend() && heken_list.get(1).isDown()) {
-            return Utils.appendSpace(TEXT_TREND_HEKEN_LONG, 10);
-        }
-        if (heken_list.get(0).isDown() && heken_list.get(1).isUptrend()) {
-            return Utils.appendSpace(TEXT_TREND_HEKEN_SHORT, 10);
-        }
 
-        if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(2).isDown()) {
+        // ---------------------------------------------------------------
+        if (heken_list.get(2).isDown() && heken_list.get(1).isDown() && heken_list.get(0).isUptrend()) {
             return Utils.appendSpace(TEXT_TREND_HEKEN_LONG, 10);
         }
-        if (heken_list.get(0).isDown() && heken_list.get(1).isDown() && heken_list.get(2).isUptrend()) {
+        if (heken_list.get(2).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(0).isDown()) {
             return Utils.appendSpace(TEXT_TREND_HEKEN_SHORT, 10);
         }
 
         return "";
-    }
-
-    public static String getTrendByHeken(List<BtcFutures> list) {
-        List<BtcFutures> heken_list = getHekenList(list);
-        if (CollectionUtils.isEmpty(heken_list)) {
-            return "";
-        }
-
-        return heken_list.get(0).isUptrend() ? Utils.TREND_LONG : Utils.TREND_SHORT;
     }
 
     public static String createLineForex_Header(Orders dto_entry, Orders dto_sl, String trend_d1) {
@@ -3509,10 +3499,10 @@ public class Utils {
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
         if (dto_entry_h4.getId().contains("_MINUTE_15")) {
-            risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+            // risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
         if (dto_entry_h4.getId().contains("_DAY")) {
-            risk = risk.multiply(BigDecimal.valueOf(2));
+            // risk = risk.multiply(BigDecimal.valueOf(2));
         }
 
         BigDecimal sl_long = Utils.getBigDecimal(dto_sl_d1.getLow_price());
