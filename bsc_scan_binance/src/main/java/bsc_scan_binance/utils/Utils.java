@@ -3424,10 +3424,13 @@ public class Utils {
         }
 
         // ---------------------------------------------------------------
-        if (heken_list.get(2).isDown() && heken_list.get(1).isDown() && heken_list.get(0).isUptrend()) {
+        if (heken_list.get(3).isDown() && heken_list.get(2).isDown() && heken_list.get(1).isDown()
+                && heken_list.get(0).isUptrend()) {
             return Utils.appendSpace(TEXT_TREND_HEKEN_LONG, 10);
         }
-        if (heken_list.get(2).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(0).isDown()) {
+
+        if (heken_list.get(3).isUptrend() && heken_list.get(2).isUptrend() && heken_list.get(1).isUptrend()
+                && heken_list.get(0).isDown()) {
             return Utils.appendSpace(TEXT_TREND_HEKEN_SHORT, 10);
         }
 
