@@ -3383,7 +3383,7 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
         if (!isReloadPrepareOrderTrend(EPIC, CAPITAL_TIME_XX)) {
-            return "";
+            //return "";
         }
 
         // ----------------------------TREND------------------------
@@ -3396,8 +3396,8 @@ public class BinanceServiceImpl implements BinanceService {
         String switch_trend_by_ma = Utils.switchTrend_6_10_20(list);
         // Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX) &&
         if (Utils.isBlank(switch_trend_by_ma)) {
-            int index1 = 20;
-            int index2 = 15;
+            int index1 = 21;
+            int index2 = 17;
             switch_trend_by_ma = Utils.switchTrendByMaXX(list, 3, index1);
             if (Utils.isBlank(switch_trend_by_ma)) {
                 switch_trend_by_ma = Utils.switchTrendByMaXX(list, 6, index2);
@@ -3409,7 +3409,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String note = "";
         if (Utils.isNotBlank(switch_trend_by_ma)) {
-            note += Utils.getChartNameCapital(CAPITAL_TIME_XX) + "Ma15:" + Utils.appendSpace(switch_trend_by_ma, 15);
+            note += "Ma:" + Utils.appendSpace(switch_trend_by_ma, 15);
         }
 
         // -----------------------------DATABASE---------------------------
@@ -3513,9 +3513,9 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX)) {
             List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
             List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-            if ((Utils.isUptrendByMa(list_h4, 3, 1, 2) != Utils.isUptrendByMa(list_d1, 1, 1, 2))) {
+            if ((Utils.isUptrendByMa(list_h4, 3, 0, 1) != Utils.isUptrendByMa(list_d1, 1, 0, 1))) {
                 isSameTrendh4D1 = true;
-                note += "    SameTrendH4_D1";
+                //note += "    SameTrendH4_D1";
             }
 
             List<BigDecimal> body = Utils.getOpenCloseCandle(list_d1);
@@ -3536,7 +3536,7 @@ public class BinanceServiceImpl implements BinanceService {
         String result = "";
         if (Utils.isNotBlank(switch_trend_type)) {
             if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX) && !isSameTrendh4D1) {
-                return "";
+                //return "";
             }
 
             String log = Utils.appendSpace(EPIC, 10);
