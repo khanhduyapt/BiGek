@@ -3105,18 +3105,8 @@ public class Utils {
         BigDecimal ma3_0 = calcMA(list, fastIndex, 0);
         BigDecimal ma3_3 = calcMA(list, fastIndex, 3);
 
-        // BigDecimal ma5_0 = calcMA(list, fastIndex + 2, 0);
-        // BigDecimal ma5_3 = calcMA(list, fastIndex + 2, 3);
-        // BigDecimal ma8_0 = calcMA(list, fastIndex + 5, 0);
-        // BigDecimal ma8_3 = calcMA(list, fastIndex + 5, 3);
-
         BigDecimal ma5x_0 = calcMA(list, slowIndex, 0);
         BigDecimal ma5x_3 = calcMA(list, slowIndex, 3);
-
-        // temp_long += Utils.checkXCutUpY(ma5_0, ma5_3, ma5x_0, ma5x_3) + "_";
-        // temp_shot += Utils.checkXCutDnY(ma5_0, ma5_3, ma5x_0, ma5x_3) + "_";
-        // temp_long += Utils.checkXCutUpY(ma8_0, ma8_3, ma5x_0, ma5x_3) + "_";
-        // temp_shot += Utils.checkXCutDnY(ma8_0, ma8_3, ma5x_0, ma5x_3) + "_";
 
         temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma5x_0, ma5x_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma5x_0, ma5x_3) + "_";
