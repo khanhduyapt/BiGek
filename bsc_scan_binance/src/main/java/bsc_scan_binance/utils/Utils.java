@@ -138,7 +138,8 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final List<String> EPICS_15M = Arrays.asList("XAUUSD", "US30", "UK100", "JPN225", "DAX40");
+    public static final List<String> EPICS_15M = Arrays.asList("XAUUSD", "XAGUSD", "US30", "NAS100", "UK100", "JPN225",
+            "DAX40");
 
     // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
     // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
