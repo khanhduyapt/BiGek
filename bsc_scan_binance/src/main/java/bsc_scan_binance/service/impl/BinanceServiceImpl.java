@@ -3351,14 +3351,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        // List<BtcFutures> list_5 = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
-        // if (!CollectionUtils.isEmpty(list_5)) {
-        // boolean is_uptrend_5_ma3 = Utils.isUptrendByMa(list_5, fastIndex, 0, 1);
-        // if ((is_uptrend_h1_ma3 != is_uptrend_5_ma3)) {
-        // return false;
-        // }
-        // }
-
         return true;
     }
 
@@ -3453,8 +3445,6 @@ public class BinanceServiceImpl implements BinanceService {
             String type = Objects.equals(Utils.TREND_LONG, trend_ma3) ? "(B)" : "(S)";
             result = Utils.appendSpace(type + EPIC, 15);
         }
-        // }
-
         ordersRepository.save(entity);
 
         return result;
