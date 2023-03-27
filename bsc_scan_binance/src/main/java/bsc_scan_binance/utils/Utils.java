@@ -62,7 +62,7 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 public class Utils {
 
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.005);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.01);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -2326,7 +2326,13 @@ public class Utils {
         BigDecimal high_hl = low_high.get(1).subtract(low_high.get(0)).abs();
         BigDecimal bread_hl = high_hl.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
 
-        List<BigDecimal> body = Utils.getOpenCloseCandle(list);
+        List<BigDecimal> body;
+        if (list.get(0).getId().contains("_DAY") || list.get(0).getId().contains("_1d_")) {
+            body = Utils.getLowHighCandle(list);
+        } else {
+            body = Utils.getOpenCloseCandle(list);
+        }
+
         BigDecimal high_body = body.get(1).subtract(body.get(0)).abs();
 
         BigDecimal bread = bread_hl.compareTo(high_body) > 0 ? bread_hl : high_body;
