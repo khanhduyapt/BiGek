@@ -3414,20 +3414,21 @@ public class BinanceServiceImpl implements BinanceService {
 
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
         if (Objects.nonNull(dto_h4) && Utils.isNotBlank(switch_trend_by_ma)) {
-            List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-            List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);
-            boolean isUptrendH4 = Utils.isUptrendByMa(list_h4, 3, 0, 1);
-            boolean isUptrendH1 = Utils.isUptrendByMa(list_h1, 3, 0, 1);
+            List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
+            boolean isUptrendD1 = Utils.isUptrendByMa(list_d1, 3, 0, 1);
 
             if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
-                if (isUptrendH4 != isUptrendH1) {
+                List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);
+                boolean isUptrendH1 = Utils.isUptrendByMa(list_h1, 3, 0, 1);
+                if (isUptrendD1 != isUptrendH1) {
                     return "";
                 }
             }
+
             if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XX)) {
                 List<BtcFutures> list_15 = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
                 boolean isUptrend15 = Utils.isUptrendByMa(list_15, 6, 0, 1);
-                if ((isUptrendH4 != isUptrendH1) || (isUptrendH1 != isUptrend15)) {
+                if ((isUptrendD1 != isUptrend15)) {
                     return "";
                 }
             }
