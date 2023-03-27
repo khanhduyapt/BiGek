@@ -3004,12 +3004,9 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrend_3_6_8(List<BtcFutures> list) {
+    public static String switchTrend_6_8(List<BtcFutures> list) {
         String temp_long = "";
         String temp_shot = "";
-
-        BigDecimal ma1_0 = calcMA(list, 3, 0);
-        BigDecimal ma1_3 = calcMA(list, 3, 2);
 
         BigDecimal ma2_0 = calcMA(list, 6, 0);
         BigDecimal ma2_3 = calcMA(list, 6, 2);
@@ -3017,11 +3014,8 @@ public class Utils {
         BigDecimal ma3_0 = calcMA(list, 8, 0);
         BigDecimal ma3_3 = calcMA(list, 8, 2);
 
-        temp_long += Utils.checkXCutUpY(ma1_0, ma1_3, ma2_0, ma2_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma1_0, ma1_3, ma2_0, ma2_3) + "_";
-
-        temp_long += Utils.checkXCutUpY(ma1_0, ma1_3, ma3_0, ma3_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma1_0, ma1_3, ma3_0, ma3_3) + "_";
+        temp_long += Utils.checkXCutUpY(ma2_0, ma2_3, ma3_0, ma3_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma2_0, ma2_3, ma3_0, ma3_3) + "_";
 
         String trend = "";
         trend += "_" + temp_long + "_";
@@ -3037,13 +3031,15 @@ public class Utils {
         }
 
         if (trend.contains(Utils.TREND_LONG)) {
-            if ((ma1_0.compareTo(ma1_3) > 0) && (ma1_0.compareTo(ma3_0) > 0)) {
+            // if ((ma2_0.compareTo(ma2_3) > 0) && (ma2_0.compareTo(ma3_0) > 0))
+            {
                 return Utils.TREND_LONG;
             }
         }
 
         if (trend.contains(Utils.TREND_SHORT)) {
-            if ((ma1_0.compareTo(ma1_3) < 0) && (ma1_0.compareTo(ma3_0) < 0)) {
+            // if ((ma2_0.compareTo(ma2_3) < 0) && (ma2_0.compareTo(ma3_0) < 0))
+            {
                 return Utils.TREND_SHORT;
             }
         }
@@ -3051,43 +3047,45 @@ public class Utils {
         return "";
     }
 
-    //    public static String switchTrend_6_10_20(List<BtcFutures> list) {
-    //        String result = "";
-    //        if (CollectionUtils.isEmpty(list) || (list.size() < 30)) {
-    //            return "";
-    //        }
+    // public static String switchTrend_6_10_20(List<BtcFutures> list) {
+    // String result = "";
+    // if (CollectionUtils.isEmpty(list) || (list.size() < 30)) {
+    // return "";
+    // }
     //
-    //        BigDecimal ma6_0 = calcMA(list, 6, 0);
-    //        BigDecimal ma6_1 = calcMA(list, 6, 3);
-    //        BigDecimal ma10_0 = calcMA(list, 10, 0);
-    //        BigDecimal ma20_0 = calcMA(list, 20, 0);
+    // BigDecimal ma6_0 = calcMA(list, 6, 0);
+    // BigDecimal ma6_1 = calcMA(list, 6, 3);
+    // BigDecimal ma10_0 = calcMA(list, 10, 0);
+    // BigDecimal ma20_0 = calcMA(list, 20, 0);
     //
-    //        // LONG //&& (ma10_0.compareTo(ma10_1) > 0) && (ma20_0.compareTo(ma20_1) > 0)
-    //        if ((ma6_0.compareTo(ma10_0) > 0) && (ma10_0.compareTo(ma20_0) > 0) && (ma6_0.compareTo(ma6_1) > 0)) {
-    //            String trend = "";
-    //            trend += switchTrendByMaXX(list, 6, 10);
-    //            trend += switchTrendByMaXX(list, 6, 20);
-    //            trend += switchTrendByMaXX(list, 10, 20);
+    // // LONG //&& (ma10_0.compareTo(ma10_1) > 0) && (ma20_0.compareTo(ma20_1) > 0)
+    // if ((ma6_0.compareTo(ma10_0) > 0) && (ma10_0.compareTo(ma20_0) > 0) &&
+    // (ma6_0.compareTo(ma6_1) > 0)) {
+    // String trend = "";
+    // trend += switchTrendByMaXX(list, 6, 10);
+    // trend += switchTrendByMaXX(list, 6, 20);
+    // trend += switchTrendByMaXX(list, 10, 20);
     //
-    //            if (trend.contains(TREND_LONG)) {
-    //                return TREND_LONG;
-    //            }
-    //        }
+    // if (trend.contains(TREND_LONG)) {
+    // return TREND_LONG;
+    // }
+    // }
     //
-    //        // Short && (ma10_0.compareTo(ma10_1) < 0) && (ma20_0.compareTo(ma20_1) < 0)
-    //        if ((ma6_0.compareTo(ma10_0) < 0) && (ma10_0.compareTo(ma20_0) < 0) && (ma6_0.compareTo(ma6_1) < 0)) {
-    //            String trend = "";
-    //            trend += switchTrendByMaXX(list, 6, 10);
-    //            trend += switchTrendByMaXX(list, 6, 20);
-    //            trend += switchTrendByMaXX(list, 10, 20);
+    // // Short && (ma10_0.compareTo(ma10_1) < 0) && (ma20_0.compareTo(ma20_1) < 0)
+    // if ((ma6_0.compareTo(ma10_0) < 0) && (ma10_0.compareTo(ma20_0) < 0) &&
+    // (ma6_0.compareTo(ma6_1) < 0)) {
+    // String trend = "";
+    // trend += switchTrendByMaXX(list, 6, 10);
+    // trend += switchTrendByMaXX(list, 6, 20);
+    // trend += switchTrendByMaXX(list, 10, 20);
     //
-    //            if (trend.contains(TREND_SHORT)) {
-    //                return TREND_SHORT;
-    //            }
-    //        }
+    // if (trend.contains(TREND_SHORT)) {
+    // return TREND_SHORT;
+    // }
+    // }
     //
-    //        return result;
-    //    }
+    // return result;
+    // }
 
     public static String switchTrendByMaXX(List<BtcFutures> list, int fastIndex, int slowIndex) {
         if (CollectionUtils.isEmpty(list)) {
