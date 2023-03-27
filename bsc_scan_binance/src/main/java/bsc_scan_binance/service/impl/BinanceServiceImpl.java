@@ -3432,17 +3432,12 @@ public class BinanceServiceImpl implements BinanceService {
                 return "";
             }
 
-            String same_trend = "";
-            if (isSameTrendFromH4toM5(EPIC, trend_ma3)) {
-                same_trend = "    SameTrendFromH4toM5";
-            }
-
             String log = Utils.appendSpace(EPIC, 10);
             log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":";
             log += Utils.appendSpace(note.substring(0, note.length() > 30 ? 30 : note.length()), 40);
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
             log += Utils.calc_BUF_LO_HI_BUF_Forex(false, trend_ma3, EPIC, entity, dto_h4);
-            log += "   " + dto_h4.getNote() + same_trend;
+            log += "   " + dto_h4.getNote();
 
             String EVENT_ID = "FX_15M_" + EPIC + CAPITAL_TIME_XX + switch_trend_by_ma
                     + Utils.getCurrentYyyyMmDd_HH_Blog30m();
@@ -3516,7 +3511,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (cur_price.compareTo(body.get(0)) < 0) {
                 note += "     " + Utils.TEXT_MIN_DAY_AREA;
             }
-            if (cur_price.compareTo(body.get(0)) > 0) {
+            if (cur_price.compareTo(body.get(1)) > 0) {
                 note += "     " + Utils.TEXT_MAX_DAY_AREA;
             }
         }
