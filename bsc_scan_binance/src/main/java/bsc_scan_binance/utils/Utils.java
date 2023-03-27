@@ -2323,25 +2323,19 @@ public class Utils {
     }
 
     public static BigDecimal calcBread(List<BtcFutures> list) {
-        List<BigDecimal> low_high = Utils.getLowHighCandle(list);
-        BigDecimal high_hl = low_high.get(1).subtract(low_high.get(0)).abs();
-        BigDecimal bread_hl = high_hl.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+        BigDecimal max_high = BigDecimal.ZERO;
+        BigDecimal max_bread = calcMaxBread(list);
 
-        List<BigDecimal> body;
-        if (list.get(0).getId().contains("_DAY") || list.get(0).getId().contains("_1d_")) {
-            body = Utils.getLowHighCandle(list);
-        } else {
-            body = Utils.getOpenCloseCandle(list);
+        for (BtcFutures dto : list) {
+            BigDecimal high = (dto.getHight_price().subtract(dto.getLow_price())).abs();
+            if (max_high.compareTo(high) < 0) {
+                max_high = high;
+            }
         }
 
-        BigDecimal high_body = body.get(1).subtract(body.get(0)).abs();
-
-        BigDecimal bread = bread_hl.compareTo(high_body) > 0 ? bread_hl : high_body;
-
-        return bread;
+        return max_high.add(max_bread);
     }
 
-    @SuppressWarnings("unused")
     private static BigDecimal calcMaxBread(List<BtcFutures> list) {
         BigDecimal max_bread = BigDecimal.ZERO;
 
@@ -3497,7 +3491,7 @@ public class Utils {
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
         if (dto_entry_h4.getId().contains("_MINUTE_15")) {
-            // risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+            risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
         if (dto_entry_h4.getId().contains("_DAY")) {
             risk = risk.multiply(BigDecimal.valueOf(2));
