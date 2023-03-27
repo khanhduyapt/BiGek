@@ -140,6 +140,9 @@ public class BscScanBinanceApplication {
                                 }
                             }
 
+                            if (Utils.isNotBlank(result_h4)) {
+                                Utils.logWritelnDraft("");
+                            }
                             for (String EPIC : capital_list) {
                                 binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR);
                             }

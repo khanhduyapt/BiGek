@@ -3383,7 +3383,7 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
         if (!isReloadPrepareOrderTrend(EPIC, CAPITAL_TIME_XX)) {
-            //return "";
+            return "";
         }
 
         // ----------------------------TREND------------------------
@@ -3391,25 +3391,20 @@ public class BinanceServiceImpl implements BinanceService {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
-        String trend_ma3 = Utils.getTrendByMa3_8(list);
-
-        String switch_trend_by_ma = Utils.switchTrend_6_10_20(list);
-        // Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX) &&
-        if (Utils.isBlank(switch_trend_by_ma)) {
-            int index1 = 21;
-            int index2 = 17;
-            switch_trend_by_ma = Utils.switchTrendByMaXX(list, 3, index1);
-            if (Utils.isBlank(switch_trend_by_ma)) {
-                switch_trend_by_ma = Utils.switchTrendByMaXX(list, 6, index2);
-            }
-            if (Utils.isBlank(switch_trend_by_ma)) {
-                switch_trend_by_ma = Utils.switchTrendByMaXX(list, 8, index2);
-            }
-        }
 
         String note = "";
+        String trend_ma3 = Utils.getTrendByMa3_8(list);
+        String switch_trend_by_ma = Utils.switchTrend_6_10_20(list);
         if (Utils.isNotBlank(switch_trend_by_ma)) {
-            note += "Ma:" + Utils.appendSpace(switch_trend_by_ma, 15);
+            note += "Ma6->10->20:" + Utils.appendSpace(switch_trend_by_ma, 15);
+        }
+
+        // Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX) &&
+        if (Utils.isBlank(switch_trend_by_ma)) {
+            switch_trend_by_ma = Utils.switchTrendByMaXX(list, 3, 21);
+            if (Utils.isNotBlank(switch_trend_by_ma)) {
+                note += "Ma3vs20:" + Utils.appendSpace(switch_trend_by_ma, 15);
+            }
         }
 
         // -----------------------------DATABASE---------------------------
@@ -3436,7 +3431,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.isNotBlank(switch_trend_by_ma)) {
             List<BtcFutures> list_h1 = getCapitalData(EPIC, CAPITAL_TIME_XX);
             List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-            if ((Utils.isUptrendByMa(list_h4, 3, 0, 1) != Utils.isUptrendByMa(list_h1, 3, 0, 1))) {
+            if ((Utils.isUptrendByMa(list_h4, 1, 0, 1) != Utils.isUptrendByMa(list_h1, 3, 0, 1))) {
                 return "";
             }
 
@@ -3447,11 +3442,11 @@ public class BinanceServiceImpl implements BinanceService {
             log += Utils.calc_BUF_LO_HI_BUF_Forex(false, trend_ma3, EPIC, entity, dto_h4);
             log += "   " + dto_h4.getNote();
 
+            Utils.logWritelnDraft(log);
+
             String EVENT_ID = "FX_15M_" + EPIC + CAPITAL_TIME_XX + switch_trend_by_ma
                     + Utils.getCurrentYyyyMmDd_HH_Blog30m();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
-
-                Utils.logWritelnDraft(log);
 
                 fundingHistoryRepository
                         .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
