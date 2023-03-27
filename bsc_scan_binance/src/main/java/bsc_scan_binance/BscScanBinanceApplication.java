@@ -143,8 +143,22 @@ public class BscScanBinanceApplication {
                             if (Utils.isNotBlank(result_h4)) {
                                 Utils.logWritelnDraft("");
                             }
-                            for (String EPIC : capital_list) {
+
+                            String result_h1 = "";
+                            for (int index = 0; index < forex_size; index++) {
+                                String EPIC = capital_list.get(index);
+                                String trend = "";//
                                 binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                if (Utils.isNotBlank(trend)) {
+                                    result_h1 += trend + ", ";
+
+                                    String init = "H1:" + Utils.appendSpace(trend, 6);
+                                    String str_index = Utils.appendLeft(String.valueOf(index + 1), 3) + "/" +
+                                            Utils.appendLeft(String.valueOf(forex_size), 3) + "   ";
+
+                                    System.out.println(Utils.getTimeHHmm() + str_index + Utils.appendSpace(EPIC,
+                                            15) + init);
+                                }
                             }
 
                             /*
@@ -168,9 +182,9 @@ public class BscScanBinanceApplication {
                              * (Utils.isNotBlank(item_15)) { result_15 += item_15 + ", "; } }
                              */
 
-                            if (Utils.isNotBlank(result_h4)) {
-                                String msg = "(FX):" + result_h4;
-                                String EVENT_ID = "FX_H_" + (result_h4).length() + Utils.getCurrentYyyyMmDd_HH();
+                            if (Utils.isNotBlank(result_h1)) {
+                                String msg = "(FX):" + result_h1;
+                                String EVENT_ID = "FX_H_" + (result_h1).length() + Utils.getCurrentYyyyMmDd_HH();
                                 binance_service.sendMsgPerHour(EVENT_ID, msg, true);
                             }
                         }
