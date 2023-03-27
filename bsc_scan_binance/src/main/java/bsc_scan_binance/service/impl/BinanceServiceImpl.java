@@ -3528,12 +3528,12 @@ public class BinanceServiceImpl implements BinanceService {
         String result = "";
         if (Utils.isNotBlank(switch_trend_type)) {
             if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX) && !isSameTrendh4D1) {
-                return "";
+                //return "";
             }
 
             String log = Utils.appendSpace(EPIC, 10);
             log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":";
-            log += Utils.appendSpace(switch_trend_type, 10);
+            log += Utils.appendSpace(switch_trend_type, 30) + " ";
 
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + note;
 

@@ -62,7 +62,7 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 public class Utils {
 
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.01);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.005);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -3505,7 +3505,7 @@ public class Utils {
             // risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
         if (dto_entry_h4.getId().contains("_DAY")) {
-            // risk = risk.multiply(BigDecimal.valueOf(2));
+            risk = risk.multiply(BigDecimal.valueOf(2));
         }
 
         BigDecimal sl_long = Utils.getBigDecimal(dto_sl_d1.getLow_price());
