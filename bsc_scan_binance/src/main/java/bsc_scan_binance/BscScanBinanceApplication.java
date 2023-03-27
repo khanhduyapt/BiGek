@@ -161,29 +161,16 @@ public class BscScanBinanceApplication {
                                 }
                             }
 
-                            /*
-                             * if (Utils.isNotBlank(result_h4)) { Utils.logWritelnDraft(""); }
-                             *
-                             * String result_h1 = ""; for (int index = 0; index < forex_size; index++) {
-                             * String EPIC = capital_list.get(index); String trend = "";//
-                             * binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR); if
-                             * (Utils.isNotBlank(trend)) { result_h1 += trend + ", ";
-                             *
-                             * String init = "H1:" + Utils.appendSpace(trend, 6); String str_index =
-                             * Utils.appendLeft(String.valueOf(index + 1), 3) + "/" +
-                             * Utils.appendLeft(String.valueOf(forex_size), 3) + "   ";
-                             *
-                             * System.out.println( Utils.getTimeHHmm() + str_index + Utils.appendSpace(EPIC,
-                             * 15) + init); } } if (Utils.isNotBlank(result_h1)) {
-                             * Utils.logWritelnDraft(""); }
-                             *
-                             * String result_15 = ""; for (String EPIC : Utils.EPICS_15M) { String item_15 =
-                             * "";// binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15); if
-                             * (Utils.isNotBlank(item_15)) { result_15 += item_15 + ", "; } }
-                             */
+                            String result_15 = "";
+                            for (String EPIC : Utils.EPICS_MAIN) {
+                                String item_15 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+                                if (Utils.isNotBlank(item_15)) {
+                                    result_15 += item_15 + ", ";
+                                }
+                            }
 
-                            if (Utils.isNotBlank(result_h1)) {
-                                String msg = "(FX):" + result_h1;
+                            if (Utils.isNotBlank(result_h1 + result_15)) {
+                                String msg = "(FX):" + result_h1 + result_15;
                                 String EVENT_ID = "FX_H_" + (result_h1).length() + Utils.getCurrentYyyyMmDd_HH();
                                 binance_service.sendMsgPerHour(EVENT_ID, msg, true);
                             }

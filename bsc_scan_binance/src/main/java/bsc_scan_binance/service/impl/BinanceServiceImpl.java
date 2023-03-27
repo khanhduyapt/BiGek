@@ -2917,7 +2917,7 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        String switch_trend = Utils.switchTrend_6_10_20(list);
+        String switch_trend = Utils.switchTrendByMaXX(list, 3, 21);
 
         // --------------------DATABASE--------------------
         String date_time = LocalDateTime.now().toString();
@@ -3394,17 +3394,10 @@ public class BinanceServiceImpl implements BinanceService {
 
         String note = "";
         String trend_ma3 = Utils.getTrendByMa3_8(list);
-        String switch_trend_by_ma = Utils.switchTrend_6_10_20(list);
-        if (Utils.isNotBlank(switch_trend_by_ma)) {
-            note += "Ma6->10->20:" + Utils.appendSpace(switch_trend_by_ma, 15);
-        }
 
-        // Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX) &&
-        if (Utils.isBlank(switch_trend_by_ma)) {
-            switch_trend_by_ma = Utils.switchTrendByMaXX(list, 3, 21);
-            if (Utils.isNotBlank(switch_trend_by_ma)) {
-                note += "Ma3vs20:" + Utils.appendSpace(switch_trend_by_ma, 15);
-            }
+        String switch_trend_by_ma = Utils.switchTrendByMaXX(list, 3, 21);
+        if (Utils.isNotBlank(switch_trend_by_ma)) {
+            note += "Ma3vs20:" + Utils.appendSpace(switch_trend_by_ma, 15);
         }
 
         // -----------------------------DATABASE---------------------------
@@ -3421,18 +3414,24 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO: scapForex
         String result = "";
 
-        // Orders dto_d1 = ordersRepository.findById(EPIC + "_" +
-        // Utils.CAPITAL_TIME_DAY).orElse(null);
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-
-        // if ((Objects.nonNull(dto_d1) && Utils.isNotBlank(dto_d1.getNote()))
-        // || (Objects.nonNull(dto_h4) && Utils.isNotBlank(dto_h4.getNote()))) {
-
-        if (Utils.isNotBlank(switch_trend_by_ma)) {
-            List<BtcFutures> list_h1 = getCapitalData(EPIC, CAPITAL_TIME_XX);
+        if (Objects.nonNull(dto_h4) && Utils.isNotBlank(switch_trend_by_ma)) {
             List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-            if ((Utils.isUptrendByMa(list_h4, 1, 0, 1) != Utils.isUptrendByMa(list_h1, 3, 0, 1))) {
-                return "";
+            List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);
+            boolean isUptrendH4 = Utils.isUptrendByMa(list_h4, 3, 0, 1);
+            boolean isUptrendH1 = Utils.isUptrendByMa(list_h1, 3, 0, 1);
+
+            if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
+                if (isUptrendH4 != isUptrendH1) {
+                    return "";
+                }
+            }
+            if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XX)) {
+                List<BtcFutures> list_15 = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+                boolean isUptrend15 = Utils.isUptrendByMa(list_15, 6, 0, 1);
+                if ((isUptrendH4 != isUptrendH1) || (isUptrendH1 != isUptrend15)) {
+                    return "";
+                }
             }
 
             String log = Utils.appendSpace(EPIC, 10);
