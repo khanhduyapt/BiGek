@@ -3011,8 +3011,8 @@ public class Utils {
         BigDecimal ma1_0 = calcMA(list, 3, 0);
         BigDecimal ma1_3 = calcMA(list, 3, 2);
 
-        BigDecimal ma2_0 = calcMA(list, 5, 0);
-        BigDecimal ma2_3 = calcMA(list, 5, 2);
+        BigDecimal ma2_0 = calcMA(list, 6, 0);
+        BigDecimal ma2_3 = calcMA(list, 6, 2);
 
         BigDecimal ma3_0 = calcMA(list, 8, 0);
         BigDecimal ma3_3 = calcMA(list, 8, 2);
