@@ -117,8 +117,8 @@ public class BscScanBinanceApplication {
                 while (index_crypto < total) {
                     try {
                         checkKillLongShort(binance_service);
-
-                        if (!Utils.isWeekend() && Utils.isAllowSendMsg() && Utils.isBusinessTime_6h_to_22h()) {
+                        // && Utils.isBusinessTime_6h_to_22h()
+                        if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
                             binance_service.saveMt5Data();
 
                             String result_d1 = "";

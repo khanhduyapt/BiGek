@@ -3385,7 +3385,7 @@ public class BinanceServiceImpl implements BinanceService {
         String result = "";
         if (!Objects.equals(Utils.TREND_ADJUST, trend_ma68) && Utils.isNotBlank(switch_trend_by_ma)) {
             List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
-            String trend_h4_ma68 = Utils.getTrendByMa6_8(list_h4);
+            String trend_h4_ma68 = Utils.isUptrendByMa(list_h4, 3, 0, 1) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
             if (!Objects.equals(trend_h4_ma68, trend_ma68)) {
                 return "";
@@ -3397,18 +3397,17 @@ public class BinanceServiceImpl implements BinanceService {
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
             log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, entity, entity);
 
-            String EVENT_ID = "FX_15M_" + EPIC + CAPITAL_TIME_XX + switch_trend_by_ma
-                    + Utils.getCurrentYyyyMmDd_HH_Blog15m();
+            String EVENT_ID = "FX_15M_" + EPIC + CAPITAL_TIME_XX + switch_trend_by_ma + Utils.getCurrentYyyyMmDd_HH();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
 
+                String type = Objects.equals(Utils.TREND_LONG, trend_ma68) ? "(B)" : "(S)";
+                result = Utils.appendSpace(type + EPIC, 15);
                 Utils.logWritelnDraft(log);
 
                 fundingHistoryRepository
                         .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
             }
 
-            String type = Objects.equals(Utils.TREND_LONG, trend_ma68) ? "(B)" : "(S)";
-            result = Utils.appendSpace(type + EPIC, 15);
         }
         ordersRepository.save(entity);
 
