@@ -81,6 +81,7 @@ public class Utils {
 
     public static final String TREND_LONG = "BUY";
     public static final String TREND_SHORT = "SELL";
+    public static final String TREND_ADJUST = "ADJUST";
 
     public static final String TEXT_5STAR = "(*5S*)";
     public static final String TEXT_DANGER = "(Danger)";
@@ -1100,7 +1101,7 @@ public class Utils {
     public static boolean isBusinessTime_6h_to_22h() {
         // Sang 6-8h, Trua: 1h-3h, Chieu 5h-6h, toi 8h-9h: la khung gio gia ro rang
         // nhat, sau khung gio nay gia moi chay.
-        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
+        List<Integer> times = Arrays.asList(5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -3215,21 +3216,20 @@ public class Utils {
         return false;
     }
 
-    public static String getTrendByMa3_8(List<BtcFutures> list) {
+    public static String getTrendByMa6_8(List<BtcFutures> list) {
         if (CollectionUtils.isEmpty(list) || (list.size() < 10)) {
             Utils.logWritelnDraft("(getTrendByMa)list.size() < 10");
             return "";
         }
 
-        boolean trend_ma1 = isUptrendByMa(list, 3, 1, 2);
-        boolean trend_ma2 = isUptrendByMa(list, 5, 1, 2);
+        boolean trend_ma2 = isUptrendByMa(list, 6, 1, 2);
         boolean trend_ma3 = isUptrendByMa(list, 8, 1, 2);
 
-        if ((trend_ma1 == trend_ma2) && (trend_ma2 == trend_ma3)) {
+        if ((trend_ma2 == trend_ma3)) {
             return trend_ma2 ? TREND_LONG : TREND_SHORT;
         }
 
-        return isUptrendByMa(list, 3, 1, 2) ? TREND_LONG : TREND_SHORT;
+        return TREND_ADJUST;
     }
 
     public static boolean isUptrendByMa(List<BtcFutures> list, int maIndex, int str, int end) {

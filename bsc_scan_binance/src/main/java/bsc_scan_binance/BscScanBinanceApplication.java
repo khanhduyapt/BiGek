@@ -154,8 +154,14 @@ public class BscScanBinanceApplication {
                             if (Utils.isNotBlank(result_scap)) {
                                 Utils.logWritelnDraft("");
                             }
-                            for (String EPIC : Utils.EPICS_15M) {
+                            for (String EPIC : Utils.EPICS_MAIN) {
                                 String item_15 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+                                if (Utils.isNotBlank(item_15)) {
+                                    result_scap += item_15 + ", ";
+                                }
+                            }
+                            for (String EPIC : Utils.EPICS_MAIN) {
+                                String item_15 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
                                 if (Utils.isNotBlank(item_15)) {
                                     result_scap += item_15 + ", ";
                                 }
