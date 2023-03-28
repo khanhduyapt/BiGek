@@ -3344,7 +3344,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String switch_trend_by_ma = "";
         if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
-            switch_trend_by_ma = Utils.switchTrendByMaXX(list, 6, 8);
+            switch_trend_by_ma = Utils.switchTrend_5_8(list);
             if (Utils.isNotBlank(switch_trend_by_ma)) {
                 note += "Ma6_8:" + Utils.appendSpace(switch_trend_by_ma, 15);
             }
@@ -3355,7 +3355,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isNotBlank(switch_trend_by_ma)) {
                 note += "Ma6_50:" + Utils.appendSpace(switch_trend_by_ma, 15);
             } else {
-                switch_trend_by_ma = Utils.switchTrendByMaXX(list, 6, 8);
+                switch_trend_by_ma = Utils.switchTrend_5_8(list);
                 if (Utils.isNotBlank(switch_trend_by_ma)) {
                     note += "Ma6_8:" + Utils.appendSpace(switch_trend_by_ma, 15);
                 }
