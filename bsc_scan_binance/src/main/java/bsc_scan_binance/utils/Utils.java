@@ -3439,7 +3439,7 @@ public class Utils {
 
         String header = time + "  ";
         header += Utils.appendSpace(trend_d1, 8) + "   ";
-        header += chart_h4 + ":" + Utils.appendSpace(dto_entry.getTrend(), 4) + "    ";
+        header += chart_h4 + ":" + Utils.appendSpace(dto_entry.getTrend(), 8) + "    ";
         header += Utils.appendSpace(EPIC, 12);
         header += Utils.appendSpace(Utils.getCapitalLink(EPIC), 68);
 
@@ -3490,7 +3490,7 @@ public class Utils {
         String result = "";
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
-        if (dto_entry_h4.getId().contains("_MINUTE_15")) {
+        if (dto_entry_h4.getId().contains("_MINUTE_")) {
             risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
         if (dto_entry_h4.getId().contains("_DAY")) {

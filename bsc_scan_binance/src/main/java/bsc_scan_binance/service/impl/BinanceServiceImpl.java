@@ -3083,7 +3083,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             mt5DataCandleRepository.saveAll(list);
 
-            String orderId = "MT5_DATA_" + Utils.CAPITAL_TIME_MINUTE_15;
+            String orderId = "MT5_DATA_" + Utils.CAPITAL_TIME_MINUTE_5;
             String date_time = LocalDateTime.now().toString();
             Orders entity = new Orders(orderId, date_time, "", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
                     BigDecimal.ZERO, BigDecimal.ZERO, "");
@@ -3113,7 +3113,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // TODO saveMt5Data
             required_update_bars_csv = false;
-            if (elapsedMinutes > (Utils.MINUTES_OF_15M * 2)) {
+            if (elapsedMinutes > (Utils.MINUTES_OF_5M * 5)) {
                 required_update_bars_csv = true;
                 Utils.logWritelnDraft(
                         "Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! \n");
@@ -3228,10 +3228,10 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.nonNull(dto_d1)) {
                     note_d1 = dto_d1.getNote();
                     String chart = Utils.getChartName(dto_d1);
-                    trend_d1 = chart + ":" + Utils.appendSpace(dto_d1.getTrend(), 4);
+                    trend_d1 = chart + ":" + Utils.appendSpace(dto_d1.getTrend(), 8);
                 }
 
-                String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, trend_d1).trim(), 110)
+                String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, trend_d1).trim(), 115)
                         + "   ";
                 log += Utils.createLineForex_Body(dto_h4, dto_h4).trim();
                 if (str_long_suggest.contains(EPIC)) {
@@ -3359,11 +3359,10 @@ public class BinanceServiceImpl implements BinanceService {
         List<BigDecimal> low_high = Utils.getLowHighCandle(list);
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
-        Orders entity = new Orders(orderId, date_time, trend_ma68, list.get(0).getCurrPrice(),
-                list.get(0).getCurrPrice(), list.get(0).getCurrPrice(), sl_long, sl_shot, note);
+        Orders entity = new Orders(orderId, date_time, trend_ma68, list.get(0).getCurrPrice(), low_high.get(0),
+                low_high.get(1), sl_long, sl_shot, note);
 
         String result = "";
-
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
         if (Objects.nonNull(dto_h4) && Utils.isNotBlank(switch_trend_by_ma)) {
             List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
@@ -3379,14 +3378,14 @@ public class BinanceServiceImpl implements BinanceService {
             log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":";
             log += Utils.appendSpace(note.substring(0, note.length() > 30 ? 30 : note.length()), 40);
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
-            log += Utils.calc_BUF_LO_HI_BUF_Forex(true, trend_ma68, EPIC, entity, entity);
+            log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, entity, entity);
             log += "   " + dto_h4.getNote();
 
-            Utils.logWritelnDraft(log);
-
             String EVENT_ID = "FX_15M_" + EPIC + CAPITAL_TIME_XX + switch_trend_by_ma
-                    + Utils.getCurrentYyyyMmDd_HH_Blog30m();
+                    + Utils.getCurrentYyyyMmDd_HH_Blog15m();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
+
+                Utils.logWritelnDraft(log);
 
                 fundingHistoryRepository
                         .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
