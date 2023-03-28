@@ -3441,6 +3441,21 @@ public class BinanceServiceImpl implements BinanceService {
             note += Utils.appendSpace("Ma368:" + switch_trend_type, 15);
         }
 
+        String trend_d1 = "";
+        if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX)) {
+            List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
+            trend_d1 = Utils.isUptrendByMa(list_d1, 1, 0, 1) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+
+            List<BigDecimal> body = Utils.getOpenCloseCandle(list_d1);
+            BigDecimal cur_price = list.get(0).getCurrPrice();
+            if (cur_price.compareTo(body.get(0)) < 0) {
+                note += "     " + Utils.TEXT_MIN_DAY_AREA;
+            }
+            if (cur_price.compareTo(body.get(1)) > 0) {
+                note += "     " + Utils.TEXT_MAX_DAY_AREA;
+            }
+        }
+
         String trend_ma3 = Utils.getTrendByMa5_8(list);
 
         // -----------------------------DATABASE---------------------------
@@ -3463,19 +3478,8 @@ public class BinanceServiceImpl implements BinanceService {
         String result = "";
         if (Utils.isNotBlank(switch_trend_type)) {
             if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX)) {
-                List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
-                List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-                if ((Utils.isUptrendByMa(list_h4, 3, 0, 1) != Utils.isUptrendByMa(list_d1, 1, 0, 1))) {
-                    note += " H4=D1";
-                }
-
-                List<BigDecimal> body = Utils.getOpenCloseCandle(list_d1);
-                BigDecimal cur_price = list.get(0).getCurrPrice();
-                if (cur_price.compareTo(body.get(0)) < 0) {
-                    note += "     " + Utils.TEXT_MIN_DAY_AREA;
-                }
-                if (cur_price.compareTo(body.get(1)) > 0) {
-                    note += "     " + Utils.TEXT_MAX_DAY_AREA;
+                if (!Objects.equals(trend_ma3, trend_d1)) {
+                    return "";
                 }
             }
 
