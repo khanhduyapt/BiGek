@@ -117,7 +117,6 @@ public class Utils {
     public static String CST = "";
     public static String X_SECURITY_TOKEN = "";
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
-    public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
     public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_HOUR = "HOUR";
     public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
@@ -134,7 +133,6 @@ public class Utils {
     public static final long MINUTES_OF_4H = 60;
     public static final long MINUTES_OF_1H = 30;
     public static final long MINUTES_OF_15M = 15;
-    public static final long MINUTES_OF_5M = 5;
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
@@ -598,18 +596,9 @@ public class Utils {
     }
 
     public static String getChartNameCapital_(String TIME) {
-        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE)) {
-        // return "_1m_";
-        // }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
-            return "_5m_";
-        }
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
             return "_15m_";
         }
-        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
-        // return "_30m_";
-        // }
         if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
             return "_1h_";
         }
@@ -627,18 +616,9 @@ public class Utils {
     }
 
     public static String getChartNameCapital(String TIME) {
-        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE)) {
-        // return "(1m)";
-        // }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
-            return "(05)";
-        }
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
             return "(15)";
         }
-        // if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_30)) {
-        // return "(30m)";
-        // }
         if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
             return "(H1)";
         }
@@ -2110,8 +2090,6 @@ public class Utils {
 
             if (symbol.contains(CAPITAL_TIME_MINUTE_15)) {
                 result = "(15)";
-            } else if (symbol.contains(CAPITAL_TIME_MINUTE_5)) {
-                result = "(05)";
             } else if (symbol.contains(CAPITAL_TIME_HOUR_4)) {
                 result = "(H4)";
             } else if (symbol.contains(CAPITAL_TIME_HOUR)) {
@@ -3262,7 +3240,6 @@ public class Utils {
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_15, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_5, "");
         EPIC = EPIC.replace("_", "");
 
         return EPIC;
@@ -3485,26 +3462,26 @@ public class Utils {
         return tmp_msg;
     }
 
-    public static String calc_BUF_LO_HI_BUF_Forex(boolean is15m, String trend, String EPIC, Orders dto_entry_h4,
-            Orders dto_sl_d1) {
+    public static String calc_BUF_LO_HI_BUF_Forex(boolean is15m, String trend, String EPIC, Orders dto_entry,
+            Orders dto_sl) {
         String result = "";
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
-        if (dto_entry_h4.getId().contains("_MINUTE_")) {
+        if (dto_entry.getId().contains("_MINUTE_")) {
             risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
-        if (dto_entry_h4.getId().contains("_DAY")) {
+        if (dto_entry.getId().contains("_DAY")) {
             risk = risk.multiply(BigDecimal.valueOf(2));
         }
 
-        BigDecimal sl_long = Utils.getBigDecimal(dto_sl_d1.getLow_price());
-        BigDecimal sl_shot = Utils.getBigDecimal(dto_sl_d1.getHigh_price());
+        BigDecimal sl_long = Utils.getBigDecimal(dto_sl.getLow_price());
+        BigDecimal sl_shot = Utils.getBigDecimal(dto_sl.getHigh_price());
 
-        BigDecimal en_long = Utils.getBigDecimal(dto_entry_h4.getStr_body_price());
-        BigDecimal en_shot = Utils.getBigDecimal(dto_entry_h4.getEnd_body_price());
+        BigDecimal en_long = Utils.getBigDecimal(dto_entry.getStr_body_price());
+        BigDecimal en_shot = Utils.getBigDecimal(dto_entry.getEnd_body_price());
 
-        BigDecimal tp_long = Utils.getBigDecimal(dto_entry_h4.getEnd_body_price());
-        BigDecimal tp_shot = Utils.getBigDecimal(dto_entry_h4.getStr_body_price());
+        BigDecimal tp_long = Utils.getBigDecimal(dto_entry.getEnd_body_price());
+        BigDecimal tp_shot = Utils.getBigDecimal(dto_entry.getStr_body_price());
 
         result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 8);
 
