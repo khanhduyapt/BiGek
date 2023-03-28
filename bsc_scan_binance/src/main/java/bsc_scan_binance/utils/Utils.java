@@ -2978,7 +2978,7 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrend_5_8(List<BtcFutures> list) {
+    public static String switchTrendByMa5_8(List<BtcFutures> list) {
         String temp_long = "";
         String temp_shot = "";
 
