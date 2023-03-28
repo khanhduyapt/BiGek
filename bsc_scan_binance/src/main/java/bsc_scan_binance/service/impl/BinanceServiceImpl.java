@@ -3340,7 +3340,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String note = "";
-        String trend_ma68 = Utils.getTrendByMa6_8(list);
+        String trend_ma68 = Utils.getTrendByMa5_8(list);
 
         String switch_trend_by_ma = "";
         if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
@@ -3431,7 +3431,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String note = "";
-        String switch_trend_type = Utils.switchTrend_6_8(list);
+        String switch_trend_type = Utils.switchTrend_5_8(list);
         if (Utils.isBlank(switch_trend_type)) {
             switch_trend_type = Utils.switchTrendByHekenAshi(list);
             if (Utils.isNotBlank(switch_trend_type)) {
@@ -3441,7 +3441,7 @@ public class BinanceServiceImpl implements BinanceService {
             note += Utils.appendSpace("Ma368:" + switch_trend_type, 15);
         }
 
-        String trend_ma3 = Utils.getTrendByMa6_8(list);
+        String trend_ma3 = Utils.getTrendByMa5_8(list);
 
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
