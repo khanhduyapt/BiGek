@@ -2910,12 +2910,20 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        List<BtcFutures> list = Utils.loadData(symbol, Utils.CRYPTO_TIME_1H, 55);
-        if (CollectionUtils.isEmpty(list)) {
+        List<BtcFutures> list_15m = Utils.loadData(symbol, Utils.CRYPTO_TIME_15m, 55);
+        List<BtcFutures> list_4h = Utils.loadData(symbol, Utils.CRYPTO_TIME_4H, 10);
+        if (CollectionUtils.isEmpty(list_15m) || CollectionUtils.isEmpty(list_4h)) {
             return "";
         }
+        String trend_h4 = Utils.isUptrendByMa(list_4h, 3, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
-        String switch_trend = Utils.switchTrendByMaXX(list, 3, 21);
+        String switch_trend = Utils.switchTrendByMaXX(list_15m, 6, 50);
+        if (Utils.isBlank(switch_trend)) {
+            switch_trend = Utils.switchTrendByMaXX(list_15m, 8, 50);
+        }
+        if (Utils.isBlank(switch_trend)) {
+            switch_trend = Utils.switchTrendByMaXX(list_15m, 10, 50);
+        }
 
         // --------------------DATABASE--------------------
         String date_time = LocalDateTime.now().toString();
@@ -2926,12 +2934,15 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.isBlank(switch_trend)) {
             return "";
         }
+        if (!Objects.equals(trend_h4, switch_trend)) {
+            return "";
+        }
 
         // --------------------MSG--------------------
         // TODO sendMsgKillLongShort
         String msg = "";
         if (Utils.isNotBlank(switch_trend)) {
-            String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list.get(0).getCurrPrice()), 5) + ")";
+            String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_15m.get(0).getCurrPrice()), 5) + ")";
 
             if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
                 msg = " 💹 " + symbol + "_kill_Short 💔 " + str_price;
