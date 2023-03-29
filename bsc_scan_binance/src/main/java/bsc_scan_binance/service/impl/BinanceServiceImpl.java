@@ -3384,10 +3384,12 @@ public class BinanceServiceImpl implements BinanceService {
         if (!Objects.equals(Utils.TREND_ADJUST, trend_ma68) && Utils.isNotBlank(switch_trend)) {
             String sub_note = "";
             String trend_h4 = "";
+            boolean isSameTrendH4 = false;
             List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
             if (!CollectionUtils.isEmpty(list_h4)) {
                 String trend_h4_ma3 = Utils.getTrendByMaXx(list_h4, 3);
                 if (!Objects.equals(switch_trend, trend_h4_ma3)) {
+                    isSameTrendH4 = true;
                     trend_h4 = Utils.appendSpace("   #H4:" + trend_h4_ma3, 15);
                 } else {
                     trend_h4 = Utils.appendSpace("   =H4:" + trend_h4_ma3, 15);
@@ -3413,8 +3415,11 @@ public class BinanceServiceImpl implements BinanceService {
             String EVENT_ID = "FX_15M_" + EPIC + CAPITAL_TIME_XX + switch_trend + Utils.getCurrentYyyyMmDd_HH();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
 
-                String type = Objects.equals(Utils.TREND_LONG, trend_ma68) ? "(B)" : "(S)";
-                result = Utils.appendSpace(type + EPIC, 15);
+                if (isSameTrendH4) {
+                    String type = Objects.equals(Utils.TREND_LONG, trend_ma68) ? "(B)" : "(S)";
+                    result = Utils.appendSpace(type + EPIC, 15);
+                }
+
                 Utils.logWritelnDraft(log);
 
                 fundingHistoryRepository
