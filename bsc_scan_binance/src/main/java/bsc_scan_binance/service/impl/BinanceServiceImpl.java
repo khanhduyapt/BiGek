@@ -3366,12 +3366,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String result = "";
         if (!Objects.equals(Utils.TREND_ADJUST, trend_ma68) && Utils.isNotBlank(switch_trend)) {
-            String compare_target = Utils.CAPITAL_TIME_HOUR_4;
-            if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XX)) {
-                compare_target = Utils.CAPITAL_TIME_HOUR;
-            }
-
-            List<BtcFutures> list_h4 = getCapitalData(EPIC, compare_target);
+            List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
             String trend_h4_ma3 = Utils.getTrendByMaXx(list_h4, 3);
             if (!Objects.equals(switch_trend, trend_h4_ma3)) {
                 return "";
