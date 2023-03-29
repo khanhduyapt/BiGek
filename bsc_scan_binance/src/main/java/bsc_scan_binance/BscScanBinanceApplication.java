@@ -171,10 +171,6 @@ public class BscScanBinanceApplication {
                                     }
                                     result_h1 += item1 + ". ";
                                 }
-
-                                if (Utils.isNotBlank(item1 + item2 + item3)) {
-                                    Utils.logWritelnDraft("");
-                                }
                             }
 
                             if (Utils.isNotBlank(result_h1 + result_15 + result_05)) {
@@ -201,6 +197,10 @@ public class BscScanBinanceApplication {
                                 }
 
                                 binance_service.sendMsgPerHour(EVENT_ID, result_scap, true);
+                            }
+
+                            if (Utils.isNotBlank(result_h4 + result_h1 + result_15 + result_05)) {
+                                Utils.logWritelnDraft("");
                             }
                         }
 
