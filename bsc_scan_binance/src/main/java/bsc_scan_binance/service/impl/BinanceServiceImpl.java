@@ -3450,9 +3450,10 @@ public class BinanceServiceImpl implements BinanceService {
             log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, entity, entity);
             log += sub_note;
 
-            String EVENT_ID = "FX_15M_" + EPIC + CAPITAL_TIME_XX + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog15m();
-            if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
+            String EVENT_ID = "FX_15M_" + EPIC + switch_trend + (isSameTrendD1H4H1M15 ? "1" : "0")
+                    + Utils.getCurrentYyyyMmDd_HH();
 
+            if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
                 Utils.logWritelnDraft(log);
 
                 if (isSameTrendD1H4H1M15) {
