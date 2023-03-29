@@ -3347,7 +3347,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         int slowIndex = 20;
         if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
-            slowIndex = 35;
+            slowIndex = 36;
         }
 
         String switch_trend = Utils.switchTrendByMaXX(list, 3, slowIndex);
