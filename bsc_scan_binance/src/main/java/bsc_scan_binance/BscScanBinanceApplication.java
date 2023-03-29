@@ -196,6 +196,9 @@ public class BscScanBinanceApplication {
                                     result_scap += result_05;
                                 }
 
+                                String msg = Utils.new_line_from_service + result_scap;
+
+                                Utils.logWritelnDraft(msg.replace(Utils.new_line_from_service, "\n"));
                                 binance_service.sendMsgPerHour(EVENT_ID, result_scap, true);
                             }
 
