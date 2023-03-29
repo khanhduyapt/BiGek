@@ -3363,6 +3363,24 @@ public class Utils {
         return "";
     }
 
+    public static String switchTrendByHekenAshi_0_1(List<BtcFutures> list) {
+        List<BtcFutures> heken_list = getHekenList(list);
+        if (CollectionUtils.isEmpty(heken_list)) {
+            return "";
+        }
+
+        // ---------------------------------------------------------------
+        if (heken_list.get(1).isDown() && heken_list.get(0).isUptrend()) {
+            return Utils.appendSpace(TEXT_TREND_HEKEN_LONG, 10);
+        }
+
+        if (heken_list.get(1).isUptrend() && heken_list.get(0).isDown()) {
+            return Utils.appendSpace(TEXT_TREND_HEKEN_SHORT, 10);
+        }
+
+        return "";
+    }
+
     public static String createLineForex_Header(Orders dto_entry, Orders dto_sl, String trend_d1) {
         if (Objects.isNull(dto_entry) || Objects.isNull(dto_sl)) {
             return "";

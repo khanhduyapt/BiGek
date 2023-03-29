@@ -3385,13 +3385,14 @@ public class BinanceServiceImpl implements BinanceService {
 
         String result = "";
         if (!Objects.equals(Utils.TREND_ADJUST, trend_ma68) && Utils.isNotBlank(switch_trend)) {
-            List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
-            String trend_h4 = Utils.isUptrendByMa(list_d1, 5, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+            List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+            String trend_h4 = Utils.switchTrendByHekenAshi_0_1(list_h4);
             if (!Objects.equals(switch_trend, trend_h4)) {
                 return "";
             }
 
             String sub_note = "";
+            List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
             List<BigDecimal> body_d1 = Utils.getOpenCloseCandle(list_d1.subList(1, 2));
             if (cur_price.compareTo(body_d1.get(0)) < 0) {
                 sub_note = "   Lower beard of pre day.";
