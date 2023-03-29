@@ -3343,34 +3343,20 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_ma68 = Utils.getTrendByMa5_8(list);
 
         String switch_trend = "";
-        if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
-            switch_trend = Utils.switchTrendByMa5_8(list);
+        // if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX))
+        {
+            switch_trend = Utils.switchTrendByMaXX(list, 3, 20);
             if (Utils.isNotBlank(switch_trend)) {
-                note += "Ma6_8:" + Utils.appendSpace(switch_trend, 15);
-            }
-        }
-
-        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XX)) {
-            switch_trend = Utils.switchTrendByMaXX(list, 6, 50);
-            if (Utils.isNotBlank(switch_trend)) {
-                note += "Ma6_50:" + Utils.appendSpace(switch_trend, 15);
+                note += "Ma3_20:" + Utils.appendSpace(switch_trend, 15);
             } else {
-                switch_trend = Utils.switchTrendByMa5_8(list);
+                switch_trend = Utils.switchTrendByMaXX(list, 6, 20);
                 if (Utils.isNotBlank(switch_trend)) {
-                    note += "Ma6_8:" + Utils.appendSpace(switch_trend, 15);
-                }
-            }
-        }
-
-        if (Utils.isBlank(switch_trend)) {
-            String heken = Utils.switchTrendByHekenAshi(list);
-            if (Utils.isNotBlank(heken)) {
-                note += Utils.appendSpace(heken, 15);
-
-                if (heken.contains(Utils.TREND_LONG)) {
-                    switch_trend = Utils.TREND_LONG;
+                    note += "Ma6_20:" + Utils.appendSpace(switch_trend, 15);
                 } else {
-                    switch_trend = Utils.TREND_SHORT;
+                    switch_trend = Utils.switchTrendByMaXX(list, 8, 20);
+                    if (Utils.isNotBlank(switch_trend)) {
+                        note += "Ma8_20:" + Utils.appendSpace(switch_trend, 15);
+                    }
                 }
             }
         }
@@ -3382,8 +3368,6 @@ public class BinanceServiceImpl implements BinanceService {
         String date_time = LocalDateTime.now().toString();
 
         BigDecimal cur_price = list.get(0).getCurrPrice();
-        List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
-        List<BigDecimal> body_d1 = Utils.getOpenCloseCandle(list_d1.subList(1, 2));
 
         BigDecimal bread = Utils.calcBread(list);
         List<BigDecimal> low_high = Utils.getLowHighCandle(list);
@@ -3401,13 +3385,19 @@ public class BinanceServiceImpl implements BinanceService {
 
         String result = "";
         if (!Objects.equals(Utils.TREND_ADJUST, trend_ma68) && Utils.isNotBlank(switch_trend)) {
+            List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
+            String trend_h4 = Utils.isUptrendByMa(list_d1, 5, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+            if (!Objects.equals(switch_trend, trend_h4)) {
+                return "";
+            }
 
             String sub_note = "";
+            List<BigDecimal> body_d1 = Utils.getOpenCloseCandle(list_d1.subList(1, 2));
             if (cur_price.compareTo(body_d1.get(0)) < 0) {
-                sub_note = "   Lower beard of the previous day candle.";
+                sub_note = "   Lower beard of pre day.";
             }
             if (cur_price.compareTo(body_d1.get(1)) > 0) {
-                sub_note = "   Upper beard of the previous day candle.";
+                sub_note = "   Upper beard of pre day.";
             }
 
             String log = Utils.appendSpace(EPIC, 10);
@@ -3470,6 +3460,14 @@ public class BinanceServiceImpl implements BinanceService {
             }
             if (cur_price.compareTo(body.get(1)) > 0) {
                 note += "     " + Utils.TEXT_MAX_DAY_AREA;
+            }
+
+            List<BigDecimal> body_d1 = Utils.getOpenCloseCandle(list_d1.subList(1, 2));
+            if (cur_price.compareTo(body_d1.get(0)) < 0) {
+                note += "   Lower beard of pre day.";
+            }
+            if (cur_price.compareTo(body_d1.get(1)) > 0) {
+                note += "   Upper beard of pre day.";
             }
         }
 
