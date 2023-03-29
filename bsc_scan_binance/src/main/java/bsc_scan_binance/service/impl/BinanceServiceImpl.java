@@ -3458,33 +3458,32 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            Orders dto_h4_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(entity);
+            if (isSameTrendD1H4H1M15) {
+                Orders dto_h4_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(entity);
 
-            String log = Utils.appendSpace(EPIC, 10) + Utils.appendSpace(star, 8);
-            log += " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
-            log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":";
-            log += Utils.appendSpace(note.substring(0, note.length() > 15 ? 15 : note.length()), 15);
-            log += trend_d1_h4_h1 + "   "
-                    + Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(cur_price, 5)), 10);
-            log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, entity, dto_h4_sl);
-            log += sub_note;
+                String log = Utils.appendSpace(EPIC, 10) + Utils.appendSpace(star, 8);
+                log += " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
+                log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":";
+                log += Utils.appendSpace(note.substring(0, note.length() > 15 ? 15 : note.length()), 15);
+                log += trend_d1_h4_h1 + "   "
+                        + Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(cur_price, 5)), 10);
+                log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, entity, dto_h4_sl);
+                log += sub_note;
 
-            String EVENT_ID = "FX_15M_" + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
-            if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
-                if (isSameTrendD1H4H1M15 || Objects.equals(switch_trend, trend_d1_ma1)
-                        || Objects.equals(switch_trend, trend_h4_ma2)) {
+                String EVENT_ID = "FX_15M_" + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
+                if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
                     Utils.logWritelnDraft(log);
-                }
 
-                if (star.contains("C")) {
-                    String type = (Objects.equals(Utils.TREND_LONG, switch_trend)
-                            ? "(B:" + Utils.appendSpace(star, 6) + ")"
-                            : "(S:" + Utils.appendSpace(star, 6) + ")");
-                    result = Utils.appendSpace(type + EPIC, 20);
-                }
+                    if (star.contains("C")) {
+                        String type = (Objects.equals(Utils.TREND_LONG, switch_trend)
+                                ? "(B:" + Utils.appendSpace(star, 6) + ")"
+                                : "(S:" + Utils.appendSpace(star, 6) + ")");
+                        result = Utils.appendSpace(type + EPIC, 20);
+                    }
 
-                fundingHistoryRepository
-                        .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
+                    fundingHistoryRepository
+                            .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
+                }
             }
 
         }
