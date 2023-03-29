@@ -3530,10 +3530,10 @@ public class BinanceServiceImpl implements BinanceService {
 
                 List<BigDecimal> body_d1 = Utils.getOpenCloseCandle(list_d1.subList(1, 2));
                 if (cur_price.compareTo(body_d1.get(0)) < 0) {
-                    note += "   Lower beard of pre day.";
+                    note += "   Lower beard.";
                 }
                 if (cur_price.compareTo(body_d1.get(1)) > 0) {
-                    note += "   Upper beard of pre day.";
+                    note += "   Upper beard.";
                 }
             }
         }
