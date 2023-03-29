@@ -131,14 +131,14 @@ public class Utils {
 
     public static final long MINUTES_OF_D = 240;// 600;
     public static final long MINUTES_OF_4H = 120;
-    public static final long MINUTES_OF_1H = 30;
+    public static final long MINUTES_OF_1H = 60;
     public static final long MINUTES_OF_15M = 15;
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
     public static final List<String> EPICS_15M = Arrays.asList("XAUUSD", "XAGUSD", "US30", "NAS100", "SP500", "UK100",
-            "JPN225", "DAX40");
+            "JPN225", "DAX40", "USDJPY");
 
     // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
     // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
@@ -2315,7 +2315,7 @@ public class Utils {
         return max_high.add(max_bread);
     }
 
-    private static BigDecimal calcMaxBread(List<BtcFutures> list) {
+    public static BigDecimal calcMaxBread(List<BtcFutures> list) {
         BigDecimal max_bread = BigDecimal.ZERO;
 
         for (BtcFutures dto : list) {
@@ -3476,7 +3476,7 @@ public class Utils {
             result += str_shot;
         } else {
             result += str_long;
-            result = appendSpace(result, 80);
+            result = appendSpace(result, 70);
             result += str_shot;
             result = Utils.appendSpace(result, 140);
         }
