@@ -3443,17 +3443,10 @@ public class BinanceServiceImpl implements BinanceService {
             log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, entity, entity);
             log += sub_note;
 
-            String EVENT_ID = "FX_15M_" + EPIC + CAPITAL_TIME_XX + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
-            if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
+            Utils.logWritelnDraft(log);
 
-                Utils.logWritelnDraft(log);
-
-                if (isSameTrendD1H4H1M15) {
-                    result = Utils.appendSpace(EPIC + "(" + type + ")", 15);
-                }
-
-                fundingHistoryRepository
-                        .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
+            if (isSameTrendD1H4H1M15) {
+                result = Utils.appendSpace(EPIC + "(" + type + ")", 15);
             }
         }
         ordersRepository.save(entity);
