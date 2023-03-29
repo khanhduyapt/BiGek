@@ -3416,15 +3416,13 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            if (CAPITAL_TIME_XX.contains("MINUTE")) {
-                List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);
-                if (!CollectionUtils.isEmpty(list_h1)) {
-                    trend_h1_ma3 = Utils.getTrendByMaXx(list_h1, 3);
-                    if (!Objects.equals(switch_trend, trend_h1_ma3)) {
-                        trend_d1_h4_h1 += Utils.appendSpace("#H1:" + trend_h1_ma3, 10);
-                    } else {
-                        trend_d1_h4_h1 += Utils.appendSpace("=H1:" + trend_h1_ma3, 10);
-                    }
+            List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);
+            if (!CollectionUtils.isEmpty(list_h1)) {
+                trend_h1_ma3 = Utils.getTrendByMaXx(list_h1, 3);
+                if (!Objects.equals(switch_trend, trend_h1_ma3)) {
+                    trend_d1_h4_h1 += Utils.appendSpace("#H1:" + trend_h1_ma3, 10);
+                } else {
+                    trend_d1_h4_h1 += Utils.appendSpace("=H1:" + trend_h1_ma3, 10);
                 }
             }
 
@@ -3452,7 +3450,7 @@ public class BinanceServiceImpl implements BinanceService {
             log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, entity, entity);
             log += sub_note;
 
-            String EVENT_ID = "FX_15M_" + EPIC + CAPITAL_TIME_XX + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
+            String EVENT_ID = "FX_15M_" + EPIC + CAPITAL_TIME_XX + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog15m();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
 
                 Utils.logWritelnDraft(log);
