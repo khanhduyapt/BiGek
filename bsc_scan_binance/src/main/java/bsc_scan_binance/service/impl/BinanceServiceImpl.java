@@ -3407,17 +3407,20 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);
-            if (!CollectionUtils.isEmpty(list_h1)) {
-                trend_h1_ma3 = Utils.getTrendByMaXx(list_h1, 3);
-                if (!Objects.equals(switch_trend, trend_h1_ma3)) {
-                    type += "(H1):B,";
-                    trend_d1_h4_h1 += Utils.appendSpace("#H1:" + trend_h1_ma3, 10);
-                } else {
-                    type += "(H1):S,";
-                    trend_d1_h4_h1 += Utils.appendSpace("=H1:" + trend_h1_ma3, 10);
+            if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XX)) {
+                List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);
+                if (!CollectionUtils.isEmpty(list_h1)) {
+                    trend_h1_ma3 = Utils.getTrendByMaXx(list_h1, 3);
+                    if (!Objects.equals(switch_trend, trend_h1_ma3)) {
+                        type += "(H1):B,";
+                        trend_d1_h4_h1 += Utils.appendSpace("#H1:" + trend_h1_ma3, 10);
+                    } else {
+                        type += "(H1):S,";
+                        trend_d1_h4_h1 += Utils.appendSpace("=H1:" + trend_h1_ma3, 10);
+                    }
                 }
             }
+
             type += Utils.getChartName(entity) + (Objects.equals(Utils.TREND_LONG, switch_trend) ? ":B" : ":S");
             type = type.replace("(", "").replace(")", "");
 
@@ -3443,8 +3446,9 @@ public class BinanceServiceImpl implements BinanceService {
             log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, entity, entity);
             log += sub_note;
 
-            Utils.logWritelnDraft(log);
-
+            if (Objects.equals(trend_d1_ma1, trend_h4_ma2)) {
+                Utils.logWritelnDraft(log);
+            }
             if (isSameTrendD1H4H1M15) {
                 result = Utils.appendSpace(EPIC + "(" + type + ")", 15);
             }
