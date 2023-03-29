@@ -3386,7 +3386,6 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.isNotBlank(switch_trend)) {
             String sub_note = "";
             String trend_d1_h4_h1 = "";
-            String type = "";
 
             String trend_d1_ma1 = "";
             String trend_h4_ma2 = "";
@@ -3396,10 +3395,8 @@ public class BinanceServiceImpl implements BinanceService {
             if (!CollectionUtils.isEmpty(list_d1)) {
                 trend_d1_ma1 = Utils.getTrendByMaXx(list_d1, 1);
                 if (!Objects.equals(switch_trend, trend_d1_ma1)) {
-                    type += "(D1):B,";
                     trend_d1_h4_h1 += Utils.appendSpace("#D1:" + trend_d1_ma1, 10);
                 } else {
-                    type += "(D1):S,";
                     trend_d1_h4_h1 += Utils.appendSpace("=D1:" + trend_d1_ma1, 10);
                 }
             }
@@ -3408,10 +3405,8 @@ public class BinanceServiceImpl implements BinanceService {
             if (!CollectionUtils.isEmpty(list_h4)) {
                 trend_h4_ma2 = Utils.getTrendByMaXx(list_h4, 2);
                 if (!Objects.equals(switch_trend, trend_h4_ma2)) {
-                    type += "(H4):B,";
                     trend_d1_h4_h1 += Utils.appendSpace("#H4:" + trend_h4_ma2, 10);
                 } else {
-                    type += "(H4):S,";
                     trend_d1_h4_h1 += Utils.appendSpace("=H4:" + trend_h4_ma2, 10);
                 }
             }
@@ -3421,17 +3416,12 @@ public class BinanceServiceImpl implements BinanceService {
                 if (!CollectionUtils.isEmpty(list_h1)) {
                     trend_h1_ma3 = Utils.getTrendByMaXx(list_h1, 3);
                     if (!Objects.equals(switch_trend, trend_h1_ma3)) {
-                        type += "(H1):B,";
                         trend_d1_h4_h1 += Utils.appendSpace("#H1:" + trend_h1_ma3, 10);
                     } else {
-                        type += "(H1):S,";
                         trend_d1_h4_h1 += Utils.appendSpace("=H1:" + trend_h1_ma3, 10);
                     }
                 }
             }
-
-            type += Utils.getChartName(entity) + (Objects.equals(Utils.TREND_LONG, switch_trend) ? ":B" : ":S");
-            type = type.replace("(", "").replace(")", "");
 
             List<BigDecimal> body_d1 = Utils.getOpenCloseCandle(list_d1.subList(1, 2));
             if (cur_price.compareTo(body_d1.get(0)) < 0) {
@@ -3462,7 +3452,9 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnDraft(log);
 
                 if (isSameTrendD1H4H1M15) {
-                    result = Utils.appendSpace(EPIC + "(" + type + ")", 15);
+                    String type = "";
+                    type += (Objects.equals(Utils.TREND_LONG, switch_trend) ? "(B)" : "(S)");
+                    result = Utils.appendSpace(EPIC + type, 15);
                 }
 
                 fundingHistoryRepository
