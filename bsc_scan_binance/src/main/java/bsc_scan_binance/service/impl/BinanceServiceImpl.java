@@ -3382,23 +3382,28 @@ public class BinanceServiceImpl implements BinanceService {
 
         String result = "";
         if (!Objects.equals(Utils.TREND_ADJUST, trend_ma68) && Utils.isNotBlank(switch_trend)) {
-            List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-            String trend_h4_ma3 = Utils.getTrendByMaXx(list_h4, 3);
-            if (!Objects.equals(switch_trend, trend_h4_ma3)) {
-                return "";
-            }
-
             String sub_note = "";
+            String trend_h4 = "";
+            List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+            if (!CollectionUtils.isEmpty(list_h4)) {
+                String trend_h4_ma3 = Utils.getTrendByMaXx(list_h4, 3);
+                if (!Objects.equals(switch_trend, trend_h4_ma3)) {
+                    trend_h4 = Utils.appendSpace("   #H4:" + trend_h4_ma3, 15);
+                } else {
+                    trend_h4 = Utils.appendSpace("   =H4:" + trend_h4_ma3, 15);
+                }
+            }
             List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
             List<BigDecimal> body_d1 = Utils.getOpenCloseCandle(list_d1.subList(1, 2));
             if (cur_price.compareTo(body_d1.get(0)) < 0) {
-                sub_note = "   Lower beard of pre day.";
+                sub_note += "   Lower beard of pre day.";
             }
             if (cur_price.compareTo(body_d1.get(1)) > 0) {
-                sub_note = "   Upper beard of pre day.";
+                sub_note += "   Upper beard of pre day.";
             }
 
             String log = Utils.appendSpace(EPIC, 10);
+            log += trend_h4;
             log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":";
             log += Utils.appendSpace(note.substring(0, note.length() > 30 ? 30 : note.length()), 40);
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
@@ -3415,7 +3420,6 @@ public class BinanceServiceImpl implements BinanceService {
                 fundingHistoryRepository
                         .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
             }
-
         }
         ordersRepository.save(entity);
 
@@ -3451,21 +3455,23 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX)) {
             List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
-            List<BigDecimal> body = Utils.getOpenCloseCandle(list_d1);
-            BigDecimal cur_price = list.get(0).getCurrPrice();
-            if (cur_price.compareTo(body.get(0)) < 0) {
-                note += "     " + Utils.TEXT_MIN_DAY_AREA;
-            }
-            if (cur_price.compareTo(body.get(1)) > 0) {
-                note += "     " + Utils.TEXT_MAX_DAY_AREA;
-            }
+            if (!CollectionUtils.isEmpty(list_d1)) {
+                List<BigDecimal> body = Utils.getOpenCloseCandle(list_d1);
+                BigDecimal cur_price = list.get(0).getCurrPrice();
+                if (cur_price.compareTo(body.get(0)) < 0) {
+                    note += "     " + Utils.TEXT_MIN_DAY_AREA;
+                }
+                if (cur_price.compareTo(body.get(1)) > 0) {
+                    note += "     " + Utils.TEXT_MAX_DAY_AREA;
+                }
 
-            List<BigDecimal> body_d1 = Utils.getOpenCloseCandle(list_d1.subList(1, 2));
-            if (cur_price.compareTo(body_d1.get(0)) < 0) {
-                note += "   Lower beard of pre day.";
-            }
-            if (cur_price.compareTo(body_d1.get(1)) > 0) {
-                note += "   Upper beard of pre day.";
+                List<BigDecimal> body_d1 = Utils.getOpenCloseCandle(list_d1.subList(1, 2));
+                if (cur_price.compareTo(body_d1.get(0)) < 0) {
+                    note += "   Lower beard of pre day.";
+                }
+                if (cur_price.compareTo(body_d1.get(1)) > 0) {
+                    note += "   Upper beard of pre day.";
+                }
             }
         }
 
