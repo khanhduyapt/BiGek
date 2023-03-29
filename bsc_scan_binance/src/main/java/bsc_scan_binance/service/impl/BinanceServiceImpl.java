@@ -3374,63 +3374,83 @@ public class BinanceServiceImpl implements BinanceService {
                 sl_shot, note);
 
         String result = "";
-        if (!Objects.equals(Utils.TREND_ADJUST, trend_ma68) && Utils.isNotBlank(switch_trend)) {
+        if (Utils.isNotBlank(switch_trend)) {
             String sub_note = "";
-            String trend_h4_h1 = "";
-            boolean isSameTrendH = false;
+            String trend_d1_h4_h1 = "";
             String type = "";
+
+            String trend_d1_ma1 = "";
+            String trend_h4_ma2 = "";
+            String trend_h1_ma3 = "";
+
+            List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
+            if (!CollectionUtils.isEmpty(list_d1)) {
+                trend_d1_ma1 = Utils.getTrendByMaXx(list_d1, 1);
+                if (!Objects.equals(switch_trend, trend_d1_ma1)) {
+                    type += "(D1):B,";
+                    trend_d1_h4_h1 += Utils.appendSpace("#D1:" + trend_d1_ma1, 10);
+                } else {
+                    type += "(D1):S,";
+                    trend_d1_h4_h1 += Utils.appendSpace("=D1:" + trend_d1_ma1, 10);
+                }
+            }
+
             List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
             if (!CollectionUtils.isEmpty(list_h4)) {
-                String trend_h4_ma3 = Utils.getTrendByMaXx(list_h4, 3);
-                if (!Objects.equals(switch_trend, trend_h4_ma3)) {
-                    isSameTrendH = true;
+                trend_h4_ma2 = Utils.getTrendByMaXx(list_h4, 2);
+                if (!Objects.equals(switch_trend, trend_h4_ma2)) {
                     type += "(H4):B,";
-                    trend_h4_h1 += Utils.appendSpace("#H4:" + trend_h4_ma3, 10);
+                    trend_d1_h4_h1 += Utils.appendSpace("#H4:" + trend_h4_ma2, 10);
                 } else {
                     type += "(H4):S,";
-                    trend_h4_h1 += Utils.appendSpace("=H4:" + trend_h4_ma3, 10);
+                    trend_d1_h4_h1 += Utils.appendSpace("=H4:" + trend_h4_ma2, 10);
                 }
             }
 
             List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);
             if (!CollectionUtils.isEmpty(list_h1)) {
-                String trend_h4_ma3 = Utils.getTrendByMaXx(list_h1, 3);
-                if (!Objects.equals(switch_trend, trend_h4_ma3)) {
-                    isSameTrendH = true;
+                trend_h1_ma3 = Utils.getTrendByMaXx(list_h1, 3);
+                if (!Objects.equals(switch_trend, trend_h1_ma3)) {
                     type += "(H1):B,";
-                    trend_h4_h1 += Utils.appendSpace("#H1:" + trend_h4_ma3, 10);
+                    trend_d1_h4_h1 += Utils.appendSpace("#H1:" + trend_h1_ma3, 10);
                 } else {
                     type += "(H1):S,";
-                    trend_h4_h1 += Utils.appendSpace("=H1:" + trend_h4_ma3, 10);
+                    trend_d1_h4_h1 += Utils.appendSpace("=H1:" + trend_h1_ma3, 10);
                 }
             }
-            type += Utils.getChartName(entity) + (Objects.equals(Utils.TREND_LONG, trend_ma68) ? ":B." : ":S.");
+            type += Utils.getChartName(entity) + (Objects.equals(Utils.TREND_LONG, switch_trend) ? ":B" : ":S");
             type = type.replace("(", "").replace(")", "");
 
-            List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
             List<BigDecimal> body_d1 = Utils.getOpenCloseCandle(list_d1.subList(1, 2));
             if (cur_price.compareTo(body_d1.get(0)) < 0) {
-                sub_note += "   Lower beard of pre day.";
+                sub_note += "   Lower beard.";
             }
             if (cur_price.compareTo(body_d1.get(1)) > 0) {
-                sub_note += "   Upper beard of pre day.";
+                sub_note += "   Upper beard.";
             }
 
-            String log = Utils.appendSpace(EPIC, 10);
+            boolean isSameTrendD1H4H1M15 = false;
+            if (Objects.equals(trend_d1_ma1, trend_h4_ma2) && Objects.equals(trend_h4_ma2, trend_h1_ma3)
+                    && Objects.equals(trend_h1_ma3, switch_trend)) {
+                isSameTrendD1H4H1M15 = true;
+            }
+
+            String log = Utils.appendSpace(EPIC + (isSameTrendD1H4H1M15 ? "  ***** " : ""), 15);
             log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":";
             log += Utils.appendSpace(note.substring(0, note.length() > 15 ? 15 : note.length()), 15);
-            log += trend_h4_h1 + "   ";
+            log += trend_d1_h4_h1 + "   ";
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
             log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, entity, entity);
             log += sub_note;
 
-            String EVENT_ID = "FX_15M_" + EPIC + CAPITAL_TIME_XX + switch_trend + Utils.getCurrentYyyyMmDd_HH();
+            String EVENT_ID = "FX_15M_" + EPIC + CAPITAL_TIME_XX + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
-                if (isSameTrendH) {
-                    result = Utils.appendSpace(EPIC + "(" + type + ")", 15);
-                }
 
                 Utils.logWritelnDraft(log);
+
+                if (isSameTrendD1H4H1M15) {
+                    result = Utils.appendSpace(EPIC + "(" + type + ")", 15);
+                }
 
                 fundingHistoryRepository
                         .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));

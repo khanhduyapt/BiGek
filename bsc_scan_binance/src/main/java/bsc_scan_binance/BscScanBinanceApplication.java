@@ -147,7 +147,7 @@ public class BscScanBinanceApplication {
                             for (String EPIC : Utils.EPICS_MAIN) {
                                 String item_15 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR);
                                 if (Utils.isNotBlank(item_15)) {
-                                    // result_scap += item_15 + ", ";
+                                    result_scap += item_15 + ", ";
                                 }
                             }
                             if (Utils.isNotBlank(result_scap)) {
