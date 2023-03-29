@@ -3347,7 +3347,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         int slowIndex = 20;
         if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
-            slowIndex = 50;
+            slowIndex = 35;
         }
 
         String switch_trend = Utils.switchTrendByMaXX(list, 3, slowIndex);
@@ -3466,11 +3466,10 @@ public class BinanceServiceImpl implements BinanceService {
             log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, entity, entity);
             log += sub_note;
 
-            String EVENT_ID = "FX_15M_" + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH();
-
+            String EVENT_ID = "FX_15M_" + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
-
-                if (Objects.equals(switch_trend, trend_d1_ma1) || Objects.equals(switch_trend, trend_h4_ma2)) {
+                if (isSameTrendD1H4H1M15 || Objects.equals(switch_trend, trend_d1_ma1)
+                        || Objects.equals(switch_trend, trend_h4_ma2)) {
                     Utils.logWritelnDraft(log);
                 }
 
