@@ -147,12 +147,13 @@ public class BscScanBinanceApplication {
                             String result_15 = "";
                             String result_05 = "";
                             for (String EPIC : Utils.EPICS_MAIN) {
-                                String item1 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                if (Utils.isNotBlank(item1)) {
-                                    if (Utils.isBlank(result_h1)) {
-                                        result_h1 += "(H1)";
+                                String item3 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
+                                if (Utils.isNotBlank(item3)) {
+                                    if (Utils.isBlank(result_05)) {
+                                        result_05 += "(05m)";
                                     }
-                                    result_h1 += item1 + ". ";
+
+                                    result_05 += item3 + ". ";
                                 }
 
                                 String item2 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
@@ -163,13 +164,12 @@ public class BscScanBinanceApplication {
                                     result_15 += item2 + ". ";
                                 }
 
-                                String item3 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
-                                if (Utils.isNotBlank(item3)) {
-                                    if (Utils.isBlank(result_05)) {
-                                        result_05 += "(05m)";
+                                String item1 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                if (Utils.isNotBlank(item1)) {
+                                    if (Utils.isBlank(result_h1)) {
+                                        result_h1 += "(H1)";
                                     }
-
-                                    result_05 += item3 + ". ";
+                                    result_h1 += item1 + ". ";
                                 }
 
                                 if (Utils.isNotBlank(item1 + item2 + item3)) {
