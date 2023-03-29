@@ -143,25 +143,69 @@ public class BscScanBinanceApplication {
                                 Utils.logWritelnDraft("");
                             }
 
-                            String result_scap = "";
+                            String result_h1 = "";
                             for (String EPIC : Utils.EPICS_MAIN) {
-                                String item_15 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                if (Utils.isNotBlank(item_15)) {
-                                    result_scap += item_15 + ", ";
+                                String item = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                if (Utils.isNotBlank(item)) {
+                                    if (Utils.isBlank(result_h1)) {
+                                        result_h1 += "(H1)";
+                                    }
+                                    result_h1 += item + ", ";
                                 }
                             }
-                            if (Utils.isNotBlank(result_scap)) {
+                            if (Utils.isNotBlank(result_h1)) {
                                 Utils.logWritelnDraft("");
                             }
+
+                            String result_15 = "";
                             for (String EPIC : Utils.EPICS_MAIN) {
-                                String item_15 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
-                                if (Utils.isNotBlank(item_15)) {
-                                    result_scap += item_15 + ", ";
+                                String item = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+                                if (Utils.isNotBlank(item)) {
+                                    if (Utils.isBlank(result_15)) {
+                                        result_15 += "(15m)";
+                                    }
+                                    result_15 += item + ", ";
+                                }
+                            }
+                            if (Utils.isNotBlank(result_15)) {
+                                Utils.logWritelnDraft("");
+                            }
+
+                            String result_05 = "";
+                            for (String EPIC : Utils.EPICS_MAIN) {
+                                String item = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
+                                if (Utils.isNotBlank(item)) {
+                                    if (Utils.isBlank(result_05)) {
+                                        result_05 += "(05m)";
+                                    }
+
+                                    result_05 += item + ", ";
                                 }
                             }
 
-                            if (Utils.isNotBlank(result_scap)) {
-                                String EVENT_ID = "FX_H_" + result_scap.length() + Utils.getCurrentYyyyMmDd_HH();
+                            if (Utils.isNotBlank(result_h1 + result_15 + result_05)) {
+                                String EVENT_ID = "FX_H_" + (result_h1 + result_15 + result_05).length()
+                                        + Utils.getCurrentYyyyMmDd_HH();
+
+                                String result_scap = "";
+                                if (Utils.isNotBlank(result_h1)) {
+                                    result_scap += result_h1;
+                                }
+
+                                if (Utils.isNotBlank(result_15)) {
+                                    if (Utils.isNotBlank(result_scap)) {
+                                        result_scap += Utils.new_line_from_service;
+                                    }
+                                    result_scap += result_15;
+                                }
+
+                                if (Utils.isNotBlank(result_05)) {
+                                    if (Utils.isNotBlank(result_05)) {
+                                        result_scap += Utils.new_line_from_service;
+                                    }
+                                    result_scap += result_05;
+                                }
+
                                 binance_service.sendMsgPerHour(EVENT_ID, result_scap, true);
                             }
                         }

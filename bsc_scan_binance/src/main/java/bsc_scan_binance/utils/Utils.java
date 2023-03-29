@@ -117,6 +117,7 @@ public class Utils {
     public static String CST = "";
     public static String X_SECURITY_TOKEN = "";
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
+    public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
     public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_HOUR = "HOUR";
     public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
@@ -132,7 +133,8 @@ public class Utils {
     public static final long MINUTES_OF_D = 240;// 600;
     public static final long MINUTES_OF_4H = 60;
     public static final long MINUTES_OF_1H = 60;
-    public static final long MINUTES_OF_15M = 15;
+    public static final long MINUTES_OF_15M = 5;
+    public static final long MINUTES_OF_5M = 5;
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
@@ -145,14 +147,16 @@ public class Utils {
     // Main: "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD"
 
     // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", "AUS200", "JPY225", "XAGUSD",
-    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "US30", "NAS100", "SP500", "UK100",
-            "JPN225", "DAX40", "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
+    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "US30", "NAS100", "UK100", "DAX40",
+            "EURUSD", "USDJPY", "GBPUSD", "GBPJPY", "USDCHF", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK", "AUDJPY", "AUDNZD", "NZDJPY", "EURGBP",
     // "GBPAUD", ,
-    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("XAGUSD", "AUDCAD", "CADJPY", "EURAUD",
-            "EURCAD", "EURJPY", "EURNZD", "GBPCAD", "GBPJPY", "GBPNZD", "NZDCAD");
+    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList(
+    //"XAGUSD", "SP500", "JPN225", "USDCAD",
+    //"AUDUSD", "AUDCAD", "CADJPY", "EURAUD", "EURCAD", "EURJPY", "EURNZD", "GBPCAD", "GBPNZD", "NZDCAD"
+    );
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
@@ -596,6 +600,10 @@ public class Utils {
     }
 
     public static String getChartNameCapital_(String TIME) {
+
+        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
+            return "_5m_";
+        }
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
             return "_15m_";
         }
@@ -616,6 +624,9 @@ public class Utils {
     }
 
     public static String getChartNameCapital(String TIME) {
+        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
+            return "(05)";
+        }
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
             return "(15)";
         }
@@ -2088,7 +2099,9 @@ public class Utils {
 
             String symbol = dto.getId().toUpperCase();
 
-            if (symbol.contains(CAPITAL_TIME_MINUTE_15)) {
+            if (symbol.contains(CAPITAL_TIME_MINUTE_5)) {
+                result = "(05)";
+            } else if (symbol.contains(CAPITAL_TIME_MINUTE_15)) {
                 result = "(15)";
             } else if (symbol.contains(CAPITAL_TIME_HOUR_4)) {
                 result = "(H4)";
@@ -3204,6 +3217,7 @@ public class Utils {
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_15, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_5, "");
         EPIC = EPIC.replace("_", "");
 
         return EPIC;

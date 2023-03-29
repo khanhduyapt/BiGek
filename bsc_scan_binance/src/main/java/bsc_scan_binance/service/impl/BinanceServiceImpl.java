@@ -2602,6 +2602,8 @@ public class BinanceServiceImpl implements BinanceService {
             time = Utils.MINUTES_OF_1H;
         } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_15)) {
             time = Utils.MINUTES_OF_15M;
+        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_5)) {
+            time = Utils.MINUTES_OF_5M;
         }
 
         if (time <= elapsedMinutes) {
@@ -3414,7 +3416,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XX)) {
+            if (CAPITAL_TIME_XX.contains("MINUTE")) {
                 List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);
                 if (!CollectionUtils.isEmpty(list_h1)) {
                     trend_h1_ma3 = Utils.getTrendByMaXx(list_h1, 3);
@@ -3448,17 +3450,25 @@ public class BinanceServiceImpl implements BinanceService {
             String log = Utils.appendSpace(EPIC + (isSameTrendD1H4H1M15 ? "  ***** " : ""), 15);
             log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":";
             log += Utils.appendSpace(note.substring(0, note.length() > 15 ? 15 : note.length()), 15);
-            log += trend_d1_h4_h1 + "   ";
+            log += trend_d1_h4_h1 + "   "
+                    + Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(cur_price, 5)), 10);
             log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
             log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, entity, entity);
             log += sub_note;
 
-            if (Objects.equals(trend_d1_ma1, trend_h4_ma2)) {
+            String EVENT_ID = "FX_15M_" + EPIC + CAPITAL_TIME_XX + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
+            if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
+
                 Utils.logWritelnDraft(log);
+
+                if (isSameTrendD1H4H1M15) {
+                    result = Utils.appendSpace(EPIC + "(" + type + ")", 15);
+                }
+
+                fundingHistoryRepository
+                        .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
             }
-            if (isSameTrendD1H4H1M15) {
-                result = Utils.appendSpace(EPIC + "(" + type + ")", 15);
-            }
+
         }
         ordersRepository.save(entity);
 
