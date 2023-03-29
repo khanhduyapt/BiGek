@@ -3434,14 +3434,30 @@ public class BinanceServiceImpl implements BinanceService {
                 sub_note += "   Upper beard.";
             }
 
+            String star = "";
             boolean isSameTrendD1H4H1M15 = false;
-            if (Objects.equals(trend_d1_ma1, trend_h4_ma2) && Objects.equals(trend_h4_ma2, trend_h1_ma3)
-                    && Objects.equals(trend_h1_ma3, switch_trend)) {
-                isSameTrendD1H4H1M15 = true;
+            {
+                if (Objects.equals(trend_d1_ma1, trend_h4_ma2) && Objects.equals(trend_h4_ma2, trend_h1_ma3)
+                        && Objects.equals(trend_h1_ma3, switch_trend)) {
+                    star += "Eq";
+                    isSameTrendD1H4H1M15 = true;
+                }
+
+                String change_trend_h4 = Utils.switchTrendType(list_h4);
+                if (change_trend_h4.contains(switch_trend)) {
+                    star += "C4";
+                    isSameTrendD1H4H1M15 = true;
+                }
+
+                String change_trend_h1 = Utils.switchTrendType(list_h1);
+                if (change_trend_h1.contains(switch_trend)) {
+                    star += "C1";
+                    isSameTrendD1H4H1M15 = true;
+                }
             }
 
-            String log = Utils.appendSpace(EPIC + (isSameTrendD1H4H1M15 ? "  ***** " : ""), 15);
-            log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
+            String log = Utils.appendSpace(EPIC, 10) + Utils.appendSpace(star, 8);
+            log += " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
 
             log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":";
             log += Utils.appendSpace(note.substring(0, note.length() > 15 ? 15 : note.length()), 15);
@@ -3450,16 +3466,18 @@ public class BinanceServiceImpl implements BinanceService {
             log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, entity, entity);
             log += sub_note;
 
-            String EVENT_ID = "FX_15M_" + EPIC + switch_trend + (isSameTrendD1H4H1M15 ? "1" : "0")
-                    + Utils.getCurrentYyyyMmDd_HH();
+            String EVENT_ID = "FX_15M_" + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH();
 
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
-                Utils.logWritelnDraft(log);
+
+                if (Objects.equals(switch_trend, trend_d1_ma1) || Objects.equals(switch_trend, trend_h4_ma2)) {
+                    Utils.logWritelnDraft(log);
+                }
 
                 if (isSameTrendD1H4H1M15) {
-                    String type = "";
-                    type += (Objects.equals(Utils.TREND_LONG, switch_trend) ? "(B)" : "(S)");
-                    result = Utils.appendSpace(EPIC + type, 15);
+                    String type = (Objects.equals(Utils.TREND_LONG, switch_trend) ? "(B:" + star + ")"
+                            : "(S:" + star + ")");
+                    result = Utils.appendSpace(type + EPIC, 15);
                 }
 
                 fundingHistoryRepository
