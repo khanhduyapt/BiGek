@@ -3344,25 +3344,12 @@ public class BinanceServiceImpl implements BinanceService {
 
         String switch_trend = "";
         // if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX))
-        {
-            switch_trend = Utils.switchTrendByMaXX(list, 3, 20);
-            if (Utils.isNotBlank(switch_trend)) {
-                note += "Ma3_20:" + Utils.appendSpace(switch_trend, 15);
-            } else {
-                switch_trend = Utils.switchTrendByMaXX(list, 6, 20);
-                if (Utils.isNotBlank(switch_trend)) {
-                    note += "Ma6_20:" + Utils.appendSpace(switch_trend, 15);
-                } else {
-                    switch_trend = Utils.switchTrendByMaXX(list, 8, 20);
-                    if (Utils.isNotBlank(switch_trend)) {
-                        note += "Ma8_20:" + Utils.appendSpace(switch_trend, 15);
-                    }
-                }
-            }
+        switch_trend = Utils.switchTrendByMa5_8(list);
+        if (Utils.isNotBlank(switch_trend)) {
+            note += "Ma68:" + Utils.appendSpace(switch_trend, 15);
         }
 
         // TODO: scapForex
-
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
         String date_time = LocalDateTime.now().toString();
@@ -3374,20 +3361,19 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
 
-        Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-        if (Objects.nonNull(dto_h4)) {
-            sl_long = dto_h4.getStr_body_price().subtract(bread);
-            sl_shot = dto_h4.getEnd_body_price().add(bread);
-        }
-
         Orders entity = new Orders(orderId, date_time, trend_ma68, cur_price, low_high.get(0), low_high.get(1), sl_long,
                 sl_shot, note);
 
         String result = "";
         if (!Objects.equals(Utils.TREND_ADJUST, trend_ma68) && Utils.isNotBlank(switch_trend)) {
-            List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-            String trend_h4 = Utils.switchTrendByHekenAshi_0_1(list_h4);
-            if (!Objects.equals(switch_trend, trend_h4)) {
+            String compare_target = Utils.CAPITAL_TIME_HOUR_4;
+            if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XX)) {
+                compare_target = Utils.CAPITAL_TIME_HOUR;
+            }
+
+            List<BtcFutures> list_h4 = getCapitalData(EPIC, compare_target);
+            String trend_h4_ma3 = Utils.getTrendByMaXx(list_h4, 3);
+            if (!Objects.equals(switch_trend, trend_h4_ma3)) {
                 return "";
             }
 
