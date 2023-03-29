@@ -3345,17 +3345,22 @@ public class BinanceServiceImpl implements BinanceService {
         String note = "";
         String trend_ma68 = Utils.getTrendByMa5_8(list);
 
-        String switch_trend = Utils.switchTrendByMaXX(list, 3, 20);
+        int slowIndex = 20;
+        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
+            slowIndex = 50;
+        }
+
+        String switch_trend = Utils.switchTrendByMaXX(list, 3, slowIndex);
         if (Utils.isNotBlank(switch_trend)) {
-            note += "Ma3_20:" + Utils.appendSpace(switch_trend, 15);
+            note += "Ma3_" + slowIndex + ":" + Utils.appendSpace(switch_trend, 15);
         } else {
-            switch_trend = Utils.switchTrendByMaXX(list, 6, 20);
+            switch_trend = Utils.switchTrendByMaXX(list, 6, slowIndex);
             if (Utils.isNotBlank(switch_trend)) {
-                note += "Ma6_20:" + Utils.appendSpace(switch_trend, 15);
+                note += "Ma6_" + slowIndex + ":" + Utils.appendSpace(switch_trend, 15);
             } else {
-                switch_trend = Utils.switchTrendByMaXX(list, 8, 20);
+                switch_trend = Utils.switchTrendByMaXX(list, 8, slowIndex);
                 if (Utils.isNotBlank(switch_trend)) {
-                    note += "Ma8_20:" + Utils.appendSpace(switch_trend, 15);
+                    note += "Ma8_" + slowIndex + ":" + Utils.appendSpace(switch_trend, 15);
                 }
             }
         }
@@ -3438,11 +3443,12 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String log = Utils.appendSpace(EPIC + (isSameTrendD1H4H1M15 ? "  ***** " : ""), 15);
+            log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
+
             log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":";
             log += Utils.appendSpace(note.substring(0, note.length() > 15 ? 15 : note.length()), 15);
             log += trend_d1_h4_h1 + "   "
                     + Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(cur_price, 5)), 10);
-            log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66);
             log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, entity, entity);
             log += sub_note;
 
