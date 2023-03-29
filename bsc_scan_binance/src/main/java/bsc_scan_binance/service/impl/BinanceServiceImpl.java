@@ -3343,10 +3343,26 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_ma68 = Utils.getTrendByMa5_8(list);
 
         String switch_trend = "";
-        // if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX))
-        switch_trend = Utils.switchTrendByMa5_8(list);
-        if (Utils.isNotBlank(switch_trend)) {
-            note += "Ma68:" + Utils.appendSpace(switch_trend, 15);
+        if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
+            switch_trend = Utils.switchTrendByMa5_8(list);
+            if (Utils.isNotBlank(switch_trend)) {
+                note += "Ma68:" + Utils.appendSpace(switch_trend, 15);
+            }
+        } else {
+            switch_trend = Utils.switchTrendByMaXX(list, 3, 20);
+            if (Utils.isNotBlank(switch_trend)) {
+                note += "Ma3_20:" + Utils.appendSpace(switch_trend, 15);
+            } else {
+                switch_trend = Utils.switchTrendByMaXX(list, 6, 20);
+                if (Utils.isNotBlank(switch_trend)) {
+                    note += "Ma6_20:" + Utils.appendSpace(switch_trend, 15);
+                } else {
+                    switch_trend = Utils.switchTrendByMaXX(list, 8, 20);
+                    if (Utils.isNotBlank(switch_trend)) {
+                        note += "Ma8_20:" + Utils.appendSpace(switch_trend, 15);
+                    }
+                }
+            }
         }
 
         // TODO: scapForex
