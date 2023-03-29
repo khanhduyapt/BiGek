@@ -3071,7 +3071,7 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrendByMa610(List<BtcFutures> list) {
+    public static String switchTrendByMa10(List<BtcFutures> list) {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
@@ -3294,7 +3294,7 @@ public class Utils {
             trend += switch_trend_by_heken;
         }
 
-        String switch_trend_by_ma = Utils.switchTrendByMa610(list);
+        String switch_trend_by_ma = Utils.switchTrendByMa10(list);
         if (Utils.isNotBlank(switch_trend_by_ma)) {
             if (Utils.isNotBlank(trend)) {
                 trend += ", ";

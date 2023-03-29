@@ -3358,6 +3358,13 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
+        if (Utils.isBlank(switch_trend) && Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
+            switch_trend = Utils.switchTrendByMa10(list);
+            if (Utils.isNotBlank(switch_trend)) {
+                note += "Ma3_10:" + Utils.appendSpace(switch_trend, 15);
+            }
+        }
+
         // TODO: scapForex
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
