@@ -164,13 +164,13 @@ public class BscScanBinanceApplication {
                                     result_15 += item2 + ". ";
                                 }
 
-                                //String item1 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                //if (Utils.isNotBlank(item1)) {
-                                //    if (Utils.isBlank(result_h1)) {
-                                //        result_h1 += "(H1)";
-                                //    }
-                                //    result_h1 += item1 + ". ";
-                                //}
+                                String item1 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                if (Utils.isNotBlank(item1)) {
+                                    if (Utils.isBlank(result_h1)) {
+                                        result_h1 += "(H1)";
+                                    }
+                                    result_h1 += item1 + ". ";
+                                }
                             }
 
                             if (Utils.isNotBlank(result_h1 + result_15 + result_05)) {
@@ -179,27 +179,25 @@ public class BscScanBinanceApplication {
 
                                 String result_scap = "";
                                 if (Utils.isNotBlank(result_h1)) {
+                                    result_scap += Utils.new_line_from_service;
                                     result_scap += result_h1;
                                 }
 
                                 if (Utils.isNotBlank(result_15)) {
-                                    if (Utils.isNotBlank(result_scap)) {
+                                    if (Utils.isBlank(result_scap)) {
                                         result_scap += Utils.new_line_from_service;
                                     }
                                     result_scap += result_15;
                                 }
 
                                 if (Utils.isNotBlank(result_05)) {
-                                    if (Utils.isNotBlank(result_05)) {
+                                    if (Utils.isBlank(result_scap)) {
                                         result_scap += Utils.new_line_from_service;
                                     }
                                     result_scap += result_05;
                                 }
 
-                                // String msg = Utils.new_line_from_service + result_scap;
-                                // Utils.logWritelnDraft(msg.replace(Utils.new_line_from_service, "    "));
-                                binance_service.sendMsgPerHour(EVENT_ID, Utils.new_line_from_service + result_scap,
-                                        true);
+                                binance_service.sendMsgPerHour(EVENT_ID, result_scap, true);
                             }
 
                             if (Utils.isNotBlank(result_h4 + result_h1 + result_15 + result_05)) {

@@ -81,7 +81,7 @@ public class Utils {
 
     public static final String TREND_LONG = "BUY";
     public static final String TREND_SHORT = "SELL";
-    public static final String TREND_ADJUST = "ADJUST";
+    public static final String TREND_ADJUST = "ADJ";
 
     public static final String TEXT_5STAR = "(*5S*)";
     public static final String TEXT_DANGER = "(Danger)";
@@ -92,7 +92,7 @@ public class Utils {
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
-    public static final String TEXT_TREND_BY_MA = "(Ma6_10)";
+    public static final String TEXT_TREND_BY_MA = "(Ma36_58)";
 
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
@@ -147,7 +147,7 @@ public class Utils {
     // Main: "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD"
 
     // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", "AUS200", "JPY225", "XAGUSD",
-    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "US30", "NAS100", "UK100", "DAX40",
+    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "US30", "NAS100", "UK100", "DAX40",
             "EURUSD", "USDJPY", "GBPUSD", "GBPJPY", "USDCHF", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
@@ -3167,20 +3167,20 @@ public class Utils {
         return false;
     }
 
-    public static String getTrendByMa5_8(List<BtcFutures> list) {
-        if (CollectionUtils.isEmpty(list) || (list.size() < 10)) {
-            Utils.logWritelnDraft("(getTrendByMa)list.size() < 10");
+    public static String getTrendByMa3_6(List<BtcFutures> list) {
+        if (CollectionUtils.isEmpty(list) || (list.size() < 5)) {
+            Utils.logWritelnDraft("(getTrendByMa)list.size() < 5");
             return "";
         }
 
-        boolean trend_ma2 = isUptrendByMa(list, 5, 1, 2);
-        boolean trend_ma3 = isUptrendByMa(list, 8, 1, 2);
+        boolean trend_ma2 = isUptrendByMa(list, 3, 1, 2);
+        boolean trend_ma3 = isUptrendByMa(list, 6, 1, 2);
 
         if ((trend_ma2 == trend_ma3)) {
             return trend_ma2 ? TREND_LONG : TREND_SHORT;
         }
 
-        return TREND_ADJUST;
+        return TREND_ADJUST + (trend_ma3 ? "(B)" : "(S)");
     }
 
     public static String getTrendByMaXx(List<BtcFutures> list, int maIndex) {
@@ -3308,38 +3308,12 @@ public class Utils {
             trend += switch_trend_by_heken;
         }
 
-        String switch_trend_by_ma = Utils.switchTrendByMa10(list);
+        String switch_trend_by_ma = Utils.switchTrendByMa5_8(list);
         if (Utils.isNotBlank(switch_trend_by_ma)) {
             if (Utils.isNotBlank(trend)) {
                 trend += ", ";
             }
             trend += Utils.TEXT_TREND_BY_MA + switch_trend_by_ma + " ";
-        }
-
-        if (list.size() >= 20) {
-            String switch_trend_ma50 = Utils.switchTrendByMaXX(list, 3, 20);
-            if (Utils.isNotBlank(switch_trend_ma50)) {
-                if (Utils.isNotBlank(trend)) {
-                    trend += ", ";
-                }
-                trend += "(Ma3_20)" + switch_trend_ma50;
-            } else {
-                switch_trend_ma50 = Utils.switchTrendByMaXX(list, 6, 20);
-                if (Utils.isNotBlank(switch_trend_ma50)) {
-                    if (Utils.isNotBlank(trend)) {
-                        trend += ", ";
-                    }
-                    trend += "(Ma6_20)" + switch_trend_ma50;
-                } else {
-                    switch_trend_ma50 = Utils.switchTrendByMaXX(list, 8, 20);
-                    if (Utils.isNotBlank(switch_trend_ma50)) {
-                        if (Utils.isNotBlank(trend)) {
-                            trend += ", ";
-                        }
-                        trend += "(Ma8_20)" + switch_trend_ma50;
-                    }
-                }
-            }
         }
 
         return trend;
@@ -3394,6 +3368,24 @@ public class Utils {
 
         if (heken_list.get(1).isUptrend() && heken_list.get(0).isDown()) {
             return Utils.appendSpace(TEXT_TREND_HEKEN_SHORT, 10);
+        }
+
+        return "";
+    }
+
+    public static String getTrendByHekenAshi_0(List<BtcFutures> list) {
+        List<BtcFutures> heken_list = getHekenList(list);
+        if (CollectionUtils.isEmpty(heken_list)) {
+            return "";
+        }
+
+        // ---------------------------------------------------------------
+        if (heken_list.get(0).isUptrend()) {
+            return TREND_LONG;
+        }
+
+        if (heken_list.get(0).isDown()) {
+            return TREND_SHORT;
         }
 
         return "";
