@@ -3386,8 +3386,8 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_d1 = "";
             String trend_h4 = "";
             String trend_h1 = "";
-            String trend_type_h4 = "";
-            String trend_type_h1 = "";
+            String switch_trend_h4 = "";
+            String switch_trend_h1 = "";
 
             List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
             if (!CollectionUtils.isEmpty(list_d1)) {
@@ -3399,7 +3399,7 @@ public class BinanceServiceImpl implements BinanceService {
                     sub_note += "   Upper beard.";
                 }
 
-                trend_d1 = Utils.getTrendByMa3_6(list_d1);
+                trend_d1 = Utils.getTrendByMaXx(list_d1, 3);
                 if (!Objects.equals(switch_trend, trend_d1)) {
                     trend_d1_h4_h1 += Utils.appendSpace("#D1:" + trend_d1, 11);
                 } else {
@@ -3409,8 +3409,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
             if (!CollectionUtils.isEmpty(list_h4)) {
-                trend_h4 = Utils.getTrendByMa3_6(list_h4);
-                trend_type_h4 = Utils.switchTrendType(list_h4);
+                trend_h4 = Utils.getTrendByMaXx(list_h4, 3);
+                switch_trend_h4 = Utils.switchTrendByHekenAshi_0_1(list_h4);
 
                 if (!Objects.equals(switch_trend, trend_h4)) {
                     trend_d1_h4_h1 += Utils.appendSpace("#H4:" + trend_h4, 11);
@@ -3421,8 +3421,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);
             if (!CollectionUtils.isEmpty(list_h1)) {
-                trend_h1 = Utils.getTrendByMa3_6(list_h1);
-                trend_type_h1 = Utils.switchTrendType(list_h1);
+                trend_h1 = Utils.getTrendByMaXx(list_h1, 3);
+                switch_trend_h1 = Utils.switchTrendByHekenAshi_0_1(list_h1);
 
                 if (!Objects.equals(switch_trend, trend_h1)) {
                     trend_d1_h4_h1 += Utils.appendSpace("#H1:" + trend_h1, 11);
@@ -3431,29 +3431,30 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            boolean isSameTrendD1H4H1M15 = false;
+            boolean isSameTrend = false;
             {
-                if (Objects.equals(trend_h4, switch_trend) && Objects.equals(trend_h1, switch_trend)) {
-                    star = "Eh";
-                    isSameTrendD1H4H1M15 = true;
-
-                    if (Objects.equals(trend_d1, switch_trend)) {
-                        star = "Ed";
-                    }
+                if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX) && Objects.equals(trend_d1, switch_trend)
+                        && Objects.equals(trend_h4, switch_trend)) {
+                    star = "Eq";
+                    isSameTrend = true;
                 }
 
-                if (trend_type_h4.contains(switch_trend)) {
+                if (CAPITAL_TIME_XX.contains("MINUTE") && Objects.equals(trend_h4, switch_trend)
+                        && Objects.equals(trend_h1, switch_trend)) {
+                    star = "Eq";
+                    isSameTrend = true;
+                }
+
+                if (switch_trend_h4.contains(switch_trend)) {
                     star += "C4";
                 }
 
-                if (trend_type_h1.contains(switch_trend)) {
+                if (switch_trend_h1.contains(switch_trend)) {
                     star += "C1";
                 }
             }
 
-            if (Objects.equals(trend_h4, switch_trend)
-                    || (CAPITAL_TIME_XX.contains("MINUTE_") && Objects.equals(trend_h1, switch_trend))) {
-
+            if (isSameTrend) {
                 String type = (Objects.equals(Utils.TREND_LONG, switch_trend) ? "(B:" + Utils.appendSpace(star, 6) + ")"
                         : "(S:" + Utils.appendSpace(star, 6) + ")");
 
@@ -3471,9 +3472,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     Utils.logWritelnDraft(log);
 
-                    if (isSameTrendD1H4H1M15) {
-                        result = Utils.appendSpace(type + EPIC, 20);
-                    }
+                    result = Utils.appendSpace(type + EPIC, 20);
 
                     fundingHistoryRepository
                             .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));

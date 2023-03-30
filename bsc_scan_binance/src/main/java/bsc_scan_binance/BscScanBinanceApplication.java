@@ -93,15 +93,14 @@ public class BscScanBinanceApplication {
             binance_service.createReport();
             binance_service.deleteConnectTimeOutException();
             // ----------------------------------------
-            List<String> capital_list = new ArrayList<String>();
-            capital_list.addAll(Utils.EPICS_MAIN);
-            capital_list.addAll(Utils.EPICS_FOREXS_OTHERS);
+            List<String> CAPITAL_LIST = new ArrayList<String>();
+            CAPITAL_LIST.addAll(Utils.EPICS_MAIN);
+            CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_OTHERS);
 
             if (app_flag != Utils.const_app_flag_webonly) {
                 int total = Utils.coins.size();
                 int index_crypto = 0;
                 int round_crypto = 0;
-                int forex_size = capital_list.size();
                 Date start_time = Calendar.getInstance().getTime();
 
                 File log = new File(Utils.getForexLogFile());
@@ -111,17 +110,13 @@ public class BscScanBinanceApplication {
                 System.out.println(log.getAbsolutePath());
                 System.out.println();
 
-                // binance_service.initForexTrend("USDCAD", Utils.CAPITAL_TIME_DAY);
-                // binance_service.initForexTrend("USDCAD", Utils.CAPITAL_TIME_HOUR_4);
-
                 while (index_crypto < total) {
                     try {
                         checkKillLongShort(binance_service);
-                        // && Utils.isBusinessTime_6h_to_22h()
                         if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
                             binance_service.saveMt5Data();
 
-                            for (String EPIC : capital_list) {
+                            for (String EPIC : CAPITAL_LIST) {
                                 binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
                                 binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
                             }
@@ -129,7 +124,15 @@ public class BscScanBinanceApplication {
                             String result_h1 = "";
                             String result_15 = "";
                             String result_05 = "";
-                            for (String EPIC : Utils.EPICS_MAIN) {
+
+                            for (String EPIC : CAPITAL_LIST) {
+                                String item1 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                if (Utils.isNotBlank(item1)) {
+                                    if (Utils.isBlank(result_h1)) {
+                                        result_h1 += "(H1)";
+                                    }
+                                    result_h1 += item1 + ". ";
+                                }
 
                                 String item2 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
                                 if (Utils.isNotBlank(item2)) {
@@ -138,14 +141,6 @@ public class BscScanBinanceApplication {
                                     }
                                     result_15 += item2 + ". ";
                                 }
-
-                                String item1 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                //                                if (Utils.isNotBlank(item1)) {
-                                //                                    if (Utils.isBlank(result_h1)) {
-                                //                                        result_h1 += "(H1)";
-                                //                                    }
-                                //                                    result_h1 += item1 + ". ";
-                                //                                }
                             }
 
                             for (String EPIC : Utils.EPICS_5M) {
@@ -156,16 +151,6 @@ public class BscScanBinanceApplication {
                                     }
                                     result_05 += item3 + ". ";
                                 }
-                            }
-
-                            for (String EPIC : Utils.EPICS_FOREXS_OTHERS) {
-                                String item1 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                //                                if (Utils.isNotBlank(item1)) {
-                                //                                    if (Utils.isBlank(result_h1)) {
-                                //                                        result_h1 += "(H1)";
-                                //                                    }
-                                //                                    result_h1 += item1 + ". ";
-                                //                                }
                             }
 
                             if (Utils.isNotBlank(result_h1 + result_15 + result_05)) {
