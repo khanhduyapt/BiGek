@@ -153,7 +153,7 @@ public class Utils {
     // "EURNOK", "AUDJPY", "AUDNZD", "NZDJPY", "EURGBP",
     // "GBPAUD", ,"XAGUSD", "SP500", "JPN225",
     public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList(
-            "USDCAD", "AUDUSD", "AUDCAD", "CADJPY", "EURCAD", "EURJPY", "EURNZD", "GBPCAD", "NZDCAD");
+            "USDCAD", "CADJPY", "EURCAD", "EURJPY", "EURNZD", "GBPCAD", "NZDCAD");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",

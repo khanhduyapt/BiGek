@@ -3486,6 +3486,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             String log = Utils.appendSpace(EPIC, 10) + Utils.getChartName(entity) + type;
             log += "   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
+            log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, entity, entity);
+
             Utils.logWritelnDraft(log);
         }
 
