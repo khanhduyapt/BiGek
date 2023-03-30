@@ -3456,6 +3456,11 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
+            // switch_trend # H4->RESET
+            if (!Objects.equals(switch_trend, trend_h4_ma2)) {
+                isSameTrendD1H4H1M15 = false;
+            }
+
             if (isSameTrendD1H4H1M15) {
                 Orders dto_h4_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(entity);
 
@@ -3483,8 +3488,8 @@ public class BinanceServiceImpl implements BinanceService {
                             .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
                 }
             }
-
         }
+
         ordersRepository.save(entity);
 
         return result;

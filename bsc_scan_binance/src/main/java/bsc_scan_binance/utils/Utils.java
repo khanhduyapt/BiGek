@@ -3184,7 +3184,7 @@ public class Utils {
     }
 
     public static String getTrendByMaXx(List<BtcFutures> list, int maIndex) {
-        return isUptrendByMa(list, maIndex, 0, 1) ? TREND_LONG : TREND_SHORT;
+        return isUptrendByMa(list, maIndex, 1, 2) ? TREND_LONG : TREND_SHORT;
     }
 
     public static boolean isUptrendByMa(List<BtcFutures> list, int maIndex, int str, int end) {
