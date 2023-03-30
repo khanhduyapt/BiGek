@@ -3413,12 +3413,24 @@ public class BinanceServiceImpl implements BinanceService {
             log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(cur_price, 5)), 10);
             log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, entity, entity);
 
-            String EVENT_ID = "FX_15M_" + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
+            String EVENT_ID = "FX_05M_" + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
 
                 Utils.logWritelnDraft(log);
 
                 result = Utils.appendSpace(type + EPIC, 20);
+
+                fundingHistoryRepository
+                        .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
+            }
+        } else if (Utils.isNotBlank(switch_trend)) {
+            String type = (Objects.equals(Utils.TREND_LONG, switch_trend) ? "(B)" : "(S)");
+            String log = Utils.appendSpace(EPIC, 10) + Utils.getChartName(entity) + type;
+            log += "   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " " + note;
+
+            String EVENT_ID = "FX_05M_OTHERS" + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH();
+            if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
+                Utils.logWritelnDraft(log);
 
                 fundingHistoryRepository
                         .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));

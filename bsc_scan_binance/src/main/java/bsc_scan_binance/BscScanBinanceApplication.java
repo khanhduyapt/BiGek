@@ -113,6 +113,7 @@ public class BscScanBinanceApplication {
                 while (index_crypto < total) {
                     try {
                         checkKillLongShort(binance_service);
+
                         if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
                             binance_service.saveMt5Data();
 
@@ -132,19 +133,8 @@ public class BscScanBinanceApplication {
                                 Utils.logWritelnDraft("");
                             }
 
-                            String result_15 = "";
                             String result_05 = "";
                             for (String EPIC : CAPITAL_LIST) {
-                                String item2 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
-                                if (Utils.isNotBlank(item2)) {
-                                    if (Utils.isBlank(result_15)) {
-                                        result_15 += "(15m)";
-                                    }
-                                    result_15 += item2 + ". ";
-                                }
-                            }
-
-                            for (String EPIC : Utils.EPICS_5M) {
                                 String item3 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
                                 if (Utils.isNotBlank(item3)) {
                                     if (Utils.isBlank(result_05)) {
@@ -154,21 +144,14 @@ public class BscScanBinanceApplication {
                                 }
                             }
 
-                            if (Utils.isNotBlank(result_h4 + result_15 + result_05)) {
-                                String EVENT_ID = "FX_H_" + (result_h4 + result_15 + result_05).length()
+                            if (Utils.isNotBlank(result_h4 + result_05)) {
+                                String EVENT_ID = "FX_H_" + (result_h4 + result_05).length()
                                         + Utils.getCurrentYyyyMmDd_HH();
 
                                 String result_scap = "";
                                 if (Utils.isNotBlank(result_h4)) {
                                     result_scap += Utils.new_line_from_service;
                                     result_scap += result_h4;
-                                }
-
-                                if (Utils.isNotBlank(result_15)) {
-                                    if (Utils.isBlank(result_scap)) {
-                                        result_scap += Utils.new_line_from_service;
-                                    }
-                                    result_scap += result_15;
                                 }
 
                                 if (Utils.isNotBlank(result_05)) {
