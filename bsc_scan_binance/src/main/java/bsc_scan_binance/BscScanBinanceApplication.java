@@ -128,6 +128,9 @@ public class BscScanBinanceApplication {
                                     }
                                     result_h4 += item1 + ". ";
                                 }
+
+                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
                             }
                             if (Utils.isNotBlank(result_h4)) {
                                 Utils.logWritelnDraft("");
@@ -155,9 +158,7 @@ public class BscScanBinanceApplication {
                                 }
 
                                 if (Utils.isNotBlank(result_05)) {
-                                    if (Utils.isBlank(result_scap)) {
-                                        result_scap += Utils.new_line_from_service;
-                                    }
+                                    result_scap += Utils.new_line_from_service;
                                     result_scap += result_05;
                                 }
 
