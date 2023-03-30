@@ -3398,6 +3398,14 @@ public class BinanceServiceImpl implements BinanceService {
 
             List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
             if (!CollectionUtils.isEmpty(list_d1)) {
+                List<BigDecimal> body_d1 = Utils.getOpenCloseCandle(list_d1.subList(1, 2));
+                if (cur_price.compareTo(body_d1.get(0)) < 0) {
+                    sub_note += "   Lower beard.";
+                }
+                if (cur_price.compareTo(body_d1.get(1)) > 0) {
+                    sub_note += "   Upper beard.";
+                }
+
                 trend_d1_ma1 = Utils.getTrendByMaXx(list_d1, 1);
                 if (!Objects.equals(switch_trend, trend_d1_ma1)) {
                     trend_d1_h4_h1 += Utils.appendSpace("#D1:" + trend_d1_ma1, 10);
@@ -3424,14 +3432,6 @@ public class BinanceServiceImpl implements BinanceService {
                 } else {
                     trend_d1_h4_h1 += Utils.appendSpace("=H1:" + trend_h1_ma3, 10);
                 }
-            }
-
-            List<BigDecimal> body_d1 = Utils.getOpenCloseCandle(list_d1.subList(1, 2));
-            if (cur_price.compareTo(body_d1.get(0)) < 0) {
-                sub_note += "   Lower beard.";
-            }
-            if (cur_price.compareTo(body_d1.get(1)) > 0) {
-                sub_note += "   Upper beard.";
             }
 
             String star = "";
