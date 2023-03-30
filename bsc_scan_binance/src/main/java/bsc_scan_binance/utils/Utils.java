@@ -139,8 +139,7 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final List<String> EPICS_15M = Arrays.asList("XAUUSD", "XAGUSD", "US30", "NAS100", "SP500", "UK100",
-            "JPN225", "DAX40", "USDJPY");
+    public static final List<String> EPICS_5M = Arrays.asList("XAUUSD", "US30");
 
     // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
     // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
@@ -3178,7 +3177,7 @@ public class Utils {
             return trend_ma2 ? TREND_LONG : TREND_SHORT;
         }
 
-        return TREND_ADJUST + (trend_ma3 ? "(B)" : "(S)");
+        return TREND_ADJUST + (trend_ma2 ? "(B)" : "(S)");
     }
 
     public static String getTrendByMaXx(List<BtcFutures> list, int maIndex) {

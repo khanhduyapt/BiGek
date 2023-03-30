@@ -3336,6 +3336,7 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
+        String star = "";
         String note = "";
         String trend_ma68 = Utils.getTrendByMa3_6(list);
 
@@ -3430,7 +3431,6 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            String star = "";
             boolean isSameTrendD1H4H1M15 = false;
             {
                 if (Objects.equals(trend_h4, switch_trend) && Objects.equals(trend_h1, switch_trend)) {
@@ -3481,6 +3481,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
+        entity.setNote(star + entity.getNote());
         ordersRepository.save(entity);
 
         return result;
@@ -3518,18 +3519,18 @@ public class BinanceServiceImpl implements BinanceService {
                 List<BigDecimal> body = Utils.getOpenCloseCandle(list_d1);
                 BigDecimal cur_price = list.get(0).getCurrPrice();
                 if (cur_price.compareTo(body.get(0)) < 0) {
-                    note += "     " + Utils.TEXT_MIN_DAY_AREA;
+                    note += Utils.TEXT_MIN_DAY_AREA;
                 }
                 if (cur_price.compareTo(body.get(1)) > 0) {
-                    note += "     " + Utils.TEXT_MAX_DAY_AREA;
+                    note += Utils.TEXT_MAX_DAY_AREA;
                 }
 
                 List<BigDecimal> body_d1 = Utils.getOpenCloseCandle(list_d1.subList(1, 2));
                 if (cur_price.compareTo(body_d1.get(0)) < 0) {
-                    note += "   Lower beard.";
+                    note += " Lower beard.";
                 }
                 if (cur_price.compareTo(body_d1.get(1)) > 0) {
-                    note += "   Upper beard.";
+                    note += " Upper beard.";
                 }
             }
         }
