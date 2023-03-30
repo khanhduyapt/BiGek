@@ -121,38 +121,20 @@ public class BscScanBinanceApplication {
                         if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
                             binance_service.saveMt5Data();
 
-                            String result_d1 = "";
                             for (String EPIC : capital_list) {
-                                result_d1 += binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
-                            }
-                            if (Utils.isNotBlank(result_d1)) {
-                                Utils.logWritelnDraft("");
-                            }
-
-                            String result_h4 = "";
-                            for (String EPIC : capital_list) {
-                                String trend = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-                                if (Utils.isNotBlank(trend)) {
-                                    if (Utils.isNotBlank(result_h4)) {
-                                        result_h4 += ". ";
-                                    }
-                                    result_h4 += trend;
-                                }
-                            }
-                            if (Utils.isNotBlank(result_h4)) {
-                                Utils.logWritelnDraft("");
+                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
+                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
                             }
 
                             String result_h1 = "";
                             String result_15 = "";
                             String result_05 = "";
                             for (String EPIC : Utils.EPICS_MAIN) {
-                                String item3 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
+                                String item3 = ""; // binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
                                 if (Utils.isNotBlank(item3)) {
                                     if (Utils.isBlank(result_05)) {
                                         result_05 += "(05m)";
                                     }
-
                                     result_05 += item3 + ". ";
                                 }
 
@@ -165,12 +147,22 @@ public class BscScanBinanceApplication {
                                 }
 
                                 String item1 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                if (Utils.isNotBlank(item1)) {
-                                    if (Utils.isBlank(result_h1)) {
-                                        result_h1 += "(H1)";
-                                    }
-                                    result_h1 += item1 + ". ";
-                                }
+//                                if (Utils.isNotBlank(item1)) {
+//                                    if (Utils.isBlank(result_h1)) {
+//                                        result_h1 += "(H1)";
+//                                    }
+//                                    result_h1 += item1 + ". ";
+//                                }
+                            }
+
+                            for (String EPIC : Utils.EPICS_FOREXS_OTHERS) {
+                                String item1 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR);
+//                                if (Utils.isNotBlank(item1)) {
+//                                    if (Utils.isBlank(result_h1)) {
+//                                        result_h1 += "(H1)";
+//                                    }
+//                                    result_h1 += item1 + ". ";
+//                                }
                             }
 
                             if (Utils.isNotBlank(result_h1 + result_15 + result_05)) {
@@ -200,7 +192,7 @@ public class BscScanBinanceApplication {
                                 binance_service.sendMsgPerHour(EVENT_ID, result_scap, true);
                             }
 
-                            if (Utils.isNotBlank(result_h4 + result_h1 + result_15 + result_05)) {
+                            if (Utils.isNotBlank(result_h1 + result_15 + result_05)) {
                                 Utils.logWritelnDraft("");
                             }
                         }
