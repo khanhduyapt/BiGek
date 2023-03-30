@@ -3190,34 +3190,6 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.logWritelnReport("(BUY ) " + str_long_suggest.trim());
         Utils.logWritelnReport("(SELL) " + str_shot_suggest.trim());
 
-        /*
-         * List<Orders> list_d1 = ordersRepository.getD1List(); list_d1.add(null);
-         * list_d1.addAll(ordersRepository.getTrend_Reversal_H4today());
-         * list_d1.add(null);
-         * list_d1.addAll(ordersRepository.getTrend_Reversal_H1today()); if
-         * (!CollectionUtils.isEmpty(list_d1)) { Utils.logWritelnReport(""); for (Orders
-         * dto_d1 : list_d1) { if (Objects.isNull(dto_d1)) {
-         * Utils.writelnLogFooter_Forex(); Utils.writelnLogFooter_Forex();
-         * Utils.writelnLogFooter_Forex(); continue; }
-         *
-         * String EPIC = Utils.getEpicFromId(dto_d1.getId());
-         *
-         * String log = Utils.appendSpace( Utils.createLineForex_Header(dto_d1, dto_d1,
-         * Utils.appendSpace(dto_d1.getNote(), 10)).trim(), 110) + "   ";
-         *
-         * log += Utils.createLineForex_Body(dto_d1, dto_d1).trim();
-         *
-         * if (dto_d1.getNote().contains(Utils.TREND_LONG)) { log =
-         * log.replace("   (BUY )", "***(BUY )"); } if
-         * (dto_d1.getNote().contains(Utils.TREND_SHORT)) { log =
-         * log.replace("   (SELL)", "***(SELL)"); }
-         *
-         * Utils.logWritelnReport(log); } }
-         *
-         * Utils.writelnLogFooter_Forex(); Utils.writelnLogFooter_Forex();
-         * Utils.writelnLogFooter_Forex();
-         */
-
         // TODO createReport
         String msg_forx = "";
         String msg_futu = "";
@@ -3240,10 +3212,10 @@ public class BinanceServiceImpl implements BinanceService {
                 String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, trend_d1).trim(), 115)
                         + "   ";
                 log += Utils.createLineForex_Body(dto_h4, dto_h4).trim();
-                if (str_long_suggest.contains(EPIC)) {
+                if (str_long_suggest.contains(EPIC) || dto_h4.getNote().contains(Utils.TREND_LONG)) {
                     log = log.replace("   (BUY )", "***(BUY )");
                 }
-                if (str_shot_suggest.contains(EPIC)) {
+                if (str_shot_suggest.contains(EPIC) || dto_h4.getNote().contains(Utils.TREND_SHORT)) {
                     log = log.replace("   (SELL)", "***(SELL)");
                 }
 
@@ -3422,8 +3394,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
         } else if (Utils.isNotBlank(switch_trend)) {
             String type = (Objects.equals(Utils.TREND_LONG, switch_trend) ? "(B)" : "(S)");
-            String log = Utils.appendSpace(EPIC, 10) + Utils.getChartName(entity) + type;
-            log += "   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + "   " + note;
+            String log = Utils.appendSpace(EPIC, 10) + Utils.getChartName(entity) + Utils.appendSpace(type, 7);
+            log += "   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + "    " + note;
 
             String EVENT_ID = "FX_05M_OTHERS" + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
