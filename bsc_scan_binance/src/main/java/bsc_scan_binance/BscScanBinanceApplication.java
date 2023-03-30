@@ -116,24 +116,25 @@ public class BscScanBinanceApplication {
                         if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
                             binance_service.saveMt5Data();
 
+                            String result_h4 = "";
                             for (String EPIC : CAPITAL_LIST) {
                                 binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
-                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+
+                                String item1 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+                                if (Utils.isNotBlank(item1)) {
+                                    if (Utils.isBlank(result_h4)) {
+                                        result_h4 += "(H4)";
+                                    }
+                                    result_h4 += item1 + ". ";
+                                }
+                            }
+                            if (Utils.isNotBlank(result_h4)) {
+                                Utils.logWritelnDraft("");
                             }
 
-                            String result_h1 = "";
                             String result_15 = "";
                             String result_05 = "";
-
                             for (String EPIC : CAPITAL_LIST) {
-                                String item1 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                if (Utils.isNotBlank(item1)) {
-                                    if (Utils.isBlank(result_h1)) {
-                                        result_h1 += "(H1)";
-                                    }
-                                    result_h1 += item1 + ". ";
-                                }
-
                                 String item2 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
                                 if (Utils.isNotBlank(item2)) {
                                     if (Utils.isBlank(result_15)) {
@@ -153,14 +154,14 @@ public class BscScanBinanceApplication {
                                 }
                             }
 
-                            if (Utils.isNotBlank(result_h1 + result_15 + result_05)) {
-                                String EVENT_ID = "FX_H_" + (result_h1 + result_15 + result_05).length()
+                            if (Utils.isNotBlank(result_h4 + result_15 + result_05)) {
+                                String EVENT_ID = "FX_H_" + (result_h4 + result_15 + result_05).length()
                                         + Utils.getCurrentYyyyMmDd_HH();
 
                                 String result_scap = "";
-                                if (Utils.isNotBlank(result_h1)) {
+                                if (Utils.isNotBlank(result_h4)) {
                                     result_scap += Utils.new_line_from_service;
-                                    result_scap += result_h1;
+                                    result_scap += result_h4;
                                 }
 
                                 if (Utils.isNotBlank(result_15)) {
@@ -178,10 +179,6 @@ public class BscScanBinanceApplication {
                                 }
 
                                 binance_service.sendMsgPerHour(EVENT_ID, result_scap, true);
-                            }
-
-                            if (Utils.isNotBlank(result_h1 + result_15 + result_05)) {
-                                Utils.logWritelnDraft("");
                             }
                         }
 

@@ -3338,7 +3338,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String star = "";
         String note = "";
-        String trend_ma68 = Utils.getTrendByMa3_6(list);
+        String trend_heken_ma6 = Utils.getTrendByHekenAshi_Ma(list);
 
         int slowIndex = 50;
         String switch_trend = Utils.switchTrendByMaXX(list, 3, slowIndex);
@@ -3348,11 +3348,6 @@ public class BinanceServiceImpl implements BinanceService {
             switch_trend = Utils.switchTrendByMaXX(list, 6, slowIndex);
             if (Utils.isNotBlank(switch_trend)) {
                 note += "Ma6_" + slowIndex + ":" + Utils.appendSpace(switch_trend, 15);
-            } else {
-                switch_trend = Utils.switchTrendByMaXX(list, 8, slowIndex);
-                if (Utils.isNotBlank(switch_trend)) {
-                    note += "Ma8_" + slowIndex + ":" + Utils.appendSpace(switch_trend, 15);
-                }
             }
         }
 
@@ -3368,115 +3363,65 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
 
+        Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+        String trend_d1 = "";
+        String trend_h4 = "";
+        String trend_d1_h4 = "";
+        if (Objects.nonNull(dto_d1)) {
+            trend_d1 = dto_d1.getTrend();
+            if (!Objects.equals(switch_trend, trend_d1)) {
+                trend_d1_h4 += Utils.appendSpace("#D1:" + trend_d1, 11);
+            } else {
+                trend_d1_h4 += Utils.appendSpace("=D1:" + trend_d1, 11);
+            }
+        }
         if (Objects.nonNull(dto_h4)) {
+            trend_h4 = dto_h4.getTrend();
+            if (!Objects.equals(switch_trend, trend_h4)) {
+                trend_d1_h4 += Utils.appendSpace("#H4:" + trend_h4, 11);
+            } else {
+                trend_d1_h4 += Utils.appendSpace("=H4:" + trend_h4, 11);
+            }
+
             BigDecimal max_bread = Utils.calcMaxBread(list);
             sl_long = dto_h4.getStr_body_price().subtract(max_bread);
             sl_shot = dto_h4.getEnd_body_price().add(max_bread);
         }
+        boolean isSameTrend = false;
+        if (Objects.equals(trend_h4, switch_trend)) {
+            star = "Eh4";
+            if (Objects.equals(trend_d1, switch_trend)) {
+                star = "Ed1";
+            }
 
-        Orders entity = new Orders(orderId, date_time, trend_ma68, cur_price, cur_price, cur_price, sl_long,
+            isSameTrend = true;
+        }
+
+        Orders entity = new Orders(orderId, date_time, trend_heken_ma6, cur_price, cur_price, cur_price, sl_long,
                 sl_shot, note);
 
         String result = "";
-        if (Utils.isNotBlank(switch_trend)) {
-            String sub_note = "";
-            String trend_d1_h4_h1 = "";
+        if (isSameTrend && Utils.isNotBlank(switch_trend) && Objects.equals(trend_heken_ma6, switch_trend)) {
+            String type = "(" + (Objects.equals(Utils.TREND_LONG, switch_trend) ? "B:" + star : "S:" + star) + ")";
 
-            String trend_d1 = "";
-            String trend_h4 = "";
-            String trend_h1 = "";
-            String switch_trend_h4 = "";
-            String switch_trend_h1 = "";
+            String log = Utils.appendSpace(EPIC, 10) + Utils.getChartName(entity) + type;
+            log += "   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
+            log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":";
+            log += Utils.appendSpace(note.substring(0, note.length() > 15 ? 15 : note.length()), 15);
+            log += trend_d1_h4 + "   ";
+            log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(cur_price, 5)), 10);
+            log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, entity, entity);
 
-            List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
-            if (!CollectionUtils.isEmpty(list_d1)) {
-                List<BigDecimal> body_d1 = Utils.getOpenCloseCandle(list_d1.subList(1, 2));
-                if (cur_price.compareTo(body_d1.get(0)) < 0) {
-                    sub_note += "   Lower beard.";
-                }
-                if (cur_price.compareTo(body_d1.get(1)) > 0) {
-                    sub_note += "   Upper beard.";
-                }
+            String EVENT_ID = "FX_15M_" + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
+            if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
 
-                trend_d1 = Utils.getTrendByMaXx(list_d1, 3);
-                if (!Objects.equals(switch_trend, trend_d1)) {
-                    trend_d1_h4_h1 += Utils.appendSpace("#D1:" + trend_d1, 11);
-                } else {
-                    trend_d1_h4_h1 += Utils.appendSpace("=D1:" + trend_d1, 11);
-                }
-            }
+                Utils.logWritelnDraft(log);
 
-            List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-            if (!CollectionUtils.isEmpty(list_h4)) {
-                trend_h4 = Utils.getTrendByMaXx(list_h4, 3);
-                switch_trend_h4 = Utils.switchTrendByHekenAshi_0_1(list_h4);
+                result = Utils.appendSpace(type + EPIC, 20);
 
-                if (!Objects.equals(switch_trend, trend_h4)) {
-                    trend_d1_h4_h1 += Utils.appendSpace("#H4:" + trend_h4, 11);
-                } else {
-                    trend_d1_h4_h1 += Utils.appendSpace("=H4:" + trend_h4, 11);
-                }
-            }
-
-            List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);
-            if (!CollectionUtils.isEmpty(list_h1)) {
-                trend_h1 = Utils.getTrendByMaXx(list_h1, 3);
-                switch_trend_h1 = Utils.switchTrendByHekenAshi_0_1(list_h1);
-
-                if (!Objects.equals(switch_trend, trend_h1)) {
-                    trend_d1_h4_h1 += Utils.appendSpace("#H1:" + trend_h1, 11);
-                } else {
-                    trend_d1_h4_h1 += Utils.appendSpace("=H1:" + trend_h1, 11);
-                }
-            }
-
-            boolean isSameTrend = false;
-            {
-                if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX) && Objects.equals(trend_d1, switch_trend)
-                        && Objects.equals(trend_h4, switch_trend)) {
-                    star = "Eq";
-                    isSameTrend = true;
-                }
-
-                if (CAPITAL_TIME_XX.contains("MINUTE") && Objects.equals(trend_h4, switch_trend)
-                        && Objects.equals(trend_h1, switch_trend)) {
-                    star = "Eq";
-                    isSameTrend = true;
-                }
-
-                if (switch_trend_h4.contains(switch_trend)) {
-                    star += "C4";
-                }
-
-                if (switch_trend_h1.contains(switch_trend)) {
-                    star += "C1";
-                }
-            }
-
-            if (isSameTrend) {
-                String type = (Objects.equals(Utils.TREND_LONG, switch_trend) ? "(B:" + Utils.appendSpace(star, 6) + ")"
-                        : "(S:" + Utils.appendSpace(star, 6) + ")");
-
-                String log = Utils.appendSpace(EPIC, 10) + Utils.getChartName(entity) + type;
-                log += "   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
-                log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":";
-                log += Utils.appendSpace(note.substring(0, note.length() > 15 ? 15 : note.length()), 15);
-                log += trend_d1_h4_h1 + "   "
-                        + Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(cur_price, 5)), 10);
-                log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, entity, entity);
-                log += sub_note;
-
-                String EVENT_ID = "FX_15M_" + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
-                if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
-
-                    Utils.logWritelnDraft(log);
-
-                    result = Utils.appendSpace(type + EPIC, 20);
-
-                    fundingHistoryRepository
-                            .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
-                }
+                fundingHistoryRepository
+                        .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
             }
         }
 
@@ -3502,39 +3447,8 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        String note = "";
-        String switch_ma35 = Utils.switchTrendByMaXX(list, 3, 5);
-        if (Utils.isNotBlank(switch_ma35)) {
-            note += Utils.appendSpace("Ma35:" + switch_ma35, 15);
-        }
-        String heken = Utils.switchTrendByHekenAshi(list);
-        if (Utils.isNotBlank(heken)) {
-            note += Utils.appendSpace(heken, 15);
-        }
-
-        if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX)) {
-            List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_DAY);
-            if (!CollectionUtils.isEmpty(list_d1)) {
-                List<BigDecimal> body = Utils.getOpenCloseCandle(list_d1);
-                BigDecimal cur_price = list.get(0).getCurrPrice();
-                if (cur_price.compareTo(body.get(0)) < 0) {
-                    note += Utils.TEXT_MIN_DAY_AREA;
-                }
-                if (cur_price.compareTo(body.get(1)) > 0) {
-                    note += Utils.TEXT_MAX_DAY_AREA;
-                }
-
-                List<BigDecimal> body_d1 = Utils.getOpenCloseCandle(list_d1.subList(1, 2));
-                if (cur_price.compareTo(body_d1.get(0)) < 0) {
-                    note += " Lower beard.";
-                }
-                if (cur_price.compareTo(body_d1.get(1)) > 0) {
-                    note += " Upper beard.";
-                }
-            }
-        }
-
-        String trend_ma3 = Utils.getTrendByMa3_6(list);
+        String trend = Utils.getTrendByHekenAshi_Ma(list);
+        String switch_trend = Utils.switchTrendByHekenAshi_0_1(list);
 
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
@@ -3549,11 +3463,21 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
 
-        Orders entity = new Orders(orderId, date_time, trend_ma3, list.get(0).getCurrPrice(), str_body_price,
-                end_body_price, sl_long, sl_shot, note);
+        Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), str_body_price,
+                end_body_price, sl_long, sl_shot, switch_trend);
         ordersRepository.save(entity);
 
-        return "";
+        String result = "";
+        if (Utils.isNotBlank(switch_trend) && Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_HOUR_4)) {
+            String type = (Objects.equals(Utils.TREND_LONG, switch_trend) ? "(B)" : "(S)");
+            result = Utils.appendSpace(type + EPIC, 20);
+
+            String log = Utils.appendSpace(EPIC, 10) + Utils.getChartName(entity) + type;
+            log += "   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
+            Utils.logWritelnDraft(log);
+        }
+
+        return result;
     }
 
 }
