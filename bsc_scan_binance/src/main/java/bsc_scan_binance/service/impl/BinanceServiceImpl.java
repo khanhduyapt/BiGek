@@ -3346,6 +3346,9 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_ma68 = Utils.getTrendByMa5_8(list);
 
         int slowIndex = 20;
+        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
+            slowIndex = 50;
+        }
 
         String switch_trend = Utils.switchTrendByMaXX(list, 3, slowIndex);
         if (Utils.isNotBlank(switch_trend)) {
@@ -3358,11 +3361,6 @@ public class BinanceServiceImpl implements BinanceService {
                 switch_trend = Utils.switchTrendByMaXX(list, 8, slowIndex);
                 if (Utils.isNotBlank(switch_trend)) {
                     note += "Ma8_" + slowIndex + ":" + Utils.appendSpace(switch_trend, 15);
-                } else {
-                    switch_trend = Utils.switchTrendByMaXX(list, 10, slowIndex);
-                    if (Utils.isNotBlank(switch_trend)) {
-                        note += "Ma10_" + slowIndex + ":" + Utils.appendSpace(switch_trend, 15);
-                    }
                 }
             }
         }
@@ -3461,8 +3459,11 @@ public class BinanceServiceImpl implements BinanceService {
             if (isSameTrendD1H4H1M15) {
                 Orders dto_h4_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(entity);
 
-                String log = Utils.appendSpace(EPIC, 10) + Utils.appendSpace(star, 8);
-                log += " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
+                String type = (Objects.equals(Utils.TREND_LONG, switch_trend) ? "(B:" + Utils.appendSpace(star, 6) + ")"
+                        : "(S:" + Utils.appendSpace(star, 6) + ")");
+
+                String log = Utils.appendSpace(EPIC, 10) + type;
+                log += "   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
                 log += Utils.appendSpace(Utils.getChartName(entity), 5) + ":";
                 log += Utils.appendSpace(note.substring(0, note.length() > 15 ? 15 : note.length()), 15);
                 log += trend_d1_h4_h1 + "   "
@@ -3475,9 +3476,6 @@ public class BinanceServiceImpl implements BinanceService {
                     Utils.logWritelnDraft(log);
 
                     if (star.contains("C")) {
-                        String type = (Objects.equals(Utils.TREND_LONG, switch_trend)
-                                ? "(B:" + Utils.appendSpace(star, 6) + ")"
-                                : "(S:" + Utils.appendSpace(star, 6) + ")");
                         result = Utils.appendSpace(type + EPIC, 20);
                     }
 
