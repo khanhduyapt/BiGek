@@ -3358,7 +3358,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         BigDecimal cur_price = list.get(0).getCurrPrice();
 
-        BigDecimal bread = Utils.calcBread(list);
+        BigDecimal bread = Utils.calcMaxBread(list);
         List<BigDecimal> low_high = Utils.getLowHighCandle(list);
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
@@ -3383,11 +3383,8 @@ public class BinanceServiceImpl implements BinanceService {
             } else {
                 trend_d1_h4 += Utils.appendSpace("=H4:" + trend_h4, 11);
             }
-
-            BigDecimal max_bread = Utils.calcMaxBread(list);
-            sl_long = dto_h4.getStr_body_price().subtract(max_bread);
-            sl_shot = dto_h4.getEnd_body_price().add(max_bread);
         }
+
         boolean isSameTrend = false;
         if (Objects.equals(trend_h4, switch_trend)) {
             star = "Eh4";
@@ -3426,7 +3423,7 @@ public class BinanceServiceImpl implements BinanceService {
         } else if (Utils.isNotBlank(switch_trend)) {
             String type = (Objects.equals(Utils.TREND_LONG, switch_trend) ? "(B)" : "(S)");
             String log = Utils.appendSpace(EPIC, 10) + Utils.getChartName(entity) + type;
-            log += "   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " " + note;
+            log += "   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + "   " + note;
 
             String EVENT_ID = "FX_05M_OTHERS" + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
