@@ -148,14 +148,16 @@ public class Utils {
     // Main: "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD"
 
     // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", "AUS200", "JPY225", "XAGUSD",
-    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "US30", "NAS100", "UK100", "DAX40",
-            "EURUSD", "USDJPY", "GBPUSD", "GBPJPY", "USDCHF", "NZDUSD");
+    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "US30", "NAS100", "EURUSD",
+            "USDJPY", "GBPUSD", "GBPJPY", "USDCHF", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK", "AUDJPY", "AUDNZD", "NZDJPY", "EURGBP",
     // "GBPAUD", ,"XAGUSD", "SP500", "JPN225",
-    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("USDCAD", "CADJPY", "EURCAD", "EURJPY",
-            "EURNZD", "GBPCAD", "NZDCAD");
+    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList(
+    // "UK100", "DAX40", "USDCAD", "CADJPY", "EURCAD", "EURJPY", "EURNZD", "GBPCAD",
+    // "NZDCAD"
+    );
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",

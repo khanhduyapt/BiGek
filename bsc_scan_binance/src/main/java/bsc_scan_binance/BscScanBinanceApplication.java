@@ -120,17 +120,16 @@ public class BscScanBinanceApplication {
                             String result_h4 = "";
                             for (String EPIC : CAPITAL_LIST) {
                                 binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
+                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
 
-                                String item1 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+                                String item1 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
                                 if (Utils.isNotBlank(item1)) {
                                     if (Utils.isBlank(result_h4)) {
-                                        result_h4 += "(H4)";
+                                        result_h4 += "(15)";
                                     }
                                     result_h4 += item1 + ". ";
                                 }
-
-                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
                             }
                             if (Utils.isNotBlank(result_h4)) {
                                 Utils.logWritelnDraft("");
