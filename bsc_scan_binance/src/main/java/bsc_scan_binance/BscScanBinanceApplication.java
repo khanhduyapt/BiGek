@@ -133,9 +133,13 @@ public class BscScanBinanceApplication {
                         }
 
                         // ---------------------------------------------------------
-                        String SYMBOL = Utils.coins.get(index_crypto);
-                        if (isReloadAfter(Utils.MINUTES_OF_1H, "CHECK_CRYPTO_" + SYMBOL)) {
+                        String SYMBOL = Utils.coins.get(index_crypto).toUpperCase();
+                        if (isReloadAfter(Utils.MINUTES_OF_15M, "CHECK_CRYPTO_" + SYMBOL)) {
                             // checkCrypto(binance_service, SYMBOL, index_crypto, total);
+
+                            if (Utils.isNotBlank(binance_service.sendMsgKillLongShort(SYMBOL))) {
+                                wait(SLEEP_MINISECONDS);
+                            }
                         }
 
                         // ---------------------------------------------------------
@@ -180,15 +184,15 @@ public class BscScanBinanceApplication {
     }
 
     private static void checkKillLongShort(BinanceService binance_service) {
-        if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("bitcoin", "BTC"))) {
+        if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("BTC"))) {
             wait(SLEEP_MINISECONDS);
         }
 
-        if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("ethereum", "ETH"))) {
+        if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("ETH"))) {
             wait(SLEEP_MINISECONDS);
         }
 
-        if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("binancecoin", "BNB"))) {
+        if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("BNB"))) {
             wait(SLEEP_MINISECONDS);
         }
     }
