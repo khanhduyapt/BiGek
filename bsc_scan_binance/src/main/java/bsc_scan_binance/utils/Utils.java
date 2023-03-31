@@ -2895,27 +2895,7 @@ public class Utils {
     }
 
     private static String checkXCutUpY(BigDecimal maX_1, BigDecimal maX_2, BigDecimal maY_1, BigDecimal maY_2) {
-        if ((maX_1.compareTo(maX_2) > 0) && (maX_1.compareTo(maY_1) > 0) && (maY_2.compareTo(maX_2) > 0)) {
-            return TREND_LONG;
-        }
-
-        return "";
-    }
-
-    public static String checkMaXCuttingUpY(List<BtcFutures> list, int maFast, int maSlow) {
-        if (list.size() < maSlow) {
-            return "";
-        }
-
-        int str = 1;
-        int end = 5;
-        BigDecimal ma3_1 = calcMA(list, maFast, str);
-        BigDecimal ma3_2 = calcMA(list, maFast, end);
-
-        BigDecimal ma50_1 = calcMA(list, maSlow, str);
-        BigDecimal ma50_2 = calcMA(list, maSlow, end);
-
-        if ((ma3_1.compareTo(ma3_2) > 0) && (ma3_1.compareTo(ma50_1) > 0) && (ma50_2.compareTo(ma3_2) > 0)) {
+        if ((maX_1.compareTo(maX_2) >= 0) && (maX_1.compareTo(maY_1) >= 0) && (maY_2.compareTo(maX_2) >= 0)) {
             return TREND_LONG;
         }
 
@@ -2923,7 +2903,7 @@ public class Utils {
     }
 
     private static String checkXCutDnY(BigDecimal maX_1, BigDecimal maX_2, BigDecimal maY_1, BigDecimal maY_2) {
-        if ((maX_1.compareTo(maX_2) < 0) && (maX_1.compareTo(maY_1) < 0) && (maY_2.compareTo(maX_2) < 0)) {
+        if ((maX_1.compareTo(maX_2) <= 0) && (maX_1.compareTo(maY_1) <= 0) && (maY_2.compareTo(maX_2) <= 0)) {
             return TREND_SHORT;
         }
         return "";
@@ -3312,22 +3292,42 @@ public class Utils {
             return "";
         }
 
-        BigDecimal ma2_0 = calcMA(list, 2, 0);
+        BigDecimal ma1_0 = calcMA(list, 1, 1);
+        BigDecimal ma1_3 = calcMA(list, 1, 3);
+
+        BigDecimal ma2_0 = calcMA(list, 2, 1);
         BigDecimal ma2_3 = calcMA(list, 2, 3);
 
-        BigDecimal ma3_0 = calcMA(list, 3, 0);
+        BigDecimal ma3_0 = calcMA(list, 3, 1);
         BigDecimal ma3_3 = calcMA(list, 3, 3);
 
-        BigDecimal ma4_0 = calcMA(list, 4, 0);
+        BigDecimal ma4_0 = calcMA(list, 4, 1);
         BigDecimal ma4_3 = calcMA(list, 4, 3);
 
-        BigDecimal ma5_0 = calcMA(list, 5, 0);
+        BigDecimal ma5_0 = calcMA(list, 5, 1);
         BigDecimal ma5_3 = calcMA(list, 5, 3);
 
-        BigDecimal ma6_0 = calcMA(list, 5, 0);
-        BigDecimal ma6_3 = calcMA(list, 5, 3);
+        BigDecimal ma6_0 = calcMA(list, 6, 1);
+        BigDecimal ma6_3 = calcMA(list, 6, 3);
 
         int count_long = 0;
+
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma1_0, ma1_3, ma2_0, ma2_3))) {
+            count_long += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma1_0, ma1_3, ma3_0, ma3_3))) {
+            count_long += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma1_0, ma1_3, ma4_0, ma4_3))) {
+            count_long += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma1_0, ma1_3, ma5_0, ma5_3))) {
+            count_long += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma1_0, ma1_3, ma6_0, ma6_3))) {
+            count_long += 1;
+        }
+
         if (Utils.isNotBlank(Utils.checkXCutUpY(ma2_0, ma2_3, ma3_0, ma3_3))) {
             count_long += 1;
         }
@@ -3365,6 +3365,23 @@ public class Utils {
         // -------------------------
 
         int count_shot = 0;
+
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma1_0, ma1_3, ma2_0, ma2_3))) {
+            count_shot += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma1_0, ma1_3, ma3_0, ma3_3))) {
+            count_shot += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma1_0, ma1_3, ma4_0, ma4_3))) {
+            count_shot += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma1_0, ma1_3, ma5_0, ma5_3))) {
+            count_shot += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma1_0, ma1_3, ma6_0, ma6_3))) {
+            count_shot += 1;
+        }
+
         if (Utils.isNotBlank(Utils.checkXCutDnY(ma2_0, ma2_3, ma3_0, ma3_3))) {
             count_shot += 1;
         }
@@ -3400,10 +3417,10 @@ public class Utils {
         }
         // -------------------------
 
-        if ((count_long > count_shot) && ((count_long - count_shot) > 1)) {
+        if ((count_long > count_shot) && ((count_long - count_shot) > 2)) {
             return TREND_LONG;
         }
-        if ((count_shot > count_long) && ((count_shot - count_long) > 1)) {
+        if ((count_shot > count_long) && ((count_shot - count_long) > 2)) {
             return TREND_SHORT;
         }
 
