@@ -3308,24 +3308,6 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        String trend_h4 = "";
-        String trend_h1 = "";
-        boolean hasSwitchTrend = false;
-        Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-        Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
-        if (Objects.nonNull(dto_h4)) {
-            trend_h4 = dto_h4.getTrend();
-            if (Utils.isNotBlank(dto_h4.getNote())) {
-                hasSwitchTrend = true;
-            }
-        }
-        if (Objects.nonNull(dto_h1)) {
-            trend_h1 = dto_h1.getTrend();
-            if (Utils.isNotBlank(dto_h1.getNote())) {
-                hasSwitchTrend = true;
-            }
-        }
-
         String curr_trend = Utils.getTrendByHekenAshi_Ma(list);
         String switch_trend = Utils.switchTrendByHekenAshi_3_to_6(list);
 
@@ -3341,8 +3323,24 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal sl_shot = low_high.get(1).add(bread);
 
         String note = "";
+
+        String trend_h4 = "";
+        String trend_h1 = "";
+        boolean hasSwitchTrend = false;
+        Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+        Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
+        if (Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1)) {
+            trend_h4 = dto_h4.getTrend();
+            trend_h1 = dto_h1.getTrend();
+
+            if (Utils.isNotBlank(dto_h4.getNote()) && Utils.isNotBlank(dto_h1.getNote())) {
+                hasSwitchTrend = true;
+            }
+        }
+
         boolean isSameTrend = false;
-        if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, curr_trend)) {
+        if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, curr_trend)
+                && Objects.equals(curr_trend, switch_trend)) {
             isSameTrend = true;
             note = "H4_H1";
         }
@@ -3352,13 +3350,8 @@ public class BinanceServiceImpl implements BinanceService {
         ordersRepository.save(entity);
 
         // TODO: scapForex
-        if (!hasSwitchTrend || !isSameTrend) {
-            return "";
-        }
-
         String result = "";
-        if (isSameTrend && Objects.equals(trend_h4, switch_trend)) {
-
+        if (isSameTrend && hasSwitchTrend) {
             String EVENT_ID = "FX_05M_" + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH_Blog30m();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
                 fundingHistoryRepository
