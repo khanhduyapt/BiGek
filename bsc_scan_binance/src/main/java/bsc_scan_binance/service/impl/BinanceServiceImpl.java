@@ -2925,12 +2925,10 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_h4 = "";
         String trend_h1 = "";
         String trend_15 = "";
-        String trend_05 = "";
         String switch_trend_d1 = "";
         String switch_trend_h4 = "";
         String switch_trend_h1 = "";
         String switch_trend_15 = "";
-        String switch_trend_05 = "";
 
         List<BtcFutures> list_d1 = Utils.loadData(symbol, Utils.CRYPTO_TIME_1D, 10);
         if (!CollectionUtils.isEmpty(list_d1)) {
@@ -2978,22 +2976,12 @@ public class BinanceServiceImpl implements BinanceService {
             switch_trend_15 = Utils.switchTrendByHekenAshi_3_to_6(list_15);
         }
 
-        List<BtcFutures> list_05 = Utils.loadData(symbol, Utils.CRYPTO_TIME_5m, 10);
-        if (!CollectionUtils.isEmpty(list_05)) {
-            trend_05 = Utils.getTrendByHekenAshi_Ma(list_05);
-            switch_trend_05 = Utils.switchTrendByHekenAshi_3_to_6(list_05);
-        }
-
         String switch_trend = "";
         if (Objects.equals(trend_h4, trend_h1) && switch_trend_h4.contains(trend_h4)
                 && switch_trend_h1.contains(trend_h1)) {
 
             if (Objects.equals(trend_h4, trend_15) && switch_trend_15.contains(trend_15)) {
                 switch_trend = trend_15;
-            }
-
-            if (Objects.equals(trend_h4, trend_05) && switch_trend_05.contains(trend_05)) {
-                switch_trend = trend_05;
             }
         }
 
