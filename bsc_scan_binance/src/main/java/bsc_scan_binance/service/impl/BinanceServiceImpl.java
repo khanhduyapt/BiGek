@@ -3435,7 +3435,7 @@ public class BinanceServiceImpl implements BinanceService {
                                 result_05 += ", ";
                             }
                             result_05 += Utils.appendSpace(type_05 + EPIC, 20);
-                            outputLog(EPIC, dto_05, dto_h4);
+                            outputLog(EPIC, type_05, dto_05, dto_h4);
                         }
                     }
                 }
@@ -3452,7 +3452,7 @@ public class BinanceServiceImpl implements BinanceService {
                             result_05 += ", ";
                         }
                         result_05 += Utils.appendSpace(type_05 + EPIC, 20);
-                        outputLog(EPIC, dto_05, dto_h4);
+                        outputLog(EPIC, type_05, dto_05, dto_h4);
                     }
                 }
 
@@ -3479,7 +3479,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
     }
 
-    private void outputLog(String EPIC, Orders dto_entry, Orders dto_sl) {
+    private void outputLog(String EPIC, String type, Orders dto_entry, Orders dto_sl) {
         String EVENT_ID = "FX_OUTPUT_LOG_" + Utils.getChartName(dto_entry) + EPIC + dto_entry.getTrend()
                 + Utils.getCurrentYyyyMmDdHHByChart(dto_entry.getId());
 
@@ -3487,7 +3487,6 @@ public class BinanceServiceImpl implements BinanceService {
             fundingHistoryRepository
                     .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
 
-            String type = Objects.equals(Utils.TREND_LONG, dto_entry.getTrend()) ? "(B)" : "(S)";
             String log = Utils.appendSpace(EPIC, 10) + Utils.getChartName(dto_entry) + type;
             log += "   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
             log += Utils.appendSpace(Utils.getChartName(dto_entry), 5) + ":";
