@@ -3008,7 +3008,7 @@ public class BinanceServiceImpl implements BinanceService {
                 msg = msg.replace("_kill_Short", "(Buy)").replace("_kill_Long", "(Sell)") + Utils.appendSpace(note, 10);
             }
 
-            String EVENT_ID = EVENT_PUMP + symbol + Utils.getCurrentYyyyMmDd_HH_Blog4h();
+            String EVENT_ID = EVENT_PUMP + symbol + Utils.getCurrentYyyyMmDd_HH();
             sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
 
             String url = Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70);
@@ -3420,6 +3420,7 @@ public class BinanceServiceImpl implements BinanceService {
                 trend_15 = dto_15.getTrend();
                 trend_05 = dto_05.getTrend();
 
+                //#1
                 if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
                         && Objects.equals(trend_15, trend_05)) {
 
@@ -3435,11 +3436,13 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
+                //#2
+                if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_15, trend_05)) {
                     if (Utils.isNotBlank(dto_h1.getNote()) && Utils.isNotBlank(dto_15.getNote())
                             && dto_05.getNote().contains(trend_h1)) {
 
-                        String type_05 = Objects.equals(Utils.TREND_LONG, dto_05.getTrend()) ? "(1_m:B)" : "(h_m:S)";
+                        String type_05 = Objects.equals(Utils.TREND_LONG, dto_05.getTrend()) ? "(1_m:B)" : "(1_m:S)";
                         if (Utils.isNotBlank(result_05)) {
                             result_05 += ", ";
                         }
@@ -3448,6 +3451,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
+                //#3
                 if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
                         && dto_h4.getNote().contains(Utils.TEXT_SAME_TREND_1_TO_6)
                         && dto_h1.getNote().contains(Utils.TEXT_SAME_TREND_1_TO_6)

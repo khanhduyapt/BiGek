@@ -3339,23 +3339,23 @@ public class Utils {
             return "";
         }
 
-        BigDecimal ma1_0 = calcMA(list, 1, 1);
-        BigDecimal ma1_3 = calcMA(list, 1, 3);
+        BigDecimal ma1_0 = calcMA(list, 1, 0);
+        BigDecimal ma1_3 = calcMA(list, 1, 2);
 
-        BigDecimal ma2_0 = calcMA(list, 2, 1);
-        BigDecimal ma2_3 = calcMA(list, 2, 3);
+        BigDecimal ma2_0 = calcMA(list, 2, 0);
+        BigDecimal ma2_3 = calcMA(list, 2, 2);
 
-        BigDecimal ma3_0 = calcMA(list, 3, 1);
-        BigDecimal ma3_3 = calcMA(list, 3, 3);
+        BigDecimal ma3_0 = calcMA(list, 3, 0);
+        BigDecimal ma3_3 = calcMA(list, 3, 2);
 
-        BigDecimal ma4_0 = calcMA(list, 4, 1);
-        BigDecimal ma4_3 = calcMA(list, 4, 3);
+        BigDecimal ma4_0 = calcMA(list, 4, 0);
+        BigDecimal ma4_3 = calcMA(list, 4, 2);
 
-        BigDecimal ma5_0 = calcMA(list, 5, 1);
-        BigDecimal ma5_3 = calcMA(list, 5, 3);
+        BigDecimal ma5_0 = calcMA(list, 5, 0);
+        BigDecimal ma5_3 = calcMA(list, 5, 2);
 
-        BigDecimal ma6_0 = calcMA(list, 6, 1);
-        BigDecimal ma6_3 = calcMA(list, 6, 3);
+        BigDecimal ma6_0 = calcMA(list, 6, 0);
+        BigDecimal ma6_3 = calcMA(list, 6, 2);
 
         int count_long = 0;
 
@@ -3480,7 +3480,7 @@ public class Utils {
             return "";
         }
 
-        return Utils.isUptrendByMa(heken_list, 2, 0, 1) ? TREND_LONG : TREND_SHORT;
+        return Utils.isUptrendByMa(heken_list, 1, 0, 1) ? TREND_LONG : TREND_SHORT;
     }
 
     public static String createLineForex_Header(Orders dto_entry, Orders dto_sl, String trend_d1) {
