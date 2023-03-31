@@ -53,7 +53,7 @@ public interface BinanceService {
 
     public List<String> getSummaryCurrencies(String SOURCE, String CAPITAL_TIME_XXX);
 
-    public String scapForex(String EPIC, String CAPITAL_TIME_XXX);
+    public void scapForex();
 
     public void deleteConnectTimeOutException();
 

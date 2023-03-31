@@ -115,54 +115,20 @@ public class BscScanBinanceApplication {
                         checkKillLongShort(binance_service);
 
                         if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
-                            binance_service.saveMt5Data();
+                            if (isReloadAfter((Utils.MINUTES_OF_5M), "MT5_DATA")) {
+                                binance_service.saveMt5Data();
+                            }
 
-                            String result_h4 = "";
                             for (String EPIC : CAPITAL_LIST) {
                                 binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
                                 binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-                                String item1 = binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                if (Utils.isNotBlank(item1)) {
-                                    if (Utils.isBlank(result_h4)) {
-                                        result_h4 += "(H1)";
-                                    }
-                                    result_h4 += item1 + ". ";
-                                }
-                            }
-                            if (Utils.isNotBlank(result_h4)) {
-                                Utils.logWritelnDraft("");
+                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
                             }
 
-                            String result_05 = "";
-                            for (String EPIC : CAPITAL_LIST) {
-                                String item3 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
-                                if (Utils.isBlank(item3)) {
-                                    item3 = binance_service.scapForex(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
-                                }
-                                if (Utils.isNotBlank(item3)) {
-                                    if (Utils.isBlank(result_05)) {
-                                        result_05 += "(05m)";
-                                    }
-                                    result_05 += item3 + ". ";
-                                }
-                            }
-
-                            if (Utils.isNotBlank(result_h4 + result_05)) {
-                                String EVENT_ID = "FX_H_" + (result_h4 + result_05).length()
-                                        + Utils.getCurrentYyyyMmDd_HH();
-
-                                String result_scap = "";
-                                if (Utils.isNotBlank(result_h4)) {
-                                    result_scap += Utils.new_line_from_service;
-                                    result_scap += result_h4;
-                                }
-
-                                if (Utils.isNotBlank(result_05)) {
-                                    result_scap += Utils.new_line_from_service;
-                                    result_scap += result_05;
-                                }
-
-                                binance_service.sendMsgPerHour(EVENT_ID, result_scap, true);
+                            if (isReloadAfter((Utils.MINUTES_OF_5M), "MT5_SCAP_FOREX")) {
+                                binance_service.scapForex();
                             }
                         }
 
