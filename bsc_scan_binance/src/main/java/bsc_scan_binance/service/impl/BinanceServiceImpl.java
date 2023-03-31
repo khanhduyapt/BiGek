@@ -3375,6 +3375,10 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         String type_05 = Objects.equals(Utils.TREND_LONG, dto_05.getTrend()) ? "(B)" : "(S)";
+
+                        if (Utils.isNotBlank(result_05)) {
+                            result_05 += ", ";
+                        }
                         result_05 += Utils.appendSpace(type_05 + EPIC, 20);
                         outputLog(EPIC, dto_05, dto_h4);
                         count += 1;
@@ -3387,6 +3391,9 @@ public class BinanceServiceImpl implements BinanceService {
                         count += 1;
 
                         String type_15 = Objects.equals(Utils.TREND_LONG, dto_15.getTrend()) ? "(B)" : "(S)";
+                        if (Utils.isNotBlank(result_15)) {
+                            result_15 += ", ";
+                        }
                         result_15 += Utils.appendSpace(type_15 + EPIC, 20);
                         outputLog(EPIC, dto_15, dto_h4);
                         count += 1;
