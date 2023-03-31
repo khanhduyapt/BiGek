@@ -137,9 +137,9 @@ public class BscScanBinanceApplication {
                         if (isReloadAfter(Utils.MINUTES_OF_15M, "CHECK_CRYPTO_" + SYMBOL)) {
                             // checkCrypto(binance_service, SYMBOL, index_crypto, total);
 
-                            // if (Utils.isNotBlank(binance_service.sendMsgKillLongShort(SYMBOL))) {
-                            //     wait(SLEEP_MINISECONDS);
-                            // }
+                            if (Utils.isNotBlank(binance_service.sendMsgKillLongShort(SYMBOL))) {
+                                wait(SLEEP_MINISECONDS);
+                            }
                         }
 
                         // ---------------------------------------------------------
