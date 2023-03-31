@@ -3420,8 +3420,38 @@ public class BinanceServiceImpl implements BinanceService {
                 trend_15 = dto_15.getTrend();
                 trend_05 = dto_05.getTrend();
 
-                if (Objects.equals(trend_h4, trend_h1) && dto_h4.getNote().contains(Utils.TEXT_SAME_TREND_1_TO_6)
-                        && dto_h1.getNote().contains(Utils.TEXT_SAME_TREND_1_TO_6)) {
+                if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_15, trend_05)) {
+
+                    if (Utils.isNotBlank(dto_h4.getNote()) && Utils.isNotBlank(dto_h1.getNote())
+                            && Utils.isNotBlank(dto_15.getNote()) && Utils.isNotBlank(dto_05.getNote())) {
+
+                        String type_05 = Objects.equals(Utils.TREND_LONG, dto_05.getTrend()) ? "(h_m:B)" : "(h_m:S)";
+                        if (Utils.isNotBlank(result_05)) {
+                            result_05 += ", ";
+                        }
+                        result_05 += Utils.appendSpace(type_05 + EPIC, 20);
+                        outputLog(EPIC, type_05, dto_05, dto_h4);
+                    }
+                }
+
+                if (Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
+                    if (dto_h1.getNote().contains(trend_h1) && dto_15.getNote().contains(trend_15)
+                            && dto_05.getNote().contains(result_05)) {
+
+                        String type_05 = Objects.equals(Utils.TREND_LONG, dto_05.getTrend()) ? "(1_m:B)" : "(h_m:S)";
+                        if (Utils.isNotBlank(result_05)) {
+                            result_05 += ", ";
+                        }
+                        result_05 += Utils.appendSpace(type_05 + EPIC, 20);
+                        outputLog(EPIC, type_05, dto_05, dto_h4);
+                    }
+                }
+
+                if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
+                        && dto_h4.getNote().contains(Utils.TEXT_SAME_TREND_1_TO_6)
+                        && dto_h1.getNote().contains(Utils.TEXT_SAME_TREND_1_TO_6)
+                        && dto_15.getNote().contains(Utils.TEXT_SAME_TREND_1_TO_6)) {
 
                     List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
                     if (!CollectionUtils.isEmpty(list)) {
@@ -3436,22 +3466,6 @@ public class BinanceServiceImpl implements BinanceService {
                             result_05 += Utils.appendSpace(type_05 + EPIC, 20);
                             outputLog(EPIC, type_05, dto_05, dto_h4);
                         }
-                    }
-                }
-
-                if (Objects.equals(trend_h4, trend_h1) && Utils.isNotBlank(dto_h4.getNote())
-                        && Utils.isNotBlank(dto_h1.getNote())) {
-
-                    if (Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)
-                            && Utils.isNotBlank(dto_15.getNote())
-                            && Utils.isNotBlank(dto_05.getNote())) {
-
-                        String type_05 = Objects.equals(Utils.TREND_LONG, dto_05.getTrend()) ? "(h_m:B)" : "(h_m:S)";
-                        if (Utils.isNotBlank(result_05)) {
-                            result_05 += ", ";
-                        }
-                        result_05 += Utils.appendSpace(type_05 + EPIC, 20);
-                        outputLog(EPIC, type_05, dto_05, dto_h4);
                     }
                 }
 
@@ -3489,7 +3503,10 @@ public class BinanceServiceImpl implements BinanceService {
             String log = Utils.appendSpace(EPIC, 10) + Utils.getChartName(dto_entry) + type;
             log += "   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
             log += Utils.appendSpace(Utils.getChartName(dto_entry), 5) + ":";
-            log += Utils.appendSpace(dto_entry.getNote(), 25) + " ";
+            log += Utils.appendSpace(
+                    (dto_entry.getNote().length() > 30 ? dto_entry.getNote().substring(0, 30) : dto_entry.getNote()),
+                    35);
+
             log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 10);
             log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, dto_entry, dto_sl);
 
