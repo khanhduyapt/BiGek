@@ -2914,16 +2914,9 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        String note_d1 = "";
         String trend_d1 = "";
         String trend_h4 = "";
         String trend_15 = "";
-
-        List<BtcFutures> list_d1 = Utils.loadData(symbol, Utils.CRYPTO_TIME_1D, 10);
-        if (!CollectionUtils.isEmpty(list_d1)) {
-            trend_d1 = Utils.getTrendByHekenAshi_Ma(list_d1);
-            note_d1 = "(D:" + trend_d1 + ")";
-        }
 
         List<BtcFutures> list_h4 = Utils.loadData(symbol, Utils.CRYPTO_TIME_4H, 10);
         if (!CollectionUtils.isEmpty(list_h4)) {
@@ -2935,7 +2928,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        List<BtcFutures> list_h1 = Utils.loadData(symbol, Utils.CRYPTO_TIME_4H, 10);
+        List<BtcFutures> list_h1 = Utils.loadData(symbol, Utils.CRYPTO_TIME_1H, 10);
         if (!CollectionUtils.isEmpty(list_h1)) {
             String trend_h1 = Utils.getTrendByHekenAshi_Ma(list_h1);
             if (!Objects.equals(trend_h4, trend_h1)) {
@@ -2959,19 +2952,27 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        // --------------------DATABASE--------------------
-        String date_time = LocalDateTime.now().toString();
-        Orders entity = new Orders(orderId, date_time, trend_h4, list_15.get(0).getCurrPrice(), BigDecimal.ZERO,
-                BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, switch_trend);
-        ordersRepository.save(entity);
-        // --------------------MSG--------------------
-
         String msg = "";
         // TODO sendMsgKillLongShort
         if (Utils.isNotBlank(switch_trend) && Objects.equals(trend_h4, switch_trend)) {
+
+            // --------------------DATABASE--------------------
+            String date_time = LocalDateTime.now().toString();
+            Orders entity = new Orders(orderId, date_time, trend_h4, list_15.get(0).getCurrPrice(), BigDecimal.ZERO,
+                    BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, switch_trend);
+            ordersRepository.save(entity);
+            // --------------------MSG--------------------
+
             boolean isOnlyMe = true;
             if ("_BTC_ETH_BNB_".contains(symbol)) {
                 isOnlyMe = false;
+            }
+
+            String note_d1 = "";
+            List<BtcFutures> list_d1 = Utils.loadData(symbol, Utils.CRYPTO_TIME_1D, 10);
+            if (!CollectionUtils.isEmpty(list_d1)) {
+                trend_d1 = Utils.getTrendByHekenAshi_Ma(list_d1);
+                note_d1 = "(D:" + trend_d1 + ")";
             }
 
             String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_h4.get(0).getCurrPrice()), 5) + ")";
@@ -3411,16 +3412,8 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                if (!(trend_15 + dto_15.getNote()).contains(trend_h1)) {
-                    continue;
-                }
-
-                if (!(trend_05 + dto_05.getNote()).contains(trend_15)) {
-                    continue;
-                }
-
-                boolean find_next = true;
                 // #1
+                boolean find_next = true;
                 List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
                 if (!CollectionUtils.isEmpty(list)) {
                     String type_05 = "";
@@ -3450,9 +3443,14 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
+                if (!(trend_15 + dto_15.getNote()).contains(trend_h1)) {
+                    continue;
+                }
+
                 // #2
-                if (find_next && Utils.isNotBlank(dto_h4.getNote()) && Utils.isNotBlank(dto_h1.getNote())
-                        && Utils.isNotBlank(dto_15.getNote()) && Utils.isNotBlank(dto_05.getNote())) {
+                if (find_next && Objects.equals(trend_15, trend_05) && Utils.isNotBlank(dto_h4.getNote())
+                        && Utils.isNotBlank(dto_h1.getNote()) && Utils.isNotBlank(dto_15.getNote())
+                        && Utils.isNotBlank(dto_05.getNote())) {
 
                     String type_05 = Objects.equals(Utils.TREND_LONG, trend_05) ? "(h_m:B)" : "(h_m:S)";
                     if (Utils.isNotBlank(result_05)) {
