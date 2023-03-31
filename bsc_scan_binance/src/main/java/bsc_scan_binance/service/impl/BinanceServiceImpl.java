@@ -3425,10 +3425,9 @@ public class BinanceServiceImpl implements BinanceService {
 
                     List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
                     if (!CollectionUtils.isEmpty(list)) {
-                        String trend = Utils.getTrendByHekenAshi_Ma(list);
-                        String switch_trend_ma50 = Utils.switchTrendByHekenAshi_3_to_6(list);
+                        String switch_trend_3_6 = Utils.switchTrendByHekenAshi_3_to_6(list);
 
-                        if (Objects.equals(trend_h4, switch_trend_ma50) && Objects.equals(trend_h4, trend)) {
+                        if (Objects.equals(trend_h4, switch_trend_3_6)) {
                             String type_05 = Objects.equals(Utils.TREND_LONG, dto_05.getTrend()) ? "(1_6:B)"
                                     : "(1_6:S)";
                             if (Utils.isNotBlank(result_05)) {
