@@ -1280,24 +1280,23 @@ public class Utils {
         return Utils.convertDateToString("dd", calendar.getTime());
     }
 
-    public static String getCurrentYyyyMmDdHHByChart(List<BtcFutures> list) {
-        String symbol = list.get(0).getId();
-        String result = getCurrentYyyyMmDd_HH() + "_";
+    public static String getCurrentYyyyMmDdHHByChart(String id) {
+        String result = getCurrentYyyyMmDd_HH_Blog15m() + "_";
 
-        if (symbol.contains("_4h_")) {
+        if (id.contains("_4h_") || id.contains("HOUR_4")) {
             return getCurrentYyyyMmDd_HH_Blog4h() + "_";
         }
 
-        if (symbol.contains("_1d_")) {
+        if (id.contains("_1h_") || id.contains("HOUR")) {
+            return getCurrentYyyyMmDd_HH() + "_";
+        }
+
+        if (id.contains("_1d_") || id.contains("DAY")) {
             return getYyyyMmDdHH_ChangeDailyChart() + "_";
         }
 
-        if (symbol.contains("_3m_")) {
-            result += getCurrentMinute_Blog15minutes();
-        }
-
-        if (symbol.contains("_1m_")) {
-            result += getCurrentMinute_Blog5minutes();
+        if (id.contains("_15_") || id.contains("MINUTE_15")) {
+            return getCurrentYyyyMmDd_HH_Blog15m() + "_";
         }
 
         return result;
@@ -3359,7 +3358,12 @@ public class Utils {
             count_long += 1;
         }
 
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma5_0, ma5_3, ma6_0, ma6_3))) {
+            count_long += 1;
+        }
+
         // -------------------------
+
         int count_shot = 0;
         if (Utils.isNotBlank(Utils.checkXCutDnY(ma2_0, ma2_3, ma3_0, ma3_3))) {
             count_shot += 1;
@@ -3391,12 +3395,15 @@ public class Utils {
             count_shot += 1;
         }
 
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma5_0, ma5_3, ma6_0, ma6_3))) {
+            count_shot += 1;
+        }
         // -------------------------
 
-        if ((count_long > count_shot) && ((count_long - count_shot) > 2)) {
+        if ((count_long > count_shot) && ((count_long - count_shot) > 1)) {
             return TREND_LONG;
         }
-        if ((count_shot > count_long) && ((count_shot - count_long) > 2)) {
+        if ((count_shot > count_long) && ((count_shot - count_long) > 1)) {
             return TREND_SHORT;
         }
 
@@ -3409,7 +3416,7 @@ public class Utils {
             return "";
         }
 
-        return Utils.isUptrendByMa(heken_list, 5, 0, 1) ? TREND_LONG : TREND_SHORT;
+        return Utils.isUptrendByMa(heken_list, 2, 0, 1) ? TREND_LONG : TREND_SHORT;
     }
 
     public static String createLineForex_Header(Orders dto_entry, Orders dto_sl, String trend_d1) {

@@ -3290,10 +3290,11 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initForexTrend(String EPIC, String CAPITAL_TIME_XX) {
-        // EPIC = "XAGUSD";
         if (required_update_bars_csv) {
             return "";
         }
+
+        //EPIC = "EURCAD"; //TODO initForexTrend
         if (!isReloadPrepareOrderTrend(EPIC, CAPITAL_TIME_XX)) {
             return "";
         }
@@ -3306,7 +3307,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend = Utils.getTrendByHekenAshi_Ma(list);
         String switch_trend = Utils.switchTrendByHekenAshi_3_to_6(list);
         String note = "";
-        if (Utils.isNotBlank(switch_trend)) {
+        if (Utils.isNotBlank(switch_trend) && Objects.equals(trend, switch_trend)) {
             note = Utils.TEXT_SWITCH_TREND_TO_ + switch_trend;
         }
 
@@ -3357,35 +3358,32 @@ public class BinanceServiceImpl implements BinanceService {
                 trend_h1 = dto_h1.getTrend();
                 trend_15 = dto_15.getTrend();
                 trend_05 = dto_05.getTrend();
-                if (Utils.isBlank(dto_h4.getNote()) || Utils.isBlank(dto_h1.getNote())) {
-                    continue;
-                }
 
-                boolean hasValue = false;
-                if (Objects.equals(trend_h4, trend_h1)) {
-                    String type = Objects.equals(Utils.TREND_LONG, dto_h1.getTrend()) ? "(B)" : "(S)";
+                if (Utils.isNotBlank(dto_h4.getNote()) && dto_h4.getNote().contains(trend_h4)) {
+                    String type = Objects.equals(Utils.TREND_LONG, dto_h4.getTrend()) ? "(B)" : "(S)";
                     result_h4 += Utils.appendSpace(type + EPIC, 20);
+                    outputLog(EPIC, dto_h4);
+                }
+
+                if (Objects.equals(trend_h4, trend_h1) && dto_h1.getNote().contains(trend_h1)) {
                     outputLog(EPIC, dto_h1);
-                    hasValue = true;
                 }
 
-                if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
-                    String type = Objects.equals(Utils.TREND_LONG, dto_15.getTrend()) ? "(B)" : "(S)";
-                    result_05 += Utils.appendSpace(type + EPIC, 20);
-                    outputLog(EPIC, dto_15);
-                    hasValue = true;
-                }
+                if (Objects.equals(trend_h4, trend_h1) && Utils.isNotBlank(dto_h4.getNote())
+                        && Utils.isNotBlank(dto_h1.getNote())) {
 
-                if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
-                        && Objects.equals(trend_15, trend_05)) {
-                    String type = Objects.equals(Utils.TREND_LONG, dto_05.getTrend()) ? "(B)" : "(S)";
-                    result_05 += Utils.appendSpace(type + EPIC, 20);
-                    outputLog(EPIC, dto_05);
-                    hasValue = true;
-                }
+                    if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
+                        String type = Objects.equals(Utils.TREND_LONG, dto_15.getTrend()) ? "(B)" : "(S)";
+                        result_05 += Utils.appendSpace(type + EPIC, 20);
+                        outputLog(EPIC, dto_15);
+                    }
 
-                if (hasValue) {
-                    Utils.logWritelnDraft("");
+                    if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
+                            && Objects.equals(trend_15, trend_05)) {
+                        String type = Objects.equals(Utils.TREND_LONG, dto_05.getTrend()) ? "(B)" : "(S)";
+                        result_05 += Utils.appendSpace(type + EPIC, 20);
+                        outputLog(EPIC, dto_05);
+                    }
                 }
             }
         }
@@ -3411,7 +3409,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     private void outputLog(String EPIC, Orders dto) {
         String EVENT_ID = "FX_" + Utils.getChartName(dto) + EPIC + dto.getTrend()
-                + Utils.getCurrentYyyyMmDd_HH();
+                + Utils.getCurrentYyyyMmDdHHByChart(dto.getId());
 
         if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
             fundingHistoryRepository
