@@ -3443,10 +3443,6 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (!(trend_15 + dto_15.getNote()).contains(trend_h1)) {
-                    continue;
-                }
-
                 // #2
                 if (find_next && Objects.equals(trend_15, trend_05) && Utils.isNotBlank(dto_h4.getNote())
                         && Utils.isNotBlank(dto_h1.getNote()) && Utils.isNotBlank(dto_15.getNote())
