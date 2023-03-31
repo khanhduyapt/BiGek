@@ -95,7 +95,7 @@ public class Utils {
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
     public static final String TEXT_TREND_BY_MA = "(Ma36_58)";
-
+    public static final String TEXT_SWITCH_TREND_TO_ = "switch_trend_to_";
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
     public static final String TEXT_TREND_HEKEN_SHORT = TEXT_TREND_HEKEN_ + TREND_SHORT;
@@ -3309,13 +3309,100 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrendByHekenAshi_Xx(List<BtcFutures> list, int fastIndex, int slowIndex) {
+    public static String switchTrendByHekenAshi_3_to_6(List<BtcFutures> list) {
         List<BtcFutures> heken_list = getHekenList(list);
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
         }
 
-        return switchTrendByMaXX(heken_list, fastIndex, slowIndex);
+        BigDecimal ma2_0 = calcMA(list, 2, 0);
+        BigDecimal ma2_3 = calcMA(list, 2, 3);
+
+        BigDecimal ma3_0 = calcMA(list, 3, 0);
+        BigDecimal ma3_3 = calcMA(list, 3, 3);
+
+        BigDecimal ma4_0 = calcMA(list, 4, 0);
+        BigDecimal ma4_3 = calcMA(list, 4, 3);
+
+        BigDecimal ma5_0 = calcMA(list, 5, 0);
+        BigDecimal ma5_3 = calcMA(list, 5, 3);
+
+        BigDecimal ma6_0 = calcMA(list, 5, 0);
+        BigDecimal ma6_3 = calcMA(list, 5, 3);
+
+        int count_long = 0;
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma2_0, ma2_3, ma3_0, ma3_3))) {
+            count_long += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma2_0, ma2_3, ma4_0, ma4_3))) {
+            count_long += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma2_0, ma2_3, ma5_0, ma5_3))) {
+            count_long += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma2_0, ma2_3, ma6_0, ma6_3))) {
+            count_long += 1;
+        }
+
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma3_0, ma3_3, ma4_0, ma4_3))) {
+            count_long += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma3_0, ma3_3, ma5_0, ma5_3))) {
+            count_long += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma3_0, ma3_3, ma6_0, ma6_3))) {
+            count_long += 1;
+        }
+
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma4_0, ma4_3, ma5_0, ma5_3))) {
+            count_long += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma4_0, ma4_3, ma6_0, ma6_3))) {
+            count_long += 1;
+        }
+
+        // -------------------------
+        int count_shot = 0;
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma2_0, ma2_3, ma3_0, ma3_3))) {
+            count_shot += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma2_0, ma2_3, ma4_0, ma4_3))) {
+            count_shot += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma2_0, ma2_3, ma5_0, ma5_3))) {
+            count_shot += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma2_0, ma2_3, ma6_0, ma6_3))) {
+            count_shot += 1;
+        }
+
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma3_0, ma3_3, ma4_0, ma4_3))) {
+            count_shot += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma3_0, ma3_3, ma5_0, ma5_3))) {
+            count_shot += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma3_0, ma3_3, ma6_0, ma6_3))) {
+            count_shot += 1;
+        }
+
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma4_0, ma4_3, ma5_0, ma5_3))) {
+            count_shot += 1;
+        }
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma4_0, ma4_3, ma6_0, ma6_3))) {
+            count_shot += 1;
+        }
+
+        // -------------------------
+
+        if ((count_long > count_shot) && ((count_long - count_shot) > 2)) {
+            return TREND_LONG;
+        }
+        if ((count_shot > count_long) && ((count_shot - count_long) > 2)) {
+            return TREND_SHORT;
+        }
+
+        return "";
     }
 
     public static String getTrendByHekenAshi_Ma(List<BtcFutures> list) {
