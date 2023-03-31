@@ -2932,6 +2932,22 @@ public class BinanceServiceImpl implements BinanceService {
         String switch_trend_15 = "";
         String switch_trend_05 = "";
 
+        List<BtcFutures> list_d1 = Utils.loadData(symbol, Utils.CRYPTO_TIME_1D, 10);
+        if (!CollectionUtils.isEmpty(list_d1)) {
+            trend_d1 = Utils.getTrendByHekenAshi_Ma(list_d1);
+            switch_trend_d1 = Utils.switchTrendByHekenAshi_3_to_6(list_d1);
+        }
+        if (switch_trend_d1.contains(trend_d1)) {
+            note = "(D:" + switch_trend_d1 + ")";
+        } else {
+            note = "(D:" + trend_d1 + ")";
+        }
+        if (!"_BTC_ETH_BNB_".contains(symbol)) {
+            if ((trend_d1 + switch_trend_d1).contains(Utils.TREND_SHORT)) {
+                return "NOTHING";
+            }
+        }
+
         List<BtcFutures> list_h4 = Utils.loadData(symbol, Utils.CRYPTO_TIME_4H, 10);
         if (!CollectionUtils.isEmpty(list_h4)) {
             trend_h4 = Utils.getTrendByHekenAshi_Ma(list_h4);
@@ -2968,17 +2984,6 @@ public class BinanceServiceImpl implements BinanceService {
             switch_trend_05 = Utils.switchTrendByHekenAshi_3_to_6(list_05);
         }
 
-        List<BtcFutures> list_d1 = Utils.loadData(symbol, Utils.CRYPTO_TIME_1D, 10);
-        if (!CollectionUtils.isEmpty(list_d1)) {
-            trend_d1 = Utils.getTrendByHekenAshi_Ma(list_d1);
-            switch_trend_d1 = Utils.switchTrendByHekenAshi_3_to_6(list_d1);
-        }
-        if (switch_trend_d1.contains(trend_d1)) {
-            note = "(D:" + switch_trend_d1 + ")";
-        } else {
-            note = "(D:" + trend_d1 + ")";
-        }
-
         String switch_trend = "";
         if (Objects.equals(trend_h4, trend_h1) && Utils.isNotBlank(switch_trend_h4)
                 && Utils.isNotBlank(switch_trend_h1)) {
@@ -2992,10 +2997,13 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        // TODO sendMsgKillLongShort
-
         String msg = "";
         boolean isOnlyMe = true;
+        if ("_BTC_ETH_BNB_".contains(symbol)) {
+            isOnlyMe = false;
+        }
+
+        // TODO sendMsgKillLongShort
         if (Utils.isNotBlank(switch_trend)) {
             String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_h4.get(0).getCurrPrice()), 5) + ")";
 
@@ -3012,11 +3020,8 @@ public class BinanceServiceImpl implements BinanceService {
                 msg = msg.replace("_kill_Short", "(Buy)").replace("_kill_Long", "(Sell)");
             }
 
-            //if ("_BTC_ETH_BNB_".contains(symbol))
-            {
-                String EVENT_ID = EVENT_PUMP + symbol + Utils.getCurrentYyyyMmDd_HH_Blog4h();
-                sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
-            }
+            String EVENT_ID = EVENT_PUMP + symbol + Utils.getCurrentYyyyMmDd_HH_Blog4h();
+            sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
 
             String url = Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70);
             Utils.logWritelnDraft(Utils.appendSpace(msg, 50) + " " + url);
