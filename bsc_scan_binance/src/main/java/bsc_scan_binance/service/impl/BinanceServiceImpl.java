@@ -3307,7 +3307,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend = Utils.getTrendByHekenAshi_Ma(list);
         String switch_trend = Utils.switchTrendByHekenAshi_3_to_6(list);
         String note = "";
-        if (Utils.isNotBlank(switch_trend) && Objects.equals(trend, switch_trend)) {
+        if (Utils.isNotBlank(switch_trend)) {
             note = Utils.TEXT_SWITCH_TREND_TO_ + switch_trend;
         }
 
@@ -3338,7 +3338,7 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        String result_h4 = "";
+        String result_15 = "";
         String result_05 = "";
         List<String> CAPITAL_LIST = new ArrayList<String>();
         CAPITAL_LIST.addAll(Utils.EPICS_MAIN);
@@ -3352,76 +3352,88 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_5).orElse(null);
-
+            int count = 0;
             if (Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1)) {
                 trend_h4 = dto_h4.getTrend();
                 trend_h1 = dto_h1.getTrend();
                 trend_15 = dto_15.getTrend();
                 trend_05 = dto_05.getTrend();
 
-                if (Utils.isNotBlank(dto_h4.getNote()) && dto_h4.getNote().contains(trend_h4)) {
-                    String type = Objects.equals(Utils.TREND_LONG, dto_h4.getTrend()) ? "(B)" : "(S)";
-                    result_h4 += Utils.appendSpace(type + EPIC, 20);
-                    outputLog(EPIC, dto_h4);
-                }
-
-                if (Objects.equals(trend_h4, trend_h1) && dto_h1.getNote().contains(trend_h1)) {
-                    outputLog(EPIC, dto_h1);
-                }
-
                 if (Objects.equals(trend_h4, trend_h1) && Utils.isNotBlank(dto_h4.getNote())
                         && Utils.isNotBlank(dto_h1.getNote())) {
 
-                    if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
-                        String type = Objects.equals(Utils.TREND_LONG, dto_15.getTrend()) ? "(B)" : "(S)";
-                        result_05 += Utils.appendSpace(type + EPIC, 20);
-                        outputLog(EPIC, dto_15);
-                    }
+                    if (Objects.equals(trend_h1, trend_05) && Utils.isNotBlank(dto_05.getNote())) {
+                        outputLog(EPIC, dto_h4, dto_h4);
+                        count += 1;
 
-                    if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
-                            && Objects.equals(trend_15, trend_05)) {
-                        String type = Objects.equals(Utils.TREND_LONG, dto_05.getTrend()) ? "(B)" : "(S)";
-                        result_05 += Utils.appendSpace(type + EPIC, 20);
-                        outputLog(EPIC, dto_05);
+                        outputLog(EPIC, dto_h1, dto_h4);
+                        count += 1;
+
+                        if (Objects.equals(trend_h1, trend_15) && Utils.isNotBlank(dto_15.getNote())) {
+                            outputLog(EPIC, dto_15, dto_h4);
+                            count += 1;
+                        }
+
+                        String type_05 = Objects.equals(Utils.TREND_LONG, dto_05.getTrend()) ? "(B)" : "(S)";
+                        result_05 += Utils.appendSpace(type_05 + EPIC, 20);
+                        outputLog(EPIC, dto_05, dto_h4);
+                        count += 1;
+
+                    } else if (Objects.equals(trend_h1, trend_15) && Utils.isNotBlank(dto_15.getNote())) {
+                        outputLog(EPIC, dto_h4, dto_h4);
+                        count += 1;
+
+                        outputLog(EPIC, dto_h1, dto_h4);
+                        count += 1;
+
+                        String type_15 = Objects.equals(Utils.TREND_LONG, dto_15.getTrend()) ? "(B)" : "(S)";
+                        result_15 += Utils.appendSpace(type_15 + EPIC, 20);
+                        outputLog(EPIC, dto_15, dto_h4);
+                        count += 1;
                     }
+                }
+
+                if (count > 1) {
+                    Utils.logWritelnDraft("");
                 }
             }
         }
 
-        if (Utils.isNotBlank(result_h4 + result_05)) {
-            String EVENT_ID = "FX_H_" + (result_h4 + result_05).length()
+        if (Utils.isNotBlank(result_15 + result_05)) {
+            String EVENT_ID = "FX_H_" + (result_15 + result_05).length()
                     + Utils.getCurrentYyyyMmDd_HH();
 
             String result_scap = "";
-            if (Utils.isNotBlank(result_h4)) {
+
+            if (Utils.isNotBlank(result_15)) {
                 result_scap += Utils.new_line_from_service;
-                result_scap += result_h4;
+                result_scap += "(15)" + result_15;
             }
 
             if (Utils.isNotBlank(result_05)) {
                 result_scap += Utils.new_line_from_service;
-                result_scap += result_05;
+                result_scap += "(05)" + result_05;
             }
 
             sendMsgPerHour(EVENT_ID, result_scap, true);
         }
     }
 
-    private void outputLog(String EPIC, Orders dto) {
-        String EVENT_ID = "FX_" + Utils.getChartName(dto) + EPIC + dto.getTrend()
-                + Utils.getCurrentYyyyMmDdHHByChart(dto.getId());
+    private void outputLog(String EPIC, Orders dto_entry, Orders dto_sl) {
+        String EVENT_ID = "FX_OUTPUT_LOG_" + Utils.getChartName(dto_entry) + EPIC + dto_entry.getTrend()
+                + Utils.getCurrentYyyyMmDdHHByChart(dto_entry.getId());
 
         if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
             fundingHistoryRepository
                     .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
 
-            String type = Objects.equals(Utils.TREND_LONG, dto.getTrend()) ? "(B)" : "(S)";
-            String log = Utils.appendSpace(EPIC, 10) + Utils.getChartName(dto) + type;
+            String type = Objects.equals(Utils.TREND_LONG, dto_entry.getTrend()) ? "(B)" : "(S)";
+            String log = Utils.appendSpace(EPIC, 10) + Utils.getChartName(dto_entry) + type;
             log += "   " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
-            log += Utils.appendSpace(Utils.getChartName(dto), 5) + ":";
-            log += Utils.appendSpace(dto.getNote(), 25);
-            log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto.getCurrent_price(), 5)), 10);
-            log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, dto, dto);
+            log += Utils.appendSpace(Utils.getChartName(dto_entry), 5) + ":";
+            log += Utils.appendSpace(dto_entry.getNote(), 25);
+            log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 10);
+            log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, dto_entry, dto_sl);
 
             Utils.logWritelnDraft(log);
         }
