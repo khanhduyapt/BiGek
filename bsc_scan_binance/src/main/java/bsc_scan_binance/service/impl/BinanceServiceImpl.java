@@ -2985,8 +2985,8 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String switch_trend = "";
-        if (Objects.equals(trend_h4, trend_h1) && Utils.isNotBlank(switch_trend_h4)
-                && Utils.isNotBlank(switch_trend_h1)) {
+        if (Objects.equals(trend_h4, trend_h1) && switch_trend_h4.contains(trend_h4)
+                && switch_trend_h1.contains(trend_h1)) {
 
             if (Objects.equals(trend_h4, trend_15) && switch_trend_15.contains(trend_15)) {
                 switch_trend = trend_15;
@@ -3008,16 +3008,16 @@ public class BinanceServiceImpl implements BinanceService {
             String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_h4.get(0).getCurrPrice()), 5) + ")";
 
             if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
-                msg = " 💹 " + Utils.appendSpace(note, 10) + Utils.getChartName(list_h4) + symbol + "_kill_Short 💔 "
+                msg = " 💹 " + Utils.getChartName(list_h4) + symbol + "_kill_Short 💔 "
                         + str_price;
             }
             if (Objects.equals(Utils.TREND_SHORT, switch_trend)) {
-                msg = " 🔻 " + Utils.appendSpace(note, 10) + Utils.getChartName(list_h4) + symbol + "_kill_Long 💔 "
+                msg = " 🔻 " + Utils.getChartName(list_h4) + symbol + "_kill_Long 💔 "
                         + str_price;
             }
 
             if (isOnlyMe) {
-                msg = msg.replace("_kill_Short", "(Buy)").replace("_kill_Long", "(Sell)");
+                msg = msg.replace("_kill_Short", "(Buy)").replace("_kill_Long", "(Sell)") + Utils.appendSpace(note, 10);
             }
 
             String EVENT_ID = EVENT_PUMP + symbol + Utils.getCurrentYyyyMmDd_HH_Blog4h();
