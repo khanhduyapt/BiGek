@@ -3311,32 +3311,31 @@ public class Utils {
         BigDecimal ma6_1 = calcMA(list, 6, 0);
         BigDecimal ma6_2 = calcMA(list, 6, 1);
 
-        if ((ma1_1.compareTo(ma1_2) > 0) && (ma2_1.compareTo(ma2_2) > 0) && (ma3_1.compareTo(ma3_2) > 0)
-                && (ma4_1.compareTo(ma4_2) > 0) && (ma5_1.compareTo(ma5_2) > 0) && (ma6_1.compareTo(ma6_2) > 0)) {
+        if ((ma1_1.compareTo(ma1_2) >= 0) && (ma2_1.compareTo(ma2_2) >= 0) && (ma3_1.compareTo(ma3_2) >= 0)
+                && (ma4_1.compareTo(ma4_2) >= 0) && (ma5_1.compareTo(ma5_2) >= 0) && (ma6_1.compareTo(ma6_2) >= 0)) {
 
-            if ((ma1_1.compareTo(ma2_1) > 0) && (ma2_1.compareTo(ma3_1) > 0) && (ma3_1.compareTo(ma4_1) > 0)
-                    && (ma4_1.compareTo(ma5_1) > 0) && (ma5_1.compareTo(ma6_1) > 0)) {
+            if ((ma1_1.compareTo(ma2_1) >= 0) && (ma2_1.compareTo(ma3_1) >= 0) && (ma3_1.compareTo(ma4_1) >= 0)
+                    && (ma4_1.compareTo(ma5_1) >= 0) && (ma5_1.compareTo(ma6_1) >= 0)) {
 
-                if ((ma1_2.compareTo(ma2_2) > 0) && (ma2_2.compareTo(ma3_2) > 0) && (ma3_2.compareTo(ma4_2) > 0)
-                        && (ma4_2.compareTo(ma5_2) > 0) && (ma5_2.compareTo(ma6_2) > 0)) {
+                if ((ma1_2.compareTo(ma2_2) >= 0) && (ma2_2.compareTo(ma3_2) >= 0) && (ma3_2.compareTo(ma4_2) >= 0)
+                        && (ma4_2.compareTo(ma5_2) >= 0) && (ma5_2.compareTo(ma6_2) >= 0)) {
                     return true;
                 }
             }
         }
 
-        if ((ma1_1.compareTo(ma1_2) < 0) && (ma2_1.compareTo(ma2_2) < 0) && (ma3_1.compareTo(ma3_2) < 0)
-                && (ma4_1.compareTo(ma4_2) < 0) && (ma5_1.compareTo(ma5_2) < 0) && (ma6_1.compareTo(ma6_2) < 0)) {
+        if ((ma1_1.compareTo(ma1_2) <= 0) && (ma2_1.compareTo(ma2_2) <= 0) && (ma3_1.compareTo(ma3_2) <= 0)
+                && (ma4_1.compareTo(ma4_2) <= 0) && (ma5_1.compareTo(ma5_2) <= 0) && (ma6_1.compareTo(ma6_2) <= 0)) {
 
-            if ((ma1_1.compareTo(ma2_1) < 0) && (ma2_1.compareTo(ma3_1) < 0) && (ma3_1.compareTo(ma4_1) < 0)
-                    && (ma4_1.compareTo(ma5_1) < 0) && (ma5_1.compareTo(ma6_1) < 0)) {
+            if ((ma1_1.compareTo(ma2_1) <= 0) && (ma2_1.compareTo(ma3_1) <= 0) && (ma3_1.compareTo(ma4_1) <= 0)
+                    && (ma4_1.compareTo(ma5_1) <= 0) && (ma5_1.compareTo(ma6_1) <= 0)) {
 
-                if ((ma1_2.compareTo(ma2_2) < 0) && (ma2_2.compareTo(ma3_2) < 0) && (ma3_2.compareTo(ma4_2) < 0)
-                        && (ma4_2.compareTo(ma5_2) < 0) && (ma5_2.compareTo(ma6_2) < 0)) {
+                if ((ma1_2.compareTo(ma2_2) <= 0) && (ma2_2.compareTo(ma3_2) <= 0) && (ma3_2.compareTo(ma4_2) <= 0)
+                        && (ma4_2.compareTo(ma5_2) <= 0) && (ma5_2.compareTo(ma6_2) <= 0)) {
                     return true;
                 }
             }
         }
-
         return false;
     }
 
