@@ -157,7 +157,7 @@ public class Utils {
     public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList(
             "UK100", "DAX40", "USDCAD", "CADJPY", "EURCAD", "EURJPY", "EURNZD", "GBPCAD", "NZDCAD");
 
-    public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("HNT", "AERGO", "ARK", "BIDR", "CREAM",
+    public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("AERGO", "ARK", "BIDR", "CREAM",
             "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT",
             "WABI", "IQ");
 
@@ -172,7 +172,7 @@ public class Utils {
             "DF", "DGB", "DIA", "DOCK", "DODO", "DOGE", "DOT", "DREP", "DUSK", "DYDX", "EGLD", "ELF", "ENJ", "ENS",
             "EOS", "EPX", "ERN", "ETC", "ETH", "FARM", "FET", "FIDA", "FIL", "FIO", "FIRO", "FIS", "FLM", "FLOW",
             "FLUX", "FOR", "FORTH", "FRONT", "FTM", "FTT", "FUN", "FXS", "GAL", "GALA", "GAS", "GFT", "GHST", "GLM",
-            "GLMR", "GMT", "GMX", "GNS", "GRT", "GTC", "HARD", "HBAR", "HFT", "HIFI", "HIGH", "HIVE", "HNT", "HOOK",
+            "GLMR", "GMT", "GMX", "GNS", "GRT", "GTC", "HARD", "HBAR", "HFT", "HIFI", "HIGH", "HIVE", "HOOK",
             "HOT", "ICP", "ICX", "IDEX", "ILV", "IMX", "INJ", "IOST", "IOTA", "IOTX", "IQ", "IRIS", "JASMY", "JOE",
             "JST", "JUV", "KAVA", "KDA", "KEY", "KLAY", "KMD", "KNC", "KP3R", "KSM", "LAZIO", "LEVER", "LINA", "LINK",
             "LIT", "LOKA", "LOOM", "LPT", "LQTY", "LRC", "LSK", "LTC", "LTO", "LUNA", "LUNC", "MAGIC", "MANA", "MASK",

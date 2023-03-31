@@ -2943,7 +2943,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (!"_BTC_ETH_BNB_".contains(symbol)) {
             if ((trend_h4 + switch_trend_h4).contains(Utils.TREND_SHORT)) {
-                //TODO:wating return "NOTHING";
+                return "NOTHING";
             }
         }
 
@@ -2974,6 +2974,8 @@ public class BinanceServiceImpl implements BinanceService {
             switch_trend_d1 = Utils.switchTrendByHekenAshi_3_to_6(list_d1);
         }
         if (switch_trend_d1.contains(trend_d1)) {
+            note = "(D:" + switch_trend_d1 + ")";
+        } else {
             note = "(D:" + trend_d1 + ")";
         }
 
@@ -2995,19 +2997,19 @@ public class BinanceServiceImpl implements BinanceService {
         String msg = "";
         boolean isOnlyMe = true;
         if (Utils.isNotBlank(switch_trend)) {
-            String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_15.get(0).getCurrPrice()), 5) + ")";
+            String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_h4.get(0).getCurrPrice()), 5) + ")";
 
             if (Objects.equals(Utils.TREND_LONG, switch_trend)) {
-                msg = " 💹 " + Utils.appendSpace(note, 10) + Utils.getChartName(list_15) + symbol + "_kill_Short 💔 "
+                msg = " 💹 " + Utils.appendSpace(note, 10) + Utils.getChartName(list_h4) + symbol + "_kill_Short 💔 "
                         + str_price;
             }
             if (Objects.equals(Utils.TREND_SHORT, switch_trend)) {
-                msg = " 🔻 " + Utils.appendSpace(note, 10) + Utils.getChartName(list_15) + symbol + "_kill_Long 💔 "
+                msg = " 🔻 " + Utils.appendSpace(note, 10) + Utils.getChartName(list_h4) + symbol + "_kill_Long 💔 "
                         + str_price;
             }
 
             if (isOnlyMe) {
-
+                msg = msg.replace("_kill_Short", "(Buy)").replace("_kill_Long", "(Sell)");
             }
 
             //if ("_BTC_ETH_BNB_".contains(symbol))
