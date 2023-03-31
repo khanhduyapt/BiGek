@@ -3293,34 +3293,48 @@ public class Utils {
             return false;
         }
 
-        BigDecimal ma1_1 = calcMA(list, 1, 1);
-        BigDecimal ma1_2 = calcMA(list, 1, 2);
+        BigDecimal ma1_1 = calcMA(list, 1, 0);
+        BigDecimal ma1_2 = calcMA(list, 1, 1);
 
-        BigDecimal ma2_1 = calcMA(list, 2, 1);
-        BigDecimal ma2_2 = calcMA(list, 2, 2);
+        BigDecimal ma2_1 = calcMA(list, 2, 0);
+        BigDecimal ma2_2 = calcMA(list, 2, 1);
 
-        BigDecimal ma3_1 = calcMA(list, 3, 1);
-        BigDecimal ma3_2 = calcMA(list, 3, 2);
+        BigDecimal ma3_1 = calcMA(list, 3, 0);
+        BigDecimal ma3_2 = calcMA(list, 3, 1);
 
-        BigDecimal ma4_1 = calcMA(list, 4, 1);
-        BigDecimal ma4_2 = calcMA(list, 4, 2);
+        BigDecimal ma4_1 = calcMA(list, 4, 0);
+        BigDecimal ma4_2 = calcMA(list, 4, 1);
 
-        BigDecimal ma5_1 = calcMA(list, 5, 1);
-        BigDecimal ma5_2 = calcMA(list, 5, 2);
+        BigDecimal ma5_1 = calcMA(list, 5, 0);
+        BigDecimal ma5_2 = calcMA(list, 5, 1);
 
-        BigDecimal ma6_1 = calcMA(list, 6, 1);
-        BigDecimal ma6_2 = calcMA(list, 6, 2);
+        BigDecimal ma6_1 = calcMA(list, 6, 0);
+        BigDecimal ma6_2 = calcMA(list, 6, 1);
 
         if ((ma1_1.compareTo(ma1_2) > 0) && (ma2_1.compareTo(ma2_2) > 0) && (ma3_1.compareTo(ma3_2) > 0)
-                && (ma4_1.compareTo(ma4_2) > 0) && (ma5_1.compareTo(ma5_2) > 0) && (ma6_1.compareTo(ma6_2) > 0)
-                && (ma1_1.compareTo(ma2_1) > 0)) {
-            return true;
+                && (ma4_1.compareTo(ma4_2) > 0) && (ma5_1.compareTo(ma5_2) > 0) && (ma6_1.compareTo(ma6_2) > 0)) {
+
+            if ((ma1_1.compareTo(ma2_1) > 0) && (ma2_1.compareTo(ma3_1) > 0) && (ma3_1.compareTo(ma4_1) > 0)
+                    && (ma4_1.compareTo(ma5_1) > 0) && (ma5_1.compareTo(ma6_1) > 0)) {
+
+                if ((ma1_2.compareTo(ma2_2) > 0) && (ma2_2.compareTo(ma3_2) > 0) && (ma3_2.compareTo(ma4_2) > 0)
+                        && (ma4_2.compareTo(ma5_2) > 0) && (ma5_2.compareTo(ma6_2) > 0)) {
+                    return true;
+                }
+            }
         }
 
         if ((ma1_1.compareTo(ma1_2) < 0) && (ma2_1.compareTo(ma2_2) < 0) && (ma3_1.compareTo(ma3_2) < 0)
-                && (ma4_1.compareTo(ma4_2) < 0) && (ma5_1.compareTo(ma5_2) < 0) && (ma6_1.compareTo(ma6_2) < 0)
-                && (ma1_1.compareTo(ma2_1) < 0)) {
-            return true;
+                && (ma4_1.compareTo(ma4_2) < 0) && (ma5_1.compareTo(ma5_2) < 0) && (ma6_1.compareTo(ma6_2) < 0)) {
+
+            if ((ma1_1.compareTo(ma2_1) < 0) && (ma2_1.compareTo(ma3_1) < 0) && (ma3_1.compareTo(ma4_1) < 0)
+                    && (ma4_1.compareTo(ma5_1) < 0) && (ma5_1.compareTo(ma6_1) < 0)) {
+
+                if ((ma1_2.compareTo(ma2_2) < 0) && (ma2_2.compareTo(ma3_2) < 0) && (ma3_2.compareTo(ma4_2) < 0)
+                        && (ma4_2.compareTo(ma5_2) < 0) && (ma5_2.compareTo(ma6_2) < 0)) {
+                    return true;
+                }
+            }
         }
 
         return false;
