@@ -3418,9 +3418,9 @@ public class BinanceServiceImpl implements BinanceService {
                 end_body_price, sl_long, sl_shot, note);
 
         String result = "";
-        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_HOUR) && Objects.equals(trend, switch_trend)) {
+        if (CAPITAL_TIME_XX.contains(Utils.CAPITAL_TIME_HOUR) && Objects.equals(trend, switch_trend)) {
 
-            String EVENT_ID = "FX_H1_" + EPIC + switch_trend + Utils.getCurrentYyyyMmDd_HH();
+            String EVENT_ID = "FX_H1_" + EPIC + CAPITAL_TIME_XX + switch_trend + Utils.getCurrentYyyyMmDd_HH();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
                 fundingHistoryRepository
                         .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
@@ -3431,7 +3431,9 @@ public class BinanceServiceImpl implements BinanceService {
                 log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, entity, entity);
                 Utils.logWritelnDraft(log);
 
-                result = Utils.appendSpace(type + EPIC, 20);
+                if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_HOUR)) {
+                    result = Utils.appendSpace(type + EPIC, 20);
+                }
 
                 fundingHistoryRepository
                         .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
