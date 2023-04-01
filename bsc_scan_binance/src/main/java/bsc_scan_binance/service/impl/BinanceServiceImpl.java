@@ -2947,6 +2947,7 @@ public class BinanceServiceImpl implements BinanceService {
             // TODO: return Utils.CRYPTO_TIME_15m;
         }
         // ----------------------------------------
+        String percent = "";
         if (!BTC_ETH_BNB.contains(SYMBOL) && !Utils.COINS_NEW_LISTING.contains(SYMBOL)) {
             List<BtcFutures> list_w1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1w, 10);
             if (CollectionUtils.isEmpty(list_w1)) {
@@ -2959,6 +2960,12 @@ public class BinanceServiceImpl implements BinanceService {
                 DAILY_DOWN_TREND_COINS += "_" + SYMBOL + "_";
                 return Utils.CRYPTO_TIME_4H;
             }
+
+            percent += "     10W: ";
+            List<BigDecimal> low_high_10w = Utils.getLowHighCandle(list_w1);
+            percent += Utils.appendSpace("Low:"
+                    + Utils.getPercentToEntry(list_w1.get(0).getCurrPrice(), low_high_10w.get(0), false) + "   "
+                    + "Hig:" + Utils.getPercentToEntry(list_w1.get(0).getCurrPrice(), low_high_10w.get(1), true), 45);
         }
 
         // ------------------------------------------------
@@ -2968,6 +2975,13 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnDraft(not_found_msg);
             return Utils.CRYPTO_TIME_4H;
         }
+
+        percent += "     10D: ";
+        List<BigDecimal> low_high_10d = Utils.getLowHighCandle(list_d1);
+        percent += Utils.appendSpace(
+                "Low:" + Utils.getPercentToEntry(list_d1.get(0).getCurrPrice(), low_high_10d.get(0), false) + "   "
+                        + "Hig:" + Utils.getPercentToEntry(list_d1.get(0).getCurrPrice(), low_high_10d.get(1), true),
+                45);
 
         String TREND_D1 = Utils.getTrendByHekenAshi(list_d1);
         if (!BTC_ETH_BNB.contains(SYMBOL) && Objects.equals(TREND_D1, Utils.TREND_SHORT)) {
@@ -3001,6 +3015,7 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(SYMBOL, 10) + Utils.appendSpace(TREND_D1, 10);
         log += Utils.appendSpace(str_price, 15) + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
         log += "(Btc:H4:" + (BTC_ALLOW_LONG_SHITCOIN ? "Up" : "Down") + ")";
+        log += percent;
 
         logMsgPerHour("CRYPTO_H4_" + SYMBOL, log);
         // ------------------------------------------------

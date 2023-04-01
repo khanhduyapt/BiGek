@@ -134,7 +134,7 @@ public class Utils {
     public static final String CRYPTO_TIME_1w = "1w";
 
     public static final Integer MINUTES_OF_D = 240;// 600;
-    public static final Integer MINUTES_OF_4H = 60;
+    public static final Integer MINUTES_OF_4H = 120;
     public static final Integer MINUTES_OF_1H = 60;
     public static final Integer MINUTES_OF_15M = 15;
     public static final Integer MINUTES_OF_5M = 5;

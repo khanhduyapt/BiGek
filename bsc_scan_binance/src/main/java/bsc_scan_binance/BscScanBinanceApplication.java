@@ -27,7 +27,7 @@ public class BscScanBinanceApplication {
 
     public static String callFormBinance = "";
     public static String TAKER_TOKENS = "_";
-    public static int SLEEP_MINISECONDS = 1200; // Gecko=wait(6000);
+    public static int SLEEP_MINISECONDS = 1800; // Gecko=wait(6000);
     private static Hashtable<String, LocalTime> keys_dict = new Hashtable<String, LocalTime>();
     public static Hashtable<String, String> forex_naming_dict = new Hashtable<String, String>();
     public static Hashtable<String, Integer> watting_dict = new Hashtable<String, Integer>();
@@ -155,14 +155,15 @@ public class BscScanBinanceApplication {
                         long diff = curr_time.getTime() - start_time.getTime();
                         start_time = Calendar.getInstance().getTime();
 
-                        System.out.println("reload: " + Utils.getMmDD_TimeHHmm() + ", spend:"
-                                + TimeUnit.MILLISECONDS.toMinutes(diff) + " Minutes.");
+                        String msg = "round:" + round_crypto + ", reload: " + Utils.getMmDD_TimeHHmm() + ", spend:"
+                                + TimeUnit.MILLISECONDS.toMinutes(diff) + " Minutes.";
+                        System.out.println();
 
                         round_crypto += 1;
                         index_crypto = 0;
 
-                        System.out.println("round:" + round_crypto);
-                        Utils.logWritelnDraft("round:" + round_crypto);
+                        System.out.println(msg);
+                        Utils.logWritelnDraft(msg);
                     } else {
                         index_crypto += 1;
                     }
