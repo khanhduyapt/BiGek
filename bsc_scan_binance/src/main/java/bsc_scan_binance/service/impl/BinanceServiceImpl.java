@@ -3000,13 +3000,12 @@ public class BinanceServiceImpl implements BinanceService {
             return Utils.CRYPTO_TIME_5m;
         }
         // ------------------------------------------------
-        String msg = "";
         // TODO sendMsgKillLongShort
+        String msg = "";
         boolean isOnlyMe = true;
         if (BTC_ETH_BNB.contains(SYMBOL)) {
             isOnlyMe = false;
         }
-
         if (Objects.equals(Utils.TREND_LONG, TREND_D1)) {
             msg = " 💹 " + Utils.getChartName(list_h4) + SYMBOL + "_kill_Short 💔 " + str_price;
         }
@@ -3025,7 +3024,6 @@ public class BinanceServiceImpl implements BinanceService {
             } else if (BTC_ALLOW_LONG_SHITCOIN) {
                 sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
             }
-
             Utils.logWritelnDraft(log.replace("(H1)", "(15)"));
         }
 
