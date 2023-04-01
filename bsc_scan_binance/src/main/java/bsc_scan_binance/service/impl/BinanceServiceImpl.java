@@ -3027,7 +3027,7 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnDraft(log.replace("(H1)", "(15)"));
         }
 
-        return Utils.CRYPTO_TIME_5m;
+        return Utils.CRYPTO_TIME_1H;
     }
 
     @Override
