@@ -2963,9 +2963,10 @@ public class BinanceServiceImpl implements BinanceService {
 
             percent += "     10W: ";
             List<BigDecimal> low_high_10w = Utils.getLowHighCandle(list_w1);
-            percent += Utils.appendSpace("Low:"
-                    + Utils.getPercentToEntry(list_w1.get(0).getCurrPrice(), low_high_10w.get(0), false) + "   "
-                    + "Hig:" + Utils.getPercentToEntry(list_w1.get(0).getCurrPrice(), low_high_10w.get(1), true), 45);
+            percent += Utils.appendSpace(
+                    "Low:" + Utils.getPercentToEntry(list_w1.get(0).getCurrPrice(), low_high_10w.get(0), false), 22);
+            percent += Utils.appendSpace(
+                    "Hig:" + Utils.getPercentToEntry(list_w1.get(0).getCurrPrice(), low_high_10w.get(1), true), 22);
         }
 
         // ------------------------------------------------
@@ -2979,9 +2980,9 @@ public class BinanceServiceImpl implements BinanceService {
         percent += "     10D: ";
         List<BigDecimal> low_high_10d = Utils.getLowHighCandle(list_d1);
         percent += Utils.appendSpace(
-                "Low:" + Utils.getPercentToEntry(list_d1.get(0).getCurrPrice(), low_high_10d.get(0), false) + "   "
-                        + "Hig:" + Utils.getPercentToEntry(list_d1.get(0).getCurrPrice(), low_high_10d.get(1), true),
-                45);
+                "Low:" + Utils.getPercentToEntry(list_d1.get(0).getCurrPrice(), low_high_10d.get(0), false), 22);
+        percent += Utils.appendSpace(
+                "Hig:" + Utils.getPercentToEntry(list_d1.get(0).getCurrPrice(), low_high_10d.get(1), true), 22);
 
         String TREND_D1 = Utils.getTrendByHekenAshi(list_d1);
         if (!BTC_ETH_BNB.contains(SYMBOL) && Objects.equals(TREND_D1, Utils.TREND_SHORT)) {
