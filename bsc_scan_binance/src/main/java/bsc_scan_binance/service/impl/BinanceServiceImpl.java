@@ -2913,7 +2913,7 @@ public class BinanceServiceImpl implements BinanceService {
             return Utils.CRYPTO_TIME_4H;
         }
         if (!BTC_ETH_BNB.contains(SYMBOL) && !BTC_ALLOW_LONG_SHITCOIN) {
-            return Utils.CRYPTO_TIME_15m;
+            // TODO: return Utils.CRYPTO_TIME_15m;
         }
 
         // ----------------------------------------
@@ -2950,7 +2950,7 @@ public class BinanceServiceImpl implements BinanceService {
             DAILY_UP_TREND_COINS += "_" + SYMBOL + "_";
         }
         if (!Objects.equals("BTC", SYMBOL) && Objects.equals(Utils.TREND_LONG, TREND_D1) && !BTC_ALLOW_LONG_SHITCOIN) {
-            return Utils.CRYPTO_TIME_15m;
+            // TODO: return Utils.CRYPTO_TIME_15m;
         }
         // ------------------------------------------------
         List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 15);
@@ -3022,15 +3022,9 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String EVENT_ID = EVENT_PUMP + SYMBOL + Utils.getCurrentYyyyMmDd_HH();
-        if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
-            if (BTC_ETH_BNB.contains(SYMBOL)) {
-                sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
-            } else if (BTC_ALLOW_LONG_SHITCOIN) {
-                sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
-            }
-            Utils.logWritelnDraft(log.replace("(H1)", "(15)"));
-        }
+        sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
 
+        Utils.logWritelnDraft(log.replace("(H1)", "(15)"));
         return Utils.CRYPTO_TIME_15m;
     }
 
