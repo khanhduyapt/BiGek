@@ -188,8 +188,8 @@ public class Utils {
 //            "XMR", "XNO", "XRP", "XTZ", "XVG", "XVS", "YFI", "YFII", "YGG", "ZEC", "ZEN", "ZIL", "ZRX");
 
     //
-    public static final List<String> COINS_NEW_LISTING = Arrays.asList("RDNT", "ARB", "ID", "LQTY", "SYN", "GNS", "RPL",
-            "MAGIC", "HOOK", "HFT");
+    public static final List<String> COINS_NEW_LISTING = Arrays.asList("RDNT", "AMB", "ARB", "ID", "LQTY", "SYN", "GNS",
+            "RPL", "MAGIC", "HOOK", "HFT");
 
     // COINS_FUTURES
     public static final List<String> COINS = Arrays.asList("1INCH", "AAVE", "ACH", "ADA", "AGIX", "ALGO", "ALICE",
@@ -3351,6 +3351,10 @@ public class Utils {
     }
 
     public static String switchTrendByHekenAshi_3_to_6(List<BtcFutures> list) {
+        if (CollectionUtils.isEmpty(list)) {
+            return "";
+        }
+
         List<BtcFutures> heken_list = getHekenList(list);
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
@@ -3492,6 +3496,10 @@ public class Utils {
     }
 
     public static String getTrendByHekenAshi(List<BtcFutures> list) {
+        if (CollectionUtils.isEmpty(list)) {
+            return "";
+        }
+
         List<BtcFutures> heken_list = getHekenList(list);
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";

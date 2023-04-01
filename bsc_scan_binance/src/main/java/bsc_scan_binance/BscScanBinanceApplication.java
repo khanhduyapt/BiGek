@@ -134,7 +134,7 @@ public class BscScanBinanceApplication {
 
                         // ---------------------------------------------------------
                         String SYMBOL = Utils.COINS.get(index_crypto).toUpperCase();
-                        if (isReloadAfter(15, "CHECK_CRYPTO_" + SYMBOL)) {
+                        if (isReloadAfter(5, "CHECK_CRYPTO_" + SYMBOL)) {
                             binance_service.sendMsgKillLongShort(SYMBOL);
                         }
 
