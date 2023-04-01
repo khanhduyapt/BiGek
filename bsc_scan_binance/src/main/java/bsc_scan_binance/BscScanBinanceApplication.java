@@ -30,6 +30,7 @@ public class BscScanBinanceApplication {
     public static int SLEEP_MINISECONDS = 8000;
     private static Hashtable<String, LocalTime> keys_dict = new Hashtable<String, LocalTime>();
     public static Hashtable<String, String> forex_naming_dict = new Hashtable<String, String>();
+    public static Hashtable<String, Integer> watting_dict = new Hashtable<String, Integer>();
     public static String hostname = " ";
     public static ApplicationContext applicationContext;
     public static WandaBot wandaBot;
@@ -134,8 +135,9 @@ public class BscScanBinanceApplication {
 
                         // ---------------------------------------------------------
                         String SYMBOL = Utils.COINS.get(index_crypto).toUpperCase();
-                        if (isReloadAfter(5, "CHECK_CRYPTO_" + SYMBOL)) {
-                            binance_service.sendMsgKillLongShort(SYMBOL);
+                        if (isReloadAfter(getWattingTime(SYMBOL), "CHECK_CRYPTO_" + SYMBOL)) {
+                            String crypto_time = binance_service.sendMsgKillLongShort(SYMBOL);
+                            setWattingTime(SYMBOL, crypto_time);
                         }
 
                         // ---------------------------------------------------------
@@ -209,6 +211,38 @@ public class BscScanBinanceApplication {
         // wait(SLEEP_MINISECONDS);
         // }
         //
+    }
+
+    public static Integer getWattingTime(String SYMBOL) {
+        if (!watting_dict.containsKey(SYMBOL)) {
+            return Utils.MINUTES_OF_5M;
+        }
+
+        return watting_dict.get(SYMBOL);
+    }
+
+    public static void setWattingTime(String SYMBOL, String CRYPTO_TIME_xx) {
+        Integer time = Utils.MINUTES_OF_5M;
+        switch (CRYPTO_TIME_xx) {
+        case Utils.CRYPTO_TIME_5m:
+            time = Utils.MINUTES_OF_5M;
+            break;
+        case Utils.CRYPTO_TIME_15m:
+            time = Utils.MINUTES_OF_15M;
+            break;
+        case Utils.CRYPTO_TIME_1H:
+            time = Utils.MINUTES_OF_1H;
+            break;
+        case Utils.CRYPTO_TIME_4H:
+        case Utils.CRYPTO_TIME_1D:
+        case Utils.CRYPTO_TIME_1w:
+            time = Utils.MINUTES_OF_4H;
+            break;
+        default:
+            time = Utils.MINUTES_OF_5M;
+            break;
+        }
+        watting_dict.put(SYMBOL, time);
     }
 
     public static boolean isReloadAfter(long minutes, String geckoid_or_epic) {

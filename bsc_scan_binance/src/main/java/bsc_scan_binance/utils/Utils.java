@@ -96,7 +96,7 @@ public class Utils {
 
     public static final String TEXT_TREND_BY_MA = "(Ma36_58)";
     public static final String TEXT_SWITCH_TREND_TO_ = "switch_trend_to_";
-    public static final String TEXT_SAME_TREND_1_TO_6 = "_Same1To6_";
+    public static final String TEXT_SAME_TREND_1_TO_6 = "Same1To6_";
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
     public static final String TEXT_TREND_HEKEN_SHORT = TEXT_TREND_HEKEN_ + TREND_SHORT;
@@ -133,11 +133,11 @@ public class Utils {
     public static final String CRYPTO_TIME_1D = "1d";
     public static final String CRYPTO_TIME_1w = "1w";
 
-    public static final long MINUTES_OF_D = 240;// 600;
-    public static final long MINUTES_OF_4H = 60;
-    public static final long MINUTES_OF_1H = 60;
-    public static final long MINUTES_OF_15M = 5;
-    public static final long MINUTES_OF_5M = 5;
+    public static final Integer MINUTES_OF_D = 240;// 600;
+    public static final Integer MINUTES_OF_4H = 60;
+    public static final Integer MINUTES_OF_1H = 60;
+    public static final Integer MINUTES_OF_15M = 15;
+    public static final Integer MINUTES_OF_5M = 5;
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
