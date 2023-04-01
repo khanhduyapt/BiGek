@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,6 +105,7 @@ public class BinanceServiceImpl implements BinanceService {
     private static final String EVENT_DH4H1_H1_CRYPTO = "DH4H1_STR_H1_CRYPTO";
     private static final String EVENT_DH4H1_15M_CRYPTO = "DH4H1_STR_15M_CRYPTO";
     // ********************************************************************************
+    private static Hashtable<String, LocalTime> keys_dict = new Hashtable<String, LocalTime>();
     private static List<String> GLOBAL_LONG_LIST = new ArrayList<String>();
     private static List<String> GLOBAL_SHOT_LIST = new ArrayList<String>();
     private boolean BTC_ALLOW_LONG_SHITCOIN = false;
@@ -2577,6 +2579,35 @@ public class BinanceServiceImpl implements BinanceService {
         }
     }
 
+    public boolean isReloadAfter(long minutes, String epic) {
+        LocalTime cur_time = LocalTime.now();
+        String key = Utils.getStringValue(epic);
+
+        boolean reload = false;
+        if (keys_dict.containsKey(key)) {
+            LocalTime pre_time = keys_dict.get(key);
+
+            long elapsedMinutes = Duration.between(pre_time, cur_time).toMinutes();
+
+            if (minutes <= elapsedMinutes) {
+                keys_dict.put(key, cur_time);
+
+                reload = true;
+            }
+        } else {
+            keys_dict.put(key, cur_time);
+            reload = true;
+        }
+
+        return reload;
+    }
+
+    public void logMsgPerHour(String epic_id, String log) {
+        if (isReloadAfter(Utils.MINUTES_OF_1H, epic_id)) {
+            Utils.logWritelnDraft(log);
+        }
+    }
+
     private boolean isReloadPrepareOrderTrend(String EPIC, String CAPITAL_TIME_XXX) {
         long elapsedMinutes = Utils.MINUTES_OF_D + 1;
         LocalDateTime date_time = LocalDateTime.now();
@@ -2915,7 +2946,6 @@ public class BinanceServiceImpl implements BinanceService {
         if (!BTC_ETH_BNB.contains(SYMBOL) && !BTC_ALLOW_LONG_SHITCOIN) {
             // TODO: return Utils.CRYPTO_TIME_15m;
         }
-
         // ----------------------------------------
         if (!BTC_ETH_BNB.contains(SYMBOL) && !Utils.COINS_NEW_LISTING.contains(SYMBOL)) {
             List<BtcFutures> list_w1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1w, 10);
@@ -2941,10 +2971,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         String TREND_D1 = Utils.getTrendByHekenAshi(list_d1);
         if (!BTC_ETH_BNB.contains(SYMBOL) && Objects.equals(TREND_D1, Utils.TREND_SHORT)) {
-            if (!DAILY_DOWN_TREND_COINS.contains(SYMBOL)) {
-                DAILY_DOWN_TREND_COINS += "_" + SYMBOL + "_";
-                return Utils.CRYPTO_TIME_4H;
-            }
+            DAILY_DOWN_TREND_COINS += "_" + SYMBOL + "_";
+            return Utils.CRYPTO_TIME_4H;
         }
         if (Objects.equals(Utils.TREND_LONG, TREND_D1) && !DAILY_UP_TREND_COINS.contains(SYMBOL)) {
             DAILY_UP_TREND_COINS += "_" + SYMBOL + "_";
@@ -2955,7 +2983,6 @@ public class BinanceServiceImpl implements BinanceService {
         // ------------------------------------------------
         List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 15);
         String trend_h4 = Utils.getTrendByHekenAshi(list_h4);
-
         if (Objects.equals("BTC", SYMBOL)) {
             if (Objects.equals(trend_h4, Utils.TREND_LONG)) {
                 BTC_ALLOW_LONG_SHITCOIN = true;
@@ -2968,6 +2995,14 @@ public class BinanceServiceImpl implements BinanceService {
         if (!Objects.equals(TREND_D1, Utils.switchTrendByHekenAshi_3_to_6(list_h4))) {
             return Utils.CRYPTO_TIME_1H;
         }
+
+        String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_h4.get(0).getCurrPrice()), 5) + ")";
+        String log = "CRYPTO   (H4)   ";
+        log += Utils.appendSpace(SYMBOL, 10) + Utils.appendSpace(TREND_D1, 10);
+        log += Utils.appendSpace(str_price, 15) + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
+        log += "(Btc:H4:" + (BTC_ALLOW_LONG_SHITCOIN ? "Up" : "Down") + ")";
+
+        logMsgPerHour("CRYPTO_H4_" + SYMBOL, log);
         // ------------------------------------------------
         List<BtcFutures> list_h1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1H, 10);
         if (!Objects.equals(TREND_D1, Utils.getTrendByHekenAshi(list_h1))) {
@@ -2976,20 +3011,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (!Objects.equals(TREND_D1, Utils.switchTrendByHekenAshi_3_to_6(list_h1))) {
             return Utils.CRYPTO_TIME_15m;
         }
-        // ------------------------------------------------
-        String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_h1.get(0).getCurrPrice()), 5) + ")";
-        String log = "CRYPTO   (H1)   ";
-        log += Utils.appendSpace(SYMBOL, 10) + Utils.appendSpace(TREND_D1, 10);
-        log += Utils.appendSpace(str_price, 15) + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
-        log += "(Btc:H4:" + (BTC_ALLOW_LONG_SHITCOIN ? "Up" : "Down") + ")";
-
-        String CRYPTO_LOG_EVENT_ID = "CRYPTO_LOG_" + SYMBOL + Utils.getCurrentYyyyMmDd_HH();
-        if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, CRYPTO_LOG_EVENT_ID)) {
-            fundingHistoryRepository
-                    .save(createPumpDumpEntity(CRYPTO_LOG_EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
-
-            Utils.logWritelnDraft(log);
-        }
+        logMsgPerHour("CRYPTO_H1_" + SYMBOL, log.replace("(H4)", "(H1)"));
         // ------------------------------------------------
         List<BtcFutures> list_15 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_15m, 10);
         if (!Objects.equals(TREND_D1, Utils.getTrendByHekenAshi(list_15))) {
@@ -3024,7 +3046,8 @@ public class BinanceServiceImpl implements BinanceService {
         String EVENT_ID = EVENT_PUMP + SYMBOL + Utils.getCurrentYyyyMmDd_HH();
         sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
 
-        Utils.logWritelnDraft(log.replace("(H1)", "(15)"));
+        Utils.logWritelnDraft(log.replace("(H1)", "(05)").replace("(H4)", "(05)"));
+
         return Utils.CRYPTO_TIME_15m;
     }
 
@@ -3437,6 +3460,18 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
+                // -----------------------------------------------------------------
+                String chart = "";
+                if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)) {
+                    chart = "(H4)";
+                } else if (dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)) {
+                    chart = "(H1)";
+                }
+                String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(dto_d1.getCurrent_price()), 5) + ")";
+                String log = "CRYPTO   " + chart + "   ";
+                log += Utils.appendSpace(EPIC, 10) + Utils.appendSpace(TREND_D1, 10);
+                log += Utils.appendSpace(str_price, 15) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 70);
+                logMsgPerHour("FOREX_H1_" + EPIC, log);
                 // -----------------------------------------------------------------
                 // #1 trend_05 = trend_h4 && CuttingUp(Ma50)
                 boolean find_next = true;

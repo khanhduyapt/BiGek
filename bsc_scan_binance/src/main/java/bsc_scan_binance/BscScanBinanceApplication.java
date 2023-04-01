@@ -27,7 +27,7 @@ public class BscScanBinanceApplication {
 
     public static String callFormBinance = "";
     public static String TAKER_TOKENS = "_";
-    public static int SLEEP_MINISECONDS = 3000;
+    public static int SLEEP_MINISECONDS = 1000; // Gecko=wait(6000);
     private static Hashtable<String, LocalTime> keys_dict = new Hashtable<String, LocalTime>();
     public static Hashtable<String, String> forex_naming_dict = new Hashtable<String, String>();
     public static Hashtable<String, Integer> watting_dict = new Hashtable<String, Integer>();
