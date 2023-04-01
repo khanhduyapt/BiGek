@@ -3011,11 +3011,13 @@ public class BinanceServiceImpl implements BinanceService {
             return Utils.CRYPTO_TIME_15m;
         }
 
+        String btc_trend = Utils.appendSpace("(Btc:H4:" + (BTC_ALLOW_LONG_SHITCOIN ? "Uptrend" : "Downtrend") + ")",
+                25);
         String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_h4.get(0).getCurrPrice()), 5) + ")";
         String log = "CRYPTO   (H4)   ";
         log += Utils.appendSpace(SYMBOL, 10) + Utils.appendSpace(TREND_D1, 10);
         log += Utils.appendSpace(str_price, 15) + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
-        log += "(Btc:H4:" + (BTC_ALLOW_LONG_SHITCOIN ? "Up" : "Down") + ")";
+        log += btc_trend;
         log += percent;
 
         logMsgPerHour("CRYPTO_H4_" + SYMBOL, log);
@@ -3056,7 +3058,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
         if (isOnlyMe) {
             msg = msg.replace("_kill_Short 💔 ", "").replace("_kill_Long 💔 ", "");
-            msg += "(Btc:H4:" + (BTC_ALLOW_LONG_SHITCOIN ? "Up" : "Down") + ")";
+            msg += btc_trend;
         }
 
         String EVENT_ID = EVENT_PUMP + SYMBOL + Utils.getCurrentYyyyMmDd_HH();
