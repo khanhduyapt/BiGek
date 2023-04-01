@@ -98,7 +98,7 @@ public class BscScanBinanceApplication {
             CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_OTHERS);
 
             if (app_flag != Utils.const_app_flag_webonly) {
-                int total = Utils.coins.size();
+                int total = Utils.COINS.size();
                 int index_crypto = 0;
                 int round_crypto = 0;
                 Date start_time = Calendar.getInstance().getTime();
@@ -133,13 +133,9 @@ public class BscScanBinanceApplication {
                         }
 
                         // ---------------------------------------------------------
-                        String SYMBOL = Utils.coins.get(index_crypto).toUpperCase();
+                        String SYMBOL = Utils.COINS.get(index_crypto).toUpperCase();
                         if (isReloadAfter(Utils.MINUTES_OF_15M, "CHECK_CRYPTO_" + SYMBOL)) {
-                            // checkCrypto(binance_service, SYMBOL, index_crypto, total);
-
-                            if (Utils.isNotBlank(binance_service.sendMsgKillLongShort(SYMBOL))) {
-                                wait(SLEEP_MINISECONDS);
-                            }
+                            binance_service.sendMsgKillLongShort(SYMBOL);
                         }
 
                         // ---------------------------------------------------------
@@ -184,16 +180,10 @@ public class BscScanBinanceApplication {
     }
 
     private static void checkKillLongShort(BinanceService binance_service) {
-        if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("BTC"))) {
-            wait(SLEEP_MINISECONDS);
-        }
-
-        if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("ETH"))) {
-            wait(SLEEP_MINISECONDS);
-        }
-
-        if (Utils.isNotBlank(binance_service.sendMsgKillLongShort("BNB"))) {
-            wait(SLEEP_MINISECONDS);
+        if (isReloadAfter(Utils.MINUTES_OF_15M, "CHECK_KILL_LONG_SHORT")) {
+            binance_service.sendMsgKillLongShort("BTC");
+            binance_service.sendMsgKillLongShort("ETH");
+            binance_service.sendMsgKillLongShort("BNB");
         }
     }
 

@@ -158,36 +158,49 @@ public class Utils {
     public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("UK100", "DAX40", "USDCAD", "CADJPY", "EURCAD",
             "EURJPY", "EURNZD", "GBPCAD", "NZDCAD");
 
-    public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("AERGO", "ARK", "BIDR", "CREAM", "GAS",
-            "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM", "QKC", "QLC", "SNM", "SNT", "UFT", "WABI",
-            "IQ");
+    public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("ART", "BNT", "PHT", "TRT", "DGT", "DODO",
+            "AERGO", "ARK", "BIDR", "CREAM", "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM",
+            "QKC", "QLC", "SNM", "SNT", "UFT", "WABI", "IQ");
 
-    // Delete: "BIDR", "IDRT", "NEM", "PIVX", "QLC", "WABI"
-    public static final List<String> coins = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ACM", "ADA", "ADX", "AERGO",
-            "AGIX", "AGLD", "AKRO", "ALCX", "ALGO", "ALICE", "ALPACA", "ALPHA", "ALPINE", "AMB", "AMP", "ANKR", "ANT",
-            "APE", "API3", "APT", "AR", "ARDR", "ARK", "ARPA", "ASR", "ASTR", "ATA", "ATM", "ATOM", "AUCTION", "AUDIO",
-            "AUTO", "AVA", "AVAX", "AXS", "BADGER", "BAKE", "BAL", "BAND", "BAR", "BAT", "BCH", "BEL", "BETA", "BETH",
-            "BICO", "BIFI", "BLZ", "BNB", "BNT", "BNX", "BOND", "BSW", "BTC", "BTS", "BURGER", "C98", "CAKE", "CELO",
-            "CELR", "CFX", "CHESS", "CHR", "CHZ", "CITY", "CKB", "CLV", "COCOS", "COMP", "COS", "COTI", "CREAM", "CRV",
-            "CTK", "CTSI", "CTXC", "CVC", "CVP", "CVX", "DAR", "DASH", "DATA", "DCR", "DEGO", "DENT", "DEXE", "DF",
-            "DGB", "DIA", "DOCK", "DODO", "DOGE", "DOT", "DREP", "DUSK", "DYDX", "EGLD", "ELF", "ENJ", "ENS", "EOS",
-            "EPX", "ERN", "ETC", "ETH", "FARM", "FET", "FIDA", "FIL", "FIO", "FIRO", "FIS", "FLM", "FLOW", "FLUX",
-            "FOR", "FORTH", "FRONT", "FTM", "FTT", "FUN", "FXS", "GAL", "GALA", "GAS", "GFT", "GHST", "GLM", "GLMR",
-            "GMT", "GMX", "GNS", "GRT", "GTC", "HARD", "HBAR", "HFT", "HIFI", "HIGH", "HIVE", "HOOK", "HOT", "ICP",
-            "ICX", "IDEX", "ILV", "IMX", "INJ", "IOST", "IOTA", "IOTX", "IQ", "IRIS", "JASMY", "JOE", "JST", "JUV",
-            "KAVA", "KDA", "KEY", "KLAY", "KMD", "KNC", "KP3R", "KSM", "LAZIO", "LEVER", "LINA", "LINK", "LIT", "LOKA",
-            "LOOM", "LPT", "LQTY", "LRC", "LSK", "LTC", "LTO", "LUNA", "LUNC", "MAGIC", "MANA", "MASK", "MATIC", "MBOX",
-            "MC", "MDT", "MDX", "MINA", "MKR", "MLN", "MOB", "MOVR", "MTL", "MULTI", "NEAR", "NEBL", "NEO", "NEXO",
-            "NKN", "NMR", "NULS", "OCEAN", "OG", "OGN", "OMG", "ONE", "ONG", "ONT", "OOKI", "OP", "ORN", "OSMO", "OXT",
-            "PEOPLE", "PERL", "PERP", "PHA", "PHB", "PLA", "PNT", "POLS", "POLYX", "POND", "PORTO", "POWR", "PROM",
-            "PROS", "PSG", "PUNDIX", "PYR", "QI", "QKC", "QNT", "QTUM", "QUICK", "RAD", "RARE", "RAY", "REEF", "REI",
-            "REN", "REQ", "RIF", "RLC", "RNDR", "ROSE", "RPL", "RSR", "RUNE", "RVN", "SAND", "SANTOS", "SC", "SCRT",
-            "SFP", "SHIB", "SKL", "SLP", "SNM", "SNT", "SNX", "SOL", "SPELL", "SRM", "SSV", "STEEM", "STG", "STMX",
-            "STORJ", "STPT", "STRAX", "STX", "SUN", "SUPER", "SUSHI", "SXP", "SYN", "SYS", "T", "TFUEL", "THETA", "TKO",
-            "TLM", "TOMO", "TORN", "TRB", "TROY", "TRU", "TRX", "TVK", "TWT", "UFT", "UMA", "UNFI", "UNI", "UTK", "VET",
-            "VGX", "VIB", "VIDT", "VITE", "VOXEL", "VTHO", "WAN", "WAVES", "WAXP", "WIN", "WING", "WNXM", "WOO", "WRX",
-            "WTC", "XEC", "XLM", "XMR", "XNO", "XRP", "XTZ", "XVG", "XVS", "YFI", "YFII", "YGG", "ZEC", "ZEN", "ZIL",
-            "ZRX");
+//    public static final List<String> COINS = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ARB", "ADA", "ADX", "AERGO",
+//            "AGIX", "AGLD", "AKRO", "ALCX", "ALGO", "ALICE", "ALPACA", "ALPHA", "ALPINE", "AMB", "AMP", "ANKR", "ANT",
+//            "APE", "API3", "APT", "AR", "ARDR", "ARK", "ARPA", "ASR", "ASTR", "ATA", "ATM", "ATOM", "AUCTION", "AUDIO",
+//            "AUTO", "AVA", "AVAX", "AXS", "BADGER", "BAKE", "BAL", "BAND", "BAR", "BAT", "BCH", "BEL", "BETA", "BETH",
+//            "BICO", "BIFI", "BLZ", "BNB", "BNT", "BNX", "BOND", "BSW", "BTC", "BTS", "BURGER", "C98", "CAKE", "CELO",
+//            "CELR", "CFX", "CHESS", "CHR", "CHZ", "CITY", "CKB", "CLV", "COCOS", "COMP", "COS", "COTI", "CREAM", "CRV",
+//            "CTK", "CTSI", "CTXC", "CVC", "CVP", "CVX", "DAR", "DASH", "DATA", "DCR", "DEGO", "DENT", "DEXE", "DGB",
+//            "DIA", "DOCK", "DODO", "DOGE", "DOT", "DREP", "DUSK", "DYDX", "EGLD", "ELF", "ENJ", "ENS", "EOS", "EPX",
+//            "ERN", "ETC", "ETH", "FARM", "FET", "FIDA", "FIL", "FIO", "FIRO", "FIS", "FLM", "FLOW", "FLUX", "FOR",
+//            "FORTH", "FRONT", "FTM", "FTT", "FUN", "FXS", "GAL", "GALA", "GAS", "GFT", "GHST", "GLM", "GLMR", "GMT",
+//            "GMX", "GNS", "GRT", "GTC", "HARD", "HBAR", "HFT", "HIFI", "HIGH", "HIVE", "HOOK", "HOT", "ID", "ICX",
+//            "IDEX", "ILV", "IMX", "INJ", "IOST", "IOTA", "IOTX", "IQ", "IRIS", "JASMY", "JOE", "JST", "JUV", "KAVA",
+//            "KDA", "KEY", "KLAY", "KMD", "KNC", "KP3R", "KSM", "LAZIO", "LEVER", "LINA", "LINK", "LIT", "LOKA", "LOOM",
+//            "LPT", "LQTY", "LRC", "LSK", "LTC", "LTO", "LUNA", "LUNC", "MAGIC", "MANA", "MASK", "MATIC", "MBOX", "MC",
+//            "MDT", "MDX", "MINA", "MKR", "MLN", "MOB", "MOVR", "MTL", "MULTI", "NEAR", "NEBL", "NEO", "NEXO", "NKN",
+//            "NMR", "NULS", "OCEAN", "OG", "OGN", "OMG", "ONE", "ONG", "ONT", "OOKI", "OP", "ORN", "OSMO", "OXT",
+//            "PEOPLE", "PERL", "PERP", "PHA", "PHB", "PLA", "PNT", "POLS", "POLYX", "POND", "PORTO", "POWR", "PROM",
+//            "PROS", "PSG", "PUNDIX", "PYR", "QI", "QKC", "QNT", "QTUM", "QUICK", "RDNT", "RARE", "RAY", "REEF", "REI",
+//            "REN", "REQ", "RIF", "RLC", "RNDR", "ROSE", "RPL", "RSR", "RUNE", "RVN", "SAND", "SANTOS", "SC", "SCRT",
+//            "SFP", "SHIB", "SKL", "SLP", "SNM", "SNT", "SNX", "SOL", "SPELL", "SRM", "SSV", "STEEM", "STG", "STMX",
+//            "STORJ", "STPT", "STRAX", "STX", "SUN", "SUPER", "SUSHI", "SXP", "SYN", "SYS", "THETA", "TKO", "TLM",
+//            "TOMO", "TORN", "TRB", "TROY", "TRU", "TRX", "TVK", "TWT", "UFT", "UNFI", "UNI", "UTK", "VGX", "VIB",
+//            "VIDT", "VITE", "VOXEL", "VTHO", "WAN", "WAVES", "WAXP", "WIN", "WING", "WNXM", "WRX", "WTC", "XEC", "XLM",
+//            "XMR", "XNO", "XRP", "XTZ", "XVG", "XVS", "YFI", "YFII", "YGG", "ZEC", "ZEN", "ZIL", "ZRX");
+
+    // COINS_FUTURES
+    public static final List<String> COINS = Arrays.asList("1INCH", "AAVE", "ACH", "ADA", "AGIX", "ALGO", "ALICE",
+            "ALPHA", "AMB", "ANKR", "ANT", "APE", "API3", "APT", "AR", "ARB", "ARPA", "ASTR", "ATA", "ATOM", "AUDIO",
+            "AVAX", "AXS", "BAKE", "BAL", "BAND", "BAT", "BCH", "BEL", "BLZ", "BNB", "BNT", "BNX", "BTC", "BTC", "C98",
+            "CELO", "CELR", "CFX", "CHR", "CHZ", "CKB", "COCOS", "COMP", "COTI", "CRV", "CTK", "CTSI", "CVX", "DAR",
+            "DASH", "DENT", "DGB", "DODO", "DOGE", "DOT", "DUSK", "DYDX", "EGLD", "ENJ", "ENS", "EOS", "ETC", "ETH",
+            "FET", "FIL", "FLM", "FLOW", "FTM", "FXS", "GAL", "GALA", "GMT", "GMX", "GRT", "GTC", "HBAR", "HIGH",
+            "HOOK", "HOT", "ICP", "ICX", "ID", "IMX", "INJ", "IOST", "IOTA", "IOTX", "JASMY", "JOE", "KAVA", "KLAY",
+            "KNC", "KSM", "LDO", "LEVER", "LINA", "LINK", "LIT", "LPT", "LQTY", "LRC", "LTC", "MAGIC", "MANA", "MASK",
+            "MATIC", "MINA", "MKR", "MTL", "NEAR", "NEO", "NKN", "OCEAN", "OGN", "OMG", "ONE", "ONT", "OP", "PEOPLE",
+            "PERP", "PHB", "QNT", "QTUM", "REEF", "REN", "RLC", "RNDR", "ROSE", "RSR", "RUNE", "RVN", "SAND", "SFP",
+            "SKL", "SNX", "SOL", "SPELL", "SSV", "STG", "STMX", "STORJ", "STX", "SUSHI", "SXP", "THETA", "TLM", "TOMO",
+            "TRB", "TRT", "TRU", "TRX", "UNFI", "UNI", "VET", "WAVES", "XEM", "XLM", "XMR", "XRP", "XTZ", "YFI", "ZEC",
+            "ZEN", "ZIL", "ZRX");
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
@@ -3474,7 +3487,7 @@ public class Utils {
         return "";
     }
 
-    public static String getTrendByHekenAshi_Ma(List<BtcFutures> list) {
+    public static String getTrendByHekenAshi(List<BtcFutures> list) {
         List<BtcFutures> heken_list = getHekenList(list);
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
