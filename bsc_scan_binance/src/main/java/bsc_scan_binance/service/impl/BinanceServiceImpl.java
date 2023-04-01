@@ -165,7 +165,6 @@ public class BinanceServiceImpl implements BinanceService {
     private Mt5DataCandleRepository mt5DataCandleRepository;
 
     private String BTC_ETH_BNB = "_BTC_ETH_BNB_";
-    private boolean BTC_ALLOW_LONG_SHITCOIN = false;
 
     private static final String EVENT_DANGER_CZ_KILL_LONG = "CZ_KILL_LONG";
     private static final String EVENT_BTC_RANGE = "BTC_RANGE";
@@ -2909,16 +2908,10 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String sendMsgKillLongShort(String symbol) {
-        // TODO: Debug
-        BTC_ALLOW_LONG_SHITCOIN = true;
-        if (!BTC_ETH_BNB.contains(symbol) && !BTC_ALLOW_LONG_SHITCOIN) {
-            return "";
-        }
-
         String EPIC = "CRYPTO_" + symbol;
         String orderId = EPIC + "_" + Utils.CRYPTO_TIME_15m;
         if (!isReloadPrepareOrderTrend(EPIC, Utils.CRYPTO_TIME_15m)) {
-            return "";
+            // return "";
         }
 
         boolean not_allow_short = true;
@@ -2932,7 +2925,8 @@ public class BinanceServiceImpl implements BinanceService {
                 BigDecimal.ZERO, BigDecimal.ZERO, "");
         ordersRepository.save(entity);
 
-        if (BTC_ALLOW_LONG_SHITCOIN) {
+        String trend_w1 = "";
+        if (!BTC_ETH_BNB.contains(symbol)) {
             List<BtcFutures> list_w1 = Utils.loadData(symbol, Utils.CRYPTO_TIME_1w, 10);
             if (CollectionUtils.isEmpty(list_w1)) {
                 String not_found_msg = "BinanceNotFound:" + symbol + "(" + Utils.CRYPTO_TIME_1w + ")";
@@ -2940,9 +2934,8 @@ public class BinanceServiceImpl implements BinanceService {
                 return "";
             }
 
-            String trend_w1 = Utils.getTrendByHekenAshi(list_w1);
-
-            if (Objects.equals(trend_w1, Utils.TREND_SHORT)) {
+            trend_w1 = Utils.getTrendByHekenAshi(list_w1);
+            if (not_allow_short && Objects.equals(trend_w1, Utils.TREND_SHORT)) {
                 return "";
             }
         }
@@ -2960,56 +2953,60 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
         // ----------------------------------------
-
         List<BtcFutures> list_h4 = Utils.loadData(symbol, Utils.CRYPTO_TIME_4H, 10);
         if (CollectionUtils.isEmpty(list_h4)) {
             return "";
         }
-        String trend_h4 = Utils.getTrendByHekenAshi(list_h4);
-
-        if (Objects.equals("BTC", symbol)) {
-            if (Objects.equals(trend_d1, Utils.TREND_LONG) && Objects.equals(trend_h4, Utils.TREND_LONG)) {
-                BTC_ALLOW_LONG_SHITCOIN = true;
-            }
+        String swith_trend_h4 = Utils.switchTrendByHekenAshi_3_to_6(list_h4);
+        if (Utils.isBlank(swith_trend_h4)) {
+            return "";
         }
+        String trend_h4 = Utils.getTrendByHekenAshi(list_h4);
         if (not_allow_short && Objects.equals(trend_h4, Utils.TREND_SHORT)) {
             return "";
         }
-
+        // --------------------------------
         List<BtcFutures> list_h1 = Utils.loadData(symbol, Utils.CRYPTO_TIME_1H, 10);
         if (CollectionUtils.isEmpty(list_h1)) {
-            return "";
-        }
-        String trend_h1 = Utils.getTrendByHekenAshi(list_h1);
-        if (!Objects.equals(trend_h4, trend_h1)) {
-            return "";
-        }
-
-        List<BtcFutures> list_15 = Utils.loadData(symbol, Utils.CRYPTO_TIME_15m, 50);
-        if (CollectionUtils.isEmpty(list_15)) {
-            return "";
-        }
-        String trend_15 = Utils.getTrendByHekenAshi(list_15);
-        if (!Objects.equals(trend_h4, trend_15)) {
-            return "";
-        }
-
-        Utils.logWritelnDraft("trend_w1-d1-h4-h1-15:Long----------" + symbol + "     "
-                + Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70));
-
-        String swith_trend_h4 = Utils.switchTrendByHekenAshi_3_to_6(list_h4);
-        if (Utils.isBlank(swith_trend_h4)) {
             return "";
         }
         String swith_trend_h1 = Utils.switchTrendByHekenAshi_3_to_6(list_h1);
         if (Utils.isBlank(swith_trend_h1)) {
             return "";
         }
+        if (!Objects.equals(swith_trend_h4, swith_trend_h1)) {
+            return "";
+        }
+        String trend_h1 = Utils.getTrendByHekenAshi(list_h1);
+        if (!Objects.equals(trend_h4, trend_h1)) {
+            return "";
+        }
+        // --------------------------------
+        String CRYPTO_LOG_EVENT_ID = "CRYPTO_LOG_" + symbol + Utils.getCurrentYyyyMmDd_HH_Blog4h();
+        if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, CRYPTO_LOG_EVENT_ID)) {
+            fundingHistoryRepository
+                    .save(createPumpDumpEntity(CRYPTO_LOG_EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
+
+            Utils.logWritelnDraft("CRYPTO     " + Utils.appendSpace(symbol, 10) + Utils.appendSpace(trend_h1, 10)
+                    + Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70));
+        }
+
+        // --------------------------------
+        List<BtcFutures> list_15 = Utils.loadData(symbol, Utils.CRYPTO_TIME_15m, 50);
+        if (CollectionUtils.isEmpty(list_15)) {
+            return "";
+        }
         String swith_trend_15 = Utils.switchTrendByHekenAshi_3_to_6(list_15);
         if (Utils.isBlank(swith_trend_15)) {
             return "";
         }
-
+        if (!Objects.equals(swith_trend_h4, swith_trend_15)) {
+            return "";
+        }
+        String trend_15 = Utils.getTrendByHekenAshi(list_15);
+        if (!Objects.equals(trend_h4, trend_15)) {
+            return "";
+        }
         // ------------------------------------------------
 
         String msg = "";
@@ -3033,6 +3030,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String EVENT_ID = EVENT_PUMP + symbol + Utils.getCurrentYyyyMmDd_HH();
+
         sendMsgPerHour(EVENT_ID, msg, true);
 
         String url = Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70);

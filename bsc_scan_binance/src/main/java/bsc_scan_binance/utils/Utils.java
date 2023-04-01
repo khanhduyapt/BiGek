@@ -187,6 +187,10 @@ public class Utils {
 //            "VIDT", "VITE", "VOXEL", "VTHO", "WAN", "WAVES", "WAXP", "WIN", "WING", "WNXM", "WRX", "WTC", "XEC", "XLM",
 //            "XMR", "XNO", "XRP", "XTZ", "XVG", "XVS", "YFI", "YFII", "YGG", "ZEC", "ZEN", "ZIL", "ZRX");
 
+    //
+    public static final List<String> COINS_NEW_LISTING = Arrays.asList("RDNT", "ARB", "ID", "LQTY", "SYN", "GNS", "RPL",
+            "MAGIC", "HOOK", "HFT");
+
     // COINS_FUTURES
     public static final List<String> COINS = Arrays.asList("1INCH", "AAVE", "ACH", "ADA", "AGIX", "ALGO", "ALICE",
             "ALPHA", "AMB", "ANKR", "ANT", "APE", "API3", "APT", "AR", "ARB", "ARPA", "ASTR", "ATA", "ATOM", "AUDIO",
