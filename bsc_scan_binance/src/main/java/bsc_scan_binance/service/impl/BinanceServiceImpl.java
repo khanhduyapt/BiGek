@@ -2990,10 +2990,10 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (!Objects.equals(TREND_D1, trend_h4)) {
-            return Utils.CRYPTO_TIME_1H;
+            return Utils.CRYPTO_TIME_15m;
         }
         if (!Objects.equals(TREND_D1, Utils.switchTrendByHekenAshi_3_to_6(list_h4))) {
-            return Utils.CRYPTO_TIME_1H;
+            return Utils.CRYPTO_TIME_15m;
         }
 
         String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_h4.get(0).getCurrPrice()), 5) + ")";
