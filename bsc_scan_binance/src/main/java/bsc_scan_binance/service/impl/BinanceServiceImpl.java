@@ -2913,7 +2913,7 @@ public class BinanceServiceImpl implements BinanceService {
             return Utils.CRYPTO_TIME_4H;
         }
         if (!BTC_ETH_BNB.contains(SYMBOL) && !BTC_ALLOW_LONG_SHITCOIN) {
-            return Utils.CRYPTO_TIME_5m;
+            return Utils.CRYPTO_TIME_15m;
         }
 
         // ----------------------------------------
@@ -2950,7 +2950,7 @@ public class BinanceServiceImpl implements BinanceService {
             DAILY_UP_TREND_COINS += "_" + SYMBOL + "_";
         }
         if (!Objects.equals("BTC", SYMBOL) && Objects.equals(Utils.TREND_LONG, TREND_D1) && !BTC_ALLOW_LONG_SHITCOIN) {
-            return Utils.CRYPTO_TIME_1H;
+            return Utils.CRYPTO_TIME_15m;
         }
         // ------------------------------------------------
         List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 15);
@@ -3031,7 +3031,7 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnDraft(log.replace("(H1)", "(15)"));
         }
 
-        return Utils.CRYPTO_TIME_1H;
+        return Utils.CRYPTO_TIME_15m;
     }
 
     @Override
@@ -3366,7 +3366,6 @@ public class BinanceServiceImpl implements BinanceService {
         if (required_update_bars_csv) {
             return "";
         }
-        // EPIC = "EURCAD"; //TODO initForexTrend
         if (!isReloadPrepareOrderTrend(EPIC, CAPITAL_TIME_XX)) {
             return "";
         }
