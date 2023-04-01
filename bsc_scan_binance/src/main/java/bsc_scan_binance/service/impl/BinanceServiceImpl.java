@@ -2997,7 +2997,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
         String switch_trend_d1 = "";
         if (Objects.equals(Utils.TREND_LONG, Utils.switchTrendByHekenAshi_3_to_6(list_d1))) {
-            switch_trend_d1 = "(*****)D1_" + Utils.TEXT_SWITCH_TREND_TO_ + Utils.TREND_LONG;
+            switch_trend_d1 = "(*)D1_" + Utils.TEXT_SWITCH_TREND_TO_ + Utils.TREND_LONG;
         }
         // ------------------------------------------------
         List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 15);
@@ -3062,7 +3062,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
         if (isOnlyMe) {
             msg = msg.replace("_kill_Short 💔 ", "").replace("_kill_Long 💔 ", "");
-            msg += btc_trend;
+            msg += btc_trend + switch_trend_d1;
         }
 
         String EVENT_ID = EVENT_PUMP + SYMBOL + Utils.getCurrentYyyyMmDd_HH();
