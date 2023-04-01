@@ -158,7 +158,7 @@ public class Utils {
     public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("UK100", "DAX40", "USDCAD", "CADJPY", "EURCAD",
             "EURJPY", "EURNZD", "GBPCAD", "NZDCAD");
 
-    public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("ART", "BNT", "PHT", "TRT", "DGT", "DODO",
+    public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("ART", "BNT", "PHT", "DGT", "DODO",
             "AERGO", "ARK", "BIDR", "CREAM", "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM",
             "QKC", "QLC", "SNM", "SNT", "UFT", "WABI", "IQ");
 
@@ -203,8 +203,8 @@ public class Utils {
             "MATIC", "MINA", "MKR", "MTL", "NEAR", "NEO", "NKN", "OCEAN", "OGN", "OMG", "ONE", "ONT", "OP", "PEOPLE",
             "PERP", "PHB", "QNT", "QTUM", "REEF", "REN", "RLC", "RNDR", "ROSE", "RSR", "RUNE", "RVN", "SAND", "SFP",
             "SKL", "SNX", "SOL", "SPELL", "SSV", "STG", "STMX", "STORJ", "STX", "SUSHI", "SXP", "THETA", "TLM", "TOMO",
-            "TRB", "TRT", "TRU", "TRX", "UNFI", "UNI", "VET", "WAVES", "XEM", "XLM", "XMR", "XRP", "XTZ", "YFI", "ZEC",
-            "ZEN", "ZIL", "ZRX");
+            "TRB", "TRU", "TRX", "UNFI", "UNI", "VET", "WAVES", "XEM", "XLM", "XMR", "XRP", "XTZ", "YFI", "ZEC", "ZEN",
+            "ZIL", "ZRX");
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"

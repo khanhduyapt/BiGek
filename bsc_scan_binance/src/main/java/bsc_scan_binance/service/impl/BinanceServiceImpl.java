@@ -3368,11 +3368,12 @@ public class BinanceServiceImpl implements BinanceService {
 
         String trend = Utils.getTrendByHekenAshi(list);
         String switch_trend = Utils.switchTrendByHekenAshi_3_to_6(list);
+
         String note = "";
-        if (Utils.isNotBlank(switch_trend)) {
-            note = Utils.TEXT_SWITCH_TREND_TO_ + switch_trend;
+        if (Objects.equals(trend, switch_trend)) {
+            note = Utils.TEXT_SWITCH_TREND_TO_ + trend;
         } else if (Utils.isSameTrendByHekenAshi_Ma1_6(list)) {
-            note = Utils.TEXT_SAME_TREND_1_TO_6;
+            note = Utils.TEXT_SAME_TREND_1_TO_6 + trend;
         }
 
         // -----------------------------DATABASE---------------------------
@@ -3408,10 +3409,9 @@ public class BinanceServiceImpl implements BinanceService {
         CAPITAL_LIST.addAll(Utils.EPICS_MAIN);
         CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_OTHERS);
         for (String EPIC : CAPITAL_LIST) {
-            String trend_d1 = "";
+            String TREND_D1 = "";
             String trend_h4 = "";
             String trend_h1 = "";
-            String trend_15 = "";
             String trend_05 = "";
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
@@ -3420,26 +3420,25 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_5).orElse(null);
             if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1) && Objects.nonNull(dto_15)
                     && Objects.nonNull(dto_05)) {
-                trend_d1 = dto_d1.getTrend();
+                TREND_D1 = dto_d1.getTrend();
                 trend_h4 = dto_h4.getTrend();
                 trend_h1 = dto_h1.getTrend();
-                trend_15 = dto_15.getTrend();
                 trend_05 = dto_05.getTrend();
 
                 // H4=H1=TrendD1
-                if (!Objects.equals(trend_d1, trend_h4) || !Objects.equals(trend_d1, trend_h1)) {
+                if (!Objects.equals(TREND_D1, trend_h4) || !Objects.equals(TREND_D1, trend_h1)) {
                     continue;
                 }
-
                 // H4 & H1:switch_trend
-                if (Utils.isNotBlank(dto_h4.getNote()) && Utils.isNotBlank(dto_h1.getNote())) {
+                if (Utils.isNotBlank(dto_h4.getNote()) || Utils.isNotBlank(dto_h1.getNote())) {
                     continue;
                 }
 
+                // -----------------------------------------------------------------
                 // #1 trend_05 = trend_h4 && CuttingUp(Ma50)
                 boolean find_next = true;
-                if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + trend_d1)
-                        && Objects.equals(trend_h4, trend_05)) {
+                if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)
+                        && Objects.equals(TREND_D1, trend_h1) && Objects.equals(TREND_D1, trend_05)) {
 
                     List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
                     if (!CollectionUtils.isEmpty(list)) {
@@ -3459,7 +3458,7 @@ public class BinanceServiceImpl implements BinanceService {
                             }
                         }
 
-                        if (Objects.equals(switch_trend, trend_h4)) {
+                        if (Objects.equals(TREND_D1, switch_trend)) {
                             if (Utils.isNotBlank(result_05)) {
                                 result_05 += ", ";
                             }
@@ -3470,13 +3469,14 @@ public class BinanceServiceImpl implements BinanceService {
                         }
                     }
                 }
-
+                // -----------------------------------------------------------------
                 // #2
-                if (find_next && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + trend_d1)
-                        && Objects.equals(trend_15, trend_05) && Utils.isNotBlank(dto_15.getNote())
-                        && Utils.isNotBlank(dto_05.getNote())) {
+                if (find_next && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)
+                        && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)
+                        && dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)
+                        && dto_05.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)) {
 
-                    String type_05 = Objects.equals(Utils.TREND_LONG, trend_05) ? "(h_m:B)" : "(h_m:S)";
+                    String type_05 = Objects.equals(Utils.TREND_LONG, TREND_D1) ? "(h_m:B)" : "(h_m:S)";
                     if (Utils.isNotBlank(result_05)) {
                         result_05 += ", ";
                     }
@@ -3484,27 +3484,23 @@ public class BinanceServiceImpl implements BinanceService {
                     outputLog(EPIC, type_05, dto_05, dto_h4);
                     find_next = false;
                 }
-
+                // -----------------------------------------------------------------
                 // #3
-                if (find_next && dto_h4.getNote().contains(Utils.TEXT_SAME_TREND_1_TO_6)
-                        && dto_h1.getNote().contains(Utils.TEXT_SAME_TREND_1_TO_6)
-                        && dto_15.getNote().contains(Utils.TEXT_SAME_TREND_1_TO_6)) {
+                if (find_next && dto_h4.getNote().contains(Utils.TEXT_SAME_TREND_1_TO_6 + TREND_D1)
+                        && dto_h1.getNote().contains(Utils.TEXT_SAME_TREND_1_TO_6 + TREND_D1)
+                        && dto_15.getNote().contains(Utils.TEXT_SAME_TREND_1_TO_6 + TREND_D1)) {
 
-                    List<BtcFutures> list2 = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
-                    if (!CollectionUtils.isEmpty(list2)) {
-                        String switch_trend_3_6 = Utils.switchTrendByHekenAshi_3_to_6(list2);
-
-                        if (Objects.equals(trend_h4, switch_trend_3_6)) {
-                            String type_05 = Objects.equals(Utils.TREND_LONG, trend_05) ? "(1_6:B)" : "(1_6:S)";
-                            if (Utils.isNotBlank(result_05)) {
-                                result_05 += ", ";
-                            }
-                            result_05 += Utils.appendSpace(type_05 + EPIC, 20);
-                            outputLog(EPIC, type_05, dto_05, dto_h4);
+                    List<BtcFutures> list_05 = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
+                    if (Objects.equals(TREND_D1, Utils.switchTrendByHekenAshi_3_to_6(list_05))) {
+                        String type_05 = Objects.equals(Utils.TREND_LONG, TREND_D1) ? "(1_6:B)" : "(1_6:S)";
+                        if (Utils.isNotBlank(result_05)) {
+                            result_05 += ", ";
                         }
+                        result_05 += Utils.appendSpace(type_05 + EPIC, 20);
+                        outputLog(EPIC, type_05, dto_05, dto_h4);
                     }
                 }
-
+                // -----------------------------------------------------------------
             }
         }
 
