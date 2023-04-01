@@ -2949,15 +2949,19 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.equals(Utils.TREND_LONG, TREND_D1) && !DAILY_UP_TREND_COINS.contains(SYMBOL)) {
             DAILY_UP_TREND_COINS += "_" + SYMBOL + "_";
         }
-
+        if (!Objects.equals("BTC", SYMBOL) && Objects.equals(Utils.TREND_LONG, TREND_D1) && !BTC_ALLOW_LONG_SHITCOIN) {
+            return Utils.CRYPTO_TIME_1H;
+        }
         // ------------------------------------------------
         List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 15);
         String trend_h4 = Utils.getTrendByHekenAshi(list_h4);
+
         if (Objects.equals("BTC", SYMBOL)) {
             if (Objects.equals(trend_h4, Utils.TREND_LONG)) {
                 BTC_ALLOW_LONG_SHITCOIN = true;
             }
         }
+
         if (!Objects.equals(TREND_D1, trend_h4)) {
             return Utils.CRYPTO_TIME_1H;
         }
