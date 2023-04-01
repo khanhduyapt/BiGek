@@ -27,7 +27,7 @@ public class BscScanBinanceApplication {
 
     public static String callFormBinance = "";
     public static String TAKER_TOKENS = "_";
-    public static int SLEEP_MINISECONDS = 8000;
+    public static int SLEEP_MINISECONDS = 3000;
     private static Hashtable<String, LocalTime> keys_dict = new Hashtable<String, LocalTime>();
     public static Hashtable<String, String> forex_naming_dict = new Hashtable<String, String>();
     public static Hashtable<String, Integer> watting_dict = new Hashtable<String, Integer>();
@@ -189,36 +189,13 @@ public class BscScanBinanceApplication {
         }
     }
 
-    private static void checkCrypto(BinanceService binance_service, String SYMBOL, int index_crypto, int total) {
-        String trend = binance_service.initCryptoTrend(Utils.CRYPTO_TIME_1H, SYMBOL);
-        if (Utils.isNotBlank(trend)) {
-            String init = Utils.CRYPTO_TIME_1H.toUpperCase() + ":" + Utils.appendSpace(trend, 6);
-            String str_index = Utils.appendLeft(String.valueOf(index_crypto), 3) + "/"
-                    + Utils.appendLeft(String.valueOf(total), 3) + "   ";
-            System.out.println(Utils.getTimeHHmm() + str_index + Utils.appendSpace(SYMBOL, 10) + init);
-        }
-
-        // ----------------------------------------------
-        // if ((round_count > 0) && Utils.isWorkingTime()) {
-        // if (isReloadAfter(Utils.MINUTES_OF_4H, "COIN_GECKO_" + SYMBOL)) {
-        // gecko_service.loadData(GECKOID);
-        // }
-        //
-        // if (isReloadAfter(Utils.MINUTES_OF_4H, "INIT_CRYPTO_" + GECKOID)) {
-        // binance_service.initCrypto(GECKOID, SYMBOL);
-        // }
-        //
-        // wait(SLEEP_MINISECONDS);
-        // }
-        //
-    }
-
     public static Integer getWattingTime(String SYMBOL) {
-        if (!watting_dict.containsKey(SYMBOL)) {
-            return Utils.MINUTES_OF_5M;
+        Integer time = Utils.MINUTES_OF_5M;
+        if (watting_dict.containsKey(SYMBOL)) {
+            time = watting_dict.get(SYMBOL);
         }
 
-        return watting_dict.get(SYMBOL);
+        return time;
     }
 
     public static void setWattingTime(String SYMBOL, String CRYPTO_TIME_xx) {
