@@ -2995,6 +2995,10 @@ public class BinanceServiceImpl implements BinanceService {
         if (!Objects.equals("BTC", SYMBOL) && Objects.equals(Utils.TREND_LONG, TREND_D1) && !BTC_ALLOW_LONG_SHITCOIN) {
             // TODO: return Utils.CRYPTO_TIME_15m;
         }
+        String switch_trend_d1 = "";
+        if (Objects.equals(Utils.TREND_LONG, Utils.switchTrendByHekenAshi_3_to_6(list_d1))) {
+            switch_trend_d1 = "(*****)D1_" + Utils.TEXT_SWITCH_TREND_TO_ + Utils.TREND_LONG;
+        }
         // ------------------------------------------------
         List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 15);
         String trend_h4 = Utils.getTrendByHekenAshi(list_h4);
@@ -3014,7 +3018,7 @@ public class BinanceServiceImpl implements BinanceService {
         String btc_trend = Utils.appendSpace("(Btc:H4:" + (BTC_ALLOW_LONG_SHITCOIN ? "Uptrend" : "Downtrend") + ")",
                 25);
         String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_h4.get(0).getCurrPrice()), 5) + ")";
-        String log = "CRYPTO   (H4)   ";
+        String log = "CRYPTO  " + switch_trend_d1 + " (H4)   ";
         log += Utils.appendSpace(SYMBOL, 10) + Utils.appendSpace(TREND_D1, 10);
         log += Utils.appendSpace(str_price, 15) + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
         log += btc_trend;
