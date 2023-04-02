@@ -2941,7 +2941,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public String sendMsgKillLongShort(String SYMBOL) {
         if (DAILY_DOWN_TREND_COINS.contains("_" + SYMBOL + "_")) {
-            return Utils.CRYPTO_TIME_4H;
+            return Utils.CRYPTO_TIME_1H;
         }
         if (!BTC_ETH_BNB.contains(SYMBOL) && !BTC_ALLOW_LONG_SHITCOIN) {
             // TODO: return Utils.CRYPTO_TIME_15m;
@@ -2953,12 +2953,12 @@ public class BinanceServiceImpl implements BinanceService {
             if (CollectionUtils.isEmpty(list_w1)) {
                 String not_found_msg = "BinanceNotFound:" + SYMBOL + "(" + Utils.CRYPTO_TIME_1w + ")";
                 Utils.logWritelnDraft(not_found_msg);
-                return Utils.CRYPTO_TIME_4H;
+                return Utils.CRYPTO_TIME_1H;
             }
             String trend_w1 = Utils.getTrendByHekenAshi(list_w1);
             if (Objects.equals(trend_w1, Utils.TREND_SHORT)) {
                 DAILY_DOWN_TREND_COINS += "_" + SYMBOL + "_";
-                return Utils.CRYPTO_TIME_4H;
+                return Utils.CRYPTO_TIME_1H;
             }
 
             percent += "     10W: ";
@@ -2974,7 +2974,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (CollectionUtils.isEmpty(list_d1)) {
             String not_found_msg = "BinanceNotFound:" + SYMBOL + "(" + Utils.CRYPTO_TIME_1D + ")";
             Utils.logWritelnDraft(not_found_msg);
-            return Utils.CRYPTO_TIME_4H;
+            return Utils.CRYPTO_TIME_1H;
         }
 
         percent += "     10D: ";
@@ -2987,13 +2987,13 @@ public class BinanceServiceImpl implements BinanceService {
         String TREND_D1 = Utils.getTrendByHekenAshi(list_d1);
         if (!BTC_ETH_BNB.contains(SYMBOL) && Objects.equals(TREND_D1, Utils.TREND_SHORT)) {
             DAILY_DOWN_TREND_COINS += "_" + SYMBOL + "_";
-            return Utils.CRYPTO_TIME_4H;
+            return Utils.CRYPTO_TIME_1H;
         }
         if (Objects.equals(Utils.TREND_LONG, TREND_D1) && !DAILY_UP_TREND_COINS.contains(SYMBOL)) {
             DAILY_UP_TREND_COINS += "_" + SYMBOL + "_";
         }
         if (!BTC_ETH_BNB.contains(SYMBOL) && Objects.equals(Utils.TREND_SHORT, TREND_D1)) {
-            return Utils.CRYPTO_TIME_4H;
+            return Utils.CRYPTO_TIME_1H;
         }
 
         String switch_trend_d1 = "";
@@ -3071,7 +3071,7 @@ public class BinanceServiceImpl implements BinanceService {
         String EVENT_ID = EVENT_PUMP + SYMBOL + Utils.getCurrentYyyyMmDd_HH();
         sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
 
-        return Utils.CRYPTO_TIME_15m;
+        return Utils.CRYPTO_TIME_1H;
     }
 
     @Override
