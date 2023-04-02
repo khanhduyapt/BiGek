@@ -113,9 +113,8 @@ public class BscScanBinanceApplication {
 
                 while (index_crypto < total) {
                     try {
-                        checkKillLongShort(binance_service);
 
-                        if (!Utils.isWeekend() && Utils.isAllowSendMsg()) {
+                        if (Utils.isWeekday() && Utils.isAllowSendMsg() && Utils.isBusinessTime_6h_to_22h()) {
                             if (isReloadAfter((Utils.MINUTES_OF_5M), "MT5_DATA")) {
                                 binance_service.saveMt5Data();
                             }
@@ -134,6 +133,12 @@ public class BscScanBinanceApplication {
                         }
 
                         // ---------------------------------------------------------
+                        if (isReloadAfter((Utils.MINUTES_OF_5M), "INIT_CRYPTO")) {
+                            binance_service.initCryptoTrend("BTC");
+                            binance_service.initCryptoTrend("ETH");
+                            binance_service.initCryptoTrend("BNB");
+                        }
+
                         String SYMBOL = Utils.COINS.get(index_crypto).toUpperCase();
                         if (isReloadAfter(getWattingTime(SYMBOL), "CHECK_CRYPTO_" + SYMBOL)) {
                             String crypto_time = binance_service.sendMsgKillLongShort(SYMBOL);
@@ -180,14 +185,6 @@ public class BscScanBinanceApplication {
 
     public static void initTelegramBotsApi() {
         System.out.println("____________________initTelegramBotsApi" + Utils.getTimeHHmm() + "____________________");
-    }
-
-    private static void checkKillLongShort(BinanceService binance_service) {
-        if (isReloadAfter(Utils.MINUTES_OF_15M, "CHECK_KILL_LONG_SHORT")) {
-            binance_service.sendMsgKillLongShort("BTC");
-            binance_service.sendMsgKillLongShort("ETH");
-            binance_service.sendMsgKillLongShort("BNB");
-        }
     }
 
     public static Integer getWattingTime(String SYMBOL) {

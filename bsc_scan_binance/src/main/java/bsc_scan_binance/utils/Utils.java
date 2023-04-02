@@ -1078,10 +1078,12 @@ public class Utils {
         }
     }
 
-    public static boolean isWeekend() {
+    public static boolean isWeekday() {
         LocalDate today = LocalDate.now();
         DayOfWeek day = DayOfWeek.of(today.get(ChronoField.DAY_OF_WEEK));
         boolean value = day == DayOfWeek.SUNDAY || day == DayOfWeek.SATURDAY;
+        value = !value;
+
         return value;
     }
 
