@@ -2975,13 +2975,13 @@ public class BinanceServiceImpl implements BinanceService {
         percent += Utils.appendSpace(
                 "Hig:" + Utils.getPercentToEntry(list_d1.get(0).getCurrPrice(), low_high_10d.get(1), true), 22);
 
-        String btc_trend = Utils.appendSpace("(Btc:H4:" + (BTC_ALLOW_LONG_SHITCOIN ? "Uptrend" : "Downtrend") + ")",
+        String btc_h4_trend = Utils.appendSpace("(Btc:H4:" + (BTC_ALLOW_LONG_SHITCOIN ? "Uptrend" : "Downtrend") + ")",
                 25);
         String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_d1.get(0).getCurrPrice()), 5) + ")";
         String log = Utils.appendSpace("CRYPTO  " + Utils.appendSpace(switch_trend_d1, 3) + " (D1)", 18);
         log += Utils.appendSpace(SYMBOL, 10) + Utils.appendSpace(TREND_D1, 10);
         log += Utils.appendSpace(str_price, 15) + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
-        log += btc_trend;
+        log += btc_h4_trend;
         log += percent;
 
         if (Utils.isNotBlank(switch_trend_d1)) {
@@ -3037,8 +3037,14 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (Utils.isNotBlank(switch_trend_h1)) {
+            String btc_h4_trend = Utils
+                    .appendSpace("(Btc:H4:" + (BTC_ALLOW_LONG_SHITCOIN ? "Uptrend" : "Downtrend") + ")", 25);
+
             String EVENT_ID = "BTC_SWITCH_TREND_" + switch_trend_h1 + Utils.getCurrentYyyyMmDd_HH();
-            sendMsgPerHour(EVENT_ID, "BTC_" + Utils.TEXT_SWITCH_TREND_TO_ + switch_trend_h1, true);
+
+            String msg = "BTC_" + Utils.TEXT_SWITCH_TREND_TO_ + switch_trend_h1 + btc_h4_trend;
+
+            sendMsgPerHour(EVENT_ID, msg, true);
         }
 
         if (Utils.isNotBlank(switch_trend_h4) && Objects.equals(switch_trend_h4, switch_trend_h1)) {
@@ -3062,6 +3068,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_h4.get(0).getCurrPrice()), 5)
                             + ")";
+
                     if (Objects.equals(Utils.TREND_LONG, trend_h4)) {
                         msg = " 💹 " + Utils.getChartName(list_h4) + SYMBOL + "_kill_Short 💔 " + str_price;
                     }
