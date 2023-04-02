@@ -2992,13 +2992,28 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.equals(Utils.TREND_LONG, TREND_D1) && !DAILY_UP_TREND_COINS.contains(SYMBOL)) {
             DAILY_UP_TREND_COINS += "_" + SYMBOL + "_";
         }
-        if (!Objects.equals("BTC", SYMBOL) && Objects.equals(Utils.TREND_LONG, TREND_D1) && !BTC_ALLOW_LONG_SHITCOIN) {
-            // TODO: return Utils.CRYPTO_TIME_15m;
+        if (!BTC_ETH_BNB.contains(SYMBOL) && Objects.equals(Utils.TREND_SHORT, TREND_D1)) {
+            return Utils.CRYPTO_TIME_4H;
         }
+
         String switch_trend_d1 = "";
         if (Objects.equals(Utils.TREND_LONG, Utils.switchTrendByHekenAshi_3_to_6(list_d1))) {
-            switch_trend_d1 = "(*)D1_" + Utils.TEXT_SWITCH_TREND_TO_ + Utils.TREND_LONG;
+            switch_trend_d1 = "(*)";
         }
+
+        String btc_trend = Utils.appendSpace("(Btc:H4:" + (BTC_ALLOW_LONG_SHITCOIN ? "Uptrend" : "Downtrend") + ")",
+                25);
+        String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_d1.get(0).getCurrPrice()), 5) + ")";
+        String log = Utils.appendSpace("CRYPTO  " + Utils.appendSpace(switch_trend_d1, 3) + " (D1)", 18);
+        log += Utils.appendSpace(SYMBOL, 10) + Utils.appendSpace(TREND_D1, 10);
+        log += Utils.appendSpace(str_price, 15) + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
+        log += btc_trend;
+        log += percent;
+
+        if (Utils.isNotBlank(switch_trend_d1)) {
+            logMsgPerHour("CRYPTO_D1_" + SYMBOL, log);
+        }
+
         // ------------------------------------------------
         List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 15);
         String trend_h4 = Utils.getTrendByHekenAshi(list_h4);
@@ -3015,16 +3030,7 @@ public class BinanceServiceImpl implements BinanceService {
             return Utils.CRYPTO_TIME_15m;
         }
 
-        String btc_trend = Utils.appendSpace("(Btc:H4:" + (BTC_ALLOW_LONG_SHITCOIN ? "Uptrend" : "Downtrend") + ")",
-                25);
-        String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_h4.get(0).getCurrPrice()), 5) + ")";
-        String log = "CRYPTO  " + switch_trend_d1 + " (H4)   ";
-        log += Utils.appendSpace(SYMBOL, 10) + Utils.appendSpace(TREND_D1, 10);
-        log += Utils.appendSpace(str_price, 15) + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
-        log += btc_trend;
-        log += percent;
-
-        logMsgPerHour("CRYPTO_H4_" + SYMBOL, log);
+        logMsgPerHour("CRYPTO_H4_" + SYMBOL, log.replace("(D1)", "(H4)"));
         // ------------------------------------------------
         List<BtcFutures> list_h1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1H, 10);
         if (!Objects.equals(TREND_D1, Utils.getTrendByHekenAshi(list_h1))) {
@@ -3033,7 +3039,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (!Objects.equals(TREND_D1, Utils.switchTrendByHekenAshi_3_to_6(list_h1))) {
             return Utils.CRYPTO_TIME_15m;
         }
-        logMsgPerHour("CRYPTO_H1_" + SYMBOL, log.replace("(H4)", "(H1)"));
+        logMsgPerHour("CRYPTO_H1_" + SYMBOL, log.replace("(D1)", "(H1)"));
         // ------------------------------------------------
         List<BtcFutures> list_15 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_15m, 10);
         if (!Objects.equals(TREND_D1, Utils.getTrendByHekenAshi(list_15))) {
@@ -3042,12 +3048,10 @@ public class BinanceServiceImpl implements BinanceService {
         if (!Objects.equals(TREND_D1, Utils.switchTrendByHekenAshi_3_to_6(list_15))) {
             return Utils.CRYPTO_TIME_5m;
         }
-        List<BtcFutures> list_5 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_5m, 10);
-        String trend_5 = Utils.getTrendByHekenAshi(list_5);
-        if (!Objects.equals(TREND_D1, trend_5)) {
-            return Utils.CRYPTO_TIME_5m;
-        }
+        Utils.logWritelnDraft(log.replace("(D1)", "(15)"));
+
         // ------------------------------------------------
+
         // TODO sendMsgKillLongShort
         String msg = "";
         boolean isOnlyMe = true;
@@ -3064,11 +3068,8 @@ public class BinanceServiceImpl implements BinanceService {
             msg = msg.replace("_kill_Short 💔 ", "").replace("_kill_Long 💔 ", "");
             msg += btc_trend + switch_trend_d1;
         }
-
         String EVENT_ID = EVENT_PUMP + SYMBOL + Utils.getCurrentYyyyMmDd_HH();
         sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
-
-        Utils.logWritelnDraft(log.replace("(H1)", "(05)").replace("(H4)", "(05)"));
 
         return Utils.CRYPTO_TIME_15m;
     }

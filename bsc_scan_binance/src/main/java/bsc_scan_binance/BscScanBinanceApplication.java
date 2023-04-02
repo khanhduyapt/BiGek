@@ -157,13 +157,12 @@ public class BscScanBinanceApplication {
 
                         String msg = "round:" + round_crypto + ", reload: " + Utils.getMmDD_TimeHHmm() + ", spend:"
                                 + TimeUnit.MILLISECONDS.toMinutes(diff) + " Minutes.";
-                        System.out.println();
 
                         round_crypto += 1;
                         index_crypto = 0;
 
                         System.out.println(msg);
-                        Utils.logWritelnDraft(msg);
+                        // Utils.logWritelnDraft(msg);
                     } else {
                         index_crypto += 1;
                     }
