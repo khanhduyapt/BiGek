@@ -3038,11 +3038,11 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (Utils.isNotBlank(switch_trend_h1)) {
             String btc_h4_trend = Utils
-                    .appendSpace("(Btc:H4:" + (BTC_ALLOW_LONG_SHITCOIN ? "Uptrend" : "Downtrend") + ")", 25);
+                    .appendSpace("(H4:" + (BTC_ALLOW_LONG_SHITCOIN ? Utils.TREND_LONG : Utils.TREND_SHORT) + ")", 25);
 
             String EVENT_ID = "BTC_SWITCH_TREND_" + switch_trend_h1 + Utils.getCurrentYyyyMmDd_HH();
 
-            String msg = "BTC_" + Utils.TEXT_SWITCH_TREND_TO_ + switch_trend_h1 + btc_h4_trend;
+            String msg = "(H1)BTC_" + Utils.TEXT_SWITCH_TREND_TO_ + switch_trend_h1 + btc_h4_trend;
 
             sendMsgPerHour(EVENT_ID, msg, true);
         }
