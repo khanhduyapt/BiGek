@@ -2944,7 +2944,7 @@ public class BinanceServiceImpl implements BinanceService {
             return Utils.CRYPTO_TIME_1H;
         }
         if (!BTC_ETH_BNB.contains(SYMBOL) && !BTC_ALLOW_LONG_SHITCOIN) {
-            // TODO: return Utils.CRYPTO_TIME_15m;
+            return Utils.CRYPTO_TIME_15m;
         }
         // ----------------------------------------
         String percent = "";
@@ -3020,6 +3020,20 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.equals("BTC", SYMBOL)) {
             if (Objects.equals(trend_h4, Utils.TREND_LONG)) {
                 BTC_ALLOW_LONG_SHITCOIN = true;
+            } else {
+                BTC_ALLOW_LONG_SHITCOIN = false;
+            }
+
+            List<BtcFutures> list_h1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1H, 10);
+            String switch_trend = Utils.switchTrendByHekenAshi_3_to_6(list_h1);
+            if (Utils.isNotBlank(switch_trend)) {
+                String EVENT_ID = "BTC_SWITCH_TREND_" + switch_trend + Utils.getCurrentYyyyMmDd_HH();
+                sendMsgPerHour(EVENT_ID, "BTC_" + Utils.TEXT_SWITCH_TREND_TO_ + switch_trend, true);
+            }
+            if (Objects.equals(Utils.getTrendByHekenAshi(list_h1), Utils.TREND_LONG)) {
+                BTC_ALLOW_LONG_SHITCOIN = true;
+            } else {
+                BTC_ALLOW_LONG_SHITCOIN = false;
             }
         }
 
@@ -3029,7 +3043,6 @@ public class BinanceServiceImpl implements BinanceService {
         if (!Objects.equals(TREND_D1, Utils.switchTrendByHekenAshi_3_to_6(list_h4))) {
             return Utils.CRYPTO_TIME_15m;
         }
-
         logMsgPerHour("CRYPTO_H4_" + SYMBOL, log.replace("(D1)", "(H4)"));
         // ------------------------------------------------
         List<BtcFutures> list_h1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1H, 10);
@@ -3040,6 +3053,7 @@ public class BinanceServiceImpl implements BinanceService {
             return Utils.CRYPTO_TIME_15m;
         }
         logMsgPerHour("CRYPTO_H1_" + SYMBOL, log.replace("(D1)", "(H1)"));
+
         // ------------------------------------------------
         List<BtcFutures> list_15 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_15m, 10);
         if (!Objects.equals(TREND_D1, Utils.getTrendByHekenAshi(list_15))) {
