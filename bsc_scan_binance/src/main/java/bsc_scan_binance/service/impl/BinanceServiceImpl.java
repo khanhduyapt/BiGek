@@ -3423,6 +3423,7 @@ public class BinanceServiceImpl implements BinanceService {
         return "";
     }
 
+    @SuppressWarnings("unused")
     @Override
     @Transactional
     public void scapForex() {
@@ -3461,10 +3462,10 @@ public class BinanceServiceImpl implements BinanceService {
                         result_05 += ", ";
                     }
                     result_05 += Utils.appendSpace(dto_05.getNote() + EPIC, 20);
-                    outputLog(EPIC, dto_05.getNote(), dto_05, dto_h1);
+                    outputLog(EPIC, dto_05.getNote(), dto_05, dto_h4);
                 }
 
-                // #3
+                // #2
                 if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)
                         && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)
                         && dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)
@@ -3475,7 +3476,7 @@ public class BinanceServiceImpl implements BinanceService {
                         result_05 += ", ";
                     }
                     result_05 += Utils.appendSpace(type_05 + EPIC, 20);
-                    outputLog(EPIC, type_05, dto_05, dto_h1);
+                    outputLog(EPIC, type_05, dto_05, dto_h4);
                 }
             }
         }
