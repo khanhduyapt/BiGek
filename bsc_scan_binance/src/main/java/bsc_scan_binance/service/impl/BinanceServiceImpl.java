@@ -3443,15 +3443,14 @@ public class BinanceServiceImpl implements BinanceService {
                     logMsgPerHour("FOREX_H1_" + EPIC + trend_h1, log, Utils.MINUTES_OF_1H);
                 }
 
+                // H4 & H1:switch_trend
+                if (Utils.isBlank(dto_h4.getNote() + dto_h1.getNote())) {
+                    continue;
+                }
                 // H4=H1=TrendD1
                 if (!Objects.equals(TREND_D1, trend_h4) || !Objects.equals(TREND_D1, trend_h1)) {
                     continue;
                 }
-                // H4 & H1:switch_trend
-                if (!(dto_h4.getNote() + dto_h1.getNote()).contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)) {
-                    continue;
-                }
-
                 // -----------------------------------------------------------------
                 String chart = "";
                 if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)) {

@@ -162,30 +162,30 @@ public class Utils {
             "AERGO", "ARK", "BIDR", "CREAM", "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM",
             "QKC", "QLC", "SNM", "SNT", "UFT", "WABI", "IQ");
 
-//    public static final List<String> COINS = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ARB", "ADA", "ADX", "AERGO",
-//            "AGIX", "AGLD", "AKRO", "ALCX", "ALGO", "ALICE", "ALPACA", "ALPHA", "ALPINE", "AMB", "AMP", "ANKR", "ANT",
-//            "APE", "API3", "APT", "AR", "ARDR", "ARK", "ARPA", "ASR", "ASTR", "ATA", "ATM", "ATOM", "AUCTION", "AUDIO",
-//            "AUTO", "AVA", "AVAX", "AXS", "BADGER", "BAKE", "BAL", "BAND", "BAR", "BAT", "BCH", "BEL", "BETA", "BETH",
-//            "BICO", "BIFI", "BLZ", "BNB", "BNT", "BNX", "BOND", "BSW", "BTC", "BTS", "BURGER", "C98", "CAKE", "CELO",
-//            "CELR", "CFX", "CHESS", "CHR", "CHZ", "CITY", "CKB", "CLV", "COCOS", "COMP", "COS", "COTI", "CREAM", "CRV",
-//            "CTK", "CTSI", "CTXC", "CVC", "CVP", "CVX", "DAR", "DASH", "DATA", "DCR", "DEGO", "DENT", "DEXE", "DGB",
-//            "DIA", "DOCK", "DODO", "DOGE", "DOT", "DREP", "DUSK", "DYDX", "EGLD", "ELF", "ENJ", "ENS", "EOS", "EPX",
-//            "ERN", "ETC", "ETH", "FARM", "FET", "FIDA", "FIL", "FIO", "FIRO", "FIS", "FLM", "FLOW", "FLUX", "FOR",
-//            "FORTH", "FRONT", "FTM", "FTT", "FUN", "FXS", "GAL", "GALA", "GAS", "GFT", "GHST", "GLM", "GLMR", "GMT",
-//            "GMX", "GNS", "GRT", "GTC", "HARD", "HBAR", "HFT", "HIFI", "HIGH", "HIVE", "HOOK", "HOT", "ID", "ICX",
-//            "IDEX", "ILV", "IMX", "INJ", "IOST", "IOTA", "IOTX", "IQ", "IRIS", "JASMY", "JOE", "JST", "JUV", "KAVA",
-//            "KDA", "KEY", "KLAY", "KMD", "KNC", "KP3R", "KSM", "LAZIO", "LEVER", "LINA", "LINK", "LIT", "LOKA", "LOOM",
-//            "LPT", "LQTY", "LRC", "LSK", "LTC", "LTO", "LUNA", "LUNC", "MAGIC", "MANA", "MASK", "MATIC", "MBOX", "MC",
-//            "MDT", "MDX", "MINA", "MKR", "MLN", "MOB", "MOVR", "MTL", "MULTI", "NEAR", "NEBL", "NEO", "NEXO", "NKN",
-//            "NMR", "NULS", "OCEAN", "OG", "OGN", "OMG", "ONE", "ONG", "ONT", "OOKI", "OP", "ORN", "OSMO", "OXT",
-//            "PEOPLE", "PERL", "PERP", "PHA", "PHB", "PLA", "PNT", "POLS", "POLYX", "POND", "PORTO", "POWR", "PROM",
-//            "PROS", "PSG", "PUNDIX", "PYR", "QI", "QKC", "QNT", "QTUM", "QUICK", "RDNT", "RARE", "RAY", "REEF", "REI",
-//            "REN", "REQ", "RIF", "RLC", "RNDR", "ROSE", "RPL", "RSR", "RUNE", "RVN", "SAND", "SANTOS", "SC", "SCRT",
-//            "SFP", "SHIB", "SKL", "SLP", "SNM", "SNT", "SNX", "SOL", "SPELL", "SRM", "SSV", "STEEM", "STG", "STMX",
-//            "STORJ", "STPT", "STRAX", "STX", "SUN", "SUPER", "SUSHI", "SXP", "SYN", "SYS", "THETA", "TKO", "TLM",
-//            "TOMO", "TORN", "TRB", "TROY", "TRU", "TRX", "TVK", "TWT", "UFT", "UNFI", "UNI", "UTK", "VGX", "VIB",
-//            "VIDT", "VITE", "VOXEL", "VTHO", "WAN", "WAVES", "WAXP", "WIN", "WING", "WNXM", "WRX", "WTC", "XEC", "XLM",
-//            "XMR", "XNO", "XRP", "XTZ", "XVG", "XVS", "YFI", "YFII", "YGG", "ZEC", "ZEN", "ZIL", "ZRX");
+    //    public static final List<String> COINS = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ARB", "ADA", "ADX", "AERGO",
+    //            "AGIX", "AGLD", "AKRO", "ALCX", "ALGO", "ALICE", "ALPACA", "ALPHA", "ALPINE", "AMB", "AMP", "ANKR", "ANT",
+    //            "APE", "API3", "APT", "AR", "ARDR", "ARK", "ARPA", "ASR", "ASTR", "ATA", "ATM", "ATOM", "AUCTION", "AUDIO",
+    //            "AUTO", "AVA", "AVAX", "AXS", "BADGER", "BAKE", "BAL", "BAND", "BAR", "BAT", "BCH", "BEL", "BETA", "BETH",
+    //            "BICO", "BIFI", "BLZ", "BNB", "BNT", "BNX", "BOND", "BSW", "BTC", "BTS", "BURGER", "C98", "CAKE", "CELO",
+    //            "CELR", "CFX", "CHESS", "CHR", "CHZ", "CITY", "CKB", "CLV", "COCOS", "COMP", "COS", "COTI", "CREAM", "CRV",
+    //            "CTK", "CTSI", "CTXC", "CVC", "CVP", "CVX", "DAR", "DASH", "DATA", "DCR", "DEGO", "DENT", "DEXE", "DGB",
+    //            "DIA", "DOCK", "DODO", "DOGE", "DOT", "DREP", "DUSK", "DYDX", "EGLD", "ELF", "ENJ", "ENS", "EOS", "EPX",
+    //            "ERN", "ETC", "ETH", "FARM", "FET", "FIDA", "FIL", "FIO", "FIRO", "FIS", "FLM", "FLOW", "FLUX", "FOR",
+    //            "FORTH", "FRONT", "FTM", "FTT", "FUN", "FXS", "GAL", "GALA", "GAS", "GFT", "GHST", "GLM", "GLMR", "GMT",
+    //            "GMX", "GNS", "GRT", "GTC", "HARD", "HBAR", "HFT", "HIFI", "HIGH", "HIVE", "HOOK", "HOT", "ID", "ICX",
+    //            "IDEX", "ILV", "IMX", "INJ", "IOST", "IOTA", "IOTX", "IQ", "IRIS", "JASMY", "JOE", "JST", "JUV", "KAVA",
+    //            "KDA", "KEY", "KLAY", "KMD", "KNC", "KP3R", "KSM", "LAZIO", "LEVER", "LINA", "LINK", "LIT", "LOKA", "LOOM",
+    //            "LPT", "LQTY", "LRC", "LSK", "LTC", "LTO", "LUNA", "LUNC", "MAGIC", "MANA", "MASK", "MATIC", "MBOX", "MC",
+    //            "MDT", "MDX", "MINA", "MKR", "MLN", "MOB", "MOVR", "MTL", "MULTI", "NEAR", "NEBL", "NEO", "NEXO", "NKN",
+    //            "NMR", "NULS", "OCEAN", "OG", "OGN", "OMG", "ONE", "ONG", "ONT", "OOKI", "OP", "ORN", "OSMO", "OXT",
+    //            "PEOPLE", "PERL", "PERP", "PHA", "PHB", "PLA", "PNT", "POLS", "POLYX", "POND", "PORTO", "POWR", "PROM",
+    //            "PROS", "PSG", "PUNDIX", "PYR", "QI", "QKC", "QNT", "QTUM", "QUICK", "RDNT", "RARE", "RAY", "REEF", "REI",
+    //            "REN", "REQ", "RIF", "RLC", "RNDR", "ROSE", "RPL", "RSR", "RUNE", "RVN", "SAND", "SANTOS", "SC", "SCRT",
+    //            "SFP", "SHIB", "SKL", "SLP", "SNM", "SNT", "SNX", "SOL", "SPELL", "SRM", "SSV", "STEEM", "STG", "STMX",
+    //            "STORJ", "STPT", "STRAX", "STX", "SUN", "SUPER", "SUSHI", "SXP", "SYN", "SYS", "THETA", "TKO", "TLM",
+    //            "TOMO", "TORN", "TRB", "TROY", "TRU", "TRX", "TVK", "TWT", "UFT", "UNFI", "UNI", "UTK", "VGX", "VIB",
+    //            "VIDT", "VITE", "VOXEL", "VTHO", "WAN", "WAVES", "WAXP", "WIN", "WING", "WNXM", "WRX", "WTC", "XEC", "XLM",
+    //            "XMR", "XNO", "XRP", "XTZ", "XVG", "XVS", "YFI", "YFII", "YGG", "ZEC", "ZEN", "ZIL", "ZRX");
 
     //
     public static final List<String> COINS_NEW_LISTING = Arrays.asList("RDNT", "AMB", "ARB", "ID", "LQTY", "SYN", "GNS",
@@ -3507,7 +3507,14 @@ public class Utils {
             return "";
         }
 
-        return Utils.isUptrendByMa(heken_list, 1, 0, 1) ? TREND_LONG : TREND_SHORT;
+        int sta = 1;
+        int end = 2;
+        if (list.get(0).getId().contains("_1d_") || list.get(0).getId().contains("_4h_")) {
+            sta = 0;
+            end = 1;
+        }
+
+        return Utils.isUptrendByMa(heken_list, 1, sta, end) ? TREND_LONG : TREND_SHORT;
     }
 
     public static String createLineForex_Header(Orders dto_entry, Orders dto_sl, String trend_d1) {
