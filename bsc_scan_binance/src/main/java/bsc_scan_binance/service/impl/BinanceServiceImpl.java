@@ -3455,23 +3455,13 @@ public class BinanceServiceImpl implements BinanceService {
                 trend_05 = dto_05.getTrend();
 
                 // #1
-                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(TREND_D1, trend_05)
+                if (Objects.equals(trend_h1, trend_05) && Utils.isNotBlank(dto_h1.getNote())
                         && dto_05.getNote().contains("50")) {
                     if (Utils.isNotBlank(result_05)) {
                         result_05 += ", ";
                     }
                     result_05 += Utils.appendSpace(dto_05.getNote() + EPIC, 20);
                     outputLog(EPIC, dto_05.getNote(), dto_05, dto_h1);
-                }
-
-                // #2
-                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(TREND_D1, trend_15)
-                        && dto_15.getNote().contains("50")) {
-                    if (Utils.isNotBlank(result_15)) {
-                        result_15 += ", ";
-                    }
-                    result_15 += Utils.appendSpace(dto_15.getNote() + EPIC, 20);
-                    outputLog(EPIC, dto_15.getNote(), dto_15, dto_h1);
                 }
 
                 // #3
@@ -3526,6 +3516,13 @@ public class BinanceServiceImpl implements BinanceService {
 
             log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 10);
             log += Utils.calc_BUF_LO_HI_BUF_Forex(true, "", EPIC, dto_entry, dto_sl);
+
+            if (Objects.equals(Utils.TREND_LONG, dto_entry.getTrend())) {
+                log = log.replace("   (BUY )", "***(BUY )");
+            }
+            if (Objects.equals(Utils.TREND_SHORT, dto_entry.getTrend())) {
+                log = log.replace("   (SELL)", "***(SELL)");
+            }
 
             Utils.logWritelnDraft(log);
         }
