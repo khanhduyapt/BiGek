@@ -3459,7 +3459,7 @@ public class BinanceServiceImpl implements BinanceService {
                     log += Utils.appendSpace(EPIC, 10) + Utils.appendSpace(dto_h1.getNote(), 20) + " #H4 "
                             + Utils.appendSpace(Utils.getCapitalLink(EPIC), 70);
 
-                    logMsgPerHour("FOREX_H1_" + EPIC + trend_h1, log, Utils.MINUTES_OF_1H);
+                    // logMsgPerHour("FOREX_H1_" + EPIC + trend_h1, log, Utils.MINUTES_OF_1H);
                 }
 
                 // H4 & H1:switch_trend
@@ -3481,7 +3481,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String log = "FOREX    " + chart + "   ";
                 log += Utils.appendSpace(EPIC, 10) + Utils.appendSpace(TREND_D1, 10);
                 log += Utils.appendSpace(str_price, 15) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 70);
-                logMsgPerHour("FOREX_H1_" + EPIC, log, Utils.MINUTES_OF_1H);
+                // logMsgPerHour("FOREX_H1_" + EPIC, log, Utils.MINUTES_OF_1H);
                 // -----------------------------------------------------------------
                 // #1 trend_05 = trend_h4 && CuttingUp(Ma50)
                 boolean find_next = true;

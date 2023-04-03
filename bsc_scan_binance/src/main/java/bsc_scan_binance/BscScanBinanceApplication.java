@@ -139,11 +139,11 @@ public class BscScanBinanceApplication {
                             binance_service.initCryptoTrend("BNB");
                         }
 
-                        String SYMBOL = Utils.COINS.get(index_crypto).toUpperCase();
-                        if (isReloadAfter(getWattingTime(SYMBOL), "CHECK_CRYPTO_" + SYMBOL)) {
-                            String crypto_time = binance_service.sendMsgKillLongShort(SYMBOL);
-                            setWattingTime(SYMBOL, crypto_time);
-                        }
+                        //String SYMBOL = Utils.COINS.get(index_crypto).toUpperCase();
+                        //if (isReloadAfter(getWattingTime(SYMBOL), "CHECK_CRYPTO_" + SYMBOL)) {
+                        //    String crypto_time = binance_service.sendMsgKillLongShort(SYMBOL);
+                        //    setWattingTime(SYMBOL, crypto_time);
+                        //}
 
                         // ---------------------------------------------------------
                         if (isReloadAfter((Utils.MINUTES_OF_1H), "CREATE_REPORT")) {
