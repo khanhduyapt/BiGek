@@ -3381,7 +3381,7 @@ public class BinanceServiceImpl implements BinanceService {
         String switch_trend = Utils.switchTrendByHekenAshi_3_to_6(list);
 
         String note = "";
-        if (CAPITAL_TIME_XX.toUpperCase().contains(Utils.CAPITAL_TIME_MINUTE_5)) {
+        if (CAPITAL_TIME_XX.toUpperCase().contains("MINUTE_")) {
             String switch_trend_ma50 = Utils.switchTrendByMaXX(list, 3, 50);
             if (Utils.isNotBlank(switch_trend_ma50)) {
                 note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(3_50:B)" : "(3_50:S)";
@@ -3439,6 +3439,7 @@ public class BinanceServiceImpl implements BinanceService {
             String TREND_D1 = "";
             String trend_h4 = "";
             String trend_h1 = "";
+            String trend_15 = "";
             String trend_05 = "";
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
@@ -3450,11 +3451,12 @@ public class BinanceServiceImpl implements BinanceService {
                 TREND_D1 = dto_d1.getTrend();
                 trend_h4 = dto_h4.getTrend();
                 trend_h1 = dto_h1.getTrend();
+                trend_15 = dto_15.getTrend();
                 trend_05 = dto_05.getTrend();
 
                 // #1
-                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(TREND_D1, trend_h1)
-                        && Objects.equals(TREND_D1, trend_05) && dto_05.getNote().contains("50")) {
+                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(TREND_D1, trend_05)
+                        && dto_05.getNote().contains("50")) {
                     if (Utils.isNotBlank(result_05)) {
                         result_05 += ", ";
                     }
@@ -3463,6 +3465,16 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // #2
+                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(TREND_D1, trend_15)
+                        && dto_15.getNote().contains("50")) {
+                    if (Utils.isNotBlank(result_15)) {
+                        result_15 += ", ";
+                    }
+                    result_15 += Utils.appendSpace(dto_15.getNote() + EPIC, 20);
+                    outputLog(EPIC, dto_15.getNote(), dto_15, dto_h1);
+                }
+
+                // #3
                 if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)
                         && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)
                         && dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)
