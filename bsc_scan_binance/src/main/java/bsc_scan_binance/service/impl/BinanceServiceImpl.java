@@ -3437,7 +3437,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (!Objects.equals(trend_h4, trend_h1) && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_)
                         && !dto_h1.getNote().contains(trend_h4)) {
                     String log = "FOREX    " + "(H1)" + "   ";
-                    log += Utils.appendSpace(EPIC, 10) + Utils.appendSpace(dto_h1.getNote(), 22) + " #H4"
+                    log += Utils.appendSpace(EPIC, 10) + Utils.appendSpace(dto_h1.getNote(), 20) + " #H4 "
                             + Utils.appendSpace(Utils.getCapitalLink(EPIC), 70);
 
                     logMsgPerHour("FOREX_H1_" + EPIC + trend_h1, log, Utils.MINUTES_OF_1H);
