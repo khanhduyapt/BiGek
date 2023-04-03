@@ -133,7 +133,7 @@ public class BscScanBinanceApplication {
                         }
 
                         // ---------------------------------------------------------
-                        if (isReloadAfter((Utils.MINUTES_OF_5M), "INIT_CRYPTO")) {
+                        if (isReloadAfter((Utils.MINUTES_OF_15M), "INIT_CRYPTO")) {
                             binance_service.initCryptoTrend("BTC");
                             binance_service.initCryptoTrend("ETH");
                             binance_service.initCryptoTrend("BNB");
@@ -197,10 +197,10 @@ public class BscScanBinanceApplication {
     }
 
     public static void setWattingTime(String SYMBOL, String CRYPTO_TIME_xx) {
-        Integer time = Utils.MINUTES_OF_5M;
+        Integer time = Utils.MINUTES_OF_15M;
         switch (CRYPTO_TIME_xx) {
         case Utils.CRYPTO_TIME_5m:
-            time = Utils.MINUTES_OF_5M;
+            time = Utils.MINUTES_OF_15M;
             break;
         case Utils.CRYPTO_TIME_15m:
             time = Utils.MINUTES_OF_15M;
@@ -214,7 +214,7 @@ public class BscScanBinanceApplication {
             time = Utils.MINUTES_OF_4H;
             break;
         default:
-            time = Utils.MINUTES_OF_5M;
+            time = Utils.MINUTES_OF_15M;
             break;
         }
         watting_dict.put(SYMBOL, time);

@@ -2985,7 +2985,7 @@ public class BinanceServiceImpl implements BinanceService {
         log += percent;
 
         if (Utils.isNotBlank(switch_trend_d1)) {
-            logMsgPerHour("CRYPTO_D1_" + SYMBOL, log, Utils.MINUTES_OF_4H);
+            // logMsgPerHour("CRYPTO_D1_" + SYMBOL, log, Utils.MINUTES_OF_4H);
         }
         // ------------------------------------------------
         List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 15);
@@ -2993,25 +2993,28 @@ public class BinanceServiceImpl implements BinanceService {
         if (!Objects.equals(TREND_D1, switch_trend_h4)) {
             return Utils.CRYPTO_TIME_5m;
         }
-        logMsgPerHour("CRYPTO_H4_" + SYMBOL, log.replace("(D1)", "(H4)"), Utils.MINUTES_OF_4H);
+        // logMsgPerHour("CRYPTO_H4_" + SYMBOL, log.replace("(D1)", "(H4)"),
+        // Utils.MINUTES_OF_4H);
         // ------------------------------------------------
         List<BtcFutures> list_h1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1H, 10);
         if (!Objects.equals(TREND_D1, Utils.switchTrendByHekenAshi_3_to_6(list_h1))) {
             return Utils.CRYPTO_TIME_5m;
         }
-        logMsgPerHour("CRYPTO_H1_" + SYMBOL, log.replace("(D1)", "(H1)"), Utils.MINUTES_OF_1H);
+        // logMsgPerHour("CRYPTO_H1_" + SYMBOL, log.replace("(D1)", "(H1)"),
+        // Utils.MINUTES_OF_1H);
 
         // ------------------------------------------------
         List<BtcFutures> list_15 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_15m, 10);
         if (!Objects.equals(TREND_D1, Utils.switchTrendByHekenAshi_3_to_6(list_15))) {
             return Utils.CRYPTO_TIME_5m;
         }
-        logMsgPerHour("CRYPTO_15_" + SYMBOL, log.replace("(D1)", "(15)"), Utils.MINUTES_OF_15M);
 
         // ------------------------------------------------
         String msg = "(" + switch_trend_h4 + ")" + SYMBOL;
         String EVENT_ID = EVENT_PUMP + SYMBOL + Utils.getCurrentYyyyMmDd_HH();
         sendMsgPerHour(EVENT_ID, msg, true);
+
+        logMsgPerHour("CRYPTO_15_" + SYMBOL, log.replace("(D1)", "(15)"), Utils.MINUTES_OF_15M);
 
         return Utils.CRYPTO_TIME_1H;
     }
@@ -3029,7 +3032,7 @@ public class BinanceServiceImpl implements BinanceService {
         String switch_trend_h1 = Utils.switchTrendByHekenAshi_3_to_6(list_h1);
 
         if (Objects.equals("BTC", SYMBOL)) {
-            if (Objects.equals(trend_h4, Utils.TREND_LONG) || Objects.equals(trend_h1, Utils.TREND_LONG)) {
+            if (Objects.equals(trend_h4, Utils.TREND_LONG) && Objects.equals(trend_h1, Utils.TREND_LONG)) {
                 BTC_ALLOW_LONG_SHITCOIN = true;
             } else {
                 BTC_ALLOW_LONG_SHITCOIN = false;
@@ -3037,13 +3040,11 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (Utils.isNotBlank(switch_trend_h1)) {
-            String btc_h4_trend = Utils
-                    .appendSpace("(H4:" + (BTC_ALLOW_LONG_SHITCOIN ? Utils.TREND_LONG : Utils.TREND_SHORT) + ")", 25);
+            String btc_h4_trend = Utils.appendSpace(
+                    "BTC(H4:" + (BTC_ALLOW_LONG_SHITCOIN ? Utils.TREND_LONG : Utils.TREND_SHORT) + ")", 25);
+            String msg = btc_h4_trend + "(H1)" + Utils.TEXT_SWITCH_TREND_TO_ + switch_trend_h1;
 
-            String EVENT_ID = "BTC_SWITCH_TREND_" + switch_trend_h1 + Utils.getCurrentYyyyMmDd_HH();
-
-            String msg = "(H1)BTC_" + Utils.TEXT_SWITCH_TREND_TO_ + switch_trend_h1 + btc_h4_trend;
-
+            String EVENT_ID = "BTC_SWITCH_TREND_" + trend_h4 + trend_h1 + Utils.getCurrentYyyyMmDd_HH();
             sendMsgPerHour(EVENT_ID, msg, true);
         }
 
@@ -3450,7 +3451,7 @@ public class BinanceServiceImpl implements BinanceService {
                     chart = "(H1)";
                 }
                 String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(dto_d1.getCurrent_price()), 5) + ")";
-                String log = "CRYPTO   " + chart + "   ";
+                String log = "FOREX    " + chart + "   ";
                 log += Utils.appendSpace(EPIC, 10) + Utils.appendSpace(TREND_D1, 10);
                 log += Utils.appendSpace(str_price, 15) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 70);
                 logMsgPerHour("FOREX_H1_" + EPIC, log, Utils.MINUTES_OF_1H);
