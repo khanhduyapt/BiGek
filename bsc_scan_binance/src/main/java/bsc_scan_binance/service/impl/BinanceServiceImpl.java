@@ -3439,6 +3439,7 @@ public class BinanceServiceImpl implements BinanceService {
             String TREND_D1 = "";
             String trend_h4 = "";
             String trend_h1 = "";
+            String trend_15 = "";
             String trend_05 = "";
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
@@ -3450,17 +3451,19 @@ public class BinanceServiceImpl implements BinanceService {
                 TREND_D1 = dto_d1.getTrend();
                 trend_h4 = dto_h4.getTrend();
                 trend_h1 = dto_h1.getTrend();
+                trend_15 = dto_15.getTrend();
                 trend_05 = dto_05.getTrend();
 
                 // #1
-                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_05)
-                        && Objects.equals(trend_h1, trend_05)
+                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(TREND_D1, trend_h1)
+                        && Objects.equals(TREND_D1, trend_15)
+                        && Objects.equals(TREND_D1, trend_05)
                         && dto_05.getNote().contains("50")) {
                     if (Utils.isNotBlank(result_05)) {
                         result_05 += ", ";
                     }
                     result_05 += Utils.appendSpace(dto_05.getNote() + EPIC, 20);
-                    outputLog(EPIC, dto_05.getNote(), dto_05, dto_h4);
+                    outputLog(EPIC, dto_05.getNote(), dto_05, dto_h1);
                 }
 
                 // #2
@@ -3474,7 +3477,7 @@ public class BinanceServiceImpl implements BinanceService {
                         result_05 += ", ";
                     }
                     result_05 += Utils.appendSpace(type_05 + EPIC, 20);
-                    outputLog(EPIC, type_05, dto_05, dto_h4);
+                    outputLog(EPIC, type_05, dto_05, dto_h1);
                 }
             }
         }
