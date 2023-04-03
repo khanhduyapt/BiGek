@@ -3076,7 +3076,7 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.equals(Utils.TREND_SHORT, trend_h4)) {
                         msg = " 🔻 " + Utils.getChartName(list_h4) + SYMBOL + "_kill_Long 💔 " + str_price;
                     }
-                    String EVENT_ID = EVENT_PUMP + SYMBOL + Utils.getCurrentYyyyMmDd_HH();
+                    String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_HH();
                     sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
 
                 }
@@ -3433,6 +3433,15 @@ public class BinanceServiceImpl implements BinanceService {
                 trend_h4 = dto_h4.getTrend();
                 trend_h1 = dto_h1.getTrend();
                 trend_05 = dto_05.getTrend();
+
+                if (!Objects.equals(trend_h4, trend_h1) && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_)
+                        && !dto_h1.getNote().contains(trend_h4)) {
+                    String log = "FOREX    " + "(H1)" + "   ";
+                    log += Utils.appendSpace(EPIC, 10) + Utils.appendSpace(dto_h1.getNote(), 22) + " #H4"
+                            + Utils.appendSpace(Utils.getCapitalLink(EPIC), 70);
+
+                    logMsgPerHour("FOREX_H1_" + EPIC + trend_h1, log, Utils.MINUTES_OF_1H);
+                }
 
                 // H4=H1=TrendD1
                 if (!Objects.equals(TREND_D1, trend_h4) || !Objects.equals(TREND_D1, trend_h1)) {
