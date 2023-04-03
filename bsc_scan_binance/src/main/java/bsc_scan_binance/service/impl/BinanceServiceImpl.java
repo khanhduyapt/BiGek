@@ -3453,13 +3453,14 @@ public class BinanceServiceImpl implements BinanceService {
                 trend_05 = dto_05.getTrend();
 
                 // #1
-                if (Objects.equals(trend_h4, trend_05) && Objects.equals(trend_h1, trend_05)
+                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_05)
+                        && Objects.equals(trend_h1, trend_05)
                         && dto_05.getNote().contains("50")) {
                     if (Utils.isNotBlank(result_05)) {
                         result_05 += ", ";
                     }
                     result_05 += Utils.appendSpace(dto_05.getNote() + EPIC, 20);
-                    outputLog(EPIC, dto_05.getNote(), dto_05, dto_h1);
+                    outputLog(EPIC, dto_05.getNote(), dto_05, dto_h4);
                 }
 
                 // #2
