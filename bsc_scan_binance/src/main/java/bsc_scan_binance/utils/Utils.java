@@ -3580,10 +3580,10 @@ public class Utils {
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
         if (dto_entry.getId().contains("_MINUTE_")) {
-            risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+            // risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
         if (dto_entry.getId().contains("_DAY")) {
-            risk = risk.multiply(BigDecimal.valueOf(2));
+            // risk = risk.multiply(BigDecimal.valueOf(2));
         }
 
         BigDecimal sl_long = Utils.getBigDecimal(dto_sl.getLow_price());
