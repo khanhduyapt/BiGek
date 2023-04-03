@@ -2938,8 +2938,11 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String sendMsgKillLongShort(String SYMBOL) {
+        if (!BTC_ETH_BNB.contains(SYMBOL)) {
+            return "";
+        }
         if (!BTC_ETH_BNB.contains(SYMBOL) && !BTC_ALLOW_LONG_SHITCOIN) {
-            // return Utils.CRYPTO_TIME_5m;
+            return Utils.CRYPTO_TIME_5m;
         }
         // ----------------------------------------
         List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 10);
@@ -3040,13 +3043,12 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (Utils.isNotBlank(switch_trend_h1)) {
-            String btc_h4_trend = Utils.appendSpace(
-                    "BTC(H4:" + (BTC_ALLOW_LONG_SHITCOIN ? Utils.TREND_LONG : Utils.TREND_SHORT) + ")", 25);
-            String msg = btc_h4_trend + "(H1)" + Utils.TEXT_SWITCH_TREND_TO_ + switch_trend_h1;
-
-            String EVENT_ID = "BTC_SWITCH_TREND_" + trend_h4 + trend_h1 + Utils.getCurrentYyyyMmDd_HH();
-            sendMsgPerHour(EVENT_ID, msg, true);
-            logMsgPerHour("BTC_SWITCH_TREND_" + trend_h4 + trend_h1, msg, Utils.MINUTES_OF_1H);
+            // String btc_h4_trend = Utils.appendSpace(
+            //         "BTC(H4:" + (BTC_ALLOW_LONG_SHITCOIN ? Utils.TREND_LONG : Utils.TREND_SHORT) + ")", 25);
+            // String msg = btc_h4_trend + "(H1)" + Utils.TEXT_SWITCH_TREND_TO_ + switch_trend_h1;
+            // String EVENT_ID = "BTC_SWITCH_TREND_" + trend_h4 + trend_h1 + Utils.getCurrentYyyyMmDd_HH();
+            // sendMsgPerHour(EVENT_ID, msg, true);
+            // logMsgPerHour("BTC_SWITCH_TREND_" + trend_h4 + trend_h1, msg, Utils.MINUTES_OF_1H);
         }
 
         if (Utils.isNotBlank(switch_trend_h4) && Objects.equals(switch_trend_h4, switch_trend_h1)) {
@@ -3379,12 +3381,29 @@ public class BinanceServiceImpl implements BinanceService {
         String switch_trend = Utils.switchTrendByHekenAshi_3_to_6(list);
 
         String note = "";
-        if (Objects.equals(trend, switch_trend)) {
-            note = Utils.TEXT_SWITCH_TREND_TO_ + trend;
-        } else if (Utils.isSameTrendByHekenAshi_Ma1_6(list)) {
-            note = Utils.TEXT_SAME_TREND_1_TO_6 + trend;
-        }
 
+        if (CAPITAL_TIME_XX.toUpperCase().contains(Utils.CAPITAL_TIME_MINUTE_5)) {
+            String switch_trend_ma50 = Utils.switchTrendByMaXX(list, 3, 50);
+            if (Utils.isNotBlank(switch_trend_ma50)) {
+                note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(3_50:B)" : "(3_50:S)";
+            } else {
+                switch_trend_ma50 = Utils.switchTrendByMaXX(list, 6, 50);
+                if (Utils.isNotBlank(switch_trend_ma50)) {
+                    note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(6_50:B)" : "(6_50:S)";
+                } else {
+                    switch_trend_ma50 = Utils.switchTrendByMaXX(list, 8, 50);
+                    if (Utils.isNotBlank(switch_trend_ma50)) {
+                        note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(8_50:B)" : "(8_50:S)";
+                    }
+                }
+            }
+        } else {
+            if (Objects.equals(trend, switch_trend)) {
+                note = Utils.TEXT_SWITCH_TREND_TO_ + trend;
+            } else if (Utils.isSameTrendByHekenAshi_Ma1_6(list)) {
+                note = Utils.TEXT_SAME_TREND_1_TO_6 + trend;
+            }
+        }
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
         String date_time = LocalDateTime.now().toString();
@@ -3467,37 +3486,18 @@ public class BinanceServiceImpl implements BinanceService {
                 // #1 trend_05 = trend_h4 && CuttingUp(Ma50)
                 boolean find_next = true;
 
-                List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
-                if (!CollectionUtils.isEmpty(list)) {
-                    String type_05 = "";
-                    String switch_trend = Utils.switchTrendByMaXX(list, 3, 50);
-                    if (Utils.isNotBlank(switch_trend)) {
-                        type_05 = switch_trend.contains(Utils.TREND_LONG) ? "(3_50:B)" : "(3_50:S)";
-                    } else {
-                        switch_trend = Utils.switchTrendByMaXX(list, 6, 50);
-                        if (Utils.isNotBlank(switch_trend)) {
-                            type_05 = switch_trend.contains(Utils.TREND_LONG) ? "(6_50:B)" : "(6_50:S)";
-                        } else {
-                            switch_trend = Utils.switchTrendByMaXX(list, 8, 50);
-                            if (Utils.isNotBlank(switch_trend)) {
-                                type_05 = switch_trend.contains(Utils.TREND_LONG) ? "(8_50:B)" : "(8_50:S)";
-                            }
-                        }
+                if (Objects.equals(TREND_D1, trend_05) && dto_05.getNote().contains("50")) {
+                    if (Utils.isNotBlank(result_05)) {
+                        result_05 += ", ";
                     }
+                    result_05 += Utils.appendSpace(dto_05.getNote() + EPIC, 20);
+                    outputLog(EPIC, dto_05.getNote(), dto_05, dto_h4);
 
-                    if (Objects.equals(TREND_D1, switch_trend)) {
-                        if (Utils.isNotBlank(result_05)) {
-                            result_05 += ", ";
-                        }
-                        result_05 += Utils.appendSpace(type_05 + EPIC, 20);
-                        outputLog(EPIC, type_05, dto_05, dto_h4);
-
-                        find_next = false;
-                    }
+                    find_next = false;
                 }
                 // -----------------------------------------------------------------
                 // #2
-                if (find_next && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)
+                if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)
                         && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)
                         && dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)
                         && dto_05.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)) {
