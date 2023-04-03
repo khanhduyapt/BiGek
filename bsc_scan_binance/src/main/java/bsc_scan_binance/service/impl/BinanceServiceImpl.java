@@ -3046,6 +3046,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String EVENT_ID = "BTC_SWITCH_TREND_" + trend_h4 + trend_h1 + Utils.getCurrentYyyyMmDd_HH();
             sendMsgPerHour(EVENT_ID, msg, true);
+            logMsgPerHour("BTC_SWITCH_TREND_" + trend_h4 + trend_h1, msg, Utils.MINUTES_OF_1H);
         }
 
         if (Utils.isNotBlank(switch_trend_h4) && Objects.equals(switch_trend_h4, switch_trend_h1)) {
@@ -3078,7 +3079,6 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                     String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_HH();
                     sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
-
                 }
             }
         }
@@ -3467,36 +3467,33 @@ public class BinanceServiceImpl implements BinanceService {
                 // -----------------------------------------------------------------
                 // #1 trend_05 = trend_h4 && CuttingUp(Ma50)
                 boolean find_next = true;
-                if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_ + TREND_D1)
-                        && Objects.equals(TREND_D1, trend_h1) && Objects.equals(TREND_D1, trend_05)) {
 
-                    List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
-                    if (!CollectionUtils.isEmpty(list)) {
-                        String type_05 = "";
-                        String switch_trend = Utils.switchTrendByMaXX(list, 3, 50);
+                List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
+                if (!CollectionUtils.isEmpty(list)) {
+                    String type_05 = "";
+                    String switch_trend = Utils.switchTrendByMaXX(list, 3, 50);
+                    if (Utils.isNotBlank(switch_trend)) {
+                        type_05 = switch_trend.contains(Utils.TREND_LONG) ? "(3_50:B)" : "(3_50:S)";
+                    } else {
+                        switch_trend = Utils.switchTrendByMaXX(list, 6, 50);
                         if (Utils.isNotBlank(switch_trend)) {
-                            type_05 = switch_trend.contains(Utils.TREND_LONG) ? "(3_50:B)" : "(3_50:S)";
+                            type_05 = switch_trend.contains(Utils.TREND_LONG) ? "(6_50:B)" : "(6_50:S)";
                         } else {
-                            switch_trend = Utils.switchTrendByMaXX(list, 6, 50);
+                            switch_trend = Utils.switchTrendByMaXX(list, 8, 50);
                             if (Utils.isNotBlank(switch_trend)) {
-                                type_05 = switch_trend.contains(Utils.TREND_LONG) ? "(6_50:B)" : "(6_50:S)";
-                            } else {
-                                switch_trend = Utils.switchTrendByMaXX(list, 8, 50);
-                                if (Utils.isNotBlank(switch_trend)) {
-                                    type_05 = switch_trend.contains(Utils.TREND_LONG) ? "(8_50:B)" : "(8_50:S)";
-                                }
+                                type_05 = switch_trend.contains(Utils.TREND_LONG) ? "(8_50:B)" : "(8_50:S)";
                             }
                         }
+                    }
 
-                        if (Objects.equals(TREND_D1, switch_trend)) {
-                            if (Utils.isNotBlank(result_05)) {
-                                result_05 += ", ";
-                            }
-                            result_05 += Utils.appendSpace(type_05 + EPIC, 20);
-                            outputLog(EPIC, type_05, dto_05, dto_h4);
-
-                            find_next = false;
+                    if (Objects.equals(TREND_D1, switch_trend)) {
+                        if (Utils.isNotBlank(result_05)) {
+                            result_05 += ", ";
                         }
+                        result_05 += Utils.appendSpace(type_05 + EPIC, 20);
+                        outputLog(EPIC, type_05, dto_05, dto_h4);
+
+                        find_next = false;
                     }
                 }
                 // -----------------------------------------------------------------
