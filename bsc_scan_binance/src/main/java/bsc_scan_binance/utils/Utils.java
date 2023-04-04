@@ -3256,15 +3256,9 @@ public class Utils {
             String EPIC = getEpicFromId(dto_entry.getId());
 
             String trend = dto_entry.getTrend();
-            if (dto_entry.getNote().contains(Utils.TEXT_TREND_HEKEN_LONG)) {
-                trend = Utils.TREND_LONG;
-            }
-            if (dto_entry.getNote().contains(Utils.TEXT_TREND_HEKEN_SHORT)) {
-                trend = Utils.TREND_SHORT;
-            }
 
             String buffer = Utils.appendSpace("", 14);
-            buffer += Utils.calc_BUF_LO_HI_BUF_Forex(false, "", EPIC, dto_entry, dto_sl);
+            buffer += Utils.calc_BUF_LO_HI_BUF_Forex(false, trend, EPIC, dto_entry, dto_sl);
             log = buffer;
         }
 
@@ -3603,7 +3597,7 @@ public class Utils {
             result = Utils.appendSpace(result, 135);
         }
 
-        return result;
+        return Utils.getChartName(dto_entry) + ":" + result;
     }
 
     public static String calc_BUF_Long_Forex(BigDecimal risk, String EPIC, BigDecimal en_long, BigDecimal sl_long,

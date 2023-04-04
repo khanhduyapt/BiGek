@@ -3223,18 +3223,11 @@ public class BinanceServiceImpl implements BinanceService {
                     String trend_d1 = dto_d1.getTrend();
                     String chart = Utils.getChartName(dto_d1) + ":" + Utils.appendSpace(dto_d1.getTrend(), 8);
 
-                    String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 115)
-                            + "   ";
+                    String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
                     log += Utils.createLineForex_Body(dto_h4, dto_h4).trim();
-                    if (Objects.equals(Utils.TREND_LONG, trend_d1)) {
-                        log = log.replace("   (BUY )", "***(BUY )");
-                    }
-                    if (Objects.equals(Utils.TREND_SHORT, trend_d1)) {
-                        log = log.replace("   (SELL)", "***(SELL)");
-                    }
 
                     if (Utils.isNotBlank(note_d1)) {
-                        log += "   " + note_d1;
+                        log += "     " + note_d1;
                     }
 
                     String week_trend = "";
@@ -3424,6 +3417,7 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.nonNull(dto_15) && Objects.nonNull(dto_05)) {
                         String trend_15 = dto_15.getTrend();
                         String trend_05 = dto_05.getTrend();
+
                         if (Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)
                                 && dto_15.getNote().contains("50")) {
                             String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "(15:B)" : "(15:S)";
