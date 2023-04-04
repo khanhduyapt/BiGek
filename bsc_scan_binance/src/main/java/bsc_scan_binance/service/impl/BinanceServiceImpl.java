@@ -3133,16 +3133,6 @@ public class BinanceServiceImpl implements BinanceService {
 
         //TODO: week_trend_index
         Hashtable<String, String> week_trend_index = new Hashtable<String, String>();
-
-        week_trend_index.put("BTCUSD", Utils.TREND_SHORT);
-        week_trend_index.put("XAUUSD", Utils.TREND_LONG);
-        week_trend_index.put("XAGUSD", Utils.TREND_LONG);
-
-        week_trend_index.put("US30", Utils.TREND_LONG);
-        week_trend_index.put("NAS100", Utils.TREND_LONG);
-        week_trend_index.put("UK100", Utils.TREND_LONG);
-        week_trend_index.put("GER30", Utils.TREND_LONG);
-
         week_trend_index.put("USD", Utils.TREND_SHORT); // DXY
         week_trend_index.put("GBP", Utils.TREND_LONG); // BXY
         week_trend_index.put("JPY", Utils.TREND_SHORT); // JXY
@@ -3414,22 +3404,15 @@ public class BinanceServiceImpl implements BinanceService {
         CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_OTHERS);
 
         for (String EPIC : CAPITAL_LIST) {
-            boolean allow_continue = false;
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
             String trend_h4 = dto_h4.getTrend();
             if (Objects.nonNull(dto_h4)) {
-                if (GLOBAL_LONG_LIST.contains(EPIC) && Objects.equals(trend_h4, Utils.TREND_LONG)) {
-                    allow_continue = true;
-                }
-                if (GLOBAL_SHOT_LIST.contains(EPIC) && Objects.equals(trend_h4, Utils.TREND_SHORT)) {
-                    allow_continue = true;
-                }
-
-                if (!allow_continue) {
+                if (GLOBAL_LONG_LIST.contains(EPIC) && !Objects.equals(trend_h4, Utils.TREND_LONG)) {
                     continue;
                 }
-            } else {
-                continue;
+                if (GLOBAL_SHOT_LIST.contains(EPIC) && !Objects.equals(trend_h4, Utils.TREND_SHORT)) {
+                    continue;
+                }
             }
 
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
@@ -3441,6 +3424,10 @@ public class BinanceServiceImpl implements BinanceService {
                 String d1_range = dto_d1.getNote();
                 String trend_h1 = dto_h1.getTrend();
                 String trend_15 = dto_15.getTrend();
+
+                if (!Objects.equals(TREND_D1, trend_h4) || !Objects.equals(TREND_D1, trend_h1)) {
+                    continue;
+                }
 
                 if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_)) {
                     String type = Objects.equals(Utils.TREND_LONG, trend_h4) ? "(H4:B)" : "(H4:S)";
