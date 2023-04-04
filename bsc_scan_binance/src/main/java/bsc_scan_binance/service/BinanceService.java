@@ -51,8 +51,6 @@ public interface BinanceService {
 
     public void createReport();
 
-    public List<String> getSummaryCurrencies(String SOURCE, String CAPITAL_TIME_XXX);
-
     public void scapForex();
 
     public void deleteConnectTimeOutException();
@@ -60,5 +58,7 @@ public interface BinanceService {
     public void saveMt5Data();
 
     public void sendMsgPerHour(String EVENT_ID, String msg_content, boolean isOnlyMe);
+
+    public void initWeekTrend();
 
 }

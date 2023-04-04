@@ -91,6 +91,7 @@ public class BscScanBinanceApplication {
 
             // ----------------------------------------
             binance_service.clearTrash();
+            binance_service.initWeekTrend();
             binance_service.createReport();
             binance_service.deleteConnectTimeOutException();
             // ----------------------------------------

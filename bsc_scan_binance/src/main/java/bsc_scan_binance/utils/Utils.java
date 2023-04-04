@@ -3535,6 +3535,26 @@ public class Utils {
         return "";
     }
 
+    public static String getTrendByHekenAshi(List<BtcFutures> list, int maIndex) {
+        if (CollectionUtils.isEmpty(list)) {
+            return "";
+        }
+
+        List<BtcFutures> heken_list = getHekenList(list);
+        if (CollectionUtils.isEmpty(heken_list)) {
+            return "";
+        }
+
+        int sta = 1;
+        int end = 2;
+        if (list.get(0).getId().contains("_1d_") || list.get(0).getId().contains("_4h_")) {
+            sta = 0;
+            end = 1;
+        }
+
+        return Utils.isUptrendByMa(heken_list, maIndex, sta, end) ? TREND_LONG : TREND_SHORT;
+    }
+
     public static String getTrendByHekenAshi(List<BtcFutures> list) {
         if (CollectionUtils.isEmpty(list)) {
             return "";
