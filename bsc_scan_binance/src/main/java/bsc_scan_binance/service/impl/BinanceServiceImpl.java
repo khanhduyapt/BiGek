@@ -3354,10 +3354,10 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
             }
-        }
-
-        if (Objects.equals(trend, switch_trend)) {
-            note += Utils.TEXT_SWITCH_TREND_TO_ + trend;
+        } else {
+            if (Objects.equals(trend, switch_trend)) {
+                note += Utils.TEXT_SWITCH_TREND_TO_ + trend;
+            }
         }
 
         if (Utils.isNotBlank(note)) {
@@ -3389,7 +3389,6 @@ public class BinanceServiceImpl implements BinanceService {
         return "";
     }
 
-    @SuppressWarnings("unused")
     @Override
     @Transactional
     public void scapForex() {
@@ -3404,47 +3403,32 @@ public class BinanceServiceImpl implements BinanceService {
         CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_OTHERS);
 
         for (String EPIC : CAPITAL_LIST) {
-            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-            String trend_h4 = dto_h4.getTrend();
-            if (Objects.nonNull(dto_h4)) {
-                if (GLOBAL_LONG_LIST.contains(EPIC) && !Objects.equals(trend_h4, Utils.TREND_LONG)) {
-                    continue;
-                }
-                if (GLOBAL_SHOT_LIST.contains(EPIC) && !Objects.equals(trend_h4, Utils.TREND_SHORT)) {
-                    continue;
-                }
-            }
 
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
+            Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_5).orElse(null);
+
             if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1)
-                    && Objects.nonNull(dto_15)) {
-                String TREND_D1 = dto_d1.getTrend();
+                    && Objects.nonNull(dto_15) && Objects.nonNull(dto_05)) {
+
                 String d1_range = dto_d1.getNote();
+                String TREND_D1 = dto_d1.getTrend();
+                String trend_h4 = dto_h4.getTrend();
                 String trend_h1 = dto_h1.getTrend();
                 String trend_15 = dto_15.getTrend();
+                String trend_05 = dto_05.getTrend();
 
-                if (!Objects.equals(TREND_D1, trend_h4) || !Objects.equals(TREND_D1, trend_h1)) {
-                    continue;
-                }
-
-                if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_)) {
-                    String type = Objects.equals(Utils.TREND_LONG, trend_h4) ? "(H4:B)" : "(H4:S)";
-                    outputLog(EPIC, type, dto_h4, dto_h4, d1_range);
-                }
-
-                if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_)
-                        && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_)
-                        && dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_)) {
-
-                    if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
-                        String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "(15:B)" : "(15:S)";
+                if ((dto_h4.getNote() + dto_h1.getNote()).contains(Utils.TEXT_SWITCH_TREND_TO_)) {
+                    if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(TREND_D1, trend_h1)
+                            && Objects.equals(TREND_D1, trend_15) && Objects.equals(TREND_D1, trend_05)) {
+                        String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "(05:B)" : "(05:S)";
                         if (Utils.isNotBlank(result_05)) {
                             result_05 += ", ";
                         }
                         result_05 += Utils.appendSpace(type + EPIC, 20);
-                        outputLog(EPIC, type, dto_15, dto_h4, d1_range);
+                        outputLog(EPIC, type, dto_05, dto_15, d1_range);
                     }
                 }
 
