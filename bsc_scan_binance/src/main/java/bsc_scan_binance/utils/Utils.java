@@ -60,9 +60,8 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 
 //@Slf4j
 public class Utils {
-
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.02);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.005);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -147,14 +146,16 @@ public class Utils {
     // Main: "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD"
 
     // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", "AUS200", "JPY225", "XAGUSD",
-    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "US30", "NAS100", "EURUSD",
-            "USDJPY", "GBPUSD", "GBPJPY", "USDCHF", "NZDUSD");
+    public static final List<String> EPICS_MAIN = Arrays.asList("BTCUSD", "XAUUSD", "XAGUSD", "US30", "NAS100", "UK100",
+            "GER30", "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK", "AUDJPY", "AUDNZD", "NZDJPY", "EURGBP",
     // "GBPAUD", ,"XAGUSD", "SP500", "JPN225",
-    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("UK100", "DAX40", "USDCAD", "CADJPY", "EURCAD",
-            "EURJPY", "EURNZD", "GBPCAD", "NZDCAD");
+    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList(
+            "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD",
+            "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "GBPAUD",
+            "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("ART", "BNT", "PHT", "DGT", "DODO",
             "AERGO", "ARK", "BIDR", "CREAM", "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM",
@@ -3565,8 +3566,8 @@ public class Utils {
             return "";
         }
 
-        int sta = 1;
-        int end = 2;
+        int sta = 0;
+        int end = 1;
         if (list.get(0).getId().contains("_1d_") || list.get(0).getId().contains("_4h_")) {
             sta = 0;
             end = 1;
@@ -3582,13 +3583,13 @@ public class Utils {
         String EPIC = getEpicFromId(dto_entry.getId());
         String chart_h4 = getChartName(dto_entry);
 
-        String insert_time = Utils.getStringValue(dto_entry.getInsertTime());
-        LocalDateTime pre_time = LocalDateTime.parse(insert_time);
-        String time = pre_time.format(DateTimeFormatter.ofPattern("HH:mm"));
+        //String insert_time = Utils.getStringValue(dto_entry.getInsertTime());
+        //LocalDateTime pre_time = LocalDateTime.parse(insert_time);
+        //String time = pre_time.format(DateTimeFormatter.ofPattern("HH:mm"));
 
-        String header = time + "  ";
-        header += Utils.appendSpace(trend_d1, 8) + "   ";
-        header += chart_h4 + ":" + Utils.appendSpace(dto_entry.getTrend(), 8) + "    ";
+        String header = "";// time + "  ";
+        header += Utils.appendSpace(trend_d1, 8);
+        header += chart_h4 + ":" + Utils.appendSpace(dto_entry.getTrend(), 8);
         header += Utils.appendSpace(EPIC, 12);
         header += Utils.appendSpace(Utils.getCapitalLink(EPIC), 68);
 
