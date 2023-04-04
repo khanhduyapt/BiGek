@@ -3410,6 +3410,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1)) {
                 String d1_range = dto_d1.getNote();
+                String trend_d1 = dto_d1.getTrend();
                 String trend_h4 = dto_h4.getTrend();
 
                 if ((dto_h4.getNote() + dto_h1.getNote()).contains(Utils.TEXT_SWITCH_TREND_TO_)) {
@@ -3420,7 +3421,11 @@ public class BinanceServiceImpl implements BinanceService {
 
                         if (Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)
                                 && dto_15.getNote().contains("50")) {
-                            String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "(15:B)" : "(15:S)";
+
+                            String type = "";
+                            type += Objects.equals(Utils.TREND_LONG, trend_d1) ? " (D1:B) " : " (D1:S) ";
+                            type += Objects.equals(Utils.TREND_LONG, trend_15) ? " (15:B) " : " (15:S) ";
+
                             if (Utils.isNotBlank(result_15)) {
                                 result_15 += ", ";
                             }
@@ -3430,7 +3435,11 @@ public class BinanceServiceImpl implements BinanceService {
 
                         if (Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)
                                 && dto_05.getNote().contains("50")) {
-                            String type = Objects.equals(Utils.TREND_LONG, trend_05) ? "(05:B)" : "(05:S)";
+
+                            String type = "";
+                            type += Objects.equals(Utils.TREND_LONG, trend_d1) ? " (D1:B) " : " (D1:S) ";
+                            type += Objects.equals(Utils.TREND_LONG, trend_05) ? " (05:B) " : " (05:S) ";
+
                             if (Utils.isNotBlank(result_05)) {
                                 result_05 += ", ";
                             }
