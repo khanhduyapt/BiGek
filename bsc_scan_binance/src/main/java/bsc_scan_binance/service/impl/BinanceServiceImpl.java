@@ -2986,15 +2986,17 @@ public class BinanceServiceImpl implements BinanceService {
             String mt5_data_file = "";
             String pcname = InetAddress.getLocalHost().getHostName().toLowerCase();
             if (Objects.equals(pcname, "pc")) {
-                //MFF
+                // MFF
                 mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.csv";
 
-                //The5ers: mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\10CE948A1DFC9A8C27E56E827008EBD4\\MQL5\\Files\\Data\\Bars.csv";
+                // The5ers: mt5_data_file =
+                // "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\10CE948A1DFC9A8C27E56E827008EBD4\\MQL5\\Files\\Data\\Bars.csv";
             } else if (Objects.equals(pcname, "desktop-l4m1ju2")) {
                 // MFF
                 mt5_data_file = "C:\\Users\\DellE5270\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.csv";
 
-                //The5ers:  mt5_data_file = "C:\\Users\\DellE5270\\AppData\\Roaming\\MetaQuotes\\Terminal\\10CE948A1DFC9A8C27E56E827008EBD4\\MQL5\\Files\\Data\\Bars.csv";
+                // The5ers: mt5_data_file =
+                // "C:\\Users\\DellE5270\\AppData\\Roaming\\MetaQuotes\\Terminal\\10CE948A1DFC9A8C27E56E827008EBD4\\MQL5\\Files\\Data\\Bars.csv";
             }
 
             File file = new File(mt5_data_file);
@@ -3131,7 +3133,7 @@ public class BinanceServiceImpl implements BinanceService {
         GLOBAL_LONG_LIST = new ArrayList<String>();
         GLOBAL_SHOT_LIST = new ArrayList<String>();
 
-        //TODO: week_trend_index
+        // TODO: week_trend_index
         Hashtable<String, String> week_trend_index = new Hashtable<String, String>();
         week_trend_index.put("USD", Utils.TREND_SHORT); // DXY
         week_trend_index.put("GBP", Utils.TREND_LONG); // BXY
@@ -3339,7 +3341,7 @@ public class BinanceServiceImpl implements BinanceService {
             note += percent;
         }
 
-        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
+        if (CAPITAL_TIME_XX.contains("MINUTE_")) {
             String switch_trend_ma50 = Utils.switchTrendByMaXX(list, 1, 50);
             if (Utils.isNotBlank(switch_trend_ma50)) {
                 note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(1_50:B)" : "(1_50:S)";
@@ -3410,8 +3412,8 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_5).orElse(null);
 
-            if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1)
-                    && Objects.nonNull(dto_15) && Objects.nonNull(dto_05)) {
+            if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1) && Objects.nonNull(dto_15)
+                    && Objects.nonNull(dto_05)) {
 
                 String d1_range = dto_d1.getNote();
                 String TREND_D1 = dto_d1.getTrend();
@@ -3421,14 +3423,26 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_05 = dto_05.getTrend();
 
                 if ((dto_h4.getNote() + dto_h1.getNote()).contains(Utils.TEXT_SWITCH_TREND_TO_)) {
-                    if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(TREND_D1, trend_h1)
-                            && Objects.equals(TREND_D1, trend_15) && Objects.equals(TREND_D1, trend_05)) {
-                        String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "(05:B)" : "(05:S)";
-                        if (Utils.isNotBlank(result_05)) {
-                            result_05 += ", ";
+                    if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(TREND_D1, trend_h1)) {
+
+                        if (Objects.equals(TREND_D1, trend_05) && dto_05.getNote().contains("50")) {
+                            String type = Objects.equals(Utils.TREND_LONG, trend_05) ? "(05:B)" : "(05:S)";
+                            if (Utils.isNotBlank(result_05)) {
+                                result_05 += ", ";
+                            }
+                            result_05 += Utils.appendSpace(type + EPIC, 20);
+                            outputLog(EPIC, type, dto_05, dto_15, d1_range);
                         }
-                        result_05 += Utils.appendSpace(type + EPIC, 20);
-                        outputLog(EPIC, type, dto_05, dto_15, d1_range);
+
+                        if (Objects.equals(TREND_D1, trend_15) && dto_15.getNote().contains("50")) {
+                            String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "(15:B)" : "(15:S)";
+                            if (Utils.isNotBlank(result_05)) {
+                                result_05 += ", ";
+                            }
+                            result_05 += Utils.appendSpace(type + EPIC, 20);
+                            outputLog(EPIC, type, dto_15, dto_15, d1_range);
+                        }
+
                     }
                 }
 
