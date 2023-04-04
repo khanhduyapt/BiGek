@@ -146,16 +146,17 @@ public class Utils {
     // Main: "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD"
 
     // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", "AUS200", "JPY225", "XAGUSD",
-    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "US30", "NAS100", "UK100",
-            "GER30", "EURUSD", "USDJPY", "GBPUSD", "GBPJPY", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
+    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "US30", "NAS100", "UK100", "GER30",
+            "EURUSD", "USDJPY", "GBPUSD", "GBPJPY", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK", "AUDJPY", "AUDNZD", "NZDJPY", "EURGBP",
     // "GBPAUD", ,"XAGUSD", "SP500", "JPN225",
     public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList(
-    //"BTCUSD", "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD",
-    //"CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "GBPAUD",
-    //"GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY"
+    // "BTCUSD", "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD",
+    // "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP",
+    // "EURJPY", "EURNZD", "GBPAUD",
+    // "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY"
     );
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("ART", "BNT", "PHT", "DGT", "DODO",
@@ -3422,52 +3423,18 @@ public class Utils {
 
         int count_long = 0;
 
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma1_0, ma1_3, ma2_0, ma2_3))) {
-            count_long += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma1_0, ma1_3, ma3_0, ma3_3))) {
-            count_long += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma1_0, ma1_3, ma4_0, ma4_3))) {
-            count_long += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma1_0, ma1_3, ma5_0, ma5_3))) {
-            count_long += 1;
-        }
         if (Utils.isNotBlank(Utils.checkXCutUpY(ma1_0, ma1_3, ma6_0, ma6_3))) {
-            count_long += 1;
-        }
-
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma2_0, ma2_3, ma3_0, ma3_3))) {
-            count_long += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma2_0, ma2_3, ma4_0, ma4_3))) {
-            count_long += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma2_0, ma2_3, ma5_0, ma5_3))) {
             count_long += 1;
         }
         if (Utils.isNotBlank(Utils.checkXCutUpY(ma2_0, ma2_3, ma6_0, ma6_3))) {
             count_long += 1;
         }
-
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma3_0, ma3_3, ma4_0, ma4_3))) {
-            count_long += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma3_0, ma3_3, ma5_0, ma5_3))) {
-            count_long += 1;
-        }
         if (Utils.isNotBlank(Utils.checkXCutUpY(ma3_0, ma3_3, ma6_0, ma6_3))) {
-            count_long += 1;
-        }
-
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma4_0, ma4_3, ma5_0, ma5_3))) {
             count_long += 1;
         }
         if (Utils.isNotBlank(Utils.checkXCutUpY(ma4_0, ma4_3, ma6_0, ma6_3))) {
             count_long += 1;
         }
-
         if (Utils.isNotBlank(Utils.checkXCutUpY(ma5_0, ma5_3, ma6_0, ma6_3))) {
             count_long += 1;
         }
@@ -3475,62 +3442,27 @@ public class Utils {
         // -------------------------
 
         int count_shot = 0;
-
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma1_0, ma1_3, ma2_0, ma2_3))) {
-            count_shot += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma1_0, ma1_3, ma3_0, ma3_3))) {
-            count_shot += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma1_0, ma1_3, ma4_0, ma4_3))) {
-            count_shot += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma1_0, ma1_3, ma5_0, ma5_3))) {
-            count_shot += 1;
-        }
         if (Utils.isNotBlank(Utils.checkXCutDnY(ma1_0, ma1_3, ma6_0, ma6_3))) {
-            count_shot += 1;
-        }
-
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma2_0, ma2_3, ma3_0, ma3_3))) {
-            count_shot += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma2_0, ma2_3, ma4_0, ma4_3))) {
-            count_shot += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma2_0, ma2_3, ma5_0, ma5_3))) {
             count_shot += 1;
         }
         if (Utils.isNotBlank(Utils.checkXCutDnY(ma2_0, ma2_3, ma6_0, ma6_3))) {
             count_shot += 1;
         }
-
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma3_0, ma3_3, ma4_0, ma4_3))) {
-            count_shot += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma3_0, ma3_3, ma5_0, ma5_3))) {
-            count_shot += 1;
-        }
         if (Utils.isNotBlank(Utils.checkXCutDnY(ma3_0, ma3_3, ma6_0, ma6_3))) {
-            count_shot += 1;
-        }
-
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma4_0, ma4_3, ma5_0, ma5_3))) {
             count_shot += 1;
         }
         if (Utils.isNotBlank(Utils.checkXCutDnY(ma4_0, ma4_3, ma6_0, ma6_3))) {
             count_shot += 1;
         }
-
         if (Utils.isNotBlank(Utils.checkXCutDnY(ma5_0, ma5_3, ma6_0, ma6_3))) {
             count_shot += 1;
         }
         // -------------------------
 
-        if ((count_long > count_shot) && ((count_long - count_shot) > 2)) {
+        if ((count_long > count_shot) && ((count_long - count_shot) > 1)) {
             return TREND_LONG;
         }
-        if ((count_shot > count_long) && ((count_shot - count_long) > 2)) {
+        if ((count_shot > count_long) && ((count_shot - count_long) > 1)) {
             return TREND_SHORT;
         }
 
@@ -3584,11 +3516,11 @@ public class Utils {
         String EPIC = getEpicFromId(dto_entry.getId());
         String chart_h4 = getChartName(dto_entry);
 
-        //String insert_time = Utils.getStringValue(dto_entry.getInsertTime());
-        //LocalDateTime pre_time = LocalDateTime.parse(insert_time);
-        //String time = pre_time.format(DateTimeFormatter.ofPattern("HH:mm"));
+        // String insert_time = Utils.getStringValue(dto_entry.getInsertTime());
+        // LocalDateTime pre_time = LocalDateTime.parse(insert_time);
+        // String time = pre_time.format(DateTimeFormatter.ofPattern("HH:mm"));
 
-        String header = "";// time + "  ";
+        String header = "";// time + " ";
         header += Utils.appendSpace(trend_d1, 8);
         header += chart_h4 + ":" + Utils.appendSpace(dto_entry.getTrend(), 8);
         header += Utils.appendSpace(EPIC, 12);
