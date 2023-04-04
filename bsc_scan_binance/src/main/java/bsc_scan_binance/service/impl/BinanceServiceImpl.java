@@ -3428,6 +3428,8 @@ public class BinanceServiceImpl implements BinanceService {
                 if (!allow_continue) {
                     continue;
                 }
+            } else {
+                continue;
             }
 
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);

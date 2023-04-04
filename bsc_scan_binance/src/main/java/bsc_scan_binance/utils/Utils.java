@@ -3656,8 +3656,6 @@ public class Utils {
         BigDecimal tp_long = Utils.getBigDecimal(dto_entry.getEnd_body_price());
         BigDecimal tp_shot = Utils.getBigDecimal(dto_entry.getStr_body_price());
 
-        result += " Risk: " + Utils.appendSpace(removeLastZero(risk).replace(".0", "") + "$", 8);
-
         String str_long = calc_BUF_Long_Forex(risk, EPIC, en_long, sl_long, tp_long);
         String str_shot = calc_BUF_Shot_Forex(risk, EPIC, en_shot, sl_shot, tp_shot);
 
@@ -3667,9 +3665,9 @@ public class Utils {
             result += str_shot;
         } else {
             result += str_long;
-            result = appendSpace(result, 70);
+            result = appendSpace(result, 60);
             result += str_shot;
-            result = Utils.appendSpace(result, 140);
+            result = Utils.appendSpace(result, 135);
         }
 
         return result;
