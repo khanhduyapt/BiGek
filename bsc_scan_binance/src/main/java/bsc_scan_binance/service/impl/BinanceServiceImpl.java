@@ -3405,7 +3405,6 @@ public class BinanceServiceImpl implements BinanceService {
         CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_OTHERS);
 
         for (String EPIC : CAPITAL_LIST) {
-
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
@@ -3416,36 +3415,30 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.nonNull(dto_05)) {
 
                 String d1_range = dto_d1.getNote();
-                String TREND_D1 = dto_d1.getTrend();
                 String trend_h4 = dto_h4.getTrend();
-                String trend_h1 = dto_h1.getTrend();
                 String trend_15 = dto_15.getTrend();
                 String trend_05 = dto_05.getTrend();
 
-                if ((dto_h4.getNote() + dto_h1.getNote()).contains(Utils.TEXT_SWITCH_TREND_TO_)) {
-                    if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(TREND_D1, trend_h1)) {
-
-                        if (Objects.equals(TREND_D1, trend_05) && dto_05.getNote().contains("50")) {
-                            String type = Objects.equals(Utils.TREND_LONG, trend_05) ? "(05:B)" : "(05:S)";
-                            if (Utils.isNotBlank(result_05)) {
-                                result_05 += ", ";
-                            }
-                            result_05 += Utils.appendSpace(type + EPIC, 20);
-                            outputLog(EPIC, type, dto_05, dto_15, d1_range);
+                if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_)) {
+                    if (Objects.equals(trend_h4, trend_05) && dto_05.getNote().contains("50")) {
+                        String type = Objects.equals(Utils.TREND_LONG, trend_05) ? "(05:B)" : "(05:S)";
+                        if (Utils.isNotBlank(result_05)) {
+                            result_05 += ", ";
                         }
-
-                        if (Objects.equals(TREND_D1, trend_15) && dto_15.getNote().contains("50")) {
-                            String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "(15:B)" : "(15:S)";
-                            if (Utils.isNotBlank(result_05)) {
-                                result_05 += ", ";
-                            }
-                            result_05 += Utils.appendSpace(type + EPIC, 20);
-                            outputLog(EPIC, type, dto_15, dto_15, d1_range);
-                        }
-
+                        result_05 += Utils.appendSpace(type + EPIC, 20);
+                        outputLog(EPIC, type, dto_05, dto_15, d1_range);
                     }
-                }
 
+                    if (Objects.equals(trend_h4, trend_15) && dto_15.getNote().contains("50")) {
+                        String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "(15:B)" : "(15:S)";
+                        if (Utils.isNotBlank(result_15)) {
+                            result_15 += ", ";
+                        }
+                        result_15 += Utils.appendSpace(type + EPIC, 20);
+                        outputLog(EPIC, type, dto_15, dto_15, d1_range);
+                    }
+
+                }
             }
         }
 
@@ -3453,12 +3446,10 @@ public class BinanceServiceImpl implements BinanceService {
             String EVENT_ID = "FX_H_" + (result_15 + result_05).length() + Utils.getCurrentYyyyMmDd_HH();
 
             String result_scap = "";
-
             if (Utils.isNotBlank(result_15)) {
                 result_scap += Utils.new_line_from_service;
                 result_scap += "(15)" + result_15;
             }
-
             if (Utils.isNotBlank(result_05)) {
                 result_scap += Utils.new_line_from_service;
                 result_scap += "(05)" + result_05;
