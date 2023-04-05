@@ -3063,7 +3063,7 @@ public class Utils {
         }
 
         if (list.size() < slowIndex) {
-            Utils.logWritelnDraft("(switchTrendByMaXX)list list.size() < slowIndex");
+            Utils.logWritelnDraft("(switchTrendByMaXX)list list.size() < slowIndex " + list.get(0).getId());
             return "";
         }
 
@@ -3608,12 +3608,17 @@ public class Utils {
 
         MoneyAtRiskResponse money_long = new MoneyAtRiskResponse(EPIC, risk, en_long, sl_long, tp_long);
 
-        BigDecimal lot_long = money_long.calcLot();
         String temp = "";
         temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)) + " ", 10);
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 8);
-        temp += Utils.appendLeft(removeLastZero(lot_long), 8) + "(lot)";
+        temp += Utils.appendLeft(removeLastZero(money_long.calcLot()), 8) + "(lot)";
         temp += "/" + removeLastZero(risk).replace(".0", "") + "$";
+
+        BigDecimal risk_x5 = risk.multiply(BigDecimal.valueOf(5));
+        MoneyAtRiskResponse money_x5 = new MoneyAtRiskResponse(EPIC, risk_x5, en_long, sl_long, tp_long);
+        temp += "   ";
+        temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
+        temp += "/" + removeLastZero(risk_x5).replace(".0", "") + "$";
 
         String result = Utils.appendSpace("(BUY )" + temp, 38);
         return result;
@@ -3626,13 +3631,17 @@ public class Utils {
         entry_calc = entry_calc.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
 
         MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, en_shot, sl_shot, tp_shot);
-
-        BigDecimal lot_shot = money_short.calcLot();
         String temp = "";
         temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)) + " ", 10);
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 8);
-        temp += Utils.appendLeft(removeLastZero(lot_shot), 8) + "(lot)";
+        temp += Utils.appendLeft(removeLastZero(money_short.calcLot()), 8) + "(lot)";
         temp += "/" + removeLastZero(risk).replace(".0", "") + "$";
+
+        BigDecimal risk_x5 = risk.multiply(BigDecimal.valueOf(5));
+        MoneyAtRiskResponse money_x5 = new MoneyAtRiskResponse(EPIC, risk_x5, en_shot, sl_shot, tp_shot);
+        temp += "   ";
+        temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
+        temp += "/" + removeLastZero(risk_x5).replace(".0", "") + "$";
 
         String result = Utils.appendSpace("(SELL)" + temp, 38);
         return result;
