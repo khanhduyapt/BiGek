@@ -157,12 +157,10 @@ public class Utils {
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK", "AUDJPY", "AUDNZD", "NZDJPY", "EURGBP",
     // "GBPAUD", ,"XAGUSD", "SP500", "JPN225",
-    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList(
-    // "BTCUSD", "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD",
-    // "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP",
-    // "EURJPY", "EURNZD", "GBPAUD",
-    // "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY"
-    );
+
+    // "EURCHF", "EURGBP","NZDCHF", "NZDJPY", "GBPAUD",
+    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("CADJPY", "EURCAD", "EURJPY", "EURNZD",
+            "GBPNZD");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("ART", "BNT", "PHT", "DGT", "DODO",
             "AERGO", "ARK", "BIDR", "CREAM", "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM",
@@ -3478,13 +3476,8 @@ public class Utils {
             return "";
         }
 
-        int sta = 1;
-        int end = 2;
-        if (list.get(0).getId().contains("_1d_") || list.get(0).getId().contains("_4h_")) {
-            sta = 0;
-            end = 1;
-        }
-
+        int sta = 0;
+        int end = 1;
         return Utils.isUptrendByMa(heken_list, maIndex, sta, end) ? TREND_LONG : TREND_SHORT;
     }
 
@@ -3500,11 +3493,6 @@ public class Utils {
 
         int sta = 0;
         int end = 1;
-        if (list.get(0).getId().contains("_1d_") || list.get(0).getId().contains("_4h_")) {
-            sta = 0;
-            end = 1;
-        }
-
         return Utils.isUptrendByMa(heken_list, 1, sta, end) ? TREND_LONG : TREND_SHORT;
     }
 

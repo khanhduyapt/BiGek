@@ -74,7 +74,6 @@ import bsc_scan_binance.repository.GeckoVolumeMonthRepository;
 import bsc_scan_binance.repository.GeckoVolumeUpPre4hRepository;
 import bsc_scan_binance.repository.Mt5DataCandleRepository;
 import bsc_scan_binance.repository.OrdersRepository;
-import bsc_scan_binance.repository.PrepareOrdersRepository;
 import bsc_scan_binance.repository.PriorityCoinHistoryRepository;
 import bsc_scan_binance.response.BollAreaResponse;
 import bsc_scan_binance.response.BtcFuturesResponse;
@@ -139,9 +138,6 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Autowired
     private OrdersRepository ordersRepository;
-
-    @Autowired
-    private PrepareOrdersRepository prepareOrdersRepository;
 
     @Autowired
     private BinanceFuturesRepository binanceFuturesRepository;
@@ -3319,12 +3315,11 @@ public class BinanceServiceImpl implements BinanceService {
 
         String note = "";
         String trend = Utils.getTrendByHekenAshi(list);
-        if (CAPITAL_TIME_XX.contains(Utils.CAPITAL_TIME_MINUTE_5)) {
-            trend = Utils.getTrendByHekenAshi(list, 6);
-        } else if (CAPITAL_TIME_XX.contains(Utils.CAPITAL_TIME_MINUTE_15)) {
-            trend = Utils.getTrendByHekenAshi(list, 3);
-        } else {
-            trend = Utils.getTrendByHekenAshi(list);
+        if (!Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_DAY)) {
+            String trend_ma6 = Utils.getTrendByHekenAshi(list, 6);
+            if (!Objects.equals(trend, trend_ma6)) {
+                trend = Utils.TREND_ADJUST;
+            }
         }
 
         String switch_trend = Utils.switchTrendByHekenAshi_3_to_6(list);
@@ -3433,7 +3428,8 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_15 = dto_15.getTrend();
                 String trend_05 = dto_05.getTrend();
                 boolean has_output = false;
-                if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_15)) {
+                if (!Objects.equals(trend_h4, Utils.TREND_ADJUST) && Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(trend_h4, trend_15)) {
                     if (Utils.ONEWAY_EPICS.contains(EPIC) && !Objects.equals(TREND_D1, trend_h4)) {
                         continue;
                     }
@@ -3458,8 +3454,10 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (!has_output && (dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))
-                        || dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05)))) {
+                if (!has_output && !Objects.equals(trend_15, Utils.TREND_ADJUST)
+                        && !Objects.equals(trend_05, Utils.TREND_ADJUST)
+                        && (dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))
+                                || dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05)))) {
 
                     String msg = Utils.appendSpace(EPIC, 10);
                     msg += Utils.appendSpace("(SwitchTrend)" + dto_15.getNote() + dto_05.getNote(), 38);
