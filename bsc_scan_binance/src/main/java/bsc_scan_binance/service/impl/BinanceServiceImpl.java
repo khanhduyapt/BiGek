@@ -3216,16 +3216,11 @@ public class BinanceServiceImpl implements BinanceService {
 
                 Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
                 if (Objects.nonNull(dto_d1)) {
-                    String note_d1 = dto_d1.getNote();
                     String trend_d1 = dto_d1.getTrend();
                     String chart = Utils.getChartName(dto_d1) + ":" + Utils.appendSpace(dto_d1.getTrend(), 8);
 
                     String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
                     log += Utils.createLineForex_Body(dto_h4, dto_h4).trim();
-
-                    if (Utils.isNotBlank(note_d1)) {
-                        log += "     " + note_d1;
-                    }
 
                     String week_trend = "";
                     if (GLOBAL_LONG_LIST.contains(EPIC)) {
@@ -3377,8 +3372,6 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal bread = BigDecimal.ZERO;
         if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_DAY)) {
             bread = Utils.calcMaxBread(list);
-        } else if (CAPITAL_TIME_XX.contains("MINUTE_")) {
-            bread = Utils.calcMaxBread(list);
         } else {
             bread = Utils.calcMaxHigh(list);
         }
@@ -3454,8 +3447,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (!has_output && !Objects.equals(trend_15, Utils.TREND_ADJUST)
-                        && !Objects.equals(trend_05, Utils.TREND_ADJUST)
+                if (!has_output && !Objects.equals(trend_05, Utils.TREND_ADJUST)
                         && (dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))
                                 || dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05)))) {
 
@@ -3464,7 +3456,7 @@ public class BinanceServiceImpl implements BinanceService {
                     msg += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
                     msg += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_15.getCurrent_price(), 5)), 15);
 
-                    msg += Utils.calc_BUF_LO_HI_BUF_Forex(true, dto_h1.getTrend(), EPIC, dto_15, dto_h1);
+                    msg += Utils.calc_BUF_LO_HI_BUF_Forex(true, dto_h1.getTrend(), EPIC, dto_h1, dto_h1);
                     logMsgPerHour("LOG_PER_HOUR_05" + EPIC + dto_h1.getTrend(), msg, Utils.MINUTES_OF_15M);
                 }
 

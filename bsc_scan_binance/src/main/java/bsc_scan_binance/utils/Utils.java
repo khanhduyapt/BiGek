@@ -3585,7 +3585,7 @@ public class Utils {
             result += str_shot;
         } else {
             result += str_long;
-            result = appendSpace(result, 60);
+            result = appendSpace(result, 65) + "   ";
             result += str_shot;
             result = Utils.appendSpace(result, 135);
         }
