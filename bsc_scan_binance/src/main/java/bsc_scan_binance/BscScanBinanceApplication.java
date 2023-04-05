@@ -114,8 +114,8 @@ public class BscScanBinanceApplication {
 
                 while (index_crypto < total) {
                     try {
-
-                        if (Utils.isWeekday() && Utils.isAllowSendMsg() && Utils.isBusinessTime_6h_to_22h()) {
+                        // && Utils.isBusinessTime_6h_to_22h()
+                        if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
                             if (isReloadAfter((Utils.MINUTES_OF_5M), "MT5_DATA")) {
                                 binance_service.saveMt5Data();
                                 wait(SLEEP_MINISECONDS);
@@ -138,11 +138,11 @@ public class BscScanBinanceApplication {
                             binance_service.initCryptoTrend("BNB");
                         }
 
-                        //String SYMBOL = Utils.COINS.get(index_crypto).toUpperCase();
-                        //if (isReloadAfter(getWattingTime(SYMBOL), "CHECK_CRYPTO_" + SYMBOL)) {
-                        //    String crypto_time = binance_service.sendMsgKillLongShort(SYMBOL);
-                        //    setWattingTime(SYMBOL, crypto_time);
-                        //}
+                        // String SYMBOL = Utils.COINS.get(index_crypto).toUpperCase();
+                        // if (isReloadAfter(getWattingTime(SYMBOL), "CHECK_CRYPTO_" + SYMBOL)) {
+                        // String crypto_time = binance_service.sendMsgKillLongShort(SYMBOL);
+                        // setWattingTime(SYMBOL, crypto_time);
+                        // }
 
                         // ---------------------------------------------------------
                         if (isReloadAfter((Utils.MINUTES_OF_1H), "CREATE_REPORT")) {
