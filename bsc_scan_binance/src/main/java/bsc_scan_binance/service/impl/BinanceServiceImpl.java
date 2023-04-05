@@ -3336,17 +3336,22 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (CAPITAL_TIME_XX.contains(Utils.CAPITAL_TIME_MINUTE_5)) {
-            String switch_trend_ma50 = Utils.switchTrendByMaXX(list, 1, 50);
+            String switch_trend_ma50 = Utils.switchTrendByMaXX(list, 1, Utils.MA_SLOW_INDEX_OF_MINUTE_XX);
             if (Utils.isNotBlank(switch_trend_ma50)) {
-                note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(1_50:B)" : "(1_50:S)";
+                note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(1_" + Utils.MA_SLOW_INDEX_OF_MINUTE_XX + ":B)"
+                        : "(1_" + Utils.MA_SLOW_INDEX_OF_MINUTE_XX + ":S)";
             } else {
-                switch_trend_ma50 = Utils.switchTrendByMaXX(list, 2, 50);
+                switch_trend_ma50 = Utils.switchTrendByMaXX(list, 2, Utils.MA_SLOW_INDEX_OF_MINUTE_XX);
                 if (Utils.isNotBlank(switch_trend_ma50)) {
-                    note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(2_50:B)" : "(2_50:S)";
+                    note = switch_trend_ma50.contains(Utils.TREND_LONG)
+                            ? "(2_" + Utils.MA_SLOW_INDEX_OF_MINUTE_XX + ":B)"
+                            : "(2_" + Utils.MA_SLOW_INDEX_OF_MINUTE_XX + ":S)";
                 } else {
-                    switch_trend_ma50 = Utils.switchTrendByMaXX(list, 3, 50);
+                    switch_trend_ma50 = Utils.switchTrendByMaXX(list, 3, Utils.MA_SLOW_INDEX_OF_MINUTE_XX);
                     if (Utils.isNotBlank(switch_trend_ma50)) {
-                        note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(3_50:B)" : "(3_50:S)";
+                        note = switch_trend_ma50.contains(Utils.TREND_LONG)
+                                ? "(3_" + Utils.MA_SLOW_INDEX_OF_MINUTE_XX + ":B)"
+                                : "(3_" + Utils.MA_SLOW_INDEX_OF_MINUTE_XX + ":S)";
                     }
                 }
             }
@@ -3419,28 +3424,47 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_15 = dto_15.getTrend();
                 String trend_05 = dto_05.getTrend();
 
-                if ((dto_h4.getNote() + dto_h1.getNote()).contains(Utils.TEXT_SWITCH_TREND_TO_)) {
-                    if (Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)
-                            && dto_05.getNote().contains("50")) {
+                if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_15)
+                        && Objects.equals(trend_h4, trend_05)) {
 
-                        if (Utils.isNotBlank(result_05)) {
-                            result_05 += ", ";
+                    if ((dto_h4.getNote() + dto_h1.getNote()).contains(Utils.TEXT_SWITCH_TREND_TO_)) {
+                        if (dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_XX))) {
+                            String type = Objects.equals(Utils.TREND_LONG, trend_05) ? "(B)" : "(S)";
+                            if (Utils.isNotBlank(result_05)) {
+                                result_05 += ", ";
+                            }
+                            result_05 += Utils.appendSpace(type + EPIC, 15);
+                            outputLog(EPIC, dto_05, dto_05);
                         }
-                        result_05 += Utils.appendSpace(EPIC, 15);
-                        outputLog(EPIC, dto_05, dto_05);
+                        if (dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_XX))) {
+                            String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "(B)" : "(S)";
+                            if (Utils.isNotBlank(result_15)) {
+                                result_15 += ", ";
+                            }
+                            result_15 += Utils.appendSpace(type + EPIC, 15);
+                            outputLog(EPIC, dto_15, dto_15);
+                        }
                     }
-                }
 
-                if (!Objects.equals(trend_h1, trend_05) && dto_05.getNote().contains("50")) {
-                    String msg = Utils.appendSpace(EPIC, 10) + " (Trend_05MxMa50#TrendH1) "
-                            + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
-                    logMsgPerHour("LOG_PER_HOUR_05" + EPIC, msg, Utils.MINUTES_OF_15M);
+                    if (!Objects.equals(trend_h1, trend_05)
+                            && dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_XX))) {
+                        String msg = Utils.appendSpace(EPIC, 10);
+                        msg += Utils.appendSpace(
+                                " (Trend_05)" + dto_05.getTrend() + " # " + "(H1:" + dto_h1.getTrend() + ")", 35);
+                        msg += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
+                        msg += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_05.getCurrent_price(), 5)),
+                                15);
+                        msg += Utils.calc_BUF_LO_HI_BUF_Forex(true, dto_05.getTrend(), EPIC, dto_05, dto_05);
+                        logMsgPerHour("LOG_PER_HOUR_05" + EPIC, msg, Utils.MINUTES_OF_15M);
+                    }
                 }
 
             }
         }
 
-        if (Utils.isNotBlank(result_15 + result_05)) {
+        if (Utils.isNotBlank(result_15 + result_05))
+
+        {
             String EVENT_ID = "FX_H_" + (result_15 + result_05).length() + Utils.getCurrentYyyyMmDd_HH();
 
             String result_scap = "";
