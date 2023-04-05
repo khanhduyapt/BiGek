@@ -3349,19 +3349,16 @@ public class BinanceServiceImpl implements BinanceService {
 
             String switch_trend_ma50 = Utils.switchTrendByMaXX(list, 1, ma_slow);
             if (Utils.isNotBlank(switch_trend_ma50)) {
-                note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(1_" + ma_slow + ":B)"
-                        : "(1_" + ma_slow + ":S)";
+                note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(1_" + ma_slow + ":B)" : "(1_" + ma_slow + ":S)";
             } else {
                 switch_trend_ma50 = Utils.switchTrendByMaXX(list, 2, ma_slow);
                 if (Utils.isNotBlank(switch_trend_ma50)) {
-                    note = switch_trend_ma50.contains(Utils.TREND_LONG)
-                            ? "(2_" + ma_slow + ":B)"
+                    note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(2_" + ma_slow + ":B)"
                             : "(2_" + ma_slow + ":S)";
                 } else {
                     switch_trend_ma50 = Utils.switchTrendByMaXX(list, 3, ma_slow);
                     if (Utils.isNotBlank(switch_trend_ma50)) {
-                        note = switch_trend_ma50.contains(Utils.TREND_LONG)
-                                ? "(3_" + ma_slow + ":B)"
+                        note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(3_" + ma_slow + ":B)"
                                 : "(3_" + ma_slow + ":S)";
                     }
                 }
@@ -3461,18 +3458,16 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (!has_output
-                        && (dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))
-                                || dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05)))) {
+                if (!has_output && (dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))
+                        || dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05)))) {
 
                     String msg = Utils.appendSpace(EPIC, 10);
                     msg += Utils.appendSpace("(SwitchTrend)" + dto_15.getNote() + dto_05.getNote(), 38);
                     msg += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
-                    msg += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_15.getCurrent_price(), 5)),
-                            15);
+                    msg += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_15.getCurrent_price(), 5)), 15);
 
                     msg += Utils.calc_BUF_LO_HI_BUF_Forex(true, dto_h1.getTrend(), EPIC, dto_15, dto_h1);
-                    logMsgPerHour("LOG_PER_HOUR_05" + EPIC, msg, Utils.MINUTES_OF_15M);
+                    logMsgPerHour("LOG_PER_HOUR_05" + EPIC + dto_h1.getTrend(), msg, Utils.MINUTES_OF_15M);
                 }
 
             }
