@@ -3466,7 +3466,7 @@ public class BinanceServiceImpl implements BinanceService {
                                 || dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05)))) {
 
                     String msg = Utils.appendSpace(EPIC, 10);
-                    msg += Utils.appendSpace(dto_15.getNote() + dto_05.getNote() + "(SwitchTrend)", 38);
+                    msg += Utils.appendSpace("(SwitchTrend)" + dto_15.getNote() + dto_05.getNote(), 38);
                     msg += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
                     msg += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_15.getCurrent_price(), 5)),
                             15);
