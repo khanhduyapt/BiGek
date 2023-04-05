@@ -3422,13 +3422,13 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_05 = dto_05.getTrend();
 
                 boolean has_output = false;
-                if (!Objects.equals(trend_h4, Utils.TREND_ADJUST) && Objects.equals(trend_h4, trend_h1)
-                        && Objects.equals(trend_h4, trend_15)) {
+                if (!Objects.equals(trend_h4, Utils.TREND_ADJUST) && Objects.equals(trend_h4, trend_h1)) {
                     if (Utils.ONEWAY_EPICS.contains(EPIC) && !Objects.equals(TREND_D1, trend_h4)) {
                         continue;
                     }
 
-                    if (dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))) {
+                    if (Objects.equals(trend_h4, trend_15)
+                            && dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))) {
                         String type = Objects.equals(Utils.TREND_LONG, trend_05) ? "(B)"
                                 : Objects.equals(Utils.TREND_SHORT, trend_05) ? "(S)" : "(x)";
                         if (Utils.isNotBlank(result_15)) {
@@ -3437,7 +3437,9 @@ public class BinanceServiceImpl implements BinanceService {
                         result_15 += Utils.appendSpace(type + EPIC, 15);
                         outputLog(EPIC, dto_15, dto_15);
                         has_output = true;
-                    } else if (Objects.equals(trend_h4, trend_05)
+                    }
+
+                    if (Objects.equals(trend_h4, trend_05)
                             && dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05))) {
                         String type = Objects.equals(Utils.TREND_LONG, trend_05) ? "(B)"
                                 : Objects.equals(Utils.TREND_SHORT, trend_05) ? "(S)" : "(x)";
