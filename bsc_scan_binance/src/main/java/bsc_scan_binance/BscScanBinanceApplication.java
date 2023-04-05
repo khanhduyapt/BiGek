@@ -118,17 +118,15 @@ public class BscScanBinanceApplication {
                         if (Utils.isWeekday() && Utils.isAllowSendMsg() && Utils.isBusinessTime_6h_to_22h()) {
                             if (isReloadAfter((Utils.MINUTES_OF_5M), "MT5_DATA")) {
                                 binance_service.saveMt5Data();
-                            }
-
-                            for (String EPIC : CAPITAL_LIST) {
-                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
-                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
-                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
-                            }
-
-                            if (isReloadAfter((Utils.MINUTES_OF_5M), "MT5_SCAP_FOREX")) {
+                                wait(SLEEP_MINISECONDS);
+                                for (String EPIC : CAPITAL_LIST) {
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
+                                }
+                                wait(SLEEP_MINISECONDS);
                                 binance_service.scapForex();
                             }
                         }

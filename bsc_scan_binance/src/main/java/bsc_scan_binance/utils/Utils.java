@@ -3618,7 +3618,7 @@ public class Utils {
 
         BigDecimal risk_x5 = risk.multiply(BigDecimal.valueOf(5));
         MoneyAtRiskResponse money_x5 = new MoneyAtRiskResponse(EPIC, risk_x5, en_long, sl_long, tp_long);
-        temp += "   ";
+        temp += " ";
         temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
         temp += "/" + removeLastZero(risk_x5).replace(".0", "") + "$";
 
@@ -3641,7 +3641,7 @@ public class Utils {
 
         BigDecimal risk_x5 = risk.multiply(BigDecimal.valueOf(5));
         MoneyAtRiskResponse money_x5 = new MoneyAtRiskResponse(EPIC, risk_x5, en_shot, sl_shot, tp_shot);
-        temp += "   ";
+        temp += " ";
         temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
         temp += "/" + removeLastZero(risk_x5).replace(".0", "") + "$";
 
