@@ -3415,7 +3415,7 @@ public class BinanceServiceImpl implements BinanceService {
                 + Utils.getCurrentYyyyMmDdHHByChart(dto_entry.getId());
 
         String log = Utils.appendSpace(EPIC, 10);
-        log += Utils.appendSpace(dto_entry.getNote(), 38);
+        log += Utils.appendSpace(dto_sl.getNote() + dto_entry.getNote(), 38);
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
 
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 15);
