@@ -3304,8 +3304,9 @@ public class BinanceServiceImpl implements BinanceService {
         String switch_trend = "";
 
         if (CAPITAL_TIME_XX.contains("MINUTE_")) {
-            int ma_fast = 1;
-            int ma_slow = 20;
+            int ma_fast = 6;
+            int ma_slow = 8;
+
             if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
                 ma_fast = 1;
                 ma_slow = Utils.MA_SLOW_INDEX_OF_MINUTE_05;
@@ -3314,7 +3315,7 @@ public class BinanceServiceImpl implements BinanceService {
             switch_trend = Utils.switchTrendByMaXX(heken_list, ma_fast, ma_slow);
             if (Utils.isNotBlank(switch_trend)) {
                 note = switch_trend + "(" + ma_fast + "_" + ma_slow + ")";
-            } else {
+            } else if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
                 switch_trend = Utils.switchTrendByMaXX(heken_list, 6, 8);
                 if (Utils.isNotBlank(switch_trend)) {
                     note = switch_trend + "(6_8)";
@@ -3347,8 +3348,8 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal str_body_price = low_high.get(0);
         BigDecimal end_body_price = low_high.get(1);
         if (CAPITAL_TIME_XX.contains("MINUTE_") || Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
-            str_body_price = list.get(0).getCurrPrice();
-            end_body_price = list.get(0).getCurrPrice();
+            // str_body_price = list.get(0).getCurrPrice();
+            // end_body_price = list.get(0).getCurrPrice();
         }
 
         BigDecimal sl_long = low_high.get(0).subtract(bread);
@@ -3389,11 +3390,10 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_15 = dto_15.getTrend();
                 String trend_05 = dto_05.getTrend();
 
-                String type = Objects.equals(Utils.TREND_LONG, trend_h4) ? "(B)"
-                        : Objects.equals(Utils.TREND_SHORT, trend_h4) ? "(S)" : "(x)";
+                String type = Objects.equals(Utils.TREND_LONG, TREND_D1) ? "(B)"
+                        : Objects.equals(Utils.TREND_SHORT, TREND_D1) ? "(S)" : "(x)";
 
                 // TODO: scapForex
-                boolean has_output = false;
                 if (Objects.equals(TREND_D1, trend_h4)
                         && Objects.equals(TREND_D1, trend_h1)
                         && Objects.equals(TREND_D1, trend_15)
@@ -3406,7 +3406,6 @@ public class BinanceServiceImpl implements BinanceService {
                         }
                         result_15 += Utils.appendSpace(type + EPIC, 15);
                         outputLog(EPIC, dto_15, dto_h1);
-                        has_output = true;
                     }
 
                     if (Utils.isNotBlank(dto_05.getNote())) {
@@ -3415,27 +3414,7 @@ public class BinanceServiceImpl implements BinanceService {
                         }
                         result_05 += Utils.appendSpace(type + EPIC, 15);
                         outputLog(EPIC, dto_05, dto_h1);
-                        has_output = true;
                     }
-                }
-
-                if (!has_output && Objects.equals(TREND_D1, trend_h1)
-                        && Objects.equals(TREND_D1, trend_15)
-                        && Objects.equals(TREND_D1, trend_05)
-                        && Utils.isNotBlank(dto_15.getNote() + dto_05.getNote())) {
-
-                    String msg = Utils.appendSpace(EPIC, 10);
-                    msg += Utils.appendSpace(dto_15.getNote() + dto_05.getNote(), 38);
-                    msg += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
-                    msg += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_15.getCurrent_price(), 5)),
-                            15);
-                    msg += Utils.calc_BUF_LO_HI_BUF_Forex(true, trend_05, EPIC, dto_15, dto_h1);
-                    logMsgPerHour("LOG_PER_HOUR_15" + EPIC + dto_15.getTrend(), msg, Utils.MINUTES_OF_15M);
-
-                    if (Utils.isNotBlank(result_15)) {
-                        result_15 += ", ";
-                    }
-                    result_15 += Utils.appendSpace(type + EPIC, 15);
                 }
 
             }
