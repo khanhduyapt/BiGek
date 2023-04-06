@@ -3397,9 +3397,6 @@ public class Utils {
         BigDecimal ma2_0 = calcMA(heken_list, 2, 0);
         BigDecimal ma2_3 = calcMA(heken_list, 2, 2);
 
-        BigDecimal ma3_0 = calcMA(heken_list, 3, 0);
-        BigDecimal ma3_3 = calcMA(heken_list, 3, 2);
-
         BigDecimal ma6_0 = calcMA(heken_list, 6, 0);
         BigDecimal ma6_3 = calcMA(heken_list, 6, 2);
 
@@ -3409,9 +3406,6 @@ public class Utils {
             count_long += 1;
         }
         if (Utils.isNotBlank(Utils.checkXCutUpY(ma2_0, ma2_3, ma6_0, ma6_3))) {
-            count_long += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma3_0, ma3_3, ma6_0, ma6_3))) {
             count_long += 1;
         }
 
@@ -3424,15 +3418,12 @@ public class Utils {
         if (Utils.isNotBlank(Utils.checkXCutDnY(ma2_0, ma2_3, ma6_0, ma6_3))) {
             count_shot += 1;
         }
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma3_0, ma3_3, ma6_0, ma6_3))) {
-            count_shot += 1;
-        }
         // -------------------------
 
-        if ((count_long > count_shot) && ((count_long - count_shot) > 1) && (ma3_0.compareTo(ma3_3) > 0)) {
+        if ((count_long > count_shot) && ((count_long - count_shot) > 1) && (ma1_0.compareTo(ma1_1) > 0)) {
             return TREND_LONG;
         }
-        if ((count_shot > count_long) && ((count_shot - count_long) > 1) && (ma3_0.compareTo(ma3_3) < 0)) {
+        if ((count_shot > count_long) && ((count_shot - count_long) > 1) && (ma1_0.compareTo(ma1_1) < 0)) {
             return TREND_SHORT;
         }
 
