@@ -3315,16 +3315,10 @@ public class BinanceServiceImpl implements BinanceService {
         List<BtcFutures> heken_list = Utils.getHekenList(list);
         String note = "";
         String trend = Utils.getTrendByHekenAshiList(heken_list, 1);
-        if (CAPITAL_TIME_XX.contains("MINUTE_")) {
-            trend = Utils.getTrendByHekenAshiList(heken_list, 3);
-        }
         String switch_trend = Utils.switchTrendByHekenAshi_1_6(heken_list);
 
-        if (CAPITAL_TIME_XX.contains("MINUTE_")) {
+        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
             int ma_slow = Utils.MA_SLOW_INDEX_OF_MINUTE_05;
-            if (CAPITAL_TIME_XX.contains(Utils.CAPITAL_TIME_MINUTE_15)) {
-                ma_slow = Utils.MA_SLOW_INDEX_OF_MINUTE_15;
-            }
 
             String switch_trend_ma50 = Utils.switchTrendByMaXX(heken_list, 1, ma_slow);
             if (Utils.isNotBlank(switch_trend_ma50)) {
@@ -3415,13 +3409,15 @@ public class BinanceServiceImpl implements BinanceService {
                         continue;
                     }
 
-                    if (Utils.isNotBlank(dto_h1.getNote()) && Objects.equals(trend_h1, trend_15)
+                    if (Utils.isNotBlank(dto_h1.getNote()) && Objects.equals(TREND_D1, trend_h4)
+                            && Objects.equals(TREND_D1, trend_h1) && Objects.equals(trend_h1, trend_15)
                             && Objects.equals(trend_h1, trend_05)) {
-                        outputLog(EPIC, dto_h1, dto_h1);
+                        // outputLog(EPIC, dto_h1, dto_h1);
                     }
 
                     if (Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)) {
-                        if (dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))) {
+
+                        if (dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_)) {
                             String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "(B)"
                                     : Objects.equals(Utils.TREND_SHORT, trend_15) ? "(S)" : "(x)";
 
@@ -3451,31 +3447,13 @@ public class BinanceServiceImpl implements BinanceService {
                         && (dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))
                                 || dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05)))) {
 
-                    String note = "";
-                    String buf = "";
-                    if (dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))) {
-                        note += dto_15.getNote();
-                        buf = Utils.calc_BUF_LO_HI_BUF_Forex(true, dto_15.getTrend(), EPIC, dto_15, dto_h1);
-
-                        String msg = Utils.appendSpace(EPIC, 10);
-                        msg += Utils.appendSpace("(SwitchTrend)" + note, 38);
-                        msg += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
-                        msg += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_15.getCurrent_price(), 5)),
-                                15);
-                        msg += buf;
-                        logMsgPerHour("LOG_PER_HOUR_05" + EPIC + dto_15.getTrend(), msg, Utils.MINUTES_OF_15M);
-                    }
-
                     if (dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05))) {
-                        note += dto_05.getNote();
-                        buf = Utils.calc_BUF_LO_HI_BUF_Forex(true, dto_05.getTrend(), EPIC, dto_05, dto_h1);
-
                         String msg = Utils.appendSpace(EPIC, 10);
-                        msg += Utils.appendSpace("(SwitchTrend)" + note, 38);
+                        msg += Utils.appendSpace("(SwitchTrend)" + dto_05.getNote(), 38);
                         msg += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
                         msg += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_15.getCurrent_price(), 5)),
                                 15);
-                        msg += buf;
+                        msg += Utils.calc_BUF_LO_HI_BUF_Forex(true, dto_05.getTrend(), EPIC, dto_05, dto_h1);
                         logMsgPerHour("LOG_PER_HOUR_05" + EPIC + dto_05.getTrend(), msg, Utils.MINUTES_OF_15M);
                     }
                 }
