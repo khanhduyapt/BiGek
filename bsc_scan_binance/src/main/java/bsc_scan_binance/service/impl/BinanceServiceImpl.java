@@ -2929,21 +2929,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        if (Utils.isNotBlank(switch_trend_h1)) {
-            // String btc_h4_trend = Utils.appendSpace(
-            // "BTC(H4:" + (BTC_ALLOW_LONG_SHITCOIN ? Utils.TREND_LONG : Utils.TREND_SHORT)
-            // + ")", 25);
-            // String msg = btc_h4_trend + "(H1)" + Utils.TEXT_SWITCH_TREND_TO_ +
-            // switch_trend_h1;
-            // String EVENT_ID = "BTC_SWITCH_TREND_" + trend_h4 + trend_h1 +
-            // Utils.getCurrentYyyyMmDd_HH();
-            // sendMsgPerHour(EVENT_ID, msg, true);
-            // logMsgPerHour("BTC_SWITCH_TREND_" + trend_h4 + trend_h1, msg,
-            // Utils.MINUTES_OF_1H);
-        }
-
         if (Utils.isNotBlank(switch_trend_h4) && Objects.equals(switch_trend_h4, switch_trend_h1)) {
-
             List<BtcFutures> list_15 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_15m, 10);
             String switch_trend_15 = Utils.switchTrendByHekenAshi_1_6(Utils.getHekenList(list_15));
 
@@ -3328,6 +3314,11 @@ public class BinanceServiceImpl implements BinanceService {
             switch_trend = Utils.switchTrendByMaXX(heken_list, ma_fast, ma_slow);
             if (Utils.isNotBlank(switch_trend)) {
                 note = switch_trend + "(" + ma_fast + "_" + ma_slow + ")";
+            } else {
+                switch_trend = Utils.switchTrendByMaXX(heken_list, 6, 8);
+                if (Utils.isNotBlank(switch_trend)) {
+                    note = switch_trend + "(6_8)";
+                }
             }
         } else {
             switch_trend = Utils.switchTrendByHekenAshi_1_6(heken_list);
@@ -3430,8 +3421,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (!has_output && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)
-                        && (dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))
-                                || dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05)))) {
+                        && Utils.isNotBlank(dto_15.getNote() + dto_05.getNote())) {
 
                     String msg = Utils.appendSpace(EPIC, 10);
                     msg += Utils.appendSpace(dto_15.getNote() + dto_05.getNote(), 38);
