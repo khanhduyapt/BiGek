@@ -3310,7 +3310,6 @@ public class BinanceServiceImpl implements BinanceService {
 
         String note = "";
         String trend = Utils.getTrendByHekenAshi(list);
-
         if (CAPITAL_TIME_XX.contains("MINUTE_")) {
             trend = Utils.getTrendByHekenAshi(list, 3);
         }
@@ -3328,14 +3327,12 @@ public class BinanceServiceImpl implements BinanceService {
             note += percent;
         }
 
-        if (CAPITAL_TIME_XX.contains("MINUTE_") || Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
+        if (CAPITAL_TIME_XX.contains("MINUTE_")) {
             int ma_slow = Utils.MA_SLOW_INDEX_OF_MINUTE_05;
             if (CAPITAL_TIME_XX.contains(Utils.CAPITAL_TIME_MINUTE_15)) {
                 ma_slow = Utils.MA_SLOW_INDEX_OF_MINUTE_15;
             }
-            if (CAPITAL_TIME_XX.contains(Utils.CAPITAL_TIME_HOUR)) {
-                ma_slow = Utils.MA_SLOW_INDEX_OF_H1;
-            }
+
             String switch_trend_ma50 = Utils.switchTrendByMaXX(list, 1, ma_slow);
             if (Utils.isNotBlank(switch_trend_ma50)) {
                 note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(1_" + ma_slow + ":B)" : "(1_" + ma_slow + ":S)";
@@ -3352,10 +3349,8 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
             }
-        } else {
-            if (Objects.equals(trend, switch_trend)) {
-                note += Utils.TEXT_SWITCH_TREND_TO_ + trend;
-            }
+        } else if (Objects.equals(trend, switch_trend)) {
+            note += Utils.TEXT_SWITCH_TREND_TO_ + trend;
         }
 
         if (Utils.isNotBlank(note)) {
@@ -3424,14 +3419,6 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean has_output = false;
                 if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
 
-                    if (Objects.equals(trend_h1, trend_15) && Objects.equals(trend_h1, trend_05)
-                            && dto_h1.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_H1))) {
-                        String type = Objects.equals(Utils.TREND_LONG, trend_h1) ? "(B)"
-                                : Objects.equals(Utils.TREND_SHORT, trend_h1) ? "(S)" : "(x)";
-                        outputLog(EPIC, dto_h1, dto_h1);
-                        has_output = true;
-                    }
-
                     if (Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)
                             && dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))) {
                         String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "(B)"
@@ -3459,7 +3446,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (!has_output && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_15)
+                if (!has_output && Objects.equals(trend_h1, trend_15)
                         && (dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))
                                 || dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05)))) {
 
