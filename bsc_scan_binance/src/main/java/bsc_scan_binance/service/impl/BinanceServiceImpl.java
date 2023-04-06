@@ -3404,42 +3404,36 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // TODO: scapForex
                 boolean has_output = false;
-                if (Objects.equals(trend_h4, trend_h1)) {
-                    if (Utils.ONEWAY_EPICS.contains(EPIC) && !Objects.equals(TREND_D1, trend_h4)) {
-                        continue;
+                if (Utils.ONEWAY_EPICS.contains(EPIC) && !Objects.equals(TREND_D1, trend_h4)) {
+                    continue;
+                }
+
+                if (Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(trend_h4, trend_15)
+                        && Objects.equals(trend_h4, trend_05)) {
+
+                    if (dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_)) {
+                        String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "(B)"
+                                : Objects.equals(Utils.TREND_SHORT, trend_15) ? "(S)" : "(x)";
+
+                        if (Utils.isNotBlank(result_15) && !Objects.equals(Utils.TREND_ADJUST, trend_15)) {
+                            result_15 += ", ";
+                        }
+                        result_15 += Utils.appendSpace(type + EPIC, 15);
+                        outputLog(EPIC, dto_15, dto_h1);
+                        has_output = true;
                     }
 
-                    if (Utils.isNotBlank(dto_h1.getNote()) && Objects.equals(TREND_D1, trend_h4)
-                            && Objects.equals(TREND_D1, trend_h1) && Objects.equals(trend_h1, trend_15)
-                            && Objects.equals(trend_h1, trend_05)) {
-                        // outputLog(EPIC, dto_h1, dto_h1);
-                    }
+                    if (dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05))) {
+                        String type = Objects.equals(Utils.TREND_LONG, trend_05) ? "(B)"
+                                : Objects.equals(Utils.TREND_SHORT, trend_05) ? "(S)" : "(x)";
 
-                    if (Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)) {
-
-                        if (dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_)) {
-                            String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "(B)"
-                                    : Objects.equals(Utils.TREND_SHORT, trend_15) ? "(S)" : "(x)";
-
-                            if (Utils.isNotBlank(result_15) && !Objects.equals(Utils.TREND_ADJUST, trend_15)) {
-                                result_15 += ", ";
-                            }
-                            result_15 += Utils.appendSpace(type + EPIC, 15);
-                            outputLog(EPIC, dto_15, dto_h1);
-                            has_output = true;
+                        if (Utils.isNotBlank(result_05) && !Objects.equals(Utils.TREND_ADJUST, trend_05)) {
+                            result_05 += ", ";
                         }
-
-                        if (dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05))) {
-                            String type = Objects.equals(Utils.TREND_LONG, trend_05) ? "(B)"
-                                    : Objects.equals(Utils.TREND_SHORT, trend_05) ? "(S)" : "(x)";
-
-                            if (Utils.isNotBlank(result_05) && !Objects.equals(Utils.TREND_ADJUST, trend_05)) {
-                                result_05 += ", ";
-                            }
-                            result_05 += Utils.appendSpace(type + EPIC, 15);
-                            outputLog(EPIC, dto_05, dto_h1);
-                            has_output = true;
-                        }
+                        result_05 += Utils.appendSpace(type + EPIC, 15);
+                        outputLog(EPIC, dto_05, dto_h1);
+                        has_output = true;
                     }
                 }
 
