@@ -116,8 +116,9 @@ public class Utils {
     public static final int MA_INDEX_D1_START_LONG = 8;
     public static final int MA_INDEX_CURRENCY = 10;
 
-    public static final int MA_SLOW_INDEX_OF_MINUTE_05 = 20;
+    public static final int MA_SLOW_INDEX_OF_MINUTE_05 = 50;
     public static final int MA_SLOW_INDEX_OF_MINUTE_15 = 20;
+    public static final int MA_SLOW_INDEX_OF_H1 = 15;
 
     public static String CST = "";
     public static String X_SECURITY_TOKEN = "";
