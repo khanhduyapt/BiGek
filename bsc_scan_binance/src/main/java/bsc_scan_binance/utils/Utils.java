@@ -3404,12 +3404,6 @@ public class Utils {
         BigDecimal ma3_0 = calcMA(heken_list, 3, 0);
         BigDecimal ma3_3 = calcMA(heken_list, 3, 2);
 
-        BigDecimal ma4_0 = calcMA(heken_list, 4, 0);
-        BigDecimal ma4_3 = calcMA(heken_list, 4, 2);
-
-        BigDecimal ma5_0 = calcMA(heken_list, 5, 0);
-        BigDecimal ma5_3 = calcMA(heken_list, 5, 2);
-
         BigDecimal ma6_0 = calcMA(heken_list, 6, 0);
         BigDecimal ma6_3 = calcMA(heken_list, 6, 2);
 
@@ -3424,12 +3418,6 @@ public class Utils {
         if (Utils.isNotBlank(Utils.checkXCutUpY(ma3_0, ma3_3, ma6_0, ma6_3))) {
             count_long += 1;
         }
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma4_0, ma4_3, ma6_0, ma6_3))) {
-            count_long += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma5_0, ma5_3, ma6_0, ma6_3))) {
-            count_long += 1;
-        }
 
         // -------------------------
 
@@ -3441,12 +3429,6 @@ public class Utils {
             count_shot += 1;
         }
         if (Utils.isNotBlank(Utils.checkXCutDnY(ma3_0, ma3_3, ma6_0, ma6_3))) {
-            count_shot += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma4_0, ma4_3, ma6_0, ma6_3))) {
-            count_shot += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma5_0, ma5_3, ma6_0, ma6_3))) {
             count_shot += 1;
         }
         // -------------------------

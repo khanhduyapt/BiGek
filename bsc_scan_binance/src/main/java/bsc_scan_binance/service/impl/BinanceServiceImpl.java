@@ -3315,29 +3315,26 @@ public class BinanceServiceImpl implements BinanceService {
         List<BtcFutures> heken_list = Utils.getHekenList(list);
         String note = "";
         String trend = Utils.getTrendByHekenAshiList(heken_list, 1);
-        String switch_trend = Utils.switchTrendByHekenAshi_1_6(heken_list);
+        String switch_trend = "";
 
-        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
-            int ma_slow = Utils.MA_SLOW_INDEX_OF_MINUTE_05;
-
-            String switch_trend_ma50 = Utils.switchTrendByMaXX(heken_list, 1, ma_slow);
-            if (Utils.isNotBlank(switch_trend_ma50)) {
-                note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(1_" + ma_slow + ":B)" : "(1_" + ma_slow + ":S)";
-            } else {
-                switch_trend_ma50 = Utils.switchTrendByMaXX(heken_list, 2, ma_slow);
-                if (Utils.isNotBlank(switch_trend_ma50)) {
-                    note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(2_" + ma_slow + ":B)"
-                            : "(2_" + ma_slow + ":S)";
-                } else {
-                    switch_trend_ma50 = Utils.switchTrendByMaXX(heken_list, 3, ma_slow);
-                    if (Utils.isNotBlank(switch_trend_ma50)) {
-                        note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(3_" + ma_slow + ":B)"
-                                : "(3_" + ma_slow + ":S)";
-                    }
-                }
+        if (CAPITAL_TIME_XX.contains("MINUTE_")) {
+            int ma_fast = 1;
+            int ma_slow = 20;
+            if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
+                ma_fast = 1;
+                ma_slow = Utils.MA_SLOW_INDEX_OF_MINUTE_05;
             }
-        } else if (Objects.equals(trend, switch_trend)) {
-            note += Utils.TEXT_SWITCH_TREND_TO_ + trend;
+
+            switch_trend = Utils.switchTrendByMaXX(heken_list, ma_fast, ma_slow);
+            if (Utils.isNotBlank(switch_trend)) {
+                note = Utils.TEXT_SWITCH_TREND_TO_
+                        + switch_trend + "(" + ma_fast + "_" + ma_slow + ")";
+            }
+        } else {
+            switch_trend = Utils.switchTrendByHekenAshi_1_6(heken_list);
+            if (Utils.isNotBlank(switch_trend)) {
+                note = Utils.TEXT_SWITCH_TREND_TO_ + switch_trend + "(1_6)";
+            }
         }
 
         if (Utils.isNotBlank(note)) {
@@ -3412,7 +3409,7 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_h4, trend_15)
                         && Objects.equals(trend_h4, trend_05)) {
 
-                    if (dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_TO_)) {
+                    if (Utils.isNotBlank(dto_15.getNote())) {
                         String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "(B)"
                                 : Objects.equals(Utils.TREND_SHORT, trend_15) ? "(S)" : "(x)";
 
@@ -3424,7 +3421,7 @@ public class BinanceServiceImpl implements BinanceService {
                         has_output = true;
                     }
 
-                    if (dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05))) {
+                    if (Utils.isNotBlank(dto_05.getNote())) {
                         String type = Objects.equals(Utils.TREND_LONG, trend_05) ? "(B)"
                                 : Objects.equals(Utils.TREND_SHORT, trend_05) ? "(S)" : "(x)";
 
