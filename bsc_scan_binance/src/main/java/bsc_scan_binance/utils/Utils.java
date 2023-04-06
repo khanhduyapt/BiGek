@@ -3269,7 +3269,7 @@ public class Utils {
         return log;
     }
 
-    private static List<BtcFutures> getHekenList(List<BtcFutures> list) {
+    public static List<BtcFutures> getHekenList(List<BtcFutures> list) {
         List<BtcFutures> heken_list = new ArrayList<BtcFutures>();
         if (list.size() < 2) {
             return heken_list;
@@ -3379,12 +3379,7 @@ public class Utils {
         return false;
     }
 
-    public static String switchTrendByHekenAshi_3_to_6(List<BtcFutures> list) {
-        if (CollectionUtils.isEmpty(list)) {
-            return "";
-        }
-
-        List<BtcFutures> heken_list = getHekenList(list);
+    public static String switchTrendByHekenAshi_1_6(List<BtcFutures> heken_list) {
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
         }
@@ -3456,22 +3451,17 @@ public class Utils {
         }
         // -------------------------
 
-        if ((count_long > count_shot) && ((count_long - count_shot) > 1)) {
+        if ((count_long > count_shot) && ((count_long - count_shot) > 1) && (ma6_0.compareTo(ma6_3) > 0)) {
             return TREND_LONG;
         }
-        if ((count_shot > count_long) && ((count_shot - count_long) > 1)) {
+        if ((count_shot > count_long) && ((count_shot - count_long) > 1) && (ma6_0.compareTo(ma6_3) < 0)) {
             return TREND_SHORT;
         }
 
         return "";
     }
 
-    public static String getTrendByHekenAshi(List<BtcFutures> list, int maIndex) {
-        if (CollectionUtils.isEmpty(list)) {
-            return "";
-        }
-
-        List<BtcFutures> heken_list = getHekenList(list);
+    public static String getTrendByHekenAshiList(List<BtcFutures> heken_list, int maIndex) {
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
         }
@@ -3479,21 +3469,6 @@ public class Utils {
         int sta = 0;
         int end = 1;
         return Utils.isUptrendByMa(heken_list, maIndex, sta, end) ? TREND_LONG : TREND_SHORT;
-    }
-
-    public static String getTrendByHekenAshi(List<BtcFutures> list) {
-        if (CollectionUtils.isEmpty(list)) {
-            return "";
-        }
-
-        List<BtcFutures> heken_list = getHekenList(list);
-        if (CollectionUtils.isEmpty(heken_list)) {
-            return "";
-        }
-
-        int sta = 0;
-        int end = 1;
-        return Utils.isUptrendByMa(heken_list, 1, sta, end) ? TREND_LONG : TREND_SHORT;
     }
 
     public static String createLineForex_Header(Orders dto_entry, Orders dto_sl, String trend_d1) {

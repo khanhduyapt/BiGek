@@ -58,7 +58,6 @@ import bsc_scan_binance.entity.GeckoVolumeUpPre4h;
 import bsc_scan_binance.entity.Mt5DataCandle;
 import bsc_scan_binance.entity.Mt5DataCandleKey;
 import bsc_scan_binance.entity.Orders;
-import bsc_scan_binance.entity.PriorityCoinHistory;
 import bsc_scan_binance.repository.BinanceFuturesRepository;
 import bsc_scan_binance.repository.BinanceVolumeDateTimeRepository;
 import bsc_scan_binance.repository.BinanceVolumnDayRepository;
@@ -2736,25 +2735,25 @@ public class BinanceServiceImpl implements BinanceService {
         note += ",H10d:" + Utils.getPercentToEntry(current_price, max_days, false);
         note += ",L10w:" + Utils.getPercentToEntry(current_price, min_week, true) + ",";
         // ---------------------------------------------------------
-        String position = "";
-        if (Objects.equals(Utils.TEXT_TREND_BY_MA, Utils.switchTrendByHekenAshi_3_to_6(list_h4))) {
-            position = "_PositionH4";
-        }
-        if (Objects.equals(Utils.TEXT_TREND_BY_MA, Utils.switchTrendByHekenAshi_3_to_6(list_days))) {
-            position = "_PositionD1";
-
-            PriorityCoinHistory his = new PriorityCoinHistory();
-            his.setGeckoid(gecko_id);
-            his.setSymbol(Utils.getMmDD_TimeHHmm());
-            String history = scapLongD1.replace(" ", "");
-            if (history.length() > 255) {
-                history = history.substring(0, 250) + "...";
-            }
-            his.setName(history);
-
-            priorityCoinHistoryRepository.save(his);
-        }
-        note += position;
+        //        String position = "";
+        //        if (Objects.equals(Utils.TEXT_TREND_BY_MA, Utils.switchTrendByHekenAshi_3_to_6(list_h4))) {
+        //            position = "_PositionH4";
+        //        }
+        //        if (Objects.equals(Utils.TEXT_TREND_BY_MA, Utils.switchTrendByHekenAshi_3_to_6(list_days))) {
+        //            position = "_PositionD1";
+        //
+        //            PriorityCoinHistory his = new PriorityCoinHistory();
+        //            his.setGeckoid(gecko_id);
+        //            his.setSymbol(Utils.getMmDD_TimeHHmm());
+        //            String history = scapLongD1.replace(" ", "");
+        //            if (history.length() > 255) {
+        //                history = history.substring(0, 250) + "...";
+        //            }
+        //            his.setName(history);
+        //
+        //            priorityCoinHistoryRepository.save(his);
+        //        }
+        //        note += position;
         // ---------------------------------------------------------
         String mUpMa = "";
         String today = Utils.getToday_MMdd();
@@ -2835,13 +2834,15 @@ public class BinanceServiceImpl implements BinanceService {
             return Utils.CRYPTO_TIME_5m;
         }
 
-        String TREND_D1 = Utils.getTrendByHekenAshi(list_d1);
+        List<BtcFutures> heken_list = Utils.getHekenList(list_d1);
+        String TREND_D1 = Utils.getTrendByHekenAshiList(heken_list, 1);
+
         if (!BTC_ETH_BNB.contains(SYMBOL) && Objects.equals(Utils.TREND_SHORT, TREND_D1)) {
             return Utils.CRYPTO_TIME_5m;
         }
 
         String switch_trend_d1 = "";
-        if (Objects.equals(Utils.TREND_LONG, Utils.switchTrendByHekenAshi_3_to_6(list_d1))) {
+        if (Objects.equals(Utils.TREND_LONG, Utils.switchTrendByHekenAshi_1_6(heken_list))) {
             switch_trend_d1 = "(*)";
         }
 
@@ -2875,7 +2876,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
         // ------------------------------------------------
         List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 15);
-        String switch_trend_h4 = Utils.switchTrendByHekenAshi_3_to_6(list_h4);
+        String switch_trend_h4 = Utils.switchTrendByHekenAshi_1_6(Utils.getHekenList(list_h4));
         if (!Objects.equals(TREND_D1, switch_trend_h4)) {
             return Utils.CRYPTO_TIME_5m;
         }
@@ -2883,7 +2884,7 @@ public class BinanceServiceImpl implements BinanceService {
         // Utils.MINUTES_OF_4H);
         // ------------------------------------------------
         List<BtcFutures> list_h1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1H, 10);
-        if (!Objects.equals(TREND_D1, Utils.switchTrendByHekenAshi_3_to_6(list_h1))) {
+        if (!Objects.equals(TREND_D1, Utils.switchTrendByHekenAshi_1_6(Utils.getHekenList(list_h1)))) {
             return Utils.CRYPTO_TIME_5m;
         }
         // logMsgPerHour("CRYPTO_H1_" + SYMBOL, log.replace("(D1)", "(H1)"),
@@ -2891,7 +2892,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // ------------------------------------------------
         List<BtcFutures> list_15 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_15m, 10);
-        if (!Objects.equals(TREND_D1, Utils.switchTrendByHekenAshi_3_to_6(list_15))) {
+        if (!Objects.equals(TREND_D1, Utils.switchTrendByHekenAshi_1_6(Utils.getHekenList(list_15)))) {
             return Utils.CRYPTO_TIME_5m;
         }
 
@@ -2911,11 +2912,14 @@ public class BinanceServiceImpl implements BinanceService {
         List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 15);
         List<BtcFutures> list_h1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1H, 10);
 
-        String trend_h4 = Utils.getTrendByHekenAshi(list_h4);
-        String trend_h1 = Utils.getTrendByHekenAshi(list_h1);
+        List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
+        String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4, 1);
 
-        String switch_trend_h4 = Utils.switchTrendByHekenAshi_3_to_6(list_h4);
-        String switch_trend_h1 = Utils.switchTrendByHekenAshi_3_to_6(list_h1);
+        List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
+        String trend_h1 = Utils.getTrendByHekenAshiList(heken_list_h1, 1);
+
+        String switch_trend_h4 = Utils.switchTrendByHekenAshi_1_6(heken_list_h4);
+        String switch_trend_h1 = Utils.switchTrendByHekenAshi_1_6(heken_list_h1);
 
         if (Objects.equals("BTC", SYMBOL)) {
             if (Objects.equals(trend_h4, Utils.TREND_LONG) && Objects.equals(trend_h1, Utils.TREND_LONG)) {
@@ -2941,12 +2945,12 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.isNotBlank(switch_trend_h4) && Objects.equals(switch_trend_h4, switch_trend_h1)) {
 
             List<BtcFutures> list_15 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_15m, 10);
-            String switch_trend_15 = Utils.switchTrendByHekenAshi_3_to_6(list_15);
+            String switch_trend_15 = Utils.switchTrendByHekenAshi_1_6(Utils.getHekenList(list_15));
 
             if (Objects.equals(switch_trend_h4, switch_trend_15)) {
 
                 List<BtcFutures> list_05 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_15m, 10);
-                String switch_trend_05 = Utils.switchTrendByHekenAshi_3_to_6(list_05);
+                String switch_trend_05 = Utils.switchTrendByHekenAshi_1_6(Utils.getHekenList(list_05));
 
                 if (Objects.equals(switch_trend_h4, switch_trend_05)) {
 
@@ -3220,7 +3224,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String chart = Utils.getChartName(dto_d1) + ":" + Utils.appendSpace(dto_d1.getTrend(), 8);
 
                     String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
-                    log += Utils.createLineForex_Body(dto_h4, dto_h4).trim();
+                    log += Utils.createLineForex_Body(dto_h4, dto_h4).trim() + "   " + dto_h4.getNote();
 
                     String week_trend = "";
                     if (GLOBAL_LONG_LIST.contains(EPIC)) {
@@ -3308,24 +3312,18 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
+        List<BtcFutures> heken_list = Utils.getHekenList(list);
+        String percent = Utils.removeLastZero(Utils.formatPrice(
+                Utils.getPercent(heken_list.get(1).getPrice_close_candle(), heken_list.get(2).getPrice_close_candle())
+                        .multiply(BigDecimal.valueOf(100)),
+                0)).replace(".0", "");
+
         String note = "";
-        String trend = Utils.getTrendByHekenAshi(list);
+        String trend = Utils.getTrendByHekenAshiList(heken_list, 1);
         if (CAPITAL_TIME_XX.contains("MINUTE_")) {
-            trend = Utils.getTrendByHekenAshi(list, 3);
+            trend = Utils.getTrendByHekenAshiList(heken_list, 3);
         }
-
-        String switch_trend = Utils.switchTrendByHekenAshi_3_to_6(list);
-
-        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_DAY)) {
-            String percent = list.size() + "D: ";
-            List<BigDecimal> low_high_10d = Utils.getLowHighCandle(list);
-            percent += Utils.appendSpace(
-                    "Low:" + Utils.getPercentToEntry(list.get(0).getCurrPrice(), low_high_10d.get(0), false), 22);
-            percent += Utils.appendSpace(
-                    "Hig:" + Utils.getPercentToEntry(list.get(0).getCurrPrice(), low_high_10d.get(1), true), 22);
-
-            note += percent;
-        }
+        String switch_trend = Utils.switchTrendByHekenAshi_1_6(heken_list);
 
         if (CAPITAL_TIME_XX.contains("MINUTE_")) {
             int ma_slow = Utils.MA_SLOW_INDEX_OF_MINUTE_05;
@@ -3354,7 +3352,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (Utils.isNotBlank(note)) {
-            note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + note;
+            note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + note + "(angle:" + percent + ")";
         }
 
         // -----------------------------DATABASE---------------------------
@@ -3422,7 +3420,8 @@ public class BinanceServiceImpl implements BinanceService {
                         continue;
                     }
 
-                    if (Utils.isNotBlank(dto_h1.getNote())) {
+                    if (Utils.isNotBlank(dto_h1.getNote()) && Objects.equals(trend_h1, trend_15)
+                            && Objects.equals(trend_h1, trend_05)) {
                         outputLog(EPIC, dto_h1, dto_h1);
                     }
 
@@ -3453,7 +3452,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (!has_output && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)
+                if (!has_output && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_h1, trend_05)
                         && (dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))
                                 || dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05)))) {
 
