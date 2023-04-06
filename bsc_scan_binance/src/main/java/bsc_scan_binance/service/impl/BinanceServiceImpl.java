@@ -3417,10 +3417,10 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // TODO: scapForex
                 boolean has_output = false;
-                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
+                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)) {
 
-                    if (Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)
-                            && dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))) {
+                    if (dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))) {
                         String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "(B)"
                                 : Objects.equals(Utils.TREND_SHORT, trend_15) ? "(S)" : "(x)";
 
@@ -3432,8 +3432,7 @@ public class BinanceServiceImpl implements BinanceService {
                         has_output = true;
                     }
 
-                    if (Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)
-                            && dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05))) {
+                    if (dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05))) {
                         String type = Objects.equals(Utils.TREND_LONG, trend_05) ? "(B)"
                                 : Objects.equals(Utils.TREND_SHORT, trend_05) ? "(S)" : "(x)";
 
@@ -3446,7 +3445,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (!has_output && Objects.equals(trend_h1, trend_15)
+                if (!has_output && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)
                         && (dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))
                                 || dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05)))) {
 
