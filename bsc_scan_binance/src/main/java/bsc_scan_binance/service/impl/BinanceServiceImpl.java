@@ -2735,25 +2735,27 @@ public class BinanceServiceImpl implements BinanceService {
         note += ",H10d:" + Utils.getPercentToEntry(current_price, max_days, false);
         note += ",L10w:" + Utils.getPercentToEntry(current_price, min_week, true) + ",";
         // ---------------------------------------------------------
-        //        String position = "";
-        //        if (Objects.equals(Utils.TEXT_TREND_BY_MA, Utils.switchTrendByHekenAshi_3_to_6(list_h4))) {
-        //            position = "_PositionH4";
-        //        }
-        //        if (Objects.equals(Utils.TEXT_TREND_BY_MA, Utils.switchTrendByHekenAshi_3_to_6(list_days))) {
-        //            position = "_PositionD1";
+        // String position = "";
+        // if (Objects.equals(Utils.TEXT_TREND_BY_MA,
+        // Utils.switchTrendByHekenAshi_3_to_6(list_h4))) {
+        // position = "_PositionH4";
+        // }
+        // if (Objects.equals(Utils.TEXT_TREND_BY_MA,
+        // Utils.switchTrendByHekenAshi_3_to_6(list_days))) {
+        // position = "_PositionD1";
         //
-        //            PriorityCoinHistory his = new PriorityCoinHistory();
-        //            his.setGeckoid(gecko_id);
-        //            his.setSymbol(Utils.getMmDD_TimeHHmm());
-        //            String history = scapLongD1.replace(" ", "");
-        //            if (history.length() > 255) {
-        //                history = history.substring(0, 250) + "...";
-        //            }
-        //            his.setName(history);
+        // PriorityCoinHistory his = new PriorityCoinHistory();
+        // his.setGeckoid(gecko_id);
+        // his.setSymbol(Utils.getMmDD_TimeHHmm());
+        // String history = scapLongD1.replace(" ", "");
+        // if (history.length() > 255) {
+        // history = history.substring(0, 250) + "...";
+        // }
+        // his.setName(history);
         //
-        //            priorityCoinHistoryRepository.save(his);
-        //        }
-        //        note += position;
+        // priorityCoinHistoryRepository.save(his);
+        // }
+        // note += position;
         // ---------------------------------------------------------
         String mUpMa = "";
         String today = Utils.getToday_MMdd();
@@ -3303,33 +3305,38 @@ public class BinanceServiceImpl implements BinanceService {
         String trend = Utils.getTrendByHekenAshiList(heken_list, 1);
         String switch_trend = "";
 
-        if (CAPITAL_TIME_XX.contains("MINUTE_")) {
-            int ma_fast = 6;
-            int ma_slow = 8;
-
-            if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
-                ma_fast = 1;
-                ma_slow = Utils.MA_SLOW_INDEX_OF_MINUTE_05;
-            }
-
-            switch_trend = Utils.switchTrendByMaXX(heken_list, ma_fast, ma_slow);
-            if (Utils.isNotBlank(switch_trend)) {
-                note = switch_trend + "(" + ma_fast + "_" + ma_slow + ")";
-            } else if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
-                switch_trend = Utils.switchTrendByMaXX(heken_list, 6, 8);
-                if (Utils.isNotBlank(switch_trend)) {
-                    note = switch_trend + "(6_8)";
-                }
-            }
-        } else {
-            switch_trend = Utils.switchTrendByHekenAshi_1_6(heken_list);
-            if (Utils.isNotBlank(switch_trend)) {
-                note = switch_trend + "(1_6)";
-            }
+        switch_trend = Utils.switchTrendByHekenAshi_1_6(heken_list);
+        if (Utils.isNotBlank(switch_trend)) {
+            note = "(1_6)";
         }
 
+        // if (CAPITAL_TIME_XX.contains("MINUTE_")) {
+        // int ma_fast = 1;
+        // int ma_slow = 20;
+        //
+        // if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
+        // //ma_fast = 1;
+        // //ma_slow = Utils.MA_SLOW_INDEX_OF_MINUTE_05;
+        // }
+        //
+        // switch_trend = Utils.switchTrendByMaXX(heken_list, ma_fast, ma_slow);
+        // if (Utils.isNotBlank(switch_trend)) {
+        // note = "(" + ma_fast + "_" + ma_slow + ")";
+        // } else if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
+        // switch_trend = Utils.switchTrendByMaXX(heken_list, 6, 8);
+        // if (Utils.isNotBlank(switch_trend)) {
+        // note = "(6_8)";
+        // }
+        // }
+        // } else {
+        // switch_trend = Utils.switchTrendByHekenAshi_1_6(heken_list);
+        // if (Utils.isNotBlank(switch_trend)) {
+        // note = "(1_6)";
+        // }
+        // }
+
         if (Utils.isNotBlank(note)) {
-            note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + note;
+            note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + trend + note;
         }
 
         // -----------------------------DATABASE---------------------------
@@ -3394,10 +3401,8 @@ public class BinanceServiceImpl implements BinanceService {
                         : Objects.equals(Utils.TREND_SHORT, TREND_D1) ? "(S)" : "(x)";
 
                 // TODO: scapForex
-                if (Objects.equals(TREND_D1, trend_h4)
-                        && Objects.equals(TREND_D1, trend_h1)
-                        && Objects.equals(TREND_D1, trend_15)
-                        && Objects.equals(TREND_D1, trend_05)) {
+                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(TREND_D1, trend_h1)
+                        && Objects.equals(TREND_D1, trend_15) && Objects.equals(TREND_D1, trend_05)) {
 
                     if (Utils.isNotBlank(dto_15.getNote())) {
                         if (Utils.isNotBlank(result_15) && !Objects.equals(Utils.TREND_ADJUST, trend_15)) {
@@ -3440,19 +3445,14 @@ public class BinanceServiceImpl implements BinanceService {
         String EVENT_ID = "FX_OUTPUT_LOG_" + Utils.getChartName(dto_entry) + EPIC + dto_entry.getTrend()
                 + Utils.getCurrentYyyyMmDdHHByChart(dto_entry.getId());
 
-        if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
-            fundingHistoryRepository
-                    .save(createPumpDumpEntity(EVENT_ID, EVENT_MSG_PER_HOUR, EVENT_MSG_PER_HOUR, "", false));
+        String log = Utils.appendSpace(EPIC, 10);
+        log += Utils.appendSpace(dto_entry.getNote(), 38);
+        log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
 
-            String log = Utils.appendSpace(EPIC, 10);
-            log += Utils.appendSpace(dto_entry.getNote(), 38);
-            log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
+        log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 15);
+        log += Utils.calc_BUF_LO_HI_BUF_Forex(true, dto_entry.getTrend(), EPIC, dto_entry, dto_sl);
 
-            log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 15);
-            log += Utils.calc_BUF_LO_HI_BUF_Forex(true, dto_entry.getTrend(), EPIC, dto_entry, dto_sl);
-
-            Utils.logWritelnDraft(log);
-        }
+        logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_15M);
     }
 }
 

@@ -114,10 +114,6 @@ public class Utils {
     public static final int MA_INDEX_D1_START_LONG = 8;
     public static final int MA_INDEX_CURRENCY = 10;
 
-    public static final int MA_SLOW_INDEX_OF_MINUTE_05 = 50;
-    public static final int MA_SLOW_INDEX_OF_MINUTE_15 = 20;
-    public static final int MA_SLOW_INDEX_OF_H1 = 10;
-
     public static String CST = "";
     public static String X_SECURITY_TOKEN = "";
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
@@ -151,7 +147,7 @@ public class Utils {
 
     // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", "AUS200", "JPY225", "XAGUSD",
     public static final List<String> EPICS_MAIN = Arrays.asList("BTCUSD", "ETHUSD", "XAUUSD", "XAGUSD", "US30", "SP500",
-            "GER30", "EURUSD", "USDJPY", "GBPUSD", "GBPJPY", "USDCHF", "AUDUSD", "GBPCAD", "NZDUSD");
+            "GER30", "UK100", "EURUSD", "USDJPY", "GBPUSD", "GBPJPY", "USDCHF", "AUDUSD", "GBPCAD", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK", "AUDJPY", "AUDNZD", "NZDJPY", "EURGBP",
@@ -3099,13 +3095,13 @@ public class Utils {
         }
 
         if (trend.contains(Utils.TREND_LONG)) {
-            if ((ma3_0.compareTo(ma3_3) > 0) && (ma3_0.compareTo(ma5x_0) > 0)) {
+            if ((ma3_0.compareTo(ma3_3) > 0) && (ma5x_0.compareTo(ma5x_3) > 0)) {
                 return Utils.TREND_LONG;
             }
         }
 
         if (trend.contains(Utils.TREND_SHORT)) {
-            if ((ma3_0.compareTo(ma3_3) < 0) && (ma3_0.compareTo(ma5x_0) < 0)) {
+            if ((ma3_0.compareTo(ma3_3) < 0) && (ma5x_0.compareTo(ma5x_3) < 0)) {
                 return Utils.TREND_SHORT;
             }
         }
