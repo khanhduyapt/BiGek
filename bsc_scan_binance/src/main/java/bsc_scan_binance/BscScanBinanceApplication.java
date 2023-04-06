@@ -154,7 +154,6 @@ public class BscScanBinanceApplication {
                         e.printStackTrace();
                     }
                     if (Objects.equals(index_crypto, total - 1)) {
-                        Utils.writelnLogFooter();
                         Date curr_time = Calendar.getInstance().getTime();
                         long diff = curr_time.getTime() - start_time.getTime();
                         start_time = Calendar.getInstance().getTime();

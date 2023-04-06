@@ -3411,8 +3411,7 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private void outputLog(String EPIC, Orders dto_entry, Orders dto_sl) {
-        String EVENT_ID = "FX_OUTPUT_LOG_" + Utils.getChartName(dto_entry) + EPIC + dto_entry.getTrend()
-                + Utils.getCurrentYyyyMmDdHHByChart(dto_entry.getId());
+        String EVENT_ID = "FX_LOG_" + Utils.getChartName(dto_entry) + EPIC + dto_entry.getTrend();
 
         String log = Utils.appendSpace(EPIC, 10);
         log += Utils.appendSpace(dto_sl.getNote() + dto_entry.getNote(), 38);
