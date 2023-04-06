@@ -2911,57 +2911,51 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initCryptoTrend(String SYMBOL) {
-        List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 15);
-        List<BtcFutures> list_h1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1H, 10);
+        List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 10);
+        List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 10);
 
-        List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
-        String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4, 1);
-
-        List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
-        String trend_h1 = Utils.getTrendByHekenAshiList(heken_list_h1, 1);
-
-        String switch_trend_h4 = Utils.switchTrendByHekenAshi_1_6(heken_list_h4);
-        String switch_trend_h1 = Utils.switchTrendByHekenAshi_1_6(heken_list_h1);
-
-        if (Objects.equals("BTC", SYMBOL)) {
-            if (Objects.equals(trend_h4, Utils.TREND_LONG) && Objects.equals(trend_h1, Utils.TREND_LONG)) {
-                BTC_ALLOW_LONG_SHITCOIN = true;
-            } else {
-                BTC_ALLOW_LONG_SHITCOIN = false;
-            }
+        String TREND_D1 = Utils.getTrendByHekenAshiList(Utils.getHekenList(list_d1), 1);
+        String trend_h4 = Utils.getTrendByHekenAshiList(Utils.getHekenList(list_h4), 1);
+        if (!Objects.equals(TREND_D1, trend_h4)) {
+            return "";
         }
 
-        if (Utils.isNotBlank(switch_trend_h4) && Objects.equals(switch_trend_h4, switch_trend_h1)) {
-            List<BtcFutures> list_15 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_15m, 10);
-            String switch_trend_15 = Utils.switchTrendByHekenAshi_1_6(Utils.getHekenList(list_15));
+        List<BtcFutures> list_h1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1H, 10);
+        List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
+        String trend_h1 = Utils.getTrendByHekenAshiList(heken_list_h1, 1);
+        if (!Objects.equals(TREND_D1, trend_h1)) {
+            return "";
+        }
 
-            if (Objects.equals(switch_trend_h4, switch_trend_15)) {
+        if (Utils.isBlank(Utils.switchTrendByHekenAshi_1_6(heken_list_h1))) {
+            return "";
+        }
 
-                List<BtcFutures> list_05 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_15m, 10);
-                String switch_trend_05 = Utils.switchTrendByHekenAshi_1_6(Utils.getHekenList(list_05));
+        List<BtcFutures> list_15 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_15m, 10);
+        List<BtcFutures> heken_list_15 = Utils.getHekenList(list_15);
+        String trend_15 = Utils.getTrendByHekenAshiList(heken_list_15, 1);
+        if (Utils.isBlank(Utils.switchTrendByHekenAshi_1_6(heken_list_15))) {
+            return "";
+        }
 
-                if (Objects.equals(switch_trend_h4, switch_trend_05)) {
-
-                    // TODO sendMsgKillLongShort
-                    String msg = "";
-                    boolean isOnlyMe = true;
-                    if (BTC_ETH_BNB.contains(SYMBOL)) {
-                        isOnlyMe = false;
-                    }
-
-                    String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_h4.get(0).getCurrPrice()), 5)
-                            + ")";
-
-                    if (Objects.equals(Utils.TREND_LONG, trend_h4)) {
-                        msg = " 💹 " + Utils.getChartName(list_h4) + SYMBOL + "_kill_Short 💔 " + str_price;
-                    }
-                    if (Objects.equals(Utils.TREND_SHORT, trend_h4)) {
-                        msg = " 🔻 " + Utils.getChartName(list_h4) + SYMBOL + "_kill_Long 💔 " + str_price;
-                    }
-                    String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_HH_Blog4h();
-                    sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
-                }
+        if (Objects.equals(TREND_D1, trend_15)) {
+            // TODO sendMsgKillLongShort
+            String msg = "";
+            boolean isOnlyMe = true;
+            if (BTC_ETH_BNB.contains(SYMBOL)) {
+                isOnlyMe = false;
             }
+
+            String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_h4.get(0).getCurrPrice()), 5) + ")";
+
+            if (Objects.equals(Utils.TREND_LONG, trend_h4)) {
+                msg = " 💹 " + Utils.getChartName(list_h4) + SYMBOL + "_kill_Short 💔 " + str_price;
+            }
+            if (Objects.equals(Utils.TREND_SHORT, trend_h4)) {
+                msg = " 🔻 " + Utils.getChartName(list_h4) + SYMBOL + "_kill_Long 💔 " + str_price;
+            }
+            String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_HH();
+            sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
         }
 
         return "";
