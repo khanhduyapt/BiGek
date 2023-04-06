@@ -3303,40 +3303,9 @@ public class BinanceServiceImpl implements BinanceService {
         List<BtcFutures> heken_list = Utils.getHekenList(list);
         String note = "";
         String trend = Utils.getTrendByHekenAshiList(heken_list, 1);
-        String switch_trend = "";
 
-        switch_trend = Utils.switchTrendByHekenAshi_1_6(heken_list);
-        if (Utils.isNotBlank(switch_trend)) {
-            note = "(1_6)";
-        }
-
-        // if (CAPITAL_TIME_XX.contains("MINUTE_")) {
-        // int ma_fast = 1;
-        // int ma_slow = 20;
-        //
-        // if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
-        // //ma_fast = 1;
-        // //ma_slow = Utils.MA_SLOW_INDEX_OF_MINUTE_05;
-        // }
-        //
-        // switch_trend = Utils.switchTrendByMaXX(heken_list, ma_fast, ma_slow);
-        // if (Utils.isNotBlank(switch_trend)) {
-        // note = "(" + ma_fast + "_" + ma_slow + ")";
-        // } else if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
-        // switch_trend = Utils.switchTrendByMaXX(heken_list, 6, 8);
-        // if (Utils.isNotBlank(switch_trend)) {
-        // note = "(6_8)";
-        // }
-        // }
-        // } else {
-        // switch_trend = Utils.switchTrendByHekenAshi_1_6(heken_list);
-        // if (Utils.isNotBlank(switch_trend)) {
-        // note = "(1_6)";
-        // }
-        // }
-
-        if (Utils.isNotBlank(note)) {
-            note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + trend + note;
+        if (Utils.isNotBlank(Utils.switchTrendByHekenAshi_1_6(heken_list))) {
+            note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + trend + "(1_6)";
         }
 
         // -----------------------------DATABASE---------------------------
@@ -3355,8 +3324,8 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal str_body_price = low_high.get(0);
         BigDecimal end_body_price = low_high.get(1);
         if (CAPITAL_TIME_XX.contains("MINUTE_") || Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
-            // str_body_price = list.get(0).getCurrPrice();
-            // end_body_price = list.get(0).getCurrPrice();
+            str_body_price = list.get(0).getCurrPrice();
+            end_body_price = list.get(0).getCurrPrice();
         }
 
         BigDecimal sl_long = low_high.get(0).subtract(bread);
@@ -3405,18 +3374,24 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(TREND_D1, trend_15) && Objects.equals(TREND_D1, trend_05)) {
 
                     if (Utils.isNotBlank(dto_15.getNote())) {
-                        if (Utils.isNotBlank(result_15) && !Objects.equals(Utils.TREND_ADJUST, trend_15)) {
-                            result_15 += ", ";
+                        if (Utils.isNotBlank(dto_h1.getNote())) {
+                            if (Utils.isNotBlank(result_15)) {
+                                result_15 += ", ";
+                            }
+                            result_15 += Utils.appendSpace(type + EPIC, 15);
                         }
-                        result_15 += Utils.appendSpace(type + EPIC, 15);
+
                         outputLog(EPIC, dto_15, dto_h1);
                     }
 
                     if (Utils.isNotBlank(dto_05.getNote())) {
-                        if (Utils.isNotBlank(result_05) && !Objects.equals(Utils.TREND_ADJUST, trend_05)) {
-                            result_05 += ", ";
+                        if (Utils.isNotBlank(dto_h1.getNote())) {
+                            if (Utils.isNotBlank(result_05)) {
+                                result_05 += ", ";
+                            }
+                            result_05 += Utils.appendSpace(type + EPIC, 15);
                         }
-                        result_05 += Utils.appendSpace(type + EPIC, 15);
+
                         outputLog(EPIC, dto_05, dto_h1);
                     }
                 }
