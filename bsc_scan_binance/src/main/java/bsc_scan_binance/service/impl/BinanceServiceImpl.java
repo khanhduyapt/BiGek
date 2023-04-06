@@ -3203,6 +3203,10 @@ public class BinanceServiceImpl implements BinanceService {
                 Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
                 if (Objects.nonNull(dto_d1)) {
                     String trend_d1 = dto_d1.getTrend();
+                    if (!Objects.equals(trend_d1, dto_h4.getTrend())) {
+                        continue;
+                    }
+
                     String chart = Utils.getChartName(dto_d1) + ":" + Utils.appendSpace(dto_d1.getTrend(), 8);
 
                     String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
@@ -3407,6 +3411,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             sendMsgPerHour(EVENT_ID, result_scap, true);
+            logMsgPerHour(EVENT_ID, result_scap.replace(Utils.new_line_from_service, "   "), Utils.MINUTES_OF_15M);
         }
     }
 
