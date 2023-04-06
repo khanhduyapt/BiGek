@@ -94,8 +94,6 @@ public class Utils {
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
     public static final String TEXT_TREND_BY_MA = "(Ma36_58)";
-    public static final String TEXT_SWITCH_TREND_TO_ = "Change_to_";
-    public static final String TEXT_SAME_TREND_1_TO_6 = "Same1To6_";
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
     public static final String TEXT_TREND_HEKEN_SHORT = TEXT_TREND_HEKEN_ + TREND_SHORT;
@@ -683,7 +681,7 @@ public class Utils {
             return "(H4)";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_DAY)) {
-            return "(D)";
+            return "(D1)";
         }
         // if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
         // return "(W)";

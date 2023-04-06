@@ -3327,13 +3327,12 @@ public class BinanceServiceImpl implements BinanceService {
 
             switch_trend = Utils.switchTrendByMaXX(heken_list, ma_fast, ma_slow);
             if (Utils.isNotBlank(switch_trend)) {
-                note = Utils.TEXT_SWITCH_TREND_TO_
-                        + switch_trend + "(" + ma_fast + "_" + ma_slow + ")";
+                note = switch_trend + "(" + ma_fast + "_" + ma_slow + ")";
             }
         } else {
             switch_trend = Utils.switchTrendByHekenAshi_1_6(heken_list);
             if (Utils.isNotBlank(switch_trend)) {
-                note = Utils.TEXT_SWITCH_TREND_TO_ + switch_trend + "(1_6)";
+                note = switch_trend + "(1_6)";
             }
         }
 
