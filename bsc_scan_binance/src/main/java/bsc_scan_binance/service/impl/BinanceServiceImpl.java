@@ -3313,11 +3313,6 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         List<BtcFutures> heken_list = Utils.getHekenList(list);
-        String percent = Utils.removeLastZero(Utils.formatPrice(
-                Utils.getPercent(heken_list.get(1).getPrice_close_candle(), heken_list.get(2).getPrice_close_candle())
-                        .multiply(BigDecimal.valueOf(100)),
-                0)).replace(".0", "");
-
         String note = "";
         String trend = Utils.getTrendByHekenAshiList(heken_list, 1);
         if (CAPITAL_TIME_XX.contains("MINUTE_")) {
@@ -3331,16 +3326,16 @@ public class BinanceServiceImpl implements BinanceService {
                 ma_slow = Utils.MA_SLOW_INDEX_OF_MINUTE_15;
             }
 
-            String switch_trend_ma50 = Utils.switchTrendByMaXX(list, 1, ma_slow);
+            String switch_trend_ma50 = Utils.switchTrendByMaXX(heken_list, 1, ma_slow);
             if (Utils.isNotBlank(switch_trend_ma50)) {
                 note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(1_" + ma_slow + ":B)" : "(1_" + ma_slow + ":S)";
             } else {
-                switch_trend_ma50 = Utils.switchTrendByMaXX(list, 2, ma_slow);
+                switch_trend_ma50 = Utils.switchTrendByMaXX(heken_list, 2, ma_slow);
                 if (Utils.isNotBlank(switch_trend_ma50)) {
                     note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(2_" + ma_slow + ":B)"
                             : "(2_" + ma_slow + ":S)";
                 } else {
-                    switch_trend_ma50 = Utils.switchTrendByMaXX(list, 3, ma_slow);
+                    switch_trend_ma50 = Utils.switchTrendByMaXX(heken_list, 3, ma_slow);
                     if (Utils.isNotBlank(switch_trend_ma50)) {
                         note = switch_trend_ma50.contains(Utils.TREND_LONG) ? "(3_" + ma_slow + ":B)"
                                 : "(3_" + ma_slow + ":S)";
@@ -3352,7 +3347,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (Utils.isNotBlank(note)) {
-            note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + note + "(angle:" + percent + ")";
+            note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + note;
         }
 
         // -----------------------------DATABASE---------------------------

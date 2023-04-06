@@ -3451,10 +3451,10 @@ public class Utils {
         }
         // -------------------------
 
-        if ((count_long > count_shot) && ((count_long - count_shot) > 1) && (ma6_0.compareTo(ma6_3) > 0)) {
+        if ((count_long > count_shot) && ((count_long - count_shot) > 1) && (ma3_0.compareTo(ma3_3) > 0)) {
             return TREND_LONG;
         }
-        if ((count_shot > count_long) && ((count_shot - count_long) > 1) && (ma6_0.compareTo(ma6_3) < 0)) {
+        if ((count_shot > count_long) && ((count_shot - count_long) > 1) && (ma3_0.compareTo(ma3_3) < 0)) {
             return TREND_SHORT;
         }
 
