@@ -3388,17 +3388,16 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_h1 = dto_h1.getTrend();
                 String trend_15 = dto_15.getTrend();
                 String trend_05 = dto_05.getTrend();
-                if (!Objects.equals(TREND_D1, trend_h4)) {
-                    continue;
-                }
 
                 String type = Objects.equals(Utils.TREND_LONG, trend_h4) ? "(B)"
                         : Objects.equals(Utils.TREND_SHORT, trend_h4) ? "(S)" : "(x)";
 
                 // TODO: scapForex
                 boolean has_output = false;
-                if (Objects.equals(trend_h4, trend_h1)
-                        && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)) {
+                if (Objects.equals(TREND_D1, trend_h4)
+                        && Objects.equals(TREND_D1, trend_h1)
+                        && Objects.equals(TREND_D1, trend_15)
+                        && Objects.equals(TREND_D1, trend_05)) {
 
                     if (Utils.isNotBlank(dto_15.getNote())) {
 
@@ -3420,7 +3419,9 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (!has_output && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)
+                if (!has_output && Objects.equals(TREND_D1, trend_h1)
+                        && Objects.equals(TREND_D1, trend_15)
+                        && Objects.equals(TREND_D1, trend_05)
                         && Utils.isNotBlank(dto_15.getNote() + dto_05.getNote())) {
 
                     String msg = Utils.appendSpace(EPIC, 10);
