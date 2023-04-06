@@ -3400,7 +3400,6 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(TREND_D1, trend_05)) {
 
                     if (Utils.isNotBlank(dto_15.getNote())) {
-
                         if (Utils.isNotBlank(result_15) && !Objects.equals(Utils.TREND_ADJUST, trend_15)) {
                             result_15 += ", ";
                         }
