@@ -3401,14 +3401,15 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
+                String type = Objects.equals(Utils.TREND_LONG, trend_h4) ? "(B)"
+                        : Objects.equals(Utils.TREND_SHORT, trend_h4) ? "(S)" : "(x)";
+
                 // TODO: scapForex
                 boolean has_output = false;
                 if (Objects.equals(trend_h4, trend_h1)
                         && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)) {
 
                     if (Utils.isNotBlank(dto_15.getNote())) {
-                        String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "(B)"
-                                : Objects.equals(Utils.TREND_SHORT, trend_15) ? "(S)" : "(x)";
 
                         if (Utils.isNotBlank(result_15) && !Objects.equals(Utils.TREND_ADJUST, trend_15)) {
                             result_15 += ", ";
@@ -3419,9 +3420,6 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     if (Utils.isNotBlank(dto_05.getNote())) {
-                        String type = Objects.equals(Utils.TREND_LONG, trend_05) ? "(B)"
-                                : Objects.equals(Utils.TREND_SHORT, trend_05) ? "(S)" : "(x)";
-
                         if (Utils.isNotBlank(result_05) && !Objects.equals(Utils.TREND_ADJUST, trend_05)) {
                             result_05 += ", ";
                         }
@@ -3442,6 +3440,11 @@ public class BinanceServiceImpl implements BinanceService {
                             15);
                     msg += Utils.calc_BUF_LO_HI_BUF_Forex(true, trend_05, EPIC, dto_15, dto_h1);
                     logMsgPerHour("LOG_PER_HOUR_15" + EPIC + dto_15.getTrend(), msg, Utils.MINUTES_OF_15M);
+
+                    if (Utils.isNotBlank(result_15)) {
+                        result_15 += ", ";
+                    }
+                    result_15 += Utils.appendSpace(type + EPIC, 15);
                 }
 
             }
