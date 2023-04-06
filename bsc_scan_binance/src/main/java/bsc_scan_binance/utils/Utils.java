@@ -3393,8 +3393,7 @@ public class Utils {
         BigDecimal ma1_1 = calcMA(heken_list, 1, 1);
         BigDecimal ma1_3 = calcMA(heken_list, 1, 2);
 
-        if (heken_list.get(0).getId().contains("_1d_") || heken_list.get(0).getId().contains("_4h_")
-                || heken_list.get(0).getId().contains("_1h_")) {
+        if (heken_list.get(0).getId().contains("_1d_") || heken_list.get(0).getId().contains("_4h_")) {
             if ((ma1_0.compareTo(ma1_1) > 0) && (ma1_3.compareTo(ma1_1) > 0)) {
                 return TREND_LONG;
             }

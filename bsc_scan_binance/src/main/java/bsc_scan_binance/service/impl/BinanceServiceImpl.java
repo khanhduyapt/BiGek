@@ -3132,14 +3132,14 @@ public class BinanceServiceImpl implements BinanceService {
 
         // TODO: week_trend_index
         Hashtable<String, String> week_trend_index = new Hashtable<String, String>();
-        week_trend_index.put("USD", Utils.TREND_SHORT); // DXY
-        week_trend_index.put("GBP", Utils.TREND_LONG); // BXY
-        week_trend_index.put("JPY", Utils.TREND_SHORT); // JXY
-        week_trend_index.put("NZD", Utils.TREND_LONG); // ZXY
         week_trend_index.put("AUD", Utils.TREND_LONG); // AXY
-        week_trend_index.put("EUR", Utils.TREND_LONG); // EXY
-        week_trend_index.put("CHF", Utils.TREND_LONG); // SXY
+        week_trend_index.put("GBP", Utils.TREND_LONG); // BXY
         week_trend_index.put("CAD", Utils.TREND_LONG); // CXY
+        week_trend_index.put("USD", Utils.TREND_SHORT); // DXY
+        week_trend_index.put("EUR", Utils.TREND_LONG); // EXY
+        week_trend_index.put("JPY", Utils.TREND_SHORT); // JXY
+        week_trend_index.put("CHF", Utils.TREND_LONG); // SXY
+        week_trend_index.put("NZD", Utils.TREND_LONG); // ZXY
 
         // String results = "";
         List<String> epic_long = new ArrayList<String>();
@@ -3417,31 +3417,39 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // TODO: scapForex
                 boolean has_output = false;
-                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)
-                        && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)) {
-
-                    if (dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))) {
-                        String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "(B)"
-                                : Objects.equals(Utils.TREND_SHORT, trend_15) ? "(S)" : "(x)";
-
-                        if (Utils.isNotBlank(result_15) && !Objects.equals(Utils.TREND_ADJUST, trend_15)) {
-                            result_15 += ", ";
-                        }
-                        result_15 += Utils.appendSpace(type + EPIC, 15);
-                        outputLog(EPIC, dto_15, dto_h1);
-                        has_output = true;
+                if (Objects.equals(trend_h4, trend_h1)) {
+                    if (Utils.ONEWAY_EPICS.contains(EPIC) && !Objects.equals(TREND_D1, trend_h4)) {
+                        continue;
                     }
 
-                    if (dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05))) {
-                        String type = Objects.equals(Utils.TREND_LONG, trend_05) ? "(B)"
-                                : Objects.equals(Utils.TREND_SHORT, trend_05) ? "(S)" : "(x)";
+                    if (Utils.isNotBlank(dto_h1.getNote())) {
+                        outputLog(EPIC, dto_h1, dto_h1);
+                    }
 
-                        if (Utils.isNotBlank(result_05) && !Objects.equals(Utils.TREND_ADJUST, trend_05)) {
-                            result_05 += ", ";
+                    if (Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)) {
+                        if (dto_15.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_15))) {
+                            String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "(B)"
+                                    : Objects.equals(Utils.TREND_SHORT, trend_15) ? "(S)" : "(x)";
+
+                            if (Utils.isNotBlank(result_15) && !Objects.equals(Utils.TREND_ADJUST, trend_15)) {
+                                result_15 += ", ";
+                            }
+                            result_15 += Utils.appendSpace(type + EPIC, 15);
+                            outputLog(EPIC, dto_15, dto_h1);
+                            has_output = true;
                         }
-                        result_05 += Utils.appendSpace(type + EPIC, 15);
-                        outputLog(EPIC, dto_05, dto_h1);
-                        has_output = true;
+
+                        if (dto_05.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_MINUTE_05))) {
+                            String type = Objects.equals(Utils.TREND_LONG, trend_05) ? "(B)"
+                                    : Objects.equals(Utils.TREND_SHORT, trend_05) ? "(S)" : "(x)";
+
+                            if (Utils.isNotBlank(result_05) && !Objects.equals(Utils.TREND_ADJUST, trend_05)) {
+                                result_05 += ", ";
+                            }
+                            result_05 += Utils.appendSpace(type + EPIC, 15);
+                            outputLog(EPIC, dto_05, dto_h1);
+                            has_output = true;
+                        }
                     }
                 }
 
