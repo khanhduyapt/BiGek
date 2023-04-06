@@ -3309,13 +3309,10 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String note = "";
-        String trend = Utils.getTrendByHekenAshi(list, 1);
+        String trend = Utils.getTrendByHekenAshi(list);
 
         if (CAPITAL_TIME_XX.contains("MINUTE_")) {
-            String trend_ma6 = Utils.getTrendByHekenAshi(list, 6);
-            if (!Objects.equals(trend, trend_ma6)) {
-                trend = Utils.TREND_ADJUST;
-            }
+            trend = Utils.getTrendByHekenAshi(list, 3);
         }
 
         String switch_trend = Utils.switchTrendByHekenAshi_3_to_6(list);
@@ -3402,7 +3399,6 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        String result_h1 = "";
         String result_15 = "";
         String result_05 = "";
         List<String> CAPITAL_LIST = new ArrayList<String>();
@@ -3424,6 +3420,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_15 = dto_15.getTrend();
                 String trend_05 = dto_05.getTrend();
 
+                // TODO: scapForex
                 boolean has_output = false;
                 if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
 
@@ -3431,11 +3428,6 @@ public class BinanceServiceImpl implements BinanceService {
                             && dto_h1.getNote().contains(String.valueOf(Utils.MA_SLOW_INDEX_OF_H1))) {
                         String type = Objects.equals(Utils.TREND_LONG, trend_h1) ? "(B)"
                                 : Objects.equals(Utils.TREND_SHORT, trend_h1) ? "(S)" : "(x)";
-
-                        if (Utils.isNotBlank(result_h1) && !Objects.equals(Utils.TREND_ADJUST, trend_h1)) {
-                            result_h1 += ", ";
-                        }
-                        result_h1 += Utils.appendSpace(type + EPIC, 15);
                         outputLog(EPIC, dto_h1, dto_h1);
                         has_output = true;
                     }
@@ -3503,14 +3495,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        if (Utils.isNotBlank(result_h1 + result_15 + result_05)) {
-            String EVENT_ID = "FX_H_" + (result_h1 + result_15 + result_05).length() + Utils.getCurrentYyyyMmDd_HH();
+        if (Utils.isNotBlank(result_15 + result_05)) {
+            String EVENT_ID = "FX_H_" + (result_15 + result_05).length() + Utils.getCurrentYyyyMmDd_HH();
 
             String result_scap = "";
-            if (Utils.isNotBlank(result_h1)) {
-                result_scap += Utils.new_line_from_service;
-                result_scap += "(H1)" + result_h1;
-            }
             if (Utils.isNotBlank(result_15)) {
                 result_scap += Utils.new_line_from_service;
                 result_scap += "(15)" + result_15;
