@@ -3296,7 +3296,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        if (CAPITAL_TIME_XX.contains("MINUTE_")) {
+        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
             String switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 50);
             if (Utils.isNotBlank(switch_trend)) {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(1_50)";
@@ -3311,21 +3311,17 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
             }
+
+        } else if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XX)) {
+
+            String switch_trend = Utils.switchTrendByMaXX_123(heken_list, 3, 5, 1, 3);
+            String find_trend = Utils.isAboveMALine(heken_list, 50, 0) ? Utils.TREND_SHORT : Utils.TREND_LONG;
+            if (Objects.equals(switch_trend, find_trend)) {
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(3_5)";
+            }
+
         } else if (Utils.isNotBlank(Utils.switchTrendByHekenAshi_1_6(heken_list))) {
             note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(1_6)";
-        }
-
-        if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XX)) {
-            // String percent = "(" + list.size() + "D): ";
-            // List<BigDecimal> low_high_10d = Utils.getLowHighCandle(list);
-            // percent += Utils.appendSpace(
-            // "Low:" + Utils.getPercentToEntry(list.get(0).getCurrPrice(),
-            // low_high_10d.get(0), false), 22);
-            // percent += Utils.appendSpace(
-            // "Hig:" + Utils.getPercentToEntry(list.get(0).getCurrPrice(),
-            // low_high_10d.get(1), true), 22);
-            //
-            // note = percent + note;
         }
 
         // -----------------------------DATABASE---------------------------

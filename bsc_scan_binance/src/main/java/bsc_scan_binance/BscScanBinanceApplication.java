@@ -122,25 +122,26 @@ public class BscScanBinanceApplication {
                 week_trend_index.put("CHF", Utils.TREND_LONG); // SXY
                 week_trend_index.put("NZD", Utils.TREND_LONG); // ZXY
                 binance_service.initWeekTrend();
+                Utils.writelnLogFooter();
 
                 while (index_crypto < total) {
                     try {
                         // && Utils.isBusinessTime_6h_to_22h()
-                        if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
-                            if (isReloadAfter((Utils.MINUTES_OF_5M), "MT5_DATA")) {
-                                binance_service.saveMt5Data();
-                                wait(SLEEP_MINISECONDS);
-                                for (String EPIC : CAPITAL_LIST) {
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
-                                }
-                                wait(SLEEP_MINISECONDS);
-                                binance_service.scapForex();
+                        // if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
+                        if (isReloadAfter((Utils.MINUTES_OF_5M), "MT5_DATA")) {
+                            binance_service.saveMt5Data();
+                            wait(SLEEP_MINISECONDS);
+                            for (String EPIC : CAPITAL_LIST) {
+                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
+                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
+                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
+                                binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
                             }
+                            wait(SLEEP_MINISECONDS);
+                            binance_service.scapForex();
                         }
+                        // }
 
                         // ---------------------------------------------------------
                         if (isReloadAfter((Utils.MINUTES_OF_15M), "INIT_CRYPTO")) {
