@@ -3400,7 +3400,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (Utils.isNotBlank(dto_05.getNote())) {
                         outputLog(EPIC, dto_05, dto_h1);
-                    } else if (Utils.isNotBlank(dto_h1.getNote())) {
+                    } else if (Utils.isNotBlank(dto_h1.getNote()) && Objects.equals(trend_h4, trend_h1)) {
                         outputLog(EPIC, dto_h1, dto_h4);
                     }
                 }
@@ -3436,7 +3436,7 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 15);
         log += Utils.calc_BUF_LO_HI_BUF_Forex(true, dto_entry.getTrend(), EPIC, dto_entry, dto_sl);
 
-        logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_15M);
+        logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
     }
 }
 
