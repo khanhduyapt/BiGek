@@ -154,9 +154,8 @@ public class Utils {
     // "GBPAUD", ,"XAGUSD", "SP500", "JPN225",
 
     // "EURCHF", "EURGBP","NZDCHF", "NZDJPY", "GBPAUD",
-    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("CADJPY", "EURCAD", "EURJPY", "EURNZD",
-            "GBPNZD", "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF", "CHFJPY", "EURAUD", "EURCHF", "GBPAUD",
-            "GBPCHF", "NZDCAD", "NZDCHF", "NZDJPY");
+    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList(
+            "CADJPY", "EURJPY", "EURNZD", "GBPNZD", "AUDJPY", "AUDNZD", "CHFJPY", "NZDJPY");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("ART", "BNT", "PHT", "DGT", "DODO",
             "AERGO", "ARK", "BIDR", "CREAM", "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM",
