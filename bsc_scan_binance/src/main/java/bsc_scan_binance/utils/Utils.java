@@ -2334,7 +2334,7 @@ public class Utils {
         return result;
     }
 
-    public static BigDecimal calcMaxHigh(List<BtcFutures> list) {
+    public static BigDecimal calcMaxCandleHigh(List<BtcFutures> list) {
         BigDecimal max_high = BigDecimal.ZERO;
 
         for (BtcFutures dto : list) {

@@ -3337,6 +3337,10 @@ public class BinanceServiceImpl implements BinanceService {
         List<BigDecimal> low_high = Utils.getLowHighCandle(list);
 
         BigDecimal bread = Utils.calcMaxBread(list);
+        if (CAPITAL_TIME_XX.contains("MINUTE_")) {
+            bread = Utils.calcMaxCandleHigh(list);
+        }
+
         BigDecimal str_body_price = low_high.get(0);
         BigDecimal end_body_price = low_high.get(1);
         if (CAPITAL_TIME_XX.contains("MINUTE_") || Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
@@ -3397,22 +3401,22 @@ public class BinanceServiceImpl implements BinanceService {
                         }
                         result_15 += Utils.appendSpace(type + EPIC, 15);
                         has_output = true;
-                        outputLog(EPIC, dto_15, dto_h4);
+                        outputLog(EPIC, dto_15, dto_15);
                     } else if (Utils.isNotBlank(dto_05.getNote())) {
                         if (Utils.isNotBlank(result_05)) {
                             result_05 += ", ";
                         }
                         result_05 += Utils.appendSpace(type + EPIC, 15);
                         has_output = true;
-                        outputLog(EPIC, dto_05, dto_h4);
+                        outputLog(EPIC, dto_05, dto_15);
                     }
                 }
 
                 if (!has_output && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
                     if (Utils.isNotBlank(dto_15.getNote())) {
-                        outputLog(EPIC, dto_15, dto_h1);
+                        outputLog(EPIC, dto_15, dto_15);
                     } else if (Objects.equals(trend_h1, trend_05) && Utils.isNotBlank(dto_05.getNote())) {
-                        outputLog(EPIC, dto_05, dto_h1);
+                        outputLog(EPIC, dto_05, dto_15);
                     }
                 }
 
@@ -3433,8 +3437,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             sendMsgPerHour(EVENT_ID, result_scap, true);
-            // logMsgPerHour(EVENT_ID, "Msg:" +
-            // result_scap.replace(Utils.new_line_from_service, " "), Utils.MINUTES_OF_15M);
         }
     }
 
