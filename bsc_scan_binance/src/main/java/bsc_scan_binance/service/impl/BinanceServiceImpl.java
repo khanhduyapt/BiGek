@@ -3375,7 +3375,14 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)
                         && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)) {
 
-                    if (Utils.isNotBlank(dto_15.getNote())) {
+                    if (Utils.isNotBlank(dto_05.getNote())) {
+                        if (Utils.isNotBlank(result_05)) {
+                            result_05 += ", ";
+                        }
+                        result_05 += Utils.appendSpace(type + EPIC, 15);
+                        has_output = true;
+                        outputLog(EPIC, dto_h1, dto_h4);
+                    } else if (Utils.isNotBlank(dto_15.getNote())) {
                         if (Utils.isNotBlank(result_15)) {
                             result_15 += ", ";
                         }
@@ -3384,26 +3391,14 @@ public class BinanceServiceImpl implements BinanceService {
                         outputLog(EPIC, dto_h1, dto_h4);
                     }
 
-                    if (Utils.isNotBlank(dto_05.getNote())) {
-                        if (Utils.isNotBlank(result_05)) {
-                            result_05 += ", ";
-                        }
-                        result_05 += Utils.appendSpace(type + EPIC, 15);
-                        has_output = true;
-                        outputLog(EPIC, dto_h1, dto_h4);
-                    }
                 }
 
                 //&& Objects.equals(trend_h4, trend_h1)
-                if (!has_output && Utils.isNotBlank(dto_05.getNote())
+                if (!has_output
+                        && (Utils.isNotBlank(dto_05.getNote()) || Utils.isNotBlank(dto_h1.getNote()))
                         && Objects.equals(trend_h4, trend_15)
                         && Objects.equals(trend_h4, trend_05)) {
                     outputLog(EPIC, dto_05, dto_h1);
-
-                    if (Utils.isNotBlank(result_05)) {
-                        result_05 += ", ";
-                    }
-                    result_05 += Utils.appendSpace(type + EPIC, 15);
                 }
 
             }
