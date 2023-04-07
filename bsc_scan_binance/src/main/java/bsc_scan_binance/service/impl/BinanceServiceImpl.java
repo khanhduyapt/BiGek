@@ -3359,8 +3359,8 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_5).orElse(null);
 
-            if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1) && Objects.nonNull(dto_15)
-                    && Objects.nonNull(dto_05)) {
+            if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)
+                    && Objects.nonNull(dto_h1) && Objects.nonNull(dto_15) && Objects.nonNull(dto_05)) {
                 String TREND_D1 = dto_d1.getTrend();
                 String trend_h4 = dto_h4.getTrend();
                 String trend_h1 = dto_h1.getTrend();
@@ -3368,41 +3368,36 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_05 = dto_05.getTrend();
 
                 // TODO: scapForex
-                if (Objects.equals(TREND_D1, trend_h4) && Utils.isNotBlank(dto_h4.getNote())) {
+                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)) {
+
                     String type = Objects.equals(Utils.TREND_LONG, trend_h4) ? "(B)"
                             : Objects.equals(Utils.TREND_SHORT, trend_h4) ? "(S)" : "(x)";
 
-                    if (Objects.equals(trend_h4, trend_h1)
-                            && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)) {
-
-                        if (Utils.isNotBlank(dto_15.getNote())) {
-                            if (Utils.isNotBlank(result_15)) {
-                                result_15 += ", ";
-                            }
-                            result_15 += Utils.appendSpace(type + EPIC, 15);
-
-                            outputLog(EPIC, dto_h1, dto_h4);
+                    if (Utils.isNotBlank(dto_15.getNote())) {
+                        if (Utils.isNotBlank(result_15)) {
+                            result_15 += ", ";
                         }
+                        result_15 += Utils.appendSpace(type + EPIC, 15);
 
-                        if (Utils.isNotBlank(dto_05.getNote())) {
-                            if (Utils.isNotBlank(result_05)) {
-                                result_05 += ", ";
-                            }
-                            result_05 += Utils.appendSpace(type + EPIC, 15);
+                        outputLog(EPIC, dto_h1, dto_h4);
+                    }
 
-                            outputLog(EPIC, dto_h1, dto_h4);
+                    if (Utils.isNotBlank(dto_05.getNote())) {
+                        if (Utils.isNotBlank(result_05)) {
+                            result_05 += ", ";
                         }
+                        result_05 += Utils.appendSpace(type + EPIC, 15);
+
+                        outputLog(EPIC, dto_h1, dto_h4);
                     }
                 }
 
-                if (Utils.EPICS_MAIN.contains(EPIC)) {
-                    if (Utils.isNotBlank(dto_05.getNote()) && Objects.equals(trend_h1, trend_15)
-                            && Objects.equals(trend_h1, trend_05)) {
-
-                        outputLog(EPIC, dto_05, dto_h1);
-
-                    }
+                if (Utils.EPICS_MAIN.contains(EPIC) && Utils.isNotBlank(dto_05.getNote())
+                        && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_h1, trend_05)) {
+                    outputLog(EPIC, dto_05, dto_h1);
                 }
+
             }
         }
 
