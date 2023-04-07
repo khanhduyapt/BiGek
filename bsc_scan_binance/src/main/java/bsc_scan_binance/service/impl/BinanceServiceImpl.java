@@ -3197,7 +3197,8 @@ public class BinanceServiceImpl implements BinanceService {
                     String chart = Utils.getChartName(dto_d1) + ":" + Utils.appendSpace(dto_d1.getTrend(), 8);
 
                     String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
-                    log += Utils.createLineForex_Body(dto_h4, dto_h4).trim() + "   " + dto_h4.getNote();
+                    log += Utils.createLineForex_Body(dto_h4, dto_h4).trim();
+                    log += "   " + dto_d1.getNote() + "   " + dto_h4.getNote();
 
                     String week_trend = "";
                     if (GLOBAL_LONG_LIST.contains(EPIC)) {
@@ -3298,20 +3299,33 @@ public class BinanceServiceImpl implements BinanceService {
         if (CAPITAL_TIME_XX.contains("MINUTE_")) {
             String switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 50);
             if (Utils.isNotBlank(switch_trend)) {
-                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + trend + "(1_50)";
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(1_50)";
             } else {
                 switch_trend = Utils.switchTrendByMaXX(heken_list, 3, 50);
                 if (Utils.isNotBlank(switch_trend)) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + trend + "(3_50)";
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(3_50)";
                 } else {
                     switch_trend = Utils.switchTrendByMaXX(heken_list, 5, 50);
                     if (Utils.isNotBlank(switch_trend)) {
-                        note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + trend + "(5_50)";
+                        note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(5_50)";
                     }
                 }
             }
         } else if (Utils.isNotBlank(Utils.switchTrendByHekenAshi_1_6(heken_list))) {
-            note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + trend + "(1_6)";
+            note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(1_6)";
+        }
+
+        if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XX)) {
+            // String percent = "(" + list.size() + "D): ";
+            // List<BigDecimal> low_high_10d = Utils.getLowHighCandle(list);
+            // percent += Utils.appendSpace(
+            // "Low:" + Utils.getPercentToEntry(list.get(0).getCurrPrice(),
+            // low_high_10d.get(0), false), 22);
+            // percent += Utils.appendSpace(
+            // "Hig:" + Utils.getPercentToEntry(list.get(0).getCurrPrice(),
+            // low_high_10d.get(1), true), 22);
+            //
+            // note = percent + note;
         }
 
         // -----------------------------DATABASE---------------------------
