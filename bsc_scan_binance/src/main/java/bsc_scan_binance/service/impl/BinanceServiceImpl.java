@@ -189,7 +189,6 @@ public class BinanceServiceImpl implements BinanceService {
 
     private int pre_HH = 0;
     private String sp500 = "";
-    private String pre_data_csv = "";
 
     @Override
     @Transactional
@@ -3061,7 +3060,6 @@ public class BinanceServiceImpl implements BinanceService {
             mt5DataCandleRepository.saveAll(list);
 
             // ------------------------------------------------------------------------
-
             String log = "(MT5_DATA): " + Utils.appendLeft(String.valueOf(total_data), 4) + "/"
                     + Utils.appendLeft(String.valueOf(total_line), 4);
             if (not_found > 0) {
@@ -3070,12 +3068,10 @@ public class BinanceServiceImpl implements BinanceService {
             log += "      LastModifiedTime: " + Utils.formatDateTime(attr.lastModifiedTime());
             log += "      " + file.getAbsolutePath();
 
-            String cur_data_csv = String.valueOf(not_found);
-            if (!Objects.equals(pre_data_csv, cur_data_csv)) {
+            if (log.contains("NOT_FOUND")) {
                 Utils.logWritelnDraft("\n\n\n");
                 Utils.logWritelnDraft(log);
                 Utils.logWritelnDraft("\n\n\n");
-                pre_data_csv = cur_data_csv;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -3312,13 +3308,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         List<BigDecimal> low_high = Utils.getLowHighCandle(list);
 
-        BigDecimal bread = BigDecimal.ZERO;
-        if (CAPITAL_TIME_XX.contains("MINUTE_")) {
-            bread = Utils.calcMaxHigh(list).add(Utils.calcMaxBread(list));
-        } else {
-            bread = Utils.calcMaxBread(list);
-        }
-
+        BigDecimal bread = Utils.calcMaxBread(list);
         BigDecimal str_body_price = low_high.get(0);
         BigDecimal end_body_price = low_high.get(1);
         if (CAPITAL_TIME_XX.contains("MINUTE_") || Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
@@ -3411,7 +3401,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             sendMsgPerHour(EVENT_ID, result_scap, true);
-            logMsgPerHour(EVENT_ID, result_scap.replace(Utils.new_line_from_service, "   "), Utils.MINUTES_OF_15M);
+            logMsgPerHour(EVENT_ID, "Msg:" + result_scap.replace(Utils.new_line_from_service, "   "),
+                    Utils.MINUTES_OF_15M);
         }
     }
 
