@@ -3367,19 +3367,20 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_15 = dto_15.getTrend();
                 String trend_05 = dto_05.getTrend();
 
+                String type = Objects.equals(Utils.TREND_LONG, trend_h4) ? "(B)"
+                        : Objects.equals(Utils.TREND_SHORT, trend_h4) ? "(S)" : "(x)";
+
                 // TODO: scapForex
+                boolean has_output = false;
                 if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)
                         && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)) {
-
-                    String type = Objects.equals(Utils.TREND_LONG, trend_h4) ? "(B)"
-                            : Objects.equals(Utils.TREND_SHORT, trend_h4) ? "(S)" : "(x)";
 
                     if (Utils.isNotBlank(dto_15.getNote())) {
                         if (Utils.isNotBlank(result_15)) {
                             result_15 += ", ";
                         }
                         result_15 += Utils.appendSpace(type + EPIC, 15);
-
+                        has_output = true;
                         outputLog(EPIC, dto_h1, dto_h4);
                     }
 
@@ -3388,14 +3389,21 @@ public class BinanceServiceImpl implements BinanceService {
                             result_05 += ", ";
                         }
                         result_05 += Utils.appendSpace(type + EPIC, 15);
-
+                        has_output = true;
                         outputLog(EPIC, dto_h1, dto_h4);
                     }
                 }
 
-                if (Utils.isNotBlank(dto_05.getNote())
-                        && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_h1, trend_05)) {
+                if (!has_output && Utils.isNotBlank(dto_05.getNote())
+                        && Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(trend_h4, trend_15)
+                        && Objects.equals(trend_h4, trend_05)) {
                     outputLog(EPIC, dto_05, dto_h1);
+
+                    if (Utils.isNotBlank(result_05)) {
+                        result_05 += ", ";
+                    }
+                    result_05 += Utils.appendSpace(type + EPIC, 15);
                 }
 
             }
