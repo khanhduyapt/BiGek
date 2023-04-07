@@ -3112,23 +3112,12 @@ public class BinanceServiceImpl implements BinanceService {
         GLOBAL_LONG_LIST = new ArrayList<String>();
         GLOBAL_SHOT_LIST = new ArrayList<String>();
 
-        // TODO: week_trend_index
-        Hashtable<String, String> week_trend_index = new Hashtable<String, String>();
-        week_trend_index.put("AUD", Utils.TREND_LONG); // AXY
-        week_trend_index.put("GBP", Utils.TREND_LONG); // BXY
-        week_trend_index.put("CAD", Utils.TREND_LONG); // CXY
-        week_trend_index.put("USD", Utils.TREND_SHORT); // DXY
-        week_trend_index.put("EUR", Utils.TREND_LONG); // EXY
-        week_trend_index.put("JPY", Utils.TREND_SHORT); // JXY
-        week_trend_index.put("CHF", Utils.TREND_LONG); // SXY
-        week_trend_index.put("NZD", Utils.TREND_LONG); // ZXY
-
         // String results = "";
         List<String> epic_long = new ArrayList<String>();
         List<String> epic_shot = new ArrayList<String>();
         for (String cur : Utils.currencies) {
-            if (week_trend_index.containsKey(cur)) {
-                String trend = week_trend_index.get(cur);
+            if (BscScanBinanceApplication.week_trend_index.containsKey(cur)) {
+                String trend = BscScanBinanceApplication.week_trend_index.get(cur);
                 if (Objects.equals(trend, Utils.TREND_LONG)) {
                     epic_long.add(cur);
                 } else {
@@ -3401,8 +3390,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             sendMsgPerHour(EVENT_ID, result_scap, true);
-            logMsgPerHour(EVENT_ID, "Msg:" + result_scap.replace(Utils.new_line_from_service, "   "),
-                    Utils.MINUTES_OF_15M);
+            // logMsgPerHour(EVENT_ID, "Msg:" + result_scap.replace(Utils.new_line_from_service, "   "), Utils.MINUTES_OF_15M);
         }
     }
 
