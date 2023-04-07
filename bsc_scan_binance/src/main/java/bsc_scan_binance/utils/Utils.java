@@ -154,8 +154,8 @@ public class Utils {
     // "GBPAUD", ,"XAGUSD", "SP500", "JPN225",
 
     // "EURCHF", "EURGBP","NZDCHF", "NZDJPY", "GBPAUD",
-    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList(
-            "CADJPY", "EURJPY", "EURNZD", "GBPNZD", "AUDJPY", "AUDNZD", "CHFJPY", "NZDJPY");
+    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("CADJPY", "EURJPY", "EURNZD", "GBPNZD",
+            "AUDJPY", "AUDNZD", "CHFJPY", "NZDJPY");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("ART", "BNT", "PHT", "DGT", "DODO",
             "AERGO", "ARK", "BIDR", "CREAM", "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM",
@@ -3378,43 +3378,54 @@ public class Utils {
             return "";
         }
 
+        int maSlow = 6;
         BigDecimal ma1_0 = calcMA(heken_list, 1, 0);
         BigDecimal ma1_1 = calcMA(heken_list, 1, 1);
-        BigDecimal ma1_3 = calcMA(heken_list, 1, 2);
+        BigDecimal ma1_2 = calcMA(heken_list, 1, 2);
+        BigDecimal ma1_3 = calcMA(heken_list, 1, 3);
 
-        // || heken_list.get(0).getId().contains("_1h_")
-        if (heken_list.get(0).getId().contains("_1d_") || heken_list.get(0).getId().contains("_4h_")) {
-            if ((ma1_0.compareTo(ma1_1) > 0) && (ma1_3.compareTo(ma1_1) > 0)) {
+        if (heken_list.get(0).getId().contains("_1d_")) {
+            if ((ma1_0.compareTo(ma1_1) > 0) && (ma1_2.compareTo(ma1_1) > 0)) {
                 return TREND_LONG;
             }
-
-            if ((ma1_0.compareTo(ma1_1) < 0) && (ma1_3.compareTo(ma1_1) < 0)) {
+            if ((ma1_0.compareTo(ma1_1) < 0) && (ma1_2.compareTo(ma1_1) < 0)) {
                 return TREND_SHORT;
             }
+            maSlow = 3;
+        }
+
+        if (heken_list.get(0).getId().contains("_4h_")) {
+            if ((ma1_1.compareTo(ma1_2) > 0) && (ma1_3.compareTo(ma1_2) > 0)) {
+                return TREND_LONG;
+            }
+            if ((ma1_1.compareTo(ma1_2) < 0) && (ma1_3.compareTo(ma1_2) < 0)) {
+                return TREND_SHORT;
+            }
+            maSlow = 5;
         }
 
         BigDecimal ma2_0 = calcMA(heken_list, 2, 0);
-        BigDecimal ma2_3 = calcMA(heken_list, 2, 2);
+        BigDecimal ma2_2 = calcMA(heken_list, 2, 2);
 
-        BigDecimal ma6_0 = calcMA(heken_list, 6, 0);
-        BigDecimal ma6_3 = calcMA(heken_list, 6, 2);
+        BigDecimal ma6_0 = calcMA(heken_list, maSlow, 0);
+        BigDecimal ma6_2 = calcMA(heken_list, maSlow, 2);
 
         int count_long = 0;
 
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma1_0, ma1_3, ma6_0, ma6_3))) {
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma1_0, ma1_2, ma6_0, ma6_2))) {
             count_long += 1;
         }
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma2_0, ma2_3, ma6_0, ma6_3))) {
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma2_0, ma2_2, ma6_0, ma6_2))) {
             count_long += 1;
         }
 
         // -------------------------
 
         int count_shot = 0;
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma1_0, ma1_3, ma6_0, ma6_3))) {
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma1_0, ma1_2, ma6_0, ma6_2))) {
             count_shot += 1;
         }
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma2_0, ma2_3, ma6_0, ma6_3))) {
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma2_0, ma2_2, ma6_0, ma6_2))) {
             count_shot += 1;
         }
         // -------------------------
@@ -3504,7 +3515,7 @@ public class Utils {
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
         if (dto_entry.getId().contains("_MINUTE_")) {
-            risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+            // risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
         if (dto_entry.getId().contains("_DAY")) {
             // risk = risk.multiply(BigDecimal.valueOf(2));
