@@ -3359,8 +3359,8 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_5).orElse(null);
 
-            if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)
-                    && Objects.nonNull(dto_h1) && Objects.nonNull(dto_15) && Objects.nonNull(dto_05)) {
+            if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1) && Objects.nonNull(dto_15)
+                    && Objects.nonNull(dto_05)) {
                 String TREND_D1 = dto_d1.getTrend();
                 String trend_h4 = dto_h4.getTrend();
                 String trend_h1 = dto_h1.getTrend();
@@ -3393,15 +3393,13 @@ public class BinanceServiceImpl implements BinanceService {
 
                 }
 
-                //&& Objects.equals(trend_h4, trend_h1)
-                if (!has_output
-                        && Objects.equals(trend_h4, trend_15)
-                        && Objects.equals(trend_h4, trend_05)) {
+                if (!has_output && Utils.isNotBlank(dto_h1.getNote()) && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_h1, trend_05)) {
 
                     if (Utils.isNotBlank(dto_05.getNote())) {
                         outputLog(EPIC, dto_05, dto_h1);
-                    } else if (Utils.isNotBlank(dto_h1.getNote()) && Objects.equals(trend_h4, trend_h1)) {
-                        outputLog(EPIC, dto_h1, dto_h4);
+                    } else if (Utils.isNotBlank(dto_15.getNote())) {
+                        outputLog(EPIC, dto_15, dto_h1);
                     }
                 }
 
@@ -3422,7 +3420,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             sendMsgPerHour(EVENT_ID, result_scap, true);
-            // logMsgPerHour(EVENT_ID, "Msg:" + result_scap.replace(Utils.new_line_from_service, "   "), Utils.MINUTES_OF_15M);
+            // logMsgPerHour(EVENT_ID, "Msg:" +
+            // result_scap.replace(Utils.new_line_from_service, " "), Utils.MINUTES_OF_15M);
         }
     }
 
