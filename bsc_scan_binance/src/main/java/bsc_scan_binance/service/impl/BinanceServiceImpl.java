@@ -3411,9 +3411,7 @@ public class BinanceServiceImpl implements BinanceService {
                         result_15 += Utils.appendSpace(type + EPIC, 15);
                         has_output = true;
                         outputLog(EPIC, dto_15, dto_15);
-                    }
-
-                    if (Utils.isNotBlank(dto_05.getNote())) {
+                    } else if (Utils.isNotBlank(dto_05.getNote())) {
                         if (Utils.isNotBlank(result_05)) {
                             result_05 += ", ";
                         }
@@ -3427,9 +3425,7 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Utils.isNotBlank(dto_15.getNote()) && Objects.equals(trend_h4, trend_h1)
                             && Objects.equals(trend_h1, trend_15)) {
                         outputLog(EPIC, dto_15, dto_15);
-                    }
-
-                    if (Objects.equals(trend_h1, trend_15) && Objects.equals(trend_h1, trend_05)
+                    } else if (Objects.equals(trend_h1, trend_15) && Objects.equals(trend_h1, trend_05)
                             && Utils.isNotBlank(dto_05.getNote())) {
                         outputLog(EPIC, dto_05, dto_15);
                     }
