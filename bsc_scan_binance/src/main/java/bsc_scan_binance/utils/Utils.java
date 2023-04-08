@@ -1110,6 +1110,26 @@ public class Utils {
         return false;
     }
 
+    public static boolean isTokyoSession() {
+        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14);
+        Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
+        if (times.contains(hh)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isLondonAndNewYorkSession() {
+        List<Integer> times = Arrays.asList(14, 15, 16, 17, 18, 19, 20, 21, 22, 23);
+        Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
+        if (times.contains(hh)) {
+            return true;
+        }
+
+        return false;
+    }
+
     public static boolean isBusinessTime_6h_to_22h() {
         // Sang 6-8h, Trua: 1h-3h, Chieu 5h-6h, toi 8h-9h: la khung gio gia ro rang
         // nhat, sau khung gio nay gia moi chay.
