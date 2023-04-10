@@ -3417,6 +3417,9 @@ public class Utils {
 
         int count_long = 0;
 
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma1_0, ma1_2, ma3_0, ma3_2))) {
+            count_long += 1;
+        }
         if (Utils.isNotBlank(Utils.checkXCutUpY(ma1_0, ma1_2, ma5_0, ma5_2))) {
             count_long += 1;
         }
@@ -3427,6 +3430,9 @@ public class Utils {
         // -------------------------
 
         int count_shot = 0;
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma1_0, ma1_2, ma3_0, ma3_2))) {
+            count_shot += 1;
+        }
         if (Utils.isNotBlank(Utils.checkXCutDnY(ma1_0, ma1_2, ma5_0, ma5_2))) {
             count_shot += 1;
         }
