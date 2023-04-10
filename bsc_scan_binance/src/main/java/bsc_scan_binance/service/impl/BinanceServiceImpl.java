@@ -3297,7 +3297,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        if (CAPITAL_TIME_XX.contains("MINUTE_")) {
+        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
             String switch_trend = Utils.switchTrendByHekenAshi_135(heken_list);
             String find_trend_05m = Utils.isAboveMALine(list, 50, 1) ? Utils.TREND_SHORT : Utils.TREND_LONG;
 
@@ -3395,11 +3395,6 @@ public class BinanceServiceImpl implements BinanceService {
                 // && Utils.EPICS_MAIN.contains(EPIC)
                 if (!has_output) {
                     if (Objects.equals(trend_h1, trend_15) && Objects.equals(trend_h1, trend_05)) {
-
-                        if (Utils.isNotBlank(dto_15.getNote())) {
-                            outputLog(EPIC, dto_15, dto_05);
-                        }
-
                         if (Utils.isNotBlank(dto_05.getNote())) {
                             outputLog(EPIC, dto_05, dto_05);
                         }
