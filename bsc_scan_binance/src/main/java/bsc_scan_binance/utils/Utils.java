@@ -146,17 +146,16 @@ public class Utils {
     public static final String ONEWAY_EPICS = "_US30_SP500_GER30_";
 
     // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", "AUS200", "JPY225", "XAGUSD",
-    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "US30", "EURUSD", "USDJPY",
-            "GBPUSD", "GBPJPY", "USDCHF", "NZDUSD");
+    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "US30", "EURUSD", "USDJPY", "GBPUSD",
+            "GBPJPY", "USDCHF", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK", "AUDJPY", "AUDNZD", "NZDJPY", "EURGBP",
     // "GBPAUD", ,"XAGUSD", "SP500", "JPN225",
 
     // "EURCHF", "EURGBP","NZDCHF", "NZDJPY", "GBPAUD",
-    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("BTCUSD", "SP500",
-            "GER30", "XAGUSD", "AUDUSD", "CADJPY", "EURJPY", "EURNZD", "ETHUSD", "GBPCAD", "GBPNZD", "AUDJPY", "AUDNZD",
-            "CHFJPY", "NZDJPY");
+    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("BTCUSD", "SP500", "GER30", "XAGUSD", "AUDUSD",
+            "CADJPY", "EURJPY", "EURNZD", "ETHUSD", "GBPCAD", "GBPNZD", "AUDJPY", "AUDNZD", "CHFJPY", "NZDJPY");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("ART", "BNT", "PHT", "DGT", "DODO",
             "AERGO", "ARK", "BIDR", "CREAM", "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM",
@@ -3382,12 +3381,11 @@ public class Utils {
         return false;
     }
 
-    public static String switchTrendByHekenAshi_1_6(List<BtcFutures> heken_list) {
+    public static String switchTrendByHekenAshi_135(List<BtcFutures> heken_list) {
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
         }
 
-        int maSlow = 6;
         BigDecimal ma1_0 = calcMA(heken_list, 1, 0);
         BigDecimal ma1_1 = calcMA(heken_list, 1, 1);
         BigDecimal ma1_2 = calcMA(heken_list, 1, 2);
@@ -3400,7 +3398,6 @@ public class Utils {
             if ((ma1_0.compareTo(ma1_1) < 0) && (ma1_2.compareTo(ma1_1) < 0)) {
                 return TREND_SHORT;
             }
-            maSlow = 3;
         }
 
         if (heken_list.get(0).getId().contains("_4h_")) {
@@ -3410,31 +3407,30 @@ public class Utils {
             if ((ma1_1.compareTo(ma1_2) < 0) && (ma1_3.compareTo(ma1_2) < 0)) {
                 return TREND_SHORT;
             }
-            maSlow = 5;
         }
 
-        BigDecimal ma2_0 = calcMA(heken_list, 2, 0);
-        BigDecimal ma2_2 = calcMA(heken_list, 2, 2);
+        BigDecimal ma3_0 = calcMA(heken_list, 2, 0);
+        BigDecimal ma3_2 = calcMA(heken_list, 2, 2);
 
-        BigDecimal ma6_0 = calcMA(heken_list, maSlow, 0);
-        BigDecimal ma6_2 = calcMA(heken_list, maSlow, 2);
+        BigDecimal ma5_0 = calcMA(heken_list, 5, 0);
+        BigDecimal ma5_2 = calcMA(heken_list, 5, 2);
 
         int count_long = 0;
 
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma1_0, ma1_2, ma6_0, ma6_2))) {
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma1_0, ma1_2, ma5_0, ma5_2))) {
             count_long += 1;
         }
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma2_0, ma2_2, ma6_0, ma6_2))) {
+        if (Utils.isNotBlank(Utils.checkXCutUpY(ma3_0, ma3_2, ma5_0, ma5_2))) {
             count_long += 1;
         }
 
         // -------------------------
 
         int count_shot = 0;
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma1_0, ma1_2, ma6_0, ma6_2))) {
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma1_0, ma1_2, ma5_0, ma5_2))) {
             count_shot += 1;
         }
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma2_0, ma2_2, ma6_0, ma6_2))) {
+        if (Utils.isNotBlank(Utils.checkXCutDnY(ma3_0, ma3_2, ma5_0, ma5_2))) {
             count_shot += 1;
         }
         // -------------------------
