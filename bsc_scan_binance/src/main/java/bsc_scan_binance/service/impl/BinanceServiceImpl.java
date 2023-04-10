@@ -3304,9 +3304,13 @@ public class BinanceServiceImpl implements BinanceService {
             String find_trend_by_char_15m = Utils.isAboveMALine(heken_15m, 50, 1) ? Utils.TREND_SHORT
                     : Utils.TREND_LONG;
             String switch_trend_of_chart_5m = Utils.switchTrendByMaXX_123(heken_list, 3, 5, 1, 3);
-
             if (Objects.equals(switch_trend_of_chart_5m, find_trend_by_char_15m)) {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(3_5)";
+            } else {
+                switch_trend_of_chart_5m = Utils.switchTrendByMaXX_123(heken_list, 1, 3, 1, 3);
+                if (Objects.equals(switch_trend_of_chart_5m, find_trend_by_char_15m)) {
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(1_3)";
+                }
             }
 
         } else if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XX)) {
@@ -3315,6 +3319,11 @@ public class BinanceServiceImpl implements BinanceService {
             String find_trend = Utils.isAboveMALine(heken_list, 50, 1) ? Utils.TREND_SHORT : Utils.TREND_LONG;
             if (Objects.equals(switch_trend, find_trend)) {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(3_5)";
+            } else {
+                switch_trend = Utils.switchTrendByMaXX_123(heken_list, 1, 3, 1, 3);
+                if (Objects.equals(switch_trend, find_trend)) {
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(1_3)";
+                }
             }
 
         } else if (Utils.isNotBlank(Utils.switchTrendByHekenAshi_1_6(heken_list))) {
@@ -3406,7 +3415,8 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (!has_output && !Utils.ONEWAY_EPICS.contains(EPIC)) {
-                    if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
+                    //Objects.equals(trend_h4, trend_h1) &&
+                    if (Objects.equals(trend_h1, trend_15)
                             && Objects.equals(trend_h1, trend_05)) {
 
                         if (Utils.isNotBlank(dto_15.getNote())) {
