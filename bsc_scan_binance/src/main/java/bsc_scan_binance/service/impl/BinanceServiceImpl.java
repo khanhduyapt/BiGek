@@ -3424,11 +3424,13 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (!has_output && !Utils.ONEWAY_EPICS.contains(EPIC)) {
-                    if (Utils.isNotBlank(dto_15.getNote()) && Objects.equals(trend_h1, trend_15)) {
+                    if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
+                            && Utils.isNotBlank(dto_15.getNote())) {
                         outputLog(EPIC, dto_15, dto_15);
                     }
 
-                    if (Objects.equals(trend_h1, trend_15) && Objects.equals(trend_h1, trend_05)
+                    if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
+                            && Objects.equals(trend_h1, trend_05)
                             && Utils.isNotBlank(dto_05.getNote())) {
                         outputLog(EPIC, dto_05, dto_15);
                     }
