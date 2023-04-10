@@ -3405,7 +3405,8 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (!has_output && Utils.EPICS_MAIN.contains(EPIC)) {
+                //&& Utils.EPICS_MAIN.contains(EPIC)
+                if (!has_output) {
                     if (Objects.equals(trend_h1, trend_15)
                             && Objects.equals(trend_h1, trend_05)) {
 
