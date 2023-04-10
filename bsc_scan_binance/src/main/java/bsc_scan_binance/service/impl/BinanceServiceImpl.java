@@ -3298,13 +3298,17 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
-            String switch_trend = Utils.switchTrendByHekenAshi_135(heken_list);
-            String find_trend_05m = Utils.isAboveMALine(list, 50, 1) ? Utils.TREND_SHORT : Utils.TREND_LONG;
+            String switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 50);
+            if (Utils.isNotBlank(switch_trend)) {
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(1_50)";
+            } else {
+                switch_trend = Utils.switchTrendByHekenAshi_135(heken_list);
+                String find_trend_05m = Utils.isAboveMALine(list, 50, 1) ? Utils.TREND_SHORT : Utils.TREND_LONG;
 
-            if (Objects.equals(switch_trend, find_trend_05m)) {
-                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(1_5)";
+                if (Objects.equals(switch_trend, find_trend_05m)) {
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(1_5)";
+                }
             }
-
         } else if (Utils.isNotBlank(Utils.switchTrendByHekenAshi_135(heken_list))) {
             note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(1_5)";
         }
