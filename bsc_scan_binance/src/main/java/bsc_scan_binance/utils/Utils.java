@@ -3316,16 +3316,16 @@ public class Utils {
         return heken_list;
     }
 
-    public static String switchTrendByVector(List<BtcFutures> list) {
-        BigDecimal ma3_0 = calcMA(list, 3, 0);
-        BigDecimal ma3_1 = calcMA(list, 3, 1);
-        BigDecimal ma3_2 = calcMA(list, 3, 2);
+    public static String switchTrendByHeken123(List<BtcFutures> heken_list) {
+        BigDecimal ma_1 = calcMA(heken_list, 1, 1);
+        BigDecimal ma_2 = calcMA(heken_list, 1, 2);
+        BigDecimal ma_3 = calcMA(heken_list, 1, 3);
 
-        if ((ma3_0.compareTo(ma3_1) > 0) && (ma3_2.compareTo(ma3_1) > 0)) {
+        if ((ma_1.compareTo(ma_2) > 0) && (ma_3.compareTo(ma_2) > 0)) {
             return TREND_LONG;
         }
 
-        if ((ma3_0.compareTo(ma3_1) < 0) && (ma3_2.compareTo(ma3_1) < 0)) {
+        if ((ma_1.compareTo(ma_2) < 0) && (ma_3.compareTo(ma_2) < 0)) {
             return TREND_SHORT;
         }
 
