@@ -2993,7 +2993,7 @@ public class BinanceServiceImpl implements BinanceService {
                     .toLocalDateTime();
             long elapsedMinutes = Duration.between(created_time, LocalDateTime.now()).toMinutes();
             required_update_bars_csv = false;
-            if (elapsedMinutes > (Utils.MINUTES_OF_15M + 5)) {
+            if (elapsedMinutes > Utils.MINUTES_OF_15M) {
                 required_update_bars_csv = true;
                 Utils.logWritelnDraft(
                         "Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! \n");
