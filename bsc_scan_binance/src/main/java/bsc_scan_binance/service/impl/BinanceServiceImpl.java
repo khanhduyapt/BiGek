@@ -3303,7 +3303,7 @@ public class BinanceServiceImpl implements BinanceService {
             String find_trend_05m = Utils.isAboveMALine(list, 50, 1) ? Utils.TREND_SHORT : Utils.TREND_LONG;
             String find_trend_15m = Utils.isAboveMALine(list_15m, 50, 1) ? Utils.TREND_SHORT : Utils.TREND_LONG;
 
-            if (Objects.equals(find_trend_05m, find_trend_15m)) {
+            if (Objects.equals(trend, find_trend_05m) && Objects.equals(find_trend_15m, find_trend_05m)) {
                 String switch_trend = Utils.switchTrendByMaXX_123(heken_list, 1, 3, 1, 3);
                 if (Objects.equals(switch_trend, find_trend_15m)) {
                     note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(find_trend_15m, 4) + "(1_3)";
@@ -3314,7 +3314,7 @@ public class BinanceServiceImpl implements BinanceService {
             String find_trend = Utils.isAboveMALine(list, 50, 1) ? Utils.TREND_SHORT : Utils.TREND_LONG;
             String switch_trend = Utils.switchTrendByMaXX_123(heken_list, 1, 3, 1, 3);
 
-            if (Objects.equals(switch_trend, find_trend)) {
+            if (Objects.equals(trend, find_trend) && Objects.equals(switch_trend, find_trend)) {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(find_trend, 4) + "(1_3)";
             }
 
