@@ -146,16 +146,17 @@ public class Utils {
     public static final String ONEWAY_EPICS = "_US30_SP500_GER30_";
 
     // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", "AUS200", "JPY225", "XAGUSD",
-    public static final List<String> EPICS_MAIN = Arrays.asList("BTCUSD", "ETHUSD", "XAUUSD", "XAGUSD", "US30", "SP500",
-            "GER30", "EURUSD", "USDJPY", "GBPUSD", "GBPJPY", "USDCHF", "AUDUSD", "GBPCAD", "NZDUSD");
+    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "US30", "EURUSD", "USDJPY",
+            "GBPUSD", "GBPJPY", "USDCHF", "NZDUSD");
 
     // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
     // "EURNOK", "AUDJPY", "AUDNZD", "NZDJPY", "EURGBP",
     // "GBPAUD", ,"XAGUSD", "SP500", "JPN225",
 
     // "EURCHF", "EURGBP","NZDCHF", "NZDJPY", "GBPAUD",
-    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("CADJPY", "EURJPY", "EURNZD", "GBPNZD",
-            "AUDJPY", "AUDNZD", "CHFJPY", "NZDJPY");
+    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("BTCUSD", "SP500",
+            "GER30", "XAGUSD", "AUDUSD", "CADJPY", "EURJPY", "EURNZD", "ETHUSD", "GBPCAD", "GBPNZD", "AUDJPY", "AUDNZD",
+            "CHFJPY", "NZDJPY");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("ART", "BNT", "PHT", "DGT", "DODO",
             "AERGO", "ARK", "BIDR", "CREAM", "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM",

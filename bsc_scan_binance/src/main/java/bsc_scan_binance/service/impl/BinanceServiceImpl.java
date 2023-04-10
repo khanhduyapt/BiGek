@@ -3414,26 +3414,15 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (!has_output && !Utils.ONEWAY_EPICS.contains(EPIC)) {
-                    //Objects.equals(trend_h4, trend_h1) &&
+                if (!has_output && Utils.EPICS_MAIN.contains(EPIC)) {
                     if (Objects.equals(trend_h1, trend_15)
                             && Objects.equals(trend_h1, trend_05)) {
 
                         if (Utils.isNotBlank(dto_15.getNote())) {
-                            if (Utils.isNotBlank(result_15)) {
-                                result_15 += ", ";
-                            }
-                            result_15 += Utils.appendSpace(type + EPIC, 15);
-
                             outputLog(EPIC, dto_15, dto_15);
                         }
 
                         if (Utils.isNotBlank(dto_05.getNote())) {
-                            if (Utils.isNotBlank(result_05)) {
-                                result_05 += ", ";
-                            }
-                            result_05 += Utils.appendSpace(type + EPIC, 15);
-
                             outputLog(EPIC, dto_05, dto_15);
                         }
                     }
@@ -3469,7 +3458,7 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 15);
         log += Utils.calc_BUF_LO_HI_BUF_Forex(true, dto_entry.getTrend(), EPIC, dto_entry, dto_sl);
 
-        logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_15M);
+        logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
     }
 }
 
