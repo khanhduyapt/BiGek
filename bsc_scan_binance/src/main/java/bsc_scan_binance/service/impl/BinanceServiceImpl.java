@@ -3290,9 +3290,9 @@ public class BinanceServiceImpl implements BinanceService {
         String note = "";
         String trend = "";
         if (CAPITAL_TIME_XX.contains("MINUTE_")) {
-            trend = Utils.getTrendByHekenAshiList(heken_list, 3);
-        } else if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
             trend = Utils.getTrendByHekenAshiList(heken_list, 2);
+        } else if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
+            trend = Utils.getTrendByHekenAshiList(heken_list, 1);
         } else {
             trend = Utils.getTrendByHekenAshiList(heken_list, 1);
         }
