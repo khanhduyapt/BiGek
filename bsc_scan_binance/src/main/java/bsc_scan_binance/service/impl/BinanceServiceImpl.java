@@ -3288,14 +3288,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         List<BtcFutures> heken_list = Utils.getHekenList(list);
         String note = "";
-        String trend = "";
-        if (CAPITAL_TIME_XX.contains("MINUTE_")) {
-            trend = Utils.getTrendByHekenAshiList(heken_list, 2);
-        } else if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
-            trend = Utils.getTrendByHekenAshiList(heken_list, 1);
-        } else {
-            trend = Utils.getTrendByHekenAshiList(heken_list, 1);
-        }
+        String trend = Utils.getTrendByHekenAshiList(heken_list, 1);
 
         if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX)) {
             String trend_06 = Utils.getTrendByHekenAshiList(heken_list, 6);
