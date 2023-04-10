@@ -2033,6 +2033,14 @@ public class Utils {
     }
 
     public static boolean isAboveMALine(List<BtcFutures> list, int length, int ofCandleIndex) {
+        if (CollectionUtils.isEmpty(list)) {
+            Utils.logWritelnDraft("(isAboveMALine)list Empty");
+        }
+        if (list.size() < length) {
+            Utils.logWritelnDraft(
+                    "(isAboveMALine) " + list.get(0).getId() + " list.size()<" + length + ")" + list.size());
+        }
+
         BigDecimal ma = calcMA(list, length, ofCandleIndex);
 
         if ((list.get(ofCandleIndex).getPrice_close_candle().compareTo(ma) > 0)) {
@@ -3317,15 +3325,11 @@ public class Utils {
     }
 
     public static String switchTrendByHeken123(List<BtcFutures> heken_list) {
-        BigDecimal ma_1 = calcMA(heken_list, 1, 1);
-        BigDecimal ma_2 = calcMA(heken_list, 1, 2);
-        BigDecimal ma_3 = calcMA(heken_list, 1, 3);
-
-        if ((ma_1.compareTo(ma_2) > 0) && (ma_3.compareTo(ma_2) > 0)) {
+        if (heken_list.get(1).isUptrend() && heken_list.get(2).isDown()) {
             return TREND_LONG;
         }
 
-        if ((ma_1.compareTo(ma_2) < 0) && (ma_3.compareTo(ma_2) < 0)) {
+        if (heken_list.get(1).isDown() && heken_list.get(2).isUptrend()) {
             return TREND_SHORT;
         }
 

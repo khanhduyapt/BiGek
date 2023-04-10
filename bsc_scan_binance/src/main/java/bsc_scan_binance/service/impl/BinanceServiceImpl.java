@@ -3299,31 +3299,23 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
             List<BtcFutures> list_15m = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
-            List<BtcFutures> heken_15m = Utils.getHekenList(list_15m);
 
-            String find_trend = Utils.isAboveMALine(heken_15m, 50, 1) ? Utils.TREND_SHORT : Utils.TREND_LONG;
-            String switch_trend = Utils.switchTrendByMaXX_123(heken_list, 1, 3, 1, 3);
+            String find_trend_05m = Utils.isAboveMALine(list, 50, 1) ? Utils.TREND_SHORT : Utils.TREND_LONG;
+            String find_trend_15m = Utils.isAboveMALine(list_15m, 50, 1) ? Utils.TREND_SHORT : Utils.TREND_LONG;
 
-            if (Objects.equals(switch_trend, find_trend)) {
-                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(3_5)";
-            } else {
-                switch_trend = Utils.switchTrendByHeken123(heken_list);
-                if (Objects.equals(switch_trend, find_trend)) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(1_3)";
+            if (Objects.equals(find_trend_05m, find_trend_15m)) {
+                String switch_trend = Utils.switchTrendByMaXX_123(heken_list, 1, 3, 1, 3);
+                if (Objects.equals(switch_trend, find_trend_15m)) {
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(find_trend_15m, 4) + "(1_3)";
                 }
             }
 
         } else if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_15, CAPITAL_TIME_XX)) {
+            String find_trend = Utils.isAboveMALine(list, 50, 1) ? Utils.TREND_SHORT : Utils.TREND_LONG;
             String switch_trend = Utils.switchTrendByMaXX_123(heken_list, 1, 3, 1, 3);
-            String find_trend = Utils.isAboveMALine(heken_list, 50, 1) ? Utils.TREND_SHORT : Utils.TREND_LONG;
 
             if (Objects.equals(switch_trend, find_trend)) {
-                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(3_5)";
-            } else {
-                switch_trend = Utils.switchTrendByHeken123(heken_list);
-                if (Objects.equals(switch_trend, find_trend)) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(1_3)";
-                }
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(find_trend, 4) + "(1_3)";
             }
 
         } else if (Utils.isNotBlank(Utils.switchTrendByHekenAshi_1_6(heken_list))) {
