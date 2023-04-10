@@ -3298,19 +3298,15 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
-            List<BtcFutures> list_15m = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
-
             String find_trend_05m = Utils.isAboveMALine(list, 50, 1) ? Utils.TREND_SHORT : Utils.TREND_LONG;
-            String find_trend_15m = Utils.isAboveMALine(list_15m, 50, 1) ? Utils.TREND_SHORT : Utils.TREND_LONG;
-
-            if (Objects.equals(trend, find_trend_05m) && Objects.equals(find_trend_15m, find_trend_05m)) {
+            if (Objects.equals(trend, find_trend_05m)) {
                 String switch_trend = Utils.switchTrendByMaXX_123(heken_list, 1, 3, 1, 3);
-                if (Objects.equals(switch_trend, find_trend_15m)) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(find_trend_15m, 4) + "(1_3)";
+                if (Objects.equals(switch_trend, find_trend_05m)) {
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(find_trend_05m, 4) + "(1_3)";
                 } else {
                     switch_trend = Utils.switchTrendByMaXX_123(heken_list, 3, 5, 1, 3);
-                    if (Objects.equals(switch_trend, find_trend_15m)) {
-                        note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(find_trend_15m, 4)
+                    if (Objects.equals(switch_trend, find_trend_05m)) {
+                        note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(find_trend_05m, 4)
                                 + "(3_5)";
                     }
                 }
