@@ -3381,7 +3381,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1) && Objects.nonNull(dto_15)
                     && Objects.nonNull(dto_05)) {
-                String TREND_D1 = dto_d1.getTrend();
                 String trend_h4 = dto_h4.getTrend();
                 String trend_h1 = dto_h1.getTrend();
                 String trend_15 = dto_15.getTrend();
@@ -3392,8 +3391,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // TODO: scapForex
                 boolean has_output = false;
-                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)
-                        && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)) {
+                if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_15)
+                        && Objects.equals(trend_h4, trend_05)) {
 
                     if (Utils.isNotBlank(dto_15.getNote())) {
                         if (Utils.isNotBlank(result_15)) {
@@ -3458,7 +3457,7 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 15);
         log += Utils.calc_BUF_LO_HI_BUF_Forex(true, dto_entry.getTrend(), EPIC, dto_entry, dto_sl);
 
-        logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
+        logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_15M);
     }
 }
 
