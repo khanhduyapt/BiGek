@@ -128,7 +128,7 @@ public class BscScanBinanceApplication {
                     try {
                         // && Utils.isBusinessTime_6h_to_22h()
                         if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
-                            if (isReloadAfter((Utils.MINUTES_OF_5M), "MT5_DATA")) {
+                            if (isReloadAfter(3, "MT5_DATA")) {
                                 binance_service.saveMt5Data();
                                 wait(SLEEP_MINISECONDS);
                                 for (String EPIC : CAPITAL_LIST) {
