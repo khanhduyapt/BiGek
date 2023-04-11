@@ -3290,16 +3290,7 @@ public class BinanceServiceImpl implements BinanceService {
         String note = "";
         String trend = Utils.getTrendByHekenAshiList(heken_list, 1);
 
-        // CAPITAL_TIME_XX.contains("MINUTE_")
-        if (CAPITAL_TIME_XX.contains("MINUTE_")) {
-            String switch_trend = Utils.switchTrendByHekenAshi_135(heken_list);
-            String find_trend = Utils.isAboveMALine(heken_list, 50) ? Utils.TREND_SHORT : Utils.TREND_LONG;
-
-            if (Objects.equals(switch_trend, find_trend)) {
-                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
-            }
-
-        } else if (Utils.isNotBlank(Utils.switchTrendByHekenAshi_135(heken_list))) {
+        if (Utils.isNotBlank(Utils.switchTrendByHekenAshi_135(heken_list))) {
             note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
         }
 
@@ -3350,59 +3341,38 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
-            Orders dto_03 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_5).orElse(null);
+            Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_5).orElse(null);
 
             if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1) && Objects.nonNull(dto_15)
-                    && Objects.nonNull(dto_03)) {
+                    && Objects.nonNull(dto_05)) {
                 String TREND_D1 = dto_d1.getTrend();
                 String trend_h4 = dto_h4.getTrend();
                 String trend_h1 = dto_h1.getTrend();
                 String trend_15 = dto_15.getTrend();
-                String trend_05 = dto_03.getTrend();
+                String trend_05 = dto_05.getTrend();
 
-                if (Utils.ONEWAY_EPICS.contains(EPIC) && !Objects.equals(TREND_D1, trend_h1)) {
-                    continue;
-                }
-
-                String type = Objects.equals(Utils.TREND_LONG, trend_h1) ? "(B)"
-                        : Objects.equals(Utils.TREND_SHORT, trend_h1) ? "(S)" : "(x)";
+                String type = Objects.equals(Utils.TREND_LONG, trend_05) ? "(B)"
+                        : Objects.equals(Utils.TREND_SHORT, trend_05) ? "(S)" : "(x)";
 
                 // TODO: scapForex
                 boolean has_output = false;
-                if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
-                        && Objects.equals(trend_15, trend_05)) {
-
-                    if (Utils.isNotBlank(dto_03.getNote())) {
+                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(trend_h1, trend_15)) {
+                    if (Objects.equals(trend_15, trend_05) && Utils.isNotBlank(dto_05.getNote())) {
                         if (Utils.isNotBlank(result_03)) {
                             result_03 += ", ";
                         }
                         result_03 += Utils.appendSpace(type + EPIC, 15);
+                        outputLog(EPIC, dto_05, dto_05);
                         has_output = true;
-                        outputLog(EPIC, dto_03, dto_03);
-                    }
-
-                    if (Utils.isNotBlank(dto_15.getNote())) {
-                        if (Utils.isNotBlank(result_15)) {
-                            result_15 += ", ";
-                        }
-                        result_15 += Utils.appendSpace(type + EPIC, 15);
-                        has_output = true;
-                        outputLog(EPIC, dto_15, dto_03);
                     }
                 }
 
-                // && Utils.EPICS_MAIN.contains(EPIC)
-                if (!has_output && Utils.isNotBlank(dto_03.getNote())
-                        && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
+                if (!has_output && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_15, trend_05)
+                        && Utils.isNotBlank(dto_05.getNote())) {
 
-                    if (Objects.equals(TREND_D1, trend_h1)) {
-                        if (Utils.isNotBlank(result_03)) {
-                            result_03 += ", ";
-                        }
-                        result_03 += Utils.appendSpace(type + EPIC, 15);
-                    }
-
-                    outputLog(EPIC, dto_03, dto_03);
+                    outputLog(EPIC, dto_05, dto_05);
                 }
 
             }
