@@ -3362,17 +3362,14 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_15, trend_05)) {
 
                     String note = "";
-                    if (Utils.isNotBlank(dto_h4.getNote())) {
-                        note += dto_h4.getNote();
-                    }
-                    if (Utils.isNotBlank(dto_h1.getNote())) {
-                        note += dto_h1.getNote();
+                    if (Utils.isNotBlank(dto_05.getNote())) {
+                        note += dto_05.getNote();
                     }
                     if (Utils.isNotBlank(dto_15.getNote())) {
                         note += dto_15.getNote();
                     }
-                    if (Utils.isNotBlank(dto_05.getNote())) {
-                        note += dto_05.getNote();
+                    if (Utils.isNotBlank(dto_h1.getNote())) {
+                        note += dto_h1.getNote();
                     }
 
                     if (Utils.isNotBlank(note)) {
@@ -3380,16 +3377,26 @@ public class BinanceServiceImpl implements BinanceService {
                             result_03 += ", ";
                         }
                         result_03 += Utils.appendSpace(type + EPIC, 15);
-                        outputLog(EPIC, dto_h1, dto_h1, "(Swing) " + note);
+                        outputLog(EPIC, dto_05, dto_05, "(Swing) " + note);
                         has_output = true;
                     }
                 }
 
-                if (!has_output && Objects.equals(trend_h1, trend_15)
-                        && Objects.equals(trend_15, trend_05)
-                        && Utils.isNotBlank(dto_05.getNote())) {
+                if (!has_output && Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_15, trend_05)) {
 
-                    outputLog(EPIC, dto_05, dto_15, "(Scap)  " + dto_05.getNote());
+                    String note = "";
+                    if (Utils.isNotBlank(dto_05.getNote())) {
+                        note += dto_05.getNote();
+                    }
+                    if (Utils.isNotBlank(dto_15.getNote())) {
+                        note += dto_15.getNote();
+                    }
+
+                    if (Utils.isNotBlank(note)) {
+                        outputLog(EPIC, dto_05, dto_05, "(Scap)  " + note);
+                    }
                 }
 
             }
