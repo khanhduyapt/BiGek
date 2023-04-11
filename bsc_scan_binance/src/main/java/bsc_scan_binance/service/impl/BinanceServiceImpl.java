@@ -3380,7 +3380,7 @@ public class BinanceServiceImpl implements BinanceService {
                             result_03 += ", ";
                         }
                         result_03 += Utils.appendSpace(type + EPIC, 15);
-                        outputLog(EPIC, dto_05, dto_h1, "(Swing) " + note);
+                        outputLog(EPIC, dto_h1, dto_h1, "(Swing) " + note);
                         has_output = true;
                     }
                 }
@@ -3389,7 +3389,7 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_15, trend_05)
                         && Utils.isNotBlank(dto_05.getNote())) {
 
-                    outputLog(EPIC, dto_05, dto_h1, "(Scap)  " + dto_05.getNote());
+                    outputLog(EPIC, dto_05, dto_15, "(Scap)  " + dto_05.getNote());
                 }
 
             }
