@@ -3289,22 +3289,21 @@ public class BinanceServiceImpl implements BinanceService {
         List<BtcFutures> heken_list = Utils.getHekenList(list);
         String note = "";
         String trend = Utils.getTrendByHekenAshiList(heken_list, 1);
+        if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XX)) {
+            trend = Utils.getTrendByHekenAshiList(heken_list, 3);
+        }
 
         // CAPITAL_TIME_XX.contains("MINUTE_")
-        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
-            String switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 50);
-            if (Utils.isNotBlank(switch_trend)) {
-                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(1_50)";
-            } else {
-                switch_trend = Utils.switchTrendByHekenAshi_135(heken_list);
-                String find_trend_05m = Utils.isAboveMALine(list, 50, 1) ? Utils.TREND_SHORT : Utils.TREND_LONG;
+        if (CAPITAL_TIME_XX.contains("MINUTE_")) {
+            String switch_trend = Utils.switchTrendByHekenAshi_135(heken_list);
+            String find_trend = Utils.isAboveMALine(heken_list, 50) ? Utils.TREND_SHORT : Utils.TREND_LONG;
 
-                if (Objects.equals(switch_trend, find_trend_05m)) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(1_5)";
-                }
+            if (Objects.equals(switch_trend, find_trend)) {
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
             }
+
         } else if (Utils.isNotBlank(Utils.switchTrendByHekenAshi_135(heken_list))) {
-            note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(1_5)";
+            note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
         }
 
         // -----------------------------DATABASE---------------------------
@@ -3435,7 +3434,7 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 15);
         log += Utils.calc_BUF_LO_HI_BUF_Forex(true, dto_entry.getTrend(), EPIC, dto_entry, dto_sl);
 
-        logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_15M);
+        logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
     }
 }
 

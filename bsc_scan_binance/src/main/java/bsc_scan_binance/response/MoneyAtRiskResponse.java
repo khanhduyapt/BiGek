@@ -131,8 +131,11 @@ public class MoneyAtRiskResponse {
             unit_risk_per_pip = BigDecimal.valueOf(0.833333333333333);
             break;
         case "US500":
-        case "SP500":
             standard_lot = BigDecimal.valueOf(0.05);
+            unit_risk_per_pip = BigDecimal.valueOf(0.5);
+            break;
+        case "SP500":
+            standard_lot = BigDecimal.valueOf(0.5);
             unit_risk_per_pip = BigDecimal.valueOf(0.5);
             break;
         case "SP35":

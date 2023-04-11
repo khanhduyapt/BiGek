@@ -145,21 +145,12 @@ public class Utils {
 
     public static final String ONEWAY_EPICS = "_US30_SP500_GER30_";
 
-    // "SP35", "HK50", "OIL_CRUDE", "NAS100", "SP500", "AUS200", "JPY225", "XAGUSD",
+    // "SP35", "HK50", "OIL_CRUDE", "NAS100",  "AUS200", "JPY225",
     public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "US30", "EURUSD", "USDJPY", "GBPUSD",
             "GBPJPY", "USDCHF", "NZDUSD");
 
-    // bad: "EURDKK", USDTRY, "USDHKD", "EURRON", "EURTRY","GBPTRY","USDRON",
-    // "EURNOK", "AUDJPY", "AUDNZD", "NZDJPY", "EURGBP",
-    // "GBPAUD", ,"XAGUSD", "SP500", "JPN225",
-
-    // "EURCHF", "EURGBP","NZDCHF", "NZDJPY", "GBPAUD",
     public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("BTCUSD", "SP500", "GER30", "XAGUSD", "AUDUSD",
-            "CADJPY", "EURJPY", "EURNZD", "ETHUSD", "GBPNZD", "AUDJPY", "CHFJPY", "NZDJPY");
-
-    public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("ART", "BNT", "PHT", "DGT", "DODO",
-            "AERGO", "ARK", "BIDR", "CREAM", "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM",
-            "QKC", "QLC", "SNM", "SNT", "UFT", "WABI", "IQ");
+            "CADJPY", "EURJPY", "EURNZD", "ETHUSD", "GBPNZD", "AUDJPY", "NZDJPY");
 
     // public static final List<String> COINS = Arrays.asList("1INCH", "AAVE",
     // "ACA", "ACH", "ARB", "ADA", "ADX", "AERGO",
@@ -209,6 +200,10 @@ public class Utils {
     // "WNXM", "WRX", "WTC", "XEC", "XLM",
     // "XMR", "XNO", "XRP", "XTZ", "XVG", "XVS", "YFI", "YFII", "YGG", "ZEC", "ZEN",
     // "ZIL", "ZRX");
+
+    public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("ART", "BNT", "PHT", "DGT", "DODO",
+            "AERGO", "ARK", "BIDR", "CREAM", "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM",
+            "QKC", "QLC", "SNM", "SNT", "UFT", "WABI", "IQ");
 
     //
     public static final List<String> COINS_NEW_LISTING = Arrays.asList("RDNT", "AMB", "ARB", "ID", "LQTY", "SYN", "GNS",
@@ -665,7 +660,7 @@ public class Utils {
 
     public static String getChartNameCapital(String TIME) {
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
-            return "(05)";
+            return "(03)";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
             return "(15)";
@@ -2031,7 +2026,7 @@ public class Utils {
         return false;
     }
 
-    public static boolean isAboveMALine(List<BtcFutures> list, int length, int ofCandleIndex) {
+    public static boolean isAboveMALine(List<BtcFutures> list, int length) {
         if (CollectionUtils.isEmpty(list)) {
             Utils.logWritelnDraft("(isAboveMALine)list Empty");
         }
@@ -2040,9 +2035,9 @@ public class Utils {
                     "(isAboveMALine) " + list.get(0).getId() + " list.size()<" + length + ")" + list.size());
         }
 
-        BigDecimal ma = calcMA(list, length, ofCandleIndex);
+        BigDecimal ma = calcMA(list, length, 0);
 
-        if ((list.get(ofCandleIndex).getPrice_close_candle().compareTo(ma) > 0)) {
+        if ((list.get(0).getCurrPrice().compareTo(ma) > 0)) {
             return true;
         }
 
