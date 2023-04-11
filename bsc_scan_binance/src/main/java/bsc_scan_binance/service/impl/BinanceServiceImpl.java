@@ -3290,14 +3290,6 @@ public class BinanceServiceImpl implements BinanceService {
         String note = "";
         String trend = Utils.getTrendByHekenAshiList(heken_list, 1);
 
-        // if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX))
-        {
-            String trend_06 = Utils.getTrendByHekenAshiList(heken_list, 6);
-            if (!Objects.equals(trend, trend_06)) {
-                trend = Utils.getTrendByHekenAshiList(heken_list, 3);
-            }
-        }
-
         // CAPITAL_TIME_XX.contains("MINUTE_")
         if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
             String switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 50);
@@ -3352,7 +3344,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String result_15 = "";
-        String result_05 = "";
+        String result_03 = "";
         List<String> CAPITAL_LIST = new ArrayList<String>();
         CAPITAL_LIST.addAll(Utils.EPICS_MAIN);
         CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_OTHERS);
@@ -3362,15 +3354,15 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
-            Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_5).orElse(null);
+            Orders dto_03 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_5).orElse(null);
 
             if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1) && Objects.nonNull(dto_15)
-                    && Objects.nonNull(dto_05)) {
+                    && Objects.nonNull(dto_03)) {
                 String TREND_D1 = dto_d1.getTrend();
                 String trend_h4 = dto_h4.getTrend();
                 String trend_h1 = dto_h1.getTrend();
                 String trend_15 = dto_15.getTrend();
-                String trend_05 = dto_05.getTrend();
+                String trend_05 = dto_03.getTrend();
 
                 String type = Objects.equals(Utils.TREND_LONG, trend_h4) ? "(B)"
                         : Objects.equals(Utils.TREND_SHORT, trend_h4) ? "(S)" : "(x)";
@@ -3380,13 +3372,13 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_15)
                         && Objects.equals(trend_h4, trend_05)) {
 
-                    if (Utils.isNotBlank(dto_05.getNote())) {
-                        if (Utils.isNotBlank(result_05)) {
-                            result_05 += ", ";
+                    if (Utils.isNotBlank(dto_03.getNote())) {
+                        if (Utils.isNotBlank(result_03)) {
+                            result_03 += ", ";
                         }
-                        result_05 += Utils.appendSpace(type + EPIC, 15);
+                        result_03 += Utils.appendSpace(type + EPIC, 15);
                         has_output = true;
-                        outputLog(EPIC, dto_05, dto_05);
+                        outputLog(EPIC, dto_03, dto_03);
                     }
 
                     if (Utils.isNotBlank(dto_15.getNote())) {
@@ -3395,38 +3387,38 @@ public class BinanceServiceImpl implements BinanceService {
                         }
                         result_15 += Utils.appendSpace(type + EPIC, 15);
                         has_output = true;
-                        outputLog(EPIC, dto_15, dto_05);
+                        outputLog(EPIC, dto_15, dto_03);
                     }
                 }
 
                 // && Utils.EPICS_MAIN.contains(EPIC)
-                if (!has_output && Utils.isNotBlank(dto_05.getNote())
+                if (!has_output && Utils.isNotBlank(dto_03.getNote())
                         && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_h1, trend_05)) {
 
                     if (Objects.equals(TREND_D1, trend_h1)) {
-                        if (Utils.isNotBlank(result_05)) {
-                            result_05 += ", ";
+                        if (Utils.isNotBlank(result_03)) {
+                            result_03 += ", ";
                         }
-                        result_05 += Utils.appendSpace(type + EPIC, 15);
+                        result_03 += Utils.appendSpace(type + EPIC, 15);
                     }
 
-                    outputLog(EPIC, dto_05, dto_05);
+                    outputLog(EPIC, dto_03, dto_03);
                 }
 
             }
         }
 
-        if (Utils.isNotBlank(result_15 + result_05)) {
-            String EVENT_ID = "FX_H_" + (result_15 + result_05).length() + Utils.getCurrentYyyyMmDd_HH();
+        if (Utils.isNotBlank(result_15 + result_03)) {
+            String EVENT_ID = "FX_H_" + (result_15 + result_03).length() + Utils.getCurrentYyyyMmDd_HH();
 
             String result_scap = "";
             if (Utils.isNotBlank(result_15)) {
                 result_scap += Utils.new_line_from_service;
                 result_scap += "(15)" + result_15;
             }
-            if (Utils.isNotBlank(result_05)) {
+            if (Utils.isNotBlank(result_03)) {
                 result_scap += Utils.new_line_from_service;
-                result_scap += "(05)" + result_05;
+                result_scap += "(03)" + result_03;
             }
 
             sendMsgPerHour(EVENT_ID, result_scap, true);

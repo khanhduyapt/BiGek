@@ -155,7 +155,7 @@ public class Utils {
 
     // "EURCHF", "EURGBP","NZDCHF", "NZDJPY", "GBPAUD",
     public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("BTCUSD", "SP500", "GER30", "XAGUSD", "AUDUSD",
-            "CADJPY", "EURJPY", "EURNZD", "ETHUSD", "GBPCAD", "GBPNZD", "AUDJPY", "CHFJPY", "NZDJPY");
+            "CADJPY", "EURJPY", "EURNZD", "ETHUSD", "GBPNZD", "AUDJPY", "CHFJPY", "NZDJPY");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("ART", "BNT", "PHT", "DGT", "DODO",
             "AERGO", "ARK", "BIDR", "CREAM", "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM",
@@ -2148,7 +2148,7 @@ public class Utils {
             String symbol = dto.getId().toUpperCase();
 
             if (symbol.contains(CAPITAL_TIME_MINUTE_5)) {
-                result = "(05)";
+                result = "(03)";
             } else if (symbol.contains(CAPITAL_TIME_MINUTE_15)) {
                 result = "(15)";
             } else if (symbol.contains(CAPITAL_TIME_HOUR_4)) {
