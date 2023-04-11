@@ -93,7 +93,7 @@ public class Utils {
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
-    public static final String TEXT_TREND_BY_MA = "(Ma36_58)";
+    public static final String TEXT_SWITCH_TREND_BY_Ma50 = "(1_50)";
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
     public static final String TEXT_TREND_HEKEN_SHORT = TEXT_TREND_HEKEN_ + TREND_SHORT;
@@ -145,7 +145,7 @@ public class Utils {
 
     public static final String ONEWAY_EPICS = "_US30_SP500_GER30_USOIL_";
 
-    // "SP35", "HK50", "OIL_CRUDE", "NAS100",  "AUS200", "JPY225",
+    // "SP35", "HK50", "OIL_CRUDE", "NAS100", "AUS200", "JPY225",
     public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "GER30", "USOIL");
 
     public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "GBPJPY",
@@ -903,6 +903,7 @@ public class Utils {
         forex_naming_dict.put("AUS200", "AU200");
         forex_naming_dict.put("XAUUSD", "GOLD");
         forex_naming_dict.put("XAGUSD", "SILVER");
+        forex_naming_dict.put("USOIL", "OIL_CRUDE");
 
         if (forex_naming_dict.containsKey(epic)) {
             String epic2 = forex_naming_dict.get(epic);
@@ -2043,10 +2044,18 @@ public class Utils {
         return false;
     }
 
-    public static boolean isBelowMALine(List<BtcFutures> list, int length, int ofCandleIndex) {
-        BigDecimal ma = calcMA(list, length, ofCandleIndex);
+    public static boolean isBelowMALine(List<BtcFutures> list, int length) {
+        if (CollectionUtils.isEmpty(list)) {
+            Utils.logWritelnDraft("(isBelowMALine)list Empty");
+        }
+        if (list.size() < length) {
+            Utils.logWritelnDraft(
+                    "(isBelowMALine) " + list.get(0).getId() + " list.size()<" + length + ")" + list.size());
+        }
 
-        if ((list.get(ofCandleIndex).getPrice_close_candle().compareTo(ma) < 0)) {
+        BigDecimal ma = calcMA(list, length, 0);
+
+        if ((list.get(0).getCurrPrice().compareTo(ma) < 0)) {
             return true;
         }
 
@@ -3377,8 +3386,7 @@ public class Utils {
             return "";
         }
 
-        if (heken_list.get(0).getId().contains("_4h_") ||
-                heken_list.get(0).getId().contains("_1d_")) {
+        if (heken_list.get(0).getId().contains("_4h_") || heken_list.get(0).getId().contains("_1d_")) {
             String switch_trend = switchTrendByHeken123(heken_list);
             if (isNotBlank(switch_trend)) {
                 return switch_trend;
