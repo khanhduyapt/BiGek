@@ -143,10 +143,10 @@ public class Utils {
     // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
     // Main: "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD"
 
-    public static final String ONEWAY_EPICS = "_US30_SP500_GER30_";
+    public static final String ONEWAY_EPICS = "_US30_SP500_GER30_USOIL_";
 
     // "SP35", "HK50", "OIL_CRUDE", "NAS100",  "AUS200", "JPY225",
-    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "GER30");
+    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "GER30", "USOIL");
 
     public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "GBPJPY",
             "USDCHF", "NZDUSD", "AUDUSD", "EURJPY", "EURNZD", "GBPNZD");

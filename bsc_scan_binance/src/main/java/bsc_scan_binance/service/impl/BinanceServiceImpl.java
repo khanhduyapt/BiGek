@@ -3308,9 +3308,9 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal str_body_price = low_high.get(0);
         BigDecimal end_body_price = low_high.get(1);
         if (CAPITAL_TIME_XX.contains("MINUTE_") || Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
-            // List<BigDecimal> body = Utils.getOpenCloseCandle(list);
-            str_body_price = list.get(0).getCurrPrice();// body.get(0);
-            end_body_price = list.get(0).getCurrPrice();// body.get(1);
+            List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(0, 10));
+            str_body_price = body.get(0);
+            end_body_price = body.get(1);
         }
 
         BigDecimal sl_long = low_high.get(0).subtract(bread);
@@ -3382,7 +3382,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (!has_output && Objects.equals(trend_h4, trend_h1)
+                if (!has_output && !Utils.ONEWAY_EPICS.contains(EPIC) && Objects.equals(trend_h4, trend_h1)
                         && Objects.equals(trend_h1, trend_15)
                         && Objects.equals(trend_15, trend_05)) {
 

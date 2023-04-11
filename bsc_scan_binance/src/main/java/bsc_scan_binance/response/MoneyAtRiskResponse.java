@@ -114,6 +114,7 @@ public class MoneyAtRiskResponse {
             break;
         case "OIL_CRUDE":
         case "OILCRUDE":
+        case "USOIL":
             standard_lot = BigDecimal.valueOf(0.25);
             unit_risk_per_pip = BigDecimal.valueOf(25);
             break;
