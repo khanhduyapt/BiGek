@@ -3289,9 +3289,6 @@ public class BinanceServiceImpl implements BinanceService {
         List<BtcFutures> heken_list = Utils.getHekenList(list);
         String note = "";
         String trend = Utils.getTrendByHekenAshiList(heken_list, 1);
-        if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XX)) {
-            trend = Utils.getTrendByHekenAshiList(heken_list, 3);
-        }
 
         // CAPITAL_TIME_XX.contains("MINUTE_")
         if (CAPITAL_TIME_XX.contains("MINUTE_")) {
@@ -3363,13 +3360,17 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_15 = dto_15.getTrend();
                 String trend_05 = dto_03.getTrend();
 
-                String type = Objects.equals(Utils.TREND_LONG, trend_h4) ? "(B)"
-                        : Objects.equals(Utils.TREND_SHORT, trend_h4) ? "(S)" : "(x)";
+                if (Utils.ONEWAY_EPICS.contains(EPIC) && !Objects.equals(TREND_D1, trend_h1)) {
+                    continue;
+                }
+
+                String type = Objects.equals(Utils.TREND_LONG, trend_h1) ? "(B)"
+                        : Objects.equals(Utils.TREND_SHORT, trend_h1) ? "(S)" : "(x)";
 
                 // TODO: scapForex
                 boolean has_output = false;
-                if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_15)
-                        && Objects.equals(trend_h4, trend_05)) {
+                if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_15, trend_05)) {
 
                     if (Utils.isNotBlank(dto_03.getNote())) {
                         if (Utils.isNotBlank(result_03)) {
@@ -3392,7 +3393,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // && Utils.EPICS_MAIN.contains(EPIC)
                 if (!has_output && Utils.isNotBlank(dto_03.getNote())
-                        && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_h1, trend_05)) {
+                        && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
 
                     if (Objects.equals(TREND_D1, trend_h1)) {
                         if (Utils.isNotBlank(result_03)) {
