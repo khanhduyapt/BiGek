@@ -3384,8 +3384,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // TODO: scapForex
                 boolean has_output = false;
-                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)
-                        && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)) {
+                if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_15)
+                        && Objects.equals(trend_h4, trend_05)) {
 
                     if (Utils.isNotBlank(dto_15.getNote())) {
                         if (Utils.isNotBlank(result_15)) {
@@ -3407,8 +3407,8 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // && Utils.EPICS_MAIN.contains(EPIC)
-                if (!has_output && Utils.isNotBlank(dto_05.getNote()) && Objects.equals(trend_h1, trend_15)
-                        && Objects.equals(trend_h1, trend_05)) {
+                if (!has_output && Utils.isNotBlank(dto_05.getNote()) && Objects.equals(TREND_D1, trend_h1)
+                        && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_h1, trend_05)) {
 
                     if (Objects.equals(TREND_D1, trend_h1)) {
                         if (Utils.isNotBlank(result_05)) {
