@@ -3323,18 +3323,6 @@ public class Utils {
         return heken_list;
     }
 
-    public static String switchTrendByHeken123(List<BtcFutures> heken_list) {
-        if (heken_list.get(1).isUptrend() && heken_list.get(2).isDown()) {
-            return TREND_LONG;
-        }
-
-        if (heken_list.get(1).isDown() && heken_list.get(2).isUptrend()) {
-            return TREND_SHORT;
-        }
-
-        return "";
-    }
-
     public static boolean isSameTrendByHekenAshi_Ma1_6(List<BtcFutures> list) {
         List<BtcFutures> heken_list = getHekenList(list);
         if (CollectionUtils.isEmpty(heken_list)) {
@@ -3381,36 +3369,44 @@ public class Utils {
         return false;
     }
 
+    public static String switchTrendByHeken123(List<BtcFutures> heken_list, int maIndex) {
+        BigDecimal ma1_0 = calcMA(heken_list, maIndex, 1);
+        BigDecimal ma1_1 = calcMA(heken_list, maIndex, 2);
+        BigDecimal ma1_2 = calcMA(heken_list, maIndex, 3);
+
+        if ((ma1_0.compareTo(ma1_1) > 0) && (ma1_2.compareTo(ma1_1) > 0)) {
+            return TREND_LONG;
+        }
+        if ((ma1_0.compareTo(ma1_1) < 0) && (ma1_2.compareTo(ma1_1) < 0)) {
+            return TREND_SHORT;
+        }
+
+        return "";
+    }
+
     public static String switchTrendByHekenAshi_135(List<BtcFutures> heken_list) {
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
+        }
+        String switch_trend = switchTrendByHeken123(heken_list, 1);
+        if (isNotBlank(switch_trend)) {
+            return switch_trend;
+        }
+        switch_trend = switchTrendByHeken123(heken_list, 3);
+        if (isNotBlank(switch_trend)) {
+            return switch_trend;
+        }
+        switch_trend = switchTrendByHeken123(heken_list, 5);
+        if (isNotBlank(switch_trend)) {
+            return switch_trend;
         }
 
         BigDecimal ma1_0 = calcMA(heken_list, 1, 0);
         BigDecimal ma1_1 = calcMA(heken_list, 1, 1);
         BigDecimal ma1_2 = calcMA(heken_list, 1, 2);
-        BigDecimal ma1_3 = calcMA(heken_list, 1, 3);
 
-        if (heken_list.get(0).getId().contains("_1d_")) {
-            if ((ma1_0.compareTo(ma1_1) > 0) && (ma1_2.compareTo(ma1_1) > 0)) {
-                return TREND_LONG;
-            }
-            if ((ma1_0.compareTo(ma1_1) < 0) && (ma1_2.compareTo(ma1_1) < 0)) {
-                return TREND_SHORT;
-            }
-        }
-
-        if (heken_list.get(0).getId().contains("_4h_")) {
-            if ((ma1_1.compareTo(ma1_2) > 0) && (ma1_3.compareTo(ma1_2) > 0)) {
-                return TREND_LONG;
-            }
-            if ((ma1_1.compareTo(ma1_2) < 0) && (ma1_3.compareTo(ma1_2) < 0)) {
-                return TREND_SHORT;
-            }
-        }
-
-        BigDecimal ma3_0 = calcMA(heken_list, 2, 0);
-        BigDecimal ma3_2 = calcMA(heken_list, 2, 2);
+        BigDecimal ma3_0 = calcMA(heken_list, 3, 0);
+        BigDecimal ma3_2 = calcMA(heken_list, 3, 2);
 
         BigDecimal ma5_0 = calcMA(heken_list, 5, 0);
         BigDecimal ma5_2 = calcMA(heken_list, 5, 2);
