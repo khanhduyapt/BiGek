@@ -3298,16 +3298,21 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 50);
             switch_trend += Utils.switchTrendByMaXX(heken_list, 3, 50);
             switch_trend += Utils.switchTrendByMaXX(heken_list, 5, 50);
+
+            if (Utils.isBlank(note)) {
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
+            }
+
             if (Utils.isNotBlank(switch_trend)) {
                 note += Utils.TEXT_SWITCH_TREND_BY_Ma50;
             }
 
             boolean isAboveMa50 = Utils.isAboveMALine(heken_list, 50);
             if (Objects.equals(Utils.TREND_LONG, trend) && !isAboveMa50) {
-                note += "(+50)";
+                note += "(50+)";
             }
             if (Objects.equals(Utils.TREND_SHORT, trend) && isAboveMa50) {
-                note += "(+50)";
+                note += "(50-)";
             }
         }
 
@@ -3376,20 +3381,12 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)
                         && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
 
-                    String note = "";
                     if (Utils.isNotBlank(dto_05.getNote())) {
-                        note += dto_05.getNote();
-                    }
-                    if (Utils.isNotBlank(dto_15.getNote())) {
-                        note += dto_15.getNote();
-                    }
-
-                    if (Utils.isNotBlank(note)) {
                         if (Utils.isNotBlank(result_03)) {
                             result_03 += ", ";
                         }
                         result_03 += Utils.appendSpace(type + EPIC, 15);
-                        outputLog(EPIC, dto_h1, dto_h4, "(Swing) " + note);
+                        outputLog(EPIC, dto_h1, dto_h4, "(Swing) " + dto_05.getNote());
                         has_output = true;
                     }
                 }
@@ -3402,14 +3399,14 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                     result_03 += Utils.appendSpace(type + EPIC, 15);
 
-                    outputLog(EPIC, dto_h1, dto_h4, "(Scap)  " + dto_05.getNote());
+                    outputLog(EPIC, dto_h1, dto_h4, "(Scap ) " + dto_05.getNote());
                     has_output = true;
                 }
 
                 if (!has_output && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)
                         && Utils.isNotBlank(dto_05.getNote())) {
 
-                    outputLog(EPIC, dto_h1, dto_h4, "(Refer) " + dto_05.getNote());
+                    outputLog(EPIC, dto_h1, dto_h4, "(     ) " + dto_05.getNote());
                 }
 
             }
