@@ -2836,7 +2836,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         List<BtcFutures> heken_list = Utils.getHekenList(list_d1);
-        String TREND_D1 = Utils.getTrendByHekenAshiList(heken_list, 1);
+        String TREND_D1 = Utils.getTrendByHekenAshiList(heken_list);
 
         if (!BTC_ETH_BNB.contains(SYMBOL) && Objects.equals(Utils.TREND_SHORT, TREND_D1)) {
             return Utils.CRYPTO_TIME_5m;
@@ -2913,15 +2913,15 @@ public class BinanceServiceImpl implements BinanceService {
         List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 10);
         List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 10);
 
-        String TREND_D1 = Utils.getTrendByHekenAshiList(Utils.getHekenList(list_d1), 1);
-        String trend_h4 = Utils.getTrendByHekenAshiList(Utils.getHekenList(list_h4), 1);
+        String TREND_D1 = Utils.getTrendByHekenAshiList(Utils.getHekenList(list_d1));
+        String trend_h4 = Utils.getTrendByHekenAshiList(Utils.getHekenList(list_h4));
         if (!Objects.equals(TREND_D1, trend_h4)) {
             return "";
         }
 
         List<BtcFutures> list_h1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1H, 10);
         List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
-        String trend_h1 = Utils.getTrendByHekenAshiList(heken_list_h1, 1);
+        String trend_h1 = Utils.getTrendByHekenAshiList(heken_list_h1);
         if (!Objects.equals(TREND_D1, trend_h1)) {
             return "";
         }
@@ -2932,7 +2932,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         List<BtcFutures> list_15 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_15m, 10);
         List<BtcFutures> heken_list_15 = Utils.getHekenList(list_15);
-        String trend_15 = Utils.getTrendByHekenAshiList(heken_list_15, 1);
+        String trend_15 = Utils.getTrendByHekenAshiList(heken_list_15);
         if (Utils.isBlank(Utils.switchTrendByHekenAshi_135(heken_list_15))) {
             return "";
         }
@@ -3288,45 +3288,25 @@ public class BinanceServiceImpl implements BinanceService {
 
         List<BtcFutures> heken_list = Utils.getHekenList(list);
         String note = "";
-        String trend = Utils.getTrendByHekenAshiList(heken_list, 1);
+        String trend = Utils.getTrendByHekenAshiList(heken_list);
 
         if (Utils.isNotBlank(Utils.switchTrendByHekenAshi_135(heken_list))) {
             note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
         }
 
         if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX)) {
-            String switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 50);
-            switch_trend += Utils.switchTrendByMaXX(heken_list, 3, 50);
-            switch_trend += Utils.switchTrendByMaXX(heken_list, 5, 50);
-            if (Utils.isNotBlank(switch_trend)) {
-                if (Utils.isBlank(note)) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
-                }
-                note += Utils.TEXT_SWITCH_TREND_BY_Ma50;
-            } else {
-                switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 20);
-                switch_trend += Utils.switchTrendByMaXX(heken_list, 3, 20);
-                switch_trend += Utils.switchTrendByMaXX(heken_list, 5, 20);
-                if (Utils.isNotBlank(switch_trend)) {
-                    if (Utils.isBlank(note)) {
-                        note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
-                    }
-                    note += Utils.TEXT_SWITCH_TREND_BY_Ma20;
-                }
-            }
-
             boolean isAboveMa50 = Utils.isAboveMALine(heken_list, 50);
             if (Objects.equals(Utils.TREND_LONG, trend) && !isAboveMa50) {
                 if (Utils.isBlank(note)) {
                     note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
                 }
-                note += "(50+)";
+                note += Utils.TEXT_SWITCH_TREND_BELOW_50_LONG;
             }
             if (Objects.equals(Utils.TREND_SHORT, trend) && isAboveMa50) {
                 if (Utils.isBlank(note)) {
                     note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
                 }
-                note += "(50-)";
+                note += Utils.TEXT_SWITCH_TREND_ABOVE_50_SHOT;
             }
         }
 
@@ -3398,26 +3378,26 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)
                         && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
 
-                    if (Utils.isNotBlank(dto_05.getNote())) {
+                    if (Utils.isNotBlank(dto_h1.getNote())) {
                         if (Utils.isNotBlank(result_03)) {
                             result_03 += ", ";
                         }
                         result_03 += Utils.appendSpace(type + EPIC, 15);
-                        outputLog(EPIC, dto_05, dto_15, "(Swing) " + dto_05.getNote());
+                        outputLog(EPIC, dto_h1, dto_h4, "(Swing) " + dto_05.getNote());
                         has_output = true;
                     }
                 }
 
-                if (!has_output && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
-                        && Objects.equals(trend_15, trend_05)
-                        && Utils.isNotBlank(dto_05.getNote())) {
+                if (!has_output && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_05)
+                        && (dto_05.getNote().contains(Utils.TEXT_SWITCH_TREND_BELOW_50_LONG)
+                                || dto_05.getNote().contains(Utils.TEXT_SWITCH_TREND_ABOVE_50_SHOT))) {
 
                     if (Utils.isNotBlank(result_03)) {
                         result_03 += ", ";
                     }
                     result_03 += Utils.appendSpace(type + EPIC, 15);
 
-                    outputLog(EPIC, dto_05, dto_15, "(Scap ) " + dto_05.getNote());
+                    outputLog(EPIC, dto_05, dto_h1, "(     ) " + dto_05.getNote());
                     has_output = true;
                 }
 
