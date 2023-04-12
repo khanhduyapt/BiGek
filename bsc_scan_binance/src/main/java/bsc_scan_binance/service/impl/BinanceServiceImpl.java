@@ -3338,9 +3338,12 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal str_body_price = low_high.get(0);
         BigDecimal end_body_price = low_high.get(1);
         if (CAPITAL_TIME_XX.contains("MINUTE_") || Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
-            List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(0, 10));
-            str_body_price = body.get(0);
-            end_body_price = body.get(1);
+            //List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(0, 10));
+            //str_body_price = body.get(0);
+            //end_body_price = body.get(1);
+
+            str_body_price = list.get(0).getCurrPrice();
+            end_body_price = list.get(0).getCurrPrice();
         }
 
         BigDecimal sl_long = low_high.get(0).subtract(bread);
@@ -3394,34 +3397,22 @@ public class BinanceServiceImpl implements BinanceService {
                             result_03 += ", ";
                         }
                         result_03 += Utils.appendSpace(type + EPIC, 15);
-                        outputLog(EPIC, dto_h1, dto_h4, "(Swing) " + dto_05.getNote());
+                        outputLog(EPIC, dto_05, dto_05, "(Swing) " + dto_05.getNote());
                         has_output = true;
                     }
                 }
 
                 if (!has_output && Objects.equals(TREND_D1, trend_h1) && Objects.equals(trend_h1, trend_15)
                         && Objects.equals(trend_15, trend_05)
-                        && (dto_05.getNote().contains(Utils.TEXT_SWITCH_TREND_BY_Ma50)
-                                || dto_05.getNote().contains(Utils.TEXT_SWITCH_TREND_BY_Ma20))) {
+                        && Utils.isNotBlank(dto_05.getNote())) {
 
                     if (Utils.isNotBlank(result_03)) {
                         result_03 += ", ";
                     }
                     result_03 += Utils.appendSpace(type + EPIC, 15);
 
-                    outputLog(EPIC, dto_h1, dto_h4, "(Scap ) " + dto_05.getNote());
+                    outputLog(EPIC, dto_05, dto_05, "(Scap ) " + dto_05.getNote());
                     has_output = true;
-                }
-
-                if (!has_output && Objects.equals(trend_h1, trend_15)
-                        && Objects.equals(trend_15, trend_05) && Utils.isNotBlank(dto_05.getNote())) {
-
-                    if (Utils.isNotBlank(result_03)) {
-                        result_03 += ", ";
-                    }
-                    result_03 += Utils.appendSpace(type + EPIC, 15);
-
-                    outputLog(EPIC, dto_05, dto_h4, "( rev ) " + dto_05.getNote());
                 }
 
             }
