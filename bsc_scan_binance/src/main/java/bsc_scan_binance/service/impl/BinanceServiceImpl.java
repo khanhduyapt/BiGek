@@ -3346,7 +3346,6 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        String result_h = "";
         String result_m = "";
         List<String> CAPITAL_LIST = new ArrayList<String>();
         CAPITAL_LIST.addAll(Utils.EPICS_MAIN);
@@ -3378,50 +3377,47 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // TODO: Bat buoc phai danh theo khung D1, khong co keo thi nghi.
                 // (2023/04/12 da chay 3 tai khoan 20k vi danh nguoc xu huong D1 & H4)
-                boolean has_output = false;
-
                 if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)
                         && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
 
+                    boolean has_output = false;
+
                     if (Utils.isNotBlank(dto_h4.getNote())) {
+                        outputLog(EPIC, dto_h1, dto_h4, dto_h4.getNote());
+                        has_output = true;
+                    }
+
+                    if (!has_output && Utils.isNotBlank(dto_h1.getNote())) {
+                        outputLog(EPIC, dto_h1, dto_h1, dto_h1.getNote());
+                        has_output = true;
+                    }
+
+                    if (!has_output && Utils.isNotBlank(dto_15.getNote())) {
+                        outputLog(EPIC, dto_15, dto_h1, dto_15.getNote());
+                        has_output = true;
+                    }
+
+                    if (!has_output && Utils.isNotBlank(dto_05.getNote())) {
+                        outputLog(EPIC, dto_05, dto_h1, dto_05.getNote());
+                        has_output = true;
+                    }
+
+                    if (has_output) {
                         if (Utils.isNotBlank(result_m)) {
                             result_m += ", ";
                         }
                         result_m += Utils.appendSpace(type + EPIC, 15);
-                        outputLog(EPIC, dto_h1, dto_h1, dto_h4.getNote());
-                        has_output = true;
                     }
-                }
 
-                if (!has_output && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)
-                        && Objects.equals(trend_h1, trend_05)
-                        && dto_05.getNote().contains(Utils.TEXT_SWITCH_TREND_BY_Ma50)) {
-
-                    if (Utils.isNotBlank(result_m)) {
-                        result_m += ", ";
-                    }
-                    result_m += Utils.appendSpace(type + EPIC, 15);
-
-                    outputLog(EPIC, dto_05, dto_h1, dto_05.getNote());
                 }
 
             }
         }
 
-        if (Utils.isNotBlank(result_h + result_m)) {
-            String EVENT_ID = "FX_H_" + (result_h + result_m).length() + Utils.getCurrentYyyyMmDd_HH();
+        if (Utils.isNotBlank(result_m)) {
+            String EVENT_ID = "FX_H_" + (result_m).length() + Utils.getCurrentYyyyMmDd_HH();
 
-            String result_scap = "";
-            if (Utils.isNotBlank(result_h)) {
-                result_scap += Utils.new_line_from_service;
-                result_scap += "(H1)" + result_h;
-            }
-            if (Utils.isNotBlank(result_m)) {
-                result_scap += Utils.new_line_from_service;
-                result_scap += "(03)" + result_m;
-            }
-
-            sendMsgPerHour(EVENT_ID, result_scap, true);
+            sendMsgPerHour(EVENT_ID, result_m, true);
         }
     }
 
