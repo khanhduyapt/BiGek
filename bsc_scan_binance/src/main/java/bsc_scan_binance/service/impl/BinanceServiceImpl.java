@@ -3402,7 +3402,8 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (!has_output && Objects.equals(TREND_D1, trend_h1) && Objects.equals(trend_h1, trend_15)
+                if (!has_output && Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(trend_h1, trend_15)
                         && Objects.equals(trend_15, trend_05)
                         && Utils.isNotBlank(dto_05.getNote())) {
 
