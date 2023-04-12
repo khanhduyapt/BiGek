@@ -3384,7 +3384,7 @@ public class BinanceServiceImpl implements BinanceService {
                         : Objects.equals(Utils.TREND_SHORT, trend_05) ? "(S)" : "(x)";
 
                 // TODO: Bat buoc phai danh theo khung D1, khong co keo thi nghi.
-                // (Da chay 3 tai khoan 20k vi danh nguoc xu huong D1 vi tham bat dinh bat day)
+                // (Da chay 3 tai khoan 20k vi danh nguoc xu huong D1)
                 boolean has_output = false;
                 if (Utils.isNotBlank(dto_h4.getNote())
                         && Objects.equals(TREND_D1, trend_h4)
@@ -3392,14 +3392,12 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_h1, trend_15)
                         && Objects.equals(trend_15, trend_05)) {
 
-                    if (Utils.isNotBlank(dto_05.getNote())) {
-                        if (Utils.isNotBlank(result_03)) {
-                            result_03 += ", ";
-                        }
-                        result_03 += Utils.appendSpace(type + EPIC, 15);
-                        outputLog(EPIC, dto_05, dto_h4, dto_h4.getNote());
-                        has_output = true;
+                    if (Utils.isNotBlank(result_03)) {
+                        result_03 += ", ";
                     }
+                    result_03 += Utils.appendSpace(type + EPIC, 15);
+                    outputLog(EPIC, dto_05, dto_h4, dto_h4.getNote());
+                    has_output = true;
                 }
 
                 if (!has_output && Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_05)
