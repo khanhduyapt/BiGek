@@ -80,7 +80,6 @@ public class Utils {
 
     public static final String TREND_LONG = "BUY";
     public static final String TREND_SHORT = "SELL";
-    public static final String TREND_ADJUST = "ADJ";
 
     public static final String TEXT_EQUAL_TO_D1 = "Ed1";
     public static final String TEXT_EQUAL_TO_H4 = "Eh4";
@@ -3211,22 +3210,6 @@ public class Utils {
         return false;
     }
 
-    public static String getTrendByMa3_6(List<BtcFutures> list) {
-        if (CollectionUtils.isEmpty(list) || (list.size() < 5)) {
-            Utils.logWritelnDraft("(getTrendByMa)list.size() < 5");
-            return "";
-        }
-
-        boolean trend_ma2 = isUptrendByMa(list, 3, 1, 2);
-        boolean trend_ma3 = isUptrendByMa(list, 6, 1, 2);
-
-        if ((trend_ma2 == trend_ma3)) {
-            return trend_ma2 ? TREND_LONG : TREND_SHORT;
-        }
-
-        return TREND_ADJUST + (trend_ma2 ? "(B)" : "(S)");
-    }
-
     public static String getTrendByMaXx(List<BtcFutures> list, int maIndex) {
         return isUptrendByMa(list, maIndex, 1, 2) ? TREND_LONG : TREND_SHORT;
     }
@@ -3390,7 +3373,8 @@ public class Utils {
             return "";
         }
 
-        //if (heken_list.get(0).getId().contains("_4h_") || heken_list.get(0).getId().contains("_1d_"))
+        // if (heken_list.get(0).getId().contains("_4h_") ||
+        // heken_list.get(0).getId().contains("_1d_"))
         {
             String switch_trend = switchTrendByHeken123(heken_list);
             if (isNotBlank(switch_trend)) {

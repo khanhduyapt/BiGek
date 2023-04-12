@@ -3189,9 +3189,8 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.nonNull(dto_d1)) {
                     String trend_d1 = dto_d1.getTrend();
 
-                    if (!Objects.equals(Utils.TREND_ADJUST, dto_h4.getTrend())
-                            && !Objects.equals(trend_d1, dto_h4.getTrend())) {
-                        // continue;
+                    if (!Objects.equals(trend_d1, dto_h4.getTrend())) {
+                        continue;
                     }
 
                     String chart = Utils.getChartName(dto_d1) + ":" + Utils.appendSpace(dto_d1.getTrend(), 8);
@@ -3304,19 +3303,19 @@ public class BinanceServiceImpl implements BinanceService {
                         + Utils.TEXT_SWITCH_TREND_BY_Ma50;
             }
 
-            //boolean isAboveMa50 = Utils.isAboveMALine(heken_list, 50);
-            //if (Objects.equals(Utils.TREND_LONG, trend) && !isAboveMa50) {
-            //    if (Utils.isBlank(note)) {
-            //        note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
-            //    }
-            //    note += Utils.TEXT_SWITCH_TREND_BELOW_50_LONG;
-            //}
-            //if (Objects.equals(Utils.TREND_SHORT, trend) && isAboveMa50) {
-            //    if (Utils.isBlank(note)) {
-            //        note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
-            //    }
-            //    note += Utils.TEXT_SWITCH_TREND_ABOVE_50_SHOT;
-            //}
+            boolean isAboveMa50 = Utils.isAboveMALine(heken_list, 50);
+            if (Objects.equals(Utils.TREND_LONG, trend) && !isAboveMa50) {
+                if (Utils.isBlank(note)) {
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
+                }
+                note += Utils.TEXT_SWITCH_TREND_BELOW_50_LONG;
+            }
+            if (Objects.equals(Utils.TREND_SHORT, trend) && isAboveMa50) {
+                if (Utils.isBlank(note)) {
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
+                }
+                note += Utils.TEXT_SWITCH_TREND_ABOVE_50_SHOT;
+            }
         }
 
         // -----------------------------DATABASE---------------------------
@@ -3386,10 +3385,8 @@ public class BinanceServiceImpl implements BinanceService {
                 // TODO: Bat buoc phai danh theo khung D1, khong co keo thi nghi.
                 // (Da chay 3 tai khoan 20k vi danh nguoc xu huong D1)
                 boolean has_output = false;
-                if (Utils.isNotBlank(dto_h4.getNote())
-                        && Objects.equals(TREND_D1, trend_h4)
-                        && Objects.equals(trend_h4, trend_h1)
-                        && Objects.equals(trend_h1, trend_15)
+                if (Utils.isNotBlank(dto_h4.getNote()) && Objects.equals(TREND_D1, trend_h4)
+                        && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
                         && Objects.equals(trend_15, trend_05)) {
 
                     if (Utils.isNotBlank(result_03)) {
