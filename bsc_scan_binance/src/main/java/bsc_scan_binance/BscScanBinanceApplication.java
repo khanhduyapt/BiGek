@@ -31,7 +31,6 @@ public class BscScanBinanceApplication {
     private static Hashtable<String, LocalTime> keys_dict = new Hashtable<String, LocalTime>();
     public static Hashtable<String, String> forex_naming_dict = new Hashtable<String, String>();
     public static Hashtable<String, Integer> watting_dict = new Hashtable<String, Integer>();
-    public static Hashtable<String, String> week_trend_index = new Hashtable<String, String>();
     public static String hostname = " ";
     public static ApplicationContext applicationContext;
     public static WandaBot wandaBot;
@@ -112,16 +111,6 @@ public class BscScanBinanceApplication {
                 System.out.println(log.getAbsolutePath());
                 System.out.println();
 
-                // TODO: week_trend_index
-                week_trend_index.put("AUD", Utils.TREND_LONG); // AXY
-                week_trend_index.put("GBP", Utils.TREND_LONG); // BXY
-                week_trend_index.put("CAD", Utils.TREND_LONG); // CXY
-                week_trend_index.put("USD", Utils.TREND_SHORT); // DXY
-                week_trend_index.put("EUR", Utils.TREND_LONG); // EXY
-                week_trend_index.put("JPY", Utils.TREND_SHORT); // JXY
-                week_trend_index.put("CHF", Utils.TREND_LONG); // SXY
-                week_trend_index.put("NZD", Utils.TREND_LONG); // ZXY
-                binance_service.initWeekTrend();
                 Utils.writelnLogFooter();
 
                 while (index_crypto < total) {
@@ -131,7 +120,10 @@ public class BscScanBinanceApplication {
                             if (isReloadAfter(3, "MT5_DATA")) {
                                 binance_service.saveMt5Data();
                                 wait(SLEEP_MINISECONDS);
+                                binance_service.initWeekTrend();
+
                                 for (String EPIC : CAPITAL_LIST) {
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_WEEK);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);

@@ -125,6 +125,7 @@ public class Utils {
     public static final String CAPITAL_TIME_HOUR = "HOUR";
     public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
     public static final String CAPITAL_TIME_DAY = "DAY";
+    public static final String CAPITAL_TIME_WEEK = "WEEK";
 
     public static final String CRYPTO_TIME_5m = "5m";
     public static final String CRYPTO_TIME_15m = "15m";
@@ -653,9 +654,9 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_DAY)) {
             return "_1d_";
         }
-        // if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
-        // return "_1w_";
-        // }
+        if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
+            return "_1w_";
+        }
 
         return TIME;
     }
@@ -676,9 +677,9 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_DAY)) {
             return "(D1)";
         }
-        // if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
-        // return "(W)";
-        // }
+        if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
+            return "(W1)";
+        }
 
         return TIME;
     }
@@ -2163,6 +2164,9 @@ public class Utils {
                 result = "(H1)";
             } else if (symbol.contains(CAPITAL_TIME_DAY)) {
                 result = "(D1)";
+            } else if (symbol.contains(CAPITAL_TIME_WEEK)) {
+                result = "(W1)";
+
             } else {
                 // symbol = symbol.replace("_00", "");
                 // symbol = symbol.substring(symbol.indexOf("_"), symbol.length()).replace("_",
@@ -3240,6 +3244,7 @@ public class Utils {
 
     public static String getEpicFromId(String id) {
         String EPIC = id;
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_WEEK, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_DAY, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");

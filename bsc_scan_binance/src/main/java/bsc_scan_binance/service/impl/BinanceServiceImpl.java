@@ -3112,38 +3112,23 @@ public class BinanceServiceImpl implements BinanceService {
         GLOBAL_LONG_LIST = new ArrayList<String>();
         GLOBAL_SHOT_LIST = new ArrayList<String>();
 
-        // String results = "";
-        List<String> epic_long = new ArrayList<String>();
-        List<String> epic_shot = new ArrayList<String>();
-        for (String cur : Utils.currencies) {
-            if (BscScanBinanceApplication.week_trend_index.containsKey(cur)) {
-                String trend = BscScanBinanceApplication.week_trend_index.get(cur);
-                if (Objects.equals(trend, Utils.TREND_LONG)) {
-                    epic_long.add(cur);
-                } else {
-                    epic_shot.add(cur);
-                }
-            }
-        }
-
-        List<String> long_list = new ArrayList<String>();
-        List<String> shot_list = new ArrayList<String>();
-        for (String eLong : epic_long) {
-            for (String eShot : epic_shot) {
-                long_list.add(eLong + eShot);
-                shot_list.add(eShot + eLong);
-            }
-        }
-
         List<String> capital_list = new ArrayList<String>();
         capital_list.addAll(Utils.EPICS_MAIN);
         capital_list.addAll(Utils.EPICS_FOREXS_OTHERS);
         for (String epic : capital_list) {
-            if (long_list.contains(epic) && !GLOBAL_LONG_LIST.contains(epic)) {
+            List<BtcFutures> list = getCapitalData(epic, Utils.CAPITAL_TIME_WEEK);
+            if (CollectionUtils.isEmpty(list)) {
+                continue;
+            }
+
+            List<BtcFutures> heken_list = Utils.getHekenList(list);
+            String trend = Utils.getTrendByHekenAshiList(heken_list);
+
+            if (Objects.equals(Utils.TREND_LONG, trend) && !GLOBAL_LONG_LIST.contains(epic)) {
                 GLOBAL_LONG_LIST.add(epic);
             }
 
-            if (shot_list.contains(epic) && !GLOBAL_SHOT_LIST.contains(epic)) {
+            if (Objects.equals(Utils.TREND_SHORT, trend) && !GLOBAL_SHOT_LIST.contains(epic)) {
                 GLOBAL_SHOT_LIST.add(epic);
             }
         }
@@ -3361,8 +3346,8 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        String result_15 = "";
-        String result_03 = "";
+        String result_h = "";
+        String result_m = "";
         List<String> CAPITAL_LIST = new ArrayList<String>();
         CAPITAL_LIST.addAll(Utils.EPICS_MAIN);
         CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_OTHERS);
@@ -3388,25 +3373,28 @@ public class BinanceServiceImpl implements BinanceService {
                 // TODO: Bat buoc phai danh theo khung D1, khong co keo thi nghi.
                 // (2023/04/12 da chay 3 tai khoan 20k vi danh nguoc xu huong D1 & H4)
                 boolean has_output = false;
-                if (Utils.isNotBlank(dto_h4.getNote()) && Objects.equals(TREND_D1, trend_h4)
-                        && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
-                        && Objects.equals(trend_15, trend_05)) {
 
-                    if (Utils.isNotBlank(result_03)) {
-                        result_03 += ", ";
+                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
+
+                    if (Utils.isNotBlank(dto_h4.getNote())) {
+                        if (Utils.isNotBlank(result_m)) {
+                            result_m += ", ";
+                        }
+                        result_m += Utils.appendSpace(type + EPIC, 15);
+                        outputLog(EPIC, dto_h1, dto_h1, dto_h4.getNote());
+                        has_output = true;
                     }
-                    result_03 += Utils.appendSpace(type + EPIC, 15);
-                    outputLog(EPIC, dto_h1, dto_h4, dto_h4.getNote());
-                    has_output = true;
                 }
 
-                if (!has_output && Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_05)
+                if (!has_output && Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(trend_h1, trend_05)
                         && dto_05.getNote().contains(Utils.TEXT_SWITCH_TREND_BY_Ma50)) {
 
-                    if (Utils.isNotBlank(result_03)) {
-                        result_03 += ", ";
+                    if (Utils.isNotBlank(result_m)) {
+                        result_m += ", ";
                     }
-                    result_03 += Utils.appendSpace(type + EPIC, 15);
+                    result_m += Utils.appendSpace(type + EPIC, 15);
 
                     outputLog(EPIC, dto_05, dto_h1, dto_05.getNote());
                 }
@@ -3414,19 +3402,17 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        if (Utils.isNotBlank(result_15 + result_03))
-
-        {
-            String EVENT_ID = "FX_H_" + (result_15 + result_03).length() + Utils.getCurrentYyyyMmDd_HH();
+        if (Utils.isNotBlank(result_h + result_m)) {
+            String EVENT_ID = "FX_H_" + (result_h + result_m).length() + Utils.getCurrentYyyyMmDd_HH();
 
             String result_scap = "";
-            if (Utils.isNotBlank(result_15)) {
+            if (Utils.isNotBlank(result_h)) {
                 result_scap += Utils.new_line_from_service;
-                result_scap += "(15)" + result_15;
+                result_scap += "(H1)" + result_h;
             }
-            if (Utils.isNotBlank(result_03)) {
+            if (Utils.isNotBlank(result_m)) {
                 result_scap += Utils.new_line_from_service;
-                result_scap += "(03)" + result_03;
+                result_scap += "(03)" + result_m;
             }
 
             sendMsgPerHour(EVENT_ID, result_scap, true);
