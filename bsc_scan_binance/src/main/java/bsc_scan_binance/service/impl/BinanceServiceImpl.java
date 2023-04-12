@@ -3391,7 +3391,8 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (!has_output && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)
+                if (!has_output && Objects.equals(TREND_D1, trend_h1) && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_15, trend_05)
                         && dto_05.getNote().contains(Utils.TEXT_SWITCH_TREND_BY_Ma50)) {
 
                     if (Utils.isNotBlank(result_03)) {
@@ -3405,6 +3406,11 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (!has_output && Objects.equals(TREND_D1, trend_h1) && Objects.equals(trend_h1, trend_15)
                         && Objects.equals(trend_15, trend_05) && Utils.isNotBlank(dto_05.getNote())) {
+
+                    if (Utils.isNotBlank(result_03)) {
+                        result_03 += ", ";
+                    }
+                    result_03 += Utils.appendSpace(type + EPIC, 15);
 
                     outputLog(EPIC, dto_05, dto_h4, "(     ) " + dto_05.getNote());
                 }
