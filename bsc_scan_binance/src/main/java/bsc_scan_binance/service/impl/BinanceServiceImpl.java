@@ -3186,10 +3186,12 @@ public class BinanceServiceImpl implements BinanceService {
                 String EPIC = Utils.getEpicFromId(dto_h4.getId());
 
                 Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
-                if (Objects.nonNull(dto_d1)) {
+                Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
+                if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h1)) {
                     String trend_d1 = dto_d1.getTrend();
 
-                    if (!Objects.equals(trend_d1, dto_h4.getTrend())) {
+                    if (!Objects.equals(trend_d1, dto_h4.getTrend())
+                            || !Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
                         continue;
                     }
 
@@ -3197,7 +3199,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
                     log += Utils.createLineForex_Body(dto_h4, dto_h4).trim();
-                    log += "   " + dto_d1.getNote() + dto_h4.getNote();
+                    log += "   " + dto_d1.getNote() + dto_h4.getNote() + dto_h1.getNote();
 
                     String week_trend = "";
                     if (GLOBAL_LONG_LIST.contains(EPIC)) {
@@ -3206,6 +3208,7 @@ public class BinanceServiceImpl implements BinanceService {
                     if (GLOBAL_SHOT_LIST.contains(EPIC)) {
                         week_trend = "  Global:" + Utils.TREND_SHORT;
                     }
+
                     log = Utils.appendSpace(week_trend, 15) + log;
 
                     Utils.logWritelnReport(log);
@@ -3383,7 +3386,7 @@ public class BinanceServiceImpl implements BinanceService {
                         : Objects.equals(Utils.TREND_SHORT, trend_05) ? "(S)" : "(x)";
 
                 // TODO: Bat buoc phai danh theo khung D1, khong co keo thi nghi.
-                // (Da chay 3 tai khoan 20k vi danh nguoc xu huong D1)
+                // (2023/04/12 da chay 3 tai khoan 20k vi danh nguoc xu huong D1 & H4)
                 boolean has_output = false;
                 if (Utils.isNotBlank(dto_h4.getNote()) && Objects.equals(TREND_D1, trend_h4)
                         && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
