@@ -3273,7 +3273,7 @@ public class Utils {
             String EPIC = getEpicFromId(dto_entry.getId());
 
             String buffer = Utils.appendSpace("", 14);
-            buffer += Utils.calc_BUF_LO_HI_BUF_Forex(false, "", EPIC, dto_entry, dto_sl);
+            buffer += Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_entry.getTrend(), EPIC, dto_entry, dto_sl);
             log = buffer;
         }
 
