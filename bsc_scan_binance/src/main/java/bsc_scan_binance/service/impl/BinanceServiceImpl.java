@@ -3421,7 +3421,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                     result_03 += Utils.appendSpace(type + EPIC, 15);
 
-                    outputLog(EPIC, dto_05, dto_05, "( rev ) " + dto_05.getNote());
+                    outputLog(EPIC, dto_05, dto_h1, "( rev ) " + dto_05.getNote());
                 }
 
             }
