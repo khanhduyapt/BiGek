@@ -3389,8 +3389,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (!has_output && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_05)
-                        && (dto_05.getNote().contains(Utils.TEXT_SWITCH_TREND_BELOW_50_LONG)
-                                || dto_05.getNote().contains(Utils.TEXT_SWITCH_TREND_ABOVE_50_SHOT))) {
+                        && dto_05.getNote().contains("50")) {
 
                     if (Utils.isNotBlank(result_03)) {
                         result_03 += ", ";
