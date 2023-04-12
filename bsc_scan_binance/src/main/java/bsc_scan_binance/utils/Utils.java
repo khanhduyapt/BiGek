@@ -3378,55 +3378,18 @@ public class Utils {
             return "";
         }
 
-        // if (heken_list.get(0).getId().contains("_4h_") ||
-        // heken_list.get(0).getId().contains("_1d_"))
-        {
-            String switch_trend = switchTrendByHeken123(heken_list);
-            if (isNotBlank(switch_trend)) {
-                return switch_trend;
-            }
+        String switch_trend = switchTrendByHeken123(heken_list);
+        if (isNotBlank(switch_trend)) {
+            return switch_trend;
         }
 
         BigDecimal ma1_0 = calcMA(heken_list, 1, 0);
         BigDecimal ma1_1 = calcMA(heken_list, 1, 1);
         BigDecimal ma1_2 = calcMA(heken_list, 1, 2);
-
-        BigDecimal ma3_0 = calcMA(heken_list, 3, 0);
-        BigDecimal ma3_2 = calcMA(heken_list, 3, 2);
-
-        BigDecimal ma5_0 = calcMA(heken_list, 5, 0);
-        BigDecimal ma5_2 = calcMA(heken_list, 5, 2);
-
-        int count_long = 0;
-
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma1_0, ma1_2, ma3_0, ma3_2))) {
-            count_long += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma1_0, ma1_2, ma5_0, ma5_2))) {
-            count_long += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutUpY(ma3_0, ma3_2, ma5_0, ma5_2))) {
-            count_long += 1;
-        }
-
-        // -------------------------
-
-        int count_shot = 0;
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma1_0, ma1_2, ma3_0, ma3_2))) {
-            count_shot += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma1_0, ma1_2, ma5_0, ma5_2))) {
-            count_shot += 1;
-        }
-        if (Utils.isNotBlank(Utils.checkXCutDnY(ma3_0, ma3_2, ma5_0, ma5_2))) {
-            count_shot += 1;
-        }
-        // -------------------------
-
-        if ((count_long > count_shot) && ((count_long - count_shot) > 1) && (ma1_0.compareTo(ma1_1) > 0)) {
+        if ((ma1_0.compareTo(ma1_1) >= 0) && (ma1_2.compareTo(ma1_1) >= 0)) {
             return TREND_LONG;
         }
-        if ((count_shot > count_long) && ((count_shot - count_long) > 1) && (ma1_0.compareTo(ma1_1) < 0)) {
+        if ((ma1_0.compareTo(ma1_1) <= 0) && (ma1_2.compareTo(ma1_1) >= 0)) {
             return TREND_SHORT;
         }
 

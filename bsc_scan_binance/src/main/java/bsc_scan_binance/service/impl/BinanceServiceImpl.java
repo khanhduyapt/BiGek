@@ -3280,7 +3280,7 @@ public class BinanceServiceImpl implements BinanceService {
             note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
         }
 
-        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX) && (heken_list.size() == 50)) {
+        if (Objects.equals(Utils.CAPITAL_TIME_MINUTE_5, CAPITAL_TIME_XX) && (heken_list.size() > 30)) {
             String switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 50);
             switch_trend += Utils.switchTrendByMaXX(heken_list, 2, 50);
             switch_trend += Utils.switchTrendByMaXX(heken_list, 3, 50);
@@ -3378,22 +3378,22 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
                         && Objects.equals(trend_15, trend_05)) {
 
-                    if (Utils.isNotBlank(dto_h4.getNote())) {
+                    if (Utils.isNotBlank(dto_h4.getNote()) && Utils.isNotBlank(dto_h1.getNote())) {
                         outputLog(EPIC, dto_h1, dto_h4, dto_h4.getNote());
                         has_output = true;
                     }
 
-                    if (!has_output && Utils.isNotBlank(dto_h1.getNote())) {
+                    if (!has_output && Utils.isNotBlank(dto_h1.getNote()) && Utils.isNotBlank(dto_15.getNote())) {
                         outputLog(EPIC, dto_h1, dto_h1, dto_h1.getNote());
                         has_output = true;
                     }
 
-                    if (!has_output && Utils.isNotBlank(dto_15.getNote())) {
+                    if (!has_output && Utils.isNotBlank(dto_15.getNote()) && Utils.isNotBlank(dto_05.getNote())) {
                         outputLog(EPIC, dto_15, dto_h1, dto_15.getNote());
                         has_output = true;
                     }
 
-                    if (!has_output && Utils.isNotBlank(dto_05.getNote())) {
+                    if (!has_output && dto_05.getNote().contains("50")) {
                         outputLog(EPIC, dto_05, dto_h1, dto_05.getNote());
                         has_output = true;
                     }
@@ -3402,8 +3402,8 @@ public class BinanceServiceImpl implements BinanceService {
                 if (!has_output && Objects.equals(TREND_W1, trend_h4) && Objects.equals(trend_h4, trend_h1)
                         && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
 
-                    if (Utils.isNotBlank(dto_h1.getNote())) {
-                        outputLog(EPIC, dto_h1, dto_h1, dto_h1.getNote());
+                    if (dto_05.getNote().contains("50")) {
+                        outputLog(EPIC, dto_05, dto_h1, dto_05.getNote());
                         has_output = true;
                     }
                 }
