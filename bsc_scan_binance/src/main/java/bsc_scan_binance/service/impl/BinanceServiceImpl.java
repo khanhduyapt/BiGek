@@ -3173,9 +3173,10 @@ public class BinanceServiceImpl implements BinanceService {
                 Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
                 Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
                 if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h1)) {
-                    String trend_d1 = dto_d1.getTrend();
-
-                    if (!Objects.equals(trend_d1, dto_h4.getTrend())) {
+                    if (!Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())) {
+                        continue;
+                    }
+                    if (!Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
                         continue;
                     }
 
@@ -3187,10 +3188,10 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String week_trend = "";
                     if (GLOBAL_LONG_LIST.contains(EPIC)) {
-                        week_trend = "  Global:" + Utils.TREND_LONG;
+                        week_trend = "  (W1):" + Utils.TREND_LONG;
                     }
                     if (GLOBAL_SHOT_LIST.contains(EPIC)) {
-                        week_trend = "  Global:" + Utils.TREND_SHORT;
+                        week_trend = "  (W1):" + Utils.TREND_SHORT;
                     }
 
                     log = Utils.appendSpace(week_trend, 15) + log;
