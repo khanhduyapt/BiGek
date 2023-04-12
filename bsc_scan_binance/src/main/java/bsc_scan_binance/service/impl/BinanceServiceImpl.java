@@ -3298,13 +3298,21 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 50);
             switch_trend += Utils.switchTrendByMaXX(heken_list, 3, 50);
             switch_trend += Utils.switchTrendByMaXX(heken_list, 5, 50);
-
-            if (Utils.isBlank(note)) {
-                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
-            }
-
             if (Utils.isNotBlank(switch_trend)) {
+                if (Utils.isBlank(note)) {
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
+                }
                 note += Utils.TEXT_SWITCH_TREND_BY_Ma50;
+            } else {
+                switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 20);
+                switch_trend += Utils.switchTrendByMaXX(heken_list, 3, 20);
+                switch_trend += Utils.switchTrendByMaXX(heken_list, 5, 20);
+                if (Utils.isNotBlank(switch_trend)) {
+                    if (Utils.isBlank(note)) {
+                        note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
+                    }
+                    note += Utils.TEXT_SWITCH_TREND_BY_Ma20;
+                }
             }
 
             boolean isAboveMa50 = Utils.isAboveMALine(heken_list, 50);
@@ -3391,10 +3399,10 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                // Objects.equals(TREND_D1, trend_h1) &&
-                if (!has_output && Objects.equals(trend_h1, trend_15)
+                if (!has_output && Objects.equals(TREND_D1, trend_h1) && Objects.equals(trend_h1, trend_15)
                         && Objects.equals(trend_15, trend_05)
-                        && dto_05.getNote().contains(Utils.TEXT_SWITCH_TREND_BY_Ma50)) {
+                        && (dto_05.getNote().contains(Utils.TEXT_SWITCH_TREND_BY_Ma50)
+                                || dto_05.getNote().contains(Utils.TEXT_SWITCH_TREND_BY_Ma20))) {
 
                     if (Utils.isNotBlank(result_03)) {
                         result_03 += ", ";

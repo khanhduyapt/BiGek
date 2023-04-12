@@ -93,7 +93,9 @@ public class Utils {
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
+    public static final String TEXT_SWITCH_TREND_BY_Ma20 = "(1_20)";
     public static final String TEXT_SWITCH_TREND_BY_Ma50 = "(1_50)";
+
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
     public static final String TEXT_TREND_HEKEN_SHORT = TEXT_TREND_HEKEN_ + TREND_SHORT;
