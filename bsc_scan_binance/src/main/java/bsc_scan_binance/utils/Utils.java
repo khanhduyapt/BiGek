@@ -661,7 +661,7 @@ public class Utils {
 
     public static String getChartNameCapital(String TIME) {
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
-            return "(03)";
+            return "(01)";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
             return "(15)";
@@ -2153,7 +2153,7 @@ public class Utils {
             String symbol = dto.getId().toUpperCase();
 
             if (symbol.contains(CAPITAL_TIME_MINUTE_5)) {
-                result = "(03)";
+                result = "(01)";
             } else if (symbol.contains(CAPITAL_TIME_MINUTE_15)) {
                 result = "(15)";
             } else if (symbol.contains(CAPITAL_TIME_HOUR_4)) {
