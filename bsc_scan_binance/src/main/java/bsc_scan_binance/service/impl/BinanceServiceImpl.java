@@ -3386,7 +3386,7 @@ public class BinanceServiceImpl implements BinanceService {
                             result_03 += ", ";
                         }
                         result_03 += Utils.appendSpace(type + EPIC, 15);
-                        outputLog(EPIC, dto_05, dto_h4, "(Swing) " + dto_05.getNote());
+                        outputLog(EPIC, dto_05, dto_15, "(Swing) " + dto_05.getNote());
                         has_output = true;
                     }
                 }
@@ -3399,14 +3399,14 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                     result_03 += Utils.appendSpace(type + EPIC, 15);
 
-                    outputLog(EPIC, dto_05, dto_h4, "(Scap ) " + dto_05.getNote());
+                    outputLog(EPIC, dto_05, dto_15, "(Scap ) " + dto_05.getNote());
                     has_output = true;
                 }
 
-                if (!has_output && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)
-                        && Utils.isNotBlank(dto_05.getNote())) {
+                if (!has_output && Objects.equals(TREND_D1, trend_h1) && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_15, trend_05) && Utils.isNotBlank(dto_05.getNote())) {
 
-                    outputLog(EPIC, dto_05, dto_h4, "(     ) " + dto_05.getNote());
+                    outputLog(EPIC, dto_05, dto_15, "(     ) " + dto_05.getNote());
                 }
 
             }
