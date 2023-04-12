@@ -3198,7 +3198,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
                     log += Utils.createLineForex_Body(dto_h4, dto_h4).trim();
-                    log += "   " + dto_d1.getNote() + "   " + dto_h4.getNote();
+                    log += "   " + dto_d1.getNote() + dto_h4.getNote();
 
                     String week_trend = "";
                     if (GLOBAL_LONG_LIST.contains(EPIC)) {
@@ -3375,24 +3375,38 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // TODO: scapForex
                 boolean has_output = false;
-                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                if (Utils.isNotBlank(dto_h4.getNote())
+                        && Objects.equals(trend_h4, trend_h1)
                         && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
 
-                    if (Utils.isNotBlank(dto_h4.getNote())) {
+                    if (Utils.isNotBlank(dto_15.getNote())) {
+                        if (Utils.isNotBlank(result_03)) {
+                            result_15 += ", ";
+                        }
+                        result_15 += Utils.appendSpace(type + EPIC, 15);
+                        outputLog(EPIC, dto_15, dto_h4, "(Swing) " + dto_15.getNote());
+                        has_output = true;
+                    }
+
+                    if (Utils.isNotBlank(dto_05.getNote())) {
                         if (Utils.isNotBlank(result_03)) {
                             result_03 += ", ";
                         }
                         result_03 += Utils.appendSpace(type + EPIC, 15);
-                        outputLog(EPIC, dto_h4, dto_h4, "(Swing) " + dto_h1.getNote());
+                        outputLog(EPIC, dto_05, dto_h4, "(Swing) " + dto_05.getNote());
                         has_output = true;
                     }
                 }
 
-                if (!has_output && Objects.equals(TREND_D1, trend_h4)
-                        && Objects.equals(TREND_D1, trend_05)
-                        && dto_05.getNote().contains("50")) {
+                if (!has_output && Objects.equals(TREND_D1, trend_h4) && Objects.equals(TREND_D1, trend_15)) {
+                    if (Utils.isNotBlank(dto_15.getNote())) {
+                        outputLog(EPIC, dto_15, dto_h4, "(     ) " + dto_15.getNote());
+                    }
 
-                    outputLog(EPIC, dto_05, dto_05, "(     ) " + dto_05.getNote());
+                    if (Objects.equals(TREND_D1, trend_05)
+                            && Utils.isNotBlank(dto_05.getNote())) {
+                        outputLog(EPIC, dto_05, dto_h4, "(     ) " + dto_05.getNote());
+                    }
                 }
 
             }
