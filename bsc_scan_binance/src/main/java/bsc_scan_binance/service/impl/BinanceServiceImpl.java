@@ -3305,7 +3305,7 @@ public class BinanceServiceImpl implements BinanceService {
             switch_trend += Utils.switchTrendByMaXX(heken_list, 3, 50);
 
             if (Utils.isNotBlank(switch_trend)) {
-                note += Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
                         + Utils.TEXT_SWITCH_TREND_BY_Ma50;
             }
 
@@ -3393,7 +3393,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 String note = Utils.appendSpace(dto_w1.getNote(), 10) + Utils.appendSpace(dto_d1.getNote(), 10)
                         + Utils.appendSpace(dto_h4.getNote(), 10) + Utils.appendSpace(dto_h1.getNote(), 10)
-                        + Utils.appendSpace(dto_03.getNote(), 15);
+                        + Utils.appendSpace(dto_03.getNote(), 20);
 
                 if (Objects.equals(TREND_W1, trend_d1) && Objects.equals(trend_d1, trend_h4)
                         && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
@@ -3406,26 +3406,11 @@ public class BinanceServiceImpl implements BinanceService {
                         has_output = true;
                     }
 
-                    if (!has_output && dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_BY_Ma50)) {
-                        outputLog(EPIC, dto_15, dto_h1, note);
-                        has_output = true;
-                    }
-
-                    if (!has_output && dto_03.getNote().contains(Utils.TEXT_SWITCH_TREND_BY_Ma50)) {
-                        outputLog(EPIC, dto_03, dto_15, note);
-                        has_output = true;
-                    }
                 }
 
-                if (!has_output && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)
-                        && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_03)) {
-
-                    if (!has_output && Utils.isNotBlank(dto_h4.getNote()) && Utils.isNotBlank(dto_h1.getNote())
-                            && Utils.isNotBlank(dto_15.getNote()) & Utils.isNotBlank(dto_03.getNote())) {
-
-                        outputLog(EPIC, dto_h1, dto_h4, note);
-                        has_output = true;
-                    }
+                if (Objects.equals(TREND_W1, trend_d1)
+                        && Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_15, trend_03)) {
 
                     if (!has_output && dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_BY_Ma50)) {
                         outputLog(EPIC, dto_15, dto_h1, note);
@@ -3433,23 +3418,22 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     if (!has_output && dto_03.getNote().contains(Utils.TEXT_SWITCH_TREND_BY_Ma50)) {
-                        outputLog(EPIC, dto_03, dto_15, note);
+                        outputLog(EPIC, dto_03, dto_h1, note);
                         has_output = true;
                     }
                 }
 
-                if (!has_output && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
-                        && Objects.equals(trend_15, trend_03)
-                        && dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_BY_Ma50)) {
-                    outputLog(EPIC, dto_15, dto_h1, note);
-                    has_output = true;
-                }
+                if (!has_output && Objects.equals(trend_d1, trend_d1) && Objects.equals(trend_d1, trend_15)
+                        && Objects.equals(trend_15, trend_03)) {
+                    if (!has_output && dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_BY_Ma50)) {
+                        outputLog(EPIC, dto_15, dto_h1, note);
+                        has_output = true;
+                    }
 
-                if (!has_output && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
-                        && Objects.equals(trend_15, trend_03)
-                        && dto_03.getNote().contains(Utils.TEXT_SWITCH_TREND_BY_Ma50)) {
-                    outputLog(EPIC, dto_03, dto_15, note);
-                    has_output = true;
+                    if (!has_output && dto_03.getNote().contains(Utils.TEXT_SWITCH_TREND_BY_Ma50)) {
+                        outputLog(EPIC, dto_03, dto_h1, note);
+                        has_output = true;
+                    }
                 }
 
                 if (has_output) {
