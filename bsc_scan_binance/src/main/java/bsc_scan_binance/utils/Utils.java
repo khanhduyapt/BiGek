@@ -94,8 +94,8 @@ public class Utils {
 
     public static final String TEXT_SWITCH_TREND_BY_Ma20 = "(1_20)";
     public static final String TEXT_SWITCH_TREND_BY_Ma50 = "(1_50)";
-    public static final String TEXT_SWITCH_TREND_BELOW_50_LONG = "(50+)";
-    public static final String TEXT_SWITCH_TREND_ABOVE_50_SHOT = "(50-)";
+    public static final String TEXT_SWITCH_TREND_BELOW_50_LONG = "(L_50)";
+    public static final String TEXT_SWITCH_TREND_ABOVE_50_SHOT = "(S_50)";
 
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
@@ -2041,7 +2041,7 @@ public class Utils {
 
         BigDecimal ma = calcMA(list, length, 0);
 
-        if ((list.get(0).getCurrPrice().compareTo(ma) > 0)) {
+        if ((list.get(0).getHight_price().compareTo(ma) > 0)) {
             return true;
         }
 
