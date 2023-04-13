@@ -3373,8 +3373,10 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_15 = dto_15.getTrend();
                 String trend_03 = dto_03.getTrend();
 
+                boolean has_output = false;
                 if (Objects.equals(TREND_D1, trend_h4) && dto_h4.getNote().contains("50")) {
                     outputLog(EPIC, dto_h4, dto_h4, dto_h4.getNote());
+                    has_output = true;
                 } else {
                     continue; //TODO
                 }
@@ -3391,7 +3393,6 @@ public class BinanceServiceImpl implements BinanceService {
                 String note = Utils.appendSpace(dto_d1.getNote(), 10)
                         + Utils.appendSpace(dto_h4.getNote(), 10) + Utils.appendSpace(dto_h1.getNote(), 10);
 
-                boolean has_output = false;
                 if (Objects.equals(TREND_W1, TREND_D1) && Objects.equals(TREND_D1, trend_h4)
                         && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
                         && Objects.equals(trend_15, trend_03)) {
