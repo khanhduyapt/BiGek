@@ -3171,15 +3171,17 @@ public class BinanceServiceImpl implements BinanceService {
             for (Orders dto_h4 : list_all) {
                 String EPIC = Utils.getEpicFromId(dto_h4.getId());
 
+                Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
                 Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
-                Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
-                if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h1)) {
-                    if (!Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())) {
+
+                if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_w1)) {
+                    if (!Objects.equals(dto_d1.getTrend(), dto_w1.getTrend())) {
                         continue;
                     }
 
                     String chart = Utils.getChartName(dto_d1) + ":" + Utils.appendSpace(dto_d1.getTrend(), 8);
-                    String note = dto_d1.getNote() + dto_h4.getNote() + dto_h1.getNote();
+                    String note = dto_w1.getNote() + dto_d1.getNote() + dto_h4.getNote();
+
                     String find_trend = "";
                     if (note.contains(Utils.TREND_LONG) && note.contains(Utils.TREND_SHORT)) {
                         find_trend = "";
@@ -3191,18 +3193,9 @@ public class BinanceServiceImpl implements BinanceService {
                     log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
                     log += Utils.createLineForex_Body(dto_h4, dto_h4, find_trend).trim();
                     log += "   " + note;
+                    log = Utils.appendSpace("  (W1):" + dto_w1.getTrend(), 15) + log;
 
-                    String week_trend = "";
-                    if (GLOBAL_LONG_LIST.contains(EPIC)) {
-                        week_trend = "  (W1):" + Utils.TREND_LONG;
-                    }
-                    if (GLOBAL_SHOT_LIST.contains(EPIC)) {
-                        week_trend = "  (W1):" + Utils.TREND_SHORT;
-                    }
-
-                    log = Utils.appendSpace(week_trend, 15) + log;
-
-                    if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
+                    if (Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())) {
                         Utils.logWritelnReport(log);
                     } else {
                         others.add(log);
@@ -3306,7 +3299,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     note += Utils.TEXT_SWITCH_TREND_ABOVE_50_SHOT;
 
-                } else if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
+                } else {
                     switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 50);
                     switch_trend += Utils.switchTrendByMaXX(heken_list, 3, 50);
                     switch_trend += Utils.switchTrendByMaXX(heken_list, 5, 50);
@@ -3372,7 +3365,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                 String msg_id = "";
                 boolean has_output = false;
-                if (Objects.equals(TREND_D1, trend_h4) && dto_h4.getNote().contains("50")) {
+                if (Objects.equals(TREND_W1, TREND_D1) && Objects.equals(TREND_D1, trend_h4)
+                        && dto_h4.getNote().contains("50")) {
 
                     type = Objects.equals(Utils.TREND_LONG, trend_h4) ? "(B)"
                             : Objects.equals(Utils.TREND_SHORT, trend_h4) ? "(S)" : "(x)";
@@ -3384,7 +3378,7 @@ public class BinanceServiceImpl implements BinanceService {
                     msg_id = "MSG_" + EPIC + "_H4_" + trend_h4;
                 }
 
-                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                if (Objects.equals(TREND_W1, TREND_D1) && Objects.equals(TREND_D1, trend_h1)
                         && dto_h1.getNote().contains("50")) {
 
                     type = Objects.equals(Utils.TREND_LONG, trend_h1) ? "(B)"
