@@ -3359,7 +3359,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 String msg_id = "";
                 boolean has_output = false;
-                if (dto_h4.getNote().contains("50")) {
+                if (Objects.equals(TREND_D1, trend_h4) && dto_h4.getNote().contains("50")) {
                     type = Objects.equals(Utils.TREND_LONG, trend_h4) ? "(B)"
                             : Objects.equals(Utils.TREND_SHORT, trend_h4) ? "(S)" : "(x)";
 
