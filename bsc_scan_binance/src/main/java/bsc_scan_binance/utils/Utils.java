@@ -2059,7 +2059,7 @@ public class Utils {
 
         BigDecimal ma = calcMA(list, length, 0);
 
-        if ((list.get(0).getCurrPrice().compareTo(ma) < 0)) {
+        if ((list.get(0).getLow_price().compareTo(ma) < 0)) {
             return true;
         }
 
@@ -3362,7 +3362,7 @@ public class Utils {
         return false;
     }
 
-    public static String switchTrendByHeken123(List<BtcFutures> heken_list) {
+    public static String switchTrendByHeken01(List<BtcFutures> heken_list) {
         if (heken_list.get(0).isUptrend() && heken_list.get(1).isDown()) {
             return TREND_LONG;
         }
@@ -3378,7 +3378,7 @@ public class Utils {
             return "";
         }
 
-        String switch_trend = switchTrendByHeken123(heken_list);
+        String switch_trend = switchTrendByHeken01(heken_list);
         if (isNotBlank(switch_trend)) {
             return switch_trend;
         }

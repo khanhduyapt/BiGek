@@ -3289,32 +3289,20 @@ public class BinanceServiceImpl implements BinanceService {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
-
-        List<BtcFutures> heken_list = Utils.getHekenList(list);
         String note = "";
+        List<BtcFutures> heken_list = Utils.getHekenList(list);
         String trend = Utils.getTrendByHekenAshiList(heken_list);
-        String new_trend = Utils.switchTrendByHekenAshi_135(heken_list);
-        if (Utils.isNotBlank(new_trend)) {
+
+        String switch_trend = Utils.switchTrendByHeken01(heken_list);
+        if (Utils.isNotBlank(switch_trend)) {
             note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
-        }
 
-        if (heken_list.size() > 30) {
-            if (CAPITAL_TIME_XX.contains("MINUTE_")) {
-                String switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 50);
-                switch_trend += Utils.switchTrendByMaXX(heken_list, 2, 50);
-                switch_trend += Utils.switchTrendByMaXX(heken_list, 3, 50);
-                if (Utils.isNotBlank(switch_trend)) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
-                            + Utils.TEXT_SWITCH_TREND_BY_Ma50;
-                }
-            }
-
-            if (Utils.isNotBlank(new_trend) && CAPITAL_TIME_XX.contains("HOUR")) {
-                boolean isAboveMa50 = Utils.isAboveMALine(heken_list, 50);
-                if (Objects.equals(Utils.TREND_LONG, trend) && !isAboveMa50) {
+            if (heken_list.size() > 30) {
+                if (Objects.equals(Utils.TREND_LONG, trend) && Utils.isBelowMALine(heken_list, 50)) {
                     note += Utils.TEXT_SWITCH_TREND_BELOW_50_LONG;
                 }
-                if (Objects.equals(Utils.TREND_SHORT, trend) && isAboveMa50) {
+
+                if (Objects.equals(Utils.TREND_SHORT, trend) && Utils.isAboveMALine(heken_list, 50)) {
                     note += Utils.TEXT_SWITCH_TREND_ABOVE_50_SHOT;
                 }
             }
@@ -3323,17 +3311,13 @@ public class BinanceServiceImpl implements BinanceService {
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
         String date_time = LocalDateTime.now().toString();
-        BigDecimal bread = Utils.calcMaxBread(list);
+        BigDecimal bread = Utils.calcMaxCandleHigh(list);
 
-        List<BigDecimal> body = Utils.getOpenCloseCandle(list);
+        List<BigDecimal> body = Utils.getOpenCloseCandle(heken_list);
         BigDecimal str_body_price = body.get(0);
         BigDecimal end_body_price = body.get(1);
-        if (CAPITAL_TIME_XX.contains("MINUTE_")) {
-            str_body_price = list.get(0).getCurrPrice();
-            end_body_price = list.get(0).getCurrPrice();
-        }
 
-        List<BigDecimal> low_high = Utils.getLowHighCandle(list);
+        List<BigDecimal> low_high = Utils.getLowHighCandle(heken_list);
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
 
@@ -3373,28 +3357,32 @@ public class BinanceServiceImpl implements BinanceService {
                 // (2023/04/12 da chay 3 tai khoan 20k vi danh nguoc xu huong D1 & H4)
                 String type = "";
 
+                String msg_id = "";
                 boolean has_output = false;
-                if (Objects.equals(TREND_D1, trend_h4) && dto_h4.getNote().contains("50")) {
+                if (dto_h4.getNote().contains("50")) {
                     type = Objects.equals(Utils.TREND_LONG, trend_h4) ? "(B)"
                             : Objects.equals(Utils.TREND_SHORT, trend_h4) ? "(S)" : "(x)";
 
-                    outputLog(EPIC, dto_h4, dto_h4, "(W1)" + Utils.appendSpace(TREND_W1, 5) + "(D1)"
-                            + Utils.appendSpace(TREND_D1, 5) + dto_h4.getNote());
+                    String trend = "(W1)" + Utils.appendSpace(TREND_W1, 5) + "(D1)" + Utils.appendSpace(TREND_D1, 5);
+
+                    outputLog(EPIC, dto_h4, dto_h4, trend + Utils.appendSpace(dto_h4.getNote(), 20));
                     has_output = true;
+                    msg_id = "MSG_" + EPIC + "_H4_" + trend_h4;
                 }
 
-                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)
-                        && dto_h1.getNote().contains("50")) {
+                if (Objects.equals(trend_h4, trend_h1) && dto_h1.getNote().contains("50")) {
                     type = Objects.equals(Utils.TREND_LONG, trend_h1) ? "(B)"
                             : Objects.equals(Utils.TREND_SHORT, trend_h1) ? "(S)" : "(x)";
 
-                    outputLog(EPIC, dto_h1, dto_h1, "(W1)" + Utils.appendSpace(TREND_W1, 5) + "(D1)"
-                            + Utils.appendSpace(TREND_D1, 5) + dto_h1.getNote());
+                    String trend = "(D1)" + Utils.appendSpace(TREND_D1, 5) + "(H4)" + Utils.appendSpace(trend_h4, 5);
+
+                    outputLog(EPIC, dto_h1, dto_h1, trend + Utils.appendSpace(dto_h1.getNote(), 20));
                     has_output = true;
+                    msg_id = "MSG_" + EPIC + "_H1_" + trend_h1;
                 }
 
                 if (has_output) {
-                    if (isReloadAfter(Utils.MINUTES_OF_1H, "MSG_" + EPIC + TREND_D1)) {
+                    if (isReloadAfter(Utils.MINUTES_OF_1H, msg_id)) {
                         if (Utils.isNotBlank(result_m)) {
                             result_m += ", ";
                         }
