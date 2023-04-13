@@ -3425,7 +3425,8 @@ public class BinanceServiceImpl implements BinanceService {
                         has_output = true;
                     }
 
-                    if (dto_05.getNote().contains("50")) {
+                    if (!has_output && Utils.isNotBlank(dto_h4.getNote()) && Utils.isNotBlank(dto_h1.getNote())
+                            && dto_05.getNote().contains("50")) {
                         outputLog(EPIC, dto_05, dto_h1, dto_05.getNote());
                         has_output = true;
                     }
