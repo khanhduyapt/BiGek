@@ -3255,13 +3255,13 @@ public class Utils {
         return EPIC;
     }
 
-    public static String createLineForex_Body(Orders dto_entry, Orders dto_sl) {
+    public static String createLineForex_Body(Orders dto_entry, Orders dto_sl, String find_trend) {
         String log = "";
         if (Objects.nonNull(dto_entry) && Objects.nonNull(dto_sl)) {
             String EPIC = getEpicFromId(dto_entry.getId());
 
             String buffer = Utils.appendSpace("", 14);
-            buffer += Utils.calc_BUF_LO_HI_BUF_Forex(false, dto_entry.getTrend(), EPIC, dto_entry, dto_sl);
+            buffer += Utils.calc_BUF_LO_HI_BUF_Forex(false, find_trend, EPIC, dto_entry, dto_sl);
             log = buffer;
         }
 
@@ -3471,7 +3471,7 @@ public class Utils {
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
         if (dto_entry.getId().contains("_MINUTE_")) {
-            // risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+            risk = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
         if (dto_entry.getId().contains("_DAY")) {
             // risk = risk.multiply(BigDecimal.valueOf(2));
