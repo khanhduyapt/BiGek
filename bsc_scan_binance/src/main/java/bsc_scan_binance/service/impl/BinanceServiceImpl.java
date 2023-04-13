@@ -3293,22 +3293,23 @@ public class BinanceServiceImpl implements BinanceService {
         List<BtcFutures> heken_list = Utils.getHekenList(list);
         String note = "";
         String trend = Utils.getTrendByHekenAshiList(heken_list);
-
-        if (Utils.isNotBlank(Utils.switchTrendByHekenAshi_135(heken_list))) {
+        String new_trend = Utils.switchTrendByHekenAshi_135(heken_list);
+        if (Utils.isNotBlank(new_trend)) {
             note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
         }
 
         if (heken_list.size() > 30) {
-            String switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 50);
-            switch_trend += Utils.switchTrendByMaXX(heken_list, 2, 50);
-            switch_trend += Utils.switchTrendByMaXX(heken_list, 3, 50);
-
-            if (Utils.isNotBlank(switch_trend)) {
-                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
-                        + Utils.TEXT_SWITCH_TREND_BY_Ma50;
+            if (CAPITAL_TIME_XX.contains("MINUTE_")) {
+                String switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 50);
+                switch_trend += Utils.switchTrendByMaXX(heken_list, 2, 50);
+                switch_trend += Utils.switchTrendByMaXX(heken_list, 3, 50);
+                if (Utils.isNotBlank(switch_trend)) {
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
+                            + Utils.TEXT_SWITCH_TREND_BY_Ma50;
+                }
             }
 
-            if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX)) {
+            if (Utils.isNotBlank(new_trend) && Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX)) {
                 boolean isAboveMa50 = Utils.isAboveMALine(heken_list, 50);
                 if (Objects.equals(Utils.TREND_LONG, trend) && !isAboveMa50) {
                     note += Utils.TEXT_SWITCH_TREND_BELOW_50_LONG;
