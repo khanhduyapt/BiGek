@@ -3319,14 +3319,12 @@ public class BinanceServiceImpl implements BinanceService {
 
         BigDecimal str_body_price = low_high.get(0);
         BigDecimal end_body_price = low_high.get(1);
-        if (CAPITAL_TIME_XX.contains("MINUTE_")) {
-            str_body_price = list.get(0).getCurrPrice();
-            end_body_price = list.get(0).getCurrPrice();
-        }
-        if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
+        if (CAPITAL_TIME_XX.contains("MINUTE_") || Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
             List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(0, 10));
             str_body_price = body.get(0);
             end_body_price = body.get(1);
+            // str_body_price = list.get(0).getCurrPrice();
+            // end_body_price = list.get(0).getCurrPrice();
         }
 
         BigDecimal sl_long = low_high.get(0).subtract(bread);
