@@ -3391,7 +3391,7 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean has_output = false;
 
                 String note = Utils.appendSpace(dto_d1.getNote(), 10) + Utils.appendSpace(dto_h4.getNote(), 10)
-                        + Utils.appendSpace(dto_h1.getNote(), 10) + Utils.appendSpace(dto_03.getNote(), 10);
+                        + Utils.appendSpace(dto_h1.getNote(), 10) + Utils.appendSpace(dto_03.getNote(), 15);
 
                 if (Objects.equals(TREND_W1, trend_d1) && Objects.equals(trend_d1, trend_h4)
                         && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
