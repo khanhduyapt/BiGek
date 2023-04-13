@@ -3299,11 +3299,24 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (heken_list.size() > 30) {
                 if (Objects.equals(Utils.TREND_LONG, trend) && Utils.isBelowMALine(heken_list, 50)) {
-                    note += Utils.TEXT_SWITCH_TREND_BELOW_50_LONG;
-                }
 
-                if (Objects.equals(Utils.TREND_SHORT, trend) && Utils.isAboveMALine(heken_list, 50)) {
+                    note += Utils.TEXT_SWITCH_TREND_BELOW_50_LONG;
+
+                } else if (Objects.equals(Utils.TREND_SHORT, trend) && Utils.isAboveMALine(heken_list, 50)) {
+
                     note += Utils.TEXT_SWITCH_TREND_ABOVE_50_SHOT;
+
+                } else if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
+                    switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 50);
+                    switch_trend += Utils.switchTrendByMaXX(heken_list, 3, 50);
+                    switch_trend += Utils.switchTrendByMaXX(heken_list, 5, 50);
+
+                    if (switch_trend.contains(Utils.TREND_LONG)) {
+                        note += Utils.TEXT_SWITCH_TREND_BELOW_50_LONG;
+                    }
+                    if (switch_trend.contains(Utils.TREND_SHORT)) {
+                        note += Utils.TEXT_SWITCH_TREND_ABOVE_50_SHOT;
+                    }
                 }
             }
         }
@@ -3360,6 +3373,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String msg_id = "";
                 boolean has_output = false;
                 if (Objects.equals(TREND_D1, trend_h4) && dto_h4.getNote().contains("50")) {
+
                     type = Objects.equals(Utils.TREND_LONG, trend_h4) ? "(B)"
                             : Objects.equals(Utils.TREND_SHORT, trend_h4) ? "(S)" : "(x)";
 
@@ -3370,7 +3384,9 @@ public class BinanceServiceImpl implements BinanceService {
                     msg_id = "MSG_" + EPIC + "_H4_" + trend_h4;
                 }
 
-                if (Objects.equals(trend_h4, trend_h1) && dto_h1.getNote().contains("50")) {
+                if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                        && dto_h1.getNote().contains("50")) {
+
                     type = Objects.equals(Utils.TREND_LONG, trend_h1) ? "(B)"
                             : Objects.equals(Utils.TREND_SHORT, trend_h1) ? "(S)" : "(x)";
 
