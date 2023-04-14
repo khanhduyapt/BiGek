@@ -2821,34 +2821,21 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String sendMsgKillLongShort(String SYMBOL) {
-        List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 10);
-        List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 10);
+        List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 15);
+        List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 15);
 
-        String TREND_D1 = Utils.getTrendByHekenAshiList(Utils.getHekenList(list_d1));
-        String trend_h4 = Utils.getTrendByHekenAshiList(Utils.getHekenList(list_h4));
+        List<BtcFutures> heken_list_d1 = Utils.getHekenList(list_d1);
+        List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
+
+        String TREND_D1 = Utils.getTrendByHekenAshiList(heken_list_d1);
+        String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
+
         if (!Objects.equals(TREND_D1, trend_h4)) {
             return "";
         }
 
-        List<BtcFutures> list_h1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1H, 10);
-        List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
-        String trend_h1 = Utils.getTrendByHekenAshiList(heken_list_h1);
-        if (!Objects.equals(TREND_D1, trend_h1)) {
-            return "";
-        }
-
-        if (Utils.isBlank(Utils.switchTrendByHekenAshi_135(heken_list_h1))) {
-            return "";
-        }
-
-        List<BtcFutures> list_15 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_15m, 10);
-        List<BtcFutures> heken_list_15 = Utils.getHekenList(list_15);
-        String trend_15 = Utils.getTrendByHekenAshiList(heken_list_15);
-        if (Utils.isBlank(Utils.switchTrendByHekenAshi_135(heken_list_15))) {
-            return "";
-        }
-
-        if (Objects.equals(TREND_D1, trend_15)) {
+        String switch_trend = Utils.switchTrendByHeken01(heken_list_h4);
+        if (Utils.isNotBlank(switch_trend)) {
             // TODO sendMsgKillLongShort
             String msg = "";
             boolean isOnlyMe = true;
@@ -2878,13 +2865,13 @@ public class BinanceServiceImpl implements BinanceService {
         // return Utils.CRYPTO_TIME_1w;
         // }
 
-        List<BtcFutures> list_w1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1w, 10);
+        List<BtcFutures> list_w1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1w, 15);
         String TREND_W1 = Utils.getTrendByHekenAshiList(Utils.getHekenList(list_w1));
         if (!Objects.equals(TREND_W1, Utils.TREND_LONG)) {
             return Utils.CRYPTO_TIME_1w;
         }
 
-        List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 10);
+        List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 15);
         List<BtcFutures> heken_list_d1 = Utils.getHekenList(list_d1);
         String TREND_D1 = Utils.getTrendByHekenAshiList(heken_list_d1);
         if (!Objects.equals(TREND_D1, Utils.TREND_LONG)) {
