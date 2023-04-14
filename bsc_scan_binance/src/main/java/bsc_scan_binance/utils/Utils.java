@@ -3164,8 +3164,8 @@ public class Utils {
         BigDecimal ma3_0 = calcMA(list, 3, 0);
         BigDecimal ma3_3 = calcMA(list, 3, 3);
 
-        BigDecimal ma10_0 = calcMA(list, 10, 0);
-        BigDecimal ma10_3 = calcMA(list, 10, 3);
+        BigDecimal ma10_0 = calcMA(list, 8, 0);
+        BigDecimal ma10_3 = calcMA(list, 8, 3);
 
         temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma10_0, ma10_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma10_0, ma10_3) + "_";
