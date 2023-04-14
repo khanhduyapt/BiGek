@@ -3311,6 +3311,8 @@ public class BinanceServiceImpl implements BinanceService {
                         note += Utils.TEXT_SWITCH_TREND_ABOVE_50_SHOT;
                     }
                 }
+
+                // H1, H4 o duoi Ma50, H1 dao chieu o vung day list_h4.
             }
         }
 
@@ -3379,7 +3381,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Objects.equals(TREND_W1, TREND_D1) && Objects.equals(TREND_D1, trend_h1)
-                        && Utils.isNotBlank(dto_h1.getNote())) {
+                        && dto_h1.getNote().contains("50")) {
 
                     type = Objects.equals(Utils.TREND_LONG, trend_h1) ? "(B)"
                             : Objects.equals(Utils.TREND_SHORT, trend_h1) ? "(S)" : "(x)";
