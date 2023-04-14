@@ -147,10 +147,10 @@ public class Utils {
     // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
     // Main: "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD"
 
-    public static final String ONEWAY_EPICS = "_US30_SP500_GER30_USOIL_";
+    public static final String ONEWAY_EPICS = "_US30_SP500_GER30_GER40_USOIL_";
 
     // "SP35", "HK50", "OIL_CRUDE", "NAS100", "AUS200", "JPY225",
-    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "GER30", "USOIL");
+    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "GER40", "USOIL");
 
     public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "GBPJPY",
             "USDCHF", "NZDUSD", "AUDUSD", "EURJPY", "EURNZD", "GBPNZD");
@@ -796,6 +796,18 @@ public class Utils {
         return result;
     }
 
+    public static String appendLeftAndRight(String value, int length, String charactor) {
+        String result = value;
+        for (int i = 0; i < length; i++) {
+            result = charactor + result;
+        }
+        for (int i = 0; i < length; i++) {
+            result += charactor;
+        }
+
+        return result;
+    }
+
     public static String appendLeft(String value, int length, String charactor) {
         int len = value.length();
         if (len < length) {
@@ -902,6 +914,7 @@ public class Utils {
         forex_naming_dict.put("JPY225", "J225");
         forex_naming_dict.put("JPN225", "J225");
         forex_naming_dict.put("GER30", "DE40");
+        forex_naming_dict.put("GER40", "DE40");
         forex_naming_dict.put("DAX40", "DE40");
         forex_naming_dict.put("FRA40", "FR40");
         forex_naming_dict.put("AUS200", "AU200");
@@ -3471,10 +3484,10 @@ public class Utils {
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
         if (dto_entry.getId().contains("_MINUTE_")) {
-            risk = risk.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
+            risk = risk.divide(BigDecimal.valueOf(3), 3, RoundingMode.CEILING);
         }
-        if (dto_entry.getId().contains("_DAY")) {
-            // risk = risk.multiply(BigDecimal.valueOf(2));
+        if (dto_entry.getId().contains(CAPITAL_TIME_HOUR) && !dto_entry.getId().contains(CAPITAL_TIME_HOUR_4)) {
+            risk = risk.divide(BigDecimal.valueOf(2), 3, RoundingMode.CEILING);
         }
 
         BigDecimal sl_long = Utils.getBigDecimal(dto_sl.getLow_price());

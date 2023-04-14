@@ -297,6 +297,7 @@ public class MoneyAtRiskResponse {
             unit_risk_per_pip = BigDecimal.valueOf(0.5);
             break;
         case "GER30":
+        case "GER40":
             standard_lot = BigDecimal.valueOf(0.158);
             unit_risk_per_pip = BigDecimal.valueOf(0.166666666666667);
             break;
