@@ -3325,6 +3325,7 @@ public class BinanceServiceImpl implements BinanceService {
         CAPITAL_LIST.addAll(Utils.EPICS_ONE_WAY);
         CAPITAL_LIST.addAll(Utils.EPICS_FOREXS);
 
+        String msg = "";
         for (String EPIC : CAPITAL_LIST) {
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
@@ -3341,53 +3342,67 @@ public class BinanceServiceImpl implements BinanceService {
             String TREND_W1 = dto_w1.getTrend();
             String TREND_D1 = dto_d1.getTrend();
 
+            String result = "";
             analysis("(patern_0)", EPIC, Utils.CAPITAL_TIME_DAY, TREND_W1, false);
 
             if (Objects.equals(TREND_W1, TREND_D1)) {
                 if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
-                    analysis("(WDH4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, true);
+                    result += analysis("(WDH4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, true);
                 }
 
                 if (dto_h1.getNote().contains("50") && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
-                    analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, TREND_D1, true);
+                    result += analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, TREND_D1, true);
                 }
             }
 
             // ------------------------------Scalping H4------------------------------
             if (!Utils.EPICS_INDEXS.contains(EPIC)) {
                 if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
-                    analysis("(  H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
+                    result += analysis("(  H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
                 }
             }
+
+            if (Utils.isNotBlank(result) && isReloadAfter(Utils.MINUTES_OF_1H, "ScapForex_" + EPIC)) {
+                msg += result;
+            }
+
         }
 
+        if (Utils.isNotBlank(msg)) {
+            String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH();
+            sendMsgPerHour(EVENT_ID, msg, true);
+        }
     }
 
-    private void analysis(String id, String EPIC, String CAPITAL_TIME_XX, String find_trend, boolean requireMa50) {
+    private String analysis(String id, String EPIC, String CAPITAL_TIME_XX, String find_trend, boolean requireMa50) {
         Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
         if (Objects.isNull(dto)) {
-            return;
+            return "";
         }
-        String trend_chi = dto.getTrend();
-        if (!Objects.equals(find_trend, trend_chi)) {
-            return;
+        String trend = dto.getTrend();
+        if (!Objects.equals(find_trend, trend)) {
+            return "";
         }
         // ----------------------------TREND------------------------
         if (Utils.isNotBlank(dto.getNote())) {
             if (requireMa50 && !dto.getNote().contains("50")) {
-                return;
+                return "";
+            }
+            if (!isReloadAfter(Utils.MINUTES_OF_1H, EPIC + trend)) {
+                return "";
             }
 
             String char_name = Utils.getChartName(dto);
-            String type = Objects.equals(Utils.TREND_LONG, trend_chi) ? "(B)"
-                    : Objects.equals(Utils.TREND_SHORT, trend_chi) ? "(S)" : "(x)";
-            String EVENT_ID = "FX_H_" + char_name + Utils.getCurrentYyyyMmDd_HH();
+            String type = Objects.equals(Utils.TREND_LONG, trend) ? "(B)"
+                    : Objects.equals(Utils.TREND_SHORT, trend) ? "(S)" : "(x)";
 
-            String log = Utils.appendSpace(id, 16) + Utils.appendSpace(dto.getNote(), 25);
+            String log = Utils.appendSpace(id, 15) + Utils.appendSpace(dto.getNote(), 25);
             outputLog("Analysis_" + char_name, EPIC, dto, dto, log);
 
-            sendMsgPerHour(EVENT_ID, char_name + type + EPIC, true);
+            return char_name + type + EPIC;
         }
+
+        return "";
     }
 
     private void outputLog(String prefix_id, String EPIC, Orders dto_entry, Orders dto_sl, String append) {
