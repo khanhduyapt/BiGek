@@ -3193,7 +3193,9 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.equals(dto_d1.getTrend(), dto_w1.getTrend())
                             && Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())) {
                         Utils.logWritelnReport(log);
-                    } else if (Objects.equals(dto_d1.getTrend(), dto_w1.getTrend())) {
+                    }
+
+                    if (!Objects.equals(dto_d1.getTrend(), dto_w1.getTrend())) {
                         others.add(log);
                     }
 
@@ -3220,7 +3222,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (others.size() > 0) {
             Utils.logWritelnReport("");
-            Utils.logWritelnReport(Utils.appendLeftAndRight(" Start W1 = D1 # H4  ", 50, "+"));
+            Utils.logWritelnReport(Utils.appendLeftAndRight("   Start   D1 # H4   ", 50, "+"));
             for (String log : others) {
                 Utils.logWritelnReport(log);
             }
