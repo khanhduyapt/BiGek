@@ -3160,8 +3160,8 @@ public class BinanceServiceImpl implements BinanceService {
         String msg_forx = "";
         String msg_futu = "";
         String msg_scap = "";
-        List<String> list_d1 = new ArrayList<String>();
-        List<String> others = new ArrayList<String>();
+        List<String> list_d1_switch_trend = new ArrayList<String>();
+        List<String> list_h4_switch_trend = new ArrayList<String>();
         List<Orders> list_all = ordersRepository.getTrend_H4List();
         if (!CollectionUtils.isEmpty(list_all)) {
             Utils.logWritelnReport("");
@@ -3195,12 +3195,12 @@ public class BinanceServiceImpl implements BinanceService {
                         Utils.logWritelnReport(log);
                     }
 
-                    if (!Objects.equals(dto_d1.getTrend(), dto_w1.getTrend())) {
-                        others.add(log);
+                    if (!Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())) {
+                        list_d1_switch_trend.add(log);
                     }
 
-                    if (Utils.isNotBlank(dto_d1.getNote())) {
-                        list_d1.add(log);
+                    if (!Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())) {
+                        list_h4_switch_trend.add(log);
                     }
 
                 }
@@ -3210,20 +3210,20 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnReport("");
         }
 
-        if (list_d1.size() > 0) {
+        if (list_d1_switch_trend.size() > 0) {
             Utils.logWritelnReport("");
             Utils.logWritelnReport(Utils.appendLeftAndRight("Start Switch_Trend_D1", 50, "+"));
-            for (String log : list_d1) {
+            for (String log : list_d1_switch_trend) {
                 Utils.logWritelnReport(log);
             }
             Utils.logWritelnReport("");
             Utils.logWritelnReport("");
         }
 
-        if (others.size() > 0) {
+        if (list_h4_switch_trend.size() > 0) {
             Utils.logWritelnReport("");
             Utils.logWritelnReport(Utils.appendLeftAndRight("   Start   D1 # H4   ", 50, "+"));
-            for (String log : others) {
+            for (String log : list_h4_switch_trend) {
                 Utils.logWritelnReport(log);
             }
             Utils.logWritelnReport("");
@@ -3302,6 +3302,16 @@ public class BinanceServiceImpl implements BinanceService {
         String switch_trend = Utils.switchTrendByHeken01(heken_list);
         if (Utils.isNotBlank(switch_trend)) {
             note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
+
+            if (heken_list.size() > 30) {
+                if (Objects.equals(Utils.TREND_LONG, trend) && Utils.isBelowMALine(heken_list, 50)) {
+                    note += Utils.TEXT_SWITCH_TREND_BELOW_50_LONG;
+                }
+
+                if (Objects.equals(Utils.TREND_SHORT, trend) && Utils.isAboveMALine(heken_list, 50)) {
+                    note += Utils.TEXT_SWITCH_TREND_ABOVE_50_SHOT;
+                }
+            }
         }
 
         // -----------------------------DATABASE---------------------------
