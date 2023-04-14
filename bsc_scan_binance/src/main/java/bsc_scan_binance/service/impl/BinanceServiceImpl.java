@@ -3355,19 +3355,19 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1 = dto_h1.getTrend();
 
             analysis(EPIC, Utils.CAPITAL_TIME_DAY, Utils.CAPITAL_TIME_WEEK);
-
             if (Objects.equals(TREND_W1, TREND_D1)) {
                 analysis(EPIC, Utils.CAPITAL_TIME_HOUR_4, Utils.CAPITAL_TIME_DAY);
+            }
 
-                if (Objects.equals(TREND_D1, trend_h4)) {
-                    analysis(EPIC, Utils.CAPITAL_TIME_HOUR, Utils.CAPITAL_TIME_HOUR_4);
+            // ---------------------------------Scap---------------------------------- //
+            if (Objects.equals(TREND_D1, trend_h4)) {
+                analysis(EPIC, Utils.CAPITAL_TIME_HOUR, Utils.CAPITAL_TIME_HOUR_4);
+
+                if (Objects.equals(trend_h4, trend_h1)) {
+                    analysis(EPIC, Utils.CAPITAL_TIME_MINUTE_5, Utils.CAPITAL_TIME_HOUR);
                 }
             }
-
-            //Scap
-            if (Objects.equals(TREND_D1, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
-                analysis(EPIC, Utils.CAPITAL_TIME_MINUTE_5, Utils.CAPITAL_TIME_HOUR);
-            }
+            // ----------------------------------------------------------------------- //
         }
     }
 
