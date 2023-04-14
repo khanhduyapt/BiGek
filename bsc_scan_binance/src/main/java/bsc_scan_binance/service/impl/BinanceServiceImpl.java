@@ -3343,16 +3343,21 @@ public class BinanceServiceImpl implements BinanceService {
 
             analysis("(patern_0)", EPIC, Utils.CAPITAL_TIME_DAY, TREND_W1, false);
 
-            if (!Objects.equals(TREND_W1, TREND_D1)) {
-                return;
-            }
-            // ---------------------------------Scalping----------------------------------
-            if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
-                analysis("(Scap, H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, true);
+            if (Objects.equals(TREND_W1, TREND_D1)) {
+                if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
+                    analysis("(WDH4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, true);
+                }
+
+                if (dto_h1.getNote().contains("50") && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
+                    analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, TREND_D1, true);
+                }
             }
 
-            if (dto_h1.getNote().contains("50") && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
-                analysis("(Scap, H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, TREND_D1, true);
+            // ------------------------------Scalping H4------------------------------
+            if (!Utils.EPICS_INDEXS.contains(EPIC)) {
+                if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
+                    analysis("(  H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
+                }
             }
         }
 
