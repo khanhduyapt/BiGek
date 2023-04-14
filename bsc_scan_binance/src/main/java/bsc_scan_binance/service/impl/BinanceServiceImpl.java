@@ -3350,6 +3350,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")
+                        && Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())
                         && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
                     result += analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, TREND_D1, true);
                 }
@@ -3362,6 +3363,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")
+                        && Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())
                         && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
                     result += analysis("(  H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
                 }
