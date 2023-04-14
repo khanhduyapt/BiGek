@@ -150,10 +150,11 @@ public class Utils {
     public static final String ONEWAY_EPICS = "_US30_SP500_GER30_GER40_USOIL_";
 
     // "SP35", "HK50", "OIL_CRUDE", "NAS100", "AUS200", "JPY225",
-    public static final List<String> EPICS_MAIN = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "GER40", "USOIL");
+    public static final List<String> EPICS_ONE_WAY = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "GER40",
+            "USOIL");
 
-    public static final List<String> EPICS_FOREXS_OTHERS = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "GBPJPY",
-            "USDCHF", "NZDUSD", "AUDUSD", "EURJPY", "EURNZD", "GBPNZD");
+    public static final List<String> EPICS_FOREXS = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "GBPJPY", "USDCHF",
+            "NZDUSD", "AUDUSD", "EURJPY", "EURNZD", "GBPNZD");
 
     // public static final List<String> COINS = Arrays.asList("1INCH", "AAVE",
     // "ACA", "ACH", "ARB", "ADA", "ADX", "AERGO",

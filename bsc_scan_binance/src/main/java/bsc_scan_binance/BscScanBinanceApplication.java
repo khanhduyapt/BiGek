@@ -95,8 +95,8 @@ public class BscScanBinanceApplication {
             binance_service.deleteConnectTimeOutException();
             // ----------------------------------------
             List<String> CAPITAL_LIST = new ArrayList<String>();
-            CAPITAL_LIST.addAll(Utils.EPICS_MAIN);
-            CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_OTHERS);
+            CAPITAL_LIST.addAll(Utils.EPICS_ONE_WAY);
+            CAPITAL_LIST.addAll(Utils.EPICS_FOREXS);
 
             if (app_flag != Utils.const_app_flag_webonly) {
                 int total = Utils.COINS.size();
