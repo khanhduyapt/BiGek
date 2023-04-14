@@ -92,8 +92,7 @@ public class Utils {
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
-    public static final String TEXT_SWITCH_TREND_BY_Ma20 = "(1_20)";
-    public static final String TEXT_SWITCH_TREND_BY_Ma50 = "(1_50)";
+    public static final String TEXT_SWITCH_TREND = "(switch)";
     public static final String TEXT_SWITCH_TREND_BELOW_50_LONG = "(B_50)";
     public static final String TEXT_SWITCH_TREND_ABOVE_50_SHOT = "(S_50)";
 
