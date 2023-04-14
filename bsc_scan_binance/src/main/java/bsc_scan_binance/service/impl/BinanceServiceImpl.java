@@ -3293,8 +3293,7 @@ public class BinanceServiceImpl implements BinanceService {
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
         String date_time = LocalDateTime.now().toString();
 
-        BigDecimal bread = Utils.calcMaxBread(list).add(Utils.calcMaxCandleHigh(list));
-
+        BigDecimal bread = Utils.calcMaxCandleHigh(list);
         List<BigDecimal> low_high = Utils.getLowHighCandle(heken_list);
 
         BigDecimal str_body_price = low_high.get(0);
