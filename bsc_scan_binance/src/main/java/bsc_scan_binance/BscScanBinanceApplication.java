@@ -115,8 +115,8 @@ public class BscScanBinanceApplication {
 
                 while (index_crypto < total) {
                     try {
-                        // && Utils.isBusinessTime_6h_to_22h()
-                        if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
+                        //
+                        if (Utils.isWeekday() && Utils.isBusinessTime_6h_to_22h() && Utils.isAllowSendMsg()) {
                             if (isReloadAfter(3, "MT5_DATA")) {
                                 binance_service.saveMt5Data();
                                 wait(SLEEP_MINISECONDS);

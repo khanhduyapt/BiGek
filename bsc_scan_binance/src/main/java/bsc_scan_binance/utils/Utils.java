@@ -95,6 +95,8 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND = "(switch)";
     public static final String TEXT_SWITCH_TREND_BELOW_50_LONG = "(B_50)";
     public static final String TEXT_SWITCH_TREND_ABOVE_50_SHOT = "(S_50)";
+    public static final String TEXT_SWITCH_TREND_Ma10_LONG = "(B_10)";
+    public static final String TEXT_SWITCH_TREND_Ma10_SHOT = "(S_10)";
 
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
@@ -1146,7 +1148,7 @@ public class Utils {
     public static boolean isBusinessTime_6h_to_22h() {
         // Sang 6-8h, Trua: 1h-3h, Chieu 5h-6h, toi 8h-9h: la khung gio gia ro rang
         // nhat, sau khung gio nay gia moi chay.
-        List<Integer> times = Arrays.asList(5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
+        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -3156,20 +3158,20 @@ public class Utils {
         String temp_long = "";
         String temp_shot = "";
 
+        BigDecimal ma1_0 = calcMA(list, 1, 0);
+        BigDecimal ma1_3 = calcMA(list, 1, 3);
+
         BigDecimal ma3_0 = calcMA(list, 3, 0);
         BigDecimal ma3_3 = calcMA(list, 3, 3);
 
-        BigDecimal ma6_0 = calcMA(list, 6, 0);
-        BigDecimal ma6_3 = calcMA(list, 6, 3);
-
-        BigDecimal ma10_0 = calcMA(list, 8, 0);
-        BigDecimal ma10_3 = calcMA(list, 8, 3);
+        BigDecimal ma10_0 = calcMA(list, 10, 0);
+        BigDecimal ma10_3 = calcMA(list, 10, 3);
 
         temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma10_0, ma10_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma10_0, ma10_3) + "_";
 
-        temp_long += Utils.checkXCutUpY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma6_0, ma6_3, ma10_0, ma10_3) + "_";
+        temp_long += Utils.checkXCutUpY(ma1_0, ma1_3, ma10_0, ma10_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma1_0, ma1_3, ma10_0, ma10_3) + "_";
 
         String trend = "";
         trend += "_" + temp_long + "_";
@@ -3184,24 +3186,13 @@ public class Utils {
             return "";
         }
 
-        BigDecimal ma6_1 = calcMA(list, 6, 1);
-        BigDecimal ma6_2 = calcMA(list, 6, 2);
-
-        BigDecimal ma10_1 = calcMA(list, 10, 1);
-        BigDecimal ma10_2 = calcMA(list, 10, 2);
-
         String result = "";
         if (trend.contains(Utils.TREND_LONG)) {
-            if ((ma6_1.compareTo(ma6_2) > 0) && (ma10_1.compareTo(ma10_2) > 0)) {
-
-                result = Utils.TREND_LONG;
-            }
+            result = Utils.TREND_LONG;
         }
 
         if (trend.contains(Utils.TREND_SHORT)) {
-            if ((ma6_1.compareTo(ma6_2) < 0) && (ma10_1.compareTo(ma10_2) < 0)) {
-                result = Utils.TREND_SHORT;
-            }
+            result = Utils.TREND_SHORT;
         }
 
         return result;
