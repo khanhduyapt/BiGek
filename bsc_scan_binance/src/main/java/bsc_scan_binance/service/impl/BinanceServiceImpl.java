@@ -3380,7 +3380,7 @@ public class BinanceServiceImpl implements BinanceService {
                     : Objects.equals(Utils.TREND_SHORT, trend_chi) ? "(S)" : "(x)";
             String EVENT_ID = "FX_H_" + char_name + Utils.getCurrentYyyyMmDd_HH();
 
-            String log = id + "  (wt)   " + Utils.appendSpace(dto_chi.getNote(), 25);
+            String log = Utils.appendSpace(id, 15) + Utils.appendSpace(dto_chi.getNote(), 25);
             outputLog("Analysis_" + char_name, EPIC, dto_chi, dto_par, log);
 
             sendMsgPerHour(EVENT_ID, char_name + type + EPIC, true);
