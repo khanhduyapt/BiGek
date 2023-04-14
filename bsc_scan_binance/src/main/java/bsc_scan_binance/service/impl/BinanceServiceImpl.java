@@ -3347,11 +3347,19 @@ public class BinanceServiceImpl implements BinanceService {
                 if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
                     result += analysis("(WDH4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, true);
                 }
+
+                if (Objects.equals(TREND_D1, dto_h4.getTrend()) && dto_h4.getNote().contains("_10")) {
+                    result += analysis("(WDH4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
+                }
             }
 
             // ------------------------------Scalping H4------------------------------
             if (!Utils.EPICS_INDEXS.contains(EPIC)) {
                 if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
+                    result += analysis("(  H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
+                }
+
+                if (Objects.equals(TREND_D1, dto_h4.getTrend()) && dto_h4.getNote().contains("_10")) {
                     result += analysis("(  H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
                 }
             }
