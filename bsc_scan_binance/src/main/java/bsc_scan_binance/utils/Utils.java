@@ -152,8 +152,9 @@ public class Utils {
     public static final List<String> EPICS_ONE_WAY = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "GER40",
             "USOIL");
 
-    public static final List<String> EPICS_FOREXS = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "GBPJPY", "USDCHF",
-            "NZDUSD", "AUDUSD", "EURJPY", "EURNZD", "GBPNZD");
+    public static final List<String> EPICS_FOREXS = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY",
+            "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF",
+            "NZDUSD", "USDCAD", "USDCHF", "USDJPY", "CHFJPY");
 
     // public static final List<String> COINS = Arrays.asList("1INCH", "AAVE",
     // "ACA", "ACH", "ARB", "ADA", "ADX", "AERGO",

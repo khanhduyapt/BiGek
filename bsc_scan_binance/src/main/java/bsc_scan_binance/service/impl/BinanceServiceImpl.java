@@ -2615,22 +2615,22 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         long time = Utils.MINUTES_OF_5M;
-        // if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_DAY)
-        // || Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_1D)) {
-        // time = Utils.MINUTES_OF_D;
-        // } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_HOUR_4)
-        // || Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_4H)) {
-        // time = Utils.MINUTES_OF_4H;
-        // } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_HOUR)
-        // || Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_1H)) {
-        // time = Utils.MINUTES_OF_1H;
-        // } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_15)) {
-        // time = Utils.MINUTES_OF_15M;
-        // } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_5)) {
-        // time = Utils.MINUTES_OF_5M;
-        // } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_15m)) {
-        // time = 15;
-        // }
+        if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_DAY)
+                || Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_1D)) {
+            time = Utils.MINUTES_OF_D;
+        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_HOUR_4)
+                || Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_4H)) {
+            time = Utils.MINUTES_OF_4H;
+        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_HOUR)
+                || Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_1H)) {
+            time = Utils.MINUTES_OF_1H;
+        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_15)) {
+            time = Utils.MINUTES_OF_15M;
+        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_MINUTE_5)) {
+            time = Utils.MINUTES_OF_5M;
+        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_15m)) {
+            time = 15;
+        }
 
         if (time <= elapsedMinutes) {
             return true;
@@ -3165,11 +3165,11 @@ public class BinanceServiceImpl implements BinanceService {
                         Utils.logWritelnReport(log);
                     }
 
-                    if (!Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())) {
+                    if (Utils.isNotBlank(dto_d1.getNote())) {
                         list_d1_switch_trend.add(log);
                     }
 
-                    if (!Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())) {
+                    if (Utils.isNotBlank(dto_h4.getNote())) {
                         list_h4_switch_trend.add(log);
                     }
 
@@ -3338,20 +3338,27 @@ public class BinanceServiceImpl implements BinanceService {
             // (2023/04/12 da chay 3 tai khoan 20k vi danh nguoc xu huong D1 & H4)
             String TREND_W1 = dto_w1.getTrend();
             String TREND_D1 = dto_d1.getTrend();
+            String TREND_H4 = dto_h4.getTrend();
+            String TREND_H1 = dto_h1.getTrend();
 
             analysis("(patern_0)", EPIC, Utils.CAPITAL_TIME_DAY, Utils.CAPITAL_TIME_WEEK, false);
 
             if (Objects.equals(TREND_W1, TREND_D1)) {
-                analysis("(w1=d1=h4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, Utils.CAPITAL_TIME_DAY, true);
-                analysis("(w1=d1=h1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, Utils.CAPITAL_TIME_DAY, true);
-            } else {
-                // ---------------------------------Scap---------------------------------- //
-                if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
-                    analysis("(Scap, H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, Utils.CAPITAL_TIME_HOUR_4, true);
+                if (Objects.equals(TREND_D1, TREND_H4) && dto_h4.getNote().contains("50")
+                        && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
+                    analysis("(w1=d1=h4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, Utils.CAPITAL_TIME_HOUR_4, true);
                 }
 
-                if (dto_h1.getNote().contains("50") && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
-                    analysis("(Scap, H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, Utils.CAPITAL_TIME_HOUR, true);
+                if (Objects.equals(TREND_D1, TREND_H1) && dto_h1.getNote().contains("50")
+                        && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
+                    analysis("(w1=d1=h1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, Utils.CAPITAL_TIME_HOUR, true);
+                }
+            }
+
+            // ---------------------------------Scap---------------------------------- //
+            if (!Objects.equals(TREND_W1, TREND_D1)) {
+                if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
+                    analysis("(Scap, H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, Utils.CAPITAL_TIME_HOUR_4, true);
                 }
             }
         }
@@ -3380,7 +3387,7 @@ public class BinanceServiceImpl implements BinanceService {
                     : Objects.equals(Utils.TREND_SHORT, trend_chi) ? "(S)" : "(x)";
             String EVENT_ID = "FX_H_" + char_name + Utils.getCurrentYyyyMmDd_HH();
 
-            String log = Utils.appendSpace(id, 15) + Utils.appendSpace(dto_chi.getNote(), 25);
+            String log = Utils.appendSpace(id, 16) + Utils.appendSpace(dto_chi.getNote(), 25);
             outputLog("Analysis_" + char_name, EPIC, dto_chi, dto_par, log);
 
             sendMsgPerHour(EVENT_ID, char_name + type + EPIC, true);
