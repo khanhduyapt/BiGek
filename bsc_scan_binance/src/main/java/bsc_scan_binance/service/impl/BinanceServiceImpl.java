@@ -2821,95 +2821,6 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String sendMsgKillLongShort(String SYMBOL) {
-        if (!BTC_ETH_BNB.contains(SYMBOL)) {
-            return "";
-        }
-        if (!BTC_ETH_BNB.contains(SYMBOL) && !BTC_ALLOW_LONG_SHITCOIN) {
-            return Utils.CRYPTO_TIME_5m;
-        }
-        // ----------------------------------------
-        List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 10);
-        if (CollectionUtils.isEmpty(list_d1)) {
-            String not_found_msg = "BinanceNotFound:" + SYMBOL + "(" + Utils.CRYPTO_TIME_1D + ")";
-            Utils.logWritelnDraft(not_found_msg);
-            return Utils.CRYPTO_TIME_5m;
-        }
-
-        List<BtcFutures> heken_list = Utils.getHekenList(list_d1);
-        String TREND_D1 = Utils.getTrendByHekenAshiList(heken_list);
-
-        if (!BTC_ETH_BNB.contains(SYMBOL) && Objects.equals(Utils.TREND_SHORT, TREND_D1)) {
-            return Utils.CRYPTO_TIME_5m;
-        }
-
-        String switch_trend_d1 = "";
-        if (Objects.equals(Utils.TREND_LONG, Utils.switchTrendByHekenAshi_135(heken_list))) {
-            switch_trend_d1 = "(*)";
-        }
-
-        String percent = "";
-        percent += "     10W: ";
-        List<BtcFutures> list_w1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1w, 10);
-        List<BigDecimal> low_high_10w = Utils.getLowHighCandle(list_w1);
-        percent += Utils.appendSpace(
-                "Low:" + Utils.getPercentToEntry(list_d1.get(0).getCurrPrice(), low_high_10w.get(0), false), 22);
-        percent += Utils.appendSpace(
-                "Hig:" + Utils.getPercentToEntry(list_d1.get(0).getCurrPrice(), low_high_10w.get(1), true), 22);
-
-        percent += "     10D: ";
-        List<BigDecimal> low_high_10d = Utils.getLowHighCandle(list_d1);
-        percent += Utils.appendSpace(
-                "Low:" + Utils.getPercentToEntry(list_d1.get(0).getCurrPrice(), low_high_10d.get(0), false), 22);
-        percent += Utils.appendSpace(
-                "Hig:" + Utils.getPercentToEntry(list_d1.get(0).getCurrPrice(), low_high_10d.get(1), true), 22);
-
-        String btc_h4_trend = Utils.appendSpace("(Btc:H4:" + (BTC_ALLOW_LONG_SHITCOIN ? "Uptrend" : "Downtrend") + ")",
-                25);
-        String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_d1.get(0).getCurrPrice()), 5) + ")";
-        String log = Utils.appendSpace("CRYPTO  " + Utils.appendSpace(switch_trend_d1, 3) + " (D1)", 18);
-        log += Utils.appendSpace(SYMBOL, 10) + Utils.appendSpace(TREND_D1, 10);
-        log += Utils.appendSpace(str_price, 15) + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
-        log += btc_h4_trend;
-        log += percent;
-
-        if (Utils.isNotBlank(switch_trend_d1)) {
-            // logMsgPerHour("CRYPTO_D1_" + SYMBOL, log, Utils.MINUTES_OF_4H);
-        }
-        // ------------------------------------------------
-        List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 15);
-        String switch_trend_h4 = Utils.switchTrendByHekenAshi_135(Utils.getHekenList(list_h4));
-        if (!Objects.equals(TREND_D1, switch_trend_h4)) {
-            return Utils.CRYPTO_TIME_5m;
-        }
-        // logMsgPerHour("CRYPTO_H4_" + SYMBOL, log.replace("(D1)", "(H4)"),
-        // Utils.MINUTES_OF_4H);
-        // ------------------------------------------------
-        List<BtcFutures> list_h1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1H, 10);
-        if (!Objects.equals(TREND_D1, Utils.switchTrendByHekenAshi_135(Utils.getHekenList(list_h1)))) {
-            return Utils.CRYPTO_TIME_5m;
-        }
-        // logMsgPerHour("CRYPTO_H1_" + SYMBOL, log.replace("(D1)", "(H1)"),
-        // Utils.MINUTES_OF_1H);
-
-        // ------------------------------------------------
-        List<BtcFutures> list_15 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_15m, 10);
-        if (!Objects.equals(TREND_D1, Utils.switchTrendByHekenAshi_135(Utils.getHekenList(list_15)))) {
-            return Utils.CRYPTO_TIME_5m;
-        }
-
-        // ------------------------------------------------
-        String msg = "(" + switch_trend_h4 + ")" + SYMBOL;
-        String EVENT_ID = EVENT_PUMP + SYMBOL + Utils.getCurrentYyyyMmDd_HH();
-        sendMsgPerHour(EVENT_ID, msg, true);
-
-        logMsgPerHour("CRYPTO_15_" + SYMBOL, log.replace("(D1)", "(15)"), Utils.MINUTES_OF_15M);
-
-        return Utils.CRYPTO_TIME_1H;
-    }
-
-    @Override
-    @Transactional
-    public String initCryptoTrend(String SYMBOL) {
         List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 10);
         List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 10);
 
@@ -2955,6 +2866,63 @@ public class BinanceServiceImpl implements BinanceService {
             }
             String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_HH();
             sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
+        }
+
+        return "";
+    }
+
+    @Override
+    @Transactional
+    public String initCryptoTrend(String SYMBOL) {
+        List<BtcFutures> list_w1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1w, 10);
+        String TREND_W1 = Utils.getTrendByHekenAshiList(Utils.getHekenList(list_w1));
+        if (!Objects.equals(TREND_W1, Utils.TREND_LONG)) {
+            return Utils.CRYPTO_TIME_1w;
+        }
+
+        List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 10);
+        List<BtcFutures> heken_list_d1 = Utils.getHekenList(list_d1);
+        String TREND_D1 = Utils.getTrendByHekenAshiList(heken_list_d1);
+        if (!Objects.equals(TREND_D1, Utils.TREND_LONG)) {
+            return Utils.CRYPTO_TIME_1D;
+        }
+
+        String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_d1.get(0).getCurrPrice()), 5) + ")";
+        String log = " " + Utils.appendSpace(str_price, 15)
+                + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
+
+        if (Utils.isNotBlank(Utils.switchTrendByHeken01(heken_list_d1))) {
+            logMsgPerHour("CRYPTO_D1_" + SYMBOL, Utils.appendSpace(list_d1.get(0).getId(), 20) + log,
+                    Utils.MINUTES_OF_4H);
+        }
+        // ------------------------------------------------------------------
+        if (binanceFuturesRepository.existsBySymbol(SYMBOL)) {
+            List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 10);
+            List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
+            String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
+            if (!Objects.equals(trend_h4, Utils.TREND_LONG)) {
+                return Utils.CRYPTO_TIME_4H;
+            }
+
+            String switch_trend = Utils.switchTrendByHeken01(heken_list_h4);
+            if (Utils.isNotBlank(switch_trend)) {
+                // TODO sendMsgKillLongShort
+                String msg = "";
+                if (Objects.equals(Utils.TREND_LONG, trend_h4)) {
+                    msg = " 💹 " + Utils.getChartName(list_h4) + SYMBOL + "(Up)" + str_price;
+                }
+                if (Objects.equals(Utils.TREND_SHORT, trend_h4)) {
+                    msg = " 🔻 " + Utils.getChartName(list_h4) + SYMBOL + "(Down)" + str_price;
+                }
+                String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_HH_Blog4h();
+                sendMsgPerHour(EVENT_ID, msg, true);
+                System.out.println(SYMBOL + "(Up)");
+
+                logMsgPerHour("CRYPTO_H4_" + SYMBOL, Utils.appendSpace(list_h4.get(0).getId(), 20) + log,
+                        Utils.MINUTES_OF_4H);
+
+                return Utils.CRYPTO_TIME_4H;
+            }
         }
 
         return "";

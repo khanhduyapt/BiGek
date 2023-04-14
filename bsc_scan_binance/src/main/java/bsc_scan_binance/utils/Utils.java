@@ -3489,6 +3489,7 @@ public class Utils {
         if (dto_entry.getId().contains(CAPITAL_TIME_HOUR) && !dto_entry.getId().contains(CAPITAL_TIME_HOUR_4)) {
             risk = risk.divide(BigDecimal.valueOf(2), 3, RoundingMode.CEILING);
         }
+        risk = formatPrice(risk, 0);
 
         BigDecimal sl_long = Utils.getBigDecimal(dto_sl.getLow_price());
         BigDecimal sl_shot = Utils.getBigDecimal(dto_sl.getHigh_price());

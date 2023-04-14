@@ -136,16 +136,16 @@ public class BscScanBinanceApplication {
 
                         // ---------------------------------------------------------
                         if (isReloadAfter((Utils.MINUTES_OF_15M), "INIT_CRYPTO")) {
-                            binance_service.initCryptoTrend("BTC");
-                            binance_service.initCryptoTrend("ETH");
-                            binance_service.initCryptoTrend("BNB");
+                            binance_service.sendMsgKillLongShort("BTC");
+                            binance_service.sendMsgKillLongShort("ETH");
+                            binance_service.sendMsgKillLongShort("BNB");
                         }
 
-                        // String SYMBOL = Utils.COINS.get(index_crypto).toUpperCase();
-                        // if (isReloadAfter(getWattingTime(SYMBOL), "CHECK_CRYPTO_" + SYMBOL)) {
-                        // String crypto_time = binance_service.sendMsgKillLongShort(SYMBOL);
-                        // setWattingTime(SYMBOL, crypto_time);
-                        // }
+                        String SYMBOL = Utils.COINS.get(index_crypto).toUpperCase();
+                        if (isReloadAfter(getWattingTime(SYMBOL), "CHECK_CRYPTO_" + SYMBOL)) {
+                            String crypto_time = binance_service.initCryptoTrend(SYMBOL);
+                            setWattingTime(SYMBOL, crypto_time);
+                        }
 
                         // ---------------------------------------------------------
                         if (isReloadAfter((Utils.MINUTES_OF_1H), "CREATE_REPORT")) {
