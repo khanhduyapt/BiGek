@@ -133,6 +133,9 @@ public class BscScanBinanceApplication {
                                 }
                                 wait(SLEEP_MINISECONDS);
                                 binance_service.scapForex();
+
+                                wait(SLEEP_MINISECONDS);
+                                binance_service.monitorProfit();
                             }
                         }
 
@@ -152,10 +155,6 @@ public class BscScanBinanceApplication {
                         // ---------------------------------------------------------
                         if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "CREATE_REPORT")) {
                             binance_service.createReport();
-                        }
-
-                        if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "PROFIT")) {
-                            binance_service.monitorProfit();
                         }
 
                         wait(SLEEP_MINISECONDS);
