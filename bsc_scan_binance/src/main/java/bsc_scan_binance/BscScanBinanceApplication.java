@@ -119,10 +119,8 @@ public class BscScanBinanceApplication {
                             alertMsgKillZone(binance_service);
                         }
 
-                        // if (Utils.isWeekday() && Utils.isBusinessTime_6h_to_22h() &&
-                        // Utils.isAllowSendMsg())
-                        {
-                            if (isReloadAfter(3, "MT5_DATA")) {
+                        if (Utils.isWeekday() && Utils.isBusinessTime_6h_to_22h() && Utils.isAllowSendMsg()) {
+                            if (isReloadAfter(5, "MT5_DATA")) {
                                 binance_service.saveMt5Data();
                                 wait(SLEEP_MINISECONDS);
                                 binance_service.initWeekTrend();
@@ -222,19 +220,19 @@ public class BscScanBinanceApplication {
         long close_Sydney = Duration.between(close_Sydney_session, cur_time).toMinutes();
         if ((0 <= close_Sydney) && (close_Sydney <= 30)) {
             binance_service.sendMsgPerHour(EVENT_ID, "Close_Sydney_Session", true);
-            binance_service.logMsgPerHour(EVENT_ID, "Close_Sydney_Session", Utils.MINUTES_OF_15M);
+            binance_service.logMsgPerHour(EVENT_ID, "Close_Sydney_Session", Utils.MINUTES_OF_5M);
         }
 
         long close_Tokyo = Duration.between(close_Tokyo_session, cur_time).toMinutes();
         if ((0 <= close_Tokyo) && (close_Tokyo <= 30)) {
             binance_service.sendMsgPerHour(EVENT_ID, "Close_Tokyo_Session", true);
-            binance_service.logMsgPerHour(EVENT_ID, "Close_Tokyo_Session", Utils.MINUTES_OF_15M);
+            binance_service.logMsgPerHour(EVENT_ID, "Close_Tokyo_Session", Utils.MINUTES_OF_5M);
         }
 
         long close_London = Duration.between(close_London_session, cur_time).toMinutes();
         if ((0 <= close_London) && (close_London <= 30)) {
             binance_service.sendMsgPerHour(EVENT_ID, "Close_London_Session", true);
-            binance_service.logMsgPerHour(EVENT_ID, "Close_London_Session", Utils.MINUTES_OF_15M);
+            binance_service.logMsgPerHour(EVENT_ID, "Close_London_Session", Utils.MINUTES_OF_5M);
         }
     }
 
