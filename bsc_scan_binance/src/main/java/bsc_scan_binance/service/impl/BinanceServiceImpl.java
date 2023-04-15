@@ -3366,9 +3366,17 @@ public class BinanceServiceImpl implements BinanceService {
                     logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_5M);
                 }
 
-                if ((Objects.equals(ACTION, trend_h4) && !Objects.equals(ACTION, trend_h1))
-                        || (!Objects.equals(ACTION, trend_h4) && Objects.equals(ACTION, trend_h1))) {
+                if (!Objects.equals(ACTION, trend_h4) && Objects.equals(ACTION, trend_h1)) {
                     msg = Utils.appendSpace("(Notify)", 15) + Utils.appendSpace(EPIC, 10) + "("
+                            + Utils.appendSpace(ACTION, 4) + ").but.H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ")"
+                            + ".H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
+
+                    String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
+                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_5M);
+                }
+
+                if (Objects.equals(ACTION, trend_h4) && !Objects.equals(ACTION, trend_h1)) {
+                    msg = Utils.appendSpace("(TakeProfit)", 15) + Utils.appendSpace(EPIC, 10) + "("
                             + Utils.appendSpace(ACTION, 4) + ").but.H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ")"
                             + ".H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
 
