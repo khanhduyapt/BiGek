@@ -3301,16 +3301,12 @@ public class BinanceServiceImpl implements BinanceService {
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
         String date_time = LocalDateTime.now().toString();
 
-        BigDecimal bread = Utils.calcMaxCandleHigh(list);
-        List<BigDecimal> low_high = Utils.getLowHighCandle(heken_list);
+        List<BigDecimal> body = Utils.getOpenCloseCandle(list);
+        BigDecimal str_body_price = body.get(0);
+        BigDecimal end_body_price = body.get(1);
 
-        BigDecimal str_body_price = low_high.get(0);
-        BigDecimal end_body_price = low_high.get(1);
-        if (CAPITAL_TIME_XX.contains("MINUTE")) {
-            str_body_price = list.get(0).getCurrPrice();
-            end_body_price = list.get(0).getCurrPrice();
-        }
-
+        BigDecimal bread = Utils.calcMaxBread(list);
+        List<BigDecimal> low_high = Utils.getLowHighCandle(list);
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
 
