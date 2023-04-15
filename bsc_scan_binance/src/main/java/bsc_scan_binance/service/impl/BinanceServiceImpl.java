@@ -3333,8 +3333,9 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
 
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4)) {
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
                 Utils.logWritelnDraft("scapForex (" + EPIC + ") dto is null");
                 return;
             }
@@ -3351,6 +3352,11 @@ public class BinanceServiceImpl implements BinanceService {
                 if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
                     result += analysis("(WDH4, 00)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, false);
                 }
+
+                if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")
+                        && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
+                    result += analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
+                }
             }
 
             // ------------------------------Scalping H4------------------------------
@@ -3365,6 +3371,11 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
                     result += analysis("(  H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
+                }
+
+                if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")
+                        && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
+                    result += analysis("(  H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
                 }
             }
 
