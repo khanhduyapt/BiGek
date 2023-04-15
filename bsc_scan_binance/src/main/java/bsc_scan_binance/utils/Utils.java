@@ -224,11 +224,11 @@ public class Utils {
             "FET", "FIL", "FLM", "FLOW", "FTM", "FXS", "GAL", "GALA", "GMT", "GMX", "GRT", "GTC", "HBAR", "HIGH",
             "HOOK", "HOT", "ICP", "ICX", "ID", "IMX", "INJ", "IOST", "IOTA", "IOTX", "JASMY", "JOE", "KAVA", "KLAY",
             "KNC", "KSM", "LDO", "LEVER", "LINA", "LINK", "LIT", "LPT", "LQTY", "LRC", "LTC", "MAGIC", "MANA", "MASK",
-            "MATIC", "MINA", "MKR", "MTL", "NEAR", "NEO", "NKN", "OCEAN", "OGN", "OMG", "ONE", "ONT", "OP", "PEOPLE",
-            "PERP", "PHB", "QNT", "QTUM", "REEF", "REN", "RLC", "RNDR", "ROSE", "RSR", "RUNE", "RVN", "SAND", "SFP",
-            "SKL", "SNX", "SOL", "SPELL", "SSV", "STG", "STMX", "STORJ", "STX", "SUSHI", "SXP", "THETA", "TLM", "TOMO",
-            "TRB", "TRU", "TRX", "UNFI", "UNI", "VET", "WAVES", "XEM", "XLM", "XMR", "XRP", "XTZ", "YFI", "ZEC", "ZEN",
-            "ZIL", "ZRX");
+            "MATIC", "MINA", "MKR", "MTL", "NEAR", "NEBL", "NEO", "NKN", "OCEAN", "OGN", "OMG", "ONE", "ONT", "OP",
+            "PEOPLE", "PERP", "PHB", "QNT", "QTUM", "REEF", "REN", "RLC", "RNDR", "ROSE", "RSR", "RUNE", "RVN", "SAND",
+            "SFP", "SKL", "SNX", "SOL", "SPELL", "SSV", "STG", "STMX", "STORJ", "STX", "SUSHI", "SXP", "THETA", "TLM",
+            "TOMO", "TRB", "TRU", "TRX", "UNFI", "UNI", "VET", "WAVES", "XEM", "XLM", "XMR", "XRP", "XTZ", "YFI", "ZEC",
+            "ZEN", "ZIL", "ZRX");
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
@@ -2056,8 +2056,9 @@ public class Utils {
         }
 
         BigDecimal ma = calcMA(list, length, 0);
+        List<BigDecimal> low_high = getLowHighCandle(list.subList(0, 5));
 
-        if ((list.get(0).getHight_price().compareTo(ma) > 0)) {
+        if ((low_high.get(1).compareTo(ma) > 0)) {
             return true;
         }
 
@@ -2074,8 +2075,9 @@ public class Utils {
         }
 
         BigDecimal ma = calcMA(list, length, 0);
+        List<BigDecimal> low_high = getLowHighCandle(list.subList(0, 5));
 
-        if ((list.get(0).getLow_price().compareTo(ma) < 0)) {
+        if ((low_high.get(0).compareTo(ma) < 0)) {
             return true;
         }
 
@@ -2121,6 +2123,19 @@ public class Utils {
 
     public static String getCurrentPrice(List<BtcFutures> list) {
         return Utils.appendSpace("(" + Utils.removeLastZero(list.get(0).getCurrPrice()) + ")", 12);
+    }
+
+    public static String getChartNameAndEpic(String id) {
+        String result = id;
+        String[] arr = id.split("_");
+        if (arr.length == 3) {
+            List<BtcFutures> list = new ArrayList<BtcFutures>();
+            BtcFutures dto = new BtcFutures();
+            dto.setId(id);
+            list.add(dto);
+            result = getChartName(list) + appendSpace(arr[0], 10);
+        }
+        return result;
     }
 
     public static String getChartName(List<BtcFutures> list) {
@@ -3406,9 +3421,24 @@ public class Utils {
             return "";
         }
 
-        return (heken_list.get(0).getPrice_close_candle().compareTo(heken_list.get(1).getPrice_close_candle()) > 0)
-                ? TREND_LONG
-                : TREND_SHORT;
+        String trend_0 = heken_list.get(0).isUptrend() ? TREND_LONG : TREND_SHORT;
+        String trend_1 = (heken_list.get(0).getPrice_close_candle()
+                .compareTo(heken_list.get(1).getPrice_close_candle()) > 0) ? TREND_LONG : TREND_SHORT;
+
+        if (Objects.equals(trend_0, trend_1)) {
+            return trend_0;
+        }
+
+        String trend_3 = isUptrendByMa(heken_list, 3, 0, 1) ? TREND_LONG : TREND_SHORT;
+        if (Objects.equals(trend_0, trend_3)) {
+            return trend_0;
+        }
+
+        if (Objects.equals(trend_1, trend_3)) {
+            return trend_0;
+        }
+
+        return trend_0;
     }
 
     public static String createLineForex_Header(Orders dto_entry, Orders dto_sl, String trend_d1) {

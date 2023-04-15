@@ -2840,7 +2840,7 @@ public class BinanceServiceImpl implements BinanceService {
             String msg = "";
             boolean isOnlyMe = true;
             if (BTC_ETH_BNB.contains(SYMBOL)) {
-                isOnlyMe = false;
+                // isOnlyMe = false;
             }
 
             String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_h4.get(0).getCurrPrice()), 5) + ")";
@@ -2851,8 +2851,16 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(Utils.TREND_SHORT, trend_h4)) {
                 msg = " 🔻 " + Utils.getChartName(list_h4) + SYMBOL + "_kill_Long 💔 " + str_price;
             }
-            String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_HH();
+            String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_HH_Blog4h();
             sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
+
+            String log = " " + Utils.appendSpace(str_price, 15)
+                    + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
+
+            logMsgPerHour("CRYPTO_KILL_" + SYMBOL,
+                    Utils.appendSpace(Utils.getChartNameAndEpic(list_h4.get(0).getId()), 20) + log + msg,
+                    Utils.MINUTES_OF_4H);
+
         }
 
         return "";
@@ -2864,57 +2872,57 @@ public class BinanceServiceImpl implements BinanceService {
         // if (!binanceFuturesRepository.existsBySymbol(SYMBOL)) {
         // return Utils.CRYPTO_TIME_1w;
         // }
-
-        List<BtcFutures> list_w1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1w, 15);
-        String TREND_W1 = Utils.getTrendByHekenAshiList(Utils.getHekenList(list_w1));
-        if (!Objects.equals(TREND_W1, Utils.TREND_LONG)) {
-            return Utils.CRYPTO_TIME_1w;
-        }
-
-        List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 15);
-        List<BtcFutures> heken_list_d1 = Utils.getHekenList(list_d1);
-        String TREND_D1 = Utils.getTrendByHekenAshiList(heken_list_d1);
-        if (!Objects.equals(TREND_D1, Utils.TREND_LONG)) {
-            return Utils.CRYPTO_TIME_1D;
-        }
-
-        String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_d1.get(0).getCurrPrice()), 5) + ")";
-        String log = " " + Utils.appendSpace(str_price, 15) + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
-
-        if (Utils.isNotBlank(Utils.switchTrendByHeken01(heken_list_d1))) {
-            // logMsgPerHour("CRYPTO_D1_" + SYMBOL,
-            // Utils.appendSpace(list_d1.get(0).getId(), 20) + log, Utils.MINUTES_OF_4H);
-        }
+        // List<BtcFutures> list_w1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1w, 15);
+        // String TREND_W1 = Utils.getTrendByHekenAshiList(Utils.getHekenList(list_w1));
+        // if (!Objects.equals(TREND_W1, Utils.TREND_LONG)) {
+        // return Utils.CRYPTO_TIME_1w;
+        // }
+        // ------------------------------------------------------------------
+        // List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 15);
+        // List<BtcFutures> heken_list_d1 = Utils.getHekenList(list_d1);
+        // String TREND_D1 = Utils.getTrendByHekenAshiList(heken_list_d1);
+        // if (!Objects.equals(TREND_D1, Utils.TREND_LONG)) {
+        // return Utils.CRYPTO_TIME_1D;
+        // }
+        // if (Utils.isNotBlank(Utils.switchTrendByHeken01(heken_list_d1))) {
+        // // logMsgPerHour("CRYPTO_D1_" + SYMBOL,
+        // // Utils.appendSpace(list_d1.get(0).getId(), 20) + log, Utils.MINUTES_OF_4H);
+        // }
         // ------------------------------------------------------------------
 
-        List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 10);
+        List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 55);
         List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
         String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
         if (!Objects.equals(trend_h4, Utils.TREND_LONG)) {
             return Utils.CRYPTO_TIME_4H;
         }
-
         String switch_trend = Utils.switchTrendByHeken01(heken_list_h4);
         if (Utils.isNotBlank(switch_trend)) {
-            // TODO sendMsgKillLongShort
-            String msg = "";
-            if (Objects.equals(Utils.TREND_LONG, trend_h4)) {
-                msg = " 💹 " + Utils.getChartName(list_h4) + SYMBOL + "(Up)" + str_price;
-            }
-            if (Objects.equals(Utils.TREND_SHORT, trend_h4)) {
-                msg = " 🔻 " + Utils.getChartName(list_h4) + SYMBOL + "(Down)" + str_price;
-            }
-            String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_HH_Blog4h();
-            sendMsgPerHour(EVENT_ID, msg, true);
-            System.out.println(SYMBOL + "(Up)");
-
-            logMsgPerHour("CRYPTO_H4_" + SYMBOL, Utils.appendSpace(list_h4.get(0).getId(), 20) + log,
-                    Utils.MINUTES_OF_4H);
-
+            return Utils.CRYPTO_TIME_4H;
+        }
+        if (Utils.isAboveMALine(heken_list_h4, 50)) {
             return Utils.CRYPTO_TIME_4H;
         }
 
-        return "";
+        String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_h4.get(0).getCurrPrice()), 5) + ")";
+        String log = " " + Utils.appendSpace(str_price, 15) + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
+        logMsgPerHour("CRYPTO_H4_" + SYMBOL,
+                Utils.appendSpace(Utils.getChartNameAndEpic(list_h4.get(0).getId()), 20) + log, Utils.MINUTES_OF_4H);
+
+        // ------------------------------------------------------------------
+
+        String msg = "";
+        if (Objects.equals(Utils.TREND_LONG, trend_h4)) {
+            msg = " 💹 " + Utils.getChartName(list_h4) + SYMBOL + "(Up)" + str_price;
+        }
+        if (Objects.equals(Utils.TREND_SHORT, trend_h4)) {
+            msg = " 🔻 " + Utils.getChartName(list_h4) + SYMBOL + "(Down)" + str_price;
+        }
+        String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_HH_Blog4h();
+        sendMsgPerHour(EVENT_ID, msg, true);
+        System.out.println(SYMBOL + "(Up)");
+
+        return Utils.CRYPTO_TIME_4H;
     }
 
     @Override
@@ -3345,18 +3353,14 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.equals(TREND_W1, TREND_D1)) {
                 if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
-                    result += analysis("(WDH4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, true);
-                }
-
-                if (Objects.equals(TREND_D1, dto_h4.getTrend()) && dto_h4.getNote().contains("_10")) {
-                    result += analysis("(WDH4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
+                    result += analysis("(WDH4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, false);
                 }
             }
 
             // ------------------------------Scalping H4------------------------------
-            if (!Utils.EPICS_INDEXS.contains(EPIC)) {
+            if (!Utils.EPICS_INDEXS.contains(EPIC) && !Objects.equals(TREND_W1, TREND_D1)) {
                 if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
-                    result += analysis("(  H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
+                    result += analysis("(  H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), false);
                 }
 
                 if (Objects.equals(TREND_D1, dto_h4.getTrend()) && dto_h4.getNote().contains("_10")) {
