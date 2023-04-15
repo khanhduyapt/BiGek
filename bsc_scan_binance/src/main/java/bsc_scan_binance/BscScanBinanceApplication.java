@@ -147,6 +147,7 @@ public class BscScanBinanceApplication {
                         }
 
                         String SYMBOL = Utils.COINS.get(index_crypto).toUpperCase();
+
                         if (isReloadAfter(getWattingTime(SYMBOL), "CHECK_CRYPTO_" + SYMBOL)) {
                             String crypto_time = binance_service.initCryptoTrend(SYMBOL);
                             setWattingTime(SYMBOL, crypto_time);
