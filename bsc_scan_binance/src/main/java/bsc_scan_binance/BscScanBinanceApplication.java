@@ -150,7 +150,7 @@ public class BscScanBinanceApplication {
                         }
 
                         // ---------------------------------------------------------
-                        if (isReloadAfter((Utils.MINUTES_OF_1H), "CREATE_REPORT")) {
+                        if (isReloadAfter(5, "CREATE_REPORT")) {
                             binance_service.createReport();
                         }
 
