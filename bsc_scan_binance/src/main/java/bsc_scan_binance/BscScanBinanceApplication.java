@@ -115,12 +115,14 @@ public class BscScanBinanceApplication {
 
                 while (index_crypto < total) {
                     try {
-                        if (isReloadAfter(5, "MsgKillZone")) {
+                        if (isReloadAfter(1, "MsgKillZone")) {
                             alertMsgKillZone(binance_service);
                         }
 
-                        if (Utils.isWeekday() && Utils.isBusinessTime_6h_to_22h() && Utils.isAllowSendMsg()) {
-                            if (isReloadAfter(5, "MT5_DATA")) {
+                        // if (Utils.isWeekday() && Utils.isBusinessTime_6h_to_22h() &&
+                        // Utils.isAllowSendMsg())
+                        {
+                            if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
                                 binance_service.saveMt5Data();
                                 wait(SLEEP_MINISECONDS);
                                 binance_service.initWeekTrend();
@@ -150,8 +152,12 @@ public class BscScanBinanceApplication {
                         }
 
                         // ---------------------------------------------------------
-                        if (isReloadAfter(5, "CREATE_REPORT")) {
+                        if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "CREATE_REPORT")) {
                             binance_service.createReport();
+                        }
+
+                        if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "PROFIT")) {
+                            binance_service.monitorProfit();
                         }
 
                         wait(SLEEP_MINISECONDS);
@@ -215,7 +221,8 @@ public class BscScanBinanceApplication {
         // ---------------------------------------------------------------------------
         LocalTime close_Sydney_session = LocalTime.parse("11:15:00"); // to: 11:45
         LocalTime close_Tokyo_session = LocalTime.parse("15:15:00"); // to: 15:45
-        LocalTime close_London_session = LocalTime.parse("22:15:00"); // to: 22:45
+        LocalTime close_London_session = LocalTime.parse("23:15:00"); // to: 23:45
+        LocalTime close_NewYork_session = LocalTime.parse("02:15:00"); // to: 02:45
 
         long close_Sydney = Duration.between(close_Sydney_session, cur_time).toMinutes();
         if ((0 <= close_Sydney) && (close_Sydney <= 30)) {
@@ -233,6 +240,11 @@ public class BscScanBinanceApplication {
         if ((0 <= close_London) && (close_London <= 30)) {
             binance_service.sendMsgPerHour(EVENT_ID, "Close_London_Session", true);
             binance_service.logMsgPerHour(EVENT_ID, "Close_London_Session", Utils.MINUTES_OF_5M);
+        }
+
+        long close_NewYork = Duration.between(close_NewYork_session, cur_time).toMinutes();
+        if ((0 <= close_NewYork) && (close_NewYork <= 30)) {
+            binance_service.logMsgPerHour(EVENT_ID, "Close_NewYork_Session", Utils.MINUTES_OF_5M);
         }
     }
 

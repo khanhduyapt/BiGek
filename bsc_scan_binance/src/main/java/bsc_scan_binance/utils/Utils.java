@@ -141,6 +141,8 @@ public class Utils {
     public static final Integer MINUTES_OF_15M = 15;
     public static final Integer MINUTES_OF_5M = 5;
 
+    public static final Integer MINUTES_RELOAD_CSV_DATA = 3;
+
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
@@ -193,19 +195,19 @@ public class Utils {
             "RPL", "MAGIC", "HOOK", "HFT");
 
     // COINS_FUTURES
-    public static final List<String> COINS_FUTURES = Arrays.asList("1INCH", "AAVE", "ACH", "ADA", "AGIX", "ALGO", "ALICE",
-            "ALPHA", "AMB", "ANKR", "ANT", "APE", "API3", "APT", "AR", "ARB", "ARPA", "ASTR", "ATA", "ATOM", "AUDIO",
-            "AVAX", "AXS", "BAKE", "BAL", "BAND", "BAT", "BCH", "BEL", "BLZ", "BNB", "BNT", "BNX", "BTC", "BTC", "C98",
-            "CELO", "CELR", "CFX", "CHR", "CHZ", "CKB", "COCOS", "COMP", "COTI", "CRV", "CTK", "CTSI", "CVX", "DAR",
-            "DASH", "DENT", "DGB", "DODO", "DOGE", "DOT", "DUSK", "DYDX", "EGLD", "ENJ", "ENS", "EOS", "ETC", "ETH",
-            "FET", "FIL", "FLM", "FLOW", "FTM", "FXS", "GAL", "GALA", "GMT", "GMX", "GRT", "GTC", "HBAR", "HIGH",
-            "HOOK", "HOT", "ICP", "ICX", "ID", "IMX", "INJ", "IOST", "IOTA", "IOTX", "JASMY", "JOE", "KAVA", "KLAY",
-            "KNC", "KSM", "LDO", "LEVER", "LINA", "LINK", "LIT", "LPT", "LQTY", "LRC", "LTC", "MAGIC", "MANA", "MASK",
-            "MATIC", "MINA", "MKR", "MTL", "NEAR", "NEBL", "NEO", "NKN", "OCEAN", "OGN", "ONE", "ONT", "OP", "PEOPLE",
-            "PERP", "PHB", "QNT", "QTUM", "REEF", "REN", "RLC", "RNDR", "ROSE", "RSR", "RUNE", "RVN", "SAND", "SFP",
-            "SKL", "SNX", "SOL", "SPELL", "SSV", "STG", "STMX", "STORJ", "STX", "SUSHI", "SXP", "THETA", "TLM", "TOMO",
-            "TRB", "TRU", "TRX", "UNFI", "UNI", "VET", "WAVES", "XEM", "XLM", "XMR", "XRP", "XTZ", "YFI", "ZEC", "ZEN",
-            "ZIL", "ZRX");
+    public static final List<String> COINS_FUTURES = Arrays.asList("1INCH", "AAVE", "ACH", "ADA", "AGIX", "ALGO",
+            "ALICE", "ALPHA", "AMB", "ANKR", "ANT", "APE", "API3", "APT", "AR", "ARB", "ARPA", "ASTR", "ATA", "ATOM",
+            "AUDIO", "AVAX", "AXS", "BAKE", "BAL", "BAND", "BAT", "BCH", "BEL", "BLZ", "BNB", "BNT", "BNX", "BTC",
+            "BTC", "C98", "CELO", "CELR", "CFX", "CHR", "CHZ", "CKB", "COCOS", "COMP", "COTI", "CRV", "CTK", "CTSI",
+            "CVX", "DAR", "DASH", "DENT", "DGB", "DODO", "DOGE", "DOT", "DUSK", "DYDX", "EGLD", "ENJ", "ENS", "EOS",
+            "ETC", "ETH", "FET", "FIL", "FLM", "FLOW", "FTM", "FXS", "GAL", "GALA", "GMT", "GMX", "GRT", "GTC", "HBAR",
+            "HIGH", "HOOK", "HOT", "ICP", "ICX", "ID", "IMX", "INJ", "IOST", "IOTA", "IOTX", "JASMY", "JOE", "KAVA",
+            "KLAY", "KNC", "KSM", "LDO", "LEVER", "LINA", "LINK", "LIT", "LPT", "LQTY", "LRC", "LTC", "MAGIC", "MANA",
+            "MASK", "MATIC", "MINA", "MKR", "MTL", "NEAR", "NEBL", "NEO", "NKN", "OCEAN", "OGN", "ONE", "ONT", "OP",
+            "PEOPLE", "PERP", "PHB", "QNT", "QTUM", "REEF", "REN", "RLC", "RNDR", "ROSE", "RSR", "RUNE", "RVN", "SAND",
+            "SFP", "SKL", "SNX", "SOL", "SPELL", "SSV", "STG", "STMX", "STORJ", "STX", "SUSHI", "SXP", "THETA", "TLM",
+            "TOMO", "TRB", "TRU", "TRX", "UNFI", "UNI", "VET", "WAVES", "XEM", "XLM", "XMR", "XRP", "XTZ", "YFI", "ZEC",
+            "ZEN", "ZIL", "ZRX");
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
@@ -3440,29 +3442,15 @@ public class Utils {
 
     public static String createLineCrypto(Orders entity, String symbol, String type) {
         int LENGTH = 280;
-        BigDecimal risk = BigDecimal.valueOf(10);
         String chart = entity.getId().replace("CRYPTO_" + symbol, "").replace("_", "").toUpperCase();
 
-        BigDecimal qty = BigDecimal.ZERO;
         String sl = "   (Entry:";
         if (Objects.equals(Utils.TREND_LONG, entity.getTrend())) {
-            BigDecimal pip = (entity.getStr_body_price().subtract(entity.getLow_price())).abs();
-            if (pip.compareTo(BigDecimal.ZERO) > 0) {
-                qty = Utils.roundDefault(risk.divide(pip, 10, RoundingMode.CEILING));
-            }
-
             sl += Utils.appendLeft(Utils.removeLastZero(entity.getStr_body_price()), 10);
             sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getLow_price()), 10);
-            sl += "   Qty:" + Utils.appendLeft(Utils.removeLastZero(qty), 10);
         } else {
-            BigDecimal pip = (entity.getHigh_price().subtract(entity.getEnd_body_price())).abs();
-            if (pip.compareTo(BigDecimal.ZERO) > 0) {
-                qty = Utils.roundDefault(risk.divide(pip, 10, RoundingMode.CEILING));
-            }
-
             sl += Utils.appendLeft(Utils.removeLastZero(entity.getEnd_body_price()), 10);
             sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getHigh_price()), 10);
-            sl += "   Qty:" + Utils.appendLeft(Utils.removeLastZero(qty), 10);
         }
         sl += ")  ";
 

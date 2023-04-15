@@ -18,6 +18,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -1435,122 +1436,6 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     @Override
-    @Transactional
-    public void monitorBollingerBandwidth(Boolean isCallFormBot) {
-        try {
-            {
-                String sql = "" + " select                                                              \n"
-                        + "     boll.gecko_id,                                                          \n"
-                        + "     boll.symbol,                                                            \n"
-                        + "     boll.name,                                                              \n"
-                        + "     boll.avg_price,                                                         \n"
-                        + "     boll.price_open_candle,                                                 \n"
-                        + "     boll.price_close_candle,                                                \n"
-                        + "     boll.low_price,                                                         \n"
-                        + "     boll.hight_price,                                                       \n"
-                        + "     boll.price_can_buy,                                                     \n"
-                        + "     boll.price_can_sell,                                                    \n"
-                        + "     boll.is_bottom_area,                                                    \n"
-                        + "     boll.is_top_area,                                                       \n"
-                        + "     ROUND(100*(price_can_sell - price_can_buy)/price_can_buy, 2) as profit,                                             \n"
-                        + "     (case when vector.vector_now > 0 then true else false end)   as vector_up,                                          \n"
-                        + "     concat('v1h:', cast(vector.vector_now as varchar), ', v4h:' ,cast(vector.vector_pre4h as varchar)) as vector_desc   \n"
-                        + " FROM                                                                        \n"
-                        + Utils.sql_boll_2_body + " , \n"
-                        + " (                                                                                      \n"
-                        + "  select                                                                                \n"
-                        + "       pre.gecko_id,                                                                    \n"
-                        + "       pre.hh,                                                                          \n"
-                        + "       ROUND(100 * (price_now   - price_pre4h) /price_pre4h, 2)  as vector_now,         \n"
-                        + "       ROUND(100 * (price_pre4h - price_pre8h) /price_pre8h, 2)  as vector_pre4h        \n"
-                        + "   from (                                                                               \n"
-                        + "       select                                                                           \n"
-                        + "       tmp.gecko_id,                                                                    \n"
-                        + "       tmp.hh,                                                                          \n"
-                        + "       (case when price_now is null then price_pre1h else price_now end) as price_now,  \n"
-                        + "          price_pre4h,                                                                  \n"
-                        + "          price_pre8h                                                                   \n"
-                        + "       from (                                                                           \n"
-                        + "           select                                                                       \n"
-                        + "               d.gecko_id,                                                              \n"
-                        + "               d.hh, \n"
-                        + "               (select COALESCE(h.avg_price, 0) from btc_volumn_day h where h.gecko_id = d.gecko_id and h.hh = TO_CHAR(NOW(), 'HH24')) as price_now,                          \n"
-                        + "               (select COALESCE(h.avg_price, 0) from btc_volumn_day h where h.gecko_id = d.gecko_id and h.hh = TO_CHAR(NOW() - interval  '1 hours', 'HH24')) as price_pre1h,  \n"
-                        + "                                                                                             \n"
-                        + "               (select ROUND(AVG(COALESCE(h.avg_price, 0)), 5) from btc_volumn_day h where h.gecko_id = d.gecko_id and h.hh between TO_CHAR(NOW() - interval  '4 hours', 'HH24') and TO_CHAR(NOW() - interval  '1 hours', 'HH24')) as price_pre4h,   \n"
-                        + "               (select ROUND(AVG(COALESCE(h.avg_price, 0)), 5) from btc_volumn_day h where h.gecko_id = d.gecko_id and h.hh between TO_CHAR(NOW() - interval  '8 hours', 'HH24') and TO_CHAR(NOW() - interval  '5 hours', 'HH24')) as price_pre8h    \n"
-                        + "           from  \n" + "               btc_volumn_day d \n"
-                        + "           where d.hh = (case when EXTRACT(MINUTE FROM NOW()) < 15 then TO_CHAR(NOW() - interval '1 hours', 'HH24') else TO_CHAR(NOW(), 'HH24') end) \n"
-                        + "           ) as tmp                                                                     \n"
-                        + "   ) as pre                                                                             \n"
-                        + " ) vector                                                                               \n"
-                        + "                                                                                        \n"
-                        + " where 1=1                                                                              \n"
-                        + " and vector.gecko_id = boll.gecko_id                                                    \n";
-
-                Query query = entityManager.createNativeQuery(sql, "BollAreaResponse");
-
-                @SuppressWarnings("unchecked")
-                List<BollAreaResponse> boll_anna_list = query.getResultList();
-                if (!CollectionUtils.isEmpty(boll_anna_list)) {
-
-                    List<BollArea> list = new ArrayList<BollArea>();
-                    for (BollAreaResponse dto : boll_anna_list) {
-                        BollArea entiy = (new ModelMapper()).map(dto, BollArea.class);
-                        list.add(entiy);
-                    }
-
-                    bollAreaRepository.deleteAll();
-                    bollAreaRepository.saveAll(list);
-                }
-            }
-
-            {
-                String sql = " select                                                                       \n"
-                        + "     gecko_id,                                                                   \n"
-                        + "     symbol,                                                                     \n"
-                        + "     hh,                                                                         \n"
-                        + "     curr_voulme,                                                                \n"
-                        + "     avg_vol_pre4h,                                                              \n"
-                        + "     ROUND(vol.curr_voulme / avg_vol_pre4h, 1) as vol_up_rate                    \n"
-                        + " from                                                                            \n"
-                        + " (                                                                               \n"
-                        + "     select                                                                      \n"
-                        + "         gecko_id,                                                               \n"
-                        + "         symbol,                                                                 \n"
-                        + "         hh,                                                                     \n"
-                        + "         ROUND(total_volume/1000000, 1) as curr_voulme,                          \n"
-                        + "         (select ROUND(AVG(COALESCE(h.total_volume, 0))/1000000, 1) from gecko_volumn_day h where h.gecko_id = d.gecko_id and h.hh between TO_CHAR(NOW() - interval  '4 hours', 'HH24') and TO_CHAR(NOW() - interval  '1 hours', 'HH24')) as avg_vol_pre4h \n"
-                        + "     from gecko_volumn_day d                                                     \n"
-                        + "     where d.hh = (case when EXTRACT(MINUTE FROM NOW()) < 15 then TO_CHAR(NOW() - interval '1 hours', 'HH24') else TO_CHAR(NOW(), 'HH24') end) \n"
-                        + " ) vol                                                                           \n"
-                        + " where                                                                           \n"
-                        + "     avg_vol_pre4h > 0                                                           \n"
-                        + " order by                                                                        \n"
-                        + "     vol.curr_voulme / avg_vol_pre4h desc                                        \n";
-
-                Query query = entityManager.createNativeQuery(sql, "GeckoVolumeUpPre4hResponse");
-
-                @SuppressWarnings("unchecked")
-                List<GeckoVolumeUpPre4hResponse> vol_list = query.getResultList();
-                if (!CollectionUtils.isEmpty(vol_list)) {
-                    geckoVolumeUpPre4hRepository.deleteAll();
-                    List<GeckoVolumeUpPre4h> saveList = new ArrayList<GeckoVolumeUpPre4h>();
-
-                    for (GeckoVolumeUpPre4hResponse dto : vol_list) {
-                        GeckoVolumeUpPre4h entity = (new ModelMapper()).map(dto, GeckoVolumeUpPre4h.class);
-                        entity.setGeckoid(dto.getGecko_id());
-                        saveList.add(entity);
-                    }
-                    geckoVolumeUpPre4hRepository.saveAll(saveList);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public String loadPremarket() {
         String sp_500 = getPreMarket("https://markets.businessinsider.com/index/s&p_500");
         String sp500_future = getPreMarket("https://markets.businessinsider.com/futures/s&p-500-futures");
@@ -2882,49 +2767,54 @@ public class BinanceServiceImpl implements BinanceService {
 
         String date_time = LocalDateTime.now().toString();
 
-        if (Utils.isNotBlank(Utils.switchTrendByHeken01(heken_list_d1))) {
-            if (Objects.equals(TREND_D1, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list_d1, 50)) {
+        // Database
+        String orderId_d1 = "CRYPTO_" + SYMBOL + "_1d";
+        if (Utils.isNotBlank(Utils.switchTrendByHeken01(heken_list_d1)) && Objects.equals(TREND_D1, Utils.TREND_LONG)
+                && Utils.isBelowMALine(heken_list_d1, 50)) {
 
-                logMsgPerHour("CRYPTO_D1_" + SYMBOL, Utils.appendSpace(list_d1.get(0).getId(), 20) + log,
-                        Utils.MINUTES_OF_1H);
+            logMsgPerHour("CRYPTO_D1_" + SYMBOL,
+                    Utils.appendSpace(Utils.getChartNameAndEpic(list_d1.get(0).getId()), 20) + log,
+                    Utils.MINUTES_OF_1H);
 
-                // Database
-                String orderId = "CRYPTO_" + SYMBOL + "_1d";
+            List<BigDecimal> body = Utils.getOpenCloseCandle(list_d1);
+            List<BigDecimal> low_high = Utils.getLowHighCandle(list_d1);
 
-                List<BigDecimal> body = Utils.getOpenCloseCandle(list_d1);
-                List<BigDecimal> low_high = Utils.getLowHighCandle(list_d1);
-
-                Orders entity = new Orders(orderId, date_time, Utils.TREND_LONG, list_d1.get(0).getCurrPrice(),
-                        body.get(0), body.get(1), low_high.get(0), low_high.get(1), "");
-                ordersRepository.save(entity);
+            Orders entity = new Orders(orderId_d1, date_time, Utils.TREND_LONG, list_d1.get(0).getCurrPrice(),
+                    body.get(0), body.get(1), low_high.get(0), low_high.get(1), "");
+            ordersRepository.save(entity);
+        } else {
+            Orders entity = ordersRepository.findById(orderId_d1).orElse(null);
+            if (Objects.nonNull(entity)) {
+                ordersRepository.deleteById(orderId_d1);
             }
         }
         // ------------------------------------------------------------------
-
+        // TODO: initCryptoTrend
         List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 55);
         List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
         String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
-        if (!Objects.equals(trend_h4, Utils.TREND_LONG)) {
-            return Utils.CRYPTO_TIME_4H;
-        }
         String switch_trend = Utils.switchTrendByHeken01(heken_list_h4);
-        if (Utils.isNotBlank(switch_trend)) {
-            return Utils.CRYPTO_TIME_4H;
-        }
-        if (Utils.isAboveMALine(heken_list_h4, 50)) {
-            return Utils.CRYPTO_TIME_4H;
-        }
 
-        logMsgPerHour("CRYPTO_H4_" + SYMBOL,
-                Utils.appendSpace(Utils.getChartNameAndEpic(list_h4.get(0).getId()), 20) + log, Utils.MINUTES_OF_4H);
+        String orderId_h4 = "CRYPTO_" + SYMBOL + "_4h";
+        if (Objects.equals(trend_h4, Utils.TREND_LONG) && Utils.isNotBlank(switch_trend)
+                && Utils.isBelowMALine(heken_list_h4, 50)) {
 
-        // Database
-        String orderId = "CRYPTO_" + SYMBOL + "_4h";
-        List<BigDecimal> body = Utils.getOpenCloseCandle(list_h4);
-        List<BigDecimal> low_high = Utils.getLowHighCandle(list_h4);
-        Orders entity = new Orders(orderId, date_time, Utils.TREND_LONG, list_h4.get(0).getCurrPrice(), body.get(0),
-                body.get(1), low_high.get(0), low_high.get(1), "");
-        ordersRepository.save(entity);
+            logMsgPerHour("CRYPTO_H4_" + SYMBOL,
+                    Utils.appendSpace(Utils.getChartNameAndEpic(list_h4.get(0).getId()), 20) + log,
+                    Utils.MINUTES_OF_4H);
+
+            // Database
+            List<BigDecimal> body = Utils.getOpenCloseCandle(list_h4);
+            List<BigDecimal> low_high = Utils.getLowHighCandle(list_h4);
+            Orders entity = new Orders(orderId_h4, date_time, Utils.TREND_LONG, list_h4.get(0).getCurrPrice(),
+                    body.get(0), body.get(1), low_high.get(0), low_high.get(1), "");
+            ordersRepository.save(entity);
+        } else {
+            Orders entity = ordersRepository.findById(orderId_h4).orElse(null);
+            if (Objects.nonNull(entity)) {
+                ordersRepository.deleteById(orderId_h4);
+            }
+        }
 
         return Utils.CRYPTO_TIME_4H;
     }
@@ -3129,7 +3019,7 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO createReport
         String msg_forx = "";
         String msg_futu = "";
-        String msg_scap = "";
+        String msg_spot = "";
         List<String> list_d1_switch_trend = new ArrayList<String>();
         List<String> list_h4_switch_trend = new ArrayList<String>();
         List<Orders> list_all = ordersRepository.getTrend_H4List();
@@ -3223,18 +3113,19 @@ public class BinanceServiceImpl implements BinanceService {
                         .replace("_1h", "");
 
                 String type = "";
-                boolean isFutu = false;
                 if (Utils.COINS_FUTURES.contains(symbol)) {
-                    isFutu = true;
                     type = "  (Futures)   ";
+
+                    if (Utils.isNotBlank(msg_futu)) {
+                        msg_futu += ",";
+                    }
+                    msg_futu += symbol;
                 } else {
                     type = "  (Spot)      ";
-                }
-
-                if (isFutu) {
-                    msg_futu += symbol + ",";
-                } else {
-                    msg_scap += symbol + ",";
+                    if (Utils.isNotBlank(msg_spot)) {
+                        msg_spot += ",";
+                    }
+                    msg_spot += symbol;
                 }
 
                 String tmp_msg = Utils.createLineCrypto(entity, symbol, type);
@@ -3242,16 +3133,16 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        if (Utils.isNotBlank(msg_futu + msg_scap)) {
+        if (Utils.isNotBlank(msg_futu + msg_spot)) {
             String EVENT_ID = EVENT_PUMP + "_REPORT_CRYPTO_" + Utils.getCurrentYyyyMmDd_HH_Blog4h();
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
                 String msg_crypto = "";
                 msg_crypto += "(Crypto):" + Utils.new_line_from_service;
                 msg_crypto += "(Futu)" + msg_futu + Utils.new_line_from_service;
-                msg_crypto += "(Spot)" + msg_scap + Utils.new_line_from_service;
+                msg_crypto += "(Spot)" + msg_spot + Utils.new_line_from_service;
 
                 Utils.logWritelnDraft(msg_crypto.replace(Utils.new_line_from_service, "\n"));
-                sendMsgPerHour(EVENT_ID, msg_crypto, true);
+                // sendMsgPerHour(EVENT_ID, msg_crypto, true);
             }
         }
 
@@ -3377,7 +3268,12 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")
                         && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
-                    result += analysis("(  H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
+
+                    if (isTrendWeakening(dto_h1.getTrend(), EPIC, Utils.CAPITAL_TIME_HOUR_4)) {
+                        result += analysis("(H4H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
+                    } else {
+                        result += analysis("(  H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
+                    }
                 }
             }
 
@@ -3423,6 +3319,113 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         return "";
+    }
+
+    // H1 & H4 nguoc huong -> thong bao cat lenh.
+    // Xu huong H4 cung xu huong nhung yeu di? Msg thong bao take profit.
+    // Xu huong H1 cung xu huong nhung yeu di? Log thong bao.
+    @Override
+    @Transactional
+    @SuppressWarnings("unused")
+    public void monitorProfit() {
+        List<String> EPICS_ONE_WAY = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "GER40", "USOIL");
+        List<String> EPICS_FOREXS = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
+                "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDUSD", "USDCAD",
+                "USDCHF", "USDJPY", "CHFJPY");
+        try {
+            List<String> LIST_BUYING = Arrays.asList("USDCHF");
+            List<String> LIST_SELLING = Arrays.asList("USOIL", "GBPNZD", "GBPJPY", "EURNZD", "EURJPY");
+
+            List<String> ARR = new ArrayList<String>();
+            ARR.addAll(LIST_BUYING);
+            ARR.addAll(LIST_SELLING);
+            Collections.sort(ARR);
+
+            for (String EPIC : ARR) {
+                // EPIC = "EURNZD";
+                String ACTION = LIST_BUYING.contains(EPIC) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+
+                List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);
+                List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+
+                List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
+                List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
+
+                String trend_h1 = Utils.getTrendByHekenAshiList(heken_list_h1);
+                String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
+
+                String msg = "";
+                String EVENT_ID = "PROFIT" + EPIC + ACTION + trend_h4 + trend_h1 + Utils.getCurrentYyyyMmDd_HH();
+
+                if (!Objects.equals(ACTION, trend_h4) && !Objects.equals(ACTION, trend_h1)) {
+                    msg = Utils.appendSpace("(Danger)", 15) + Utils.appendSpace(EPIC, 10) + "("
+                            + Utils.appendSpace(ACTION, 4) + ").but.H4:" + "(" + Utils.appendSpace(trend_h4, 4)
+                            + ").H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
+
+                    String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
+                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_5M);
+                }
+
+                if ((Objects.equals(ACTION, trend_h4) && !Objects.equals(ACTION, trend_h1))
+                        || (!Objects.equals(ACTION, trend_h4) && Objects.equals(ACTION, trend_h1))) {
+                    msg = Utils.appendSpace("(Notify)", 15) + Utils.appendSpace(EPIC, 10) + "("
+                            + Utils.appendSpace(ACTION, 4) + ").but.H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ")"
+                            + ".H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
+
+                    String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
+                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_5M);
+                }
+
+                if (Objects.equals(ACTION, trend_h4) && isTrendWeakening(ACTION, EPIC, Utils.CAPITAL_TIME_HOUR_4)) {
+                    msg = Utils.appendSpace("(TakeProfit)", 15) + Utils.appendSpace(EPIC, 10) + "("
+                            + Utils.appendSpace(ACTION, 4) + ").but.The.trend.(H4).is.weakening.";
+
+                    String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
+                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_5M);
+                }
+
+                if ((msg.contains("Danger") || msg.contains("TakeProfit"))
+                        && isReloadAfter(Utils.MINUTES_OF_1H, EVENT_ID)) {
+                    sendMsgPerHour(EVENT_ID, msg, true);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean isTrendWeakening(String trend_target, String EPIC, String CAPITAL_TIME_XX) {
+        List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+        List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
+        String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
+        if (!Objects.equals(trend_target, trend_h4)) {
+            return false;
+        }
+
+        int count = 0;
+        BtcFutures dto_1 = heken_list_h4.get(1);
+        for (int index = 2; index <= 5; index++) {
+            BtcFutures dto = heken_list_h4.get(index);
+            if (dto_1.isUptrend() != dto.isUptrend()) {
+                count += 1;
+            }
+
+            if (dto_1.isUptrend()) {
+                if (dto_1.getPrice_close_candle().compareTo(dto.getPrice_close_candle()) <= 0) {
+                    count += 1;
+                }
+            } else {
+                if (dto.getPrice_close_candle().compareTo(dto_1.getPrice_close_candle()) >= 0) {
+                    count += 1;
+                }
+            }
+        }
+
+        if (count > 0) {
+            return true;
+        }
+
+        return false;
     }
 
     private void outputLog(String prefix_id, String EPIC, Orders dto_entry, Orders dto_sl, String append) {

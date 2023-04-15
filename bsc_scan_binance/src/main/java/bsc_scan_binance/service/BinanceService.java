@@ -11,7 +11,7 @@ public interface BinanceService {
 
     List<CandidateTokenCssResponse> getList(Boolean isOrderByBynaceVolume);
 
-    public void monitorBollingerBandwidth(Boolean isCallFormBot);
+    public void monitorProfit();
 
     public String loadPremarket();
 
