@@ -2821,20 +2821,22 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String sendMsgKillLongShort(String SYMBOL) {
-        List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 15);
-        List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 15);
-
-        List<BtcFutures> heken_list_d1 = Utils.getHekenList(list_d1);
+        List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 50);
         List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
-
-        String TREND_D1 = Utils.getTrendByHekenAshiList(heken_list_d1);
         String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
-
-        if (!Objects.equals(TREND_D1, trend_h4)) {
+        String switch_trend = Utils.switchTrendByHeken01(heken_list_h4);
+        if (Utils.isBlank(switch_trend)) {
             return "";
         }
 
-        String switch_trend = Utils.switchTrendByHeken01(heken_list_h4);
+        if (Objects.equals(Utils.TREND_LONG, trend_h4) && Utils.isAboveMALine(heken_list_h4, 50)) {
+            return "";
+        }
+
+        if (Objects.equals(Utils.TREND_SHORT, trend_h4) && Utils.isBelowMALine(heken_list_h4, 50)) {
+            return "";
+        }
+
         if (Utils.isNotBlank(switch_trend)) {
             // TODO sendMsgKillLongShort
             String msg = "";
@@ -2954,7 +2956,7 @@ public class BinanceServiceImpl implements BinanceService {
                     .toLocalDateTime();
             long elapsedMinutes = Duration.between(created_time, LocalDateTime.now()).toMinutes();
             required_update_bars_csv = false;
-            if (elapsedMinutes > Utils.MINUTES_OF_15M) {
+            if (elapsedMinutes > (Utils.MINUTES_OF_15M + 5)) {
                 required_update_bars_csv = true;
                 Utils.logWritelnDraft(
                         "Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! \n");
@@ -3306,6 +3308,14 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal end_body_price = body.get(1);
 
         BigDecimal bread = Utils.calcMaxBread(list);
+        if (Objects.equals(Utils.CAPITAL_TIME_DAY, CAPITAL_TIME_XX)
+                || Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX)) {
+            // bread = Utils.calcMaxBread(list);
+        }
+        if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
+            // bread = Utils.calcMaxCandleHigh(list);
+        }
+
         List<BigDecimal> low_high = Utils.getLowHighCandle(list);
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
@@ -3328,6 +3338,18 @@ public class BinanceServiceImpl implements BinanceService {
         CAPITAL_LIST.addAll(Utils.EPICS_ONE_WAY);
         CAPITAL_LIST.addAll(Utils.EPICS_FOREXS);
 
+        int count = 0;
+        for (String EPIC : CAPITAL_LIST) {
+            Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
+            if (Objects.nonNull(dto_w1)) {
+                analysis("(patern_0)", EPIC, Utils.CAPITAL_TIME_DAY, dto_w1.getTrend(), false);
+                count += 1;
+            }
+        }
+        if (count > 0) {
+            Utils.logWritelnDraft("");
+        }
+
         String msg = "";
         for (String EPIC : CAPITAL_LIST) {
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
@@ -3346,14 +3368,12 @@ public class BinanceServiceImpl implements BinanceService {
             String TREND_D1 = dto_d1.getTrend();
 
             String result = "";
-            analysis("(patern_0)", EPIC, Utils.CAPITAL_TIME_DAY, TREND_W1, false);
-
             if (Objects.equals(TREND_W1, TREND_D1)) {
                 if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
                     result += analysis("(WDH4, 00)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, false);
                 }
 
-                if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")
+                if (Objects.equals(TREND_D1, dto_h1.getTrend()) && dto_h1.getNote().contains("50")
                         && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
                     result += analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
                 }
@@ -3361,15 +3381,18 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ------------------------------Scalping H4------------------------------
             if (!Utils.EPICS_INDEXS.contains(EPIC) && !Objects.equals(TREND_W1, TREND_D1)) {
-                if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
+                if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)
+                        && Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
                     result += analysis("( DH4, 00)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, false);
                 }
 
-                if (Objects.equals(TREND_D1, dto_h4.getTrend()) && dto_h4.getNote().contains("_10")) {
+                if (Objects.equals(TREND_D1, dto_h4.getTrend()) && dto_h4.getNote().contains("_10")
+                        && Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
                     result += analysis("( DH4, 10)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, false);
                 }
 
-                if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
+                if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)
+                        && Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
                     result += analysis("(  H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
                 }
 

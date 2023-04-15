@@ -3522,8 +3522,8 @@ public class Utils {
         BigDecimal tp_long = Utils.getBigDecimal(dto_entry.getEnd_body_price());
         BigDecimal tp_shot = Utils.getBigDecimal(dto_entry.getStr_body_price());
 
-        String str_long = calc_BUF_Long_Forex(risk, EPIC, en_long, sl_long, tp_long);
-        String str_shot = calc_BUF_Shot_Forex(risk, EPIC, en_shot, sl_shot, tp_shot);
+        String str_long = calc_BUF_Long_Forex(risk, EPIC, dto_entry.getCurrent_price(), en_long, sl_long, tp_long);
+        String str_shot = calc_BUF_Shot_Forex(risk, EPIC, dto_entry.getCurrent_price(), en_shot, sl_shot, tp_shot);
 
         if (Objects.equals(trend, Utils.TREND_LONG)) {
             result += str_long;
@@ -3539,48 +3539,69 @@ public class Utils {
         return Utils.getChartName(dto_entry) + ":" + result;
     }
 
-    public static String calc_BUF_Long_Forex(BigDecimal risk, String EPIC, BigDecimal en_long, BigDecimal sl_long,
-            BigDecimal tp_long) {
+    public static String calc_BUF_Long_Forex(BigDecimal risk, String EPIC, BigDecimal cur_price, BigDecimal en_long,
+            BigDecimal sl_long, BigDecimal tp_long) {
 
         BigDecimal entry_calc = en_long.add(tp_long);
         entry_calc = entry_calc.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
 
+        MoneyAtRiskResponse money_now = new MoneyAtRiskResponse(EPIC, risk, cur_price, sl_long, tp_long);
         MoneyAtRiskResponse money_long = new MoneyAtRiskResponse(EPIC, risk, en_long, sl_long, tp_long);
 
         String temp = "";
         temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)) + " ", 10);
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 8);
+
         temp += Utils.appendLeft(removeLastZero(money_long.calcLot()), 8) + "(lot)";
-        temp += "/" + removeLastZero(risk).replace(".0", "") + "$";
+        temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
 
         BigDecimal risk_x5 = risk.multiply(BigDecimal.valueOf(5));
+
         MoneyAtRiskResponse money_x5 = new MoneyAtRiskResponse(EPIC, risk_x5, en_long, sl_long, tp_long);
+        MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_long, tp_long);
+
         temp += " ";
         temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
-        temp += "/" + removeLastZero(risk_x5).replace(".0", "") + "$";
+        temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
+
+        temp += "     Now(" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 5) + "(lot)";
+        temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
+        temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) + "(lot)";
+        temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
+        temp += ") ";
 
         String result = Utils.appendSpace("(BUY )" + temp, 38);
         return result;
     }
 
-    public static String calc_BUF_Shot_Forex(BigDecimal risk, String EPIC, BigDecimal en_shot, BigDecimal sl_shot,
-            BigDecimal tp_shot) {
+    public static String calc_BUF_Shot_Forex(BigDecimal risk, String EPIC, BigDecimal cur_price, BigDecimal en_shot,
+            BigDecimal sl_shot, BigDecimal tp_shot) {
 
         BigDecimal entry_calc = en_shot.add(tp_shot);
         entry_calc = entry_calc.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
 
+        MoneyAtRiskResponse money_now = new MoneyAtRiskResponse(EPIC, risk, cur_price, sl_shot, tp_shot);
         MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, en_shot, sl_shot, tp_shot);
+
         String temp = "";
         temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)) + " ", 10);
         temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 8);
         temp += Utils.appendLeft(removeLastZero(money_short.calcLot()), 8) + "(lot)";
-        temp += "/" + removeLastZero(risk).replace(".0", "") + "$";
+        temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
 
         BigDecimal risk_x5 = risk.multiply(BigDecimal.valueOf(5));
         MoneyAtRiskResponse money_x5 = new MoneyAtRiskResponse(EPIC, risk_x5, en_shot, sl_shot, tp_shot);
+        MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_shot, tp_shot);
+
         temp += " ";
         temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
-        temp += "/" + removeLastZero(risk_x5).replace(".0", "") + "$";
+        temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
+
+        temp += "     Now(" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 5) + "(lot)";
+        temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
+        temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) + "(lot)";
+        temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
+        temp += ") ";
 
         String result = Utils.appendSpace("(SELL)" + temp, 38);
         return result;
