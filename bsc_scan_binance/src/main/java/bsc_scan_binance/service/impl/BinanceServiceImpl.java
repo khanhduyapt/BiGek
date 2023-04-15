@@ -3388,6 +3388,10 @@ public class BinanceServiceImpl implements BinanceService {
         }
     }
 
+    // 8-10-13-17-21-26-34
+    // Tokyo: 05:45~06:15 Đóng lệnh: 11:25~11:45
+    // London: 13:45~14:15 Đóng lệnh: 21:25~23:25
+    // NewYork: 18:45~19:15 Đóng lệnh: 02:25~03:25
     @Override
     @Transactional
     public String initCryptoTrend(String SYMBOL) {
@@ -3429,13 +3433,11 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // ------------------------------------------------------------------
-
+        String orderId_h4 = "CRYPTO_" + SYMBOL + "_4h";
         List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 55);
         List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
         String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
         String switch_trend = Utils.switchTrendByHeken01(heken_list_h4);
-
-        String orderId_h4 = "CRYPTO_" + SYMBOL + "_4h";
 
         if (LIST_BUYING.contains(SYMBOL)) {
             String msg = "(STOP_BUY)" + SYMBOL + "(H4_CHANGE_TO_SELL)";
@@ -3445,6 +3447,7 @@ public class BinanceServiceImpl implements BinanceService {
                 sendMsgPerHour(EVENT_ID, msg, true);
                 logMsgPerHour("CRYPTO_H4_" + SYMBOL, msg + log, Utils.MINUTES_OF_1H);
             } else if (Objects.equals(trend_h4, Utils.TREND_SHORT) && !Objects.equals("BTC", SYMBOL)) {
+                sendMsgPerHour(EVENT_ID, msg, true);
                 logMsgPerHour("CRYPTO_H4_" + SYMBOL, msg + log, Utils.MINUTES_OF_1H);
             }
         }
@@ -3485,8 +3488,3 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
 }
-
-// 8-10-13-17-21-26-34
-// Tokyo:   05:45~06:15 Đóng lệnh: 11:25~11:45
-// London:  13:45~14:15 Đóng lệnh: 21:25~23:25
-// NewYork: 18:45~19:15 Đóng lệnh: 02:25~03:25

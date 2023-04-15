@@ -183,8 +183,8 @@ public class Utils {
             "SFP", "SHIB", "SKL", "SLP", "SNM", "SNT", "SNX", "SOL", "SPELL", "SRM", "SSV", "STEEM", "STG", "STMX",
             "STORJ", "STPT", "STRAX", "STX", "SUN", "SUPER", "SUSHI", "SXP", "SYN", "SYS", "THETA", "TKO", "TLM",
             "TOMO", "TORN", "TRB", "TROY", "TRU", "TRX", "TVK", "TWT", "UFT", "UNFI", "UNI", "UTK", "VGX", "VIB",
-            "VIDT", "VITE", "VOXEL", "VTHO", "WAN", "WAVES", "WAXP", "WIN", "WING", "WNXM", "WRX", "WTC", "XEC", "XLM",
-            "XMR", "XNO", "XRP", "XTZ", "XVG", "XVS", "YFI", "YFII", "YGG", "ZEC", "ZEN", "ZIL", "ZRX");
+            "VIDT", "VITE", "VOXEL", "VTHO", "WAN", "WAVES", "WAXP", "WIN", "WING", "WNXM", "WOO", "WRX", "WTC", "XEC",
+            "XLM", "XMR", "XNO", "XRP", "XTZ", "XVG", "XVS", "YFI", "YFII", "YGG", "ZEC", "ZEN", "ZIL", "ZRX");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("ART", "BNT", "PHT", "DGT", "DODO",
             "AERGO", "ARK", "BIDR", "CREAM", "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM",
@@ -201,13 +201,13 @@ public class Utils {
             "BTC", "C98", "CELO", "CELR", "CFX", "CHR", "CHZ", "CKB", "COCOS", "COMP", "COTI", "CRV", "CTK", "CTSI",
             "CVX", "DAR", "DASH", "DENT", "DGB", "DODO", "DOGE", "DOT", "DUSK", "DYDX", "EGLD", "ENJ", "ENS", "EOS",
             "ETC", "ETH", "FET", "FIL", "FLM", "FLOW", "FTM", "FXS", "GAL", "GALA", "GMT", "GMX", "GRT", "GTC", "HBAR",
-            "HIGH", "HOOK", "HOT", "ICP", "ICX", "ID", "IMX", "INJ", "IOST", "IOTA", "IOTX", "JASMY", "JOE", "KAVA",
-            "KLAY", "KNC", "KSM", "LDO", "LEVER", "LINA", "LINK", "LIT", "LPT", "LQTY", "LRC", "LTC", "MAGIC", "MANA",
-            "MASK", "MATIC", "MINA", "MKR", "MTL", "NEAR", "NEBL", "NEO", "NKN", "OCEAN", "OGN", "ONE", "ONT", "OP",
-            "PEOPLE", "PERP", "PHB", "QNT", "QTUM", "REEF", "REN", "RLC", "RNDR", "ROSE", "RSR", "RUNE", "RVN", "SAND",
-            "SFP", "SKL", "SNX", "SOL", "SPELL", "SSV", "STG", "STMX", "STORJ", "STX", "SUSHI", "SXP", "THETA", "TLM",
-            "TOMO", "TRB", "TRU", "TRX", "UNFI", "UNI", "VET", "WAVES", "XEM", "XLM", "XMR", "XRP", "XTZ", "YFI", "ZEC",
-            "ZEN", "ZIL", "ZRX");
+            "HIGH", "HOOK", "HOT", "HFT", "ICP", "ICX", "ID", "IMX", "INJ", "IOST", "IOTA", "IOTX", "JASMY", "JOE",
+            "KAVA", "KLAY", "KNC", "KSM", "LDO", "LEVER", "LINA", "LINK", "LIT", "LPT", "LQTY", "LRC", "LTC", "MAGIC",
+            "MANA", "MASK", "MATIC", "MINA", "MKR", "MTL", "NEAR", "NEBL", "NEO", "NKN", "OCEAN", "OGN", "ONE", "ONT",
+            "OP", "PEOPLE", "PERP", "PHB", "QNT", "QTUM", "RDNT", "REEF", "REN", "RLC", "RNDR", "ROSE", "RSR", "RUNE",
+            "RVN", "SAND", "SFP", "SKL", "SNX", "SOL", "SPELL", "SSV", "STG", "STMX", "STORJ", "STX", "SUSHI", "SXP",
+            "THETA", "TLM", "TOMO", "TRB", "TRU", "TRX", "UNFI", "UNI", "VET", "WAVES", "XEM", "XLM", "XMR", "XRP",
+            "XTZ", "YFI", "ZEC", "ZEN", "ZIL", "ZRX", "WOO");
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
