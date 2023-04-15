@@ -115,6 +115,10 @@ public class BscScanBinanceApplication {
 
                 while (index_crypto < total) {
                     try {
+                        if (isReloadAfter(5, "MsgKillZone")) {
+                            alertMsgKillZone(binance_service);
+                        }
+
                         // if (Utils.isWeekday() && Utils.isBusinessTime_6h_to_22h() &&
                         // Utils.isAllowSendMsg())
                         {
@@ -181,6 +185,56 @@ public class BscScanBinanceApplication {
             System.out.println("Duydk:" + e.getMessage());
             e.printStackTrace();
             System.exit(0);
+        }
+    }
+
+    public static void alertMsgKillZone(BinanceService binance_service) {
+        LocalTime kill_zone_tk = LocalTime.parse("05:45:00"); // to: 06:15
+        LocalTime kill_zone_ld = LocalTime.parse("13:45:00"); // to: 14:15
+        LocalTime kill_zone_ny = LocalTime.parse("18:45:00"); // to: 19:15
+        LocalTime cur_time = LocalTime.now();
+
+        String EVENT_ID = "KILL_ZONE_" + Utils.getCurrentYyyyMmDd_HH();
+
+        long elapsedMinutes_tk = Duration.between(kill_zone_tk, cur_time).toMinutes();
+        if ((0 <= elapsedMinutes_tk) && (elapsedMinutes_tk <= 30)) {
+            binance_service.sendMsgPerHour(EVENT_ID, "Start_Tokyo_Kill_Zone", true);
+            binance_service.logMsgPerHour(EVENT_ID, "Start_Tokyo_Kill_Zone", Utils.MINUTES_OF_15M);
+        }
+
+        long elapsedMinutes_ld = Duration.between(kill_zone_ld, cur_time).toMinutes();
+        if ((0 <= elapsedMinutes_ld) && (elapsedMinutes_ld <= 30)) {
+            binance_service.sendMsgPerHour(EVENT_ID, "Start_London_Kill_Zone", true);
+            binance_service.logMsgPerHour(EVENT_ID, "Start_London_Kill_Zone", Utils.MINUTES_OF_15M);
+        }
+
+        long elapsedMinutes_ny = Duration.between(kill_zone_ny, cur_time).toMinutes();
+        if ((0 <= elapsedMinutes_ny) && (elapsedMinutes_ny <= 30)) {
+            binance_service.sendMsgPerHour(EVENT_ID, "Start_NewYork_Kill_Zone", true);
+            binance_service.logMsgPerHour(EVENT_ID, "Start_NewYork_Kill_Zone", Utils.MINUTES_OF_15M);
+        }
+
+        // ---------------------------------------------------------------------------
+        LocalTime close_Sydney_session = LocalTime.parse("11:15:00"); // to: 11:45
+        LocalTime close_Tokyo_session = LocalTime.parse("15:15:00"); // to: 15:45
+        LocalTime close_London_session = LocalTime.parse("22:15:00"); // to: 22:45
+
+        long close_Sydney = Duration.between(close_Sydney_session, cur_time).toMinutes();
+        if ((0 <= close_Sydney) && (close_Sydney <= 30)) {
+            binance_service.sendMsgPerHour(EVENT_ID, "Close_Sydney_Session", true);
+            binance_service.logMsgPerHour(EVENT_ID, "Close_Sydney_Session", Utils.MINUTES_OF_15M);
+        }
+
+        long close_Tokyo = Duration.between(close_Tokyo_session, cur_time).toMinutes();
+        if ((0 <= close_Tokyo) && (close_Tokyo <= 30)) {
+            binance_service.sendMsgPerHour(EVENT_ID, "Close_Tokyo_Session", true);
+            binance_service.logMsgPerHour(EVENT_ID, "Close_Tokyo_Session", Utils.MINUTES_OF_15M);
+        }
+
+        long close_London = Duration.between(close_London_session, cur_time).toMinutes();
+        if ((0 <= close_London) && (close_London <= 30)) {
+            binance_service.sendMsgPerHour(EVENT_ID, "Close_London_Session", true);
+            binance_service.logMsgPerHour(EVENT_ID, "Close_London_Session", Utils.MINUTES_OF_15M);
         }
     }
 

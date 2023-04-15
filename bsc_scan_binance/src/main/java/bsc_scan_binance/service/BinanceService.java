@@ -61,4 +61,6 @@ public interface BinanceService {
 
     public void initWeekTrend();
 
+    public void logMsgPerHour(String epic_id, String log, Integer MINUTES_OF_Xx);
+
 }
