@@ -3351,6 +3351,10 @@ public class BinanceServiceImpl implements BinanceService {
             // TODO: scapForex
             // Bat buoc phai danh theo khung D1, khong co keo thi nghi.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh nguoc xu huong D1 & H4)
+            if (!Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
+                continue;
+            }
+
             String TREND_W1 = dto_w1.getTrend();
             String TREND_D1 = dto_d1.getTrend();
 
@@ -3358,24 +3362,19 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.equals(TREND_W1, TREND_D1)) {
                 // H4 H1 cung xu huong & H4 dao chieu khi vuot qua Ma50.
-                if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
-                    result += analysis("(WDH4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, true);
-                }
+                result += analysis("(WDH4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, true);
 
                 // H4 H1 cung xu huong & H1 dao chieu khi vuot qua Ma50.
-                if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
-                    result += analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, TREND_D1, true);
-                }
+                result += analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, TREND_D1, true);
 
                 // H4 H1 M15 cung xu huong & H1+M15 cung 1 phia Ma50, M15 dao chieu.
-                if (Objects.equals(TREND_D1, dto_h4.getTrend()) && Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())
-                        && dto_h1.getNote().contains("50")) {
+                if (Objects.equals(TREND_D1, dto_h4.getTrend()) && dto_h1.getNote().contains("50")) {
                     result += analysis("(WD15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, TREND_D1, true);
                 }
             } else {
                 // ------------------------------Scalping H------------------------------
                 // H4 H1 cung xu huong & cung 1 phia cua Ma50, H4 dao chieu
-                if (dto_h1.getNote().contains("50") && Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
+                if (dto_h1.getNote().contains("50")) {
                     result += analysis("(H1H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
                 }
 
@@ -3391,7 +3390,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // ------------------------------Scalping M------------------------------
                 // H4 H1 M15 cung xu huong & H1+M15 cung 1 phia Ma50, M15 dao chieu.
-                if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend()) && dto_h1.getNote().contains("50")) {
+                if (dto_h1.getNote().contains("50")) {
                     result += analysis("(H415, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, dto_h4.getTrend(), true);
                 }
             }
@@ -3446,6 +3445,10 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     @SuppressWarnings("unused")
     public void monitorProfit() {
+        if (required_update_bars_csv) {
+            return;
+        }
+
         List<String> EPICS_ONE_WAY = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "GER40", "USOIL");
 
         List<String> EPICS_FOREXS = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
@@ -3542,21 +3545,28 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
+                List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);
                 List<BtcFutures> list_15 = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
-                if (CollectionUtils.isEmpty(list_15)) {
+
+                if (CollectionUtils.isEmpty(list_h1) || CollectionUtils.isEmpty(list_15)) {
                     continue;
                 }
 
                 List<BtcFutures> heken_list_15 = Utils.getHekenList(list_15);
                 String trend_15 = Utils.getTrendByHekenAshiList(heken_list_15);
+
+                List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
+                String trend_h1 = Utils.getTrendByHekenAshiList(heken_list_h1);
+
                 String ACTION = LIST_M15_BUYING.contains(EPIC) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
-                if (!Objects.equals(ACTION, trend_15)) {
+                if (!Objects.equals(ACTION, trend_15) || !Objects.equals(ACTION, trend_h1)) {
                     String EVENT_ID = "PROFIT" + EPIC + ACTION + trend_15 + Utils.getCurrentYyyyMmDd_HH()
                             + Utils.getCurrentMinute_Blog15minutes();
 
                     String msg = Utils.appendSpace("(15)(Danger)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
-                            + Utils.appendSpace(EPIC, 10) + ".but.M15:" + "(" + Utils.appendSpace(trend_15, 4) + ")";
+                            + Utils.appendSpace(EPIC, 10) + ".but.M15:" + "(" + Utils.appendSpace(trend_15, 4) + ")"
+                            + ".H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
 
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
 
