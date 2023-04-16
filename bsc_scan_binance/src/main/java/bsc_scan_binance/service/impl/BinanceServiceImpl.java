@@ -3440,9 +3440,11 @@ public class BinanceServiceImpl implements BinanceService {
         // ---------------------------------------CRYPTO----------------------------------------
 
         CRYPTO_LIST_BUYING = Arrays.asList("TRU");
-        for (String SYMBOL : CRYPTO_LIST_BUYING) {
-            initCryptoTrend(SYMBOL);
-            BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS);
+        if (isReloadAfter(Utils.MINUTES_OF_15M, "MONITOR_CRYPTO")) {
+            for (String SYMBOL : CRYPTO_LIST_BUYING) {
+                initCryptoTrend(SYMBOL);
+                BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS);
+            }
         }
 
         // ----------------------------------------FOREX----------------------------------------
