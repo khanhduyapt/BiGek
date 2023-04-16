@@ -3356,9 +3356,9 @@ public class BinanceServiceImpl implements BinanceService {
                     result += analysis("(WDH4, 00)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, false);
                 }
 
-                if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")
-                        && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
-                    result += analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, TREND_D1, true);
+                if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend()) && dto_h4.getNote().contains("50")
+                        && dto_h1.getNote().contains("50") && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
+                    result += analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
                 }
             }
 
@@ -3382,9 +3382,9 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // ------------------------------Scalping 15------------------------------
-            if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")
-                    && Objects.equals(TREND_D1, dto_h4.getTrend())) {
-                result += analysis("(WD15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, TREND_D1, true);
+            if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend()) && dto_h4.getNote().contains("50")
+                    && dto_h1.getNote().contains("50")) {
+                result += analysis("(H 15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, dto_h1.getTrend(), true);
             }
 
             // -----------------------------------------------------------------------
