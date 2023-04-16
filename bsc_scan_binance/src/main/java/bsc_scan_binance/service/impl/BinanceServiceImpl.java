@@ -3349,49 +3349,49 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // TODO: scapForex
-            // Bat buoc phai danh theo khung D1, khong co keo thi nghi.
-            // (2023/04/12 da chay 3 tai khoan 20k vi danh nguoc xu huong D1 & H4)
+            // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
+            // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
             if (!Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
                 continue;
             }
 
             String TREND_W1 = dto_w1.getTrend();
             String TREND_D1 = dto_d1.getTrend();
+            String TREND_H4 = dto_h4.getTrend();
 
             String result = "";
-
             if (Objects.equals(TREND_W1, TREND_D1)) {
-                // H4 H1 cung xu huong & H4 dao chieu khi vuot qua Ma50.
+                // H4 dao chieu khi vuot qua Ma50.
                 result += analysis("(WDH4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, true);
 
-                // H4 H1 cung xu huong & H1 dao chieu khi vuot qua Ma50.
+                // H1 dao chieu khi vuot qua Ma50.
                 result += analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, TREND_D1, true);
 
-                // H4 H1 M15 cung xu huong & H1+M15 cung 1 phia Ma50, M15 dao chieu.
-                if (Objects.equals(TREND_D1, dto_h4.getTrend()) && dto_h1.getNote().contains("50")) {
+                // H1+M15 cung 1 phia Ma50, M15 dao chieu.
+                if (Objects.equals(TREND_D1, TREND_H4) && dto_h1.getNote().contains("50")) {
                     result += analysis("(WD15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, TREND_D1, true);
                 }
             } else {
                 // ------------------------------Scalping H------------------------------
-                // H4 H1 cung xu huong & cung 1 phia cua Ma50, H4 dao chieu
+                // H4 H1 cung 1 phia cua Ma50, H4 dao chieu
                 if (dto_h1.getNote().contains("50")) {
-                    result += analysis("(H1H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
+                    result += analysis("(H1H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_H4, true);
                 }
 
-                // H4 H1 cung xu huong & cung 1 phia cua Ma50, H1 dao chieu.
+                // H4 H1 cung 1 phia cua Ma50, H1 dao chieu.
                 if (dto_h4.getNote().contains("50")) {
-                    result += analysis("(H4H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h4.getTrend(), true);
+                    result += analysis("(H4H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, TREND_H4, true);
                 }
 
-                // H4 H1 M15 cung xu huong & H1 vuot qua Ma50 roi dao chieu.
+                // H1 vuot qua Ma50 roi dao chieu.
                 if (Objects.equals(dto_h1.getTrend(), dto_15.getTrend())) {
-                    result += analysis("(__H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h4.getTrend(), true);
+                    result += analysis("(__H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, TREND_H4, true);
                 }
 
                 // ------------------------------Scalping M------------------------------
-                // H4 H1 M15 cung xu huong & H1+M15 cung 1 phia Ma50, M15 dao chieu.
+                // H1+M15 cung 1 phia Ma50, M15 dao chieu.
                 if (dto_h1.getNote().contains("50")) {
-                    result += analysis("(H415, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, dto_h4.getTrend(), true);
+                    result += analysis("(H415, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, TREND_H4, true);
                 }
             }
             // -----------------------------------------------------------------------
