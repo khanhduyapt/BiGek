@@ -3144,8 +3144,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         List<String> LIST_WAITING = Arrays.asList("APT", "ARB", "AUDIO", "BAND", "BSW", "C98", "CELO", "CELR", "CHESS",
                 "CHZ", "CTK", "CTSI", "DAR", "DODO", "DOGE", "DYDX", "EGLD", "ENJ", "EOS", "FIL", "FLM", "GRT", "HOOK",
-                "ID", "IMX", "KAVA", "LEVER", "LIT", "LOKA", "MAGIC", "MASK", "MOB", "NEAR", "NKN", "ONE", "OP",
-                "PEOPLE", "PERL", "PHB", "ROSE", "SXP", "WOO", "XVS");
+                "ID", "IMX", "KAVA", "LEVER", "LIT", "LOKA", "MAGIC", "MASK", "MOB", "NEAR", "ONE", "OP", "PEOPLE",
+                "PERL", "PHB", "ROSE", "SXP", "WOO", "XVS");
 
         List<String> ARR_ALLOW_H4 = new ArrayList<String>();
         ARR_ALLOW_H4.addAll(LIST_BUYING);
