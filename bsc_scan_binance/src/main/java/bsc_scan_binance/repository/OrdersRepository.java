@@ -154,6 +154,10 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
             + "  ORDER BY det.gecko_id asc ", nativeQuery = true)
     public List<Orders> getCrypto_D1();
 
+    @Query(value = "  SELECT * FROM orders det   WHERE (det.gecko_id like 'CRYPTO_%_1w') "
+            + "  ORDER BY det.gecko_id asc ", nativeQuery = true)
+    public List<Orders> getCrypto_W1();
+
     // =======================================================================
     // delete:
     @Query(value = " SELECT * FROM orders det "
