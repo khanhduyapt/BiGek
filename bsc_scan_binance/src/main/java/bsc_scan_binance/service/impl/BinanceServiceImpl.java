@@ -3355,6 +3355,7 @@ public class BinanceServiceImpl implements BinanceService {
             String TREND_D1 = dto_d1.getTrend();
 
             String result = "";
+
             if (Objects.equals(TREND_W1, TREND_D1)) {
                 // H4 H1 cung xu huong & H4 dao chieu khi vuot qua Ma50.
                 if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
