@@ -3359,25 +3359,28 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
                     result += analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, TREND_D1, true);
                 }
+
+                if (Objects.equals(TREND_D1, dto_h4.getTrend()) && Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())
+                        && dto_h1.getNote().contains("50")) {
+                    result += analysis("(WD15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, dto_h1.getTrend(), true);
+                }
             } else {
-                // ------------------------------Scalping H4------------------------------
+                // ------------------------------Scalping H------------------------------
                 if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
-                    result += analysis("(H1H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
+                    result += analysis("(__H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
                 }
 
                 if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend()) && dto_h4.getNote().contains("50")) {
                     result += analysis("(H4H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
                 }
 
-                if (!Utils.EPICS_INDEXS.contains(EPIC)) {
-                    if (dto_h4.getNote().contains("50")) {
-                        result += analysis("(  H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
-                    }
+                if (dto_h4.getNote().contains("50")) {
+                    result += analysis("(__H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
+                }
 
-                    // ------------------------------Scalping 15------------------------------
-                    if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend()) && dto_h1.getNote().contains("50")) {
-                        result += analysis("(H_15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, dto_h1.getTrend(), true);
-                    }
+                // ------------------------------Scalping M------------------------------
+                if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend()) && dto_h1.getNote().contains("50")) {
+                    result += analysis("(__15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, dto_h1.getTrend(), true);
                 }
             }
             // -----------------------------------------------------------------------
