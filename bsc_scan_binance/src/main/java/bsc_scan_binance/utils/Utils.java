@@ -2035,9 +2035,9 @@ public class Utils {
         }
 
         BigDecimal ma = calcMA(list, length, 0);
-        List<BigDecimal> low_high = getLowHighCandle(list.subList(0, 2));
+        BigDecimal price = list.get(0).getPrice_close_candle();
 
-        if ((low_high.get(1).compareTo(ma) > 0)) {
+        if ((price.compareTo(ma) > 0)) {
             return true;
         }
 
@@ -2054,9 +2054,9 @@ public class Utils {
         }
 
         BigDecimal ma = calcMA(list, length, 0);
-        List<BigDecimal> low_high = getLowHighCandle(list.subList(0, 2));
+        BigDecimal price = list.get(0).getPrice_close_candle();
 
-        if ((low_high.get(0).compareTo(ma) < 0)) {
+        if ((price.compareTo(ma) < 0)) {
             return true;
         }
 
