@@ -2790,7 +2790,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(Utils.TREND_SHORT, trend_h4)) {
                 msg = " 🔻 " + Utils.getChartName(list_h4) + SYMBOL + "_kill_Long 💔 " + str_price;
             }
-            String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_HH_Blog4h();
+            String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_Blog4h();
             sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
 
             String log = " " + Utils.appendSpace(str_price, 15)
@@ -3116,8 +3116,9 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        if (isReloadAfter(Utils.MINUTES_OF_1H, "_REPORT_CRYPTO_") && Utils.isNotBlank(msg_futu)) {
-            String EVENT_ID = EVENT_PUMP + "_REPORT_CRYPTO_" + Utils.getCurrentYyyyMmDd_HH();
+        if (isReloadAfter(Utils.MINUTES_OF_4H, "_REPORT_CRYPTO_") && Utils.isNotBlank(msg_futu)) {
+            String EVENT_ID = EVENT_PUMP + "_REPORT_CRYPTO_" + Utils.getCurrentYyyyMmDd_Blog4h();
+
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
                 String msg_crypto = "";
                 msg_crypto += "(Futu)" + msg_futu + Utils.new_line_from_service;
@@ -3125,6 +3126,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnDraft(msg_crypto.replace(Utils.new_line_from_service, "\n"));
                 sendMsgPerHour(EVENT_ID, msg_crypto, true);
             }
+
         }
 
         Utils.writelnLogFooter_Forex();
@@ -3352,37 +3354,32 @@ public class BinanceServiceImpl implements BinanceService {
 
             String result = "";
             if (Objects.equals(TREND_W1, TREND_D1)) {
-                if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
-                    result += analysis("(WDH4, 00)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, false);
+                result += analysis("(WDH4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, true);
+
+                if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
+                    result += analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, TREND_D1, true);
+                }
+            } else {
+                // ------------------------------Scalping H4------------------------------
+                if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
+                    result += analysis("(H1H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
                 }
 
                 if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend()) && dto_h4.getNote().contains("50")) {
-                    result += analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
-                }
-            }
-
-            // ------------------------------Scalping H4------------------------------
-            if (!Utils.EPICS_INDEXS.contains(EPIC) && !Objects.equals(TREND_W1, TREND_D1)) {
-                if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
-                    result += analysis("(  H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
+                    result += analysis("(H4H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
                 }
 
-                if (dto_h4.getNote().contains("50")) {
-                    if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())
-                            || isTrendWeakening(dto_h1.getTrend(), EPIC, Utils.CAPITAL_TIME_HOUR_4)) {
-                        result += analysis("(H4H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
-                    } else {
+                if (!Utils.EPICS_INDEXS.contains(EPIC)) {
+                    if (dto_h4.getNote().contains("50")) {
                         result += analysis("(  H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
+                    }
+
+                    // ------------------------------Scalping 15------------------------------
+                    if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend()) && dto_h1.getNote().contains("50")) {
+                        result += analysis("(H_15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, dto_h1.getTrend(), true);
                     }
                 }
             }
-
-            // ------------------------------Scalping 15------------------------------
-            if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend()) && dto_h4.getNote().contains("50")
-                    && dto_h1.getNote().contains("50")) {
-                result += analysis("(H 15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, dto_h1.getTrend(), true);
-            }
-
             // -----------------------------------------------------------------------
             if (Utils.isNotBlank(result) && isReloadAfter(Utils.MINUTES_OF_1H, "ScapForex_" + EPIC)) {
                 msg += result;

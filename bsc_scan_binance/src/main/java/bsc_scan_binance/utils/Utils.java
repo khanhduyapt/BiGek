@@ -1320,7 +1320,7 @@ public class Utils {
         String result = getCurrentYyyyMmDd_HH_Blog15m() + "_";
 
         if (id.contains("_4h_") || id.contains("HOUR_4")) {
-            return getCurrentYyyyMmDd_HH_Blog4h() + "_";
+            return getCurrentYyyyMmDd_Blog4h() + "_";
         }
 
         if (id.contains("_1h_") || id.contains("HOUR")) {
@@ -1362,7 +1362,7 @@ public class Utils {
         return result;
     }
 
-    public static String getCurrentYyyyMmDd_HH_Blog4h() {
+    public static String getCurrentYyyyMmDd_Blog4h() {
         String result = Utils.convertDateToString("yyyy.MM.dd_", Calendar.getInstance().getTime());
         int HH = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         HH = HH / 4;
