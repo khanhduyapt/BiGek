@@ -3382,14 +3382,15 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // ------------------------------Scalping 15------------------------------
-            if (Objects.equals(TREND_W1, TREND_D1) && Objects.equals(TREND_D1, dto_h4.getTrend())) {
+            if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")
+                    && Objects.equals(TREND_D1, dto_h4.getTrend())) {
                 result += analysis("(WD15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, TREND_D1, true);
             }
 
+            // -----------------------------------------------------------------------
             if (Utils.isNotBlank(result) && isReloadAfter(Utils.MINUTES_OF_1H, "ScapForex_" + EPIC)) {
                 msg += result;
             }
-
         }
 
         if (Utils.isNotBlank(msg)) {
