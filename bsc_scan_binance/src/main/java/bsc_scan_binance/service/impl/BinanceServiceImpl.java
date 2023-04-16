@@ -3356,22 +3356,18 @@ public class BinanceServiceImpl implements BinanceService {
                     result += analysis("(WDH4, 00)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, false);
                 }
 
-                if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend()) && dto_h4.getNote().contains("50")
-                        && dto_h1.getNote().contains("50") && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
+                if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend()) && dto_h4.getNote().contains("50")) {
                     result += analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
                 }
             }
 
             // ------------------------------Scalping H4------------------------------
             if (!Utils.EPICS_INDEXS.contains(EPIC) && !Objects.equals(TREND_W1, TREND_D1)) {
-                if (dto_h4.getNote().contains("50") && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)
-                        && Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
+                if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
                     result += analysis("(  H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
                 }
 
-                if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")
-                        && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
-
+                if (dto_h4.getNote().contains("50")) {
                     if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())
                             || isTrendWeakening(dto_h1.getTrend(), EPIC, Utils.CAPITAL_TIME_HOUR_4)) {
                         result += analysis("(H4H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
@@ -3410,7 +3406,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
         // ----------------------------TREND------------------------
         if (Utils.isNotBlank(dto.getNote())) {
-            if (requireMa50 && !dto.getNote().contains("50")) {
+            if (requireMa50 && (!dto.getNote().contains("50") || !dto.getNote().contains(Utils.TEXT_SWITCH_TREND))) {
                 return "";
             }
 
