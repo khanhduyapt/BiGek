@@ -3356,7 +3356,7 @@ public class BinanceServiceImpl implements BinanceService {
                     result += analysis("(WDH4, 00)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, false);
                 }
 
-                if (Objects.equals(TREND_D1, dto_h1.getTrend()) && dto_h1.getNote().contains("50")
+                if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")
                         && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
                     result += analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, TREND_D1, true);
                 }
@@ -3372,7 +3372,8 @@ public class BinanceServiceImpl implements BinanceService {
                 if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")
                         && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
 
-                    if (isTrendWeakening(dto_h1.getTrend(), EPIC, Utils.CAPITAL_TIME_HOUR_4)) {
+                    if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())
+                            || isTrendWeakening(dto_h1.getTrend(), EPIC, Utils.CAPITAL_TIME_HOUR_4)) {
                         result += analysis("(H4H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
                     } else {
                         result += analysis("(  H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h1.getTrend(), true);
@@ -3480,17 +3481,17 @@ public class BinanceServiceImpl implements BinanceService {
                 String EVENT_ID = "PROFIT" + EPIC + ACTION + trend_h4 + trend_h1 + Utils.getCurrentYyyyMmDd_HH();
 
                 if (!Objects.equals(ACTION, trend_h4) && !Objects.equals(ACTION, trend_h1)) {
-                    msg = Utils.appendSpace("(H4)(Danger)", 15) + Utils.appendSpace(EPIC, 10) + "("
-                            + Utils.appendSpace(ACTION, 4) + ").but.H4:" + "(" + Utils.appendSpace(trend_h4, 4)
-                            + ").H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
+                    msg = Utils.appendSpace("(H4)(Danger)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
+                            + Utils.appendSpace(EPIC, 10) + ".but.H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ").H1:"
+                            + "(" + Utils.appendSpace(trend_h1, 4) + ")";
 
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
                     logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_5M);
                 }
 
                 if (!Objects.equals(ACTION, trend_h4) && Objects.equals(ACTION, trend_h1)) {
-                    msg = Utils.appendSpace("(H4)(Notify)", 15) + Utils.appendSpace(EPIC, 10) + "("
-                            + Utils.appendSpace(ACTION, 4) + ").but.H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ")"
+                    msg = Utils.appendSpace("(H4)(Notify)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
+                            + Utils.appendSpace(EPIC, 10) + ".but.H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ")"
                             + ".H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
 
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
@@ -3498,8 +3499,8 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Objects.equals(ACTION, trend_h4) && !Objects.equals(ACTION, trend_h1)) {
-                    msg = Utils.appendSpace("(H1)(TakeProfit)", 15) + Utils.appendSpace(EPIC, 10) + "("
-                            + Utils.appendSpace(ACTION, 4) + ").but.H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ")"
+                    msg = Utils.appendSpace("(H1)(TakeProfit)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
+                            + Utils.appendSpace(EPIC, 10) + ".but.H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ")"
                             + ".H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
 
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
@@ -3507,8 +3508,8 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Objects.equals(ACTION, trend_h4) && isTrendWeakening(ACTION, EPIC, Utils.CAPITAL_TIME_HOUR_4)) {
-                    msg = Utils.appendSpace("(H4)(TakeProfit)", 15) + Utils.appendSpace(EPIC, 10) + "("
-                            + Utils.appendSpace(ACTION, 4) + ").but.The.trend.(H4).is.weakening.";
+                    msg = Utils.appendSpace("(H4)(TakeProfit)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
+                            + Utils.appendSpace(EPIC, 10) + ".but.The.trend.(H4).is.weakening.";
 
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
                     logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_5M);
@@ -3545,8 +3546,8 @@ public class BinanceServiceImpl implements BinanceService {
                     String EVENT_ID = "PROFIT" + EPIC + ACTION + trend_15 + Utils.getCurrentYyyyMmDd_HH()
                             + Utils.getCurrentMinute_Blog15minutes();
 
-                    String msg = Utils.appendSpace("(15)(Danger)", 15) + Utils.appendSpace(EPIC, 10) + "("
-                            + Utils.appendSpace(ACTION, 4) + ").but.M15:" + "(" + Utils.appendSpace(trend_15, 4) + ")";
+                    String msg = Utils.appendSpace("(15)(Danger)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
+                            + Utils.appendSpace(EPIC, 10) + ".but.M15:" + "(" + Utils.appendSpace(trend_15, 4) + ")";
 
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
 
