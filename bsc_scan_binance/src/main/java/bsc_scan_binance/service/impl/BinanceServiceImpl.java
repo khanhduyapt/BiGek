@@ -3146,10 +3146,10 @@ public class BinanceServiceImpl implements BinanceService {
 
         String date_time = LocalDateTime.now().toString();
 
-        List<String> LIST_WAITING = Arrays.asList("APT", "ARB", "AUDIO", "BAND", "BSW", "C98", "CELO", "CELR", "CHESS",
-                "CHZ", "CTK", "CTSI", "DAR", "DODO", "DOGE", "DYDX", "EGLD", "ENJ", "EOS", "FIL", "FLM", "GRT", "HOOK",
-                "ID", "IMX", "KAVA", "LEVER", "LIT", "LOKA", "MAGIC", "MASK", "MOB", "NEAR", "ONE", "OP", "PEOPLE",
-                "PERL", "PHB", "ROSE", "SXP", "WOO", "XVS");
+        List<String> LIST_WAITING = Arrays.asList("APT", "APE", "ARB", "AUDIO", "BAND", "BSW", "C98", "CELO", "CELR",
+                "CHESS", "CHZ", "CTK", "CTSI", "DAR", "DODO", "DOGE", "DYDX", "EGLD", "ENJ", "EOS", "FIL", "FLM", "GRT",
+                "HOOK", "ID", "IMX", "KAVA", "LEVER", "LIT", "LOKA", "MAGIC", "MASK", "MOB", "NEAR", "ONE", "OP",
+                "PEOPLE", "PERL", "PHB", "ROSE", "SXP", "WOO", "XVS", "XMR");
 
         List<String> ARR_ALLOW_H4 = new ArrayList<String>();
         ARR_ALLOW_H4.addAll(CRYPTO_LIST_BUYING);
@@ -3174,11 +3174,6 @@ public class BinanceServiceImpl implements BinanceService {
             String note = "";
             if (LIST_WAITING.contains(SYMBOL)) {
                 note = "WAITING_LIST";
-                String msg = "(BUY) 💹 " + Utils.getChartName(list_d1) + SYMBOL + "(Up)" + str_price;
-                sendMsgPerHour(EVENT_ID, "(BUY)" + msg, true);
-
-                logMsgPerHour(EVENT_ID, Utils.appendSpace(Utils.getChartNameAndEpic(list_d1.get(0).getId()), 20) + log,
-                        Utils.MINUTES_OF_1H);
             }
 
             List<BigDecimal> body = Utils.getOpenCloseCandle(list_d1);
@@ -3193,10 +3188,7 @@ public class BinanceServiceImpl implements BinanceService {
                 ordersRepository.deleteById(orderId_d1);
             }
         }
-        // ------------------------------------------------------------------
-        if (!ARR_ALLOW_H4.contains(SYMBOL)) {
-            return Utils.CRYPTO_TIME_4H;
-        }
+
         // ------------------------------------------------------------------
 
         List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 55);
