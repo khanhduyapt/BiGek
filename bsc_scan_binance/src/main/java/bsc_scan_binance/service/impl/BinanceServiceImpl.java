@@ -2779,7 +2779,7 @@ public class BinanceServiceImpl implements BinanceService {
             String msg = "";
             boolean isOnlyMe = true;
             if (BTC_ETH_BNB.contains(SYMBOL)) {
-                // isOnlyMe = false;
+                isOnlyMe = false;
             }
 
             String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_h4.get(0).getCurrPrice()), 5) + ")";
@@ -3137,7 +3137,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initCryptoTrend(String SYMBOL) {
-        // TODO: LIST_BUYING
+        // TODO: initCryptoTrend
         List<String> LIST_BUYING = Arrays.asList("TRU", "BTC");
 
         List<String> LIST_WAITING = Arrays.asList("APT", "ARB", "AUDIO", "BAND", "BSW", "C98", "CELO", "CELR", "CHESS",
@@ -3191,13 +3191,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
         // ------------------------------------------------------------------
-
         if (!ARR_ALLOW_H4.contains(SYMBOL)) {
             return Utils.CRYPTO_TIME_4H;
         }
-
         // ------------------------------------------------------------------
-        // TODO: initCryptoTrend
 
         String orderId_h4 = "CRYPTO_" + SYMBOL + "_4h";
         List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 55);
@@ -3347,7 +3344,8 @@ public class BinanceServiceImpl implements BinanceService {
                 return;
             }
 
-            // TODO: Bat buoc phai danh theo khung D1, khong co keo thi nghi.
+            // TODO: scapForex
+            // Bat buoc phai danh theo khung D1, khong co keo thi nghi.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh nguoc xu huong D1 & H4)
             String TREND_W1 = dto_w1.getTrend();
             String TREND_D1 = dto_d1.getTrend();
@@ -3444,18 +3442,26 @@ public class BinanceServiceImpl implements BinanceService {
                 "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDUSD", "USDCAD",
                 "USDCHF", "USDJPY", "CHFJPY");
 
+        // TODO: monitorProfit
+        List<String> LIST_H4_BUYING = Arrays.asList("USDCHF");
+        List<String> LIST_H4_SELLING = Arrays.asList("USOIL", "GBPNZD", "GBPJPY", "EURNZD", "EURJPY");
+
+        List<String> LIST_M15_BUYING = Arrays.asList("");
+        List<String> LIST_M15_SELLING = Arrays.asList("");
+
         // D-H4-H1
         {
-            List<String> LIST_BUYING = Arrays.asList("USDCHF");
-            List<String> LIST_SELLING = Arrays.asList("USOIL", "GBPNZD", "GBPJPY", "EURNZD", "EURJPY");
-
             List<String> ARR = new ArrayList<String>();
-            ARR.addAll(LIST_BUYING);
-            ARR.addAll(LIST_SELLING);
+            ARR.addAll(LIST_H4_BUYING);
+            ARR.addAll(LIST_H4_SELLING);
             Collections.sort(ARR);
 
             for (String EPIC : ARR) {
                 // EPIC = "EURNZD";
+                if (Utils.isBlank(EPIC)) {
+                    continue;
+                }
+
                 List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);
                 List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
 
@@ -3470,7 +3476,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
 
                 String msg = "";
-                String ACTION = LIST_BUYING.contains(EPIC) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+                String ACTION = LIST_H4_BUYING.contains(EPIC) ? Utils.TREND_LONG : Utils.TREND_SHORT;
                 String EVENT_ID = "PROFIT" + EPIC + ACTION + trend_h4 + trend_h1 + Utils.getCurrentYyyyMmDd_HH();
 
                 if (!Objects.equals(ACTION, trend_h4) && !Objects.equals(ACTION, trend_h1)) {
@@ -3516,15 +3522,16 @@ public class BinanceServiceImpl implements BinanceService {
 
         // M15
         {
-            List<String> LIST_BUYING = Arrays.asList("");
-            List<String> LIST_SELLING = Arrays.asList("");
-
             List<String> ARR = new ArrayList<String>();
-            ARR.addAll(LIST_BUYING);
-            ARR.addAll(LIST_SELLING);
+            ARR.addAll(LIST_M15_BUYING);
+            ARR.addAll(LIST_M15_SELLING);
             Collections.sort(ARR);
 
             for (String EPIC : ARR) {
+                if (Utils.isBlank(EPIC)) {
+                    continue;
+                }
+
                 List<BtcFutures> list_15 = getCapitalData(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
                 if (CollectionUtils.isEmpty(list_15)) {
                     continue;
@@ -3532,7 +3539,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 List<BtcFutures> heken_list_15 = Utils.getHekenList(list_15);
                 String trend_15 = Utils.getTrendByHekenAshiList(heken_list_15);
-                String ACTION = LIST_BUYING.contains(EPIC) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+                String ACTION = LIST_M15_BUYING.contains(EPIC) ? Utils.TREND_LONG : Utils.TREND_SHORT;
 
                 if (!Objects.equals(ACTION, trend_15)) {
                     String EVENT_ID = "PROFIT" + EPIC + ACTION + trend_15 + Utils.getCurrentYyyyMmDd_HH()
