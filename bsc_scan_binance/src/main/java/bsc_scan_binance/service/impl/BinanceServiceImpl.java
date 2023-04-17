@@ -45,7 +45,6 @@ import bsc_scan_binance.entity.BinanceVolumnDay;
 import bsc_scan_binance.entity.BinanceVolumnDayKey;
 import bsc_scan_binance.entity.BinanceVolumnWeek;
 import bsc_scan_binance.entity.BinanceVolumnWeekKey;
-import bsc_scan_binance.entity.BollArea;
 import bsc_scan_binance.entity.BtcFutures;
 import bsc_scan_binance.entity.BtcVolumeDay;
 import bsc_scan_binance.entity.CandidateCoin;
@@ -55,7 +54,6 @@ import bsc_scan_binance.entity.FundingHistory;
 import bsc_scan_binance.entity.FundingHistoryKey;
 import bsc_scan_binance.entity.GeckoVolumeMonth;
 import bsc_scan_binance.entity.GeckoVolumeMonthKey;
-import bsc_scan_binance.entity.GeckoVolumeUpPre4h;
 import bsc_scan_binance.entity.Mt5DataCandle;
 import bsc_scan_binance.entity.Mt5DataCandleKey;
 import bsc_scan_binance.entity.Orders;
@@ -75,7 +73,6 @@ import bsc_scan_binance.repository.GeckoVolumeUpPre4hRepository;
 import bsc_scan_binance.repository.Mt5DataCandleRepository;
 import bsc_scan_binance.repository.OrdersRepository;
 import bsc_scan_binance.repository.PriorityCoinHistoryRepository;
-import bsc_scan_binance.response.BollAreaResponse;
 import bsc_scan_binance.response.BtcFuturesResponse;
 import bsc_scan_binance.response.CandidateTokenCssResponse;
 import bsc_scan_binance.response.CandidateTokenResponse;
@@ -83,7 +80,6 @@ import bsc_scan_binance.response.DepthResponse;
 import bsc_scan_binance.response.EntryCssResponse;
 import bsc_scan_binance.response.ForexHistoryResponse;
 import bsc_scan_binance.response.FundingResponse;
-import bsc_scan_binance.response.GeckoVolumeUpPre4hResponse;
 import bsc_scan_binance.service.BinanceService;
 import bsc_scan_binance.utils.Utils;
 import lombok.RequiredArgsConstructor;
@@ -3147,9 +3143,9 @@ public class BinanceServiceImpl implements BinanceService {
         String date_time = LocalDateTime.now().toString();
 
         List<String> LIST_WAITING = Arrays.asList("APT", "APE", "ARB", "AUDIO", "BAND", "BSW", "C98", "CELO", "CELR",
-                "CHESS", "CHZ", "CTK", "CTSI", "DAR", "DODO", "DOGE", "DYDX", "EGLD", "ENJ", "EOS", "FIL", "FLM", "GRT",
-                "HOOK", "ID", "IMX", "KAVA", "LEVER", "LIT", "LOKA", "MAGIC", "MASK", "MOB", "NEAR", "ONE", "OP",
-                "PEOPLE", "PERL", "PHB", "ROSE", "SXP", "WOO", "XVS", "XMR");
+                "CHESS", "CHZ", "CTK", "CTSI", "DAR", "DODO", "DOGE", "DYDX", "EGLD", "ENJ", "EOS", "FIL", "FLM", "GNS",
+                "GRT", "HOOK", "HFT", "ID", "IMX", "KAVA", "LEVER", "LIT", "LOKA", "LQTY", "MAGIC", "MASK", "MOB",
+                "NEAR", "ONE", "OP", "PEOPLE", "PERL", "PHB", "ROSE", "RDNT", "RPL", "SXP", "SYN", "WOO", "XVS", "XMR");
 
         List<String> ARR_ALLOW_H4 = new ArrayList<String>();
         ARR_ALLOW_H4.addAll(CRYPTO_LIST_BUYING);
@@ -3218,10 +3214,17 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (Objects.equals(trend_h4, Utils.TREND_LONG) && Utils.isNotBlank(switch_trend)
                 && Utils.isBelowMALine(heken_list_h4, 50)) {
+
+            String note = "";
+            if (LIST_WAITING.contains(SYMBOL)) {
+                note = "WAITING_LIST";
+            }
+
             List<BigDecimal> body = Utils.getOpenCloseCandle(list_h4);
             List<BigDecimal> low_high = Utils.getLowHighCandle(list_h4);
             Orders entity = new Orders(orderId_h4, date_time, Utils.TREND_LONG, list_h4.get(0).getCurrPrice(),
-                    body.get(0), body.get(1), low_high.get(0), low_high.get(1), "");
+                    body.get(0), body.get(1), low_high.get(0), low_high.get(1), note);
+
             ordersRepository.save(entity);
         } else {
             Orders entity = ordersRepository.findById(orderId_h4).orElse(null);
@@ -3452,8 +3455,8 @@ public class BinanceServiceImpl implements BinanceService {
                 "USDCHF", "USDJPY", "CHFJPY");
 
         // TODO: monitorProfit
-        List<String> LIST_H4_BUYING = Arrays.asList("USDCHF");
-        List<String> LIST_H4_SELLING = Arrays.asList("USOIL", "GBPNZD", "GBPJPY", "EURNZD", "EURJPY");
+        List<String> LIST_H4_BUYING = Arrays.asList("");
+        List<String> LIST_H4_SELLING = Arrays.asList("USOIL", "EURNZD", "EURJPY");
 
         List<String> LIST_M15_BUYING = Arrays.asList("");
         List<String> LIST_M15_SELLING = Arrays.asList("");
@@ -3471,18 +3474,23 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR);
-                List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
+                Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
+                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+                Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+                Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
 
-                if (CollectionUtils.isEmpty(list_h4) || CollectionUtils.isEmpty(list_h1)) {
+                if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4)
+                        || Objects.isNull(dto_h1)) {
+                    Utils.logWritelnDraft("monitorProfit (" + EPIC + ") dto is null");
                     continue;
                 }
+                String trend_w1 = dto_w1.getTrend();
+                String trend_d1 = dto_d1.getTrend();
+                String trend_h4 = dto_h4.getTrend();
+                String trend_h1 = dto_h1.getTrend();
 
-                List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
-                List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
-
-                String trend_h1 = Utils.getTrendByHekenAshiList(heken_list_h1);
-                String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
+                String trend_w1d1 = ".W1:" + "(" + Utils.appendSpace(trend_w1, 4) + ")";
+                trend_w1d1 += ".D1:" + "(" + Utils.appendSpace(trend_d1, 4) + ")";
 
                 String msg = "";
                 String ACTION = LIST_H4_BUYING.contains(EPIC) ? Utils.TREND_LONG : Utils.TREND_SHORT;
@@ -3492,8 +3500,9 @@ public class BinanceServiceImpl implements BinanceService {
                     msg = Utils.appendSpace("(H4)(Danger)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
                             + Utils.appendSpace(EPIC, 10) + ".but.H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ").H1:"
                             + "(" + Utils.appendSpace(trend_h1, 4) + ")";
-
+                    msg += trend_w1d1;
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
+
                     logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_5M);
                 }
 
@@ -3501,8 +3510,9 @@ public class BinanceServiceImpl implements BinanceService {
                     msg = Utils.appendSpace("(H4)(Notify)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
                             + Utils.appendSpace(EPIC, 10) + ".but.H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ")"
                             + ".H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
-
+                    msg += trend_w1d1;
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
+
                     logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_5M);
                 }
 
@@ -3510,16 +3520,18 @@ public class BinanceServiceImpl implements BinanceService {
                     msg = Utils.appendSpace("(H1)(TakeProfit)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
                             + Utils.appendSpace(EPIC, 10) + ".but.H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ")"
                             + ".H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
-
+                    msg += trend_w1d1;
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
+
                     logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_5M);
                 }
 
                 if (Objects.equals(ACTION, trend_h4) && isTrendWeakening(ACTION, EPIC, Utils.CAPITAL_TIME_HOUR_4)) {
                     msg = Utils.appendSpace("(H4)(TakeProfit)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
-                            + Utils.appendSpace(EPIC, 10) + ".but.The.trend.(H4).is.weakening.";
-
+                            + Utils.appendSpace(EPIC, 10) + ".but.The.trend.(H4).is.weakening. ";
+                    msg += trend_w1d1;
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
+
                     logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_5M);
                 }
 

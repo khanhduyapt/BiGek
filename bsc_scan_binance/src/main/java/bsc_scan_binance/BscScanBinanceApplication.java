@@ -137,7 +137,7 @@ public class BscScanBinanceApplication {
                             }
                         }
 
-                        if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
+                        if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MONITOR_PROFIT")) {
                             binance_service.monitorProfit();
                         }
 
