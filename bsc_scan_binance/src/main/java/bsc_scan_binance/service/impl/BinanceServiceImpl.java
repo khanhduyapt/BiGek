@@ -3338,7 +3338,6 @@ public class BinanceServiceImpl implements BinanceService {
                 return;
             }
 
-            // TODO: scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
             if (!Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
@@ -3362,9 +3361,9 @@ public class BinanceServiceImpl implements BinanceService {
                 result += analysis("(__H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend, true);
             }
 
-            // H1+M15 cung 1 phia Ma50, M15 dao chieu.
-            if (dto_h1.getNote().contains("50")) {
-                result += analysis("(__15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend, true);
+            // H4+H1+M15 cung 1 phia Ma50, M15 dao chieu.
+            if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")) {
+                analysis("(__15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend, true);
             }
 
             // -----------------------------------------------------------------------
