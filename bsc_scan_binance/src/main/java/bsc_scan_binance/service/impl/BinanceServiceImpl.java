@@ -3442,7 +3442,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // TODO: monitorProfit
         List<String> LIST_H4_BUYING = Arrays.asList("NZDCHF");
-        List<String> LIST_H4_SELLING = Arrays.asList("EURAUD", "GBPNZD", "USOIL");
+        List<String> LIST_H4_SELLING = Arrays.asList("EURAUD", "GBPNZD", "USOIL", "GER40");
 
         // D-H4-H1
         {
@@ -3473,7 +3473,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_h1 = dto_h1.getTrend();
 
                 String trend_w1d1 = ".W1:" + "(" + Utils.appendSpace(trend_w1, 4) + ")";
-                trend_w1d1 += ".D1:" + "(" + Utils.appendSpace(trend_d1, 4) + ")";
+                trend_w1d1 += ".D1:" + "(" + Utils.appendSpace(trend_d1, 4) + ")   ";
 
                 String msg = "";
                 String ACTION = LIST_H4_BUYING.contains(EPIC) ? Utils.TREND_LONG : Utils.TREND_SHORT;
@@ -3486,7 +3486,7 @@ public class BinanceServiceImpl implements BinanceService {
                     msg += trend_w1d1;
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
 
-                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_15M);
+                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
                 }
 
                 if (!Objects.equals(ACTION, trend_h4) && Objects.equals(ACTION, trend_h1)) {
@@ -3496,7 +3496,7 @@ public class BinanceServiceImpl implements BinanceService {
                     msg += trend_w1d1;
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
 
-                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_15M);
+                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
                 }
 
                 if (Objects.equals(ACTION, trend_h4) && !Objects.equals(ACTION, trend_h1)) {
@@ -3506,7 +3506,7 @@ public class BinanceServiceImpl implements BinanceService {
                     msg += trend_w1d1;
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
 
-                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_15M);
+                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
                 }
 
                 if ((msg.contains("Danger") || msg.contains("TakeProfit"))) {
