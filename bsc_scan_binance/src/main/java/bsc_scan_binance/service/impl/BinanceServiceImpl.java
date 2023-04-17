@@ -2849,6 +2849,7 @@ public class BinanceServiceImpl implements BinanceService {
             int total_line = 0;
             int total_data = 0;
             int not_found = 0;
+            String epic_not_found = "";
             List<String> epics_time = new ArrayList<String>();
             List<Mt5DataCandle> list = new ArrayList<Mt5DataCandle>();
             List<Mt5DataCandle> list_delete = new ArrayList<Mt5DataCandle>();
@@ -2856,9 +2857,6 @@ public class BinanceServiceImpl implements BinanceService {
             BufferedReader fin = new BufferedReader(reader);
             while ((line = fin.readLine()) != null) {
                 total_line += 1;
-                if (line.contains("NOT_FOUND")) {
-                    not_found += 1;
-                }
 
                 String[] tempArr = line.replace(".cash", "").split("\\t");
                 if (tempArr.length == 7) {
@@ -2872,6 +2870,14 @@ public class BinanceServiceImpl implements BinanceService {
                     if (!epics_time.contains(dto.getId().getEpic() + "_" + dto.getId().getCandleTime())) {
                         epics_time.add(dto.getId().getEpic() + "_" + dto.getId().getCandleTime());
                         list_delete.add(dto);
+                    }
+                }
+
+                if (line.contains("NOT_FOUND")) {
+                    not_found += 1;
+
+                    if (tempArr.length > 2 && !epic_not_found.contains(tempArr[1])) {
+                        epic_not_found += tempArr[1] + ", ";
                     }
                 }
             }
@@ -2903,7 +2909,7 @@ public class BinanceServiceImpl implements BinanceService {
             String log = "(MT5_DATA): " + Utils.appendLeft(String.valueOf(total_data), 4) + "/"
                     + Utils.appendLeft(String.valueOf(total_line), 4);
             if (not_found > 0) {
-                log += "/NOT_FOUND:" + Utils.appendLeft(String.valueOf(not_found), 4);
+                log += "/NOT_FOUND:" + epic_not_found;
             }
             log += "      LastModifiedTime: " + Utils.formatDateTime(attr.lastModifiedTime());
             log += "      " + file.getAbsolutePath();
