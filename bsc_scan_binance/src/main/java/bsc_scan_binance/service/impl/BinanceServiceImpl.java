@@ -3199,17 +3199,13 @@ public class BinanceServiceImpl implements BinanceService {
                     + Utils.appendSpace(TREND_D1, 5) + "(H4)" + Utils.appendSpace(trend_h4, 5) + str_price);
         }
 
-        String msg_h4 = "";
-        if (Objects.equals(Utils.TREND_LONG, trend_h4)) {
-            msg_h4 = " 💹 " + Utils.getChartName(list_h4) + SYMBOL + "(H4)" + Utils.appendSpace(trend_h4, 5) + "(D1)"
-                    + Utils.appendSpace(TREND_D1, 5) + str_price;
-        } else {
-            msg_h4 = " 🔻 " + Utils.getChartName(list_h4) + SYMBOL + "(H4)" + Utils.appendSpace(trend_h4, 5) + "(D1)"
-                    + Utils.appendSpace(TREND_D1, 5) + str_price;
-        }
-
         if (CRYPTO_LIST_BUYING.contains(SYMBOL) && Objects.equals(Utils.TREND_SHORT, trend_h4)) {
-            sendMsgPerHour(EVENT_ID, "(STOP_BUY)" + msg_h4, true);
+            String msg_h4 = " 🔻 (STOP_BUY)";
+            msg_h4 += Utils.getChartName(list_h4) + SYMBOL + str_price;
+            msg_h4 += "(H4)" + Utils.appendSpace(trend_h4, 5);
+            msg_h4 += "(D1)" + Utils.appendSpace(TREND_D1, 5);
+
+            sendMsgPerHour(EVENT_ID, msg_h4, true);
             logMsgPerHour(EVENT_ID, msg_h4 + log, Utils.MINUTES_OF_1H);
         }
 
