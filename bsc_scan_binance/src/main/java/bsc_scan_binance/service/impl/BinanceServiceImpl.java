@@ -3473,8 +3473,8 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_h4 = dto_h4.getTrend();
                 String trend_h1 = dto_h1.getTrend();
 
-                String trend_w1d1 = Utils.appendSpace(EPIC, 10);
-                trend_w1d1 += "(" + Utils.appendSpace(ACTION, 4) + ") ";
+                String trend_w1d1 = "";
+                trend_w1d1 += "(" + Utils.appendSpace(ACTION, 4) + ") " + Utils.appendSpace(EPIC, 10);
                 trend_w1d1 += ".H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ")";
                 trend_w1d1 += ".H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
                 trend_w1d1 += ".W1:" + "(" + Utils.appendSpace(trend_w1, 4) + ")";
