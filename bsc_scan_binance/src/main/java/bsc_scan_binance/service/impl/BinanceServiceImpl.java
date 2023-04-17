@@ -3008,14 +3008,15 @@ public class BinanceServiceImpl implements BinanceService {
         List<Orders> list_all = ordersRepository.getTrend_H4List();
         if (!CollectionUtils.isEmpty(list_all)) {
             Utils.logWritelnReport("");
-            Utils.logWritelnReport(Utils.appendLeftAndRight(" Start W1 = D1 = H4  ", 50, "+"));
+            Utils.logWritelnReport(Utils.appendLeftAndRight(" Start W1 = D1 = H4 = H1 ", 50, "+"));
             for (Orders dto_h4 : list_all) {
                 String EPIC = Utils.getEpicFromId(dto_h4.getId());
 
                 Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
                 Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+                Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
 
-                if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_w1)) {
+                if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_w1) && Objects.nonNull(dto_h1)) {
 
                     String chart = Utils.getChartName(dto_d1) + ":" + Utils.appendSpace(dto_d1.getTrend(), 8);
                     String note = dto_w1.getNote() + dto_d1.getNote() + dto_h4.getNote();
@@ -3034,7 +3035,8 @@ public class BinanceServiceImpl implements BinanceService {
                     log = Utils.appendSpace("  (W1):" + dto_w1.getTrend(), 15) + log;
 
                     if (Objects.equals(dto_d1.getTrend(), dto_w1.getTrend())
-                            && Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())) {
+                            && Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())
+                            && Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
                         Utils.logWritelnReport(log);
                     }
 
@@ -3195,7 +3197,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (CRYPTO_LIST_BUYING.contains(SYMBOL)) {
             System.out.println(Utils.getTimeHHmm() + "   " + Utils.appendSpace(SYMBOL, 10) + "(D1)"
-                    + Utils.appendSpace(TREND_D1, 5) + "(H4)" + Utils.appendSpace(trend_h4, 5));
+                    + Utils.appendSpace(TREND_D1, 5) + "(H4)" + Utils.appendSpace(trend_h4, 5) + str_price);
         }
 
         String msg_h4 = "";
@@ -3313,8 +3315,9 @@ public class BinanceServiceImpl implements BinanceService {
         for (String EPIC : CAPITAL_LIST) {
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
             if (Objects.nonNull(dto_w1)) {
-                analysis("(patern_0)", EPIC, Utils.CAPITAL_TIME_DAY, dto_w1.getTrend(), false);
-                count += 1;
+                if (Utils.isNotBlank(analysis("(patern_0)", EPIC, Utils.CAPITAL_TIME_DAY, dto_w1.getTrend(), false))) {
+                    count += 1;
+                }
             }
         }
         if (count > 0) {
@@ -3334,10 +3337,12 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnDraft("scapForex (" + EPIC + ") dto is null");
                 return;
             }
-
+            String TREND_W1 = dto_w1.getTrend();
+            String TREND_D1 = dto_d1.getTrend();
+            String TREND_H4 = dto_h4.getTrend();
             // ------------------------------Scalping M------------------------------
             // H1+M15 cung 1 phia Ma50, M15 dao chieu.
-            if (dto_h1.getNote().contains("50")) {
+            if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")) {
                 analysis("(H115, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, dto_h1.getTrend(), true);
             }
 
@@ -3347,10 +3352,6 @@ public class BinanceServiceImpl implements BinanceService {
             if (!Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
                 continue;
             }
-
-            String TREND_W1 = dto_w1.getTrend();
-            String TREND_D1 = dto_d1.getTrend();
-            String TREND_H4 = dto_h4.getTrend();
 
             String result = "";
             if (Objects.equals(TREND_W1, TREND_D1)) {
@@ -3456,7 +3457,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // TODO: monitorProfit
         List<String> LIST_H4_BUYING = Arrays.asList("");
-        List<String> LIST_H4_SELLING = Arrays.asList("USOIL", "EURNZD");
+        List<String> LIST_H4_SELLING = Arrays.asList("");
 
         List<String> LIST_M15_BUYING = Arrays.asList("");
         List<String> LIST_M15_SELLING = Arrays.asList("");
