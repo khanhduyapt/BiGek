@@ -3490,7 +3490,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (!Objects.equals(ACTION, trend_h4) && Objects.equals(ACTION, trend_h1)) {
-                    msg = Utils.appendSpace("(H4)(Notify)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
+                    msg = Utils.appendSpace("(H4)(Warning)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
                             + Utils.appendSpace(EPIC, 10) + ".but.H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ")"
                             + ".H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
                     msg += trend_w1d1;
@@ -3500,7 +3500,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Objects.equals(ACTION, trend_h4) && !Objects.equals(ACTION, trend_h1)) {
-                    msg = Utils.appendSpace("(H4)(TakeProfit)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
+                    msg = Utils.appendSpace("(H4)(Notify)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
                             + Utils.appendSpace(EPIC, 10) + ".H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ")"
                             + ".but.H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
                     msg += trend_w1d1;
