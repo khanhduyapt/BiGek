@@ -119,7 +119,8 @@ public class BscScanBinanceApplication {
                             alertMsgKillZone(binance_service);
                         }
 
-                        if (Utils.isWeekday() && Utils.isBusinessTime_6h_to_22h() && Utils.isAllowSendMsg()) {
+                        // Utils.isBusinessTime_6h_to_22h() &&
+                        if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
                             if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
                                 binance_service.saveMt5Data();
                                 binance_service.initWeekTrend();
