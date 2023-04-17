@@ -3338,29 +3338,33 @@ public class BinanceServiceImpl implements BinanceService {
                 return;
             }
 
-            String TREND_H4 = dto_h4.getTrend();
-            // ------------------------------Scalping M------------------------------
             // TODO: scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
             if (!Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
                 continue;
             }
+
+            String find_trend = dto_h4.getTrend();
+            if (Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())) {
+                find_trend = dto_d1.getTrend();
+            }
+
             String result = "";
 
             // H4 H1 cung 1 phia cua Ma50, H4 dao chieu.
             if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")) {
-                result += analysis("(__H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_H4, true);
+                result += analysis("(__H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, find_trend, true);
             }
 
             // H4 H1 cung 1 phia cua Ma50, H1 dao chieu.
             if (dto_h4.getNote().contains("50")) {
-                result += analysis("(__H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, TREND_H4, true);
+                result += analysis("(__H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend, true);
             }
 
             // H1+M15 cung 1 phia Ma50, M15 dao chieu.
             if (dto_h1.getNote().contains("50")) {
-                result += analysis("(__15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, TREND_H4, true);
+                result += analysis("(__15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend, true);
             }
 
             // -----------------------------------------------------------------------
@@ -3482,7 +3486,7 @@ public class BinanceServiceImpl implements BinanceService {
                     msg += trend_w1d1;
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
 
-                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_5M);
+                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_15M);
                 }
 
                 if (!Objects.equals(ACTION, trend_h4) && Objects.equals(ACTION, trend_h1)) {
@@ -3492,7 +3496,7 @@ public class BinanceServiceImpl implements BinanceService {
                     msg += trend_w1d1;
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
 
-                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_5M);
+                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_15M);
                 }
 
                 if (Objects.equals(ACTION, trend_h4) && !Objects.equals(ACTION, trend_h1)) {
@@ -3502,7 +3506,7 @@ public class BinanceServiceImpl implements BinanceService {
                     msg += trend_w1d1;
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
 
-                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_5M);
+                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_15M);
                 }
 
                 if ((msg.contains("Danger") || msg.contains("TakeProfit"))) {
