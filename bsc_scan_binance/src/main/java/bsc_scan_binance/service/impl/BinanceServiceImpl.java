@@ -3457,6 +3457,7 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
+                String ACTION = LIST_H4_BUYING.contains(EPIC) ? Utils.TREND_LONG : Utils.TREND_SHORT;
                 Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
                 Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
                 Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
@@ -3472,38 +3473,32 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_h4 = dto_h4.getTrend();
                 String trend_h1 = dto_h1.getTrend();
 
-                String trend_w1d1 = ".W1:" + "(" + Utils.appendSpace(trend_w1, 4) + ")";
+                String trend_w1d1 = Utils.appendSpace(EPIC, 10);
+                trend_w1d1 += "(" + Utils.appendSpace(ACTION, 4) + ") ";
+                trend_w1d1 += ".H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ")";
+                trend_w1d1 += ".H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
+                trend_w1d1 += ".W1:" + "(" + Utils.appendSpace(trend_w1, 4) + ")";
                 trend_w1d1 += ".D1:" + "(" + Utils.appendSpace(trend_d1, 4) + ")   ";
 
                 String msg = "";
-                String ACTION = LIST_H4_BUYING.contains(EPIC) ? Utils.TREND_LONG : Utils.TREND_SHORT;
                 String EVENT_ID = "PROFIT" + EPIC + ACTION + trend_h4 + trend_h1 + Utils.getCurrentYyyyMmDd_HH();
 
                 if (!Objects.equals(ACTION, trend_h4) && !Objects.equals(ACTION, trend_h1)) {
-                    msg = Utils.appendSpace("(H4)(Danger)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
-                            + Utils.appendSpace(EPIC, 10) + ".but.H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ").H1:"
-                            + "(" + Utils.appendSpace(trend_h1, 4) + ")";
-                    msg += trend_w1d1;
+                    msg = Utils.appendSpace("(H4)(Danger)", 20) + trend_w1d1;
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
 
                     logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
                 }
 
                 if (!Objects.equals(ACTION, trend_h4) && Objects.equals(ACTION, trend_h1)) {
-                    msg = Utils.appendSpace("(H4)(Warning)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
-                            + Utils.appendSpace(EPIC, 10) + ".but.H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ")"
-                            + ".H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
-                    msg += trend_w1d1;
+                    msg = Utils.appendSpace("(H4)(Warning)", 20) + trend_w1d1;
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
 
                     logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
                 }
 
                 if (Objects.equals(ACTION, trend_h4) && !Objects.equals(ACTION, trend_h1)) {
-                    msg = Utils.appendSpace("(H4)(Notify)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
-                            + Utils.appendSpace(EPIC, 10) + ".H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ")"
-                            + ".but.H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
-                    msg += trend_w1d1;
+                    msg = Utils.appendSpace("(H4)(Notify)", 20) + trend_w1d1;
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
 
                     logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
@@ -3549,7 +3544,7 @@ public class BinanceServiceImpl implements BinanceService {
                             + Utils.getCurrentMinute_Blog15minutes();
 
                     String msg = Utils.appendSpace("(15)(Danger)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
-                            + Utils.appendSpace(EPIC, 10) + ".but.M15:" + "(" + Utils.appendSpace(trend_15, 4) + ")"
+                            + Utils.appendSpace(EPIC, 10) + ".M15:" + "(" + Utils.appendSpace(trend_15, 4) + ")"
                             + ".H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
 
                     String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
