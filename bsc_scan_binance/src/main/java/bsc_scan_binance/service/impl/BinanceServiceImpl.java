@@ -3353,8 +3353,13 @@ public class BinanceServiceImpl implements BinanceService {
             if (!Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
                 continue;
             }
-
             String result = "";
+
+            // H4 H1 cung 1 phia cua Ma50, H4 dao chieu.
+            if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")) {
+                result += analysis("(__H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_H4, true);
+            }
+
             if (Objects.equals(TREND_W1, TREND_D1)) {
                 // H4 dao chieu khi vuot qua Ma50.
                 result += analysis("(WDH4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_D1, true);
@@ -3368,16 +3373,6 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             } else {
                 // ------------------------------Scalping H------------------------------
-                // H4 H1 cung 1 phia cua Ma50, H4 dao chieu
-                if (dto_h1.getNote().contains("50")) {
-                    result += analysis("(  H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, TREND_H4, true);
-                }
-
-                // H4 H1 cung 1 phia cua Ma50, H1 dao chieu.
-                if (dto_h4.getNote().contains("50")) {
-                    result += analysis("(H4H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, TREND_H4, true);
-                }
-
                 // H1 vuot qua Ma50 roi dao chieu.
                 if (Objects.equals(dto_h1.getTrend(), dto_15.getTrend())) {
                     result += analysis("(__H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, TREND_H4, true);
@@ -3457,11 +3452,8 @@ public class BinanceServiceImpl implements BinanceService {
                 "USDCHF", "USDJPY", "CHFJPY");
 
         // TODO: monitorProfit
-        List<String> LIST_H4_BUYING = Arrays.asList("");
-        List<String> LIST_H4_SELLING = Arrays.asList("USOIL");
-
-        List<String> LIST_M15_BUYING = Arrays.asList("");
-        List<String> LIST_M15_SELLING = Arrays.asList("");
+        List<String> LIST_H4_BUYING = Arrays.asList("NZDCHF");
+        List<String> LIST_H4_SELLING = Arrays.asList("EURAUD", "GBPNZD", "USOIL");
 
         // D-H4-H1
         {
@@ -3535,6 +3527,8 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // M15
+        List<String> LIST_M15_BUYING = Arrays.asList("");
+        List<String> LIST_M15_SELLING = Arrays.asList("");
         {
             List<String> ARR = new ArrayList<String>();
             ARR.addAll(LIST_M15_BUYING);
