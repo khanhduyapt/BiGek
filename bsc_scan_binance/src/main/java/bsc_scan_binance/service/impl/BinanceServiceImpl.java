@@ -3350,11 +3350,11 @@ public class BinanceServiceImpl implements BinanceService {
 
             // H4 H1 cung 1 phia cua Ma50, H4 dao chieu.
             if (dto_h1.getNote().contains("50")) {
-                analysis("(H4H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
+                analysis("(Check H4)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
             }
             // H4 H1 cung 1 phia cua Ma50, H1 dao chieu.
             if (dto_h4.getNote().contains("50")) {
-                analysis("(H4H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h4.getTrend(), true);
+                analysis("(Check H1)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h4.getTrend(), true);
             }
 
             String result = "";
