@@ -3204,7 +3204,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (CRYPTO_LIST_BUYING.contains(SYMBOL)) {
             System.out.println(Utils.getTimeHHmm() + "   " + Utils.appendSpace(SYMBOL, 10) + "(D1)"
-                    + Utils.appendSpace(TREND_D1, 5) + "(H4)" + Utils.appendSpace(trend_h4, 5) + str_price);
+                    + Utils.appendSpace(TREND_D1, 5) + "(H4)" + Utils.appendSpace(trend_h4, 5));
         }
 
         if (CRYPTO_LIST_BUYING.contains(SYMBOL) && Objects.equals(Utils.TREND_SHORT, trend_h4)) {
