@@ -1354,7 +1354,7 @@ public class Utils {
         return result;
     }
 
-    public static String getCurrentYyyyMmDd_HH_Blog2h() {
+    public static String getCurrentYyyyMmDd_Blog2h() {
         String result = Utils.convertDateToString("yyyy.MM.dd_", Calendar.getInstance().getTime());
         int HH = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         HH = HH / 2;

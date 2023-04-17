@@ -2298,7 +2298,7 @@ public class BinanceServiceImpl implements BinanceService {
             // -----------------------------------------------------------------------------------------//
 
             if (Utils.isNotBlank(msg)) {
-                String EVENT_ID = EVENT_DANGER_CZ_KILL_LONG + "_" + Utils.getCurrentYyyyMmDd_HH_Blog2h();
+                String EVENT_ID = EVENT_DANGER_CZ_KILL_LONG + "_" + Utils.getCurrentYyyyMmDd_Blog2h();
 
                 if (!fundingHistoryRepository.existsPumDump("bitcoin", EVENT_ID)) {
 
@@ -3117,8 +3117,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        if (isReloadAfter(Utils.MINUTES_OF_4H, "_REPORT_CRYPTO_") && Utils.isNotBlank(msg_futu)) {
-            String EVENT_ID = EVENT_PUMP + "_REPORT_CRYPTO_" + Utils.getCurrentYyyyMmDd_Blog4h();
+        if (isReloadAfter(Utils.MINUTES_OF_1H * 2, "_REPORT_CRYPTO_") && Utils.isNotBlank(msg_futu)) {
+            String EVENT_ID = EVENT_PUMP + "_REPORT_CRYPTO_" + Utils.getCurrentYyyyMmDd_Blog2h();
 
             if (!fundingHistoryRepository.existsPumDump(EVENT_MSG_PER_HOUR, EVENT_ID)) {
                 String msg_crypto = "";
@@ -3141,7 +3141,6 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public String initCryptoTrend(String SYMBOL) {
         // TODO: initCryptoTrend
-
         String date_time = LocalDateTime.now().toString();
 
         List<String> LIST_WAITING = Arrays.asList("APT", "APE", "ARB", "AUDIO", "BAND", "BSW", "C98", "CELO", "CELR",
@@ -3157,7 +3156,7 @@ public class BinanceServiceImpl implements BinanceService {
         String orderId_d1 = "CRYPTO_" + SYMBOL + "_1d";
         String orderId_h4 = "CRYPTO_" + SYMBOL + "_4h";
         // ------------------------------------------------------------------
-        String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_HH();
+        String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_Blog2h();
         List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 55);
         List<BtcFutures> heken_list_d1 = Utils.getHekenList(list_d1);
         String TREND_D1 = Utils.getTrendByHekenAshiList(heken_list_d1);
@@ -3202,16 +3201,16 @@ public class BinanceServiceImpl implements BinanceService {
 
         String msg_h4 = "";
         if (Objects.equals(Utils.TREND_LONG, trend_h4)) {
-            msg_h4 = " 💹 " + Utils.getChartName(list_h4) + SYMBOL + "(Up)" + str_price;
+            msg_h4 = " 💹 " + Utils.getChartName(list_h4) + SYMBOL + "(H4)" + Utils.appendSpace(trend_h4, 5) + "(D1)"
+                    + Utils.appendSpace(TREND_D1, 5) + str_price;
         } else {
-            msg_h4 = " 🔻 " + Utils.getChartName(list_h4) + SYMBOL + "(Down)" + str_price;
+            msg_h4 = " 🔻 " + Utils.getChartName(list_h4) + SYMBOL + "(H4)" + Utils.appendSpace(trend_h4, 5) + "(D1)"
+                    + Utils.appendSpace(TREND_D1, 5) + str_price;
         }
 
-        if (CRYPTO_LIST_BUYING.contains(SYMBOL) && Utils.isNotBlank(switch_trend)) {
-            if (Objects.equals(Utils.TREND_SHORT, TREND_D1) && Objects.equals(Utils.TREND_SHORT, trend_h4)) {
-                sendMsgPerHour(EVENT_ID, "(STOP_BUY)" + msg_h4, true);
-                logMsgPerHour(EVENT_ID, msg_h4 + log, Utils.MINUTES_OF_1H);
-            }
+        if (CRYPTO_LIST_BUYING.contains(SYMBOL) && Objects.equals(Utils.TREND_SHORT, trend_h4)) {
+            sendMsgPerHour(EVENT_ID, "(STOP_BUY)" + msg_h4, true);
+            logMsgPerHour(EVENT_ID, msg_h4 + log, Utils.MINUTES_OF_1H);
         }
 
         if (Objects.equals(trend_h4, Utils.TREND_LONG) && Utils.isNotBlank(switch_trend)
