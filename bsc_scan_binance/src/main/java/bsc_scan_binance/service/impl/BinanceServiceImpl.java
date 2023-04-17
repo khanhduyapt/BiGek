@@ -3338,6 +3338,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (!Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
                 continue;
             }
+
             String result = "";
             String find_trend = dto_h4.getTrend();
             if (Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())) {
@@ -3354,8 +3355,15 @@ public class BinanceServiceImpl implements BinanceService {
                 result += analysis("(__H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend, true);
             }
 
+            // H1 M15 cung 1 phia cua Ma50, H1 dao chieu.
+            if (dto_h1.getNote().contains("50") && dto_15.getNote().contains("50")
+                    && Objects.equals(dto_h1.getTrend(), dto_15.getTrend())) {
+                result += analysis("(H115, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend, true);
+            }
+
             // H4+H1+M15 cung 1 phia Ma50, M15 dao chieu.
-            if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")) {
+            if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")
+                    && Objects.equals(dto_h1.getTrend(), dto_15.getTrend())) {
                 result += analysis("(__15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend, true);
             }
 
