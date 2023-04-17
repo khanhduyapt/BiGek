@@ -3431,7 +3431,7 @@ public class BinanceServiceImpl implements BinanceService {
     public void monitorProfit() {
         // ---------------------------------------CRYPTO----------------------------------------
 
-        CRYPTO_LIST_BUYING = Arrays.asList("TRU");
+        CRYPTO_LIST_BUYING = Arrays.asList("TRU", "SSV");
         if (isReloadAfter(Utils.MINUTES_OF_15M, "MONITOR_CRYPTO")) {
             for (String SYMBOL : CRYPTO_LIST_BUYING) {
                 initCryptoTrend(SYMBOL);
