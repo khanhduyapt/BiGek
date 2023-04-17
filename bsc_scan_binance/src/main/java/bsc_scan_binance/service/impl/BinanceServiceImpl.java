@@ -3154,7 +3154,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> LIST_WAITING = Arrays.asList("APT", "APE", "ARB", "AUDIO", "BAND", "BSW", "C98", "CELO", "CELR",
                 "CHESS", "CHZ", "CTK", "CTSI", "DAR", "DODO", "DOGE", "DYDX", "EGLD", "ENJ", "EOS", "FIL", "FLM", "GNS",
                 "GRT", "HOOK", "HFT", "ID", "IMX", "KAVA", "LEVER", "LIT", "LOKA", "LQTY", "MAGIC", "MASK", "MOB",
-                "NEAR", "ONE", "OP", "PEOPLE", "PERL", "PHB", "ROSE", "RDNT", "RPL", "SXP", "SYN", "WOO", "XVS", "XMR");
+                "NEAR", "ONE", "OP", "PEOPLE", "PERL", "PHB", "ROSE", "RDNT", "RPL", "SXP", "SYN", "WOO", "XVS");
 
         List<String> ARR_ALLOW_H4 = new ArrayList<String>();
         ARR_ALLOW_H4.addAll(CRYPTO_LIST_BUYING);
@@ -3209,9 +3209,9 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (CRYPTO_LIST_BUYING.contains(SYMBOL) && Objects.equals(Utils.TREND_SHORT, trend_h4)) {
             String msg_h4 = " 🔻 (STOP_BUY)";
-            msg_h4 += Utils.getChartName(list_h4) + SYMBOL + str_price;
-            msg_h4 += "(H4)" + Utils.appendSpace(trend_h4, 5);
-            msg_h4 += "(D1)" + Utils.appendSpace(TREND_D1, 5);
+            msg_h4 += Utils.getChartName(list_h4) + Utils.appendSpace(SYMBOL, 10) + Utils.appendSpace(str_price, 10);
+            msg_h4 += ".H4:" + Utils.appendSpace(trend_h4, 5);
+            msg_h4 += ".D1:" + Utils.appendSpace(TREND_D1, 5);
 
             sendMsgPerHour(EVENT_ID, msg_h4, true);
             logMsgPerHour(EVENT_ID, msg_h4 + log, Utils.MINUTES_OF_1H);
@@ -3349,38 +3349,36 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String result = "";
-            String find_trend = dto_h4.getTrend();
-            if (Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())) {
-                find_trend = dto_d1.getTrend();
-            }
+            String trend_h4 = dto_h4.getTrend();
 
             // H4 H1 cung 1 phia cua Ma50, H4 dao chieu.
             if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")) {
-                result += analysis("(__H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, find_trend, true);
+                result += analysis("(__H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4, true);
             }
 
             // H4 H1 cung 1 phia cua Ma50, H1 dao chieu.
             if (dto_h4.getNote().contains("50")) {
-                result += analysis("(__H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend, true);
+                result += analysis("(__H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4, true);
             }
 
-            // H1 M15 cung 1 phia cua Ma50, H1 dao chieu.
-            if (dto_h1.getNote().contains("50") && dto_15.getNote().contains("50")
-                    && Objects.equals(dto_h1.getTrend(), dto_15.getTrend())) {
-                result += analysis("(H115, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend, true);
-            }
+            if (Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())
+                    && Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())) {
 
-            // H4+H1+M15 cung 1 phia Ma50, M15 dao chieu.
-            if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")
-                    && Objects.equals(dto_h1.getTrend(), dto_15.getTrend())) {
-                result += analysis("(__15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend, true);
-            }
+                // H1 M15 cung 1 phia cua Ma50, H1 dao chieu.
+                if (dto_h1.getNote().contains("50") && Objects.equals(dto_h1.getTrend(), dto_15.getTrend())) {
+                    result += analysis("(H115, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4, true);
+                }
 
-            // W=D=H4, M15 dao chieu phi ve xu huong chinh
-            if (Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())) {
-                result += analysis("(__15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend, true);
-            }
+                // H4+M15 cung 1 phia Ma50, M15 dao chieu.
+                if (dto_h4.getNote().contains("50") && Objects.equals(dto_h1.getTrend(), dto_15.getTrend())) {
+                    result += analysis("(__15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4, true);
+                }
 
+                // W=D=H4, M15 dao chieu phi ve xu huong chinh
+                if (Objects.equals(dto_h1.getTrend(), dto_15.getTrend())) {
+                    result += analysis("(__15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4, true);
+                }
+            }
             // -----------------------------------------------------------------------
             if (Utils.isNotBlank(result) && isReloadAfter(Utils.MINUTES_OF_1H, "ScapForex_" + EPIC)) {
                 msg += result;
