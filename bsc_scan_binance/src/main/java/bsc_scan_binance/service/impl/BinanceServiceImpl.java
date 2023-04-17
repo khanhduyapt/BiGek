@@ -3367,6 +3367,11 @@ public class BinanceServiceImpl implements BinanceService {
                 result += analysis("(__15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend, true);
             }
 
+            // W=D=H4, M15 dao chieu phi ve xu huong chinh
+            if (Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())) {
+                result += analysis("(__15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend, true);
+            }
+
             // -----------------------------------------------------------------------
             if (Utils.isNotBlank(result) && isReloadAfter(Utils.MINUTES_OF_1H, "ScapForex_" + EPIC)) {
                 msg += result;
