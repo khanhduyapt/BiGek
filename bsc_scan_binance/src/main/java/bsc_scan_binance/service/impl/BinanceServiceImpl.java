@@ -2484,6 +2484,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
     }
 
+    @SuppressWarnings("unused")
     private boolean isReloadPrepareOrderTrend(String EPIC, String CAPITAL_TIME_XXX) {
         long elapsedMinutes = Utils.MINUTES_OF_D + 1;
         LocalDateTime date_time = LocalDateTime.now();
@@ -2719,6 +2720,7 @@ public class BinanceServiceImpl implements BinanceService {
         logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
     }
 
+    @SuppressWarnings("unused")
     private boolean isTrendWeakening(String trend_target, String EPIC, String CAPITAL_TIME_XX) {
         List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_HOUR_4);
         List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
@@ -3263,6 +3265,7 @@ public class BinanceServiceImpl implements BinanceService {
             note = Utils.TEXT_SWITCH_TREND + Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
         }
 
+        // TODO: initForexTrend
         if (heken_list.size() > 30) {
             if (Objects.equals(Utils.TREND_LONG, trend) && Utils.isBelowMALine(heken_list, 50)) {
                 if (Utils.isBlank(note)) {
