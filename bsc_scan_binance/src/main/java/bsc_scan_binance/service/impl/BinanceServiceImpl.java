@@ -3204,7 +3204,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (CRYPTO_LIST_BUYING.contains(SYMBOL)) {
             System.out.println(Utils.getTimeHHmm() + "   " + Utils.appendSpace(SYMBOL, 10) + "(D1)"
-                    + Utils.appendSpace(TREND_D1, 5) + "(H4)" + Utils.appendSpace(trend_h4, 5));
+                    + Utils.appendSpace(TREND_D1, 5) + "(H4)" + Utils.appendSpace(trend_h4, 5)
+                    + Utils.appendSpace(str_price, 10));
         }
 
         if (CRYPTO_LIST_BUYING.contains(SYMBOL) && Objects.equals(Utils.TREND_SHORT, trend_h4)) {
@@ -3361,6 +3362,8 @@ public class BinanceServiceImpl implements BinanceService {
             String find_trend = dto_h4.getTrend();
             if (Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())) {
                 find_trend = dto_d1.getTrend();
+
+                result += analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend, true);
             }
 
             // H4 H1 cung 1 phia cua Ma50, H4 dao chieu.
