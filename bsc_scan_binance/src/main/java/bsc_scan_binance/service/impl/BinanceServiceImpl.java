@@ -3352,48 +3352,15 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String result = "";
-            String find_trend = dto_h4.getTrend();
-
+            // H4 H1 cung 1 phia cua Ma50, dao chieu.
             if (Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())) {
-                find_trend = dto_d1.getTrend();
-
-                result += analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend, true);
-
-                if (Objects.equals(dto_h1.getTrend(), dto_15.getTrend()) && dto_h1.getNote().contains("50")) {
-                    result += analysis("(WD15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend, true);
-                }
-
+                result += analysis("(WDH4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_d1.getTrend(), true);
+                result += analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_d1.getTrend(), true);
             } else {
-                if (dto_h1.getNote().contains("50")) {
-                    result += analysis("(Check H4)", EPIC, Utils.CAPITAL_TIME_HOUR_4, find_trend, true);
-                }
-                result += analysis("(Check H1)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend, true);
+                result += analysis("(__H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
+                result += analysis("(__H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h4.getTrend(), true);
             }
 
-            // H4_H1+M15 cung 1 phia Ma50, M15 dao chieu.
-            if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")) {
-                result += analysis("(Check 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, dto_h1.getTrend(), true);
-            }
-
-            // H4 H1 cung 1 phia cua Ma50, H4 dao chieu.
-            if (dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")) {
-                result += analysis("(__H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, find_trend, true);
-            }
-
-            // H4 H1 cung 1 phia cua Ma50, H1 dao chieu.
-            if (dto_h4.getNote().contains("50")) {
-                result += analysis("(__H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend, true);
-            }
-
-            // H1 M15 cung 1 phia cua Ma50, H1 dao chieu.
-            if (dto_h1.getNote().contains("50") && Objects.equals(dto_h1.getTrend(), dto_15.getTrend())) {
-                result += analysis("(H115, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend, true);
-            }
-
-            // W=D=H4, M15 dao chieu phi ve xu huong chinh
-            if (Objects.equals(dto_h1.getTrend(), dto_15.getTrend())) {
-                result += analysis("(__15, 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend, true);
-            }
             // -----------------------------------------------------------------------
             if (Utils.isNotBlank(result) && isReloadAfter(Utils.MINUTES_OF_1H, "ScapForex_" + EPIC)) {
                 msg += result;
@@ -3465,11 +3432,11 @@ public class BinanceServiceImpl implements BinanceService {
 
         // TODO: monitorProfit FOREX
         // H4
-        List<String> LIST_H4_BUYING = Arrays.asList("NZDCHF");
-        List<String> LIST_H4_SELLING = Arrays.asList("GBPNZD", "USOIL", "GER40");
+        List<String> LIST_H4_BUYING = Arrays.asList("NZDCHF", "EURUSD", "GBPUSD", "GBPCAD");
+        List<String> LIST_H4_SELLING = Arrays.asList("USOIL", "GER40");
 
         // H1
-        List<String> LIST_H1_BUYING = Arrays.asList("EURUSD", "GBPUSD", "GBPCAD");
+        List<String> LIST_H1_BUYING = Arrays.asList("");
         List<String> LIST_H1_SELLING = Arrays.asList("");
 
         //----------------------------------------------------------------------------------------------
