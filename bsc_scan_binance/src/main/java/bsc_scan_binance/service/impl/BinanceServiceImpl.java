@@ -2720,7 +2720,7 @@ public class BinanceServiceImpl implements BinanceService {
         logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
     }
 
-    private String analysis(String id, String EPIC, String CAPITAL_TIME_XX, String find_trend, boolean requireMa50) {
+    private String analysis(String EPIC, String CAPITAL_TIME_XX, String find_trend) {
         Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
         if (Objects.isNull(dto)) {
             return "";
@@ -2731,7 +2731,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
         // ----------------------------TREND------------------------
         if (Utils.isNotBlank(dto.getNote())) {
-            if (requireMa50 && (!dto.getNote().contains("50") || !dto.getNote().contains(Utils.TEXT_SWITCH_TREND))) {
+            if ((!dto.getNote().contains("20") || !dto.getNote().contains(Utils.TEXT_SWITCH_TREND))) {
                 return "";
             }
 
@@ -2739,8 +2739,7 @@ public class BinanceServiceImpl implements BinanceService {
             String type = Objects.equals(Utils.TREND_LONG, trend) ? "(B)"
                     : Objects.equals(Utils.TREND_SHORT, trend) ? "(S)" : "(x)";
 
-            String log = Utils.appendSpace(id, 15)
-                    + Utils.appendSpace(dto.getNote().replace(Utils.TEXT_SWITCH_TREND, ""), 25);
+            String log = Utils.appendSpace(dto.getNote().replace(Utils.TEXT_SWITCH_TREND, ""), 25);
 
             outputLog("Analysis_" + char_name, EPIC, dto, dto, log);
 
@@ -3304,19 +3303,19 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // TODO: initForexTrend
-        if (heken_list.size() > 30) {
-            if (Objects.equals(Utils.TREND_LONG, trend) && Utils.isBelowMALine(heken_list, 50)) {
+        if (heken_list.size() >= 20) {
+            if (Objects.equals(Utils.TREND_LONG, trend) && Utils.isBelowMALine(heken_list, 20)) {
                 if (Utils.isBlank(note)) {
                     note = Utils.getChartNameCapital(CAPITAL_TIME_XX);
                 }
-                note += Utils.TEXT_SWITCH_TREND_BELOW_50_LONG;
+                note += Utils.TEXT_SWITCH_TREND_BELOW_20_LONG;
             }
 
-            if (Objects.equals(Utils.TREND_SHORT, trend) && Utils.isAboveMALine(heken_list, 50)) {
+            if (Objects.equals(Utils.TREND_SHORT, trend) && Utils.isAboveMALine(heken_list, 20)) {
                 if (Utils.isBlank(note)) {
                     note = Utils.getChartNameCapital(CAPITAL_TIME_XX);
                 }
-                note += Utils.TEXT_SWITCH_TREND_ABOVE_50_SHOT;
+                note += Utils.TEXT_SWITCH_TREND_ABOVE_20_SHOT;
             }
         }
 
@@ -3353,19 +3352,6 @@ public class BinanceServiceImpl implements BinanceService {
         CAPITAL_LIST.addAll(Utils.EPICS_ONE_WAY);
         CAPITAL_LIST.addAll(Utils.EPICS_FOREXS);
 
-        int count = 0;
-        for (String EPIC : CAPITAL_LIST) {
-            Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
-            if (Objects.nonNull(dto_w1)) {
-                if (Utils.isNotBlank(analysis("(patern_0)", EPIC, Utils.CAPITAL_TIME_DAY, dto_w1.getTrend(), false))) {
-                    count += 1;
-                }
-            }
-        }
-        if (count > 0) {
-            Utils.logWritelnDraft("");
-        }
-
         String msg = "";
         for (String EPIC : CAPITAL_LIST) {
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
@@ -3386,8 +3372,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String result = "";
-            result += analysis("(__, H4)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4, true);
-            result += analysis("(H4, H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4, true);
+            result += analysis(EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4);
+            result += analysis(EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
 
             // -----------------------------------------------------------------------
             if (Utils.isNotBlank(result) && isReloadAfter(Utils.MINUTES_OF_1H, "ScapForex_" + EPIC)) {

@@ -95,8 +95,8 @@ public class Utils {
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
     public static final String TEXT_SWITCH_TREND = "(switch)";
-    public static final String TEXT_SWITCH_TREND_BELOW_50_LONG = "(B_50)";
-    public static final String TEXT_SWITCH_TREND_ABOVE_50_SHOT = "(S_50)";
+    public static final String TEXT_SWITCH_TREND_BELOW_20_LONG = "(B_20)";
+    public static final String TEXT_SWITCH_TREND_ABOVE_20_SHOT = "(S_20)";
     public static final String TEXT_SWITCH_TREND_W10_LONG = "(B_10W)";
     public static final String TEXT_SWITCH_TREND_W10_SHOT = "(S_10W)";
     public static final String TEXT_SWITCH_TREND_D10_LONG = "(B_10D)";
@@ -3429,10 +3429,9 @@ public class Utils {
         }
 
         String trend_0 = heken_list.get(0).isUptrend() ? TREND_LONG : TREND_SHORT;
-        String trend_1 = (heken_list.get(0).getPrice_close_candle()
-                .compareTo(heken_list.get(1).getPrice_close_candle()) > 0) ? TREND_LONG : TREND_SHORT;
+        String trend_ma2 = isUptrendByMa(heken_list, 2, 0, 1) ? TREND_LONG : TREND_SHORT;
 
-        if (Objects.equals(trend_0, trend_1)) {
+        if (Objects.equals(trend_0, trend_ma2)) {
             return trend_0;
         }
 
@@ -3441,8 +3440,8 @@ public class Utils {
             return trend_0;
         }
 
-        if (Objects.equals(trend_1, trend_ma3)) {
-            return trend_0;
+        if (Objects.equals(trend_ma2, trend_ma3)) {
+            return trend_ma2;
         }
 
         return trend_0;
