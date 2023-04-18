@@ -3436,12 +3436,12 @@ public class Utils {
             return trend_0;
         }
 
-        String trend_3 = isUptrendByMa(heken_list, 3, 0, 1) ? TREND_LONG : TREND_SHORT;
-        if (Objects.equals(trend_0, trend_3)) {
+        String trend_ma3 = isUptrendByMa(heken_list, 3, 0, 1) ? TREND_LONG : TREND_SHORT;
+        if (Objects.equals(trend_0, trend_ma3)) {
             return trend_0;
         }
 
-        if (Objects.equals(trend_1, trend_3)) {
+        if (Objects.equals(trend_1, trend_ma3)) {
             return trend_0;
         }
 
