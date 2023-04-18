@@ -3462,7 +3462,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // TODO: monitorProfit
         List<String> LIST_H4_BUYING = Arrays.asList("NZDCHF");
-        List<String> LIST_H4_SELLING = Arrays.asList("EURAUD", "GBPNZD", "USOIL", "GER40");
+        List<String> LIST_H4_SELLING = Arrays.asList("EURAUD", "GBPNZD", "USOIL", "GER40", "GBPJPY");
 
         // D-H4-H1
         {
