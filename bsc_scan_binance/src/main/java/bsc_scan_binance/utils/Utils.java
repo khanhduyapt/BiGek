@@ -15,9 +15,11 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
@@ -869,6 +871,30 @@ public class Utils {
 
         if ((BscScanBinanceApplication.app_flag == const_app_flag_msg_on)
                 || (BscScanBinanceApplication.app_flag == const_app_flag_all_and_msg)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isTimeToHuntM15() {
+        LocalTime kill_zone_tk = LocalTime.parse("07:15:00"); // to: 09:45
+        LocalTime kill_zone_ld = LocalTime.parse("12:15:00"); // to: 14:45
+        LocalTime kill_zone_ny = LocalTime.parse("17:15:00"); // to: 19:45
+        LocalTime cur_time = LocalTime.now();
+
+        long elapsedMinutes_tk = Duration.between(kill_zone_tk, cur_time).toMinutes();
+        if ((0 <= elapsedMinutes_tk) && (elapsedMinutes_tk <= 150)) {
+            return true;
+        }
+
+        long elapsedMinutes_ld = Duration.between(kill_zone_ld, cur_time).toMinutes();
+        if ((0 <= elapsedMinutes_ld) && (elapsedMinutes_ld <= 150)) {
+            return true;
+        }
+
+        long elapsedMinutes_ny = Duration.between(kill_zone_ny, cur_time).toMinutes();
+        if ((0 <= elapsedMinutes_ny) && (elapsedMinutes_ny <= 150)) {
             return true;
         }
 
