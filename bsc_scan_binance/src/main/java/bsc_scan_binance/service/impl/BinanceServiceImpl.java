@@ -2720,7 +2720,7 @@ public class BinanceServiceImpl implements BinanceService {
         logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
     }
 
-    private String analysis(String EPIC, String CAPITAL_TIME_XX, String find_trend) {
+    private String analysis(String note, String EPIC, String CAPITAL_TIME_XX, String find_trend) {
         Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
         if (Objects.isNull(dto)) {
             return "";
@@ -2739,7 +2739,8 @@ public class BinanceServiceImpl implements BinanceService {
             String type = Objects.equals(Utils.TREND_LONG, trend) ? "(B)"
                     : Objects.equals(Utils.TREND_SHORT, trend) ? "(S)" : "(x)";
 
-            String log = Utils.appendSpace(dto.getNote().replace(Utils.TEXT_SWITCH_TREND, ""), 25);
+            String log = Utils.appendSpace(note, 12)
+                    + Utils.appendSpace(dto.getNote().replace(Utils.TEXT_SWITCH_TREND, ""), 25);
 
             outputLog("Analysis_" + char_name, EPIC, dto, dto, log);
 
@@ -3367,13 +3368,29 @@ public class BinanceServiceImpl implements BinanceService {
 
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
+            String note = "(H4 = H1)";
+            boolean isBreadOfH4Area = false;
             if (!Objects.equals(trend_h4, trend_h1)) {
-                continue;
+                BigDecimal cur_price = dto_h1.getCurrent_price();
+
+                if (cur_price.compareTo(dto_h4.getStr_body_price()) < 0) {
+                    isBreadOfH4Area = true;
+                    note = "( Bread )";
+                }
+                if (cur_price.compareTo(dto_h4.getEnd_body_price()) > 0) {
+                    isBreadOfH4Area = true;
+                    note = "( Bread )";
+                }
             }
 
             String result = "";
-            result += analysis(EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4);
-            result += analysis(EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
+            if (Objects.equals(trend_h4, trend_h1)) {
+                result += analysis(note, EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4);
+                result += analysis(note, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
+            }
+            if (isBreadOfH4Area) {
+                result += analysis(note, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+            }
 
             // -----------------------------------------------------------------------
             if (Utils.isNotBlank(result) && isReloadAfter(Utils.MINUTES_OF_1H, "ScapForex_" + EPIC)) {
