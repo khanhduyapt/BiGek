@@ -3182,6 +3182,10 @@ public class BinanceServiceImpl implements BinanceService {
                 note = "WAITING_LIST";
             }
 
+            if (CRYPTO_LIST_BUYING.contains(SYMBOL)) {
+                note = "BUYING";
+            }
+
             List<BigDecimal> body = Utils.getOpenCloseCandle(list_d1);
             List<BigDecimal> low_high = Utils.getLowHighCandle(list_d1);
             Orders entity = new Orders(orderId_d1, date_time, Utils.TREND_LONG, list_d1.get(0).getCurrPrice(),
@@ -3206,7 +3210,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (CRYPTO_LIST_BUYING.contains(SYMBOL)) {
             System.out.println(Utils.getTimeHHmm() + "   " + Utils.appendSpace(SYMBOL, 10) + "(D1)"
                     + Utils.appendSpace(TREND_D1, 5) + "(H4)" + Utils.appendSpace(trend_h4, 5)
-                    + Utils.appendSpace(str_price, 10));
+                    + Utils.appendSpace(str_price, 10) + "BUYING");
         }
 
         if (CRYPTO_LIST_BUYING.contains(SYMBOL) && Objects.equals(Utils.TREND_SHORT, trend_h4)) {
@@ -3345,20 +3349,60 @@ public class BinanceServiceImpl implements BinanceService {
                 return;
             }
 
+            String note = "";
+            BigDecimal curr_price = dto_h4.getCurrent_price();
+            boolean isBreadAreaOfW10 = false;
+            String trend_d1 = dto_d1.getTrend();
+            String trend_h4 = dto_h4.getTrend();
+            String trend_h1 = dto_h1.getTrend();
+
+            if (curr_price.compareTo(dto_w1.getStr_body_price()) < 0) {
+                isBreadAreaOfW10 = true;
+                note += Utils.TEXT_SWITCH_TREND_W10_LONG;
+            }
+            if (curr_price.compareTo(dto_w1.getEnd_body_price()) > 0) {
+                isBreadAreaOfW10 = true;
+                note += Utils.TEXT_SWITCH_TREND_W10_SHOT;
+            }
+
+            if (curr_price.compareTo(dto_d1.getStr_body_price()) < 0) {
+                note += Utils.TEXT_SWITCH_TREND_D10_LONG;
+            }
+            if (curr_price.compareTo(dto_d1.getEnd_body_price()) > 0) {
+                note += Utils.TEXT_SWITCH_TREND_D10_SHOT;
+            }
+
+            note = Utils.appendSpace(note, 10);
+
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
-            if (!Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
+            if (!isBreadAreaOfW10 && !Objects.equals(trend_h4, trend_h1)) {
                 continue;
             }
 
             String result = "";
             // H4 H1 cung 1 phia cua Ma50, dao chieu.
-            if (Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())) {
-                result += analysis("(WDH4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_d1.getTrend(), true);
-                result += analysis("(WDH1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_d1.getTrend(), true);
+            if (Objects.equals(dto_w1.getTrend(), trend_d1) && Utils.EPICS_INDEXS.contains(EPIC)) {
+                result += analysis("(WD:" + Utils.appendSpace(trend_d1, 4) + ", H4)" + note, EPIC,
+                        Utils.CAPITAL_TIME_HOUR_4, trend_h4, true);
+
+                result += analysis("(WD:" + Utils.appendSpace(trend_d1, 4) + ", H1)" + note, EPIC,
+                        Utils.CAPITAL_TIME_HOUR, trend_d1, true);
+
+                result += analysis("(WD:" + Utils.appendSpace(trend_d1, 4) + ", 15)" + note, EPIC,
+                        Utils.CAPITAL_TIME_MINUTE_15, trend_d1, true);
+
+            } else if (Objects.equals(dto_w1.getTrend(), trend_d1)) {
+
+                result += analysis("(WD:" + Utils.appendSpace(trend_d1, 4) + ", H4)" + note, EPIC,
+                        Utils.CAPITAL_TIME_HOUR_4, trend_h4, true);
+
+                result += analysis("(WD:" + Utils.appendSpace(trend_d1, 4) + ", H1)" + note, EPIC,
+                        Utils.CAPITAL_TIME_HOUR, trend_d1, true);
+
             } else {
-                result += analysis("(__H4, 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, dto_h4.getTrend(), true);
-                result += analysis("(__H1, 50)", EPIC, Utils.CAPITAL_TIME_HOUR, dto_h4.getTrend(), true);
+                result += analysis("(_______, H4)" + note, EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4, true);
+                result += analysis("(_______, H1)" + note, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1, true);
             }
 
             // -----------------------------------------------------------------------
@@ -3432,8 +3476,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         // TODO: monitorProfit FOREX
         // H4
-        List<String> LIST_H4_BUYING = Arrays.asList("NZDCHF", "EURUSD", "GBPUSD", "GBPCAD");
-        List<String> LIST_H4_SELLING = Arrays.asList("USOIL", "GER40");
+        List<String> LIST_H4_BUYING = Arrays.asList("GBPAUD");
+        List<String> LIST_H4_SELLING = Arrays.asList("");
 
         // H1
         List<String> LIST_H1_BUYING = Arrays.asList("");

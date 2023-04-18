@@ -95,8 +95,10 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND = "(switch)";
     public static final String TEXT_SWITCH_TREND_BELOW_50_LONG = "(B_50)";
     public static final String TEXT_SWITCH_TREND_ABOVE_50_SHOT = "(S_50)";
-    public static final String TEXT_SWITCH_TREND_Ma10_LONG = "(B_10)";
-    public static final String TEXT_SWITCH_TREND_Ma10_SHOT = "(S_10)";
+    public static final String TEXT_SWITCH_TREND_W10_LONG = "(B_10W)";
+    public static final String TEXT_SWITCH_TREND_W10_SHOT = "(S_10W)";
+    public static final String TEXT_SWITCH_TREND_D10_LONG = "(B_10D)";
+    public static final String TEXT_SWITCH_TREND_D10_SHOT = "(S_10D)";
 
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
