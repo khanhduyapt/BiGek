@@ -3409,29 +3409,30 @@ public class BinanceServiceImpl implements BinanceService {
 
             String result = "";
             if (Objects.equals(trend_w1, trend_d1)) {
-                result += analysis("(WD:" + Utils.appendSpace(trend_d1, 4) + ", H4)" + note, EPIC,
-                        Utils.CAPITAL_TIME_HOUR_4, trend_d1, true);
+                if (Objects.equals(trend_h4, trend_h1)) {
+                    result += analysis("(WD:" + Utils.appendSpace(trend_d1, 4) + ", H4)" + note, EPIC,
+                            Utils.CAPITAL_TIME_HOUR_4, trend_d1, true);
+                }
 
                 if (Objects.equals(trend_h1, trend_15)) {
                     result += analysis("(WD:" + Utils.appendSpace(trend_d1, 4) + ", H1)" + note, EPIC,
                             Utils.CAPITAL_TIME_HOUR, trend_d1, true);
                 }
 
-                if (dto_h1.getNote().contains("50")) {
+                if (Utils.isTimeToHuntM15() || Objects.equals(trend_h1, trend_15)) {
                     result += analysis("(WD:" + Utils.appendSpace(trend_d1, 4) + ", 15)" + note, EPIC,
                             Utils.CAPITAL_TIME_MINUTE_15, trend_h1, true);
                 }
             } else {
-                // H4 H1 cung 1 phia cua Ma50, dao chieu.
-                result += analysis("(D1:" + Utils.appendSpace(trend_d1, 4) + ", H4)" + note, EPIC,
-                        Utils.CAPITAL_TIME_HOUR_4, trend_h4, true);
-
-                if (Objects.equals(trend_h1, trend_15)) {
-                    result += analysis("(H4:" + Utils.appendSpace(trend_h4, 4) + ", H1)" + note, EPIC,
-                            Utils.CAPITAL_TIME_HOUR, trend_h1, true);
+                if (Objects.equals(trend_h4, trend_h1)) {
+                    result += analysis("(_______, H4)" + note, EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4, true);
                 }
 
-                if (dto_h1.getNote().contains("50")) {
+                if (Objects.equals(trend_h1, trend_15)) {
+                    result += analysis("_______, H1)" + note, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4, true);
+                }
+
+                if (Utils.isTimeToHuntM15() || Objects.equals(trend_h1, trend_15)) {
                     result += analysis("(_______, 15)" + note, EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h1, true);
                 }
             }
@@ -3479,7 +3480,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> LIST_H4_SELLING = Arrays.asList("");
 
         // H1
-        List<String> LIST_H1_BUYING = Arrays.asList("GBPAUD");
+        List<String> LIST_H1_BUYING = Arrays.asList("");
         List<String> LIST_H1_SELLING = Arrays.asList("");
 
         // ----------------------------------------------------------------------------------------------

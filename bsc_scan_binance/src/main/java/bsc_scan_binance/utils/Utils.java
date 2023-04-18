@@ -878,9 +878,9 @@ public class Utils {
     }
 
     public static boolean isTimeToHuntM15() {
-        LocalTime kill_zone_tk = LocalTime.parse("07:15:00"); // to: 09:45
-        LocalTime kill_zone_ld = LocalTime.parse("12:15:00"); // to: 14:45
-        LocalTime kill_zone_ny = LocalTime.parse("17:15:00"); // to: 19:45
+        LocalTime kill_zone_tk = LocalTime.parse("07:45:00"); // to: 09:45
+        LocalTime kill_zone_ld = LocalTime.parse("13:45:00"); // to: 15:45
+        LocalTime kill_zone_ny = LocalTime.parse("17:45:00"); // to: 19:45
         LocalTime cur_time = LocalTime.now();
 
         long elapsedMinutes_tk = Duration.between(kill_zone_tk, cur_time).toMinutes();
