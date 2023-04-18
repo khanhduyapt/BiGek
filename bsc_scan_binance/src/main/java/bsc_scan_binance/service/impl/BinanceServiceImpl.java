@@ -2739,7 +2739,9 @@ public class BinanceServiceImpl implements BinanceService {
             String type = Objects.equals(Utils.TREND_LONG, trend) ? "(B)"
                     : Objects.equals(Utils.TREND_SHORT, trend) ? "(S)" : "(x)";
 
-            String log = Utils.appendSpace(id, 15) + Utils.appendSpace(dto.getNote(), 25);
+            String log = Utils.appendSpace(id, 15)
+                    + Utils.appendSpace(dto.getNote().replace(Utils.TEXT_SWITCH_TREND, ""), 25);
+
             outputLog("Analysis_" + char_name, EPIC, dto, dto, log);
 
             if (!isReloadAfter(Utils.MINUTES_OF_1H, EPIC + trend)) {
