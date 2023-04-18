@@ -3366,40 +3366,21 @@ public class BinanceServiceImpl implements BinanceService {
 
         String msg = "";
         for (String EPIC : CAPITAL_LIST) {
-            Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
 
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
-                    || Objects.isNull(dto_15)) {
+            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)) {
                 Utils.logWritelnDraft("scapForex (" + EPIC + ") dto is null");
                 return;
             }
 
-            String note = "";
             BigDecimal curr_price = dto_h4.getCurrent_price();
-            String trend_w1 = dto_w1.getTrend();
             String trend_d1 = dto_d1.getTrend();
             String trend_h4 = dto_h4.getTrend();
             String trend_h1 = dto_h1.getTrend();
             String trend_15 = dto_15.getTrend();
-
-            if (curr_price.compareTo(dto_w1.getStr_body_price()) < 0) {
-                note += Utils.TEXT_SWITCH_TREND_W10_LONG;
-            }
-            if (curr_price.compareTo(dto_w1.getEnd_body_price()) > 0) {
-                note += Utils.TEXT_SWITCH_TREND_W10_SHOT;
-            }
-
-            if (curr_price.compareTo(dto_d1.getStr_body_price()) < 0) {
-                note += Utils.TEXT_SWITCH_TREND_D10_LONG;
-            }
-            if (curr_price.compareTo(dto_d1.getEnd_body_price()) > 0) {
-                note += Utils.TEXT_SWITCH_TREND_D10_SHOT;
-            }
-            note = Utils.appendSpace(note, 10);
 
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
@@ -3408,32 +3389,29 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String result = "";
-            if (Objects.equals(trend_w1, trend_d1)) {
-                if (Objects.equals(trend_h4, trend_h1)) {
-                    result += analysis("(WD:" + Utils.appendSpace(trend_d1, 4) + ", H4)" + note, EPIC,
-                            Utils.CAPITAL_TIME_HOUR_4, trend_d1, true);
+            if (Objects.equals(trend_d1, trend_d1)) {
+                if (Objects.equals(trend_d1, trend_h1)) {
+                    result += analysis("(D1, H4)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_d1, true);
                 }
 
                 if (Objects.equals(trend_h1, trend_15)) {
-                    result += analysis("(WD:" + Utils.appendSpace(trend_d1, 4) + ", H1)" + note, EPIC,
-                            Utils.CAPITAL_TIME_HOUR, trend_d1, true);
+                    result += analysis("(D1, H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_d1, true);
                 }
 
                 if (Utils.isTimeToHuntM15() || Objects.equals(trend_h1, trend_15)) {
-                    result += analysis("(WD:" + Utils.appendSpace(trend_d1, 4) + ", 15)" + note, EPIC,
-                            Utils.CAPITAL_TIME_MINUTE_15, trend_h1, true);
+                    result += analysis("(D1, 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_d1, true);
                 }
             } else {
-                if (Objects.equals(trend_h4, trend_h1)) {
-                    result += analysis("(_______, H4)" + note, EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4, true);
+                if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
+                    result += analysis("(__, H4)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4, true);
                 }
 
                 if (Objects.equals(trend_h1, trend_15)) {
-                    result += analysis("_______, H1)" + note, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4, true);
+                    result += analysis("(H4, H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4, true);
                 }
 
                 if (Utils.isTimeToHuntM15() || Objects.equals(trend_h1, trend_15)) {
-                    result += analysis("(_______, 15)" + note, EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h1, true);
+                    result += analysis("(H1, 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h1, true);
                 }
             }
 
