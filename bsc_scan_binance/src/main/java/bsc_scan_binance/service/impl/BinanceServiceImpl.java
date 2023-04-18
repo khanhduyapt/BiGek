@@ -3376,7 +3376,6 @@ public class BinanceServiceImpl implements BinanceService {
                 return;
             }
 
-            BigDecimal curr_price = dto_h4.getCurrent_price();
             String trend_d1 = dto_d1.getTrend();
             String trend_h4 = dto_h4.getTrend();
             String trend_h1 = dto_h1.getTrend();
@@ -3436,9 +3435,13 @@ public class BinanceServiceImpl implements BinanceService {
     public void monitorProfit() {
         // ---------------------------------------CRYPTO----------------------------------------
 
-        CRYPTO_LIST_BUYING = Arrays.asList("TRU", "SSV");
+        CRYPTO_LIST_BUYING = Arrays.asList("");
         if (isReloadAfter(Utils.MINUTES_OF_15M, "MONITOR_CRYPTO")) {
             for (String SYMBOL : CRYPTO_LIST_BUYING) {
+                if (Utils.isBlank(SYMBOL)) {
+                    continue;
+                }
+
                 initCryptoTrend(SYMBOL);
                 BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS);
             }
