@@ -2726,7 +2726,7 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
         String trend = dto.getTrend();
-        if (!Objects.equals(find_trend, trend) || !dto.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
+        if (!Objects.equals(find_trend, trend)) {
             return "";
         }
         // ----------------------------TREND------------------------
@@ -2737,9 +2737,7 @@ public class BinanceServiceImpl implements BinanceService {
             String type = Objects.equals(Utils.TREND_LONG, trend) ? "(B)"
                     : Objects.equals(Utils.TREND_SHORT, trend) ? "(S)" : "(x)";
 
-            String log = Utils.appendSpace(note, 20) + Utils.appendSpace(dto.getNote()
-                    .replace(Utils.TEXT_SWITCH_TREND, "").replace(Utils.TEXT_SWITCH_TREND_BELOW_Ma_LONG, "")
-                    .replace(Utils.TEXT_SWITCH_TREND_ABOVE_Ma_SHOT, ""), 20);
+            String log = Utils.appendSpace(note, 15) + Utils.appendSpace(dto.getNote(), 15);
 
             outputLog("Analysis_" + char_name, EPIC, dto, dto, log);
 
@@ -3059,8 +3057,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String chart = Utils.getChartName(dto_h1) + ":" + Utils.appendSpace(dto_h1.getTrend(), 8);
                     String note = dto_h4.getNote() + dto_h1.getNote();
 
-                    if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())
-                            && note.contains(Utils.TEXT_SWITCH_TREND)) {
+                    if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend()) && Utils.isNotBlank(note)) {
                         String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
                         log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
                         log += Utils.createLineForex_Body(dto_h4, dto_h4, dto_h4.getTrend()).trim();
@@ -3069,8 +3066,7 @@ public class BinanceServiceImpl implements BinanceService {
                         Utils.logWritelnReport(log);
                     }
 
-                    if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())
-                            && !note.contains(Utils.TEXT_SWITCH_TREND)) {
+                    if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend()) && Utils.isBlank(note)) {
                         String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
                         log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
                         log += Utils.createLineForex_Body(dto_h4, dto_h4, dto_h4.getTrend()).trim();
@@ -3079,7 +3075,7 @@ public class BinanceServiceImpl implements BinanceService {
                         list_h4_eq_h1.add(log);
                     }
 
-                    if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
+                    if (Utils.isNotBlank(dto_h4.getNote())) {
                         String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
                         log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
                         log += Utils.createLineForex_Body(dto_h4, dto_h4, dto_h4.getTrend()).trim();
@@ -3088,7 +3084,7 @@ public class BinanceServiceImpl implements BinanceService {
                         list_h4_switch_trend.add(log);
                     }
 
-                    if (dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
+                    if (Utils.isNotBlank(dto_h1.getNote())) {
                         chart = Utils.getChartName(dto_h4) + ":" + Utils.appendSpace(dto_h4.getTrend(), 8);
 
                         String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h1, dto_h1, chart).trim(), 105);
@@ -3320,25 +3316,21 @@ public class BinanceServiceImpl implements BinanceService {
 
         String switch_trend = Utils.switchTrendByHeken01(heken_list);
         if (Utils.isNotBlank(switch_trend)) {
-            note = Utils.TEXT_SWITCH_TREND + Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
+
+            if (heken_list.size() >= 30) {
+                if (Objects.equals(Utils.TREND_LONG, trend) && Utils.isBelowMALine(heken_list, 50)) {
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.TEXT_SWITCH_TREND_BELOW_Ma_LONG;
+                }
+                if (Objects.equals(Utils.TREND_SHORT, trend) && Utils.isAboveMALine(heken_list, 50)) {
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.TEXT_SWITCH_TREND_ABOVE_Ma_SHOT;
+                }
+            } else {
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
+            }
+
         }
 
         // TODO: initForexTrend
-        if (heken_list.size() >= 30) {
-            if (Objects.equals(Utils.TREND_LONG, trend) && Utils.isBelowMALine(heken_list, 50)) {
-                if (Utils.isBlank(note)) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX);
-                }
-                note += Utils.TEXT_SWITCH_TREND_BELOW_Ma_LONG;
-            }
-
-            if (Objects.equals(Utils.TREND_SHORT, trend) && Utils.isAboveMALine(heken_list, 50)) {
-                if (Utils.isBlank(note)) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX);
-                }
-                note += Utils.TEXT_SWITCH_TREND_ABOVE_Ma_SHOT;
-            }
-        }
 
         List<BigDecimal> body = Utils.getOpenCloseCandle(heken_list);
         BigDecimal str_body_price = body.get(0);
@@ -3375,48 +3367,63 @@ public class BinanceServiceImpl implements BinanceService {
 
         String msg = "";
         for (String EPIC : CAPITAL_LIST) {
+            Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
 
-            if (Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
+            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
                 Utils.logWritelnDraft("scapForex (" + EPIC + ") dto is null");
                 return;
             }
 
+            boolean isH4H1SameSide = false;
+            if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_BELOW_Ma_LONG)
+                    && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_BELOW_Ma_LONG)) {
+                isH4H1SameSide = true;
+            }
+            if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_ABOVE_Ma_SHOT)
+                    && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_ABOVE_Ma_SHOT)) {
+                isH4H1SameSide = true;
+            }
+
+            String trend_d1 = dto_h4.getTrend();
             String trend_h4 = dto_h4.getTrend();
             String trend_h1 = dto_h1.getTrend();
 
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
-            String note = "(H4 = H1)";
-
-            if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_BELOW_Ma_LONG)
-                    && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_BELOW_Ma_LONG)) {
-                note += Utils.TEXT_SWITCH_TREND_BELOW_Ma_LONG;
-            }
-            if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_ABOVE_Ma_SHOT)
-                    && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_ABOVE_Ma_SHOT)) {
-                note += Utils.TEXT_SWITCH_TREND_ABOVE_Ma_SHOT;
-            }
-
             String result = "";
-            if (Objects.equals(trend_h4, trend_h1)) {
-                result += analysis(note, EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4);
-                result += analysis(note, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+            if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
+                // result += analysis("(D1-->H1)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_d1);
+                result += analysis("(D1-->H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_d1);
             }
 
             if (Utils.isBlank(result)) {
                 BigDecimal cur_price = dto_h1.getCurrent_price();
-
                 if ((cur_price.compareTo(dto_h4.getStr_body_price()) < 0)
                         || (cur_price.compareTo(dto_h4.getEnd_body_price()) > 0)) {
-                    note = "( Bread )";
 
-                    result += analysis(note, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+                    if (Objects.equals(trend_d1, trend_h4)) {
+                        result += analysis("(BreadH4)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
+                    } else {
+                        result += analysis("(BreadH4)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+                    }
                 }
 
-                if (dto_h4.getNote().contains("50")) {
-                    result += analysis(note, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+                if (Utils.isBlank(result) && isH4H1SameSide) {
+                    result += analysis("(  Ma50 )", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+                }
+
+                if (Utils.isBlank(result) && Objects.equals(trend_h4, trend_h1)) {
+                    result += analysis("(H4   H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+                }
+
+                if (Utils.isBlank(result) && Objects.equals(trend_d1, trend_h1)) {
+                    result += analysis("(D1   H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+                }
+
+                if (Utils.isBlank(result)) {
+                    analysis("(       )", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
                 }
             }
 
@@ -3467,8 +3474,8 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> LIST_H4_SELLING = Arrays.asList("");
 
         // H1
-        List<String> LIST_H1_BUYING = Arrays.asList("NZDUSD", "");
-        List<String> LIST_H1_SELLING = Arrays.asList("CHFJPY", "EURNZD", "GBPNZD");
+        List<String> LIST_H1_BUYING = Arrays.asList("", "", "", "", "", "", "");
+        List<String> LIST_H1_SELLING = Arrays.asList("", "", "", "", "", "", "");
 
         // ----------------------------------------------------------------------------------------------
         List<String> EPICS_ONE_WAY = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "GER40", "USOIL");
@@ -3490,18 +3497,23 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 String ACTION = LIST_H4_BUYING.contains(EPIC) ? Utils.TREND_LONG : Utils.TREND_SHORT;
+                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
                 Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
                 Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
 
-                if (Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
+                if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
                     Utils.logWritelnDraft("monitorProfit (" + EPIC + ") dto is null");
                     continue;
                 }
+
+                String trend_d1 = dto_d1.getTrend();
                 String trend_h4 = dto_h4.getTrend();
                 String trend_h1 = dto_h1.getTrend();
 
                 String trend_w1d1 = "";
                 trend_w1d1 += "(" + Utils.appendSpace(ACTION, 4) + ") " + Utils.appendSpace(EPIC, 10);
+
+                trend_w1d1 += ".D1:" + "(" + Utils.appendSpace(trend_d1, 4) + ")";
                 trend_w1d1 += ".H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ")";
                 trend_w1d1 += ".H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
 

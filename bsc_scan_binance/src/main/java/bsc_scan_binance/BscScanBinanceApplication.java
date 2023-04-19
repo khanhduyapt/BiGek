@@ -126,6 +126,7 @@ public class BscScanBinanceApplication {
                                 binance_service.initWeekTrend();
 
                                 for (String EPIC : CAPITAL_LIST) {
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
                                 }

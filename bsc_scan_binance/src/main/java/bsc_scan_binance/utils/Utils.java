@@ -94,7 +94,6 @@ public class Utils {
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
-    public static final String TEXT_SWITCH_TREND = "(switch)";
     public static final String TEXT_SWITCH_TREND_BELOW_Ma_LONG = "(B_50)";
     public static final String TEXT_SWITCH_TREND_ABOVE_Ma_SHOT = "(S_50)";
 
@@ -141,7 +140,7 @@ public class Utils {
     public static final Integer MINUTES_OF_15M = 15;
     public static final Integer MINUTES_OF_5M = 5;
 
-    public static final Integer MINUTES_RELOAD_CSV_DATA = 3;
+    public static final Integer MINUTES_RELOAD_CSV_DATA = 5;
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
@@ -3431,7 +3430,8 @@ public class Utils {
             return trend_0;
         }
 
-        return isUptrendByMa(heken_list, 3, 0, 1) ? TREND_LONG : TREND_SHORT;
+        String trend_ma3 = isUptrendByMa(heken_list, 3, 0, 1) ? TREND_LONG : TREND_SHORT;
+        return trend_ma3;
     }
 
     public static String createLineForex_Header(Orders dto_entry, Orders dto_sl, String trend_d1) {
