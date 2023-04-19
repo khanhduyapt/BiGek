@@ -2739,8 +2739,9 @@ public class BinanceServiceImpl implements BinanceService {
             String type = Objects.equals(Utils.TREND_LONG, trend) ? "(B)"
                     : Objects.equals(Utils.TREND_SHORT, trend) ? "(S)" : "(x)";
 
-            String log = Utils.appendSpace(note, 12)
-                    + Utils.appendSpace(dto.getNote().replace(Utils.TEXT_SWITCH_TREND, ""), 25);
+            String log = Utils.appendSpace(note, 20) + Utils.appendSpace(dto.getNote()
+                    .replace(Utils.TEXT_SWITCH_TREND, "").replace(Utils.TEXT_SWITCH_TREND_BELOW_20_LONG, "")
+                    .replace(Utils.TEXT_SWITCH_TREND_ABOVE_20_SHOT, ""), 20);
 
             outputLog("Analysis_" + char_name, EPIC, dto, dto, log);
 
@@ -3044,49 +3045,46 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO createReport
         String msg_forx = "";
         String msg_futu = "";
-        List<String> list_d1_switch_trend = new ArrayList<String>();
         List<String> list_h4_switch_trend = new ArrayList<String>();
+        List<String> list_h1_switch_trend = new ArrayList<String>();
         List<Orders> list_all = ordersRepository.getTrend_H4List();
         if (!CollectionUtils.isEmpty(list_all)) {
             Utils.logWritelnReport("");
-            Utils.logWritelnReport(Utils.appendLeftAndRight(" Start W1 = D1 = H4 = H1 ", 50, "+"));
+            Utils.logWritelnReport(Utils.appendLeftAndRight(" Start      H4 = H1      ", 50, "+"));
             for (Orders dto_h4 : list_all) {
                 String EPIC = Utils.getEpicFromId(dto_h4.getId());
 
-                Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
-                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
                 Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
 
-                if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_w1) && Objects.nonNull(dto_h1)) {
+                if (Objects.nonNull(dto_h1)) {
+                    String chart = Utils.getChartName(dto_h1) + ":" + Utils.appendSpace(dto_h1.getTrend(), 8);
+                    String note = dto_h4.getNote() + dto_h1.getNote();
 
-                    String chart = Utils.getChartName(dto_d1) + ":" + Utils.appendSpace(dto_d1.getTrend(), 8);
-                    String note = dto_w1.getNote() + dto_d1.getNote() + dto_h4.getNote();
+                    if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
+                        String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
+                        log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
+                        log += Utils.createLineForex_Body(dto_h4, dto_h4, dto_h4.getTrend()).trim();
+                        log += "   " + note;
 
-                    String find_trend = "";
-                    if (note.contains(Utils.TREND_LONG) && note.contains(Utils.TREND_SHORT)) {
-                        find_trend = "";
-                    } else {
-                        find_trend = dto_h4.getTrend();
-                    }
-
-                    String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
-                    log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
-                    log += Utils.createLineForex_Body(dto_h4, dto_h4, find_trend).trim();
-                    log += "   " + note;
-                    log = Utils.appendSpace("  (W1):" + dto_w1.getTrend(), 15) + log;
-
-                    if (Objects.equals(dto_d1.getTrend(), dto_w1.getTrend())
-                            && Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())
-                            && Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
                         Utils.logWritelnReport(log);
                     }
 
-                    if (Utils.isNotBlank(dto_d1.getNote())) {
-                        list_d1_switch_trend.add(log);
+                    if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend()) && Utils.isNotBlank(dto_h4.getNote())) {
+                        String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
+                        log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
+                        log += Utils.createLineForex_Body(dto_h4, dto_h4, dto_h4.getTrend()).trim();
+                        log += "   " + note;
+
+                        list_h4_switch_trend.add(log);
                     }
 
-                    if (Utils.isNotBlank(dto_h4.getNote())) {
-                        list_h4_switch_trend.add(log);
+                    if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend()) && Utils.isNotBlank(dto_h1.getNote())) {
+                        String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h1, dto_h1, chart).trim(), 105);
+                        log += Utils.appendSpace(Utils.removeLastZero(dto_h1.getCurrent_price()), 15);
+                        log += Utils.createLineForex_Body(dto_h1, dto_h1, dto_h1.getTrend()).trim();
+                        log += "   " + note;
+
+                        list_h1_switch_trend.add(log);
                     }
 
                 }
@@ -3096,20 +3094,20 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnReport("");
         }
 
-        if (list_d1_switch_trend.size() > 0) {
+        if (list_h4_switch_trend.size() > 0) {
             Utils.logWritelnReport("");
-            Utils.logWritelnReport(Utils.appendLeftAndRight("Start Switch_Trend_D1", 50, "+"));
-            for (String log : list_d1_switch_trend) {
+            Utils.logWritelnReport(Utils.appendLeftAndRight("Start Switch_Trend_H4", 50, "+"));
+            for (String log : list_h4_switch_trend) {
                 Utils.logWritelnReport(log);
             }
             Utils.logWritelnReport("");
             Utils.logWritelnReport("");
         }
 
-        if (list_h4_switch_trend.size() > 0) {
+        if (list_h1_switch_trend.size() > 0) {
             Utils.logWritelnReport("");
-            Utils.logWritelnReport(Utils.appendLeftAndRight("   Start   D1 # H4   ", 50, "+"));
-            for (String log : list_h4_switch_trend) {
+            Utils.logWritelnReport(Utils.appendLeftAndRight("Start Switch_Trend_H1", 50, "+"));
+            for (String log : list_h1_switch_trend) {
                 Utils.logWritelnReport(log);
             }
             Utils.logWritelnReport("");
@@ -3324,7 +3322,7 @@ public class BinanceServiceImpl implements BinanceService {
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
         String date_time = LocalDateTime.now().toString();
 
-        List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(0, 10));
+        List<BigDecimal> body = Utils.getOpenCloseCandle(list);
         BigDecimal str_body_price = body.get(0);
         BigDecimal end_body_price = body.get(1);
 
@@ -3383,12 +3381,21 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
+            if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_BELOW_20_LONG)
+                    && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_BELOW_20_LONG)) {
+                note += Utils.TEXT_SWITCH_TREND_BELOW_20_LONG;
+            }
+            if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_ABOVE_20_SHOT)
+                    && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_ABOVE_20_SHOT)) {
+                note += Utils.TEXT_SWITCH_TREND_ABOVE_20_SHOT;
+            }
+
             String result = "";
             if (Objects.equals(trend_h4, trend_h1)) {
                 result += analysis(note, EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4);
                 result += analysis(note, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
             }
-            if (isBreadOfH4Area) {
+            if (isBreadOfH4Area || note.contains("20")) {
                 result += analysis(note, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
             }
 
