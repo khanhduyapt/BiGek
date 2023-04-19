@@ -3051,10 +3051,11 @@ public class BinanceServiceImpl implements BinanceService {
             for (Orders dto_h4 : list_all) {
                 String EPIC = Utils.getEpicFromId(dto_h4.getId());
 
+                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
                 Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
 
-                if (Objects.nonNull(dto_h1)) {
-                    String chart = Utils.getChartName(dto_h1) + ":" + Utils.appendSpace(dto_h1.getTrend(), 8);
+                if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h1)) {
+                    String chart = Utils.getChartName(dto_d1) + ":" + Utils.appendSpace(dto_d1.getTrend(), 8);
                     String note = dto_h4.getNote() + dto_h1.getNote();
 
                     if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend()) && Utils.isNotBlank(note)) {
@@ -3400,30 +3401,31 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Utils.isBlank(result)) {
                 BigDecimal cur_price = dto_h1.getCurrent_price();
+
+                if ((cur_price.compareTo(dto_d1.getStr_body_price()) < 0)
+                        || (cur_price.compareTo(dto_d1.getEnd_body_price()) > 0)) {
+                    result += analysis("(Bread D1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+                }
+
                 if ((cur_price.compareTo(dto_h4.getStr_body_price()) < 0)
                         || (cur_price.compareTo(dto_h4.getEnd_body_price()) > 0)) {
-
-                    if (Objects.equals(trend_d1, trend_h4)) {
-                        result += analysis("(BreadH4)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
-                    } else {
-                        result += analysis("(BreadH4)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
-                    }
+                    result += analysis("(Bread H4)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
                 }
 
                 if (Utils.isBlank(result) && isH4H1SameSide) {
-                    result += analysis("(  Ma50 )", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+                    result += analysis("(  Ma50  )", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
                 }
 
                 if (Utils.isBlank(result) && Objects.equals(trend_h4, trend_h1)) {
-                    result += analysis("(H4   H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+                    result += analysis("( H4  H1 )", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
                 }
 
                 if (Utils.isBlank(result) && Objects.equals(trend_d1, trend_h1)) {
-                    result += analysis("(D1   H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+                    result += analysis("( D1  H1 )", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
                 }
 
                 if (Utils.isBlank(result)) {
-                    analysis("(       )", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+                    analysis("(   H1   )", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
                 }
             }
 

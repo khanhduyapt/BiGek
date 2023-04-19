@@ -157,7 +157,7 @@ public class Utils {
 
     public static final List<String> EPICS_FOREXS = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY",
             "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF",
-            "NZDUSD", "USDCAD", "USDCHF", "USDJPY", "CHFJPY");
+            "NZDUSD", "USDCAD", "USDCHF", "USDJPY", "CHFJPY", "CADJPY", "NZDJPY");
 
     // ALL Binance.com
     public static final List<String> COINS = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ARB", "ADA", "ADX", "AERGO",
