@@ -3392,6 +3392,10 @@ public class BinanceServiceImpl implements BinanceService {
 
                     result += analysis(note, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
                 }
+
+                if (dto_h4.getNote().contains("50")) {
+                    result += analysis(note, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+                }
             }
 
             // -----------------------------------------------------------------------
@@ -3441,7 +3445,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> LIST_H4_SELLING = Arrays.asList("");
 
         // H1
-        List<String> LIST_H1_BUYING = Arrays.asList("", "");
+        List<String> LIST_H1_BUYING = Arrays.asList("NZDUSD", "");
         List<String> LIST_H1_SELLING = Arrays.asList("CHFJPY", "EURNZD", "GBPNZD");
 
         // ----------------------------------------------------------------------------------------------
