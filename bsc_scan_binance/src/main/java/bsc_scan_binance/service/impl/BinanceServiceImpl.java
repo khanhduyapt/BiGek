@@ -3055,6 +3055,17 @@ public class BinanceServiceImpl implements BinanceService {
                 Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
 
                 if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h1)) {
+
+                    String sameSideH4H1 = "";
+                    if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_BELOW_Ma_LONG)
+                            && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_BELOW_Ma_LONG)) {
+                        sameSideH4H1 = "   Below_Ma50";
+                    }
+                    if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_ABOVE_Ma_SHOT)
+                            && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_ABOVE_Ma_SHOT)) {
+                        sameSideH4H1 = "   Above_Ma50";
+                    }
+
                     String chart = Utils.getChartName(dto_d1) + ":" + Utils.appendSpace(dto_d1.getTrend(), 8);
                     String note = dto_h4.getNote() + dto_h1.getNote();
 
@@ -3062,7 +3073,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
                         log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
                         log += Utils.createLineForex_Body(dto_h4, dto_h4, dto_h4.getTrend()).trim();
-                        log += "   " + note;
+                        log += "   " + note + sameSideH4H1;
 
                         Utils.logWritelnReport(log);
                     }
@@ -3071,7 +3082,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
                         log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
                         log += Utils.createLineForex_Body(dto_h4, dto_h4, dto_h4.getTrend()).trim();
-                        log += "   " + note;
+                        log += "   " + note + sameSideH4H1;
 
                         list_h4_eq_h1.add(log);
                     }
@@ -3080,7 +3091,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
                         log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
                         log += Utils.createLineForex_Body(dto_h4, dto_h4, dto_h4.getTrend()).trim();
-                        log += "   " + note;
+                        log += "   " + note + sameSideH4H1;
 
                         list_h4_switch_trend.add(log);
                     }
@@ -3091,7 +3102,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h1, dto_h1, chart).trim(), 105);
                         log += Utils.appendSpace(Utils.removeLastZero(dto_h1.getCurrent_price()), 15);
                         log += Utils.createLineForex_Body(dto_h1, dto_h1, dto_h1.getTrend()).trim();
-                        log += "   " + note;
+                        log += "   " + note + sameSideH4H1;
 
                         list_h1_switch_trend.add(log);
                     }
