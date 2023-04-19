@@ -3043,6 +3043,7 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO createReport
         String msg_forx = "";
         String msg_futu = "";
+        List<String> list_h4_eq_h1 = new ArrayList<String>();
         List<String> list_h4_switch_trend = new ArrayList<String>();
         List<String> list_h1_switch_trend = new ArrayList<String>();
         List<Orders> list_all = ordersRepository.getTrend_H4List();
@@ -3058,13 +3059,24 @@ public class BinanceServiceImpl implements BinanceService {
                     String chart = Utils.getChartName(dto_h1) + ":" + Utils.appendSpace(dto_h1.getTrend(), 8);
                     String note = dto_h4.getNote() + dto_h1.getNote();
 
-                    if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
+                    if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())
+                            && note.contains(Utils.TEXT_SWITCH_TREND)) {
                         String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
                         log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
                         log += Utils.createLineForex_Body(dto_h4, dto_h4, dto_h4.getTrend()).trim();
                         log += "   " + note;
 
                         Utils.logWritelnReport(log);
+                    }
+
+                    if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())
+                            && !note.contains(Utils.TEXT_SWITCH_TREND)) {
+                        String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
+                        log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
+                        log += Utils.createLineForex_Body(dto_h4, dto_h4, dto_h4.getTrend()).trim();
+                        log += "   " + note;
+
+                        list_h4_eq_h1.add(log);
                     }
 
                     if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND)) {
@@ -3090,6 +3102,16 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
+            Utils.logWritelnReport("");
+            Utils.logWritelnReport("");
+        }
+
+        if (list_h4_eq_h1.size() > 0) {
+            Utils.logWritelnReport("");
+            Utils.logWritelnReport(Utils.appendLeftAndRight("Start H4  = H1       ", 50, "+"));
+            for (String log : list_h4_eq_h1) {
+                Utils.logWritelnReport(log);
+            }
             Utils.logWritelnReport("");
             Utils.logWritelnReport("");
         }
