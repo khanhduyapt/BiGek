@@ -3424,7 +3424,7 @@ public class BinanceServiceImpl implements BinanceService {
                     result += analysis("( D1  H1 )", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
                 }
 
-                if (Utils.isBlank(result)) {
+                if (!Objects.equals(trend_d1, trend_h4) && Utils.isBlank(result)) {
                     analysis("(   H1   )", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
                 }
             }
