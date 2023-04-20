@@ -2877,12 +2877,12 @@ public class BinanceServiceImpl implements BinanceService {
             String pcname = InetAddress.getLocalHost().getHostName().toLowerCase();
             if (Objects.equals(pcname, "pc")) {
                 // MFF Pc cong ty:
-                mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.csv";
+                mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.log";
 
             } else if (Objects.equals(pcname, "desktop-l4m1ju2")) {
 
                 // MFF Laptop
-                mt5_data_file = "C:\\Users\\DellE5270\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.csv";
+                mt5_data_file = "C:\\Users\\DellE5270\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.log";
 
             }
 
@@ -2901,10 +2901,10 @@ public class BinanceServiceImpl implements BinanceService {
             if (elapsedMinutes > (Utils.MINUTES_OF_15M + 5)) {
                 required_update_bars_csv = true;
                 Utils.logWritelnDraft(
-                        "Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! \n");
+                        "Bars.log khong duoc update! Bars.log khong duoc update! Bars.log khong duoc update! Bars.log khong duoc update! \n");
 
                 String EVENT_ID = EVENT_PUMP + "_UPDATE_BARS_CSV_" + Utils.getCurrentYyyyMmDd_HH();
-                sendMsgPerHour(EVENT_ID, "Update_Bars.csv", true);
+                sendMsgPerHour(EVENT_ID, "Update_Bars.log", true);
                 return;
             }
 
@@ -2981,7 +2981,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (log.contains("NOT_FOUND")) {
                 Utils.logWritelnDraft("\n\n\n");
                 Utils.logWritelnDraft(log);
-                Utils.logWritelnDraft(file.getAbsolutePath());
+                Utils.logWritelnDraft("file:" + file.getAbsolutePath());
                 Utils.logWritelnDraft("\n\n\n");
             }
         } catch (Exception e) {
@@ -3476,11 +3476,11 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isBlank(result) && Objects.equals(trend_d1, trend_h4)) {
-                result += analysis("(D1   H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
+                result += analysis("(D1    H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
             }
 
             if (Utils.isBlank(result) && isBreadArea) {
-                result += analysis("(Bread H4)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+                result += analysis("(Bread H4)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
             }
 
             if (Utils.isBlank(result) && isH4H1SameSide) {
