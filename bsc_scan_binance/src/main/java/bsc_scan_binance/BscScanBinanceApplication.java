@@ -132,7 +132,6 @@ public class BscScanBinanceApplication {
                                 }
 
                                 binance_service.scapForex();
-
                             }
                         }
 

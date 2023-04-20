@@ -63,7 +63,7 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 //@Slf4j
 public class Utils {
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.005);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0025);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -96,6 +96,7 @@ public class Utils {
 
     public static final String TEXT_SWITCH_TREND_BELOW_Ma_LONG = "(B_50)";
     public static final String TEXT_SWITCH_TREND_ABOVE_Ma_SHOT = "(S_50)";
+    public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma.3.5)";
 
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
@@ -149,11 +150,11 @@ public class Utils {
     // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
     // Main: "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD"
 
-    public static final String EPICS_INDEXS = "_US30_SP500_GER30_GER40_";
+    public static final String EPICS_INDEXS = "_US30_SP500_GER30_GER40_UK100_";
 
     // "SP35", "HK50", "OIL_CRUDE", "NAS100", "AUS200", "JPY225",
-    public static final List<String> EPICS_ONE_WAY = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "GER40",
-            "USOIL");
+    public static final List<String> EPICS_ONE_WAY = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "US100",
+            "GER40", "UK100", "USOIL");
 
     public static final List<String> EPICS_FOREXS = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY",
             "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF",
@@ -187,9 +188,8 @@ public class Utils {
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("ART", "BNT", "PHT", "DGT", "DODO",
             "AERGO", "ARK", "BIDR", "CREAM", "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM",
-            "QKC", "QLC", "SNM", "SNT", "UFT", "WABI", "IQ");
+            "TORN", "QKC", "QLC", "SNM", "SNT", "UFT", "WABI", "IQ");
 
-    //
     public static final List<String> COINS_NEW_LISTING = Arrays.asList("RDNT", "AMB", "ARB", "ID", "LQTY", "SYN", "GNS",
             "RPL", "MAGIC", "HOOK", "HFT");
 
@@ -3392,6 +3392,16 @@ public class Utils {
             return TREND_SHORT;
         }
 
+        String result = switchTrendByMaXX(heken_list, 2, 3);
+        if (isNotBlank(result)) {
+            return result;
+        }
+
+        result = switchTrendByMaXX(heken_list, 3, 5);
+        if (isNotBlank(result)) {
+            return result;
+        }
+
         return "";
     }
 
@@ -3485,10 +3495,10 @@ public class Utils {
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
         if (dto_entry.getId().contains("_MINUTE_")) {
-            risk = risk.divide(BigDecimal.valueOf(3), 3, RoundingMode.CEILING);
+            //risk = risk.divide(BigDecimal.valueOf(3), 3, RoundingMode.CEILING);
         }
         if (dto_entry.getId().contains(CAPITAL_TIME_HOUR) && !dto_entry.getId().contains(CAPITAL_TIME_HOUR_4)) {
-            risk = risk.divide(BigDecimal.valueOf(2), 3, RoundingMode.CEILING);
+            //risk = risk.divide(BigDecimal.valueOf(2), 3, RoundingMode.CEILING);
         }
         risk = formatPrice(risk, 0);
 
