@@ -2838,7 +2838,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (Utils.isNotBlank(switch_trend)) {
-            // TODO sendMsgKillLongShort
+            // TODO: sendMsgKillLongShort
             String msg = "";
             boolean isOnlyMe = true;
             if (BTC_ETH_BNB.contains(SYMBOL)) {
@@ -2892,7 +2892,7 @@ public class BinanceServiceImpl implements BinanceService {
                 return;
             }
 
-            // TODO saveMt5Data
+            // TODO: saveMt5Data
             BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
             LocalDateTime created_time = attr.lastModifiedTime().toInstant().atZone(ZoneId.systemDefault())
                     .toLocalDateTime();
@@ -3070,7 +3070,7 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.logWritelnReport("(BUY ) " + str_long_suggest.trim());
         Utils.logWritelnReport("(SELL) " + str_shot_suggest.trim());
 
-        // TODO createReport
+        // TODO: createReport
         String msg_forx = "";
         String msg_futu = "";
 
@@ -3424,6 +3424,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1 = dto_h1.getTrend();
             String trend_15 = dto_15.getTrend();
 
+            // TODO: scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
             // Sử dụng TREND_H4 thì ăn ít nhất 4 cây H1.
