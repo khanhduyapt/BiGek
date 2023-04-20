@@ -3419,6 +3419,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
+            // Sử dụng TREND_H4 thì ăn ít nhất 4 cây H1.
             String result = "";
             if (Objects.equals(trend_d1, trend_h4)) {
                 result += analysis("(D1-->H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
@@ -3464,9 +3465,24 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     @SuppressWarnings("unused")
     public void monitorProfit() {
+        // TODO: monitorProfit
+        CRYPTO_LIST_BUYING = Arrays.asList("");
+
+        // H4
+        List<String> LIST_H4_BUYING = Arrays.asList("");
+        List<String> LIST_H4_SELLING = Arrays.asList("XAGUSD", "US30", "", "", "", "", "");
+
+        // H1
+        List<String> LIST_H1_BUYING = Arrays.asList("EURUSD", "NZDCHF", "", "", "", "", "");
+        List<String> LIST_H1_SELLING = Arrays.asList("GBPJPY", "USDJPY", "XAGUSD", "EURJPY", "CADJPY", "", "", "", "");
+
+        // ----------------------------------------------------------------------------------------------
+        List<String> EPICS_ONE_WAY = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "GER40", "USOIL");
+        List<String> EPICS_FOREXS = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY",
+                "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF",
+                "NZDUSD", "USDCAD", "USDCHF", "USDJPY", "CHFJPY", "CADJPY", "NZDJPY");
         // ---------------------------------------CRYPTO----------------------------------------
 
-        CRYPTO_LIST_BUYING = Arrays.asList("");
         if (isReloadAfter(Utils.MINUTES_OF_15M, "MONITOR_CRYPTO")) {
             for (String SYMBOL : CRYPTO_LIST_BUYING) {
                 if (Utils.isBlank(SYMBOL)) {
@@ -3485,21 +3501,6 @@ public class BinanceServiceImpl implements BinanceService {
         if (required_update_bars_csv) {
             return;
         }
-
-        // TODO: monitorProfit FOREX
-        // H4
-        List<String> LIST_H4_BUYING = Arrays.asList("");
-        List<String> LIST_H4_SELLING = Arrays.asList("XAGUSD", "US30", "", "", "", "", "");
-
-        // H1
-        List<String> LIST_H1_BUYING = Arrays.asList("EURUSD", "NZDCHF", "", "", "", "", "");
-        List<String> LIST_H1_SELLING = Arrays.asList("GBPJPY", "USDJPY", "XAGUSD", "EURJPY", "CADJPY", "", "", "", "");
-
-        // ----------------------------------------------------------------------------------------------
-        List<String> EPICS_ONE_WAY = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "GER40", "USOIL");
-        List<String> EPICS_FOREXS = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY",
-                "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF",
-                "NZDUSD", "USDCAD", "USDCHF", "USDJPY", "CHFJPY", "CADJPY", "NZDJPY");
 
         // D-H4-H1
         {
