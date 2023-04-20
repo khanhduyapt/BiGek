@@ -3361,10 +3361,12 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (heken_list.size() >= 30) {
                 if (Objects.equals(Utils.TREND_LONG, trend) && Utils.isBelowMALine(heken_list, 50)) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.TEXT_SWITCH_TREND_BELOW_Ma_LONG;
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
+                            + Utils.TEXT_SWITCH_TREND_BELOW_Ma_LONG;
                 }
                 if (Objects.equals(Utils.TREND_SHORT, trend) && Utils.isAboveMALine(heken_list, 50)) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.TEXT_SWITCH_TREND_ABOVE_Ma_SHOT;
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
+                            + Utils.TEXT_SWITCH_TREND_ABOVE_Ma_SHOT;
                 }
 
                 if (Utils.isBlank(note)) {
@@ -3380,7 +3382,7 @@ public class BinanceServiceImpl implements BinanceService {
                     List<BigDecimal> low_high_5candle = Utils.getLowHighCandle(list.subList(0, 5));
                     if ((ma50.compareTo(low_high_5candle.get(0)) > 0)
                             && (ma50.compareTo(low_high_5candle.get(1)) < 0)) {
-                        note += "(Sw)";
+                        note = "(SW)";
                     }
                 }
 
@@ -3464,16 +3466,12 @@ public class BinanceServiceImpl implements BinanceService {
             String result = "";
 
             if (Utils.isTimeToHuntM15()) {
-                if (Objects.equals(trend_h4, trend_h1)) {
-                    result = analysis("(H4 H1 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
+                if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
+                    result = analysis("(D1 H4 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
                 }
 
                 if (Utils.isBlank(result) && dto_15.getNote().contains("50")) {
                     result = analysis("(H4 15 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
-                }
-
-                if (Utils.isBlank(result) && dto_15.getNote().contains("50")) {
-                    result = analysis("(H1 15 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h1);
                 }
             }
 
