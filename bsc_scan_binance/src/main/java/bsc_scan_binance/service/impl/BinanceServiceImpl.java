@@ -309,7 +309,7 @@ public class BinanceServiceImpl implements BinanceService {
                     + "                                                                                           \n"
                     + "          from                                                                             \n"
                     + "              candidate_coin can                                                           \n"
-                    + "          left join funding_history his on  his.event_time like '%" + EVENT_1W1D_CRYPTO
+                    + "          left join funding_history his on  his.event_time like '%1W1D"
                     + "%' and his.pumpdump and his.gecko_id = can.gecko_id  \n"
                     + "    ) xyz                                                                                  \n"
                     + " ) macd                                                                                    \n"
@@ -3281,9 +3281,8 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // ------------------------------------------------------------------
-        if (CRYPTO_LIST_BUYING.contains(SYMBOL)
-                || (Objects.equals(trend_h4, Utils.TREND_LONG) && ARR_ALLOW_H1.contains(SYMBOL)
-                        && Utils.isBelowMALine(heken_list_h4, 20))) {
+        if (CRYPTO_LIST_BUYING.contains(SYMBOL) || (Objects.equals(trend_h4, Utils.TREND_LONG)
+                && ARR_ALLOW_H1.contains(SYMBOL) && Utils.isBelowMALine(heken_list_h4, 20))) {
 
             List<BtcFutures> list_h1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1H, 55);
             List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
@@ -3452,7 +3451,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isBlank(result) && Utils.isTimeToHuntM15() && dto_15.getNote().contains("50")) {
-                result += analysis("(H4   M15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h1);
+                result += analysis("(M15  50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h1);
             }
 
             if (Utils.isBlank(result) && Objects.equals(trend_d1, trend_h4)) {
@@ -3491,10 +3490,13 @@ public class BinanceServiceImpl implements BinanceService {
     // Xu huong H4 cung xu huong nhung yeu di? Msg thong bao take profit.
     // Xu huong H1 cung xu huong nhung yeu di? Log thong bao.
     // ----------------------------------------------------------------------------------------------
-    //List<String> EPICS_ONE_WAY = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "GER40", "USOIL");
-    //List<String> EPICS_FOREXS = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY",
-    //        "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF",
-    //        "NZDUSD", "USDCAD", "USDCHF", "USDJPY", "CHFJPY", "CADJPY", "NZDJPY");
+    // List<String> EPICS_ONE_WAY = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD",
+    // "US30", "GER40", "USOIL");
+    // List<String> EPICS_FOREXS = Arrays.asList("EURAUD", "EURCAD", "EURCHF",
+    // "EURGBP", "EURJPY",
+    // "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD",
+    // "GBPUSD", "NZDCAD", "NZDCHF",
+    // "NZDUSD", "USDCAD", "USDCHF", "USDJPY", "CHFJPY", "CADJPY", "NZDJPY");
 
     @Override
     @Transactional
@@ -3507,7 +3509,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> LIST_H4_SELLING = Arrays.asList("XAGUSD", "", "", "", "", "", "");
 
         // H1
-        List<String> LIST_H1_BUYING = Arrays.asList("NZDCHF", "", "", "", "", "", "");
+        List<String> LIST_H1_BUYING = Arrays.asList("", "", "", "", "", "", "");
         List<String> LIST_H1_SELLING = Arrays.asList("", "", "", "", "", "", "", "", "");
 
         // 15
