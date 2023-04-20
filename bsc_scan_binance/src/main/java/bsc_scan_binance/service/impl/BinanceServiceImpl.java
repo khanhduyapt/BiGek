@@ -2975,11 +2975,11 @@ public class BinanceServiceImpl implements BinanceService {
                 log += "/NOT_FOUND:" + epic_not_found;
             }
             log += "      LastModifiedTime: " + Utils.formatDateTime(attr.lastModifiedTime());
-            log += "      " + file.getAbsolutePath();
 
             if (log.contains("NOT_FOUND")) {
                 Utils.logWritelnDraft("\n\n\n");
                 Utils.logWritelnDraft(log);
+                Utils.logWritelnDraft(file.getAbsolutePath());
                 Utils.logWritelnDraft("\n\n\n");
             }
         } catch (Exception e) {
@@ -3071,9 +3071,12 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO createReport
         String msg_forx = "";
         String msg_futu = "";
+
         List<String> list_h4 = new ArrayList<String>();
+        List<String> list_h4h1m15 = new ArrayList<String>();
         List<String> list_h4_switch_trend = new ArrayList<String>();
         List<String> list_h1_switch_trend = new ArrayList<String>();
+
         List<Orders> list_all = ordersRepository.getTrend_H4List();
         if (!CollectionUtils.isEmpty(list_all)) {
             Utils.logWritelnReport("");
@@ -3083,8 +3086,9 @@ public class BinanceServiceImpl implements BinanceService {
 
                 Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
                 Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
+                Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
 
-                if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h1)) {
+                if (Objects.nonNull(dto_d1) && Objects.nonNull(dto_h1) && Objects.nonNull(dto_15)) {
 
                     String sameSideH4H1 = "";
                     if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_BELOW_Ma_LONG)
@@ -3099,13 +3103,14 @@ public class BinanceServiceImpl implements BinanceService {
                     String chart = Utils.getChartName(dto_d1) + ":" + Utils.appendSpace(dto_d1.getTrend(), 8);
                     String note = dto_h4.getNote() + dto_h1.getNote();
 
-                    if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend()) && Utils.isNotBlank(note)) {
-                        String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
-                        log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
-                        log += Utils.createLineForex_Body(dto_h4, dto_h4, dto_h4.getTrend()).trim();
-                        log += "   " + note + sameSideH4H1;
+                    if (Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())
+                            && Objects.equals(dto_h1.getTrend(), dto_15.getTrend())) {
+                        String log = Utils.appendSpace(Utils.createLineForex_Header(dto_15, dto_15, chart).trim(), 105);
+                        log += Utils.appendSpace(Utils.removeLastZero(dto_15.getCurrent_price()), 15);
+                        log += Utils.createLineForex_Body(dto_15, dto_15, dto_15.getTrend()).trim();
+                        log += "   " + note;
 
-                        Utils.logWritelnReport(log);
+                        list_h4h1m15.add(log);
                     }
 
                     if (Utils.isNotBlank(dto_h4.getNote())) {
@@ -3137,6 +3142,16 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
+            Utils.logWritelnReport("");
+            Utils.logWritelnReport("");
+        }
+
+        if (list_h4h1m15.size() > 0) {
+            Utils.logWritelnReport("");
+            Utils.logWritelnReport(Utils.appendLeftAndRight("    H4 = H1 = M15    ", 50, "+"));
+            for (String log : list_h4h1m15) {
+                Utils.logWritelnReport(log);
+            }
             Utils.logWritelnReport("");
             Utils.logWritelnReport("");
         }
