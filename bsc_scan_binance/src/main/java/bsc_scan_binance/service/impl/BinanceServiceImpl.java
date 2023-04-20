@@ -2751,7 +2751,9 @@ public class BinanceServiceImpl implements BinanceService {
 
     private String analysis(String note, String EPIC, String CAPITAL_TIME_XX, String find_trend) {
         Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
-        if (Objects.isNull(dto)) {
+        Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
+
+        if (Objects.isNull(dto) || Objects.isNull(dto_sl)) {
             return "";
         }
         String trend = dto.getTrend();
@@ -2769,7 +2771,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String log = Utils.appendSpace(note, 12) + Utils.appendSpace(dto.getNote(), 30);
 
-            outputLog("Analysis_" + char_name, EPIC, dto, dto, log);
+            outputLog("Analysis_" + char_name, EPIC, dto, dto_sl, log);
 
             if (!isReloadAfter(Utils.MINUTES_OF_1H, EPIC + trend)) {
                 return "";
@@ -3478,11 +3480,11 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isBlank(result) && isH4H1SameSide) {
-                result += analysis("(  Ma50  )", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
+                result += analysis("(H1  Ma50)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
             }
 
             if (Utils.isBlank(result)) {
-                result += analysis("( H4  H1 )", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
+                result += analysis("(H4    H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
             }
 
             if (Utils.isBlank(result)) {
