@@ -3475,16 +3475,16 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Utils.isTimeToHuntM15()) {
                 if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
-                    result = analysis("(D1 H4 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
+                    result = analysis("(D1H4H115)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
                 }
 
-                if (Utils.isBlank(result) && dto_15.getNote().contains("50")) {
-                    result = analysis("(H4 15 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
+                if (Utils.isBlank(result) && Objects.equals(trend_h4, trend_h1) && dto_15.getNote().contains("50")) {
+                    result = analysis("(H4 H1 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
                 }
             }
 
             if (Utils.isBlank(result) && Objects.equals(trend_d1, trend_h4)) {
-                result += analysis("(D1    H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
+                result += analysis("(D1 H4 H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
             }
 
             if (Utils.isBlank(result) && isBreadArea) {
@@ -3492,15 +3492,11 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isBlank(result) && isH4H1SameSide) {
-                result += analysis("(H1  Ma50)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
+                result += analysis("(H4 H1 50)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
             }
 
             if (Utils.isBlank(result)) {
                 result += analysis("(H4    H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
-            }
-
-            if (Utils.isBlank(result)) {
-                result += analysis("(        )", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
             }
 
             // -----------------------------------------------------------------------
