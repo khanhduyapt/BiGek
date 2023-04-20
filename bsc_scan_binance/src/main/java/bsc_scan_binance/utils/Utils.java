@@ -872,7 +872,7 @@ public class Utils {
         return false;
     }
 
-    //https://www.calculator.net/time-duration-calculator.html
+    // https://www.calculator.net/time-duration-calculator.html
     public static boolean isTimeToHuntM15() {
         LocalTime time_tokyo = LocalTime.parse("07:00:00"); // to: 14:30
         LocalTime time_london = LocalTime.parse("15:00:00"); // to: 19:30
@@ -3498,10 +3498,10 @@ public class Utils {
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
         if (dto_entry.getId().contains("_MINUTE_")) {
-            //risk = risk.divide(BigDecimal.valueOf(3), 3, RoundingMode.CEILING);
+            // risk = risk.divide(BigDecimal.valueOf(3), 3, RoundingMode.CEILING);
         }
         if (dto_entry.getId().contains(CAPITAL_TIME_HOUR) && !dto_entry.getId().contains(CAPITAL_TIME_HOUR_4)) {
-            //risk = risk.divide(BigDecimal.valueOf(2), 3, RoundingMode.CEILING);
+            // risk = risk.divide(BigDecimal.valueOf(2), 3, RoundingMode.CEILING);
         }
         risk = formatPrice(risk, 0);
 
