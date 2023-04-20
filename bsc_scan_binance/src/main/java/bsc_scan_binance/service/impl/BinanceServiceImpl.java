@@ -3475,11 +3475,11 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Utils.isTimeToHuntM15()) {
                 if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
-                    result = analysis("(D1H4H115)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
+                    analysis("(D1H4H115)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
                 }
 
                 if (Utils.isBlank(result) && Objects.equals(trend_h4, trend_h1) && dto_15.getNote().contains("50")) {
-                    result = analysis("(H4 H1 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
+                    analysis("(H4 H1 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
                 }
             }
 
