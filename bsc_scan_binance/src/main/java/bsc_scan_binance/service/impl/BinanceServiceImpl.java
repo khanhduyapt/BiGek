@@ -3452,10 +3452,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (isH4H1SameSide) {
-                result += analysis("(SameSide)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+                result += analysis("(SameSide)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
             }
             if (Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h1, trend_15)) {
-                result += analysis("(Trend!15)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+                result += analysis("(Trend!15)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
             }
             // -----------------------------------------------------------------------
             if (Utils.isNotBlank(result) && isReloadAfter(Utils.MINUTES_OF_1H, "ScapForex_" + EPIC)) {
