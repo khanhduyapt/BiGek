@@ -3463,12 +3463,18 @@ public class BinanceServiceImpl implements BinanceService {
             // Sử dụng TREND_H4 thì ăn ít nhất 4 cây H1.
             String result = "";
 
-            if (Utils.isTimeToHuntM15() && Objects.equals(trend_h4, trend_h1)) {
-                result += analysis("(H4   M15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
-            }
+            if (Utils.isTimeToHuntM15()) {
+                if (Objects.equals(trend_h4, trend_h1)) {
+                    result = analysis("(H4 H1 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
+                }
 
-            if (Utils.isBlank(result) && Utils.isTimeToHuntM15() && dto_15.getNote().contains("50")) {
-                result += analysis("(M15  50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h1);
+                if (Utils.isBlank(result) && dto_15.getNote().contains("50")) {
+                    result = analysis("(H4 15 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
+                }
+
+                if (Utils.isBlank(result) && dto_15.getNote().contains("50")) {
+                    result = analysis("(H1 15 50)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h1);
+                }
             }
 
             if (Utils.isBlank(result) && Objects.equals(trend_d1, trend_h4)) {
