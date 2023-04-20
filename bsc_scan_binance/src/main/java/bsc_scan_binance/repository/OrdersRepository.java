@@ -139,13 +139,13 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
     public List<Orders> getAllH4();
     // =======================================================================
 
-    @Query(value = "  SELECT * FROM orders det   WHERE (det.gecko_id like 'CRYPTO_%_4h') "
-            + "  ORDER BY det.gecko_id asc ", nativeQuery = true)
-    public List<Orders> getCrypto_H4();
-
     @Query(value = "  SELECT * FROM orders det   WHERE (det.gecko_id like 'CRYPTO_%_1d') "
             + "  ORDER BY det.gecko_id asc ", nativeQuery = true)
     public List<Orders> getCrypto_D1();
+
+    @Query(value = "  SELECT * FROM orders det   WHERE (det.gecko_id like 'CRYPTO_%_4h') "
+            + "  ORDER BY det.gecko_id asc ", nativeQuery = true)
+    public List<Orders> getCrypto_H4();
 
     @Query(value = "  SELECT * FROM orders det   WHERE (det.gecko_id like 'CRYPTO_%_1h') "
             + "  ORDER BY det.gecko_id asc ", nativeQuery = true)
