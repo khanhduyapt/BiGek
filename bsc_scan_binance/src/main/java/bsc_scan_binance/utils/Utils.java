@@ -873,22 +873,23 @@ public class Utils {
     }
 
     public static boolean isTimeToHuntM15() {
-        LocalTime kill_zone_tk = LocalTime.parse("07:45:00"); // to: 09:45
-        LocalTime kill_zone_ld = LocalTime.parse("13:45:00"); // to: 15:45
-        LocalTime kill_zone_ny = LocalTime.parse("17:45:00"); // to: 19:45
+        LocalTime time_tokyo = LocalTime.parse("07:00:00"); // to: 14:30
+        LocalTime time_london = LocalTime.parse("15:00:00"); // to: 19:30
+        LocalTime time_newyork = LocalTime.parse("20:00:00"); // to: 22:30
+
         LocalTime cur_time = LocalTime.now();
 
-        long elapsedMinutes_tk = Duration.between(kill_zone_tk, cur_time).toMinutes();
-        if ((0 <= elapsedMinutes_tk) && (elapsedMinutes_tk <= 150)) {
+        long elapsedMinutes_tk = Duration.between(time_tokyo, cur_time).toMinutes();
+        if ((0 <= elapsedMinutes_tk) && (elapsedMinutes_tk <= 450)) {
             return true;
         }
 
-        long elapsedMinutes_ld = Duration.between(kill_zone_ld, cur_time).toMinutes();
-        if ((0 <= elapsedMinutes_ld) && (elapsedMinutes_ld <= 150)) {
+        long elapsedMinutes_ld = Duration.between(time_london, cur_time).toMinutes();
+        if ((0 <= elapsedMinutes_ld) && (elapsedMinutes_ld <= 270)) {
             return true;
         }
 
-        long elapsedMinutes_ny = Duration.between(kill_zone_ny, cur_time).toMinutes();
+        long elapsedMinutes_ny = Duration.between(time_newyork, cur_time).toMinutes();
         if ((0 <= elapsedMinutes_ny) && (elapsedMinutes_ny <= 150)) {
             return true;
         }
@@ -3434,14 +3435,15 @@ public class Utils {
         }
 
         String trend_0 = heken_list.get(0).isUptrend() ? TREND_LONG : TREND_SHORT;
-        String trend_ma2 = isUptrendByMa(heken_list, 1, 0, 1) ? TREND_LONG : TREND_SHORT;
+        String trend_1 = isUptrendByMa(heken_list, 1, 0, 1) ? TREND_LONG : TREND_SHORT;
 
-        if (Objects.equals(trend_0, trend_ma2)) {
+        if (Objects.equals(trend_0, trend_1)) {
             return trend_0;
         }
 
-        String trend_ma3 = isUptrendByMa(heken_list, 3, 0, 1) ? TREND_LONG : TREND_SHORT;
-        return trend_ma3;
+        String trend_2 = isUptrendByMa(heken_list, 2, 0, 1) ? TREND_LONG : TREND_SHORT;
+
+        return trend_2;
     }
 
     public static String createLineForex_Header(Orders dto_entry, Orders dto_sl, String trend_d1) {

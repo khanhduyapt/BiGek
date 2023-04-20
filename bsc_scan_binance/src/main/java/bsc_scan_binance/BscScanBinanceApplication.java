@@ -217,32 +217,32 @@ public class BscScanBinanceApplication {
         }
 
         // ---------------------------------------------------------------------------
-        LocalTime close_Sydney_session = LocalTime.parse("11:15:00"); // to: 11:45
-        LocalTime close_Tokyo_session = LocalTime.parse("15:15:00"); // to: 15:45
-        LocalTime close_London_session = LocalTime.parse("23:15:00"); // to: 23:45
-        LocalTime close_NewYork_session = LocalTime.parse("02:15:00"); // to: 02:45
+        LocalTime close_Sydney_Orders = LocalTime.parse("09:30:00"); // to: 11:45
+        LocalTime close_Tokyo_Orders = LocalTime.parse("14:30:00"); // to: 15:45
+        LocalTime close_London_Orders = LocalTime.parse("19:30:00"); // to: 23:45
+        LocalTime close_NewYork_Orders = LocalTime.parse("22:30:00"); // to: 02:45
 
-        long close_Sydney = Duration.between(close_Sydney_session, cur_time).toMinutes();
+        long close_Sydney = Duration.between(close_Sydney_Orders, cur_time).toMinutes();
         if ((0 <= close_Sydney) && (close_Sydney <= 30)) {
-            binance_service.sendMsgPerHour(EVENT_ID, "Close_Sydney_Session", true);
-            binance_service.logMsgPerHour(EVENT_ID, "Close_Sydney_Session", Utils.MINUTES_OF_15M);
+            binance_service.sendMsgPerHour(EVENT_ID, "Close_Sydney_Orders", true);
+            binance_service.logMsgPerHour(EVENT_ID, "Close_Sydney_Orders", Utils.MINUTES_OF_15M);
         }
 
-        long close_Tokyo = Duration.between(close_Tokyo_session, cur_time).toMinutes();
+        long close_Tokyo = Duration.between(close_Tokyo_Orders, cur_time).toMinutes();
         if ((0 <= close_Tokyo) && (close_Tokyo <= 30)) {
-            binance_service.sendMsgPerHour(EVENT_ID, "Close_Tokyo_Session", true);
-            binance_service.logMsgPerHour(EVENT_ID, "Close_Tokyo_Session", Utils.MINUTES_OF_15M);
+            binance_service.sendMsgPerHour(EVENT_ID, "Close_Tokyo_Orders", true);
+            binance_service.logMsgPerHour(EVENT_ID, "Close_Tokyo_Orders", Utils.MINUTES_OF_15M);
         }
 
-        long close_London = Duration.between(close_London_session, cur_time).toMinutes();
+        long close_London = Duration.between(close_London_Orders, cur_time).toMinutes();
         if ((0 <= close_London) && (close_London <= 30)) {
-            binance_service.sendMsgPerHour(EVENT_ID, "Close_London_Session", true);
-            binance_service.logMsgPerHour(EVENT_ID, "Close_London_Session", Utils.MINUTES_OF_15M);
+            binance_service.sendMsgPerHour(EVENT_ID, "Close_London_Orders", true);
+            binance_service.logMsgPerHour(EVENT_ID, "Close_London_Orders", Utils.MINUTES_OF_15M);
         }
 
-        long close_NewYork = Duration.between(close_NewYork_session, cur_time).toMinutes();
+        long close_NewYork = Duration.between(close_NewYork_Orders, cur_time).toMinutes();
         if ((0 <= close_NewYork) && (close_NewYork <= 30)) {
-            binance_service.logMsgPerHour(EVENT_ID, "Close_NewYork_Session", Utils.MINUTES_OF_15M);
+            binance_service.logMsgPerHour(EVENT_ID, "Close_NewYork_Orders", Utils.MINUTES_OF_15M);
         }
     }
 
