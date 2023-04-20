@@ -872,6 +872,7 @@ public class Utils {
         return false;
     }
 
+    //https://www.calculator.net/time-duration-calculator.html
     public static boolean isTimeToHuntM15() {
         LocalTime time_tokyo = LocalTime.parse("07:00:00"); // to: 14:30
         LocalTime time_london = LocalTime.parse("15:00:00"); // to: 19:30

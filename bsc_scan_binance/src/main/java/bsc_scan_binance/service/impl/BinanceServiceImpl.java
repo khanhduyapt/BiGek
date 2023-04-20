@@ -88,24 +88,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BinanceServiceImpl implements BinanceService {
     // ********************************************************************************
-    private static final String EVENT_1W1D_FX = "1W1D_FX";
-    private static final String EVENT_1W1D_CRYPTO = "1W1D_CRYPTO";
-
-    private static final String EVENT_DH4H1_D_FX = "DH4H1_D_TREND_FX";
-    private static final String EVENT_DH4H1_H4_FX = "DH4H1_STR_H4_FX";
-    private static final String EVENT_DH4H1_H1_FX = "DH4H1_STR_H1_FX";
-
-    private static final String EVENT_DH4H1_D_CRYPTO = "DH4H1_D_TREND_CRYPTO";
-    private static final String EVENT_DH4H1_H4_CRYPTO = "DH4H1_STR_H4_CRYPTO";
-    private static final String EVENT_DH4H1_H1_CRYPTO = "DH4H1_STR_H1_CRYPTO";
-    private static final String EVENT_DH4H1_15M_CRYPTO = "DH4H1_STR_15M_CRYPTO";
-    // ********************************************************************************
     private static Hashtable<String, LocalTime> keys_dict = new Hashtable<String, LocalTime>();
     private static List<String> CRYPTO_LIST_BUYING = new ArrayList<String>();
 
     private static List<String> GLOBAL_LONG_LIST = new ArrayList<String>();
     private static List<String> GLOBAL_SHOT_LIST = new ArrayList<String>();
-    private boolean BTC_ALLOW_LONG_SHITCOIN = false;
 
     private String str_long_suggest = "";
     private String str_shot_suggest = "";
@@ -2681,7 +2668,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (web_result.length() > 500) {
             web_result = web_result.substring(0, 450);
         }
-        String EVENT_ID = EVENT_1W1D_CRYPTO + "_" + symbol;
+        String EVENT_ID = "EVENT_1W1D_CRYPTO_" + symbol;
         fundingHistoryRepository.save(createPumpDumpEntity(EVENT_ID, gecko_id, symbol, web_result, true));
 
         initWebBinance(gecko_id, symbol, list_days, list_h1, web_result);
@@ -2718,6 +2705,48 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.calc_BUF_LO_HI_BUF_Forex(true, dto_entry.getTrend(), EPIC, dto_entry, dto_sl);
 
         logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
+    }
+
+    private void alertMsg(String CAPITAL_TIME_XX, List<String> LIST_BUYING, List<String> LIST_SELLING) {
+        List<String> ARR = new ArrayList<String>();
+        ARR.addAll(LIST_BUYING);
+        ARR.addAll(LIST_SELLING);
+        Collections.sort(ARR);
+
+        for (String EPIC : ARR) {
+            if (Utils.isBlank(EPIC)) {
+                continue;
+            }
+
+            Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
+
+            if (Objects.isNull(dto)) {
+                Utils.logWritelnDraft("monitorProfit (" + EPIC + ") dto is null");
+                continue;
+            }
+
+            String trend = dto.getTrend();
+            String ACTION = "";
+
+            if (LIST_BUYING.contains(EPIC)) {
+                ACTION = Utils.TREND_LONG;
+            }
+            if (LIST_SELLING.contains(EPIC)) {
+                ACTION = Utils.TREND_SHORT;
+            }
+
+            if (!Objects.equals(ACTION, trend)) {
+                String EVENT_ID = "PROFIT" + Utils.getChartName(dto) + EPIC + ACTION
+                        + Utils.getCurrentYyyyMmDdHHByChart(dto.getId());
+
+                String msg = "(Danger)" + Utils.appendSpace(ACTION, 8) + Utils.appendSpace(EPIC, 10)
+                        + Utils.appendSpace(Utils.getChartName(dto), 10);
+                sendMsgPerHour(EVENT_ID, msg.trim().replace(" ", "."), true);
+
+                String log = msg + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
+                logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_15M);
+            }
+        }
     }
 
     private String analysis(String note, String EPIC, String CAPITAL_TIME_XX, String find_trend) {
@@ -3252,8 +3281,9 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // ------------------------------------------------------------------
-        if (Objects.equals(trend_h4, Utils.TREND_LONG) && ARR_ALLOW_H1.contains(SYMBOL)
-                && Utils.isBelowMALine(heken_list_h4, 20)) {
+        if (CRYPTO_LIST_BUYING.contains(SYMBOL)
+                || (Objects.equals(trend_h4, Utils.TREND_LONG) && ARR_ALLOW_H1.contains(SYMBOL)
+                        && Utils.isBelowMALine(heken_list_h4, 20))) {
 
             List<BtcFutures> list_h1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1H, 55);
             List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
@@ -3262,7 +3292,8 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_trend = Utils.switchTrendByHeken01(heken_list_h1);
             switch_trend += Utils.switchTrendByMaXX(heken_list_h1, 3, 5);
 
-            if (Objects.equals(trend_h1, Utils.TREND_LONG) && Utils.isNotBlank(switch_trend)) {
+            if (CRYPTO_LIST_BUYING.contains(SYMBOL)
+                    || (Objects.equals(trend_h1, Utils.TREND_LONG) && Utils.isNotBlank(switch_trend))) {
 
                 if (Objects.equals(Utils.TREND_LONG, trend_h1) && Utils.isBelowMALine(heken_list_h1, 50)) {
                     note += "(H1)" + Utils.TEXT_SWITCH_TREND_BELOW_Ma_LONG;
@@ -3382,8 +3413,9 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
+            Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
 
-            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
+            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)) {
                 Utils.logWritelnDraft("scapForex (" + EPIC + ") dto is null");
                 return;
             }
@@ -3417,6 +3449,10 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Utils.isTimeToHuntM15() && Objects.equals(trend_h4, trend_h1)) {
                 result += analysis("(H4   M15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
+            }
+
+            if (Utils.isBlank(result) && Utils.isTimeToHuntM15() && dto_15.getNote().contains("50")) {
+                result += analysis("(H4   M15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h1);
             }
 
             if (Utils.isBlank(result) && Objects.equals(trend_d1, trend_h4)) {
@@ -3454,26 +3490,30 @@ public class BinanceServiceImpl implements BinanceService {
     // H1 & H4 nguoc huong -> thong bao cat lenh.
     // Xu huong H4 cung xu huong nhung yeu di? Msg thong bao take profit.
     // Xu huong H1 cung xu huong nhung yeu di? Log thong bao.
+    // ----------------------------------------------------------------------------------------------
+    //List<String> EPICS_ONE_WAY = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "GER40", "USOIL");
+    //List<String> EPICS_FOREXS = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY",
+    //        "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF",
+    //        "NZDUSD", "USDCAD", "USDCHF", "USDJPY", "CHFJPY", "CADJPY", "NZDJPY");
+
     @Override
     @Transactional
-    @SuppressWarnings("unused")
     public void monitorProfit() {
         // TODO: monitorProfit
         CRYPTO_LIST_BUYING = Arrays.asList("IMX", "SSV");
 
         // H4
         List<String> LIST_H4_BUYING = Arrays.asList("");
-        List<String> LIST_H4_SELLING = Arrays.asList("XAGUSD", "NZDCHF", "", "", "", "", "");
+        List<String> LIST_H4_SELLING = Arrays.asList("XAGUSD", "", "", "", "", "", "");
+
+        // H1
+        List<String> LIST_H1_BUYING = Arrays.asList("NZDCHF", "", "", "", "", "", "");
+        List<String> LIST_H1_SELLING = Arrays.asList("", "", "", "", "", "", "", "", "");
 
         // 15
         List<String> LIST_15_BUYING = Arrays.asList("", "", "", "", "", "", "");
         List<String> LIST_15_SELLING = Arrays.asList("", "", "", "", "", "", "", "", "");
 
-        // ----------------------------------------------------------------------------------------------
-        List<String> EPICS_ONE_WAY = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "GER40", "USOIL");
-        List<String> EPICS_FOREXS = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY",
-                "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF",
-                "NZDUSD", "USDCAD", "USDCHF", "USDJPY", "CHFJPY", "CADJPY", "NZDJPY");
         // ---------------------------------------CRYPTO----------------------------------------
 
         if (isReloadAfter(Utils.MINUTES_OF_15M, "MONITOR_CRYPTO")) {
@@ -3495,107 +3535,9 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        // D-H4-H1
-        {
-            List<String> ARR = new ArrayList<String>();
-            ARR.addAll(LIST_H4_BUYING);
-            ARR.addAll(LIST_H4_SELLING);
-            Collections.sort(ARR);
-
-            for (String EPIC : ARR) {
-                // EPIC = "EURNZD";
-                if (Utils.isBlank(EPIC)) {
-                    continue;
-                }
-
-                String ACTION = LIST_H4_BUYING.contains(EPIC) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
-                Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-                Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
-
-                if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
-                    Utils.logWritelnDraft("monitorProfit (" + EPIC + ") dto is null");
-                    continue;
-                }
-
-                String trend_d1 = dto_d1.getTrend();
-                String trend_h4 = dto_h4.getTrend();
-                String trend_h1 = dto_h1.getTrend();
-
-                String trend_w1d1 = "";
-                trend_w1d1 += "(" + Utils.appendSpace(ACTION, 4) + ") " + Utils.appendSpace(EPIC, 10);
-
-                trend_w1d1 += ".D1:" + "(" + Utils.appendSpace(trend_d1, 4) + ")";
-                trend_w1d1 += ".H4:" + "(" + Utils.appendSpace(trend_h4, 4) + ")";
-                trend_w1d1 += ".H1:" + "(" + Utils.appendSpace(trend_h1, 4) + ")";
-
-                String msg = "";
-                String EVENT_ID = "PROFIT" + EPIC + ACTION + Utils.getCurrentYyyyMmDd_HH();
-
-                if (!Objects.equals(ACTION, trend_h4) && !Objects.equals(ACTION, trend_h1)) {
-                    msg = Utils.appendSpace("(H4)(Danger)", 20) + trend_w1d1;
-                    String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
-
-                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
-                }
-
-                if (!Objects.equals(ACTION, trend_h4) && Objects.equals(ACTION, trend_h1)) {
-                    msg = Utils.appendSpace("(H4)(Warning)", 20) + trend_w1d1;
-                    String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
-
-                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
-                }
-
-                if (Objects.equals(ACTION, trend_h4) && !Objects.equals(ACTION, trend_h1)) {
-                    msg = Utils.appendSpace("(H4)(Notify)", 20) + trend_w1d1;
-                    String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
-
-                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
-                }
-
-                if ((msg.contains("Danger") || msg.contains("TakeProfit"))) {
-                    sendMsgPerHour(EVENT_ID, msg, true);
-                }
-            }
-        }
-
-        {
-            List<String> ARR = new ArrayList<String>();
-            ARR.addAll(LIST_15_BUYING);
-            ARR.addAll(LIST_15_SELLING);
-            Collections.sort(ARR);
-
-            for (String EPIC : ARR) {
-                if (Utils.isBlank(EPIC)) {
-                    continue;
-                }
-
-                Orders dto = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
-
-                if (Objects.isNull(dto)) {
-                    Utils.logWritelnDraft("monitorProfit (" + EPIC + ") dto is null");
-                    continue;
-                }
-
-                String trend = dto.getTrend();
-                String ACTION = LIST_15_BUYING.contains(EPIC) ? Utils.TREND_LONG : Utils.TREND_SHORT;
-
-                if (!Objects.equals(ACTION, trend)) {
-                    String EVENT_ID = "PROFIT" + EPIC + ACTION + Utils.getCurrentYyyyMmDd_HH()
-                            + Utils.getCurrentMinute_Blog15minutes();
-
-                    String msg = Utils.appendSpace("(H1)(Danger)", 20) + "(" + Utils.appendSpace(ACTION, 4) + ") "
-                            + Utils.appendSpace(EPIC, 10) + ".H1:" + "(" + Utils.appendSpace(trend, 4) + ")";
-
-                    String log = Utils.appendSpace(msg, 65) + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
-
-                    logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_15M);
-                    sendMsgPerHour(EVENT_ID, msg, true);
-                }
-
-            }
-        }
-
+        alertMsg(Utils.CAPITAL_TIME_MINUTE_15, LIST_15_BUYING, LIST_15_SELLING);
+        alertMsg(Utils.CAPITAL_TIME_HOUR, LIST_H1_BUYING, LIST_H1_SELLING);
+        alertMsg(Utils.CAPITAL_TIME_HOUR_4, LIST_H4_BUYING, LIST_H4_SELLING);
     }
 
 }
