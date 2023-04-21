@@ -2784,16 +2784,22 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private String analysis(String note, String EPIC, String CAPITAL_TIME_XX, String find_trend) {
+
         Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
         Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+        Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
 
-        if (Objects.isNull(dto) || Objects.isNull(dto_sl)) {
+        if (Objects.isNull(dto) || Objects.isNull(dto_sl) || Objects.isNull(dto_15)) {
             return "";
         }
         String trend = dto.getTrend();
-        if (!Objects.equals(find_trend, trend)) {
+        String trend_15 = dto_15.getTrend();
+
+        if (!Objects.equals(find_trend, trend) || !Objects.equals(find_trend, trend_15)
+                || !dto_15.getNote().contains("50")) {
             return "";
         }
+
         // ----------------------------TREND------------------------
         if (dto.getNote().contains(Utils.TEXT_SWITCH_TREND_BELOW_Ma_LONG)
                 || dto.getNote().contains(Utils.TEXT_SWITCH_TREND_ABOVE_Ma_SHOT)
@@ -3354,8 +3360,10 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (Utils.isNotBlank(switch_trend)) {
-            note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
-                    + Utils.TEXT_SWITCH_TREND_Ma_3_5;
+            if (!CAPITAL_TIME_XX.contains("MINUTE")) {
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
+                        + Utils.TEXT_SWITCH_TREND_Ma_3_5;
+            }
 
             if (heken_list.size() >= 30) {
                 if (Objects.equals(Utils.TREND_LONG, trend) && isBelowMa50) {
@@ -3409,9 +3417,8 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
-            Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
 
-            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)) {
+            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
                 Utils.logWritelnDraft("scapForex (" + EPIC + ") dto is null");
                 return;
             }
@@ -3428,17 +3435,16 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_d1 = dto_d1.getTrend();
             String trend_h4 = dto_h4.getTrend();
             String trend_h1 = dto_h1.getTrend();
-            String trend_15 = dto_15.getTrend();
 
-            if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
+            if (Objects.equals(trend_h4, trend_h1)) {
                 result += analysis("(D1    H4)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_d1);
             }
 
-            if (dto_h1.getNote().contains("50")) {
+            if (Objects.equals(trend_h4, trend_h1) && dto_h1.getNote().contains("50")) {
                 result += analysis("(D1 H1 50)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_d1);
             }
 
-            if (dto_h4.getNote().contains("50")) {
+            if (Objects.equals(trend_h4, trend_h1) && dto_h4.getNote().contains("50")) {
                 result += analysis("(D1 H4 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_d1);
             }
 
@@ -3446,10 +3452,12 @@ public class BinanceServiceImpl implements BinanceService {
                 result += analysis("(D1 H4 H1)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_d1);
             }
 
-            if (Utils.isTimeToHuntM15() && Objects.equals(trend_h4, trend_h1) && dto_h4.getNote().contains("50")
-                    && dto_h1.getNote().contains("50") && dto_15.getNote().contains("50")) {
+            if (Utils.isBlank(result) && Objects.equals(trend_h4, trend_h1)) {
+                result += analysis("(   H4   )", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4);
+            }
 
-                analysis("(H4 H1 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_d1);
+            if (Utils.isBlank(result)) {
+                result += analysis("(H4    15)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4);
             }
 
             // -----------------------------------------------------------------------
@@ -3485,12 +3493,12 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> LIST_D1_SELLING = Arrays.asList("US30", "GER40", "US100", "", "", "", "");
 
         // H4
-        List<String> LIST_H4_BUYING = Arrays.asList("USDCAD", "USDCHF", "USOIL", "EURCHF", "", "");
+        List<String> LIST_H4_BUYING = Arrays.asList("USDCAD", "", "USOIL", "EURCHF", "", "");
         List<String> LIST_H4_SELLING = Arrays.asList("GBPCAD", "CHFJPY", "USDJPY", "", "", "");
 
         // H1
         List<String> LIST_H1_BUYING = Arrays.asList("", "", "", "", "", "", "");
-        List<String> LIST_H1_SELLING = Arrays.asList("GBPNZD", "", "", "", "", "", "", "", "");
+        List<String> LIST_H1_SELLING = Arrays.asList("", "", "", "", "", "", "", "", "");
 
         // 15
         List<String> LIST_15_BUYING = Arrays.asList("", "", "", "", "", "", "");
