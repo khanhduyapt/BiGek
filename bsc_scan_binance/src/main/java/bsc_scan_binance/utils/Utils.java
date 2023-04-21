@@ -3458,10 +3458,14 @@ public class Utils {
         // if (Objects.equals(trend_0, trend_1)) {
         // return trend_0;
         // }
+        // String trend_2 = isUptrendByMa(heken_list, 6, 0, 1) ? TREND_LONG :
+        // TREND_SHOT;
 
-        String trend_2 = isUptrendByMa(heken_list, 6, 0, 1) ? TREND_LONG : TREND_SHOT;
+        BigDecimal ma6 = Utils.calcMA(heken_list, 6, 1);
+        BigDecimal close_price = heken_list.get(1).getPrice_close_candle();
+        String trend = (close_price.compareTo(ma6) > 0) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
-        return trend_2;
+        return trend;
     }
 
     public static String createLineForex_Header(Orders dto_entry, Orders dto_sl, String trend_d1) {
