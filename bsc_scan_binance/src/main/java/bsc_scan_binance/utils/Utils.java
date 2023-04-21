@@ -97,6 +97,9 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_BELOW_Ma_LONG = "(B_50)";
     public static final String TEXT_SWITCH_TREND_ABOVE_Ma_SHOT = "(S_50)";
     public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma.1.3)";
+
+    public static final String TEXT_SWITCH_TREND_Ma_1_20 = "(Ma1_20)";
+    public static final String TEXT_SWITCH_TREND_Ma_1_30 = "(Ma1_30)";
     public static final String TEXT_SWITCH_TREND_Ma_1_50 = "(Ma1_50)";
 
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
@@ -3448,8 +3451,9 @@ public class Utils {
         }
         String id = heken_list.get(0).getId();
         if (id.contains("_1d") || id.contains("DAY")) {
-            String trend_1 = isUptrendByMa(heken_list, 5, 0, 1) ? TREND_LONG : TREND_SHOT;
-            return trend_1;
+            // String trend_1 = isUptrendByMa(heken_list, 5, 0, 1) ? TREND_LONG :
+            // TREND_SHOT;
+            // return trend_1;
         }
 
         String trend_0 = heken_list.get(0).isUptrend() ? TREND_LONG : TREND_SHOT;
@@ -3459,7 +3463,7 @@ public class Utils {
             return trend_0;
         }
 
-        String trend_2 = isUptrendByMa(heken_list, 3, 0, 1) ? TREND_LONG : TREND_SHOT;
+        String trend_2 = isUptrendByMa(heken_list, 2, 0, 1) ? TREND_LONG : TREND_SHOT;
 
         return trend_2;
     }
