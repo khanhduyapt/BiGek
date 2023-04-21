@@ -3339,68 +3339,55 @@ public class BinanceServiceImpl implements BinanceService {
         if (CollectionUtils.isEmpty(list)) {
             return "";
         }
-        String note = "";
         List<BtcFutures> heken_list = Utils.getHekenList(list);
-
         String trend = Utils.getTrendByHekenAshiList(heken_list);
 
-        String switch_trend = Utils.switchTrendByHeken01(heken_list);
+        String note = "";
+        if (CAPITAL_TIME_XX.contains("MINUTE")) {
+            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
+            if (Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1)) {
+                String trend_h4 = dto_h4.getTrend();
+                String trend_h1 = dto_h1.getTrend();
 
-        boolean isAboveMa50 = false;
-        boolean isBelowMa50 = false;
-        if (heken_list.size() >= 30) {
-            isAboveMa50 = Utils.isAboveMALine(heken_list, 50);
-            isBelowMa50 = Utils.isBelowMALine(heken_list, 50);
-        }
-
-        if (Utils.isNotBlank(switch_trend)) {
-            if (!CAPITAL_TIME_XX.contains("MINUTE")) {
-                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
-                        + Utils.TEXT_SWITCH_TREND_Ma_3_5;
-            }
-
-            if (heken_list.size() >= 30) {
-                if (Objects.equals(Utils.TREND_LONG, trend) && isBelowMa50) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
-                            + Utils.TEXT_SWITCH_TREND_BELOW_Ma_LONG;
-                }
-
-                if (Objects.equals(Utils.TREND_SHOT, trend) && isAboveMa50) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
-                            + Utils.TEXT_SWITCH_TREND_ABOVE_Ma_SHOT;
-                }
-
-                if (CAPITAL_TIME_XX.contains("MINUTE")) {
-                    note = "";
-
-                    Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-                    Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
-                    if (Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1)) {
-                        String trend_h4 = dto_h4.getTrend();
-                        String trend_h1 = dto_h1.getTrend();
-
-                        if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend)) {
-                            switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 20);
+                if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend)) {
+                    String switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 20);
+                    if (Objects.equals(switch_trend, trend)) {
+                        note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
+                                + Utils.TEXT_SWITCH_TREND_Ma_1_20;
+                    } else {
+                        switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 30);
+                        if (Objects.equals(switch_trend, trend)) {
+                            note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
+                                    + Utils.TEXT_SWITCH_TREND_Ma_1_30;
+                        } else {
+                            switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 50);
                             if (Objects.equals(switch_trend, trend)) {
                                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
-                                        + Utils.TEXT_SWITCH_TREND_Ma_1_20;
-                            } else {
-                                switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 30);
-                                if (Objects.equals(switch_trend, trend)) {
-                                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
-                                            + Utils.TEXT_SWITCH_TREND_Ma_1_30;
-                                } else {
-                                    switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 50);
-                                    if (Objects.equals(switch_trend, trend)) {
-                                        note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
-                                                + Utils.TEXT_SWITCH_TREND_Ma_1_50;
-                                    }
-                                }
+                                        + Utils.TEXT_SWITCH_TREND_Ma_1_50;
                             }
                         }
                     }
-                } // end MINUTE
+                }
+            }
+        } else { // HOUR, DAY
+            String switch_trend = Utils.switchTrendByHeken01(heken_list);
+            if (Utils.isNotBlank(switch_trend)) {
 
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
+                        + Utils.TEXT_SWITCH_TREND_Ma_3_5;
+
+                if (heken_list.size() >= 30) {
+                    if (Objects.equals(Utils.TREND_LONG, trend) && Utils.isBelowMALine(heken_list, 50)) {
+                        note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
+                                + Utils.TEXT_SWITCH_TREND_BELOW_Ma_LONG;
+                    }
+
+                    if (Objects.equals(Utils.TREND_SHOT, trend) && Utils.isAboveMALine(heken_list, 50)) {
+                        note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
+                                + Utils.TEXT_SWITCH_TREND_ABOVE_Ma_SHOT;
+                    }
+                }
             }
         }
 
@@ -3456,10 +3443,6 @@ public class BinanceServiceImpl implements BinanceService {
                 return;
             }
 
-            if (Utils.isBlank(dto_d1.getNote() + dto_h4.getNote() + dto_h1.getNote())) {
-                continue;
-            }
-
             // TODO: 2. scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
@@ -3480,7 +3463,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Utils.isBlank(result) && Utils.isNotBlank(dto_h4.getNote() + dto_h1.getNote())
                     && Utils.isNotBlank(dto_15.getNote())) {
-                analysis("(H4  15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
+                result += analysis("(H4  15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
             }
 
             // -----------------------------------------------------------------------
