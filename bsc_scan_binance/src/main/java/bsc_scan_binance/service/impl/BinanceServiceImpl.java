@@ -3446,13 +3446,18 @@ public class BinanceServiceImpl implements BinanceService {
                 result += analysis("(D1 H4 H1)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_d1);
             }
 
-            if (Utils.isBlank(result) && Objects.equals(trend_h4, trend_h1)) {
+            if (Objects.equals(trend_h4, trend_h1)) {
+                result += analysis("(D1 H4 H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_d1);
+            }
+
+            if (Utils.isBlank(result)) {
                 result += analysis("( D:" + Utils.appendSpace(trend_d1, 4) + " )", EPIC, Utils.CAPITAL_TIME_HOUR_4,
                         trend_h4);
             }
 
             // -----------------------------------------------------------------------
-            if (Utils.isNotBlank(result) && isReloadAfter(Utils.MINUTES_OF_1H, "ScapForex_" + EPIC)) {
+            if (Utils.isNotBlank(result) && Objects.equals(trend_d1, trend_h4)
+                    && isReloadAfter(Utils.MINUTES_OF_1H, "ScapForex_" + EPIC)) {
                 msg += result;
             }
         }
