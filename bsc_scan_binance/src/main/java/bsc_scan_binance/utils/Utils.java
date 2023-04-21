@@ -3445,6 +3445,11 @@ public class Utils {
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
         }
+        String id = heken_list.get(0).getId();
+        if (id.contains("_1d") || id.contains("DAY")) {
+            String trend_1 = isUptrendByMa(heken_list, 5, 0, 1) ? TREND_LONG : TREND_SHOT;
+            return trend_1;
+        }
 
         String trend_0 = heken_list.get(0).isUptrend() ? TREND_LONG : TREND_SHOT;
         String trend_1 = isUptrendByMa(heken_list, 1, 0, 1) ? TREND_LONG : TREND_SHOT;

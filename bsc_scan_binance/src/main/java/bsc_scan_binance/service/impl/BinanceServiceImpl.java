@@ -3435,16 +3435,21 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (dto_h1.getNote().contains("50")) {
-                result += analysis("(H1    50)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
+                result += analysis("(D1 H1 50)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_d1);
             }
 
             if (dto_h4.getNote().contains("50")) {
-                result += analysis("(H4    50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4);
+                result += analysis("(D1 H4 50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_d1);
+            }
+
+            if (Objects.equals(trend_h4, trend_h1) && Utils.isNotBlank(dto_h4.getNote() + dto_h1.getNote())) {
+                result += analysis("(D1 H4 H1)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_d1);
             }
 
             if (Utils.isTimeToHuntM15() && Objects.equals(trend_h4, trend_h1) && dto_h4.getNote().contains("50")
                     && dto_h1.getNote().contains("50") && dto_15.getNote().contains("50")) {
-                analysis("(H4 H1 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
+
+                analysis("(H4 H1 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_d1);
             }
 
             // -----------------------------------------------------------------------
