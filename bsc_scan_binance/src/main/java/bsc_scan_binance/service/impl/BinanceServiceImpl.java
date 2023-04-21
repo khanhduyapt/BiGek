@@ -3369,6 +3369,15 @@ public class BinanceServiceImpl implements BinanceService {
                     note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
                             + Utils.TEXT_SWITCH_TREND_ABOVE_Ma_SHOT;
                 }
+
+                if (CAPITAL_TIME_XX.contains("MINUTE")) {
+                    switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 50);
+                    switch_trend += Utils.switchTrendByMaXX(heken_list, 3, 50);
+                    switch_trend += Utils.switchTrendByMaXX(heken_list, 5, 50);
+                    if (Utils.isNotBlank(switch_trend)) {
+                        note += Utils.TEXT_SWITCH_TREND_Ma_1_50;
+                    }
+                }
             }
         }
 
@@ -3411,8 +3420,9 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
+            Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
 
-            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
+            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)) {
                 Utils.logWritelnDraft("scapForex (" + EPIC + ") dto is null");
                 return;
             }
@@ -3453,6 +3463,10 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isBlank(result)) {
                 result += analysis("( D:" + Utils.appendSpace(trend_d1, 4) + " )", EPIC, Utils.CAPITAL_TIME_HOUR_4,
                         trend_h4);
+            }
+
+            if (Objects.equals(trend_h4, trend_h1) && dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)) {
+                result += analysis("(H4 H1 15)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
             }
 
             // -----------------------------------------------------------------------

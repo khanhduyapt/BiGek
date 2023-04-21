@@ -97,6 +97,7 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_BELOW_Ma_LONG = "(B_50)";
     public static final String TEXT_SWITCH_TREND_ABOVE_Ma_SHOT = "(S_50)";
     public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma.1.3)";
+    public static final String TEXT_SWITCH_TREND_Ma_1_50 = "(Ma1_50)";
 
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
