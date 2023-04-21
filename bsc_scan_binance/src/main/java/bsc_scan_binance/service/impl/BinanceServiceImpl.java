@@ -3455,7 +3455,7 @@ public class BinanceServiceImpl implements BinanceService {
     // Xu huong H4 cung xu huong nhung yeu di? Msg thong bao take profit.
     // Xu huong H1 cung xu huong nhung yeu di? Log thong bao.
     // ----------------------------------------------------------------------------------------------
-    // "XAUUSD", "XAGUSD", "BTCUSD", "US30", "GER40", "USOIL"
+    // "XAUUSD", "XAGUSD", "BTCUSD", "US30", "US100", "GER40", "USOIL"
     // "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
     // "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD",
     // "NZDCHF", "NZDUSD", "USDCAD", "USDCHF", "USDJPY", "CHFJPY", "CADJPY",
@@ -3469,7 +3469,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // D1
         List<String> LIST_D1_BUYING = Arrays.asList("");
-        List<String> LIST_D1_SELLING = Arrays.asList("US30", "GER40", "", "", "", "", "");
+        List<String> LIST_D1_SELLING = Arrays.asList("US30", "GER40", "US100", "", "", "", "");
 
         // H4
         List<String> LIST_H4_BUYING = Arrays.asList("USDCAD", "USDCHF", "", "", "", "");
@@ -3486,15 +3486,15 @@ public class BinanceServiceImpl implements BinanceService {
         // -------------------------------------------------------------------------------------
 
         monitorTrend(Utils.TREND_LONG,
-                Arrays.asList("NZDCHF", "NZDCAD", "NZDJPY", "NZDUSD", "GBPJPY", "UK100", "XAUUSD", "USDJPY", "", "", "",
-                        "", "", "", "", "", "", "", "", "", "", "", "", "", ""),
+                Arrays.asList("NZDCHF", "NZDCAD", "NZDJPY", "NZDUSD", "GBPJPY", "UK100", "XAUUSD", "USDJPY", "AUDJPY",
+                        "AUDUSD", "CADJPY", "EURJPY", "GBPCHF", "GBPUSD", "", "", "", "", "", "", "", "", "", "", ""),
                 Utils.CAPITAL_TIME_HOUR_4);
 
         // -------------------------------------------------------------------------------------
 
         monitorTrend(Utils.TREND_SHOT,
-                Arrays.asList("EURCAD", "EURNZD", "GBPNZD", "EURGBP", "USDCAD", "", "", "", "", "", "", "", "", "", "",
-                        "", "", "", "", "", "", "", "", "", "", "", ""),
+                Arrays.asList("EURCAD", "EURNZD", "GBPNZD", "EURGBP", "USDCAD", "GBPAUD", "", "", "", "", "", "", "",
+                        "", "", "", "", "", "", "", "", "", "", "", "", "", ""),
                 Utils.CAPITAL_TIME_HOUR_4);
 
         // -------------------------------------------------------------------------------------

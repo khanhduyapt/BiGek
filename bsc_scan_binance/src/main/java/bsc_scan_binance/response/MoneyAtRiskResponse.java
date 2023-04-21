@@ -319,7 +319,7 @@ public class MoneyAtRiskResponse {
             unit_risk_per_pip = BigDecimal.valueOf(2500.00000000005);
             break;
         case "US100":
-            standard_lot = BigDecimal.valueOf(0.0167);
+            standard_lot = BigDecimal.valueOf(0.167);
             unit_risk_per_pip = BigDecimal.valueOf(0.166666666666667);
             break;
         case "NAS100":
