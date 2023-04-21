@@ -3425,7 +3425,15 @@ public class BinanceServiceImpl implements BinanceService {
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
             // Sử dụng TREND_H4 thì ăn ít nhất 4 cây H1.
             String result = "";
+            String trend_d1 = dto_d1.getTrend();
             String trend_h4 = dto_h4.getTrend();
+            String trend_h1 = dto_h1.getTrend();
+            String trend_15 = dto_15.getTrend();
+
+            if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
+                result += analysis("(D1    H4)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_d1);
+            }
+
             if (dto_h1.getNote().contains("50")) {
                 result += analysis("(H1    50)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
             }

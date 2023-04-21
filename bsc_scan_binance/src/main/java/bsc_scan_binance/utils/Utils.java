@@ -96,7 +96,7 @@ public class Utils {
 
     public static final String TEXT_SWITCH_TREND_BELOW_Ma_LONG = "(B_50)";
     public static final String TEXT_SWITCH_TREND_ABOVE_Ma_SHOT = "(S_50)";
-    public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma.3.5)";
+    public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma.1.3)";
 
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
@@ -158,7 +158,7 @@ public class Utils {
 
     public static final List<String> EPICS_FOREXS = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY",
             "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF",
-            "NZDUSD", "USDCAD", "USDCHF", "USDJPY", "CHFJPY", "CADJPY", "NZDJPY", "AUDJPY");
+            "NZDUSD", "USDCAD", "USDCHF", "USDJPY", "CHFJPY", "CADJPY", "NZDJPY", "AUDJPY", "AUDUSD");
 
     // ALL Binance.com
     public static final List<String> COINS = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ARB", "ADA", "ADX", "AERGO",
