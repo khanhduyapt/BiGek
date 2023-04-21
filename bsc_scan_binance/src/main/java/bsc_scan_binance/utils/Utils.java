@@ -3394,6 +3394,27 @@ public class Utils {
             return TREND_SHOT;
         }
 
+        if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(3).isDown()) {
+            return TREND_LONG;
+        }
+        if (heken_list.get(0).isDown() && heken_list.get(1).isDown() && heken_list.get(3).isUptrend()) {
+            return TREND_SHOT;
+        }
+
+        String id = heken_list.get(0).getId();
+        if (id.contains("_15") || id.contains("MINUTE_15")) {
+
+            if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(3).isUptrend()
+                    && heken_list.get(4).isDown()) {
+                return TREND_LONG;
+            }
+            if (heken_list.get(0).isDown() && heken_list.get(1).isDown() && heken_list.get(3).isDown()
+                    && heken_list.get(4).isUptrend()) {
+                return TREND_SHOT;
+            }
+
+        }
+
         return "";
     }
 
