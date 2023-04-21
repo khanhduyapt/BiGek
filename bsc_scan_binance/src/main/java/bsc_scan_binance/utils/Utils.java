@@ -3451,13 +3451,13 @@ public class Utils {
             return "";
         }
         String trend_0 = heken_list.get(0).isUptrend() ? TREND_LONG : TREND_SHOT;
-        String trend_1 = isUptrendByMa(heken_list, 1, 0, 1) ? TREND_LONG : TREND_SHOT;
+        String trend_1 = isUptrendByMa(heken_list, 3, 0, 1) ? TREND_LONG : TREND_SHOT;
 
         if (Objects.equals(trend_0, trend_1)) {
             return trend_0;
         }
 
-        String trend_2 = isUptrendByMa(heken_list, 3, 0, 1) ? TREND_LONG : TREND_SHOT;
+        String trend_2 = isUptrendByMa(heken_list, 6, 0, 1) ? TREND_LONG : TREND_SHOT;
 
         return trend_2;
     }
