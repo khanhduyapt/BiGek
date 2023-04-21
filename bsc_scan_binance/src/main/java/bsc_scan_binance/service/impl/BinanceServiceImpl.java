@@ -2796,31 +2796,25 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_15 = dto_15.getTrend();
 
         if (!Objects.equals(find_trend, trend) || !Objects.equals(find_trend, trend_15)
-                || !dto_15.getNote().contains("50")) {
+                || Utils.isBlank(dto.getNote())) {
             return "";
         }
 
         // ----------------------------TREND------------------------
-        if (dto.getNote().contains(Utils.TEXT_SWITCH_TREND_BELOW_Ma_LONG)
-                || dto.getNote().contains(Utils.TEXT_SWITCH_TREND_ABOVE_Ma_SHOT)
-                || dto.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_3_5)) {
 
-            String char_name = Utils.getChartName(dto);
-            String type = Objects.equals(Utils.TREND_LONG, trend) ? "(B)"
-                    : Objects.equals(Utils.TREND_SHOT, trend) ? "(S)" : "(x)";
+        String char_name = Utils.getChartName(dto);
+        String type = Objects.equals(Utils.TREND_LONG, trend) ? "(B)"
+                : Objects.equals(Utils.TREND_SHOT, trend) ? "(S)" : "(x)";
 
-            String log = Utils.appendSpace(note, 12) + Utils.appendSpace(dto.getNote(), 30);
+        String log = Utils.appendSpace(note, 12) + Utils.appendSpace(dto.getNote(), 30);
 
-            outputLog("Analysis_" + char_name, EPIC, dto, dto_sl, log);
+        outputLog("Analysis_" + char_name, EPIC, dto, dto_sl, log);
 
-            if (!isReloadAfter(Utils.MINUTES_OF_1H, EPIC + trend)) {
-                return "";
-            }
-
-            return char_name + type + EPIC;
+        if (!isReloadAfter(Utils.MINUTES_OF_1H, EPIC + trend)) {
+            return "";
         }
 
-        return "";
+        return char_name + type + EPIC;
     }
 
     @SuppressWarnings("unused")
@@ -3453,11 +3447,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isBlank(result) && Objects.equals(trend_h4, trend_h1)) {
-                result += analysis("(   H4   )", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4);
-            }
-
-            if (Utils.isBlank(result)) {
-                result += analysis("(H4    15)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4);
+                result += analysis("( D:" + Utils.appendSpace(trend_d1, 4) + " )", EPIC, Utils.CAPITAL_TIME_HOUR_4,
+                        trend_h4);
             }
 
             // -----------------------------------------------------------------------
