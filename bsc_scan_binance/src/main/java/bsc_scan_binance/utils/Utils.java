@@ -81,7 +81,7 @@ public class Utils {
     public static final int const_app_flag_all_and_msg = 5;
 
     public static final String TREND_LONG = "BUY";
-    public static final String TREND_SHORT = "SELL";
+    public static final String TREND_SHOT = "SELL";
 
     public static final String TEXT_EQUAL_TO_D1 = "Ed1";
     public static final String TEXT_EQUAL_TO_H4 = "Eh4";
@@ -100,7 +100,7 @@ public class Utils {
 
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
-    public static final String TEXT_TREND_HEKEN_SHORT = TEXT_TREND_HEKEN_ + TREND_SHORT;
+    public static final String TEXT_TREND_HEKEN_SHORT = TEXT_TREND_HEKEN_ + TREND_SHOT;
 
     public static final String TEXT_CONNECTION_TIMED_OUT = "CONNECTION_TIMED_OUT";
     public static final String CONNECTION_TIMED_OUT_ID = "CONNECTION_TIMED_OUT_MINUTE_15";
@@ -2998,7 +2998,7 @@ public class Utils {
 
     private static String checkXCutDnY(BigDecimal maX_1, BigDecimal maX_2, BigDecimal maY_1, BigDecimal maY_2) {
         if ((maX_1.compareTo(maX_2) <= 0) && (maX_1.compareTo(maY_1) <= 0) && (maY_2.compareTo(maX_2) <= 0)) {
-            return TREND_SHORT;
+            return TREND_SHOT;
         }
         return "";
     }
@@ -3017,7 +3017,7 @@ public class Utils {
         BigDecimal ma50_2 = calcMA(list, maSlow, end);
 
         if ((ma3_1.compareTo(ma3_2) < 0) && (ma3_1.compareTo(ma50_1) < 0) && (ma50_2.compareTo(ma3_2) < 0)) {
-            return TREND_SHORT;
+            return TREND_SHOT;
         }
 
         return "";
@@ -3047,7 +3047,7 @@ public class Utils {
             stop_long += Utils.checkXCutDnY(ma3_0, ma3_3, ma8_0, ma8_3) + "_";
             stop_long += Utils.checkXCutDnY(ma6_0, ma6_3, ma8_0, ma8_3) + "_";
         }
-        if (stop_long.contains(TREND_SHORT)) {
+        if (stop_long.contains(TREND_SHOT)) {
             return "STOP:" + TREND_LONG;
         }
 
@@ -3057,7 +3057,7 @@ public class Utils {
             stop_short += Utils.checkXCutUpY(ma6_0, ma6_3, ma8_0, ma8_3) + "_";
         }
         if (stop_short.contains(TREND_LONG)) {
-            return "STOP:" + TREND_SHORT;
+            return "STOP:" + TREND_SHOT;
         }
 
         return "";
@@ -3087,7 +3087,7 @@ public class Utils {
         trend += "_____";
         trend += "_" + temp_shot + "_";
 
-        if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHORT)) {
+        if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHOT)) {
             return "";
         }
 
@@ -3099,8 +3099,8 @@ public class Utils {
             return Utils.TREND_LONG;
         }
 
-        if (trend.contains(Utils.TREND_SHORT)) {
-            return Utils.TREND_SHORT;
+        if (trend.contains(Utils.TREND_SHOT)) {
+            return Utils.TREND_SHOT;
         }
 
         return "";
@@ -3139,7 +3139,7 @@ public class Utils {
         trend += "_____";
         trend += "_" + temp_shot + "_";
 
-        if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHORT)) {
+        if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHOT)) {
             return "";
         }
 
@@ -3153,9 +3153,9 @@ public class Utils {
             }
         }
 
-        if (trend.contains(Utils.TREND_SHORT)) {
+        if (trend.contains(Utils.TREND_SHOT)) {
             if ((ma3_0.compareTo(ma3_3) < 0) && (ma5x_0.compareTo(ma5x_3) < 0)) {
-                return Utils.TREND_SHORT;
+                return Utils.TREND_SHOT;
             }
         }
 
@@ -3197,7 +3197,7 @@ public class Utils {
         trend += "_____";
         trend += "_" + temp_shot + "_";
 
-        if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHORT)) {
+        if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHOT)) {
             return "";
         }
 
@@ -3210,8 +3210,8 @@ public class Utils {
             result = Utils.TREND_LONG;
         }
 
-        if (trend.contains(Utils.TREND_SHORT)) {
-            result = Utils.TREND_SHORT;
+        if (trend.contains(Utils.TREND_SHOT)) {
+            result = Utils.TREND_SHOT;
         }
 
         return result;
@@ -3239,7 +3239,7 @@ public class Utils {
     }
 
     public static String getTrendByMaXx(List<BtcFutures> list, int maIndex) {
-        return isUptrendByMa(list, maIndex, 1, 2) ? TREND_LONG : TREND_SHORT;
+        return isUptrendByMa(list, maIndex, 1, 2) ? TREND_LONG : TREND_SHOT;
     }
 
     public static boolean isUptrendByMa(List<BtcFutures> list, int maIndex, int str, int end) {
@@ -3391,17 +3391,7 @@ public class Utils {
             return TREND_LONG;
         }
         if (heken_list.get(0).isDown() && heken_list.get(1).isUptrend()) {
-            return TREND_SHORT;
-        }
-
-        String result = switchTrendByMaXX(heken_list, 2, 3);
-        if (isNotBlank(result)) {
-            return result;
-        }
-
-        result = switchTrendByMaXX(heken_list, 3, 5);
-        if (isNotBlank(result)) {
-            return result;
+            return TREND_SHOT;
         }
 
         return "";
@@ -3424,7 +3414,7 @@ public class Utils {
             return TREND_LONG;
         }
         if ((ma1_0.compareTo(ma1_1) <= 0) && (ma1_2.compareTo(ma1_1) >= 0)) {
-            return TREND_SHORT;
+            return TREND_SHOT;
         }
 
         return "";
@@ -3435,14 +3425,14 @@ public class Utils {
             return "";
         }
 
-        String trend_0 = heken_list.get(0).isUptrend() ? TREND_LONG : TREND_SHORT;
-        String trend_1 = isUptrendByMa(heken_list, 1, 0, 1) ? TREND_LONG : TREND_SHORT;
+        String trend_0 = heken_list.get(0).isUptrend() ? TREND_LONG : TREND_SHOT;
+        String trend_1 = isUptrendByMa(heken_list, 1, 0, 1) ? TREND_LONG : TREND_SHOT;
 
         if (Objects.equals(trend_0, trend_1)) {
             return trend_0;
         }
 
-        String trend_2 = isUptrendByMa(heken_list, 2, 0, 1) ? TREND_LONG : TREND_SHORT;
+        String trend_2 = isUptrendByMa(heken_list, 3, 0, 1) ? TREND_LONG : TREND_SHOT;
 
         return trend_2;
     }
@@ -3519,7 +3509,7 @@ public class Utils {
 
         if (Objects.equals(trend, Utils.TREND_LONG)) {
             result += str_long;
-        } else if (Objects.equals(trend, Utils.TREND_SHORT)) {
+        } else if (Objects.equals(trend, Utils.TREND_SHOT)) {
             result += str_shot;
         } else {
             result += str_long;
