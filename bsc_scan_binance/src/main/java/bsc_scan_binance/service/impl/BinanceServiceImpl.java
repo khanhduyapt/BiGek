@@ -3434,8 +3434,8 @@ public class BinanceServiceImpl implements BinanceService {
                 result += analysis("(H4    50)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4);
             }
 
-            if (Utils.isTimeToHuntM15() && dto_h1.getNote().contains("50") && dto_15.getNote().contains("50")
-                    && Objects.equals(trend_h4, dto_h1.getTrend())) {
+            if (Utils.isTimeToHuntM15() && dto_h4.getNote().contains("50") && dto_h1.getNote().contains("50")
+                    && dto_15.getNote().contains("50")) {
                 analysis("(H4 H1 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
             }
 
@@ -3472,11 +3472,11 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> LIST_D1_SELLING = Arrays.asList("US30", "GER40", "US100", "", "", "", "");
 
         // H4
-        List<String> LIST_H4_BUYING = Arrays.asList("USDCAD", "USDCHF", "", "", "", "");
+        List<String> LIST_H4_BUYING = Arrays.asList("USDCAD", "USDCHF", "USOIL", "EURCHF", "", "");
         List<String> LIST_H4_SELLING = Arrays.asList("GBPCAD", "CHFJPY", "USDJPY", "", "", "");
 
         // H1
-        List<String> LIST_H1_BUYING = Arrays.asList("EURCHF", "", "", "", "", "", "");
+        List<String> LIST_H1_BUYING = Arrays.asList("", "", "", "", "", "", "");
         List<String> LIST_H1_SELLING = Arrays.asList("GBPNZD", "", "", "", "", "", "", "", "");
 
         // 15
@@ -3502,7 +3502,6 @@ public class BinanceServiceImpl implements BinanceService {
         // -------------------------------------------------------------------------------------
 
         // ---------------------------------------CRYPTO----------------------------------------
-
         if (isReloadAfter(Utils.MINUTES_OF_15M, "MONITOR_CRYPTO")) {
             for (String SYMBOL : CRYPTO_LIST_BUYING) {
                 if (Utils.isBlank(SYMBOL)) {
