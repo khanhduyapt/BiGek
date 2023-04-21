@@ -3429,8 +3429,8 @@ public class BinanceServiceImpl implements BinanceService {
             // Sử dụng TREND_H4 thì ăn ít nhất 4 cây H1.
             String result = "";
 
-            if (dto_d1.getNote().contains("50")) {
-                result += analysis("(   D1   )", EPIC, Utils.CAPITAL_TIME_DAY, trend_d1);
+            if (Utils.isNotBlank(dto_d1.getNote())) {
+                analysis("(   D1   )", EPIC, Utils.CAPITAL_TIME_DAY, trend_d1);
             }
 
             if (Objects.equals(trend_d1, trend_h4)) {
