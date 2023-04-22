@@ -649,7 +649,7 @@ public class Utils {
 
     public static String getChartNameCapital(String TIME) {
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
-            return "(03) ";
+            return "(05) ";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
             return "(15) ";
@@ -878,7 +878,7 @@ public class Utils {
     }
 
     // https://www.calculator.net/time-duration-calculator.html
-    public static boolean isTimeToHuntM15() {
+    public static boolean isHuntTime() {
         LocalTime time_tokyo = LocalTime.parse("07:00:00"); // to: 14:30
         LocalTime time_london = LocalTime.parse("15:00:00"); // to: 19:30
         LocalTime time_newyork = LocalTime.parse("20:00:00"); // to: 22:30
@@ -2195,7 +2195,7 @@ public class Utils {
             String symbol = dto.getId().toUpperCase();
 
             if (symbol.contains(CAPITAL_TIME_MINUTE_5)) {
-                result = "(03) ";
+                result = "(05) ";
             } else if (symbol.contains(CAPITAL_TIME_MINUTE_15)) {
                 result = "(15) ";
             } else if (symbol.contains(CAPITAL_TIME_HOUR_4)) {
@@ -3450,19 +3450,8 @@ public class Utils {
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
         }
-
-        // String trend_0 = heken_list.get(0).isUptrend() ? TREND_LONG : TREND_SHOT;
-        // String trend_1 = isUptrendByMa(heken_list, 3, 0, 1) ? TREND_LONG :
-        // TREND_SHOT;
-        //
-        // if (Objects.equals(trend_0, trend_1)) {
-        // return trend_0;
-        // }
-        // String trend_2 = isUptrendByMa(heken_list, 6, 0, 1) ? TREND_LONG :
-        // TREND_SHOT;
-
-        BigDecimal ma6 = Utils.calcMA(heken_list, 6, 1);
-        BigDecimal close_price = heken_list.get(1).getPrice_close_candle();
+        BigDecimal ma6 = Utils.calcMA(heken_list, 6, 0);
+        BigDecimal close_price = heken_list.get(0).getPrice_close_candle();
         String trend = (close_price.compareTo(ma6) > 0) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
         return trend;
