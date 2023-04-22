@@ -649,22 +649,22 @@ public class Utils {
 
     public static String getChartNameCapital(String TIME) {
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
-            return "(03)";
+            return "(03) ";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
-            return "(15)";
+            return "(15) ";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
-            return "(H1)";
+            return "(H1) ";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
-            return "(H4)";
+            return "(H4) ";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_DAY)) {
-            return "(D1)";
+            return "(D1) ";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
-            return "(W1)";
+            return "(W1) ";
         }
 
         return TIME;
@@ -2158,19 +2158,19 @@ public class Utils {
             String symbol = list.get(0).getId().toLowerCase();
 
             if (symbol.contains("_15m_")) {
-                result = "(15)";
+                result = "(15) ";
             } else if (symbol.contains("_30m_")) {
-                result = "(30)";
+                result = "(30) ";
             } else if (symbol.contains("_1h_")) {
-                result = "(H1)";
+                result = "(H1) ";
             } else if (symbol.contains("_2h_")) {
-                result = "(H2)";
+                result = "(H2) ";
             } else if (symbol.contains("_4h_")) {
-                result = "(H4)";
+                result = "(H4) ";
             } else if (symbol.contains("_1d_")) {
-                result = "(D1)";
+                result = "(D1) ";
             } else if (symbol.contains("_1w_")) {
-                result = "(W1)";
+                result = "(W1) ";
             } else {
                 // symbol = symbol.replace("_00", "");
                 // symbol = symbol.substring(symbol.indexOf("_"), symbol.length()).replace("_",
@@ -2195,17 +2195,17 @@ public class Utils {
             String symbol = dto.getId().toUpperCase();
 
             if (symbol.contains(CAPITAL_TIME_MINUTE_5)) {
-                result = "(03)";
+                result = "(03) ";
             } else if (symbol.contains(CAPITAL_TIME_MINUTE_15)) {
-                result = "(15)";
+                result = "(15) ";
             } else if (symbol.contains(CAPITAL_TIME_HOUR_4)) {
-                result = "(H4)";
+                result = "(H4) ";
             } else if (symbol.contains(CAPITAL_TIME_HOUR)) {
-                result = "(H1)";
+                result = "(H1) ";
             } else if (symbol.contains(CAPITAL_TIME_DAY)) {
-                result = "(D1)";
+                result = "(D1) ";
             } else if (symbol.contains(CAPITAL_TIME_WEEK)) {
-                result = "(W1)";
+                result = "(W1) ";
 
             } else {
                 // symbol = symbol.replace("_00", "");
@@ -3171,31 +3171,31 @@ public class Utils {
         return switchTrendByMaXX_123(list, fastIndex, slowIndex, 0, 3);
     }
 
-    public static String switchTrendByMa10(List<BtcFutures> list) {
-        if (CollectionUtils.isEmpty(list)) {
+    public static String switchTrendByMa13_XX(List<BtcFutures> heken_list, int slowIndexXx) {
+        if (CollectionUtils.isEmpty(heken_list) || (heken_list.size() < 50)) {
             return "";
         }
-        if (Utils.getStringValue(list.get(0).getCurrPrice()).contains("E")) {
+        if (Utils.getStringValue(heken_list.get(0).getCurrPrice()).contains("E")) {
             return "";
         }
 
         String temp_long = "";
         String temp_shot = "";
 
-        BigDecimal ma1_0 = calcMA(list, 1, 0);
-        BigDecimal ma1_3 = calcMA(list, 1, 3);
+        BigDecimal ma1_0 = calcMA(heken_list, 1, 0);
+        BigDecimal ma1_3 = calcMA(heken_list, 1, 3);
 
-        BigDecimal ma3_0 = calcMA(list, 3, 0);
-        BigDecimal ma3_3 = calcMA(list, 3, 3);
+        BigDecimal ma3_0 = calcMA(heken_list, 3, 0);
+        BigDecimal ma3_3 = calcMA(heken_list, 3, 3);
 
-        BigDecimal ma10_0 = calcMA(list, 8, 0);
-        BigDecimal ma10_3 = calcMA(list, 8, 3);
+        BigDecimal ma50_0 = calcMA(heken_list, slowIndexXx, 0);
+        BigDecimal ma50_3 = calcMA(heken_list, slowIndexXx, 3);
 
-        temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma10_0, ma10_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma10_0, ma10_3) + "_";
+        temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma50_0, ma50_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma50_0, ma50_3) + "_";
 
-        temp_long += Utils.checkXCutUpY(ma1_0, ma1_3, ma10_0, ma10_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma1_0, ma1_3, ma10_0, ma10_3) + "_";
+        temp_long += Utils.checkXCutUpY(ma1_0, ma1_3, ma50_0, ma50_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma1_0, ma1_3, ma50_0, ma50_3) + "_";
 
         String trend = "";
         trend += "_" + temp_long + "_";
