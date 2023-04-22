@@ -89,8 +89,8 @@ public class Utils {
     public static final String TEXT_DANGER = "(Danger)";
     public static final String TEXT_START_LONG = "Start:Long";
     public static final String TEXT_STOP_LONG = "Stop:Long";
-    public static final String TEXT_MIN_DAY_AREA = "(Min_Day)";
-    public static final String TEXT_MAX_DAY_AREA = "(Max_Day)";
+    public static final String TEXT_MIN_DAY_AREA = "(Min_D10_Area)";
+    public static final String TEXT_MAX_DAY_AREA = "(Max_D10_Area)";
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 

@@ -3171,9 +3171,9 @@ public class BinanceServiceImpl implements BinanceService {
         crypto_list.add(null);
         crypto_list.add(null);
         crypto_list.addAll(ordersRepository.getCrypto_H4());
-        crypto_list.add(null);
-        crypto_list.add(null);
-        crypto_list.addAll(ordersRepository.getCrypto_H1());
+        // crypto_list.add(null);
+        // crypto_list.add(null);
+        // crypto_list.addAll(ordersRepository.getCrypto_H1());
 
         if (crypto_list.size() > 2) {
             Utils.logWritelnReport(Utils.appendLeftAndRight("   CRYPTO  D1   H4   ", 50, "+"));
@@ -3401,7 +3401,11 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // TODO: 1. initForexTrend
-        List<BigDecimal> body = Utils.getOpenCloseCandle(heken_list.subList(0, 10));
+        int size = 10;
+        if (list.size() < 10)
+            size = list.size();
+
+        List<BigDecimal> body = Utils.getOpenCloseCandle(heken_list.subList(0, size));
         BigDecimal str_body_price = body.get(0);
         BigDecimal end_body_price = body.get(1);
 
@@ -3418,9 +3422,19 @@ public class BinanceServiceImpl implements BinanceService {
             end_body_price = list.get(0).getCurrPrice();
         }
 
-        List<BigDecimal> low_high = Utils.getLowHighCandle(list.subList(0, 10));
+        List<BigDecimal> low_high = Utils.getLowHighCandle(heken_list.subList(0, size));
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
+
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_DAY)) {
+            if (list.get(0).getCurrPrice().compareTo(str_body_price) < 0) {
+                note += Utils.TEXT_MIN_DAY_AREA;
+            }
+
+            if (list.get(0).getCurrPrice().compareTo(end_body_price) > 0) {
+                note += Utils.TEXT_MAX_DAY_AREA;
+            }
+        }
 
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), str_body_price,
                 end_body_price, sl_long, sl_shot, note);
@@ -3465,10 +3479,12 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isNotBlank(dto_15.getNote())) {
-                result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
+                result += analysis(dto_d1.getNote() + "(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15,
+                        trend_h4);
             }
             if (Utils.isNotBlank(dto_05.getNote())) {
-                result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5, trend_h4);
+                result += analysis(dto_d1.getNote() + "(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5,
+                        trend_h4);
             }
 
             // -----------------------------------------------------------------------
