@@ -3267,7 +3267,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String switch_trend = Utils.switchTrendByHeken01(heken_list_d1);
 
-            Orders entity = new Orders(orderId_h4, date_time, Utils.TREND_LONG, list_d1.get(0).getCurrPrice(),
+            Orders entity = new Orders(orderId_d1, date_time, trend_d1, list_d1.get(0).getCurrPrice(),
                     body.get(0), body.get(1), low_high.get(0), low_high.get(1), "(WAITING LIST)" + switch_trend);
 
             ordersRepository.save(entity);
@@ -3326,7 +3326,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                 List<BigDecimal> body = Utils.getOpenCloseCandle(list_h4);
                 List<BigDecimal> low_high = Utils.getLowHighCandle(list_h4);
-                Orders entity = new Orders(orderId_h4, date_time, Utils.TREND_LONG, list_h4.get(0).getCurrPrice(),
+
+                Orders entity = new Orders(orderId_h4, date_time, trend_h4, list_h4.get(0).getCurrPrice(),
                         body.get(0), body.get(1), low_high.get(0), low_high.get(1), note);
 
                 ordersRepository.save(entity);
@@ -3360,12 +3361,12 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
             if (Objects.nonNull(dto_h4) && Objects.equals(dto_h4.getTrend(), trend)) {
                 String type = "";
-                if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 20))) {
-                    type = Utils.TEXT_SWITCH_TREND_Ma_1_20;
-                }
-                if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 30))) {
-                    type = Utils.TEXT_SWITCH_TREND_Ma_1_30;
-                }
+                //if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 20))) {
+                //    type = Utils.TEXT_SWITCH_TREND_Ma_1_20;
+                //}
+                //if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 30))) {
+                //    type = Utils.TEXT_SWITCH_TREND_Ma_1_30;
+                //}
                 if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
                     type = Utils.TEXT_SWITCH_TREND_Ma_1_50;
                 }
