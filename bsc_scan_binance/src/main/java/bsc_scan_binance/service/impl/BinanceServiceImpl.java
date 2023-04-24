@@ -3362,7 +3362,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String switch_trend = Utils.switchTrendByHeken01(heken_list);
                 switch_trend += Utils.switchTrendByMa13_XX(heken_list, 3);
                 switch_trend += Utils.switchTrendByMa13_XX(heken_list, 5);
-                if (Utils.isNotBlank(switch_trend)) {
+                if (switch_trend.contains(trend)) {
                     type = Utils.TEXT_SWITCH_TREND_Ma_3_5;
                 }
 
@@ -3440,11 +3440,12 @@ public class BinanceServiceImpl implements BinanceService {
 
         String msg = "";
         for (String EPIC : CAPITAL_LIST) {
+            Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
 
-            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_15)) {
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_15)) {
                 Utils.logWritelnDraft("scapForex (" + EPIC + ") dto is null");
                 return;
             }
@@ -3453,20 +3454,24 @@ public class BinanceServiceImpl implements BinanceService {
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
             // Sử dụng TREND_H4 thì ăn ít nhất 4 cây H1.
-            String prifix = "  ";
+            String prifix = "    ";
             String result = "";
+
+            String trend_w1 = dto_w1.getTrend();
             String trend_d1 = dto_d1.getTrend();
             String trend_h4 = dto_h4.getTrend();
-            if (Objects.equals(trend_d1, trend_h4)) {
-                prifix = "D1";
+
+            String find_trend = trend_h4;
+            if (Objects.equals(trend_w1, trend_d1)) {
+                prifix = "W1D1";
+                find_trend = trend_w1;
+            } else if (Objects.equals(trend_d1, trend_h4)) {
+                prifix = "  D1";
+                find_trend = trend_d1;
             }
 
-            if (Utils.isNotBlank(dto_d1.getNote() + dto_h4.getNote())) {
-                // result += analysis("(" + prifix + " H4)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4);
-
-                if (Utils.isNotBlank(dto_15.getNote())) {
-                    result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
-                }
+            if (Utils.isNotBlank(dto_h4.getNote()) && Utils.isNotBlank(dto_15.getNote())) {
+                result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
             }
             // -----------------------------------------------------------------------
             if (Utils.isNotBlank(result) && isReloadAfter(Utils.MINUTES_OF_1H, "ScapForex_" + EPIC)) {
@@ -3496,7 +3501,7 @@ public class BinanceServiceImpl implements BinanceService {
         boolean isDebug = true;
 
         // TODO: 3. monitorProfit
-        CRYPTO_LIST_BUYING = Arrays.asList("BTC", "ARB");
+        CRYPTO_LIST_BUYING = Arrays.asList("ARB");
 
         // ---------------------------------------CRYPTO----------------------------------------
         if (isReloadAfter(Utils.MINUTES_OF_15M, "MONITOR_CRYPTO")) {
