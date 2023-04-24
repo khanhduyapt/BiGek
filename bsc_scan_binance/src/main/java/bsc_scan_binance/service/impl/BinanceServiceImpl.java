@@ -3361,12 +3361,12 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
             if (Objects.nonNull(dto_h4) && Objects.equals(dto_h4.getTrend(), trend)) {
                 String type = "";
-                //if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 20))) {
-                //    type = Utils.TEXT_SWITCH_TREND_Ma_1_20;
-                //}
-                //if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 30))) {
-                //    type = Utils.TEXT_SWITCH_TREND_Ma_1_30;
-                //}
+                if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 20))) {
+                    type = Utils.TEXT_SWITCH_TREND_Ma_1_20;
+                }
+                if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 30))) {
+                    type = Utils.TEXT_SWITCH_TREND_Ma_1_30;
+                }
                 if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
                     type = Utils.TEXT_SWITCH_TREND_Ma_1_50;
                 }
@@ -3489,13 +3489,17 @@ public class BinanceServiceImpl implements BinanceService {
                 prifix = "D1";
             }
 
-            if (Utils.isNotBlank(dto_15.getNote())) {
-                result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
-            }
-            if (Utils.isNotBlank(dto_05.getNote())) {
-                result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5, trend_h4);
-            }
+            if (Utils.isNotBlank(dto_h4.getNote())) {
+                result += analysis("(" + prifix + " H4)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4);
 
+                if (Utils.isNotBlank(dto_05.getNote())) {
+                    result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5, trend_h4);
+                }
+
+                if (Utils.isNotBlank(dto_15.getNote())) {
+                    result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
+                }
+            }
             // -----------------------------------------------------------------------
             if (Utils.isNotBlank(result) && isReloadAfter(Utils.MINUTES_OF_1H, "ScapForex_" + EPIC)) {
                 msg += result;
