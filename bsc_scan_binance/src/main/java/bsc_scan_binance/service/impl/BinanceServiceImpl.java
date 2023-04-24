@@ -3495,8 +3495,6 @@ public class BinanceServiceImpl implements BinanceService {
             } else if (dto_d1.getNote().contains(Utils.TEXT_MAX_DAY_AREA)) {
                 prifix = "MaxD";
                 find_trend = trend_h4;
-            } else {
-                find_trend = trend_h4;
             }
 
             if (Utils.isNotBlank(find_trend) && Utils.isNotBlank(dto_h4.getNote())
@@ -3504,7 +3502,7 @@ public class BinanceServiceImpl implements BinanceService {
                 result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
             }
 
-            if (Utils.isBlank(result) && Utils.isNotBlank(dto_h1.getNote())) {
+            if (Utils.isBlank(result) && Utils.isNotBlank(find_trend) && Utils.isNotBlank(dto_h1.getNote())) {
                 result += analysis("(" + prifix + " H1)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend);
             }
 
