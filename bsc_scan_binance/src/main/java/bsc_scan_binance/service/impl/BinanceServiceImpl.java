@@ -3373,35 +3373,13 @@ public class BinanceServiceImpl implements BinanceService {
                     note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
                 }
             }
-        } else if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_HOUR)) { // HOUR
-            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-            if (Objects.nonNull(dto_h4) && Objects.equals(dto_h4.getTrend(), trend)) {
-
-                String type = "";
-                if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 10))) {
-                    type = Utils.TEXT_SWITCH_TREND_Ma_1_10;
-                }
-                if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 20))) {
-                    type = Utils.TEXT_SWITCH_TREND_Ma_1_20;
-                }
-                if (Utils.isNotBlank(type)) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
-                }
-            }
-        } else if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_HOUR_4)) { // HOUR_4
-            String switch_trend = Utils.switchTrendByHeken01(heken_list);
-            switch_trend += Utils.switchTrendByMa13_XX(heken_list, 6);
-            switch_trend += Utils.switchTrendByMa13_XX(heken_list, 10);
-            if (Utils.isNotBlank(switch_trend)) {
-                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
-                        + Utils.TEXT_SWITCH_TREND_Ma_1_10;
-            }
         } else {
             String switch_trend = Utils.switchTrendByHeken01(heken_list);
-            if (switch_trend.contains(trend)) {
+            switch_trend += Utils.switchTrendByMa13_XX(heken_list, 3);
+            switch_trend += Utils.switchTrendByMa13_XX(heken_list, 5);
+            if (Utils.isNotBlank(switch_trend)) {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
                         + Utils.TEXT_SWITCH_TREND_Ma_3_5;
-
             }
         }
 
@@ -3483,7 +3461,7 @@ public class BinanceServiceImpl implements BinanceService {
                 prifix = "D1";
             }
 
-            if (Utils.isNotBlank(dto_h4.getNote())) {
+            if (Utils.isNotBlank(dto_d1.getNote() + dto_h4.getNote())) {
                 // result += analysis("(" + prifix + " H4)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4);
 
                 if (Utils.isNotBlank(dto_05.getNote())) {
