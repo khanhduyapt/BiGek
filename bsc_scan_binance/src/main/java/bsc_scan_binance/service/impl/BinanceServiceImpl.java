@@ -3472,6 +3472,14 @@ public class BinanceServiceImpl implements BinanceService {
                 prifix = "  D1";
                 find_trend = trend_d1;
             }
+            if (dto_d1.getNote().contains(Utils.TEXT_MIN_DAY_AREA)) {
+                prifix = "MinD";
+                find_trend = trend_h4;
+            }
+            if (dto_d1.getNote().contains(Utils.TEXT_MAX_DAY_AREA)) {
+                prifix = "MaxD";
+                find_trend = trend_h4;
+            }
 
             if (Utils.isNotBlank(find_trend) && Utils.isNotBlank(dto_h4.getNote())
                     && Utils.isNotBlank(dto_15.getNote())) {
