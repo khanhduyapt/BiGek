@@ -3513,12 +3513,25 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public void monitorProfit() {
         boolean isDebug = true;
+
+        // TODO: 3. monitorProfit
+        CRYPTO_LIST_BUYING = Arrays.asList("BTC", "ARB");
+
+        // ---------------------------------------CRYPTO----------------------------------------
+        if (isReloadAfter(Utils.MINUTES_OF_15M, "MONITOR_CRYPTO")) {
+            for (String SYMBOL : CRYPTO_LIST_BUYING) {
+                if (Utils.isBlank(SYMBOL)) {
+                    continue;
+                }
+
+                initCryptoTrend(SYMBOL);
+                BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS);
+            }
+        }
+
         if (isDebug) {
             return;
         }
-
-        // TODO: 3. monitorProfit
-        CRYPTO_LIST_BUYING = Arrays.asList("", "");
 
         // D1
         List<String> LIST_D1_BUYING = Arrays.asList("");
@@ -3553,18 +3566,6 @@ public class BinanceServiceImpl implements BinanceService {
         // -------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------
-
-        // ---------------------------------------CRYPTO----------------------------------------
-        if (isReloadAfter(Utils.MINUTES_OF_15M, "MONITOR_CRYPTO")) {
-            for (String SYMBOL : CRYPTO_LIST_BUYING) {
-                if (Utils.isBlank(SYMBOL)) {
-                    continue;
-                }
-
-                initCryptoTrend(SYMBOL);
-                BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS);
-            }
-        }
 
         // ----------------------------------------FOREX----------------------------------------
         if (!(Utils.isWeekday() && Utils.isBusinessTime_6h_to_22h() && Utils.isAllowSendMsg())) {
