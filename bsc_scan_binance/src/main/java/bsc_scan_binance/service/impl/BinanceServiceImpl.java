@@ -3538,14 +3538,14 @@ public class BinanceServiceImpl implements BinanceService {
         // -------------------------------------------------------------------------------------
 
         monitorTrend(Utils.TREND_LONG,
-                Arrays.asList("NZDCHF", "NZDCAD", "NZDJPY", "NZDUSD", "GBPJPY", "UK100", "XAUUSD", "USDJPY", "AUDJPY",
-                        "AUDUSD", "CADJPY", "EURJPY", "GBPCHF", "GBPUSD", "", "", "", "", "", "", "", "", "", "", ""),
+                Arrays.asList("", "", "", "", "", "", "", "", "",
+                        "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""),
                 Utils.CAPITAL_TIME_HOUR_4);
 
         // -------------------------------------------------------------------------------------
 
         monitorTrend(
-                Utils.TREND_SHOT, Arrays.asList("EURCAD", "EURNZD", "GBPNZD", "EURGBP", "USDCAD", "GBPAUD", "", "", "",
+                Utils.TREND_SHOT, Arrays.asList("", "", "", "", "", "", "", "", "",
                         "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""),
                 Utils.CAPITAL_TIME_HOUR_4);
 
