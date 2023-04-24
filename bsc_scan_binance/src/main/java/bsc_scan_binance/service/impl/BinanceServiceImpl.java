@@ -3363,19 +3363,31 @@ public class BinanceServiceImpl implements BinanceService {
                     type = Utils.TEXT_SWITCH_TREND_Ma_1_50;
                 }
 
-                if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 30))) {
-                    type = Utils.TEXT_SWITCH_TREND_Ma_1_30;
+                boolean allowCheck20 = false;
+                if (Utils.isBlank(type) && Objects.equals(trend, Utils.TREND_LONG)
+                        && Utils.isBelowMALine(heken_list, 50)) {
+                    allowCheck20 = true;
+                }
+                if (Utils.isBlank(type) && Objects.equals(trend, Utils.TREND_SHOT)
+                        && Utils.isAboveMALine(heken_list, 50)) {
+                    allowCheck20 = true;
                 }
 
-                if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 20))) {
-                    type = Utils.TEXT_SWITCH_TREND_Ma_1_20;
-                }
+                if (allowCheck20) {
+                    if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 30))) {
+                        type = Utils.TEXT_SWITCH_TREND_Ma_1_30;
+                    }
 
-                String switch_trend = Utils.switchTrendByHeken01(heken_list);
-                switch_trend += Utils.switchTrendByMa13_XX(heken_list, 3);
-                switch_trend += Utils.switchTrendByMa13_XX(heken_list, 5);
-                if (switch_trend.contains(trend)) {
-                    type = Utils.TEXT_SWITCH_TREND_Ma_3_5;
+                    if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 20))) {
+                        type = Utils.TEXT_SWITCH_TREND_Ma_1_20;
+                    }
+
+                    String switch_trend = Utils.switchTrendByHeken01(heken_list);
+                    switch_trend += Utils.switchTrendByMa13_XX(heken_list, 3);
+                    switch_trend += Utils.switchTrendByMa13_XX(heken_list, 5);
+                    if (switch_trend.contains(trend)) {
+                        type = Utils.TEXT_SWITCH_TREND_Ma_3_5;
+                    }
                 }
 
                 if (Utils.isNotBlank(type)) {
