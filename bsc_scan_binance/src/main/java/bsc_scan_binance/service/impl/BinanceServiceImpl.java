@@ -3126,12 +3126,15 @@ public class BinanceServiceImpl implements BinanceService {
                         list_h4h1m15.add(log);
                     }
 
-                    //chart = Utils.getChartName(dto_d1) + ":" + Utils.appendSpace(dto_d1.getTrend(), 8);
-                    //String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
-                    //log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
-                    //log += Utils.createLineForex_Body(dto_h4, dto_h4, "").trim();
-                    //log += "   " + note;
-                    //list_h4.add(log);
+                    // chart = Utils.getChartName(dto_d1) + ":" +
+                    // Utils.appendSpace(dto_d1.getTrend(), 8);
+                    // String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4,
+                    // chart).trim(), 105);
+                    // log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()),
+                    // 15);
+                    // log += Utils.createLineForex_Body(dto_h4, dto_h4, "").trim();
+                    // log += " " + note;
+                    // list_h4.add(log);
                 }
             }
 
@@ -3264,8 +3267,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             String switch_trend = Utils.switchTrendByHeken01(heken_list_d1);
 
-            Orders entity = new Orders(orderId_d1, date_time, trend_d1, list_d1.get(0).getCurrPrice(),
-                    body.get(0), body.get(1), low_high.get(0), low_high.get(1), "(WAITING LIST)" + switch_trend);
+            Orders entity = new Orders(orderId_d1, date_time, trend_d1, list_d1.get(0).getCurrPrice(), body.get(0),
+                    body.get(1), low_high.get(0), low_high.get(1), "(WAITING LIST)" + switch_trend);
 
             ordersRepository.save(entity);
         }
@@ -3324,8 +3327,8 @@ public class BinanceServiceImpl implements BinanceService {
                 List<BigDecimal> body = Utils.getOpenCloseCandle(list_h4);
                 List<BigDecimal> low_high = Utils.getLowHighCandle(list_h4);
 
-                Orders entity = new Orders(orderId_h4, date_time, trend_h4, list_h4.get(0).getCurrPrice(),
-                        body.get(0), body.get(1), low_high.get(0), low_high.get(1), note);
+                Orders entity = new Orders(orderId_h4, date_time, trend_h4, list_h4.get(0).getCurrPrice(), body.get(0),
+                        body.get(1), low_high.get(0), low_high.get(1), note);
 
                 ordersRepository.save(entity);
             } else {
@@ -3362,26 +3365,24 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
                     type = Utils.TEXT_SWITCH_TREND_Ma_1_50;
                 }
+                if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 30))) {
+                    type = Utils.TEXT_SWITCH_TREND_Ma_1_30;
+                }
+                if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 20))) {
+                    type = Utils.TEXT_SWITCH_TREND_Ma_1_20;
+                }
 
-                boolean allowCheck20 = false;
+                boolean allowCheck10 = false;
                 if (Utils.isBlank(type) && Objects.equals(trend, Utils.TREND_LONG)
                         && Utils.isBelowMALine(heken_list, 50)) {
-                    allowCheck20 = true;
+                    allowCheck10 = true;
                 }
                 if (Utils.isBlank(type) && Objects.equals(trend, Utils.TREND_SHOT)
                         && Utils.isAboveMALine(heken_list, 50)) {
-                    allowCheck20 = true;
+                    allowCheck10 = true;
                 }
 
-                if (allowCheck20) {
-                    if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 30))) {
-                        type = Utils.TEXT_SWITCH_TREND_Ma_1_30;
-                    }
-
-                    if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 20))) {
-                        type = Utils.TEXT_SWITCH_TREND_Ma_1_20;
-                    }
-
+                if (allowCheck10) {
                     String switch_trend = Utils.switchTrendByHeken01(heken_list);
                     switch_trend += Utils.switchTrendByMa13_XX(heken_list, 3);
                     switch_trend += Utils.switchTrendByMa13_XX(heken_list, 5);
@@ -3561,17 +3562,13 @@ public class BinanceServiceImpl implements BinanceService {
 
         // -------------------------------------------------------------------------------------
 
-        monitorTrend(Utils.TREND_LONG,
-                Arrays.asList("", "", "", "", "", "", "", "", "",
-                        "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""),
-                Utils.CAPITAL_TIME_HOUR_4);
+        monitorTrend(Utils.TREND_LONG, Arrays.asList("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+                "", "", "", "", "", "", "", ""), Utils.CAPITAL_TIME_HOUR_4);
 
         // -------------------------------------------------------------------------------------
 
-        monitorTrend(
-                Utils.TREND_SHOT, Arrays.asList("", "", "", "", "", "", "", "", "",
-                        "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""),
-                Utils.CAPITAL_TIME_HOUR_4);
+        monitorTrend(Utils.TREND_SHOT, Arrays.asList("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+                "", "", "", "", "", "", "", "", "", ""), Utils.CAPITAL_TIME_HOUR_4);
 
         // -------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------
