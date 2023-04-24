@@ -3108,7 +3108,6 @@ public class BinanceServiceImpl implements BinanceService {
         List<Orders> list_all = ordersRepository.getTrend_H4List();
         if (!CollectionUtils.isEmpty(list_all)) {
             Utils.logWritelnReport("");
-            Utils.logWritelnReport(Utils.appendLeftAndRight(" Start      H4 = H1      ", 50, "+"));
             for (Orders dto_h4 : list_all) {
                 String EPIC = Utils.getEpicFromId(dto_h4.getId());
 
@@ -3142,7 +3141,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (list_h4h1m15.size() > 0) {
             Utils.logWritelnReport("");
-            Utils.logWritelnReport(Utils.appendLeftAndRight("    H4 = H1 = M15    ", 50, "+"));
+            Utils.logWritelnReport(Utils.appendLeftAndRight("   Switch Trend H4   ", 50, "+"));
             for (String log : list_h4h1m15) {
                 Utils.logWritelnReport(log);
             }
@@ -3152,7 +3151,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (list_h4.size() > 0) {
             Utils.logWritelnReport("");
-            Utils.logWritelnReport(Utils.appendLeftAndRight("      Start H4       ", 50, "+"));
+            Utils.logWritelnReport(Utils.appendLeftAndRight("          H4         ", 50, "+"));
             for (String log : list_h4) {
                 Utils.logWritelnReport(log);
             }
