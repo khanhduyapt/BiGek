@@ -3115,7 +3115,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (Objects.nonNull(dto_d1)) {
                     String chart = Utils.getChartName(dto_d1) + ":" + Utils.appendSpace(dto_d1.getTrend(), 8);
-                    String note = dto_d1.getNote() + dto_h4.getNote();
+                    String note = dto_h4.getNote() + dto_d1.getNote();
 
                     if (Utils.isNotBlank(dto_h4.getNote())) {
                         String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
@@ -3498,7 +3498,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public void monitorProfit() {
-        boolean isDebug = true;
+        boolean isDebug = false;
 
         // TODO: 3. monitorProfit
         CRYPTO_LIST_BUYING = Arrays.asList("ARB");
@@ -3521,11 +3521,11 @@ public class BinanceServiceImpl implements BinanceService {
 
         // D1
         List<String> LIST_D1_BUYING = Arrays.asList("");
-        List<String> LIST_D1_SELLING = Arrays.asList("US30", "GER40", "US100", "", "", "", "");
+        List<String> LIST_D1_SELLING = Arrays.asList("US30", "US100", "", "", "", "", "");
 
         // H4
-        List<String> LIST_H4_BUYING = Arrays.asList("USDCAD", "", "USOIL", "EURCHF", "", "");
-        List<String> LIST_H4_SELLING = Arrays.asList("GBPCAD", "CHFJPY", "USDJPY", "", "", "");
+        List<String> LIST_H4_BUYING = Arrays.asList("CADJPY", "NZDCAD", "XAUUSD", "", "", "");
+        List<String> LIST_H4_SELLING = Arrays.asList("USDCAD", "", "", "", "", "");
 
         // H1
         List<String> LIST_H1_BUYING = Arrays.asList("", "", "", "", "", "", "");
