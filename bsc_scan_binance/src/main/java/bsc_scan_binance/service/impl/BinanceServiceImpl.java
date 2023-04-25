@@ -3121,7 +3121,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String note = dto_h4.getNote() + dto_d1.getNote();
 
                     if (Utils.isNotBlank(dto_h4.getNote())) {
-                        String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 105);
+                        String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 115);
                         log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
                         log += Utils.createLineForex_Body(dto_h4, dto_h4, dto_h4.getTrend()).trim();
                         log += "   " + note;
