@@ -137,7 +137,11 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
 
     @Query(value = "SELECT * FROM public.orders det where (det.gecko_id like '%_HOUR_4')     ORDER BY det.gecko_id ", nativeQuery = true)
     public List<Orders> getAllH4();
+
     // =======================================================================
+    @Query(value = "  SELECT * FROM orders det   WHERE (det.gecko_id like 'CRYPTO_%_1w') "
+            + "  ORDER BY det.trend asc, det.gecko_id asc ", nativeQuery = true)
+    public List<Orders> getCrypto_W1();
 
     @Query(value = "  SELECT * FROM orders det   WHERE (det.gecko_id like 'CRYPTO_%_1d') "
             + "  ORDER BY det.trend asc, det.gecko_id asc ", nativeQuery = true)
@@ -146,10 +150,6 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
     @Query(value = "  SELECT * FROM orders det   WHERE (det.gecko_id like 'CRYPTO_%_4h') "
             + "  ORDER BY det.trend asc, det.gecko_id asc ", nativeQuery = true)
     public List<Orders> getCrypto_H4();
-
-    @Query(value = "  SELECT * FROM orders det   WHERE (det.gecko_id like 'CRYPTO_%_1h') "
-            + "  ORDER BY det.trend asc, det.gecko_id asc ", nativeQuery = true)
-    public List<Orders> getCrypto_H1();
 
     // =======================================================================
     // delete:

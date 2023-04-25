@@ -3182,7 +3182,9 @@ public class BinanceServiceImpl implements BinanceService {
         // ==================================================================================
         // ==================================================================================
         List<Orders> crypto_list = new ArrayList<Orders>();
-
+        crypto_list.addAll(ordersRepository.getCrypto_W1());
+        crypto_list.add(null);
+        crypto_list.add(null);
         crypto_list.addAll(ordersRepository.getCrypto_D1());
         crypto_list.add(null);
         crypto_list.add(null);
@@ -3259,10 +3261,45 @@ public class BinanceServiceImpl implements BinanceService {
         ARR_ALLOW_H4.addAll(Utils.COINS_FUTURES);
 
         // ------------------------------------------------------------------
+        String orderId_w1 = "CRYPTO_" + SYMBOL + "_1w";
         String orderId_d1 = "CRYPTO_" + SYMBOL + "_1d";
         String orderId_h4 = "CRYPTO_" + SYMBOL + "_4h";
         // ------------------------------------------------------------------
         String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_Blog2h();
+
+        if (LIST_WAITING.contains(SYMBOL)) {
+            List<BtcFutures> list_w1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 10);
+            if (CollectionUtils.isEmpty(list_w1)) {
+                return Utils.CRYPTO_TIME_1H;
+            }
+            List<BtcFutures> heken_list_w1 = Utils.getHekenList(list_w1);
+            String trend_w1 = Utils.getTrendByHekenAshiList(heken_list_w1);
+
+            if (Objects.equals(trend_w1, Utils.TREND_LONG)) {
+                List<BigDecimal> body = Utils.getOpenCloseCandle(list_w1);
+                List<BigDecimal> low_high = Utils.getLowHighCandle(list_w1);
+
+                String switch_trend = Utils.switchTrendByHeken01(heken_list_w1);
+
+                String note = "";
+                if (CRYPTO_LIST_BUYING.contains(SYMBOL)) {
+                    note = "(BUYING)" + switch_trend;
+                } else if (LIST_WAITING.contains(SYMBOL)) {
+                    note = "(WAITING LIST)" + switch_trend;
+                }
+
+                Orders entity = new Orders(orderId_d1, date_time, trend_w1, list_w1.get(0).getCurrPrice(), body.get(0),
+                        body.get(1), low_high.get(0), low_high.get(1), note);
+
+                ordersRepository.save(entity);
+            } else if (!CRYPTO_LIST_BUYING.contains(SYMBOL)) {
+                Orders entity_w1 = ordersRepository.findById(orderId_w1).orElse(null);
+                if (Objects.nonNull(entity_w1)) {
+                    ordersRepository.deleteById(orderId_w1);
+                }
+            }
+
+        }
 
         // ------------------------------------------------------------------
         List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 25);
