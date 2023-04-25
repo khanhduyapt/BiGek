@@ -2697,7 +2697,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String EVENT_ID = "FX_LOG_" + prefix_id + EPIC + dto_entry.getTrend();
 
-        String log = Utils.appendSpace(EPIC, 10);
+        String log = Utils.appendSpace(EPIC, 11);
         log += Utils.appendSpace(append, 35) + " ";
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
 
@@ -2781,7 +2781,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
     }
 
-    private String analysis(String note, String EPIC, String CAPITAL_TIME_XX, String find_trend) {
+    private String analysis(String prifix, String EPIC, String CAPITAL_TIME_XX, String find_trend) {
 
         Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
         Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
@@ -2804,7 +2804,7 @@ public class BinanceServiceImpl implements BinanceService {
         String type = Objects.equals(Utils.TREND_LONG, trend) ? "(B)"
                 : Objects.equals(Utils.TREND_SHOT, trend) ? "(S)" : "(x)";
 
-        String log = Utils.appendSpace(note, 12) + Utils.appendSpace(dto.getNote(), 30);
+        String log = Utils.appendSpace(prifix, 16) + Utils.appendSpace(dto.getNote(), 30);
 
         outputLog("Analysis_" + char_name, EPIC, dto, dto_sl, log);
 
