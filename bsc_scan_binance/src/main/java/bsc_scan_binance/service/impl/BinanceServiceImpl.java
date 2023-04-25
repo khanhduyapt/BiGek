@@ -3480,7 +3480,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)) {
                 prifix = "W1D1H4";
                 find_trend = trend_w1;
-            } else if (Objects.equals(trend_d1, trend_h4)) {
+            } else if (Objects.equals(trend_w1, trend_d1) || Objects.equals(trend_d1, trend_h4)) {
                 prifix = "  D1H4";
                 find_trend = trend_d1;
             } else if (dto_d1.getNote().contains(Utils.TEXT_MIN_DAY_AREA)) {
