@@ -3385,6 +3385,12 @@ public class BinanceServiceImpl implements BinanceService {
                     note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
                 }
             }
+
+            if (Utils.isBlank(note) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
+                        + Utils.TEXT_SWITCH_TREND_Ma_1_50;
+            }
+
         } else {
             String switch_trend = Utils.switchTrendByHeken01(heken_list);
             switch_trend += Utils.switchTrendByMa13_XX(heken_list, 3);
@@ -3467,6 +3473,8 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_w1 = dto_w1.getTrend();
             String trend_d1 = dto_d1.getTrend();
             String trend_h4 = dto_h4.getTrend();
+            String trend_h1 = dto_h1.getTrend();
+            String trend_15 = dto_15.getTrend();
 
             String find_trend = "";
             if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)) {
@@ -3474,17 +3482,19 @@ public class BinanceServiceImpl implements BinanceService {
                 find_trend = trend_w1;
             } else if (Objects.equals(trend_d1, trend_h4)) {
                 prifix = "  D1H4";
+                find_trend = trend_d1;
             } else if (dto_d1.getNote().contains(Utils.TEXT_MIN_DAY_AREA)) {
                 prifix = "Min10D";
             } else if (dto_d1.getNote().contains(Utils.TEXT_MAX_DAY_AREA)) {
                 prifix = "Max10D";
             }
 
-            if (dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)) {
-                result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
+            if (dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50) && Objects.equals(trend_h4, trend_h1)
+                    && Objects.equals(trend_h1, trend_15)) {
+                result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
             }
 
-            if (Utils.isNotBlank(dto_h1.getNote())) {
+            if (Utils.isNotBlank(dto_h1.getNote()) && Objects.equals(trend_h4, trend_h1)) {
                 result += analysis("(" + prifix + " H1)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend);
             }
 
