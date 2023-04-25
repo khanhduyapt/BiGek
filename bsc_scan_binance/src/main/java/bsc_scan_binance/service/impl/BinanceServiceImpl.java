@@ -3243,7 +3243,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initCryptoTrend(String SYMBOL) {
-        // TODO: initCryptoTrend
+
         String date_time = LocalDateTime.now().toString();
 
         List<String> LIST_WAITING = Arrays.asList("APT", "APE", "ARB", "AUDIO", "BAND", "BSW", "C98", "CELO", "CELR",
@@ -3263,6 +3263,7 @@ public class BinanceServiceImpl implements BinanceService {
         // ------------------------------------------------------------------
         String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_Blog2h();
 
+        // TODO: initCryptoTrend
         if (ARR_ALLOW_H4.contains(SYMBOL)) {
             List<BtcFutures> list_w1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 10);
             if (CollectionUtils.isEmpty(list_w1)) {
