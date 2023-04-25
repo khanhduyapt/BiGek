@@ -3375,14 +3375,17 @@ public class BinanceServiceImpl implements BinanceService {
                     type = Utils.TEXT_SWITCH_TREND_Ma_1_20;
                 }
 
+                String temp = "";
                 boolean allowCheck10 = false;
                 if (Utils.isBlank(type) && Objects.equals(trend, Utils.TREND_LONG)
                         && Utils.isBelowMALine(heken_list, 50)) {
                     allowCheck10 = true;
+                    temp = "(B50)";
                 }
                 if (Utils.isBlank(type) && Objects.equals(trend, Utils.TREND_SHOT)
                         && Utils.isAboveMALine(heken_list, 50)) {
                     allowCheck10 = true;
+                    temp = "(S50)";
                 }
 
                 if (allowCheck10) {
@@ -3390,7 +3393,7 @@ public class BinanceServiceImpl implements BinanceService {
                     switch_trend += Utils.switchTrendByMa13_XX(heken_list, 3);
                     switch_trend += Utils.switchTrendByMa13_XX(heken_list, 5);
                     if (switch_trend.contains(trend)) {
-                        type = Utils.TEXT_SWITCH_TREND_Ma_3_5;
+                        type = temp;
                     }
                 }
 
@@ -3398,6 +3401,23 @@ public class BinanceServiceImpl implements BinanceService {
                     note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
                 }
 
+            }
+        } else if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_HOUR)) {
+            String type = "";
+            if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
+                type = "(B50)";
+            }
+            if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
+                type = "(S50)";
+            }
+
+            if (Utils.isNotBlank(type)) {
+                String switch_trend = Utils.switchTrendByHeken01(heken_list);
+                switch_trend += Utils.switchTrendByMa13_XX(heken_list, 3);
+                switch_trend += Utils.switchTrendByMa13_XX(heken_list, 5);
+                if (Utils.isNotBlank(switch_trend)) {
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
+                }
             }
         } else {
             String switch_trend = Utils.switchTrendByHeken01(heken_list);
@@ -3482,7 +3502,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_d1 = dto_d1.getTrend();
             String trend_h4 = dto_h4.getTrend();
 
-            String find_trend = "";
+            String find_trend = trend_h4;
             if (Objects.equals(trend_w1, trend_d1)) {
                 prifix = "W1D1";
                 find_trend = trend_w1;
