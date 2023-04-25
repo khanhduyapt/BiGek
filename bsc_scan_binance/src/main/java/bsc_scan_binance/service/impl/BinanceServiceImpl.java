@@ -3463,10 +3463,6 @@ public class BinanceServiceImpl implements BinanceService {
                 return;
             }
 
-            // TODO: 2. scapForex
-            // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
-            // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
-            // Sử dụng TREND_H4 thì ăn ít nhất 4 cây H1.
             String prifix = "      ";
             String result = "";
 
@@ -3476,6 +3472,9 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1 = dto_h1.getTrend();
             String trend_15 = dto_15.getTrend();
 
+            // TODO: 2. scapForex
+            // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
+            // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
             String find_trend = trend_h4;
             if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)) {
                 prifix = "W1D1H4";
@@ -3489,12 +3488,14 @@ public class BinanceServiceImpl implements BinanceService {
                 prifix = "Max10D";
             }
 
-            if (dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50) && Objects.equals(find_trend, trend_h4)
+            if (Utils.isNotBlank(dto_h4.getNote()) && dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)
+                    && Objects.equals(find_trend, trend_h4)
                     && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
                 result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
             }
 
-            if (Utils.isNotBlank(dto_h1.getNote()) && Objects.equals(find_trend, trend_h4)
+            if (Utils.isNotBlank(dto_h4.getNote()) && Utils.isNotBlank(dto_h1.getNote())
+                    && Objects.equals(find_trend, trend_h4)
                     && Objects.equals(trend_h4, trend_h1)) {
                 result += analysis("(" + prifix + " H1)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend);
             }
