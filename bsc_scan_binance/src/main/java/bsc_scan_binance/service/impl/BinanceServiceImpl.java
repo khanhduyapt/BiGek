@@ -3132,7 +3132,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String note = dto_h4.getNote() + dto_d1.getNote();
 
                     if (Utils.isNotBlank(dto_h4.getNote())) {
-                        String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4, chart).trim(), 115);
+                        String log = Utils.createLineForex_Header(dto_h4, dto_h4, chart);
                         log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
                         log += Utils.createLineForex_Body(dto_h4, dto_h4, dto_h4.getTrend()).trim();
                         log += "   " + note;
@@ -3144,7 +3144,7 @@ public class BinanceServiceImpl implements BinanceService {
                             && Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
                         chart += Utils.getChartName(dto_h4) + ":" + Utils.appendSpace(dto_h4.getTrend(), 8);
 
-                        String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h1, dto_h1, chart).trim(), 115);
+                        String log = Utils.createLineForex_Header(dto_h1, dto_h1, chart);
                         log += Utils.appendSpace(Utils.removeLastZero(dto_h1.getCurrent_price()), 15);
                         log += Utils.createLineForex_Body(dto_h1, dto_h4, dto_h1.getTrend()).trim();
                         log += "   " + note;
@@ -3283,7 +3283,7 @@ public class BinanceServiceImpl implements BinanceService {
                     body.get(1), low_high.get(0), low_high.get(1), "(WAITING LIST)" + switch_trend);
 
             ordersRepository.save(entity);
-        } else {
+        } else if (!CRYPTO_LIST_BUYING.contains(SYMBOL)) {
             Orders entity_d1 = ordersRepository.findById(orderId_d1).orElse(null);
             if (Objects.nonNull(entity_d1)) {
                 ordersRepository.deleteById(orderId_d1);
