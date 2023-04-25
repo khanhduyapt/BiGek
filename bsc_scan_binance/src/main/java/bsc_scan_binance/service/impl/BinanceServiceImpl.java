@@ -3376,8 +3376,8 @@ public class BinanceServiceImpl implements BinanceService {
                 }
                 if (Utils.isNotBlank(type)) {
                     String switch_trend = Utils.switchTrendByHeken01(heken_list);
-                    switch_trend += Utils.switchTrendByMa13_XX(heken_list, 3);
                     switch_trend += Utils.switchTrendByMa13_XX(heken_list, 5);
+                    switch_trend += Utils.switchTrendByMa13_XX(heken_list, 10);
                     if (Utils.isNotBlank(switch_trend)) {
                         note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
                     }
@@ -3543,11 +3543,11 @@ public class BinanceServiceImpl implements BinanceService {
 
         // D1
         List<String> LIST_D1_BUYING = Arrays.asList("");
-        List<String> LIST_D1_SELLING = Arrays.asList("US30", "US100", "", "", "", "", "");
+        List<String> LIST_D1_SELLING = Arrays.asList("US30", "US100", "GER40", "", "", "", "");
 
         // H4
         List<String> LIST_H4_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> LIST_H4_SELLING = Arrays.asList("USDCAD", "", "", "", "", "");
+        List<String> LIST_H4_SELLING = Arrays.asList("USDCAD", "CADJPY", "", "", "", "");
 
         // H1
         List<String> LIST_H1_BUYING = Arrays.asList("", "", "", "", "", "", "");
