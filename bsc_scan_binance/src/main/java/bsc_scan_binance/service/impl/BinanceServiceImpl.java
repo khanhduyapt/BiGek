@@ -3378,11 +3378,10 @@ public class BinanceServiceImpl implements BinanceService {
                     String switch_trend = Utils.switchTrendByHeken01(heken_list);
                     switch_trend += Utils.switchTrendByMa13_XX(heken_list, 5);
                     switch_trend += Utils.switchTrendByMa13_XX(heken_list, 10);
-                    if (Utils.isNotBlank(switch_trend)) {
-                        note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
+                    if (Utils.isBlank(switch_trend)) {
+                        type = "";
                     }
                 }
-
                 if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
                     type = Utils.TEXT_SWITCH_TREND_Ma_1_50;
                 }
@@ -3487,8 +3486,8 @@ public class BinanceServiceImpl implements BinanceService {
                 prifix = "MaxD";
             }
 
-            if (Utils.isNotBlank(dto_h4.getNote()) && Utils.isNotBlank(dto_15.getNote())) {
-                result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
+            if (dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)) {
+                result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, "");
             }
 
             if (Utils.isBlank(result) && Utils.isNotBlank(dto_h1.getNote())) {
