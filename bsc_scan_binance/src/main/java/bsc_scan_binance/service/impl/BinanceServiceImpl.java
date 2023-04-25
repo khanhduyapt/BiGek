@@ -3279,8 +3279,15 @@ public class BinanceServiceImpl implements BinanceService {
 
             String switch_trend = Utils.switchTrendByHeken01(heken_list_d1);
 
+            String note = "";
+            if (CRYPTO_LIST_BUYING.contains(SYMBOL)) {
+                note = "(BUYING)" + switch_trend;
+            } else if (LIST_WAITING.contains(SYMBOL)) {
+                note = "(WAITING LIST)" + switch_trend;
+            }
+
             Orders entity = new Orders(orderId_d1, date_time, trend_d1, list_d1.get(0).getCurrPrice(), body.get(0),
-                    body.get(1), low_high.get(0), low_high.get(1), "(WAITING LIST)" + switch_trend);
+                    body.get(1), low_high.get(0), low_high.get(1), note);
 
             ordersRepository.save(entity);
         } else if (!CRYPTO_LIST_BUYING.contains(SYMBOL)) {
@@ -3305,8 +3312,8 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // ------------------------------------------------------------------
-        if (CRYPTO_LIST_BUYING.contains(SYMBOL) || (Objects.equals(trend_d1, Utils.TREND_LONG)
-                && ARR_ALLOW_H4.contains(SYMBOL) && Utils.isBelowMALine(heken_list_d1, 20))) {
+        if (CRYPTO_LIST_BUYING.contains(SYMBOL)
+                || (Objects.equals(trend_d1, Utils.TREND_LONG) && ARR_ALLOW_H4.contains(SYMBOL))) {
 
             List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 55);
             if (CollectionUtils.isEmpty(list_h4)) {
