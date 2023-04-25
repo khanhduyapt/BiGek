@@ -3117,8 +3117,15 @@ public class BinanceServiceImpl implements BinanceService {
 
                 Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
                 Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+                Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
 
-                if (Objects.nonNull(dto_w1) && Objects.nonNull(dto_d1)) {
+                if (Objects.nonNull(dto_w1) && Objects.nonNull(dto_d1) && Objects.nonNull(dto_h1)) {
+
+                    if (Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())
+                            && !Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())) {
+                        continue;
+                    }
+
                     String chart = Utils.getChartName(dto_w1) + ":" + Utils.appendSpace(dto_w1.getTrend(), 8);
                     chart += Utils.getChartName(dto_d1) + ":" + Utils.appendSpace(dto_d1.getTrend(), 8);
 
@@ -3133,15 +3140,17 @@ public class BinanceServiceImpl implements BinanceService {
                         list_h4h1m15.add(log);
                     }
 
-                    // chart = Utils.getChartName(dto_d1) + ":" +
-                    // Utils.appendSpace(dto_d1.getTrend(), 8);
-                    // String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h4, dto_h4,
-                    // chart).trim(), 105);
-                    // log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()),
-                    // 15);
-                    // log += Utils.createLineForex_Body(dto_h4, dto_h4, "").trim();
-                    // log += " " + note;
-                    // list_h4.add(log);
+                    if (Utils.isNotBlank(dto_h4.getNote()) && Utils.isNotBlank(dto_h1.getNote())
+                            && Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
+                        chart += Utils.getChartName(dto_h4) + ":" + Utils.appendSpace(dto_h4.getTrend(), 8);
+
+                        String log = Utils.appendSpace(Utils.createLineForex_Header(dto_h1, dto_h1, chart).trim(), 115);
+                        log += Utils.appendSpace(Utils.removeLastZero(dto_h1.getCurrent_price()), 15);
+                        log += Utils.createLineForex_Body(dto_h1, dto_h4, dto_h1.getTrend()).trim();
+                        log += "   " + note;
+                        list_h4.add(log);
+                    }
+
                 }
             }
 
@@ -3161,7 +3170,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (list_h4.size() > 0) {
             Utils.logWritelnReport("");
-            Utils.logWritelnReport(Utils.appendLeftAndRight("          H4         ", 50, "+"));
+            Utils.logWritelnReport(Utils.appendLeftAndRight("          H1         ", 50, "+"));
             for (String log : list_h4) {
                 Utils.logWritelnReport(log);
             }
@@ -3263,12 +3272,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         List<BtcFutures> heken_list_d1 = Utils.getHekenList(list_d1);
         String trend_d1 = Utils.getTrendByHekenAshiList(heken_list_d1);
-        if (!ARR_ALLOW_H4.contains(SYMBOL) && Objects.equals(trend_d1, Utils.TREND_SHOT)) {
-            Orders entity_d1 = ordersRepository.findById(orderId_d1).orElse(null);
-            if (Objects.nonNull(entity_d1)) {
-                ordersRepository.deleteById(orderId_d1);
-            }
-        } else if (ARR_ALLOW_H4.contains(SYMBOL)) {
+
+        if (ARR_ALLOW_H4.contains(SYMBOL) && Objects.equals(trend_d1, Utils.TREND_LONG)) {
             List<BigDecimal> body = Utils.getOpenCloseCandle(list_d1);
             List<BigDecimal> low_high = Utils.getLowHighCandle(list_d1);
 
@@ -3278,6 +3283,11 @@ public class BinanceServiceImpl implements BinanceService {
                     body.get(1), low_high.get(0), low_high.get(1), "(WAITING LIST)" + switch_trend);
 
             ordersRepository.save(entity);
+        } else {
+            Orders entity_d1 = ordersRepository.findById(orderId_d1).orElse(null);
+            if (Objects.nonNull(entity_d1)) {
+                ordersRepository.deleteById(orderId_d1);
+            }
         }
 
         // ------------------------------------------------------------------
@@ -3517,10 +3527,10 @@ public class BinanceServiceImpl implements BinanceService {
     // Xu huong H1 cung xu huong nhung yeu di? Log thong bao.
     // ----------------------------------------------------------------------------------------------
     // "XAUUSD", "XAGUSD", "BTCUSD", "US30", "US100", "GER40", "USOIL"
+    // "AUDJPY", "AUDUSD", "CADJPY", "CHFJPY",
     // "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
-    // "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD",
-    // "NZDCHF", "NZDUSD", "USDCAD", "USDCHF", "USDJPY", "CHFJPY", "CADJPY",
-    // "NZDJPY"
+    // "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD",
+    // "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDJPY"
 
     @Override
     @Transactional
@@ -3552,7 +3562,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // H4
         List<String> LIST_H4_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> LIST_H4_SELLING = Arrays.asList("USDCAD", "CADJPY", "", "", "", "");
+        List<String> LIST_H4_SELLING = Arrays.asList("AUDJPY", "CADJPY", "USDJPY", "XAGUSD", "NZDJPY", "");
 
         // H1
         List<String> LIST_H1_BUYING = Arrays.asList("", "", "", "", "", "", "");
