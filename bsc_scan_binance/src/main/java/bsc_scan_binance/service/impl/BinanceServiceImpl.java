@@ -3476,7 +3476,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1 = dto_h1.getTrend();
             String trend_15 = dto_15.getTrend();
 
-            String find_trend = "";
+            String find_trend = trend_h4;
             if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)) {
                 prifix = "W1D1H4";
                 find_trend = trend_w1;
@@ -3489,12 +3489,13 @@ public class BinanceServiceImpl implements BinanceService {
                 prifix = "Max10D";
             }
 
-            if (dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50) && Objects.equals(trend_h4, trend_h1)
-                    && Objects.equals(trend_h1, trend_15)) {
+            if (dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50) && Objects.equals(find_trend, trend_h4)
+                    && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
                 result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
             }
 
-            if (Utils.isNotBlank(dto_h1.getNote()) && Objects.equals(trend_h4, trend_h1)) {
+            if (Utils.isNotBlank(dto_h1.getNote()) && Objects.equals(find_trend, trend_h4)
+                    && Objects.equals(trend_h4, trend_h1)) {
                 result += analysis("(" + prifix + " H1)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend);
             }
 
