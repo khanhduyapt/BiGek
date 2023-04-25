@@ -144,7 +144,7 @@ public class MoneyAtRiskResponse {
             unit_risk_per_pip = BigDecimal.valueOf(0.25);
             break;
         case "UK100":
-            standard_lot = BigDecimal.valueOf(0.0208);
+            standard_lot = BigDecimal.valueOf(0.208);
             unit_risk_per_pip = BigDecimal.valueOf(0.25);
             break;
         case "FR40":
