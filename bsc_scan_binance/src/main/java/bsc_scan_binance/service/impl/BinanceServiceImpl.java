@@ -2684,9 +2684,14 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public void deleteConnectTimeOutException() {
-        Orders entity_time_out = ordersRepository.findById(Utils.CONNECTION_TIMED_OUT_ID).orElse(null);
-        if (Objects.nonNull(entity_time_out)) {
-            ordersRepository.delete(entity_time_out);
+        deleteOrders(Utils.CONNECTION_TIMED_OUT_ID);
+    }
+
+    @Transactional
+    public void deleteOrders(String orderId_d1) {
+        Orders entity_d1 = ordersRepository.findById(orderId_d1).orElse(null);
+        if (Objects.nonNull(entity_d1)) {
+            ordersRepository.deleteById(orderId_d1);
         }
     }
 
@@ -2888,13 +2893,12 @@ public class BinanceServiceImpl implements BinanceService {
             String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_Blog4h();
             sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
 
-            String log = " " + Utils.appendSpace(str_price, 15)
-                    + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
-
-            logMsgPerHour("CRYPTO_KILL_" + SYMBOL,
-                    Utils.appendSpace(Utils.getChartNameAndEpic(list_h4.get(0).getId()), 20) + log + msg,
-                    Utils.MINUTES_OF_4H);
-
+            //String log = " " + Utils.appendSpace(str_price, 15)
+            //        + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
+            //
+            //logMsgPerHour("CRYPTO_KILL_" + SYMBOL,
+            //        Utils.appendSpace(Utils.getChartNameAndEpic(list_h4.get(0).getId()), 20) + log + msg,
+            //        Utils.MINUTES_OF_4H);
         }
 
         return "";
@@ -3265,7 +3269,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // TODO: initCryptoTrend
         if (ARR_ALLOW_H4.contains(SYMBOL)) {
-            List<BtcFutures> list_w1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 10);
+            List<BtcFutures> list_w1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1w, 10);
             if (CollectionUtils.isEmpty(list_w1)) {
                 return Utils.CRYPTO_TIME_1H;
             }
@@ -3289,15 +3293,16 @@ public class BinanceServiceImpl implements BinanceService {
 
                 ordersRepository.save(entity);
             } else {
-                Orders entity_w1 = ordersRepository.findById(orderId_w1).orElse(null);
-                if (Objects.nonNull(entity_w1)) {
-                    ordersRepository.deleteById(orderId_w1);
-                }
+                deleteOrders(orderId_w1);
             }
+        } else {
+            deleteOrders(orderId_w1);
+            deleteOrders(orderId_d1);
+            deleteOrders(orderId_h4);
         }
 
         // ------------------------------------------------------------------
-        List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 25);
+        List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_1D, 10);
         if (CollectionUtils.isEmpty(list_d1)) {
             return Utils.CRYPTO_TIME_1H;
         }
@@ -3323,10 +3328,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             ordersRepository.save(entity);
         } else if (!CRYPTO_LIST_BUYING.contains(SYMBOL)) {
-            Orders entity_d1 = ordersRepository.findById(orderId_d1).orElse(null);
-            if (Objects.nonNull(entity_d1)) {
-                ordersRepository.deleteById(orderId_d1);
-            }
+            deleteOrders(orderId_d1);
         }
 
         // ------------------------------------------------------------------
@@ -3345,7 +3347,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         // ------------------------------------------------------------------
         if (CRYPTO_LIST_BUYING.contains(SYMBOL)
-                || (Objects.equals(trend_d1, Utils.TREND_LONG) && ARR_ALLOW_H4.contains(SYMBOL))) {
+                || (Objects.equals(trend_d1, Utils.TREND_LONG) && ARR_ALLOW_H4.contains(SYMBOL))
+                || Objects.equals(SYMBOL, "BTC")) {
 
             List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_4H, 55);
             if (CollectionUtils.isEmpty(list_h4)) {
@@ -3357,6 +3360,11 @@ public class BinanceServiceImpl implements BinanceService {
 
             String switch_trend = Utils.switchTrendByHeken01(heken_list_h4);
             switch_trend += Utils.switchTrendByMaXX(heken_list_h4, 3, 5);
+
+            if (Utils.isNotBlank(switch_trend) && Objects.equals(SYMBOL, "BTC")) {
+                logMsgPerHour("switch_trend_btc", "BTC     " + Utils.appendSpace(switch_trend, 10) + log,
+                        Utils.MINUTES_OF_4H);
+            }
 
             if (CRYPTO_LIST_BUYING.contains(SYMBOL)
                     || (Objects.equals(trend_h4, Utils.TREND_LONG) && Utils.isNotBlank(switch_trend))) {
@@ -3388,10 +3396,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 ordersRepository.save(entity);
             } else {
-                Orders entity_h4 = ordersRepository.findById(orderId_h4).orElse(null);
-                if (Objects.nonNull(entity_h4)) {
-                    ordersRepository.deleteById(orderId_h4);
-                }
+                deleteOrders(orderId_h4);
             }
         }
 
@@ -3417,6 +3422,21 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
                         + Utils.TEXT_SWITCH_TREND_Ma_1_50;
+            }
+            if (Utils.isBlank(note)) {
+                String type = "";
+                if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
+                    type = "(B20)";
+                }
+                if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
+                    type = "(S20)";
+                }
+                if (Utils.isNotBlank(type)) {
+                    String switch_trend = Utils.switchTrendByMa13_XX(heken_list, 20);
+                    if (Utils.isNotBlank(switch_trend)) {
+                        note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
+                    }
+                }
             }
         } else if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_HOUR)) {
             String type = "";
@@ -3596,11 +3616,11 @@ public class BinanceServiceImpl implements BinanceService {
 
         // D1
         List<String> LIST_D1_BUYING = Arrays.asList("");
-        List<String> LIST_D1_SELLING = Arrays.asList("US30", "US100", "GER40", "", "", "", "");
+        List<String> LIST_D1_SELLING = Arrays.asList("", "", "", "", "", "", "");
 
         // H4
         List<String> LIST_H4_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> LIST_H4_SELLING = Arrays.asList("AUDJPY", "CADJPY", "USDJPY", "XAGUSD", "NZDJPY", "");
+        List<String> LIST_H4_SELLING = Arrays.asList("", "", "", "", "", "");
 
         // H1
         List<String> LIST_H1_BUYING = Arrays.asList("", "", "", "", "", "", "");
