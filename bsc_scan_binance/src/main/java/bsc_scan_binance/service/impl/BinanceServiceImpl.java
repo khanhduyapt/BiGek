@@ -3594,6 +3594,12 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isNotBlank(dto_h4.getNote() + dto_h1.getNote())
+                    && Objects.equals(find_trend, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                    && Objects.equals(trend_h1, trend_15)) {
+                result += analysis("(" + prifix + " H1)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend);
+            }
+
+            if (Utils.isNotBlank(dto_h4.getNote() + dto_h1.getNote())
                     && Utils.isNotBlank(dto_05.getNote())
                     && Objects.equals(find_trend, trend_h4)
                     && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_05)) {
@@ -3605,11 +3611,6 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(find_trend, trend_h4)
                     && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
                 result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
-            }
-
-            if (Utils.isNotBlank(dto_h4.getNote() + dto_h1.getNote())
-                    && Objects.equals(find_trend, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
-                result += analysis("(" + prifix + " H1)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend);
             }
 
             if (Objects.equals(trend_w1, trend_d1) && Utils.isBlank(result) && dto_05.getNote().contains("50")) {
@@ -3674,7 +3675,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> LIST_H4_SELLING = Arrays.asList("", "", "", "", "", "");
 
         // H1
-        List<String> LIST_H1_BUYING = Arrays.asList("", "", "", "", "", "", "");
+        List<String> LIST_H1_BUYING = Arrays.asList("EURGBP", "", "", "", "", "", "");
         List<String> LIST_H1_SELLING = Arrays.asList("", "", "", "", "", "", "", "", "");
 
         // 15
