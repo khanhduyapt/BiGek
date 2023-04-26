@@ -2893,12 +2893,13 @@ public class BinanceServiceImpl implements BinanceService {
             String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_Blog4h();
             sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
 
-            //String log = " " + Utils.appendSpace(str_price, 15)
-            //        + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
+            // String log = " " + Utils.appendSpace(str_price, 15)
+            // + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
             //
-            //logMsgPerHour("CRYPTO_KILL_" + SYMBOL,
-            //        Utils.appendSpace(Utils.getChartNameAndEpic(list_h4.get(0).getId()), 20) + log + msg,
-            //        Utils.MINUTES_OF_4H);
+            // logMsgPerHour("CRYPTO_KILL_" + SYMBOL,
+            // Utils.appendSpace(Utils.getChartNameAndEpic(list_h4.get(0).getId()), 20) +
+            // log + msg,
+            // Utils.MINUTES_OF_4H);
         }
 
         return "";
@@ -3192,12 +3193,12 @@ public class BinanceServiceImpl implements BinanceService {
         // ==================================================================================
         // ==================================================================================
         List<Orders> crypto_list = new ArrayList<Orders>();
-        //crypto_list.addAll(ordersRepository.getCrypto_W1());
-        //crypto_list.add(null);
-        //crypto_list.add(null);
-        //crypto_list.addAll(ordersRepository.getCrypto_D1());
-        //crypto_list.add(null);
-        //crypto_list.add(null);
+        // crypto_list.addAll(ordersRepository.getCrypto_W1());
+        // crypto_list.add(null);
+        // crypto_list.add(null);
+        // crypto_list.addAll(ordersRepository.getCrypto_D1());
+        // crypto_list.add(null);
+        // crypto_list.add(null);
         crypto_list.addAll(ordersRepository.getCrypto_H4());
 
         List<String> list_w1d1h4 = new ArrayList<String>();
@@ -3220,7 +3221,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 String tmp_msg = Utils.createLineCrypto(entity, symbol, type);
-                //Utils.logWritelnReport(tmp_msg);
+                // Utils.logWritelnReport(tmp_msg);
 
                 Orders dto_w1 = ordersRepository.findById("CRYPTO_" + symbol + "_1w").orElse(null);
                 Orders dto_d1 = ordersRepository.findById("CRYPTO_" + symbol + "_1d").orElse(null);
@@ -3420,8 +3421,7 @@ public class BinanceServiceImpl implements BinanceService {
                 List<BigDecimal> body = Utils.getOpenCloseCandle(list_h4);
                 List<BigDecimal> low_high = Utils.getLowHighCandle(list_h4);
 
-                Orders entity = new Orders(orderId_h4, date_time, trend_h4, list_h4.get(0).getCurrPrice(),
-                        body.get(0),
+                Orders entity = new Orders(orderId_h4, date_time, trend_h4, list_h4.get(0).getCurrPrice(), body.get(0),
                         body.get(1), low_high.get(0), low_high.get(1), note);
 
                 ordersRepository.save(entity);
