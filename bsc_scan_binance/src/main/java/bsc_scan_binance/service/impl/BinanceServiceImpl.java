@@ -3594,12 +3594,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isNotBlank(dto_h4.getNote() + dto_h1.getNote())
-                    && Objects.equals(find_trend, trend_h4) && Objects.equals(trend_h4, trend_h1)
-                    && Objects.equals(trend_h1, trend_15)) {
-                result += analysis("(" + prifix + " H1)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend);
-            }
-
-            if (Utils.isNotBlank(dto_h4.getNote() + dto_h1.getNote())
                     && Utils.isNotBlank(dto_05.getNote())
                     && Objects.equals(find_trend, trend_h4)
                     && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_05)) {
@@ -3620,6 +3614,18 @@ public class BinanceServiceImpl implements BinanceService {
                 result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
             }
 
+            if (Objects.equals(trend_d1, trend_h4) && Utils.isBlank(result) && dto_05.getNote().contains("50")) {
+                result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5, find_trend);
+            }
+            if (Objects.equals(trend_d1, trend_h4) && Utils.isBlank(result) && dto_15.getNote().contains("50")) {
+                result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
+            }
+
+            if (Utils.isNotBlank(dto_h4.getNote() + dto_h1.getNote())
+                    && Objects.equals(find_trend, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                    && Objects.equals(trend_h1, trend_15)) {
+                result += analysis("(" + prifix + " H1)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend);
+            }
             // -----------------------------------------------------------------------
             if (Utils.isNotBlank(result) && isReloadAfter(Utils.MINUTES_OF_1H, "ScapForex_" + EPIC)) {
                 msg += result;
