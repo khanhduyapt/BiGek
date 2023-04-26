@@ -146,7 +146,7 @@ public class Utils {
     public static final Integer MINUTES_OF_15M = 15;
     public static final Integer MINUTES_OF_5M = 5;
 
-    public static final Integer MINUTES_RELOAD_CSV_DATA = 3;
+    public static final Integer MINUTES_RELOAD_CSV_DATA = 5;
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
@@ -197,6 +197,11 @@ public class Utils {
 
     public static final List<String> COINS_NEW_LISTING = Arrays.asList("RDNT", "AMB", "ARB", "ID", "LQTY", "SYN", "GNS",
             "RPL", "MAGIC", "HOOK", "HFT");
+
+    public static final List<String> LIST_WAITING = Arrays.asList("APT", "APE", "ARB", "AUDIO", "BAND", "BSW", "C98",
+            "CELO", "CELR", "CHESS", "CHZ", "CTK", "CTSI", "DAR", "DODO", "DOGE", "DYDX", "EGLD", "ENJ", "EOS", "FIL",
+            "FLM", "GNS", "GRT", "HOOK", "HFT", "ID", "IMX", "KAVA", "LEVER", "LIT", "LOKA", "LQTY", "MAGIC", "MASK",
+            "MOB", "NEAR", "ONE", "OP", "PEOPLE", "PERL", "PHB", "ROSE", "RDNT", "RPL", "SXP", "SYN", "WOO", "XVS");
 
     // COINS_FUTURES
     public static final List<String> COINS_FUTURES = Arrays.asList("1INCH", "AAVE", "ACH", "ADA", "AGIX", "ALGO",
