@@ -3431,7 +3431,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        return Utils.CRYPTO_TIME_15m;
+        return Utils.CRYPTO_TIME_1H;
     }
 
     @Override
@@ -3581,7 +3581,10 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)) {
                 prifix = "W1D1H4";
                 find_trend = trend_w1;
-            } else if (Objects.equals(trend_w1, trend_d1) || Objects.equals(trend_d1, trend_h4)) {
+            } else if (Objects.equals(trend_w1, trend_d1)) {
+                prifix = "W1D1  ";
+                find_trend = trend_d1;
+            } else if (Objects.equals(trend_d1, trend_h4)) {
                 prifix = "  D1H4";
                 find_trend = trend_d1;
             } else if (dto_d1.getNote().contains(Utils.TEXT_MIN_DAY_AREA)) {
@@ -3607,6 +3610,13 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isNotBlank(dto_h4.getNote() + dto_h1.getNote())
                     && Objects.equals(find_trend, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
                 result += analysis("(" + prifix + " H1)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend);
+            }
+
+            if (Objects.equals(trend_w1, trend_d1) && Utils.isBlank(result) && dto_05.getNote().contains("50")) {
+                result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5, find_trend);
+            }
+            if (Objects.equals(trend_w1, trend_d1) && Utils.isBlank(result) && dto_15.getNote().contains("50")) {
+                result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
             }
 
             // -----------------------------------------------------------------------
