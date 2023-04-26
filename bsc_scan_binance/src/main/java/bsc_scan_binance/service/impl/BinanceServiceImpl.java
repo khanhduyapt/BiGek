@@ -3576,7 +3576,6 @@ public class BinanceServiceImpl implements BinanceService {
             // TODO: 2. scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
-            String find_trend = trend_d1;
             if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)) {
                 prifix = "W1D1H4";
             } else if (Objects.equals(trend_w1, trend_d1)) {
@@ -3590,13 +3589,13 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isBlank(result) && Objects.equals(trend_15, trend_05) && dto_05.getNote().contains("50")) {
-                result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5, find_trend);
+                result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5, trend_d1);
             }
             if (Utils.isBlank(result) && Objects.equals(trend_15, trend_05) && dto_15.getNote().contains("50")) {
-                result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
+                result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_d1);
             }
             if (Utils.isBlank(result) && Objects.equals(trend_h4, trend_h1) && Utils.isNotBlank(dto_h1.getNote())) {
-                result += analysis("(" + prifix + " H1)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
+                result += analysis("(" + prifix + " H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_d1);
             }
 
             // -----------------------------------------------------------------------
