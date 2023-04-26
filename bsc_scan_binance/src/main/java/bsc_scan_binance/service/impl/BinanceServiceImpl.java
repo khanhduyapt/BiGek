@@ -3645,13 +3645,13 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // D1
-        List<String> LIST_D1_BUYING = Arrays.asList("USDCAD", "", "", "", "", "", "");
-        List<String> LIST_D1_SELLING = Arrays.asList("CHFJPY", "GBPCHF", "GER40", "US100", "UK100", "NZDCAD", "NZDUSD",
-                "USDJPY", "USOIL", "XAUUSD", "", "", "");
+        List<String> LIST_D1_BUYING = Arrays.asList("USDCAD", "XAUUSD", "", "", "", "", "");
+        List<String> LIST_D1_SELLING = Arrays.asList("CHFJPY", "GBPCHF", "GER40", "US100", "UK100", "", "NZDUSD",
+                "USDJPY", "USOIL", "", "", "", "");
 
         // H4
         List<String> LIST_H4_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> LIST_H4_SELLING = Arrays.asList("", "", "", "", "", "");
+        List<String> LIST_H4_SELLING = Arrays.asList("NZDCAD", "", "", "", "", "");
 
         // H1
         List<String> LIST_H1_BUYING = Arrays.asList("", "", "", "", "", "", "");
