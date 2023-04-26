@@ -3486,11 +3486,6 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            if (Utils.isBlank(note) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
-                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
-                        + Utils.TEXT_SWITCH_TREND_Ma_1_50;
-            }
-
         } else {
             String switch_trend = Utils.switchTrendByHeken01(heken_list);
             switch_trend += Utils.switchTrendByMa13_XX(heken_list, 3);
@@ -3574,56 +3569,34 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_15 = dto_15.getTrend();
             String trend_05 = dto_05.getTrend();
 
+            if (!Objects.equals(trend_d1, trend_h4)) {
+                continue;
+            }
+
             // TODO: 2. scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
             String find_trend = trend_d1;
             if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)) {
                 prifix = "W1D1H4";
-                find_trend = trend_w1;
             } else if (Objects.equals(trend_w1, trend_d1)) {
                 prifix = "W1D1  ";
-                find_trend = trend_d1;
             } else if (Objects.equals(trend_d1, trend_h4)) {
                 prifix = "  D1H4";
-                find_trend = trend_d1;
             } else if (dto_d1.getNote().contains(Utils.TEXT_MIN_DAY_AREA)) {
                 prifix = "Min10D";
             } else if (dto_d1.getNote().contains(Utils.TEXT_MAX_DAY_AREA)) {
                 prifix = "Max10D";
             }
 
-            if (Utils.isNotBlank(dto_h4.getNote() + dto_h1.getNote())
-                    && Utils.isNotBlank(dto_05.getNote())
-                    && Objects.equals(find_trend, trend_h4)
-                    && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_05)) {
+            if (Utils.isBlank(result) && Objects.equals(trend_15, trend_05) && dto_05.getNote().contains("50")) {
                 result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5, find_trend);
             }
-
-            if (Utils.isNotBlank(dto_h4.getNote() + dto_h1.getNote())
-                    && Utils.isNotBlank(dto_15.getNote())
-                    && Objects.equals(find_trend, trend_h4)
-                    && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
+            if (Utils.isBlank(result) && Objects.equals(trend_15, trend_05) && dto_15.getNote().contains("50")) {
                 result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
             }
-
-            if (Utils.isBlank(result)
-                    && Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)
-                    && dto_05.getNote().contains("50")) {
-                result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5, find_trend);
-            }
-
-            if (Utils.isBlank(result)
-                    && Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)
-                    && dto_15.getNote().contains("50")) {
-                result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
-            }
-
-            if (Utils.isBlank(result) && Objects.equals(trend_d1, trend_h4) && dto_05.getNote().contains("50")) {
-                result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5, find_trend);
-            }
-            if (Utils.isBlank(result) && Objects.equals(trend_d1, trend_h4) && dto_15.getNote().contains("50")) {
-                result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
+            if (Utils.isBlank(result) && Objects.equals(trend_h4, trend_h1) && Utils.isNotBlank(dto_h1.getNote())) {
+                result += analysis("(" + prifix + " H1)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
             }
 
             // -----------------------------------------------------------------------
