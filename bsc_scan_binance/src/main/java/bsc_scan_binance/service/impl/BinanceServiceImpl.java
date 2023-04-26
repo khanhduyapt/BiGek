@@ -3614,7 +3614,7 @@ public class BinanceServiceImpl implements BinanceService {
     // Xu huong H4 cung xu huong nhung yeu di? Msg thong bao take profit.
     // Xu huong H1 cung xu huong nhung yeu di? Log thong bao.
     // ----------------------------------------------------------------------------------------------
-    // "XAUUSD", "XAGUSD", "BTCUSD", "US30", "US100", "GER40", "USOIL"
+    // "XAUUSD", "XAGUSD", "BTCUSD", "US30", "US100", "GER40", "UK100", "USOIL"
     // "AUDJPY", "AUDUSD", "CADJPY", "CHFJPY",
     // "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
     // "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD",
@@ -3645,15 +3645,16 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // D1
-        List<String> LIST_D1_BUYING = Arrays.asList("");
-        List<String> LIST_D1_SELLING = Arrays.asList("", "", "", "", "", "", "");
+        List<String> LIST_D1_BUYING = Arrays.asList("USDCAD", "", "", "", "", "", "");
+        List<String> LIST_D1_SELLING = Arrays.asList("CHFJPY", "GBPCHF", "GER40", "US100", "UK100", "NZDCAD", "NZDUSD",
+                "USDJPY", "USOIL", "XAUUSD", "", "", "");
 
         // H4
         List<String> LIST_H4_BUYING = Arrays.asList("", "", "", "", "", "");
         List<String> LIST_H4_SELLING = Arrays.asList("", "", "", "", "", "");
 
         // H1
-        List<String> LIST_H1_BUYING = Arrays.asList("EURGBP", "", "", "", "", "", "");
+        List<String> LIST_H1_BUYING = Arrays.asList("", "", "", "", "", "", "");
         List<String> LIST_H1_SELLING = Arrays.asList("", "", "", "", "", "", "", "", "");
 
         // 15
