@@ -3599,7 +3599,7 @@ public class BinanceServiceImpl implements BinanceService {
                 result += analysis("(" + prifix + " H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_d1);
             }
 
-            if (Utils.isBlank(result) && Objects.equals(trend_h4, trend_h1)) {
+            if (Utils.isBlank(result) && !Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_h4, trend_h1)) {
                 prifix = "  H4H1";
                 if (dto_05.getNote().contains("50")) {
                     result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5, trend_h4);
