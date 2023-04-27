@@ -3111,7 +3111,7 @@ public class BinanceServiceImpl implements BinanceService {
         String msg_futu = "";
 
         List<String> list_h4 = new ArrayList<String>();
-        List<String> list_h4h1m15 = new ArrayList<String>();
+        List<String> list_d1 = new ArrayList<String>();
 
         List<Orders> list_all = ordersRepository.getTrend_H4List();
         if (!CollectionUtils.isEmpty(list_all)) {
@@ -3136,23 +3136,23 @@ public class BinanceServiceImpl implements BinanceService {
                     String chart = Utils.getChartName(dto_w1) + ":" + Utils.appendSpace(dto_w1.getTrend(), 8);
                     chart += Utils.getChartName(dto_d1) + ":" + Utils.appendSpace(dto_d1.getTrend(), 8);
 
-                    String note = Utils.appendSpace(dto_d1.getNote(), 20) + Utils.appendSpace(dto_h4.getNote(), 20)
-                            + Utils.appendSpace(dto_h1.getNote(), 20) + Utils.appendSpace(dto_15.getNote(), 20)
-                            + Utils.appendSpace(dto_05.getNote(), 20);
+                    String note = "";
+                    note += Utils.isNotBlank(dto_d1.getNote()) ? Utils.appendSpace(dto_d1.getNote(), 20) : "";
+                    note += Utils.isNotBlank(dto_h4.getNote()) ? Utils.appendSpace(dto_h4.getNote(), 20) : "";
+                    note += Utils.isNotBlank(dto_h1.getNote()) ? Utils.appendSpace(dto_h1.getNote(), 20) : "";
+                    note += Utils.isNotBlank(dto_15.getNote()) ? Utils.appendSpace(dto_15.getNote(), 20) : "";
+                    note += Utils.isNotBlank(dto_05.getNote()) ? Utils.appendSpace(dto_05.getNote(), 20) : "";
 
-                    if (Objects.equals(dto_d1.getTrend(), dto_h4.getTrend()) && Utils.isNotBlank(dto_h4.getNote())) {
-                        String log = Utils.createLineForex_Header(dto_h4, dto_h4, chart);
-                        log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
-                        log += Utils.createLineForex_Body(dto_h4, dto_h4, dto_h4.getTrend()).trim();
+                    if (Utils.isNotBlank(dto_d1.getNote())) {
+                        String log = Utils.createLineForex_Header(dto_d1, dto_d1, chart);
+                        log += Utils.appendSpace(Utils.removeLastZero(dto_d1.getCurrent_price()), 15);
+                        log += Utils.createLineForex_Body(dto_d1, dto_d1, dto_d1.getTrend()).trim();
                         log += "   " + note;
-
-                        list_h4h1m15.add(log);
+                        list_d1.add(log);
                     }
 
                     if (Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())
-                            && Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())
-                            && Objects.equals(dto_h4.getTrend(), dto_15.getTrend())
-                            && Objects.equals(dto_h4.getTrend(), dto_05.getTrend())) {
+                            && Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
                         chart += Utils.getChartName(dto_h4) + ":" + Utils.appendSpace(dto_h4.getTrend(), 8);
 
                         String log = Utils.createLineForex_Header(dto_h1, dto_h1, chart);
@@ -3169,10 +3169,10 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnReport("");
         }
 
-        if (list_h4h1m15.size() > 0) {
+        if (list_d1.size() > 0) {
             Utils.logWritelnReport("");
-            Utils.logWritelnReport(Utils.appendLeftAndRight("   Switch Trend H4   ", 50, "+"));
-            for (String log : list_h4h1m15) {
+            Utils.logWritelnReport(Utils.appendLeftAndRight("   Switch Trend D    ", 50, "+"));
+            for (String log : list_d1) {
                 Utils.logWritelnReport(log);
             }
             Utils.logWritelnReport("");
@@ -3181,7 +3181,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (list_h4.size() > 0) {
             Utils.logWritelnReport("");
-            Utils.logWritelnReport(Utils.appendLeftAndRight("          H1         ", 50, "+"));
+            Utils.logWritelnReport(Utils.appendLeftAndRight("       D1 H4 H1      ", 50, "+"));
             for (String log : list_h4) {
                 Utils.logWritelnReport(log);
             }
@@ -3193,12 +3193,12 @@ public class BinanceServiceImpl implements BinanceService {
         // ==================================================================================
         // ==================================================================================
         List<Orders> crypto_list = new ArrayList<Orders>();
-        // crypto_list.addAll(ordersRepository.getCrypto_W1());
-        // crypto_list.add(null);
-        // crypto_list.add(null);
-        // crypto_list.addAll(ordersRepository.getCrypto_D1());
-        // crypto_list.add(null);
-        // crypto_list.add(null);
+        crypto_list.addAll(ordersRepository.getCrypto_W1());
+        crypto_list.add(null);
+        crypto_list.add(null);
+        crypto_list.addAll(ordersRepository.getCrypto_D1());
+        crypto_list.add(null);
+        crypto_list.add(null);
         crypto_list.addAll(ordersRepository.getCrypto_H4());
 
         List<String> list_w1d1h4 = new ArrayList<String>();
@@ -3220,14 +3220,13 @@ public class BinanceServiceImpl implements BinanceService {
                     type = "  (Spot)      ";
                 }
 
-                String tmp_msg = Utils.createLineCrypto(entity, symbol, type);
                 // Utils.logWritelnReport(tmp_msg);
 
                 Orders dto_w1 = ordersRepository.findById("CRYPTO_" + symbol + "_1w").orElse(null);
                 Orders dto_d1 = ordersRepository.findById("CRYPTO_" + symbol + "_1d").orElse(null);
                 Orders dto_h4 = ordersRepository.findById("CRYPTO_" + symbol + "_4h").orElse(null);
                 if (Objects.nonNull(dto_w1) && Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)) {
-                    list_w1d1h4.add(tmp_msg);
+                    list_w1d1h4.add(Utils.createLineCrypto(dto_h4, symbol, type));
 
                     if (Utils.isNotBlank(msg_futu)) {
                         msg_futu += ",";
@@ -3235,7 +3234,7 @@ public class BinanceServiceImpl implements BinanceService {
                     msg_futu += symbol;
                 }
                 if (Utils.LIST_WAITING.contains(symbol) && Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)) {
-                    list_d1h4.add(tmp_msg);
+                    list_d1h4.add(Utils.createLineCrypto(dto_h4, symbol, type));
                 }
             }
 
@@ -3364,7 +3363,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // ------------------------------------------------------------------
         String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_d1.get(0).getCurrPrice()), 5) + ")";
-        String log = " " + Utils.appendSpace(str_price, 15) + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
+        String log = " " + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70) + Utils.appendSpace(str_price, 15);
         String note = "";
 
         // ------------------------------------------------------------------
@@ -3393,7 +3392,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             String switch_trend = Utils.switchTrendByHeken01(heken_list_h4);
             if (Utils.isNotBlank(switch_trend) && Objects.equals(SYMBOL, "BTC")) {
-                logMsgPerHour("switch_trend_btc", "BTC     (H4)" + Utils.appendSpace(switch_trend, 10) + log,
+                logMsgPerHour("switch_trend_btc",
+                        Utils.appendSpace("BTC", 27) + "(H4) " + Utils.appendSpace(switch_trend, 10) + log,
                         Utils.MINUTES_OF_4H);
             }
 
@@ -3490,7 +3490,7 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_trend = Utils.switchTrendByHeken01(heken_list);
             switch_trend += Utils.switchTrendByMa13_XX(heken_list, 3);
             switch_trend += Utils.switchTrendByMa13_XX(heken_list, 5);
-            if (Utils.isNotBlank(switch_trend)) {
+            if (switch_trend.contains(trend)) {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
                         + Utils.TEXT_SWITCH_TREND_Ma_3_5;
             }
@@ -3576,12 +3576,16 @@ public class BinanceServiceImpl implements BinanceService {
             // TODO: 2. scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
+            String find_trend = trend_h4;
             if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)) {
                 prifix = "W1D1H4";
+                find_trend = trend_d1;
             } else if (Objects.equals(trend_w1, trend_d1)) {
                 prifix = "W1D1  ";
+                find_trend = trend_d1;
             } else if (Objects.equals(trend_d1, trend_h4)) {
                 prifix = "  D1H4";
+                find_trend = trend_d1;
             } else if (dto_d1.getNote().contains(Utils.TEXT_MIN_DAY_AREA)) {
                 prifix = "Min10D";
             } else if (dto_d1.getNote().contains(Utils.TEXT_MAX_DAY_AREA)) {
@@ -3589,23 +3593,28 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isBlank(result) && Objects.equals(trend_15, trend_05) && dto_05.getNote().contains("50")) {
-                result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5, trend_d1);
+                result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5, find_trend);
             }
             if (Utils.isBlank(result) && Objects.equals(trend_15, trend_05) && dto_15.getNote().contains("50")) {
-                result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_d1);
+                result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
             }
             if (Utils.isBlank(result) && dto_h1.getNote().contains("50") && Objects.equals(trend_h4, trend_h1)
                     && Objects.equals(trend_h1, trend_05)) {
-                result += analysis("(" + prifix + " H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_d1);
+                result += analysis("(" + prifix + " H1)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend);
             }
 
-            if (Utils.isBlank(result) && !Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_h4, trend_h1)) {
-                prifix = "  H4H1";
+            if (Utils.isBlank(result) && !Objects.equals(trend_w1, trend_d1)) {
+                if (Objects.equals(trend_h4, trend_h1)) {
+                    prifix = "  H4H1";
+                } else {
+                    prifix = "  H4  ";
+                }
+
                 if (dto_05.getNote().contains("50")) {
-                    result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5, trend_h4);
+                    result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5, find_trend);
                 }
                 if (dto_15.getNote().contains("50")) {
-                    result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
+                    result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
                 }
             }
 
@@ -3657,11 +3666,11 @@ public class BinanceServiceImpl implements BinanceService {
 
         // D1
         List<String> LIST_D1_BUYING = Arrays.asList("USDCAD", "", "", "", "", "", "");
-        List<String> LIST_D1_SELLING = Arrays.asList("", "GBPCHF", "", "", "", "", "", "", "", "", "", "", "");
+        List<String> LIST_D1_SELLING = Arrays.asList("", "", "", "", "", "", "", "", "", "", "", "", "");
 
         // H4
         List<String> LIST_H4_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> LIST_H4_SELLING = Arrays.asList("NZDCAD", "", "", "", "", "");
+        List<String> LIST_H4_SELLING = Arrays.asList("", "", "", "", "", "");
 
         // H1
         List<String> LIST_H1_BUYING = Arrays.asList("", "", "", "", "", "", "");
