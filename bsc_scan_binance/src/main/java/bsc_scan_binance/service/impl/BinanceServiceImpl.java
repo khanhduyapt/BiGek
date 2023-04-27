@@ -3463,7 +3463,7 @@ public class BinanceServiceImpl implements BinanceService {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
                         + Utils.TEXT_SWITCH_TREND_Ma_1_50;
             }
-        } else if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_HOUR)) {
+        } else if (CAPITAL_TIME_XX.contains("HOUR")) {
             String type = "";
             if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
                 type = "(50)";
@@ -3551,11 +3551,8 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
-            Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
-            Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_5).orElse(null);
 
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
-                    || Objects.isNull(dto_15) || Objects.isNull(dto_05)) {
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
                 Utils.logWritelnDraft("scapForex (" + EPIC + ") dto is null");
                 return;
             }
@@ -3567,40 +3564,29 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h4 = dto_h4.getTrend();
             String trend_h1 = dto_h1.getTrend();
 
-            if (!(Objects.equals(trend_w1, trend_d1) || Objects.equals(trend_d1, trend_h4)
-                    || Utils.isNotBlank(dto_h4.getNote())
-                    || Utils.isNotBlank(dto_h1.getNote()))) {
+            if (Utils.isBlank(dto_h4.getNote() + dto_h1.getNote()) || !Objects.equals(trend_h4, trend_h1)) {
                 continue;
             }
 
             // TODO: 2. scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
-
-            if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)
-                    && dto_05.getNote().contains("50")) {
-                result += analysis("(W1D1H4 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5, trend_w1);
-            }
-            if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)
-                    && dto_15.getNote().contains("50")) {
-                result += analysis("(W1D1H4 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_w1);
-            }
-
-            if (Utils.isBlank(result) && Utils.isNotBlank(dto_h1.getNote()) && Objects.equals(trend_d1, trend_h4)
-                    && Objects.equals(trend_h4, trend_h1)) {
-                result += analysis("(  D1H4 H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_d1);
-            }
-
-            if (Utils.isBlank(result) && dto_h1.getNote().contains("(50)") && Objects.equals(trend_h4, trend_h1)) {
-                result += analysis("(    H4 H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
+            if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)) {
+                if (Utils.isNotBlank(dto_h4.getNote())) {
+                    result += analysis("(W1D1H1 H4)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_d1);
+                }
+                if (Utils.isNotBlank(dto_h1.getNote())) {
+                    result += analysis("(W1D1H4 H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_d1);
+                }
+            } else {
+                if (Utils.isNotBlank(dto_h4.getNote())) {
+                    result += analysis("(  D1H1 H4)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_d1);
+                }
+                if (Utils.isNotBlank(dto_h1.getNote())) {
+                    result += analysis("(  D1H4 H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_d1);
+                }
             }
 
-            if (Utils.isBlank(result) && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)) {
-                result += analysis("(  D1H1 50)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_d1);
-            }
-            if (Utils.isBlank(result) && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)) {
-                result += analysis("(  H4H1 50)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_h4);
-            }
             // -----------------------------------------------------------------------
             if (Utils.isNotBlank(result) && isReloadAfter(Utils.MINUTES_OF_1H, "ScapForex_" + EPIC)) {
                 msg += result;
