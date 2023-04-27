@@ -3495,6 +3495,13 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
+            if (Utils.isBlank(note)) {
+                if (Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
+                            + Utils.TEXT_SWITCH_TREND_Ma_1_50;
+                }
+            }
+
         } else {
             String switch_trend = Utils.switchTrendByHeken01(heken_list);
             switch_trend += Utils.switchTrendByMa13_XX(heken_list, 3);
@@ -3578,7 +3585,9 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_15 = dto_15.getTrend();
             String trend_05 = dto_05.getTrend();
 
-            if (!Objects.equals(trend_d1, trend_h4)) {
+            if (!(Objects.equals(trend_w1, trend_d1) || Objects.equals(trend_d1, trend_h4)
+                    || Utils.isNotBlank(dto_h4.getNote())
+                    || Utils.isNotBlank(dto_h1.getNote()))) {
                 continue;
             }
 
@@ -3609,7 +3618,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isBlank(result) && Objects.equals(trend_15, trend_05) && dto_15.getNote().contains("50")) {
                 result += analysis("(" + prifix + " 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, find_trend);
             }
-            if (Utils.isBlank(result) && dto_h1.getNote().contains("50") && Objects.equals(trend_h4, trend_h1)
+            if (Utils.isBlank(result) && Utils.isNotBlank(dto_h1.getNote()) && Objects.equals(trend_h4, trend_h1)
                     && Objects.equals(trend_h1, trend_05)) {
                 result += analysis("(" + prifix + " H1)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend);
             }
@@ -3670,8 +3679,8 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // D1
-        List<String> LIST_D1_BUYING = Arrays.asList("USDCAD", "", "", "", "", "", "");
-        List<String> LIST_D1_SELLING = Arrays.asList("", "", "", "", "", "", "", "", "", "", "", "", "");
+        List<String> LIST_D1_BUYING = Arrays.asList("GBPCHF", "EURCHF", "", "", "", "", "");
+        List<String> LIST_D1_SELLING = Arrays.asList("CHFJPY", "GER40", "UK100", "", "", "", "", "", "", "", "");
 
         // H4
         List<String> LIST_H4_BUYING = Arrays.asList("", "", "", "", "", "");
