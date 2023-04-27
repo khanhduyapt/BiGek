@@ -3551,8 +3551,10 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
+            Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
 
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
+                    || Objects.isNull(dto_15)) {
                 Utils.logWritelnDraft("scapForex (" + EPIC + ") dto is null");
                 return;
             }
@@ -3564,7 +3566,8 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h4 = dto_h4.getTrend();
             String trend_h1 = dto_h1.getTrend();
 
-            if (Utils.isBlank(dto_h4.getNote() + dto_h1.getNote()) || !Objects.equals(trend_h4, trend_h1)) {
+            if (Utils.isBlank(dto_h4.getNote() + dto_h1.getNote() + dto_15.getNote())
+                    || !Objects.equals(trend_h4, trend_h1)) {
                 continue;
             }
 
@@ -3578,12 +3581,18 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Utils.isNotBlank(dto_h1.getNote())) {
                     result += analysis("(W1D1H4 H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_d1);
                 }
+                if (Utils.isNotBlank(dto_15.getNote())) {
+                    result += analysis("(W1D1H4 15)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_d1);
+                }
             } else {
                 if (Utils.isNotBlank(dto_h4.getNote())) {
                     result += analysis("(  D1H1 H4)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_d1);
                 }
                 if (Utils.isNotBlank(dto_h1.getNote())) {
                     result += analysis("(  D1H4 H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_d1);
+                }
+                if (Utils.isNotBlank(dto_15.getNote()) && Objects.equals(trend_h4, trend_h1)) {
+                    result += analysis("(  H4H1 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
                 }
             }
 
