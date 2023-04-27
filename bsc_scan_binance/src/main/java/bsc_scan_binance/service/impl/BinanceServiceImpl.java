@@ -3143,7 +3143,7 @@ public class BinanceServiceImpl implements BinanceService {
                     note += Utils.isNotBlank(dto_15.getNote()) ? Utils.appendSpace(dto_15.getNote(), 20) : "";
                     note += Utils.isNotBlank(dto_05.getNote()) ? Utils.appendSpace(dto_05.getNote(), 20) : "";
 
-                    if (Utils.isNotBlank(dto_d1.getNote())) {
+                    if (Utils.isNotBlank(dto_d1.getNote()) && Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())) {
                         String log = Utils.createLineForex_Header(dto_d1, dto_d1, chart);
                         log += Utils.appendSpace(Utils.removeLastZero(dto_d1.getCurrent_price()), 15);
                         log += Utils.createLineForex_Body(dto_d1, dto_d1, dto_d1.getTrend()).trim();
@@ -3578,8 +3578,8 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_15 = dto_15.getTrend();
             String trend_05 = dto_05.getTrend();
 
-            if (!Objects.equals(trend_d1, trend_h4)) {
-                // continue;
+            if (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, trend_h4)) {
+                continue;
             }
 
             // TODO: 2. scapForex
