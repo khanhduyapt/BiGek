@@ -3460,8 +3460,11 @@ public class BinanceServiceImpl implements BinanceService {
         String note = "";
         if (CAPITAL_TIME_XX.contains("MINUTE")) {
             if (Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
-                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
-                        + Utils.TEXT_SWITCH_TREND_Ma_1_50;
+                Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
+                if (Objects.nonNull(dto_h1) && Objects.equals(dto_h1.getTrend(), trend)) {
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
+                            + Utils.TEXT_SWITCH_TREND_Ma_1_50;
+                }
             }
         } else if (CAPITAL_TIME_XX.contains("HOUR")) {
             String type = "";
@@ -3473,17 +3476,23 @@ public class BinanceServiceImpl implements BinanceService {
             }
             if (Utils.isNotBlank(type)) {
                 String switch_trend = Utils.switchTrendByHeken01(heken_list);
-                switch_trend += Utils.switchTrendByMa13_XX(heken_list, 5);
-                switch_trend += Utils.switchTrendByMa13_XX(heken_list, 10);
+                switch_trend += Utils.switchTrendByHekenAshi_135(heken_list);
+                switch_trend += Utils.switchTrendByMa5_8(heken_list);
                 if (Utils.isNotBlank(switch_trend)) {
                     note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
                 }
             }
 
-            if (Utils.isBlank(note)) {
-                if (Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
-                            + Utils.TEXT_SWITCH_TREND_Ma_1_50;
+            if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
+                Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+                if (Objects.nonNull(dto_h4) && !Objects.equals(dto_h4.getTrend(), trend)) {
+                    note = "";
+                }
+            }
+            if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX)) {
+                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
+                if (Objects.nonNull(dto_d1) && !Objects.equals(dto_d1.getTrend(), trend)) {
+                    note = "";
                 }
             }
 
@@ -3560,40 +3569,52 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String result = "";
-
             String trend_w1 = dto_w1.getTrend();
             String trend_d1 = dto_d1.getTrend();
             String trend_h4 = dto_h4.getTrend();
             String trend_h1 = dto_h1.getTrend();
+            String trend_15 = dto_15.getTrend();
 
-            if (Utils.isBlank(dto_h4.getNote() + dto_h1.getNote() + dto_15.getNote())
-                    || !Objects.equals(trend_h4, trend_h1)) {
+            if (Utils.isBlank(dto_h4.getNote() + dto_h1.getNote() + dto_15.getNote())) {
                 continue;
             }
 
             // TODO: 2. scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
-            if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)) {
-                if (Utils.isNotBlank(dto_h4.getNote())) {
-                    result += analysis("(W1D1H1 H4)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_d1);
+            if (Utils.isNotBlank(dto_h1.getNote())) {
+                String prefix = "(W1.D1.H4.15)";
+                if (!Objects.equals(trend_w1, trend_h1)) {
+                    prefix = prefix.replace("W1", "  ");
                 }
-                if (Utils.isNotBlank(dto_h1.getNote())) {
-                    result += analysis("(W1D1H4 H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_d1);
+                if (!Objects.equals(trend_d1, trend_h1)) {
+                    prefix = prefix.replace("D1", "  ");
                 }
-                if (Utils.isNotBlank(dto_15.getNote())) {
-                    result += analysis("(W1D1H4 15)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_d1);
+                if (!Objects.equals(trend_h4, trend_h1)) {
+                    prefix = prefix.replace("H4", "  ");
                 }
-            } else {
-                if (Utils.isNotBlank(dto_h4.getNote())) {
-                    result += analysis("(  D1H1 H4)", EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_d1);
+                if (!Objects.equals(trend_15, trend_h1)) {
+                    prefix = prefix.replace("15", "  ");
                 }
-                if (Utils.isNotBlank(dto_h1.getNote())) {
-                    result += analysis("(  D1H4 H1)", EPIC, Utils.CAPITAL_TIME_HOUR, trend_d1);
+                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+            }
+
+            if (Utils.isNotBlank(dto_15.getNote())) {
+                String prefix = "(W1.D1.H4.H1)";
+                if (!Objects.equals(trend_w1, trend_15)) {
+                    prefix = prefix.replace("W1", "  ");
                 }
-                if (Utils.isNotBlank(dto_15.getNote()) && Objects.equals(trend_h4, trend_h1)) {
-                    result += analysis("(  H4H1 15)", EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_h4);
+                if (!Objects.equals(trend_d1, trend_15)) {
+                    prefix = prefix.replace("D1", "  ");
                 }
+                if (!Objects.equals(trend_h4, trend_15)) {
+                    prefix = prefix.replace("H4", "  ");
+                }
+                if (!Objects.equals(trend_h1, trend_15)) {
+                    prefix = prefix.replace("H1", "  ");
+                }
+
+                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_15);
             }
 
             // -----------------------------------------------------------------------
