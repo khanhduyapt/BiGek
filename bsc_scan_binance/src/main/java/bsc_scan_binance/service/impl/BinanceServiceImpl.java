@@ -3201,6 +3201,8 @@ public class BinanceServiceImpl implements BinanceService {
         crypto_list.add(null);
         crypto_list.addAll(ordersRepository.getCrypto_H4());
 
+        String w1d1h4 = "";
+        String d1h4 = "";
         List<String> list_w1d1h4 = new ArrayList<String>();
         List<String> list_d1h4 = new ArrayList<String>();
 
@@ -3225,7 +3227,10 @@ public class BinanceServiceImpl implements BinanceService {
                 Orders dto_w1 = ordersRepository.findById("CRYPTO_" + symbol + "_1w").orElse(null);
                 Orders dto_d1 = ordersRepository.findById("CRYPTO_" + symbol + "_1d").orElse(null);
                 Orders dto_h4 = ordersRepository.findById("CRYPTO_" + symbol + "_4h").orElse(null);
-                if (Objects.nonNull(dto_w1) && Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)) {
+                if (Objects.nonNull(dto_w1) && Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)
+                        && !w1d1h4.contains("_" + symbol + "_")) {
+
+                    w1d1h4 += "_" + symbol + "_";
                     list_w1d1h4.add(Utils.createLineCrypto(dto_h4, symbol, type));
 
                     if (Utils.isNotBlank(msg_futu)) {
@@ -3233,7 +3238,11 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                     msg_futu += symbol;
                 }
-                if (Utils.LIST_WAITING.contains(symbol) && Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)) {
+
+                if (Utils.LIST_WAITING.contains(symbol) && Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)
+                        && !d1h4.contains("_" + symbol + "_")) {
+
+                    d1h4 += "_" + symbol + "_";
                     list_d1h4.add(Utils.createLineCrypto(dto_h4, symbol, type));
                 }
             }
@@ -3393,7 +3402,7 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_trend = Utils.switchTrendByHeken01(heken_list_h4);
             if (Utils.isNotBlank(switch_trend) && Objects.equals(SYMBOL, "BTC")) {
                 logMsgPerHour("switch_trend_btc",
-                        Utils.appendSpace("BTC", 27) + "(H4) " + Utils.appendSpace(switch_trend, 10) + log,
+                        Utils.appendSpace("BTC", 27) + "(H4) " + Utils.appendSpace(switch_trend, 26) + log,
                         Utils.MINUTES_OF_4H);
             }
 
@@ -3559,7 +3568,7 @@ public class BinanceServiceImpl implements BinanceService {
                 return;
             }
 
-            String prifix = "      ";
+            String prifix = "  H4  ";
             String result = "";
 
             String trend_w1 = dto_w1.getTrend();
@@ -3586,6 +3595,8 @@ public class BinanceServiceImpl implements BinanceService {
             } else if (Objects.equals(trend_d1, trend_h4)) {
                 prifix = "  D1H4";
                 find_trend = trend_d1;
+            } else if (Objects.equals(trend_h4, trend_h1)) {
+                prifix = "  H4H1";
             } else if (dto_d1.getNote().contains(Utils.TEXT_MIN_DAY_AREA)) {
                 prifix = "Min10D";
             } else if (dto_d1.getNote().contains(Utils.TEXT_MAX_DAY_AREA)) {
@@ -3604,12 +3615,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isBlank(result) && !Objects.equals(trend_w1, trend_d1)) {
-                if (Objects.equals(trend_h4, trend_h1)) {
-                    prifix = "  H4H1";
-                } else {
-                    prifix = "  H4  ";
-                }
-
                 if (dto_05.getNote().contains("50")) {
                     result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5, find_trend);
                 }
@@ -3636,7 +3641,7 @@ public class BinanceServiceImpl implements BinanceService {
     // ----------------------------------------------------------------------------------------------
     // "XAUUSD", "XAGUSD", "BTCUSD", "US30", "US100", "GER40", "UK100", "USOIL"
     // "AUDJPY", "AUDUSD", "CADJPY", "CHFJPY",
-    // "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
+    // "EURAUD", "EURCAD", "EURCHF", "EURJPY", "EURNZD", "EURUSD",
     // "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD",
     // "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDJPY"
 
