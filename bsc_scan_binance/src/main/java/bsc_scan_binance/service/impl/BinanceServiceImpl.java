@@ -3372,7 +3372,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // ------------------------------------------------------------------
         String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_d1.get(0).getCurrPrice()), 5) + ")";
-        String log = " " + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70) + Utils.appendSpace(str_price, 15);
+        String log = Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70) + Utils.appendSpace(str_price, 15);
         String note = "";
 
         // ------------------------------------------------------------------
@@ -3402,7 +3402,7 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_trend = Utils.switchTrendByHeken01(heken_list_h4);
             if (Utils.isNotBlank(switch_trend) && Objects.equals(SYMBOL, "BTC")) {
                 logMsgPerHour("switch_trend_btc",
-                        Utils.appendSpace("BTC", 27) + "(H4) " + Utils.appendSpace(switch_trend, 26) + log,
+                        Utils.appendSpace("BTC", 27) + "(H4) " + Utils.appendSpace(switch_trend, 25) + log,
                         Utils.MINUTES_OF_4H);
             }
 
@@ -3578,7 +3578,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_15 = dto_15.getTrend();
             String trend_05 = dto_05.getTrend();
 
-            if (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, trend_h4)) {
+            if (!Objects.equals(trend_d1, trend_h4)) {
                 continue;
             }
 
@@ -3614,7 +3614,7 @@ public class BinanceServiceImpl implements BinanceService {
                 result += analysis("(" + prifix + " H1)", EPIC, Utils.CAPITAL_TIME_HOUR, find_trend);
             }
 
-            if (Utils.isBlank(result) && !Objects.equals(trend_w1, trend_d1)) {
+            if (Utils.isBlank(result)) {
                 if (dto_05.getNote().contains("50")) {
                     result += analysis("(" + prifix + " 05)", EPIC, Utils.CAPITAL_TIME_MINUTE_5, find_trend);
                 }
