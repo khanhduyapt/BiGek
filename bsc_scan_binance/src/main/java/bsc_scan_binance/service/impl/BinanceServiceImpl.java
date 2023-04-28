@@ -3465,20 +3465,10 @@ public class BinanceServiceImpl implements BinanceService {
 
             }
         } else if (CAPITAL_TIME_XX.contains("HOUR")) {
-            String type = "";
-            if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
-                type = "(50)";
-            }
-            if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
-                type = "(50)";
-            }
-            if (Utils.isNotBlank(type)) {
-                String switch_trend = Utils.switchTrendByHeken01(heken_list);
-                switch_trend += Utils.switchTrendByHekenAshi_135(heken_list);
-                switch_trend += Utils.switchTrendByMa5_8(heken_list);
-                if (Utils.isNotBlank(switch_trend)) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
-                }
+            if (Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
+                        + Utils.TEXT_SWITCH_TREND_Ma_1_50;
+
             }
         } else {
             String switch_trend = Utils.switchTrendByHeken01(heken_list);
@@ -3569,7 +3559,7 @@ public class BinanceServiceImpl implements BinanceService {
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
             if (Utils.isNotBlank(dto_h4.getNote())) {
-                String prefix = "(W1.D1.  .H1) <-- ";
+                String prefix = "(W1.D1.H4.H1) <-- ";
                 if (!Objects.equals(trend_w1, trend_h4)) {
                     prefix = prefix.replace("W1", "  ");
                 }
