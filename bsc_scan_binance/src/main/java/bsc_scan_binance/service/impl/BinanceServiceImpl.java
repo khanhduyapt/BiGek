@@ -3460,10 +3460,12 @@ public class BinanceServiceImpl implements BinanceService {
         String note = "";
         if (CAPITAL_TIME_XX.contains("MINUTE")) {
             if (Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
-                Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
-                if (Objects.nonNull(dto_h1) && Objects.equals(dto_h1.getTrend(), trend)) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
-                            + Utils.TEXT_SWITCH_TREND_Ma_1_50;
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
+                        + Utils.TEXT_SWITCH_TREND_Ma_1_50;
+
+                Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+                if (Objects.nonNull(dto_h4) && Objects.equals(dto_h4.getTrend(), trend)) {
+                    note = "";
                 }
             }
         } else if (CAPITAL_TIME_XX.contains("HOUR")) {
@@ -3486,12 +3488,6 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
                 Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
                 if (Objects.nonNull(dto_h4) && !Objects.equals(dto_h4.getTrend(), trend)) {
-                    note = "";
-                }
-            }
-            if (Objects.equals(Utils.CAPITAL_TIME_HOUR_4, CAPITAL_TIME_XX)) {
-                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
-                if (Objects.nonNull(dto_d1) && !Objects.equals(dto_d1.getTrend(), trend)) {
                     note = "";
                 }
             }
@@ -3620,10 +3616,9 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("H1", "  ");
                 }
 
-                if (!(prefix.contains("H4"))) {
-                    prefix = prefix.replace(" <-- ", "     ");
+                if (prefix.contains("H4")) {
+                    result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_15);
                 }
-                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_15);
             }
 
             if (Utils.isNotBlank(dto_05.getNote())) {

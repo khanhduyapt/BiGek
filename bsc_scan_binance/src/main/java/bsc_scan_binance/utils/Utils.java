@@ -3456,11 +3456,12 @@ public class Utils {
             return "";
         }
 
-        //Bắt buộc phải chờ đóng nến, vì khi thị trường giật lên xuống mất xu hướng.
-        BigDecimal ma6 = Utils.calcMA(heken_list, 6, 1);
-        BigDecimal close_price = heken_list.get(1).getPrice_close_candle();
+        // Bắt buộc phải chờ đóng nến, vì khi thị trường giật lên xuống mất xu hướng.
+        String trend = isUptrendByMa(heken_list, 3, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
-        String trend = (close_price.compareTo(ma6) > 0) ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        // BigDecimal ma6 = Utils.calcMA(heken_list, 6, 1);
+        // BigDecimal close_price = heken_list.get(1).getPrice_close_candle();
+        // String trend = (close_price.compareTo(ma6) > 0) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
         return trend;
     }
