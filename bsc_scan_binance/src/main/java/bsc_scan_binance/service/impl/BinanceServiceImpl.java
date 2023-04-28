@@ -3568,6 +3568,26 @@ public class BinanceServiceImpl implements BinanceService {
             // TODO: 2. scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
+            if (Utils.isNotBlank(dto_h4.getNote())) {
+                String prefix = "(W1.D1.  .H1) <-- ";
+                if (!Objects.equals(trend_w1, trend_h4)) {
+                    prefix = prefix.replace("W1", "  ");
+                }
+                if (!Objects.equals(trend_d1, trend_h4)) {
+                    prefix = prefix.replace("D1", "  ");
+                }
+                if (!Objects.equals(trend_h1, trend_h4)) {
+                    prefix = prefix.replace("H1", "  ");
+                }
+
+                if (prefix.contains("D1")) {
+                    if (!(prefix.contains("D1") && prefix.contains("H1"))) {
+                        prefix = prefix.replace("<--", "   ");
+                    }
+                    result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4);
+                }
+            }
+
             if (Utils.isNotBlank(dto_h1.getNote())) {
                 String prefix = "(W1.D1.H4.15) <-- ";
                 if (!Objects.equals(trend_w1, trend_h1)) {
