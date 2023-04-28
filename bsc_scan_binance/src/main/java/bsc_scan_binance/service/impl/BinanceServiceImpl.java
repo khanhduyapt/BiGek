@@ -3463,10 +3463,6 @@ public class BinanceServiceImpl implements BinanceService {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
                         + Utils.TEXT_SWITCH_TREND_Ma_1_50;
 
-                Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-                if (Objects.nonNull(dto_h4) && Objects.equals(dto_h4.getTrend(), trend)) {
-                    note = "";
-                }
             }
         } else if (CAPITAL_TIME_XX.contains("HOUR")) {
             String type = "";
@@ -3484,14 +3480,6 @@ public class BinanceServiceImpl implements BinanceService {
                     note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
                 }
             }
-
-            if (Objects.equals(Utils.CAPITAL_TIME_HOUR, CAPITAL_TIME_XX)) {
-                Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
-                if (Objects.nonNull(dto_h4) && !Objects.equals(dto_h4.getTrend(), trend)) {
-                    note = "";
-                }
-            }
-
         } else {
             String switch_trend = Utils.switchTrendByHeken01(heken_list);
             switch_trend += Utils.switchTrendByMa13_XX(heken_list, 3);
@@ -3595,10 +3583,12 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("15", "  ");
                 }
 
-                if (!prefix.contains("H4")) {
-                    prefix = prefix.replace(" <-- ", "     ");
+                if (prefix.contains("H4")) {
+                    if (!prefix.contains("D1")) {
+                        prefix = prefix.replace("<--", "   ");
+                    }
+                    result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
                 }
-                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
             }
 
             if (Utils.isNotBlank(dto_15.getNote())) {
@@ -3617,6 +3607,9 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (prefix.contains("H4")) {
+                    if (!prefix.contains("D1")) {
+                        prefix = prefix.replace("<--", "   ");
+                    }
                     result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_15);
                 }
             }
@@ -3637,6 +3630,9 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (prefix.contains("H4")) {
+                    if (!prefix.contains("D1")) {
+                        prefix = prefix.replace("<--", "   ");
+                    }
                     result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_MINUTE_5, trend_05);
                 }
             }
