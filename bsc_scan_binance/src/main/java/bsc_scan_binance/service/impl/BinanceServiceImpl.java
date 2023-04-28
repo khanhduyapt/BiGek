@@ -3570,12 +3570,10 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("H1", "  ");
                 }
 
-                if (prefix.contains("D1")) {
-                    if (!(prefix.contains("D1") && prefix.contains("H1"))) {
-                        prefix = prefix.replace("<--", "   ");
-                    }
-                    result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4);
+                if (!prefix.contains("W1.D1")) {
+                    prefix = prefix.replace("<--", "   ");
                 }
+                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4);
             }
 
             if (Utils.isNotBlank(dto_h1.getNote())) {
@@ -3593,12 +3591,10 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("15", "  ");
                 }
 
-                if (prefix.contains("H4")) {
-                    if (!prefix.contains("D1")) {
-                        prefix = prefix.replace("<--", "   ");
-                    }
-                    result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+                if (!prefix.contains("D1.H4")) {
+                    prefix = prefix.replace("<--", "   ");
                 }
+                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
             }
 
             if (Utils.isNotBlank(dto_15.getNote())) {
@@ -3616,12 +3612,10 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("H1", "  ");
                 }
 
-                if (prefix.contains("H4")) {
-                    if (!prefix.contains("D1")) {
-                        prefix = prefix.replace("<--", "   ");
-                    }
-                    result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_15);
+                if (!prefix.contains("H4.H1")) {
+                    prefix = prefix.replace("<--", "   ");
                 }
+                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_15);
             }
 
             if (Utils.isNotBlank(dto_05.getNote())) {
@@ -3639,12 +3633,10 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("H1", "  ");
                 }
 
-                if (prefix.contains("H4")) {
-                    if (!prefix.contains("D1")) {
-                        prefix = prefix.replace("<--", "   ");
-                    }
-                    result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_MINUTE_5, trend_05);
+                if (!prefix.contains("H4.H1")) {
+                    prefix = prefix.replace("<--", "   ");
                 }
+                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_MINUTE_5, trend_05);
             }
 
             // -----------------------------------------------------------------------
