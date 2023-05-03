@@ -3498,11 +3498,11 @@ public class BinanceServiceImpl implements BinanceService {
             }
         } else {
             String type = "";
-            if (Utils.isBlank(trend) && Objects.equals(Utils.switchTrendByMaXX(heken_list, 3, 5), trend)) {
+            if (Utils.isBlank(type) && Objects.equals(Utils.switchTrendByMaXX(heken_list, 3, 5), trend)) {
                 type = "(Ma3.5)";
             }
 
-            if (Utils.isBlank(trend) && Objects.equals(Utils.switchTrendByHeken01(heken_list), trend)) {
+            if (Utils.isBlank(type) && Objects.equals(Utils.switchTrendByHeken01(heken_list), trend)) {
                 type = "(Heken)";
             }
 

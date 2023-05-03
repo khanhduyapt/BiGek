@@ -162,8 +162,8 @@ public class Utils {
             "GER40", "UK100", "USOIL");
 
     public static final List<String> EPICS_FOREXS = Arrays.asList("AUDJPY", "AUDUSD", "CADJPY", "CHFJPY", "EURAUD",
-            "EURCAD", "EURCHF", "EURJPY", "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY",
-            "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDJPY");
+            "EURCAD", "EURCHF", "EURJPY", "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD",
+            "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDJPY");
 
     // ALL Binance.com
     public static final List<String> COINS = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ARB", "ADA", "ADX", "AERGO",
@@ -3417,20 +3417,6 @@ public class Utils {
             return TREND_SHOT;
         }
 
-        String id = heken_list.get(0).getId();
-        if (id.contains("_15") || id.contains("MINUTE_15")) {
-
-            if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(3).isUptrend()
-                    && heken_list.get(4).isDown()) {
-                return TREND_LONG;
-            }
-            if (heken_list.get(0).isDown() && heken_list.get(1).isDown() && heken_list.get(3).isDown()
-                    && heken_list.get(4).isUptrend()) {
-                return TREND_SHOT;
-            }
-
-        }
-
         return "";
     }
 
@@ -3467,7 +3453,8 @@ public class Utils {
 
         // BigDecimal ma6 = Utils.calcMA(heken_list, 6, 1);
         // BigDecimal close_price = heken_list.get(1).getPrice_close_candle();
-        // String trend = (close_price.compareTo(ma6) > 0) ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        // String trend = (close_price.compareTo(ma6) > 0) ? Utils.TREND_LONG :
+        // Utils.TREND_SHOT;
 
         return trend;
     }
