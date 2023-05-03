@@ -3110,8 +3110,8 @@ public class BinanceServiceImpl implements BinanceService {
         String msg_forx = "";
         String msg_futu = "";
 
-        List<String> list_h4 = new ArrayList<String>();
-        List<String> list_d1 = new ArrayList<String>();
+        List<String> list_d1h4h1 = new ArrayList<String>();
+        List<String> list_h4_log = new ArrayList<String>();
 
         List<Orders> list_all = ordersRepository.getTrend_H4List();
         if (!CollectionUtils.isEmpty(list_all)) {
@@ -3143,12 +3143,12 @@ public class BinanceServiceImpl implements BinanceService {
                     note += Utils.isNotBlank(dto_15.getNote()) ? Utils.appendSpace(dto_15.getNote(), 20) : "";
                     note += Utils.isNotBlank(dto_05.getNote()) ? Utils.appendSpace(dto_05.getNote(), 20) : "";
 
-                    if (Utils.isNotBlank(dto_d1.getNote()) && Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())) {
-                        String log = Utils.createLineForex_Header(dto_d1, dto_d1, chart);
-                        log += Utils.appendSpace(Utils.removeLastZero(dto_d1.getCurrent_price()), 15);
-                        log += Utils.createLineForex_Body(dto_d1, dto_d1, dto_d1.getTrend()).trim();
+                    if (Utils.isNotBlank(dto_h4.getNote())) {
+                        String log = Utils.createLineForex_Header(dto_h4, dto_h4, chart);
+                        log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
+                        log += Utils.createLineForex_Body(dto_h4, dto_h4, dto_h4.getTrend()).trim();
                         log += "   " + note;
-                        list_d1.add(log);
+                        list_h4_log.add(log);
                     }
 
                     if (Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())
@@ -3159,7 +3159,7 @@ public class BinanceServiceImpl implements BinanceService {
                         log += Utils.appendSpace(Utils.removeLastZero(dto_h1.getCurrent_price()), 15);
                         log += Utils.createLineForex_Body(dto_h1, dto_h4, dto_h1.getTrend()).trim();
                         log += "   " + note;
-                        list_h4.add(log);
+                        list_d1h4h1.add(log);
                     }
 
                 }
@@ -3169,20 +3169,20 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnReport("");
         }
 
-        if (list_d1.size() > 0) {
+        if (list_h4_log.size() > 0) {
             Utils.logWritelnReport("");
-            Utils.logWritelnReport(Utils.appendLeftAndRight("   Switch Trend D    ", 50, "+"));
-            for (String log : list_d1) {
+            Utils.logWritelnReport(Utils.appendLeftAndRight("   Switch Trend H4   ", 50, "+"));
+            for (String log : list_h4_log) {
                 Utils.logWritelnReport(log);
             }
             Utils.logWritelnReport("");
             Utils.logWritelnReport("");
         }
 
-        if (list_h4.size() > 0) {
+        if (list_d1h4h1.size() > 0) {
             Utils.logWritelnReport("");
             Utils.logWritelnReport(Utils.appendLeftAndRight("       D1 H4 H1      ", 50, "+"));
-            for (String log : list_h4) {
+            for (String log : list_d1h4h1) {
                 Utils.logWritelnReport(log);
             }
             Utils.logWritelnReport("");
@@ -3249,8 +3249,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Utils.LIST_WAITING.contains(symbol) && Objects.nonNull(dto_d1) && Utils.isNotBlank(dto_d1.getNote())
-                        && Objects.equals(Utils.TREND_LONG, dto_d1.getTrend())
-                        && !d1.contains("_" + symbol + "_")) {
+                        && Objects.equals(Utils.TREND_LONG, dto_d1.getTrend()) && !d1.contains("_" + symbol + "_")) {
 
                     d1 += "_" + symbol + "_";
                     list_d1_log.add(Utils.createLineCrypto(dto_d1, symbol, type));
@@ -3298,7 +3297,7 @@ public class BinanceServiceImpl implements BinanceService {
                 msg_crypto += "(Futu)" + msg_futu + Utils.new_line_from_service;
 
                 Utils.logWritelnDraft(msg_crypto.replace(Utils.new_line_from_service, "\n"));
-                //sendMsgPerHour(EVENT_ID, msg_crypto, true);
+                // sendMsgPerHour(EVENT_ID, msg_crypto, true);
             }
 
         }
@@ -3480,12 +3479,16 @@ public class BinanceServiceImpl implements BinanceService {
 
         String note = "";
         if (CAPITAL_TIME_XX.contains("MINUTE")) {
-
             String type = "";
-            if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMaXX(heken_list, 3, 5))) {
+            if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
+                type = "(50)";
+            }
+            if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
+                type = "(50)";
+            }
+            if (Utils.isNotBlank(type) && Objects.equals(trend, Utils.switchTrendByMaXX(heken_list, 3, 5))) {
                 type = "(Ma3.5)";
             }
-
             if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
                 type = Utils.TEXT_SWITCH_TREND_Ma_1_50;
             }
@@ -3528,15 +3531,14 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
 
-        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_DAY)) {
-            if (list.get(0).getCurrPrice().compareTo(str_body_price) < 0) {
-                note += Utils.TEXT_MIN_DAY_AREA;
-            }
-
-            if (list.get(0).getCurrPrice().compareTo(end_body_price) > 0) {
-                note += Utils.TEXT_MAX_DAY_AREA;
-            }
-        }
+        // if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_DAY)) {
+        // if (list.get(0).getCurrPrice().compareTo(str_body_price) < 0) {
+        // note += Utils.TEXT_MIN_DAY_AREA;
+        // }
+        // if (list.get(0).getCurrPrice().compareTo(end_body_price) > 0) {
+        // note += Utils.TEXT_MAX_DAY_AREA;
+        // }
+        // }
 
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), str_body_price,
                 end_body_price, sl_long, sl_shot, note);
@@ -3558,14 +3560,19 @@ public class BinanceServiceImpl implements BinanceService {
 
         String msg = "";
         for (String EPIC : CAPITAL_LIST) {
+            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
+            if (Objects.isNull(dto_h4) || Utils.isBlank(dto_h4.getNote())) {
+                continue;
+            }
+
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_WEEK).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_DAY).orElse(null);
-            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR_4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_HOUR).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_15).orElse(null);
+            Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MINUTE_5).orElse(null);
 
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
-                    || Objects.isNull(dto_15)) {
+                    || Objects.isNull(dto_15) || Objects.isNull(dto_05)) {
                 Utils.logWritelnDraft("scapForex (" + EPIC + ") dto is null");
                 return;
             }
@@ -3576,8 +3583,9 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h4 = dto_h4.getTrend();
             String trend_h1 = dto_h1.getTrend();
             String trend_15 = dto_15.getTrend();
+            String trend_05 = dto_05.getTrend();
 
-            if (Utils.isBlank(dto_h4.getNote() + dto_h1.getNote() + dto_15.getNote())) {
+            if (Utils.isBlank(dto_h4.getNote() + dto_h1.getNote() + dto_15.getNote() + dto_05.getNote())) {
                 continue;
             }
 
@@ -3617,9 +3625,10 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("15", "  ");
                 }
 
-                if (prefix.contains("H4")) {
-                    result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
+                if (!prefix.contains("H4")) {
+                    prefix = prefix.replace("<--", "   ");
                 }
+                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_HOUR, trend_h1);
             }
 
             if (Utils.isBlank(result) && Utils.isNotBlank(dto_15.getNote())) {
@@ -3637,8 +3646,28 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("H1", "  ");
                 }
 
-                if (prefix.contains("H1")) {
+                if (prefix.contains("H4")) {
                     result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_MINUTE_15, trend_15);
+                }
+            }
+
+            if (Utils.isBlank(result) && Utils.isNotBlank(dto_05.getNote())) {
+                String prefix = "(W1.D1.H4.H1) <-- ";
+                if (!Objects.equals(trend_w1, trend_05)) {
+                    prefix = prefix.replace("W1", "  ");
+                }
+                if (!Objects.equals(trend_d1, trend_05)) {
+                    prefix = prefix.replace("D1", "  ");
+                }
+                if (!Objects.equals(trend_h4, trend_05)) {
+                    prefix = prefix.replace("H4", "  ");
+                }
+                if (!Objects.equals(trend_h1, trend_05)) {
+                    prefix = prefix.replace("H1", "  ");
+                }
+
+                if (prefix.contains("H4")) {
+                    result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_MINUTE_5, trend_05);
                 }
             }
 
