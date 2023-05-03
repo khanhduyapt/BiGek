@@ -3298,7 +3298,7 @@ public class BinanceServiceImpl implements BinanceService {
                 msg_crypto += "(Futu)" + msg_futu + Utils.new_line_from_service;
 
                 Utils.logWritelnDraft(msg_crypto.replace(Utils.new_line_from_service, "\n"));
-                sendMsgPerHour(EVENT_ID, msg_crypto, true);
+                //sendMsgPerHour(EVENT_ID, msg_crypto, true);
             }
 
         }
@@ -3697,8 +3697,8 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> LIST_H4_SELLING = Arrays.asList("", "", "", "", "", "");
 
         // H1
-        List<String> LIST_H1_BUYING = Arrays.asList("", "", "", "", "", "", "");
-        List<String> LIST_H1_SELLING = Arrays.asList("", "", "", "", "", "", "", "", "");
+        List<String> LIST_H1_BUYING = Arrays.asList("EURNZD", "", "", "", "", "", "");
+        List<String> LIST_H1_SELLING = Arrays.asList("USDCAD", "", "", "", "", "", "", "", "");
 
         // 15
         List<String> LIST_15_BUYING = Arrays.asList("", "", "", "", "", "", "");
