@@ -3397,6 +3397,12 @@ public class Utils {
     }
 
     public static String switchTrendByHeken01(List<BtcFutures> heken_list) {
+        String trend = Utils.getTrendByHekenAshiList(heken_list);
+        String switch_trend = Utils.switchTrendByMaXX(heken_list, 3, 5);
+        if (Objects.equals(switch_trend, trend)) {
+            return switch_trend;// "(Ma3.5)";
+        }
+
         if (heken_list.get(0).isUptrend() && heken_list.get(1).isDown()) {
             return TREND_LONG;
         }

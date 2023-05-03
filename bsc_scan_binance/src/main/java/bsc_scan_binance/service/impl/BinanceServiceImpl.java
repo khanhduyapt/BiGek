@@ -3203,8 +3203,10 @@ public class BinanceServiceImpl implements BinanceService {
 
         String w1d1h4 = "";
         String d1h4 = "";
-        List<String> list_w1d1h4 = new ArrayList<String>();
-        List<String> list_d1h4 = new ArrayList<String>();
+        String d1 = "";
+        List<String> list_w1d1h4_log = new ArrayList<String>();
+        List<String> list_d1h4_log = new ArrayList<String>();
+        List<String> list_d1_log = new ArrayList<String>();
 
         if (crypto_list.size() > 2) {
 
@@ -3231,7 +3233,7 @@ public class BinanceServiceImpl implements BinanceService {
                         && !w1d1h4.contains("_" + symbol + "_")) {
 
                     w1d1h4 += "_" + symbol + "_";
-                    list_w1d1h4.add(Utils.createLineCrypto(dto_h4, symbol, type));
+                    list_w1d1h4_log.add(Utils.createLineCrypto(dto_h4, symbol, type));
 
                     if (Utils.isNotBlank(msg_futu)) {
                         msg_futu += ",";
@@ -3243,24 +3245,43 @@ public class BinanceServiceImpl implements BinanceService {
                         && !d1h4.contains("_" + symbol + "_")) {
 
                     d1h4 += "_" + symbol + "_";
-                    list_d1h4.add(Utils.createLineCrypto(dto_h4, symbol, type));
+                    list_d1h4_log.add(Utils.createLineCrypto(dto_h4, symbol, type));
                 }
+
+                if (Utils.LIST_WAITING.contains(symbol) && Objects.nonNull(dto_d1) && Utils.isNotBlank(dto_d1.getNote())
+                        && Objects.equals(Utils.TREND_LONG, dto_d1.getTrend())
+                        && !d1.contains("_" + symbol + "_")) {
+
+                    d1 += "_" + symbol + "_";
+                    list_d1_log.add(Utils.createLineCrypto(dto_d1, symbol, type));
+                }
+
             }
 
-            if (list_w1d1h4.size() > 0) {
+            if (list_w1d1h4_log.size() > 0) {
                 Utils.logWritelnReport("");
                 Utils.logWritelnReport(Utils.appendLeftAndRight("       W1 D1 H4      ", 50, "+"));
-                for (String log : list_w1d1h4) {
+                for (String log : list_w1d1h4_log) {
                     Utils.logWritelnReport(log);
                 }
                 Utils.logWritelnReport("");
                 Utils.logWritelnReport("");
             }
 
-            if (list_d1h4.size() > 0) {
+            if (list_d1h4_log.size() > 0) {
                 Utils.logWritelnReport("");
                 Utils.logWritelnReport(Utils.appendLeftAndRight("        D1 H4        ", 50, "+"));
-                for (String log : list_d1h4) {
+                for (String log : list_d1h4_log) {
+                    Utils.logWritelnReport(log);
+                }
+                Utils.logWritelnReport("");
+                Utils.logWritelnReport("");
+            }
+
+            if (list_d1_log.size() > 0) {
+                Utils.logWritelnReport("");
+                Utils.logWritelnReport(Utils.appendLeftAndRight("          D1         ", 50, "+"));
+                for (String log : list_d1_log) {
                     Utils.logWritelnReport(log);
                 }
                 Utils.logWritelnReport("");
