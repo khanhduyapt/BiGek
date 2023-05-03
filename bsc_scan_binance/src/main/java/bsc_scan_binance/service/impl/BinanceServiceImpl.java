@@ -3726,8 +3726,8 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> LIST_H4_SELLING = Arrays.asList("", "", "", "", "", "");
 
         // H1
-        List<String> LIST_H1_BUYING = Arrays.asList("EURNZD", "", "", "", "", "", "");
-        List<String> LIST_H1_SELLING = Arrays.asList("USDCAD", "", "", "", "", "", "", "", "");
+        List<String> LIST_H1_BUYING = Arrays.asList("", "", "", "", "", "", "");
+        List<String> LIST_H1_SELLING = Arrays.asList("", "", "", "", "", "", "", "", "");
 
         // 15
         List<String> LIST_15_BUYING = Arrays.asList("", "", "", "", "", "", "");
