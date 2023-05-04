@@ -3448,8 +3448,16 @@ public class Utils {
             return "";
         }
 
-        // Bắt buộc phải chờ đóng nến, vì khi thị trường giật lên xuống mất xu hướng.
-        String trend = isUptrendByMa(heken_list, 3, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        // Khung nhỏ bắt buộc phải chờ đóng nến, vì khi thị trường giật lên xuống mất xu hướng.
+        int str = 1;
+        int end = 2;
+        String id = heken_list.get(0).getId();
+        if (id.contains("_1w_") || id.contains("_1d_") || id.contains("_4h_")) {
+            str = 0;
+            end = 1;
+        }
+
+        String trend = isUptrendByMa(heken_list, 3, str, end) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
         // BigDecimal ma6 = Utils.calcMA(heken_list, 6, 1);
         // BigDecimal close_price = heken_list.get(1).getPrice_close_candle();
