@@ -3414,7 +3414,7 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_trend = Utils.switchTrendByHeken01(heken_list_h4);
             if (Utils.isNotBlank(switch_trend) && Objects.equals(SYMBOL, "BTC")) {
                 logMsgPerHour("switch_trend_btc",
-                        Utils.appendSpace("BTC", 29) + "(H4) " + Utils.appendSpace(switch_trend, 25) + log,
+                        Utils.appendSpace("BTC SwitchTrend", 29) + "(H4) " + Utils.appendSpace(switch_trend, 25) + log,
                         Utils.MINUTES_OF_4H);
             }
 
@@ -3615,7 +3615,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isBlank(result) && Utils.isNotBlank(dto_15.getNote())
-                    && Objects.equals(trend_15, trend_05)) {
+                    && Objects.equals(trend_h4, trend_15)) {
                 String prefix = "(W1.D1.H4.H1) <-- ";
                 if (!Objects.equals(trend_w1, trend_15)) {
                     prefix = prefix.replace("W1", "  ");
@@ -3639,7 +3639,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isBlank(result) && Utils.isNotBlank(dto_05.getNote())
-                    && Objects.equals(trend_15, trend_05)) {
+                    && Objects.equals(trend_h4, trend_05)) {
                 String prefix = "(W1.D1.H4.H1) <-- ";
                 if (!Objects.equals(trend_w1, trend_05)) {
                     prefix = prefix.replace("W1", "  ");
@@ -3711,7 +3711,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> LIST_H4_SHOT = Arrays.asList("USDCAD", "", "", "", "", "");
 
         // H1
-        List<String> LIST_H1_LONG = Arrays.asList("", "", "", "", "", "");
+        List<String> LIST_H1_LONG = Arrays.asList("USDCHF", "", "", "", "", "");
         List<String> LIST_H1_SHOT = Arrays.asList("NZDUSD", "GBPUSD", "", "", "", "");
 
         // 15
