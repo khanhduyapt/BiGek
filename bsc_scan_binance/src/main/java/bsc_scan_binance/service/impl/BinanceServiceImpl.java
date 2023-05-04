@@ -3622,6 +3622,9 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("<--", "   ");
                 }
 
+                if (Utils.isNotBlank(msg)) {
+                    msg += ",";
+                }
                 msg += analysis(prefix, EPIC, CAPITAL_TIME_XX, trend_h4);
             }
         }
