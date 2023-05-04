@@ -126,19 +126,19 @@ public class Utils {
     public static String CST = "";
     public static String X_SECURITY_TOKEN = "";
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
-    public static final String CAPITAL_TIME_MINUTE_5 = "MINUTE_5";
-    public static final String CAPITAL_TIME_MINUTE_15 = "MINUTE_15";
-    public static final String CAPITAL_TIME_HOUR = "HOUR";
-    public static final String CAPITAL_TIME_HOUR_4 = "HOUR_4";
-    public static final String CAPITAL_TIME_DAY = "DAY";
-    public static final String CAPITAL_TIME_WEEK = "WEEK";
+    public static final String CAPITAL_TIME_05 = "MINUTE_5";
+    public static final String CAPITAL_TIME_15 = "MINUTE_15";
+    public static final String CAPITAL_TIME_H1 = "HOUR";
+    public static final String CAPITAL_TIME_H4 = "HOUR_4";
+    public static final String CAPITAL_TIME_D1 = "DAY";
+    public static final String CAPITAL_TIME_W1 = "WEEK";
 
-    public static final String CRYPTO_TIME_5m = "5m";
-    public static final String CRYPTO_TIME_15m = "15m";
-    public static final String CRYPTO_TIME_1H = "1h";
-    public static final String CRYPTO_TIME_4H = "4h";
-    public static final String CRYPTO_TIME_1D = "1d";
-    public static final String CRYPTO_TIME_1w = "1w";
+    public static final String CRYPTO_TIME_05 = "5m";
+    public static final String CRYPTO_TIME_15 = "15m";
+    public static final String CRYPTO_TIME_H1 = "1h";
+    public static final String CRYPTO_TIME_H4 = "4h";
+    public static final String CRYPTO_TIME_D1 = "1d";
+    public static final String CRYPTO_TIME_W1 = "1w";
 
     public static final Integer MINUTES_OF_D = 240;// 600;
     public static final Integer MINUTES_OF_4H = 120;
@@ -630,22 +630,22 @@ public class Utils {
 
     public static String getChartNameCapital_(String TIME) {
 
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_05)) {
             return "_5m_";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_15)) {
             return "_15m_";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
             return "_1h_";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
             return "_4h_";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_DAY)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
             return "_1d_";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_W1)) {
             return "_1w_";
         }
 
@@ -653,22 +653,22 @@ public class Utils {
     }
 
     public static String getChartNameCapital(String TIME) {
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_5)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_05)) {
             return "(05) ";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_MINUTE_15)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_15)) {
             return "(15) ";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_HOUR)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
             return "(H1) ";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_HOUR_4)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
             return "(H4) ";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_DAY)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
             return "(D1) ";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_WEEK)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_W1)) {
             return "(W1) ";
         }
 
@@ -2199,17 +2199,17 @@ public class Utils {
 
             String symbol = dto.getId().toUpperCase();
 
-            if (symbol.contains(CAPITAL_TIME_MINUTE_5)) {
+            if (symbol.contains(CAPITAL_TIME_05)) {
                 result = "(05) ";
-            } else if (symbol.contains(CAPITAL_TIME_MINUTE_15)) {
+            } else if (symbol.contains(CAPITAL_TIME_15)) {
                 result = "(15) ";
-            } else if (symbol.contains(CAPITAL_TIME_HOUR_4)) {
+            } else if (symbol.contains(CAPITAL_TIME_H4)) {
                 result = "(H4) ";
-            } else if (symbol.contains(CAPITAL_TIME_HOUR)) {
+            } else if (symbol.contains(CAPITAL_TIME_H1)) {
                 result = "(H1) ";
-            } else if (symbol.contains(CAPITAL_TIME_DAY)) {
+            } else if (symbol.contains(CAPITAL_TIME_D1)) {
                 result = "(D1) ";
-            } else if (symbol.contains(CAPITAL_TIME_WEEK)) {
+            } else if (symbol.contains(CAPITAL_TIME_W1)) {
                 result = "(W1) ";
 
             } else {
@@ -3278,12 +3278,12 @@ public class Utils {
 
     public static String getEpicFromId(String id) {
         String EPIC = id;
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_WEEK, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_DAY, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR_4, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_HOUR, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_15, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_MINUTE_5, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_W1, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_D1, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H4, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H1, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_15, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_05, "");
         EPIC = EPIC.replace("_", "");
 
         return EPIC;
@@ -3520,7 +3520,7 @@ public class Utils {
         if (dto_entry.getId().contains("_MINUTE_")) {
             // risk = risk.divide(BigDecimal.valueOf(3), 3, RoundingMode.CEILING);
         }
-        if (dto_entry.getId().contains(CAPITAL_TIME_HOUR) && !dto_entry.getId().contains(CAPITAL_TIME_HOUR_4)) {
+        if (dto_entry.getId().contains(CAPITAL_TIME_H1) && !dto_entry.getId().contains(CAPITAL_TIME_H4)) {
             // risk = risk.divide(BigDecimal.valueOf(2), 3, RoundingMode.CEILING);
         }
         risk = formatPrice(risk, 0);

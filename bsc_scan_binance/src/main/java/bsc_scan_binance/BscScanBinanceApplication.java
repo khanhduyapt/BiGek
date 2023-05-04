@@ -125,12 +125,12 @@ public class BscScanBinanceApplication {
                                 binance_service.initWeekTrend();
 
                                 for (String EPIC : CAPITAL_LIST) {
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_WEEK);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_DAY);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR_4);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_HOUR);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_15);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MINUTE_5);
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_W1);
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_D1);
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H4);
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_15);
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_05);
                                 }
 
                                 binance_service.scapForex();
@@ -264,18 +264,18 @@ public class BscScanBinanceApplication {
     public static void setWattingTime(String SYMBOL, String CRYPTO_TIME_xx) {
         Integer time = Utils.MINUTES_OF_15M;
         switch (CRYPTO_TIME_xx) {
-        case Utils.CRYPTO_TIME_5m:
+        case Utils.CRYPTO_TIME_05:
             time = Utils.MINUTES_OF_15M;
             break;
-        case Utils.CRYPTO_TIME_15m:
+        case Utils.CRYPTO_TIME_15:
             time = Utils.MINUTES_OF_15M;
             break;
-        case Utils.CRYPTO_TIME_1H:
+        case Utils.CRYPTO_TIME_H1:
             time = Utils.MINUTES_OF_1H;
             break;
-        case Utils.CRYPTO_TIME_4H:
-        case Utils.CRYPTO_TIME_1D:
-        case Utils.CRYPTO_TIME_1w:
+        case Utils.CRYPTO_TIME_H4:
+        case Utils.CRYPTO_TIME_D1:
+        case Utils.CRYPTO_TIME_W1:
             time = Utils.MINUTES_OF_4H;
             break;
         default:
