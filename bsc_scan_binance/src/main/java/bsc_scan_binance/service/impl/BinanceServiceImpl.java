@@ -3602,13 +3602,13 @@ public class BinanceServiceImpl implements BinanceService {
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
             if (Utils.isNotBlank(dto.getNote()) && Objects.equals(trend_dto, trend_h4)) {
-                String prefix = "(W1.D1.H4.H1.15.05) <-- ";
+                String prefix = "(W1.H8.H4.H1.15.05) <-- ";
 
                 if (!Objects.equals(trend_w1, trend_dto)) {
                     prefix = prefix.replace("W1", "  ");
                 }
                 if (!Objects.equals(trend_d1, trend_dto)) {
-                    prefix = prefix.replace("D1", "  ");
+                    prefix = prefix.replace("H8", "  ");
                 }
                 if (!Objects.equals(trend_h1, trend_dto)) {
                     prefix = prefix.replace("H1", "  ");
@@ -3620,7 +3620,7 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("H1", "  ");
                 }
 
-                if (!prefix.contains("D1") || !prefix.contains("H1")) {
+                if (!prefix.contains("H8") || !prefix.contains("H1")) {
                     prefix = prefix.replace("<--", "   ");
                 }
 

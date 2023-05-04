@@ -133,10 +133,14 @@ public class BscScanBinanceApplication {
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_05);
                                 }
 
+                                binance_service.scapForex(Utils.CAPITAL_TIME_D1);
                                 binance_service.scapForex(Utils.CAPITAL_TIME_H4);
                                 binance_service.scapForex(Utils.CAPITAL_TIME_H1);
-                                binance_service.scapForex(Utils.CAPITAL_TIME_15);
-                                binance_service.scapForex(Utils.CAPITAL_TIME_05);
+
+                                if (Utils.isKillZoneTime()) {
+                                    binance_service.scapForex(Utils.CAPITAL_TIME_15);
+                                    binance_service.scapForex(Utils.CAPITAL_TIME_05);
+                                }
                             }
                         }
 

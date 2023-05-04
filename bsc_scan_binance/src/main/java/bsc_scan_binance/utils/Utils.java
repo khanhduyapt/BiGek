@@ -882,6 +882,30 @@ public class Utils {
         return false;
     }
 
+    public static boolean isKillZoneTime() {
+        LocalTime kill_zone_tk = LocalTime.parse("05:45:00"); // to: 06:15
+        LocalTime kill_zone_ld = LocalTime.parse("13:45:00"); // to: 14:15
+        LocalTime kill_zone_ny = LocalTime.parse("18:45:00"); // to: 19:15
+        LocalTime cur_time = LocalTime.now();
+
+        long elapsedMinutes_tk = Duration.between(kill_zone_tk, cur_time).toMinutes();
+        if ((0 <= elapsedMinutes_tk) && (elapsedMinutes_tk <= 150)) {
+            return true;
+        }
+
+        long elapsedMinutes_ld = Duration.between(kill_zone_ld, cur_time).toMinutes();
+        if ((0 <= elapsedMinutes_ld) && (elapsedMinutes_ld <= 150)) {
+            return true;
+        }
+
+        long elapsedMinutes_ny = Duration.between(kill_zone_ny, cur_time).toMinutes();
+        if ((0 <= elapsedMinutes_ny) && (elapsedMinutes_ny <= 150)) {
+            return true;
+        }
+
+        return false;
+    }
+
     // https://www.calculator.net/time-duration-calculator.html
     public static boolean isHuntTime() {
         LocalTime time_tokyo = LocalTime.parse("07:00:00"); // to: 14:30
@@ -3458,7 +3482,8 @@ public class Utils {
             return "";
         }
 
-        // Khung nhỏ bắt buộc phải chờ đóng nến, vì khi thị trường giật lên xuống mất xu hướng.
+        // Khung nhỏ bắt buộc phải chờ đóng nến, vì khi thị trường giật lên xuống mất xu
+        // hướng.
         int str = 1;
         int end = 2;
         String id = heken_list.get(0).getId();
