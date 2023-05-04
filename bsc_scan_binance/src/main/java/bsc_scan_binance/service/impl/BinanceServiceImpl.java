@@ -3596,7 +3596,8 @@ public class BinanceServiceImpl implements BinanceService {
                 if (!prefix.contains("D1")) {
                     prefix = prefix.replace("<--", "   ");
                 }
-                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h4);
+
+                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_HOUR_4, trend_h1);
             }
 
             if (Utils.isBlank(result) && Utils.isNotBlank(dto_h1.getNote())) {
@@ -3617,6 +3618,9 @@ public class BinanceServiceImpl implements BinanceService {
                 String find_trend = trend_d1;
                 if (prefix.contains("D1.H4") || prefix.contains("H4.H1")) {
                     find_trend = trend_h4;
+                } else if (dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)
+                        && Objects.equals(trend_h1, trend_15)) {
+                    find_trend = trend_h1;
                 } else {
                     prefix = prefix.replace("<--", "   ");
                 }
@@ -3642,6 +3646,9 @@ public class BinanceServiceImpl implements BinanceService {
                 String find_trend = trend_h4;
                 if (prefix.contains("D1.H4") || prefix.contains("H4.H1")) {
                     find_trend = trend_h4;
+                } else if (dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)
+                        && Objects.equals(trend_h1, trend_15)) {
+                    find_trend = trend_h1;
                 } else {
                     prefix = prefix.replace("<--", "   ");
                 }
@@ -3667,6 +3674,9 @@ public class BinanceServiceImpl implements BinanceService {
                 String find_trend = trend_h4;
                 if (prefix.contains("D1.H4") || prefix.contains("H4.H1")) {
                     find_trend = trend_h4;
+                } else if (dto_05.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)
+                        && Objects.equals(trend_h1, trend_05)) {
+                    find_trend = trend_h1;
                 } else {
                     prefix = prefix.replace("<--", "   ");
                 }
@@ -3746,7 +3756,7 @@ public class BinanceServiceImpl implements BinanceService {
         monitorTrend(Utils.TREND_SHOT,
                 Arrays.asList("US30", "US100", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
                         "", "", "", "", "", "", "", "", "", ""),
-                Utils.CAPITAL_TIME_HOUR_4);
+                Utils.CAPITAL_TIME_HOUR);
 
         // -------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------
