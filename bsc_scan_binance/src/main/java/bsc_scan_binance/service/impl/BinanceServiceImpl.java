@@ -3566,8 +3566,18 @@ public class BinanceServiceImpl implements BinanceService {
 
         String msg = "";
         for (String EPIC : CAPITAL_LIST) {
+            Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
+            if (Objects.isNull(dto) || Utils.isBlank(dto.getNote())) {
+                continue;
+            }
+
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-            if (Objects.isNull(dto_h4) || Utils.isBlank(dto_h4.getNote())) {
+            if (Objects.isNull(dto_h4) || !Objects.equals(dto_h4.getTrend(), dto.getTrend())) {
+                continue;
+            }
+
+            if ((Utils.CAPITAL_TIME_H1 + "_" + Utils.CAPITAL_TIME_15 + "_" + Utils.CAPITAL_TIME_05)
+                    .contains(CAPITAL_TIME_XX) && Utils.isBlank(dto_h4.getNote())) {
                 continue;
             }
 
@@ -3576,7 +3586,6 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(null);
-            Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
 
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
                     || Objects.isNull(dto_15) || Objects.isNull(dto_05) || Objects.isNull(dto)) {
@@ -3592,16 +3601,10 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_05 = dto_05.getTrend();
             String trend_dto = dto.getTrend();
 
-            if (!Objects.equals(trend_h4, trend_h1)) {
-                continue;
-            }
-            if (!Objects.equals(trend_h4, trend_dto)) {
-                continue;
-            }
             // TODO: 2. scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
-            if (Utils.isNotBlank(dto.getNote()) && Objects.equals(trend_dto, trend_h4)) {
+            if (Utils.isNotBlank(dto.getNote()) && Objects.equals(trend_h4, trend_dto)) {
                 String prefix = "(W1.H8.H4.H1.15.05) <-- ";
 
                 if (!Objects.equals(trend_w1, trend_dto)) {
