@@ -3566,13 +3566,16 @@ public class BinanceServiceImpl implements BinanceService {
 
         String msg = "";
         for (String EPIC : CAPITAL_LIST) {
+            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+            if (Objects.isNull(dto_h4) || Utils.isBlank(dto_h4.getNote())) {
+                continue;
+            }
+
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(null);
-
             Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
 
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
@@ -3589,13 +3592,10 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_05 = dto_05.getTrend();
             String trend_dto = dto.getTrend();
 
-            if (!Objects.equals(trend_h4, trend_dto)) {
-                continue;
-            }
-            if (Utils.isBlank(dto_h4.getNote() + dto_h1.getNote())) {
-                continue;
-            }
             if (!Objects.equals(trend_h4, trend_h1)) {
+                continue;
+            }
+            if (!Objects.equals(trend_h4, trend_dto)) {
                 continue;
             }
             // TODO: 2. scapForex
