@@ -3573,7 +3573,6 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_15 = dto_15.getTrend();
             String trend_05 = dto_05.getTrend();
 
-            // + dto_15.getNote() + dto_05.getNote()
             if (Utils.isBlank(dto_h4.getNote() + dto_h1.getNote())) {
                 continue;
             }
