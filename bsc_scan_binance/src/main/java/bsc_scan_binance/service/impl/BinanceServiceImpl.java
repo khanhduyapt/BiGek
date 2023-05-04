@@ -3630,8 +3630,8 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (Utils.isNotBlank(msg)) {
-            String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH();
-            sendMsgPerHour(EVENT_ID, Utils.getChartNameCapital(CAPITAL_TIME_XX) + msg, true);
+            // String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH();
+            // sendMsgPerHour(EVENT_ID, Utils.getChartNameCapital(CAPITAL_TIME_XX) + msg, true);
         }
     }
 
