@@ -3573,8 +3573,8 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_15 = dto_15.getTrend();
             String trend_05 = dto_05.getTrend();
 
-            // + dto_h1.getNote() + dto_15.getNote() + dto_05.getNote()
-            if (Utils.isBlank(dto_h4.getNote())) {
+            //
+            if (Utils.isBlank(dto_h4.getNote() + dto_h1.getNote() + dto_15.getNote() + dto_05.getNote())) {
                 continue;
             }
 
@@ -3628,7 +3628,9 @@ public class BinanceServiceImpl implements BinanceService {
                 result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_H1, find_trend);
             }
 
-            if (Utils.isBlank(result) && Utils.isNotBlank(dto_15.getNote()) && Objects.equals(trend_15, trend_05)) {
+            if (Utils.isBlank(result) && Utils.isNotBlank(dto_15.getNote())
+                    && Objects.equals(trend_h4, trend_15)
+                    && Objects.equals(trend_15, trend_05)) {
                 String prefix = "(W1.D1.H4.H1) <-- ";
                 if (!Objects.equals(trend_w1, trend_15)) {
                     prefix = prefix.replace("W1", "  ");
@@ -3656,7 +3658,9 @@ public class BinanceServiceImpl implements BinanceService {
                 result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_15, find_trend);
             }
 
-            if (Utils.isBlank(result) && Utils.isNotBlank(dto_05.getNote()) && Objects.equals(trend_15, trend_05)) {
+            if (Utils.isBlank(result) && Utils.isNotBlank(dto_05.getNote())
+                    && Objects.equals(trend_h4, trend_15)
+                    && Objects.equals(trend_15, trend_05)) {
                 String prefix = "(W1.D1.H4.H1) <-- ";
                 if (!Objects.equals(trend_w1, trend_05)) {
                     prefix = prefix.replace("W1", "  ");
@@ -3716,8 +3720,11 @@ public class BinanceServiceImpl implements BinanceService {
         monitorTrend(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("GBPAUD", ""));
         monitorTrend(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("US30", "US100", "", "", "", ""));
 
-        monitorTrend(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("USDCAD", ""));
+        monitorTrend(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("", ""));
         monitorTrend(Utils.TREND_SHOT, Utils.CAPITAL_TIME_15, Arrays.asList("", ""));
+
+        monitorTrend(Utils.TREND_LONG, Utils.CAPITAL_TIME_05, Arrays.asList("", ""));
+        monitorTrend(Utils.TREND_SHOT, Utils.CAPITAL_TIME_05, Arrays.asList("", ""));
         // -------------------------------------------------------------------------------------
 
         boolean isDebug = false;
@@ -3754,7 +3761,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> LIST_H1_SELLING = Arrays.asList("XAUUSD", "", "", "", "", "", "", "", "");
 
         // 15
-        List<String> LIST_15_BUYING = Arrays.asList("", "", "", "", "", "", "");
+        List<String> LIST_15_BUYING = Arrays.asList("USDCAD", "", "", "", "", "", "");
         List<String> LIST_15_SELLING = Arrays.asList("XAGUSD", "NZDUSD", "GER40", "", "", "", "", "", "");
 
         // -------------------------------------------------------------------------------------
