@@ -3589,13 +3589,15 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_05 = dto_05.getTrend();
             String trend_dto = dto.getTrend();
 
-            if (Objects.equals(trend_d1, trend_h4) && !Objects.equals(trend_h4, trend_dto)) {
+            if (!Objects.equals(trend_h4, trend_dto)) {
                 continue;
             }
             if (Utils.isBlank(dto_h4.getNote() + dto_h1.getNote())) {
                 continue;
             }
-
+            if (!Objects.equals(trend_h4, trend_h1)) {
+                continue;
+            }
             // TODO: 2. scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
@@ -3631,7 +3633,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (Utils.isNotBlank(msg)) {
             // String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH();
-            // sendMsgPerHour(EVENT_ID, Utils.getChartNameCapital(CAPITAL_TIME_XX) + msg, true);
+            // sendMsgPerHour(EVENT_ID, Utils.getChartNameCapital(CAPITAL_TIME_XX) + msg,
+            // true);
         }
     }
 
@@ -3649,10 +3652,10 @@ public class BinanceServiceImpl implements BinanceService {
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("", ""));
-        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_15, Arrays.asList("USDCAD", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_15, Arrays.asList("", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_05, Arrays.asList("", ""));
-        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_05, Arrays.asList("XAGUSD", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_05, Arrays.asList("", ""));
         // -------------------------------------------------------------------------------------
         // TODO: 3. monitorProfit
         // "XAUUSD", "XAGUSD", "BTCUSD", "US30", "US100", "GER40", "UK100", "USOIL"
@@ -3667,14 +3670,14 @@ public class BinanceServiceImpl implements BinanceService {
 
         // H4
         List<String> LIST_H4_LONG = Arrays.asList("", "", "", "", "", "");
-        List<String> LIST_H4_SHOT = Arrays.asList("USDCAD", "", "", "", "", "");
+        List<String> LIST_H4_SHOT = Arrays.asList("", "", "", "", "", "");
 
         // H1
-        List<String> LIST_H1_LONG = Arrays.asList("USDCHF", "USDJPY", "USDCAD", "", "", "");
-        List<String> LIST_H1_SHOT = Arrays.asList("NZDUSD", "GBPUSD", "GER40", "US100", "", "");
+        List<String> LIST_H1_LONG = Arrays.asList("", "", "", "", "", "");
+        List<String> LIST_H1_SHOT = Arrays.asList("", "", "", "", "", "");
 
         // 15
-        List<String> LIST_15_LONG = Arrays.asList("AUDJPY", "CADJPY", "", "", "", "");
+        List<String> LIST_15_LONG = Arrays.asList("", "", "", "", "", "");
         List<String> LIST_15_SHOT = Arrays.asList("", "", "", "", "", "");
 
         // -------------------------------------------------------------------------------------
