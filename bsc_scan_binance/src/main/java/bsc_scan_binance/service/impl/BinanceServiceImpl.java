@@ -2892,14 +2892,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
             String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_Blog4h();
             sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
-
-            // String log = " " + Utils.appendSpace(str_price, 15)
-            // + Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70);
-            //
-            // logMsgPerHour("CRYPTO_KILL_" + SYMBOL,
-            // Utils.appendSpace(Utils.getChartNameAndEpic(list_h4.get(0).getId()), 20) +
-            // log + msg,
-            // Utils.MINUTES_OF_4H);
         }
 
         return "";
@@ -3480,15 +3472,6 @@ public class BinanceServiceImpl implements BinanceService {
         String note = "";
         if (CAPITAL_TIME_XX.contains("MINUTE")) {
             String type = "";
-            if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
-                type = "(50)";
-            }
-            if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
-                type = "(50)";
-            }
-            if (Utils.isNotBlank(type) && Objects.equals(trend, Utils.switchTrendByMaXX(heken_list, 3, 5))) {
-                type = "(Ma3.5)";
-            }
             if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
                 type = Utils.TEXT_SWITCH_TREND_Ma_1_50;
             }
@@ -3500,6 +3483,15 @@ public class BinanceServiceImpl implements BinanceService {
             String type = "";
             if (Utils.isBlank(type) && Objects.equals(Utils.switchTrendByMaXX(heken_list, 3, 5), trend)) {
                 type = "(Ma3.5)";
+
+                if (heken_list.size() > 30) {
+                    if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
+                        type += "(50)";
+                    }
+                    if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
+                        type += "(50)";
+                    }
+                }
             }
 
             if (Utils.isBlank(type) && Objects.equals(Utils.CAPITAL_TIME_H1, CAPITAL_TIME_XX)
@@ -3599,7 +3591,7 @@ public class BinanceServiceImpl implements BinanceService {
                 result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_H4, trend_h4);
             }
 
-            if (Utils.isBlank(result) && Utils.isNotBlank(dto_h1.getNote())) {
+            if (Utils.isBlank(result) && Utils.isNotBlank(dto_h1.getNote()) && Objects.equals(trend_h4, trend_h1)) {
                 String prefix = "(W1.D1.H4.15) <-- ";
                 if (!Objects.equals(trend_w1, trend_h1)) {
                     prefix = prefix.replace("W1", "  ");
@@ -3643,7 +3635,7 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("<--", "   ");
                 }
 
-                // result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_15, trend_15);
+                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_15, trend_15);
             }
 
             if (Utils.isBlank(result) && Utils.isNotBlank(dto_05.getNote())
@@ -3667,7 +3659,7 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("<--", "   ");
                 }
 
-                // result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_05, trend_05);
+                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_05, trend_05);
             }
 
             // -----------------------------------------------------------------------
@@ -3720,7 +3712,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // H1
         List<String> LIST_H1_LONG = Arrays.asList("", "", "", "", "", "");
-        List<String> LIST_H1_SHOT = Arrays.asList("NZDUSD", "", "", "", "", "");
+        List<String> LIST_H1_SHOT = Arrays.asList("NZDUSD", "GBPUSD", "", "", "", "");
 
         // 15
         List<String> LIST_15_LONG = Arrays.asList("", "", "", "", "", "");

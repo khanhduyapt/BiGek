@@ -3173,7 +3173,7 @@ public class Utils {
     }
 
     public static String switchTrendByMaXX(List<BtcFutures> list, int fastIndex, int slowIndex) {
-        return switchTrendByMaXX_123(list, fastIndex, slowIndex, 0, 3);
+        return switchTrendByMaXX_123(list, fastIndex, slowIndex, 1, 2);
     }
 
     public static String switchTrendByMa13_XX(List<BtcFutures> heken_list, int slowIndexXx) {
