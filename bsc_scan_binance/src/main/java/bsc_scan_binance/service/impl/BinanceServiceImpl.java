@@ -3506,9 +3506,13 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            if (Utils.isBlank(type) && Objects.equals(Utils.CAPITAL_TIME_H1, CAPITAL_TIME_XX)
-                    && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
-                type = Utils.TEXT_SWITCH_TREND_Ma_1_50;
+            if (Utils.isBlank(type) && Objects.equals(Utils.CAPITAL_TIME_H1, CAPITAL_TIME_XX)) {
+                if (Utils.isBlank(type) && Objects.equals(Utils.switchTrendByMaXX(heken_list, 5, 8), trend)) {
+                    type = "(Ma5.8)";
+                }
+                if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
+                    type = Utils.TEXT_SWITCH_TREND_Ma_1_50;
+                }
             }
 
             if (Utils.isNotBlank(type)) {
@@ -3603,7 +3607,8 @@ public class BinanceServiceImpl implements BinanceService {
                 result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_H4, trend_h4);
             }
 
-            if (Utils.isBlank(result) && Utils.isNotBlank(dto_h1.getNote()) && Objects.equals(trend_h4, trend_h1)) {
+            if (Utils.isBlank(result) && Utils.isNotBlank(dto_h1.getNote())
+                    && Objects.equals(trend_h4, trend_h1)) {
                 String prefix = "(W1.D1.H4.15) <-- ";
                 if (!Objects.equals(trend_w1, trend_h1)) {
                     prefix = prefix.replace("W1", "  ");
@@ -3719,7 +3724,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> LIST_D1_SHOT = Arrays.asList("US100", "", "", "", "", "");
 
         // H4
-        List<String> LIST_H4_LONG = Arrays.asList("", "", "", "", "", "");
+        List<String> LIST_H4_LONG = Arrays.asList("GBPJPY", "", "", "", "", "");
         List<String> LIST_H4_SHOT = Arrays.asList("USDCAD", "", "", "", "", "");
 
         // H1
