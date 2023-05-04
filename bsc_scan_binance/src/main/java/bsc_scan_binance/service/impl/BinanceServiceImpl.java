@@ -3573,8 +3573,8 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_15 = dto_15.getTrend();
             String trend_05 = dto_05.getTrend();
 
-            //
-            if (Utils.isBlank(dto_h4.getNote() + dto_h1.getNote() + dto_15.getNote() + dto_05.getNote())) {
+            // + dto_15.getNote() + dto_05.getNote()
+            if (Utils.isBlank(dto_h4.getNote() + dto_h1.getNote())) {
                 continue;
             }
 
@@ -3600,7 +3600,7 @@ public class BinanceServiceImpl implements BinanceService {
                 result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_H4, trend_h4);
             }
 
-            if (Utils.isBlank(result) && Utils.isNotBlank(dto_h1.getNote()) && Objects.equals(trend_h4, trend_h1)) {
+            if (Utils.isBlank(result) && Utils.isNotBlank(dto_h1.getNote())) {
                 String prefix = "(W1.D1.H4.15) <-- ";
                 if (!Objects.equals(trend_w1, trend_h1)) {
                     prefix = prefix.replace("W1", "  ");
@@ -3615,21 +3615,15 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("15", "  ");
                 }
 
-                String find_trend = trend_d1;
                 if (prefix.contains("D1.H4") || prefix.contains("H4.H1")) {
-                    find_trend = trend_h4;
-                } else if (dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)
-                        && Objects.equals(trend_h1, trend_15)) {
-                    find_trend = trend_h1;
                 } else {
                     prefix = prefix.replace("<--", "   ");
                 }
 
-                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_H1, find_trend);
+                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_H1, trend_h1);
             }
 
             if (Utils.isBlank(result) && Utils.isNotBlank(dto_15.getNote())
-                    && Objects.equals(trend_h4, trend_15)
                     && Objects.equals(trend_15, trend_05)) {
                 String prefix = "(W1.D1.H4.H1) <-- ";
                 if (!Objects.equals(trend_w1, trend_15)) {
@@ -3645,21 +3639,15 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("H1", "  ");
                 }
 
-                String find_trend = trend_h4;
                 if (prefix.contains("D1.H4") || prefix.contains("H4.H1")) {
-                    find_trend = trend_h4;
-                } else if (dto_15.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)
-                        && Objects.equals(trend_h1, trend_15)) {
-                    find_trend = trend_h1;
                 } else {
                     prefix = prefix.replace("<--", "   ");
                 }
 
-                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_15, find_trend);
+                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_15, trend_15);
             }
 
             if (Utils.isBlank(result) && Utils.isNotBlank(dto_05.getNote())
-                    && Objects.equals(trend_h4, trend_15)
                     && Objects.equals(trend_15, trend_05)) {
                 String prefix = "(W1.D1.H4.H1) <-- ";
                 if (!Objects.equals(trend_w1, trend_05)) {
@@ -3675,17 +3663,12 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("H1", "  ");
                 }
 
-                String find_trend = trend_h4;
                 if (prefix.contains("D1.H4") || prefix.contains("H4.H1")) {
-                    find_trend = trend_h4;
-                } else if (dto_05.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)
-                        && Objects.equals(trend_h1, trend_05)) {
-                    find_trend = trend_h1;
                 } else {
                     prefix = prefix.replace("<--", "   ");
                 }
 
-                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_05, find_trend);
+                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_05, trend_05);
             }
 
             // -----------------------------------------------------------------------
@@ -3714,11 +3697,11 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public void monitorProfit() {
         // -------------------------------------------------------------------------------------
-        monitorTrend(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList("NZDCHF", "", "", "", ""));
-        monitorTrend(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4, Arrays.asList("", "", "", "", ""));
+        monitorTrend(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList("", ""));
+        monitorTrend(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4, Arrays.asList("", ""));
 
-        monitorTrend(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("GBPAUD", ""));
-        monitorTrend(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("US30", "US100", "", "", "", ""));
+        monitorTrend(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", ""));
+        monitorTrend(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("", ""));
 
         monitorTrend(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("", ""));
         monitorTrend(Utils.TREND_SHOT, Utils.CAPITAL_TIME_15, Arrays.asList("", ""));
@@ -3749,20 +3732,20 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // D1
-        List<String> LIST_D1_BUYING = Arrays.asList("", "", "", "", "", "", "");
-        List<String> LIST_D1_SELLING = Arrays.asList("", "", "", "", "", "", "", "", "", "", "");
+        List<String> LIST_D1_LONG = Arrays.asList("", "", "", "", "", "");
+        List<String> LIST_D1_SHOT = Arrays.asList("", "", "", "", "", "");
 
         // H4
-        List<String> LIST_H4_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> LIST_H4_SELLING = Arrays.asList("", "", "", "", "", "");
+        List<String> LIST_H4_LONG = Arrays.asList("", "", "", "", "", "");
+        List<String> LIST_H4_SHOT = Arrays.asList("", "", "", "", "", "");
 
         // H1
-        List<String> LIST_H1_BUYING = Arrays.asList("", "", "", "", "", "", "");
-        List<String> LIST_H1_SELLING = Arrays.asList("XAUUSD", "", "", "", "", "", "", "", "");
+        List<String> LIST_H1_LONG = Arrays.asList("", "", "", "", "", "");
+        List<String> LIST_H1_SHOT = Arrays.asList("", "", "", "", "", "");
 
         // 15
-        List<String> LIST_15_BUYING = Arrays.asList("USDCAD", "", "", "", "", "", "");
-        List<String> LIST_15_SELLING = Arrays.asList("XAGUSD", "NZDUSD", "GER40", "", "", "", "", "", "");
+        List<String> LIST_15_LONG = Arrays.asList("", "", "", "", "", "");
+        List<String> LIST_15_SHOT = Arrays.asList("", "", "", "", "", "");
 
         // -------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------
@@ -3775,10 +3758,10 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        alertMsg(Utils.CAPITAL_TIME_15, LIST_15_BUYING, LIST_15_SELLING);
-        alertMsg(Utils.CAPITAL_TIME_H1, LIST_H1_BUYING, LIST_H1_SELLING);
-        alertMsg(Utils.CAPITAL_TIME_H4, LIST_H4_BUYING, LIST_H4_SELLING);
-        alertMsg(Utils.CAPITAL_TIME_D1, LIST_D1_BUYING, LIST_D1_SELLING);
+        alertMsg(Utils.CAPITAL_TIME_15, LIST_15_LONG, LIST_15_SHOT);
+        alertMsg(Utils.CAPITAL_TIME_H1, LIST_H1_LONG, LIST_H1_SHOT);
+        alertMsg(Utils.CAPITAL_TIME_H4, LIST_H4_LONG, LIST_H4_SHOT);
+        alertMsg(Utils.CAPITAL_TIME_D1, LIST_D1_LONG, LIST_D1_SHOT);
     }
 
 }
