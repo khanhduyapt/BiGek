@@ -3470,7 +3470,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend = Utils.getTrendByHekenAshiList(heken_list);
 
         String note = "";
-        if (CAPITAL_TIME_XX.contains("MINUTE")) {
+        if (Objects.equals(Utils.CAPITAL_TIME_05, CAPITAL_TIME_XX)) {
             String type = "";
             if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
                 type = Utils.TEXT_SWITCH_TREND_Ma_1_50;
@@ -3478,6 +3478,18 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Utils.isNotBlank(type)) {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
+            }
+        } else if (Objects.equals(Utils.CAPITAL_TIME_15, CAPITAL_TIME_XX)) {
+            String type = "";
+            if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
+                type = "(50)";
+            }
+            if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
+                type = "(50)";
+            }
+
+            if (Utils.isNotBlank(type) && Objects.equals(Utils.switchTrendByMaXX(heken_list, 5, 8), trend)) {
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(Ma5.8)";
             }
         } else {
             String type = "";
