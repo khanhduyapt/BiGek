@@ -51,7 +51,7 @@ public interface BinanceService {
 
     public void createReport();
 
-    public void scapForex();
+    public void scapForex(String CAPITAL_TIME_XX);
 
     public void deleteConnectTimeOutException();
 
