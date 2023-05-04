@@ -2712,7 +2712,7 @@ public class BinanceServiceImpl implements BinanceService {
         logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
     }
 
-    private void monitorTrend(String ACTION, String CAPITAL_TIME_XX, List<String> list) {
+    private void waiting(String ACTION, String CAPITAL_TIME_XX, List<String> list) {
         Collections.sort(list);
 
         for (String EPIC : list) {
@@ -3643,7 +3643,7 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("<--", "   ");
                 }
 
-                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_15, trend_15);
+                // result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_15, trend_15);
             }
 
             if (Utils.isBlank(result) && Utils.isNotBlank(dto_05.getNote())
@@ -3667,7 +3667,7 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("<--", "   ");
                 }
 
-                result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_05, trend_05);
+                // result += analysis(prefix, EPIC, Utils.CAPITAL_TIME_05, trend_05);
             }
 
             // -----------------------------------------------------------------------
@@ -3686,35 +3686,50 @@ public class BinanceServiceImpl implements BinanceService {
     // Xu huong H4 cung xu huong nhung yeu di? Msg thong bao take profit.
     // Xu huong H1 cung xu huong nhung yeu di? Log thong bao.
     // ----------------------------------------------------------------------------------------------
-    // "XAUUSD", "XAGUSD", "BTCUSD", "US30", "US100", "GER40", "UK100", "USOIL"
-    // "AUDJPY", "AUDUSD", "CADJPY", "CHFJPY",
-    // "EURAUD", "EURCAD", "EURCHF", "EURJPY", "EURNZD", "EURUSD",
-    // "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD",
-    // "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDJPY"
 
     @Override
     @Transactional
     public void monitorProfit() {
         // -------------------------------------------------------------------------------------
-        monitorTrend(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList("", ""));
-        monitorTrend(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4, Arrays.asList("", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList("", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4, Arrays.asList("", ""));
 
-        monitorTrend(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", ""));
-        monitorTrend(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("", ""));
 
-        monitorTrend(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("", ""));
-        monitorTrend(Utils.TREND_SHOT, Utils.CAPITAL_TIME_15, Arrays.asList("", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_15, Arrays.asList("EURCAD", "USDCAD"));
 
-        monitorTrend(Utils.TREND_LONG, Utils.CAPITAL_TIME_05, Arrays.asList("", ""));
-        monitorTrend(Utils.TREND_SHOT, Utils.CAPITAL_TIME_05, Arrays.asList("", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_05, Arrays.asList("", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_05, Arrays.asList("XAGUSD", ""));
         // -------------------------------------------------------------------------------------
-
-        boolean isDebug = false;
-
         // TODO: 3. monitorProfit
-        CRYPTO_LIST_BUYING = Arrays.asList("ARB");
+        // "XAUUSD", "XAGUSD", "BTCUSD", "US30", "US100", "GER40", "UK100", "USOIL"
+        // "AUDJPY", "AUDUSD", "CADJPY", "CHFJPY",
+        // "EURAUD", "EURCAD", "EURCHF", "EURJPY", "EURNZD", "EURUSD",
+        // "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD",
+        // "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDJPY"
 
+        // D1
+        List<String> LIST_D1_LONG = Arrays.asList("", "", "", "", "", "");
+        List<String> LIST_D1_SHOT = Arrays.asList("US100", "GER40", "", "", "", "");
+
+        // H4
+        List<String> LIST_H4_LONG = Arrays.asList("", "", "", "", "", "");
+        List<String> LIST_H4_SHOT = Arrays.asList("USDCAD", "", "", "", "", "");
+
+        // H1
+        List<String> LIST_H1_LONG = Arrays.asList("", "", "", "", "", "");
+        List<String> LIST_H1_SHOT = Arrays.asList("NZDUSD", "", "", "", "", "");
+
+        // 15
+        List<String> LIST_15_LONG = Arrays.asList("", "", "", "", "", "");
+        List<String> LIST_15_SHOT = Arrays.asList("", "", "", "", "", "");
+
+        // -------------------------------------------------------------------------------------
         // ---------------------------------------CRYPTO----------------------------------------
+
+        CRYPTO_LIST_BUYING = Arrays.asList("ARB");
         if (isReloadAfter(Utils.MINUTES_OF_15M, "MONITOR_CRYPTO")) {
             for (String SYMBOL : CRYPTO_LIST_BUYING) {
                 if (Utils.isBlank(SYMBOL)) {
@@ -3726,27 +3741,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
+        boolean isDebug = false;
         if (isDebug) {
             return;
         }
-
-        // D1
-        List<String> LIST_D1_LONG = Arrays.asList("", "", "", "", "", "");
-        List<String> LIST_D1_SHOT = Arrays.asList("", "", "", "", "", "");
-
-        // H4
-        List<String> LIST_H4_LONG = Arrays.asList("", "", "", "", "", "");
-        List<String> LIST_H4_SHOT = Arrays.asList("", "", "", "", "", "");
-
-        // H1
-        List<String> LIST_H1_LONG = Arrays.asList("", "", "", "", "", "");
-        List<String> LIST_H1_SHOT = Arrays.asList("", "", "", "", "", "");
-
-        // 15
-        List<String> LIST_15_LONG = Arrays.asList("", "", "", "", "", "");
-        List<String> LIST_15_SHOT = Arrays.asList("", "", "", "", "", "");
-
-        // -------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------
 
         // ----------------------------------------FOREX----------------------------------------
