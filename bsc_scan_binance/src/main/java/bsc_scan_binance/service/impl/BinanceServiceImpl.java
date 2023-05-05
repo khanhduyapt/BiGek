@@ -2861,7 +2861,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_H4, 50);
         List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
         String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
-        String switch_trend = Utils.switchTrendByHeken01(heken_list_h4);
+        String switch_trend = Utils.switchTrendByHeken12(heken_list_h4);
         if (Utils.isBlank(switch_trend)) {
             return "";
         }
@@ -3326,7 +3326,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             List<BtcFutures> heken_list_w1 = Utils.getHekenList(list_w1);
             String trend_w1 = Utils.getTrendByHekenAshiList(heken_list_w1);
-            String switch_trend = Utils.switchTrendByHeken01(heken_list_w1);
+            String switch_trend = Utils.switchTrendByHeken12(heken_list_w1);
 
             if (Objects.equals(trend_w1, Utils.TREND_LONG) && Utils.isNotBlank(switch_trend)) {
                 List<BigDecimal> body = Utils.getOpenCloseCandle(list_w1);
@@ -3365,7 +3365,7 @@ public class BinanceServiceImpl implements BinanceService {
             List<BigDecimal> body = Utils.getOpenCloseCandle(list_d1);
             List<BigDecimal> low_high = Utils.getLowHighCandle(list_d1);
 
-            String switch_trend = Utils.switchTrendByHeken01(heken_list_d1);
+            String switch_trend = Utils.switchTrendByHeken12(heken_list_d1);
 
             String note = "";
             if (CRYPTO_LIST_BUYING.contains(SYMBOL)) {
@@ -3411,7 +3411,7 @@ public class BinanceServiceImpl implements BinanceService {
                 logMsgPerHour(EVENT_ID, msg_d1 + log, Utils.MINUTES_OF_1H);
             }
 
-            String switch_trend = Utils.switchTrendByHeken01(heken_list_h4);
+            String switch_trend = Utils.switchTrendByHeken12(heken_list_h4);
             if (Utils.isNotBlank(switch_trend) && Objects.equals(SYMBOL, "BTC")) {
                 logMsgPerHour("switch_trend_btc",
                         Utils.appendSpace("BTC SwitchTrend", 29) + "(H4) " + Utils.appendSpace(switch_trend, 25) + log,
@@ -3491,7 +3491,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isNotBlank(type) && Objects.equals(Utils.switchTrendByMaXX(heken_list, 5, 8), trend)) {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(Ma5.8)";
             }
-        } else {
+        } else if (CAPITAL_TIME_XX.contains("HOUR")) {
             String type = "";
             if (Utils.isBlank(type) && Objects.equals(Utils.switchTrendByMaXX(heken_list, 3, 5), trend)) {
                 type = "(Ma3.5)";
@@ -3523,6 +3523,11 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Utils.isNotBlank(type)) {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
+            }
+        } else {
+            String type = Utils.switchTrendByHeken12(heken_list);
+            if (Utils.isNotBlank(type)) {
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + type;
             }
         }
 
@@ -3609,19 +3614,19 @@ public class BinanceServiceImpl implements BinanceService {
                 String prefix = "(W1.H8.H4.H1.15.05) <-- ";
 
                 if (!Objects.equals(trend_w1, trend_dto)) {
-                    prefix = prefix.replace("W1", "  ");
+                    prefix = prefix.replace("W1.", "   ");
                 }
                 if (!Objects.equals(trend_d1, trend_dto)) {
-                    prefix = prefix.replace("H8", "  ");
+                    prefix = prefix.replace("H8.", "   ");
                 }
                 if (!Objects.equals(trend_h1, trend_dto)) {
-                    prefix = prefix.replace("H1", "  ");
+                    prefix = prefix.replace("H1.", "   ");
                 }
-                if (!Objects.equals(trend_15, trend_h1)) {
-                    prefix = prefix.replace("15", "  ");
+                if (!Objects.equals(trend_15, trend_dto)) {
+                    prefix = prefix.replace("15.", "   ");
                 }
-                if (!Objects.equals(trend_h1, trend_05)) {
-                    prefix = prefix.replace("H1", "  ");
+                if (!Objects.equals(trend_05, trend_dto)) {
+                    prefix = prefix.replace("05.", "   ");
                 }
 
                 if (!prefix.contains("H8") || !prefix.contains("H1")) {
@@ -3650,17 +3655,17 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public void monitorProfit() {
         // -------------------------------------------------------------------------------------
-        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList("GBPJPY", ""));
-        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4, Arrays.asList("", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList("GBPJPY", "", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4, Arrays.asList("", "", ""));
 
-        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", ""));
-        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
 
-        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("", ""));
-        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_15, Arrays.asList("", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("", "", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_15, Arrays.asList("XAGUSD", "", ""));
 
-        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_05, Arrays.asList("", ""));
-        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_05, Arrays.asList("", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_05, Arrays.asList("", "", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_05, Arrays.asList("", "", ""));
         // -------------------------------------------------------------------------------------
         // TODO: 3. monitorProfit
         // "XAUUSD", "XAGUSD", "BTCUSD", "US30", "US100", "GER40", "UK100", "USOIL"
