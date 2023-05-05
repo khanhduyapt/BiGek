@@ -3604,7 +3604,8 @@ public class BinanceServiceImpl implements BinanceService {
             // TODO: 2. scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
-            if (Utils.isNotBlank(dto.getNote()) && Objects.equals(trend_h4, trend_dto)) {
+            if (Utils.isNotBlank(dto.getNote()) && Objects.equals(trend_d1, trend_h4)
+                    && Objects.equals(trend_h4, trend_dto)) {
                 String prefix = "(W1.H8.H4.H1.15.05) <-- ";
 
                 if (!Objects.equals(trend_w1, trend_dto)) {
@@ -3638,6 +3639,7 @@ public class BinanceServiceImpl implements BinanceService {
             // String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH();
             // sendMsgPerHour(EVENT_ID, Utils.getChartNameCapital(CAPITAL_TIME_XX) + msg,
             // true);
+            Utils.logWritelnDraft("");
         }
     }
 

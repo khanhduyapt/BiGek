@@ -137,7 +137,7 @@ public class BscScanBinanceApplication {
                                 binance_service.scapForex(Utils.CAPITAL_TIME_H4);
                                 binance_service.scapForex(Utils.CAPITAL_TIME_H1);
 
-                                if (Utils.isKillZoneTime()) {
+                                if (Utils.isHuntTime()) {
                                     binance_service.scapForex(Utils.CAPITAL_TIME_15);
                                     binance_service.scapForex(Utils.CAPITAL_TIME_05);
                                 }
