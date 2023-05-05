@@ -3559,26 +3559,14 @@ public class BinanceServiceImpl implements BinanceService {
 
         String msg = "";
         for (String EPIC : CAPITAL_LIST) {
-            Orders dto_dt = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
-            if (Objects.isNull(dto_dt) || Utils.isBlank(dto_dt.getNote())) {
-                continue;
-            }
-
-            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-            if (Objects.isNull(dto_h4) || !Objects.equals(dto_h4.getTrend(), dto_dt.getTrend())) {
-                continue;
-            }
-
-            if ((Utils.CAPITAL_TIME_H1 + "_" + Utils.CAPITAL_TIME_15 + "_" + Utils.CAPITAL_TIME_05)
-                    .contains(CAPITAL_TIME_XX) && Utils.isBlank(dto_h4.getNote())) {
-                continue;
-            }
 
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_h6 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(null);
+            Orders dto_dt = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
 
             if (Objects.isNull(dto_d1) || Objects.isNull(dto_h6) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
                     || Objects.isNull(dto_15) || Objects.isNull(dto_05) || Objects.isNull(dto_dt)) {
@@ -3593,6 +3581,18 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_15 = dto_15.getTrend();
             String trend_05 = dto_05.getTrend();
             String trend_dt = dto_dt.getTrend();
+
+            if (Utils.isBlank(dto_dt.getNote())) {
+                continue;
+            }
+            if (!Objects.equals(trend_h4, trend_dt)) {
+                continue;
+            }
+
+            if ((Utils.CAPITAL_TIME_H1 + "_" + Utils.CAPITAL_TIME_15 + "_" + Utils.CAPITAL_TIME_05)
+                    .contains(CAPITAL_TIME_XX) && Utils.isBlank(dto_h4.getNote() + dto_h6.getNote())) {
+                continue;
+            }
 
             // TODO: 2. scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
