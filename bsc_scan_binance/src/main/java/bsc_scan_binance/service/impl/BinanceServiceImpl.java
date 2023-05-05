@@ -3149,7 +3149,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                         String log = Utils.createLineForex_Header(dto_h1, dto_h1, chart);
                         log += Utils.appendSpace(Utils.removeLastZero(dto_h1.getCurrent_price()), 15);
-                        log += Utils.createLineForex_Body(dto_h1, dto_h4, dto_h1.getTrend()).trim();
+                        log += Utils.createLineForex_Body(dto_h1, dto_h4, "").trim();
                         log += "   " + note;
                         list_d1h4h1.add(log);
                     }
@@ -3611,10 +3611,10 @@ public class BinanceServiceImpl implements BinanceService {
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
             if (Utils.isNotBlank(dto.getNote()) && Objects.equals(trend_d1, trend_h4)
                     && Objects.equals(trend_h4, trend_dto)) {
-                String prefix = "(W1.H8.H4.H1.15.05) <-- ";
+                String prefix = "(D1.H8.H4.H1.15.05) <-- ";
 
                 if (!Objects.equals(trend_w1, trend_dto)) {
-                    prefix = prefix.replace("W1.", "   ");
+                    prefix = prefix.replace("D1.", "   ");
                 }
                 if (!Objects.equals(trend_d1, trend_dto)) {
                     prefix = prefix.replace("H8.", "   ");
@@ -3667,6 +3667,7 @@ public class BinanceServiceImpl implements BinanceService {
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_05, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_05, Arrays.asList("", "", ""));
         // -------------------------------------------------------------------------------------
+
         // TODO: 3. monitorProfit
         // "XAUUSD", "XAGUSD", "BTCUSD", "US30", "US100", "GER40", "UK100", "USOIL"
         // "AUDJPY", "AUDUSD", "CADJPY", "CHFJPY",
@@ -3679,8 +3680,8 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> LIST_D1_SHOT = Arrays.asList("", "", "", "", "", "");
 
         // H4
-        List<String> LIST_H4_LONG = Arrays.asList("", "", "", "", "", "");
-        List<String> LIST_H4_SHOT = Arrays.asList("", "", "", "", "", "");
+        List<String> LIST_H4_LONG = Arrays.asList("GER40", "NZDJPY", "", "", "", "");
+        List<String> LIST_H4_SHOT = Arrays.asList("GBPAUD", "", "", "", "", "");
 
         // H1
         List<String> LIST_H1_LONG = Arrays.asList("", "", "", "", "", "");
