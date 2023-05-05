@@ -3460,11 +3460,14 @@ public class Utils {
 
         String type = "";
         if (heken_list.get(1).isUptrend() && heken_list.get(2).isDown() && heken_list.get(3).isDown()) {
-            type = Utils.appendSpace(TREND_LONG, 4) + "(Heken)";
-
+            type = "(Heken)";
         } else if (heken_list.get(1).isDown() && heken_list.get(2).isUptrend() && heken_list.get(3).isUptrend()) {
-            type = Utils.appendSpace(TREND_SHOT, 4) + "(Heken)";
+            type = "(Heken)";
+        }
 
+        if (Utils.isNotBlank(type)) {
+            String trend = Utils.getTrendByHekenAshiList(heken_list);
+            type = Utils.appendSpace(trend, 4) + type;
         }
 
         return type;
