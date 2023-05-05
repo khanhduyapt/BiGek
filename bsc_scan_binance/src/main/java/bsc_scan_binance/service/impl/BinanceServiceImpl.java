@@ -2700,7 +2700,7 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        String log = Utils.appendSpace(EPIC, 11);
+        String log = Utils.appendSpace(EPIC, 10);
         log += Utils.appendSpace(append, 35) + " ";
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
 
@@ -2786,7 +2786,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
     }
 
-    private String analysis(String prifix, String EPIC, String CAPITAL_TIME_XX, String find_trend) {
+    private String analysis(String prifix, String EPIC, String CAPITAL_TIME_XX) {
 
         Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
         Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
@@ -2794,22 +2794,18 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.isNull(dto) || Objects.isNull(dto_sl)) {
             return "";
         }
-        String trend = dto.getTrend();
-        if (Utils.isBlank(find_trend)) {
-            find_trend = trend;
-        }
 
-        if (!Objects.equals(find_trend, trend) || Utils.isBlank(dto.getNote())) {
+        if (Utils.isBlank(dto.getNote())) {
             return "";
         }
 
         // ----------------------------TREND------------------------
-
+        String trend = dto.getTrend();
         String char_name = Utils.getChartName(dto);
         String type = Objects.equals(Utils.TREND_LONG, trend) ? "(B)"
                 : Objects.equals(Utils.TREND_SHOT, trend) ? "(S)" : "(x)";
 
-        String log = Utils.appendSpace(prifix, 16) + Utils.appendSpace(dto.getNote(), 30);
+        String log = Utils.appendSpace(prifix, 16) + Utils.appendSpace(dto.getNote(), 25);
 
         outputLog("Analysis_" + char_name, EPIC, dto, dto_sl, log);
 
@@ -3551,6 +3547,7 @@ public class BinanceServiceImpl implements BinanceService {
         CAPITAL_LIST.addAll(Utils.EPICS_ONE_WAY);
         CAPITAL_LIST.addAll(Utils.EPICS_FOREXS);
 
+        int index = 1;
         String msg = "";
         for (String EPIC : CAPITAL_LIST) {
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
@@ -3592,13 +3589,16 @@ public class BinanceServiceImpl implements BinanceService {
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
 
             // Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_dt)
-            String prefix = "(D1.H8.H4.H1.15.05) <-- ";
+            String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (D1.H8.H4.H1.15.05) <-- ";
 
             if (!Objects.equals(trend_d1, trend_dt)) {
                 prefix = prefix.replace("D1.", "   ");
             }
             if (!Objects.equals(trend_h8, trend_dt)) {
                 prefix = prefix.replace("H8.", "   ");
+            }
+            if (!Objects.equals(trend_h4, trend_dt)) {
+                prefix = prefix.replace("H4.", "   ");
             }
             if (!Objects.equals(trend_h1, trend_dt)) {
                 prefix = prefix.replace("H1.", "   ");
@@ -3617,7 +3617,8 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isNotBlank(msg)) {
                 msg += ",";
             }
-            msg += analysis(prefix, EPIC, CAPITAL_TIME_XX, trend_h4);
+            msg += analysis(prefix, EPIC, CAPITAL_TIME_XX);
+            index += 1;
         }
 
         if (Utils.isNotBlank(msg)) {
