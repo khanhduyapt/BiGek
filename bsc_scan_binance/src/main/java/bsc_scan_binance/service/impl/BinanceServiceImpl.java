@@ -3563,7 +3563,6 @@ public class BinanceServiceImpl implements BinanceService {
 
         String msg = "";
         for (String EPIC : CAPITAL_LIST) {
-
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_h6 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
@@ -3681,11 +3680,15 @@ public class BinanceServiceImpl implements BinanceService {
 
         // H1
         List<String> H1_BUYING = Arrays.asList("USOIL", "AUDJPY", "", "GBPJPY", "", "");
-        List<String> H1_SELING = Arrays.asList("XAGUSD", "GER40", "", "", "", "");
+        List<String> H1_SELING = Arrays.asList("", "GER40", "", "", "", "");
 
         // 15
         List<String> M15_BUYING = Arrays.asList("", "", "", "", "", "");
         List<String> M15_SELING = Arrays.asList("", "", "", "", "", "");
+
+        // 05
+        List<String> M05_BUYING = Arrays.asList("", "", "", "", "", "");
+        List<String> M05_SELING = Arrays.asList("XAGUSD", "", "", "", "", "");
 
         // -------------------------------------------------------------------------------------
         // ---------------------------------------CRYPTO----------------------------------------
@@ -3716,6 +3719,7 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
+        alertMsg(Utils.CAPITAL_TIME_05, M05_BUYING, M05_SELING);
         alertMsg(Utils.CAPITAL_TIME_15, M15_BUYING, M15_SELING);
         alertMsg(Utils.CAPITAL_TIME_H1, H1_BUYING, H1_SELING);
         alertMsg(Utils.CAPITAL_TIME_H4, H4_BUYING, H4_SELING);

@@ -3452,6 +3452,12 @@ public class Utils {
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
         }
+        if (CollectionUtils.isEmpty(heken_list) || heken_list.size() < 5) {
+            Utils.logWritelnDraft(
+                    "(switchTrendByHeken_12)list Size < 5: " + heken_list.get(0).getId() + "  " + heken_list.size());
+            return "";
+        }
+
         String type = "";
         if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(2).isDown()
                 && heken_list.get(3).isDown()) {
