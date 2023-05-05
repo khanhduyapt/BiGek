@@ -3643,6 +3643,9 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public void monitorProfit() {
         // -------------------------------------------------------------------------------------
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_D1, Arrays.asList("EURCHF", "USDCAD", "USDJPY"));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_D1, Arrays.asList("NZDUSD", "", ""));
+
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4, Arrays.asList("", "", ""));
 
