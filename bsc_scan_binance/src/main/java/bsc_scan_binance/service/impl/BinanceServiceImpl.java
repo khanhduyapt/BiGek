@@ -2700,8 +2700,6 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        String EVENT_ID = "FX_LOG_" + prefix_id + EPIC + dto_entry.getTrend();
-
         String log = Utils.appendSpace(EPIC, 11);
         log += Utils.appendSpace(append, 35) + " ";
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
@@ -2709,7 +2707,9 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 15);
         log += Utils.calc_BUF_LO_HI_BUF_Forex(true, dto_entry.getTrend(), EPIC, dto_entry, dto_sl);
 
-        logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
+        // String EVENT_ID = "FX_LOG_" + prefix_id + EPIC + dto_entry.getTrend();
+        // logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
+        Utils.logWritelnDraft(log);
     }
 
     private void waiting(String ACTION, String CAPITAL_TIME_XX, List<String> list) {
@@ -3482,15 +3482,15 @@ public class BinanceServiceImpl implements BinanceService {
         } else if (Objects.equals(Utils.CAPITAL_TIME_15, CAPITAL_TIME_XX)) {
             String type = "";
             if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
-                type = "(50)";
+                type = "(Low50)";
             }
             if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
-                type = "(50)";
+                type = "(Hig50)";
             }
 
             String swith_trend_type = Utils.switchTrendByHeken12_or_Ma35(heken_list);
             if (Utils.isNotBlank(type) && swith_trend_type.contains(trend)) {
-                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + swith_trend_type;
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + swith_trend_type + type;
             }
 
         } else if (CAPITAL_TIME_XX.contains("HOUR")) {
@@ -3504,10 +3504,10 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (heken_list.size() > 30) {
                 if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
-                    type += "(50)";
+                    type += "(Low50)";
                 }
                 if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
-                    type += "(50)";
+                    type += "(Hig50)";
                 }
             }
 
@@ -3634,7 +3634,7 @@ public class BinanceServiceImpl implements BinanceService {
             // String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH();
             // sendMsgPerHour(EVENT_ID, Utils.getChartNameCapital(CAPITAL_TIME_XX) + msg,
             // true);
-            Utils.logWritelnDraft("");
+            Utils.logWritelnDraft("\n");
         }
     }
 
@@ -3656,10 +3656,10 @@ public class BinanceServiceImpl implements BinanceService {
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
 
-        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("GBPCHF", "CADJPY", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_15, Arrays.asList("", "", ""));
 
-        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_05, Arrays.asList("GBPCHF", "CADJPY", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_05, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_05, Arrays.asList("", "", ""));
         // -------------------------------------------------------------------------------------
 
@@ -3675,11 +3675,11 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> H6_SELING = Arrays.asList("", "", "", "", "", "");
 
         // H4
-        List<String> H4_BUYING = Arrays.asList("GER40", "", "", "", "", "");
+        List<String> H4_BUYING = Arrays.asList("GER40", "NZDJPY", "CADJPY", "", "", "");
         List<String> H4_SELING = Arrays.asList("GBPAUD", "", "", "", "", "");
 
         // H1
-        List<String> H1_BUYING = Arrays.asList("USOIL", "AUDJPY", "NZDJPY", "GBPJPY", "", "");
+        List<String> H1_BUYING = Arrays.asList("USOIL", "AUDJPY", "", "GBPJPY", "", "");
         List<String> H1_SELING = Arrays.asList("XAGUSD", "", "", "", "", "");
 
         // 15
