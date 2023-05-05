@@ -3596,6 +3596,9 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isBlank(dto_dt.getNote())) {
                 continue;
             }
+            if (!Objects.equals(trend_h8, trend_h4)) {
+                continue;
+            }
             if (!Objects.equals(trend_h4, trend_dt)) {
                 continue;
             }
@@ -3609,8 +3612,8 @@ public class BinanceServiceImpl implements BinanceService {
             // TODO: 2. scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
-            if (Utils.isNotBlank(dto_dt.getNote()) && Objects.equals(trend_h8, trend_h4)
-                    && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_dt)) {
+            if (Utils.isNotBlank(dto_dt.getNote()) && Objects.equals(trend_h4, trend_h1)
+                    && Objects.equals(trend_h4, trend_dt)) {
 
                 String prefix = "(D1.H8.H4.H1.15.05) <-- ";
 
@@ -3659,7 +3662,7 @@ public class BinanceServiceImpl implements BinanceService {
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_D1, Arrays.asList("NZDUSD", "XAUUSD", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4,
-                Arrays.asList("EURNZD", "GBPAUD", "", "", "", "", "", "", "", "", "", ""));
+                Arrays.asList("", "GBPAUD", "", "", "", "", "", "", "", "", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4,
                 Arrays.asList("NZDJPY", "NZDUSD", "UK100", "US100", "US30", "", "", "", "", "", "", "", ""));
 
@@ -3689,7 +3692,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> H4_SELING = Arrays.asList("GBPAUD", "", "", "", "", "");
 
         // H1
-        List<String> H1_BUYING = Arrays.asList("USOIL", "AUDJPY", "", "GBPJPY", "", "");
+        List<String> H1_BUYING = Arrays.asList("USOIL", "AUDJPY", "", "GBPJPY", "EURNZD", "");
         List<String> H1_SELING = Arrays.asList("", "", "", "", "", "");
 
         // 15
@@ -3698,7 +3701,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // 05
         List<String> M05_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> M05_SELING = Arrays.asList("GER40", "", "", "", "", "");
+        List<String> M05_SELING = Arrays.asList("", "", "", "", "", "");
 
         // -------------------------------------------------------------------------------------
         // ---------------------------------------CRYPTO----------------------------------------
