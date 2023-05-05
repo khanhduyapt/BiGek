@@ -133,19 +133,18 @@ public class BscScanBinanceApplication {
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_05);
                                 }
 
+                                File myScap = new File(Utils.getDraftLogFile());
+                                myScap.delete();
+                                // --------------------------------------------------------------------------
                                 binance_service.scapForex(Utils.CAPITAL_TIME_D1);
                                 binance_service.scapForex(Utils.CAPITAL_TIME_H4);
-
                                 if (Utils.isHuntTime() || Utils.isKillZoneTime()) {
                                     binance_service.scapForex(Utils.CAPITAL_TIME_H1);
                                     binance_service.scapForex(Utils.CAPITAL_TIME_15);
                                     binance_service.scapForex(Utils.CAPITAL_TIME_05);
                                 }
+                                // --------------------------------------------------------------------------
                             }
-                        }
-
-                        if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MONITOR_PROFIT")) {
-                            binance_service.monitorProfit();
                         }
 
                         // ---------------------------------------------------------
@@ -165,6 +164,11 @@ public class BscScanBinanceApplication {
                         // ---------------------------------------------------------
                         if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "CREATE_REPORT")) {
                             binance_service.createReport();
+                        }
+
+                        if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MONITOR_PROFIT")) {
+                            Utils.logWritelnDraft("");
+                            binance_service.monitorProfit();
                         }
 
                         wait(SLEEP_MINISECONDS);

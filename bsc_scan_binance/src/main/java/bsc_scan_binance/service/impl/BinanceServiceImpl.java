@@ -3080,11 +3080,13 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
+        // --------------------------------------------------------------------------
         File myObj = new File(Utils.getForexLogFile());
         myObj.delete();
+
         str_long_suggest = "";
         str_shot_suggest = "";
-        // --------------------------------------------------------------------------
+
         List<String> compare_list = Arrays.asList("USD", "CHF", "NZD", "EUR", "GBP", "AUD");
         if (!CollectionUtils.isEmpty(GLOBAL_LONG_LIST)) {
             for (String s : GLOBAL_LONG_LIST) {
@@ -3196,7 +3198,7 @@ public class BinanceServiceImpl implements BinanceService {
         String w1d1h4 = "";
         String d1h4 = "";
         String d1 = "";
-        List<String> list_w1d1h4_log = new ArrayList<String>();
+        List<String> list_w1_log = new ArrayList<String>();
         List<String> list_d1h4_log = new ArrayList<String>();
         List<String> list_d1_log = new ArrayList<String>();
 
@@ -3221,11 +3223,9 @@ public class BinanceServiceImpl implements BinanceService {
                 Orders dto_w1 = ordersRepository.findById("CRYPTO_" + symbol + "_1w").orElse(null);
                 Orders dto_d1 = ordersRepository.findById("CRYPTO_" + symbol + "_1d").orElse(null);
                 Orders dto_h4 = ordersRepository.findById("CRYPTO_" + symbol + "_4h").orElse(null);
-                if (Objects.nonNull(dto_w1) && Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)
-                        && !w1d1h4.contains("_" + symbol + "_")) {
-
+                if (Objects.nonNull(dto_w1) && !w1d1h4.contains("_" + symbol + "_")) {
                     w1d1h4 += "_" + symbol + "_";
-                    list_w1d1h4_log.add(Utils.createLineCrypto(dto_h4, symbol, type));
+                    list_w1_log.add(Utils.createLineCrypto(dto_w1, symbol, type));
 
                     if (Utils.isNotBlank(msg_futu)) {
                         msg_futu += ",";
@@ -3249,10 +3249,10 @@ public class BinanceServiceImpl implements BinanceService {
 
             }
 
-            if (list_w1d1h4_log.size() > 0) {
+            if (list_w1_log.size() > 0) {
                 Utils.logWritelnReport("");
-                Utils.logWritelnReport(Utils.appendLeftAndRight("       W1 D1 H4      ", 50, "+"));
-                for (String log : list_w1d1h4_log) {
+                Utils.logWritelnReport(Utils.appendLeftAndRight("          W1         ", 50, "+"));
+                for (String log : list_w1_log) {
                     Utils.logWritelnReport(log);
                 }
                 Utils.logWritelnReport("");
@@ -3326,7 +3326,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             List<BtcFutures> heken_list_w1 = Utils.getHekenList(list_w1);
             String trend_w1 = Utils.getTrendByHekenAshiList(heken_list_w1);
-            String switch_trend = Utils.switchTrendByHeken12_or_Ma35(heken_list_w1);
+            String switch_trend = Utils.switchTrendByHeken_12(heken_list_w1);
 
             if (Objects.equals(trend_w1, Utils.TREND_LONG) && Utils.isNotBlank(switch_trend)) {
                 List<BigDecimal> body = Utils.getOpenCloseCandle(list_w1);
@@ -3488,15 +3488,17 @@ public class BinanceServiceImpl implements BinanceService {
                 type = "(50)";
             }
 
-            if (Utils.isNotBlank(type) && Objects.equals(Utils.switchTrendByMaXX(heken_list, 5, 8), trend)) {
-                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + "(Ma5.8)";
+            String swith_trend_type = Utils.switchTrendByHeken12_or_Ma35(heken_list);
+            if (Utils.isNotBlank(type) && swith_trend_type.contains(trend)) {
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + swith_trend_type;
             }
+
         } else if (CAPITAL_TIME_XX.contains("HOUR")) {
             String type = Utils.switchTrendByHeken_12(heken_list);
             if (Utils.isNotBlank(type)) {
                 type = "(Heken)";
             }
-            if (Utils.isBlank(type) && Objects.equals(Utils.switchTrendByMaXX(heken_list, 3, 5), trend)) {
+            if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMaXX(heken_list, 3, 5))) {
                 type = "(Ma3.5)";
             }
 
@@ -3646,16 +3648,18 @@ public class BinanceServiceImpl implements BinanceService {
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_D1, Arrays.asList("EURCHF", "USDCAD", "USDJPY"));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_D1, Arrays.asList("NZDUSD", "XAUUSD", ""));
 
-        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList("", "", ""));
-        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4, Arrays.asList("", "", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4,
+                Arrays.asList("EURNZD", "GBPAUD", "", "", "", "", "", "", "", "", "", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4,
+                Arrays.asList("NZDJPY", "NZDUSD", "UK100", "US100", "US30", "", "", "", "", "", "", "", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
 
-        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("GBPCHF", "", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("GBPCHF", "CADJPY", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_15, Arrays.asList("", "", ""));
 
-        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_05, Arrays.asList("GBPCHF", "", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_05, Arrays.asList("GBPCHF", "CADJPY", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_05, Arrays.asList("", "", ""));
         // -------------------------------------------------------------------------------------
 
@@ -3675,11 +3679,11 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> H4_SELING = Arrays.asList("GBPAUD", "", "", "", "", "");
 
         // H1
-        List<String> H1_BUYING = Arrays.asList("USOIL", "AUDJPY", "NZDJPY", "", "", "");
+        List<String> H1_BUYING = Arrays.asList("USOIL", "AUDJPY", "NZDJPY", "GBPJPY", "", "");
         List<String> H1_SELING = Arrays.asList("XAGUSD", "", "", "", "", "");
 
         // 15
-        List<String> M15_BUYING = Arrays.asList("GBPJPY", "", "", "", "", "");
+        List<String> M15_BUYING = Arrays.asList("", "", "", "", "", "");
         List<String> M15_SELING = Arrays.asList("", "", "", "", "", "");
 
         // -------------------------------------------------------------------------------------
