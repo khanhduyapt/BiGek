@@ -3430,58 +3430,45 @@ public class Utils {
         return false;
     }
 
-    public static String switchTrendByHeken12(List<BtcFutures> heken_list) {
+    public static String switchTrendByHeken12_or_Ma35(List<BtcFutures> heken_list) {
         String type = "";
-
-        String trend = Utils.getTrendByHekenAshiList(heken_list);
-        String switch_trend = Utils.switchTrendByMaXX(heken_list, 3, 5);
-        if (Objects.equals(switch_trend, trend)) {
-            type = Utils.appendSpace(trend, 4) + "(Ma3.5)";
+        if (Utils.isBlank(type)) {
+            type = switchTrendByHeken_12(heken_list);
         }
 
         if (Utils.isBlank(type)) {
-            if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(2).isDown()
-                    && heken_list.get(3).isDown()) {
-                type = Utils.appendSpace(TREND_LONG, 4) + "(Heken)";
-
-            } else if (heken_list.get(0).isDown() && heken_list.get(1).isDown() && heken_list.get(2).isUptrend()
-                    && heken_list.get(3).isUptrend()) {
-                type = Utils.appendSpace(TREND_SHOT, 4) + "(Heken)";
-
-            } else if (heken_list.get(1).isUptrend() && heken_list.get(2).isDown() && heken_list.get(3).isDown()) {
-                type = Utils.appendSpace(TREND_LONG, 4) + "(Heken)";
-
-            } else if (heken_list.get(1).isDown() && heken_list.get(2).isUptrend() && heken_list.get(3).isUptrend()) {
-                type = Utils.appendSpace(TREND_SHOT, 4) + "(Heken)";
-
+            String trend = Utils.getTrendByHekenAshiList(heken_list);
+            String switch_trend = Utils.switchTrendByMaXX(heken_list, 3, 5);
+            if (Objects.equals(switch_trend, trend)) {
+                type = Utils.appendSpace(trend, 4) + "(Ma3.5)";
             }
         }
 
         return type;
     }
 
-    public static String switchTrendByHekenAshi_135(List<BtcFutures> heken_list) {
+    public static String switchTrendByHeken_12(List<BtcFutures> heken_list) {
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
         }
+        String type = "";
+        if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(2).isDown()
+                && heken_list.get(3).isDown()) {
+            type = Utils.appendSpace(TREND_LONG, 4) + "(Heken)";
 
-        String trend = Utils.getTrendByHekenAshiList(heken_list);
-        String switch_trend = switchTrendByHeken12(heken_list);
-        if (switch_trend.contains(trend)) {
-            return trend;
+        } else if (heken_list.get(0).isDown() && heken_list.get(1).isDown() && heken_list.get(2).isUptrend()
+                && heken_list.get(3).isUptrend()) {
+            type = Utils.appendSpace(TREND_SHOT, 4) + "(Heken)";
+
+        } else if (heken_list.get(1).isUptrend() && heken_list.get(2).isDown() && heken_list.get(3).isDown()) {
+            type = Utils.appendSpace(TREND_LONG, 4) + "(Heken)";
+
+        } else if (heken_list.get(1).isDown() && heken_list.get(2).isUptrend() && heken_list.get(3).isUptrend()) {
+            type = Utils.appendSpace(TREND_SHOT, 4) + "(Heken)";
+
         }
 
-        BigDecimal ma1_0 = calcMA(heken_list, 1, 0);
-        BigDecimal ma1_1 = calcMA(heken_list, 1, 1);
-        BigDecimal ma1_2 = calcMA(heken_list, 1, 2);
-        if ((ma1_0.compareTo(ma1_1) >= 0) && (ma1_2.compareTo(ma1_1) >= 0)) {
-            return TREND_LONG;
-        }
-        if ((ma1_0.compareTo(ma1_1) <= 0) && (ma1_2.compareTo(ma1_1) >= 0)) {
-            return TREND_SHOT;
-        }
-
-        return "";
+        return type;
     }
 
     public static String getTrendByHekenAshiList(List<BtcFutures> heken_list) {
