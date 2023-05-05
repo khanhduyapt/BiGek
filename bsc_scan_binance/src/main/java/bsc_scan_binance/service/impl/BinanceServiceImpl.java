@@ -3600,6 +3600,12 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
+            if ((Utils.CAPITAL_TIME_H1 + "_" + Utils.CAPITAL_TIME_15 + "_" + Utils.CAPITAL_TIME_05)
+                    .contains(CAPITAL_TIME_XX)
+                    && Utils.isBlank(dto_h1.getNote() + dto_h4.getNote() + dto_h8.getNote())) {
+                continue;
+            }
+
             // TODO: 2. scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
