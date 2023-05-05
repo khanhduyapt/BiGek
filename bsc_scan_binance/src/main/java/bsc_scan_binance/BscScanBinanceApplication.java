@@ -233,7 +233,7 @@ public class BscScanBinanceApplication {
 
         // ---------------------------------------------------------------------------
         LocalTime close_Sydney_Orders = LocalTime.parse("09:30:00"); // to: 11:45
-        LocalTime close_Tokyo_Orders = LocalTime.parse("16:00:00"); // to: 15:45
+        LocalTime close_Tokyo_Orders = LocalTime.parse("16:30:00"); // to: 15:45
         LocalTime close_London_Orders = LocalTime.parse("19:30:00"); // to: 23:45
         LocalTime close_NewYork_Orders = LocalTime.parse("22:30:00"); // to: 02:45
 
