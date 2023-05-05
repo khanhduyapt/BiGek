@@ -3610,7 +3610,7 @@ public class BinanceServiceImpl implements BinanceService {
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
             if (Utils.isNotBlank(dto_dt.getNote()) && Objects.equals(trend_h8, trend_h4)
-                    && Objects.equals(trend_h4, trend_dt)) {
+                    && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_dt)) {
 
                 String prefix = "(D1.H8.H4.H1.15.05) <-- ";
 
@@ -3694,11 +3694,11 @@ public class BinanceServiceImpl implements BinanceService {
 
         // 15
         List<String> M15_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> M15_SELING = Arrays.asList("GER40", "", "", "", "", "");
+        List<String> M15_SELING = Arrays.asList("", "", "", "", "", "");
 
         // 05
         List<String> M05_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> M05_SELING = Arrays.asList("", "", "", "", "", "");
+        List<String> M05_SELING = Arrays.asList("GER40", "", "", "", "", "");
 
         // -------------------------------------------------------------------------------------
         // ---------------------------------------CRYPTO----------------------------------------
