@@ -3366,13 +3366,15 @@ public class BinanceServiceImpl implements BinanceService {
             List<BigDecimal> body = Utils.getOpenCloseCandle(list_d1);
             List<BigDecimal> low_high = Utils.getLowHighCandle(list_d1);
 
+            String note = "";
             String switch_trend = Utils.switchTrendByHeken_12(heken_list_d1);
 
-            String note = "";
-            if (CRYPTO_LIST_BUYING.contains(SYMBOL)) {
-                note = "(BUYING)" + switch_trend;
-            } else if (Utils.LIST_WAITING.contains(SYMBOL)) {
-                note = "(WAITING LIST)" + switch_trend;
+            if (Utils.isNotBlank(switch_trend)) {
+                if (CRYPTO_LIST_BUYING.contains(SYMBOL)) {
+                    note = "(BUYING)" + switch_trend;
+                } else if (Utils.LIST_WAITING.contains(SYMBOL)) {
+                    note = "(WAITING LIST)" + switch_trend;
+                }
             }
 
             Orders entity = new Orders(orderId_d1, date_time, trend_d1, list_d1.get(0).getCurrPrice(), body.get(0),

@@ -173,7 +173,7 @@ public class Utils {
             "BICO", "BIFI", "BLZ", "BNB", "BNT", "BNX", "BOND", "BSW", "BTC", "BTS", "BURGER", "C98", "CAKE", "CELO",
             "CELR", "CFX", "CHESS", "CHR", "CHZ", "CITY", "CKB", "CLV", "COCOS", "COMP", "COS", "COTI", "CREAM", "CRV",
             "CTK", "CTSI", "CTXC", "CVP", "CVX", "DAR", "DASH", "DATA", "DCR", "DGB", "DIA", "DOCK", "DODO", "DOGE",
-            "DOT", "DREP", "DUSK", "DYDX", "EGLD", "ELF", "ENJ", "ENS", "EOS", "EPX", "ERN", "ETC", "ETH", "FARM",
+            "DOT", "DREP", "DUSK", "DYDX", "EDU", "ELF", "ENJ", "ENS", "EOS", "EPX", "ERN", "ETC", "ETH", "FARM",
             "FET", "FIDA", "FIL", "FIO", "FIRO", "FIS", "FLM", "FLOW", "FLUX", "FOR", "FORTH", "FRONT", "FTM", "FTT",
             "FUN", "FXS", "GAL", "GALA", "GAS", "GFT", "GHST", "GLM", "GLMR", "GMT", "GMX", "GNS", "GRT", "GTC", "HARD",
             "HBAR", "HFT", "HIFI", "HIGH", "HIVE", "HOOK", "HOT", "ID", "ICX", "IDEX", "ILV", "IMX", "INJ", "IOST",
@@ -185,38 +185,39 @@ public class Utils {
             "PNT", "POLS", "POLYX", "POND", "PORTO", "POWR", "PROM", "PROS", "PSG", "PUNDIX", "PYR", "QI", "QKC", "QNT",
             "QTUM", "QUICK", "RDNT", "RARE", "RAY", "REEF", "REI", "REN", "REQ", "RIF", "RLC", "RNDR", "ROSE", "RPL",
             "RSR", "RUNE", "RVN", "SAND", "SANTOS", "SC", "SCRT", "SFP", "SHIB", "SKL", "SLP", "SNM", "SNT", "SNX",
-            "SOL", "SPELL", "SRM", "SSV", "STEEM", "STG", "STMX", "STORJ", "STPT", "STRAX", "STX", "SUN", "SUPER",
-            "SUSHI", "SXP", "SYN", "SYS", "THETA", "TKO", "TLM", "TOMO", "TORN", "TRB", "TROY", "TRU", "TRX", "TVK",
-            "TWT", "UFT", "UNFI", "UNI", "UTK", "VGX", "VIB", "VIDT", "VITE", "VOXEL", "VTHO", "WAN", "WAVES", "WAXP",
-            "WIN", "WING", "WNXM", "WOO", "WRX", "WTC", "XEC", "XLM", "XMR", "XNO", "XRP", "XTZ", "XVG", "XVS", "YFI",
-            "YFII", "YGG", "ZEC", "ZEN", "ZIL", "ZRX");
+            "SOL", "SPELL", "SRM", "SSV", "STEEM", "STG", "STMX", "STORJ", "STPT", "STRAX", "STX", "SUI", "SUN",
+            "SUPER", "SUSHI", "SXP", "SYN", "SYS", "THETA", "TKO", "TLM", "TOMO", "TORN", "TRB", "TROY", "TRU", "TRX",
+            "TVK", "TWT", "UFT", "UNFI", "UNI", "UTK", "VGX", "VIB", "VIDT", "VITE", "VOXEL", "VTHO", "WAN", "WAVES",
+            "WAXP", "WIN", "WING", "WNXM", "WOO", "WRX", "WTC", "XEC", "XLM", "XMR", "XNO", "XRP", "XTZ", "XVG", "XVS",
+            "YFI", "YFII", "YGG", "ZEC", "ZEN", "ZIL", "ZRX");
 
     public static final List<String> BINANCE_PRICE_BUSD_LIST = Arrays.asList("ART", "BNT", "PHT", "DGT", "DODO",
             "AERGO", "ARK", "BIDR", "CREAM", "GAS", "GFT", "GLM", "IDRT", "IQ", "KEY", "LOOM", "NEM", "PIVX", "PROM",
             "TORN", "QKC", "QLC", "SNM", "SNT", "UFT", "WABI", "IQ");
 
-    public static final List<String> COINS_NEW_LISTING = Arrays.asList("RDNT", "AMB", "ARB", "ID", "LQTY", "SYN", "GNS",
-            "RPL", "MAGIC", "HOOK", "HFT");
+    public static final List<String> COINS_NEW_LISTING = Arrays.asList("EDU", "RDNT", "AMB", "ARB", "ID", "LQTY", "SYN",
+            "GNS", "RPL", "MAGIC", "HOOK", "HFT", "SUI");
 
     public static final List<String> LIST_WAITING = Arrays.asList("APT", "APE", "ARB", "AUDIO", "BAND", "BSW", "C98",
-            "CELO", "CELR", "CHESS", "CHZ", "CTK", "CTSI", "DAR", "DODO", "DOGE", "DYDX", "EGLD", "ENJ", "EOS", "FIL",
-            "FLM", "GNS", "GRT", "HOOK", "HFT", "ID", "IMX", "KAVA", "LEVER", "LIT", "LOKA", "LQTY", "MAGIC", "MASK",
-            "MOB", "NEAR", "ONE", "OP", "PEOPLE", "PERL", "PHB", "ROSE", "RDNT", "RPL", "SXP", "SYN", "WOO", "XVS");
+            "CELO", "CELR", "CHESS", "CHZ", "CTK", "CTSI", "DAR", "DODO", "DOGE", "DYDX", "EDU", "EGLD", "ENJ", "EOS",
+            "FIL", "FLM", "GNS", "GRT", "HOOK", "HFT", "ID", "IMX", "KAVA", "LEVER", "LIT", "LOKA", "LQTY", "MAGIC",
+            "MASK", "MOB", "NEAR", "ONE", "OP", "PEOPLE", "PERL", "PHB", "ROSE", "RDNT", "RPL", "SXP", "SYN", "SUI",
+            "WOO", "XVS");
 
     // COINS_FUTURES
     public static final List<String> COINS_FUTURES = Arrays.asList("1INCH", "AAVE", "ACH", "ADA", "AGIX", "ALGO",
             "ALICE", "ALPHA", "AMB", "ANKR", "ANT", "APE", "API3", "APT", "AR", "ARB", "ARPA", "ASTR", "ATA", "ATOM",
             "AUDIO", "AVAX", "AXS", "BAKE", "BAL", "BAND", "BAT", "BCH", "BEL", "BLZ", "BNB", "BNT", "BNX", "BTC",
             "BTC", "C98", "CELO", "CELR", "CFX", "CHR", "CHZ", "CKB", "COCOS", "COMP", "COTI", "CRV", "CTK", "CTSI",
-            "CVX", "DAR", "DASH", "DENT", "DGB", "DODO", "DOGE", "DOT", "DUSK", "DYDX", "EGLD", "ENJ", "ENS", "EOS",
-            "ETC", "ETH", "FET", "FIL", "FLM", "FLOW", "FTM", "FXS", "GAL", "GALA", "GMT", "GMX", "GRT", "GTC", "HBAR",
-            "HIGH", "HOOK", "HOT", "HFT", "ICP", "ICX", "ID", "IMX", "INJ", "IOST", "IOTA", "IOTX", "JASMY", "JOE",
-            "KAVA", "KLAY", "KNC", "KSM", "LDO", "LEVER", "LINA", "LINK", "LIT", "LPT", "LQTY", "LRC", "LTC", "MAGIC",
-            "MANA", "MASK", "MATIC", "MINA", "MKR", "MTL", "NEAR", "NEBL", "NEO", "NKN", "OCEAN", "OGN", "ONE", "ONT",
-            "OP", "PEOPLE", "PERP", "PHB", "QNT", "QTUM", "RDNT", "REEF", "REN", "RLC", "RNDR", "ROSE", "RSR", "RUNE",
-            "RVN", "SAND", "SFP", "SKL", "SNX", "SOL", "SPELL", "SSV", "STG", "STMX", "STORJ", "STX", "SUSHI", "SXP",
-            "THETA", "TLM", "TOMO", "TRB", "TRU", "TRX", "UNFI", "UNI", "VET", "WAVES", "XEM", "XLM", "XMR", "XRP",
-            "XTZ", "YFI", "ZEC", "ZEN", "ZIL", "ZRX", "WOO");
+            "CVX", "DAR", "DASH", "DENT", "DGB", "DODO", "DOGE", "DOT", "DUSK", "DYDX", "EDU", "EGLD", "ENJ", "ENS",
+            "EOS", "ETC", "ETH", "FET", "FIL", "FLM", "FLOW", "FTM", "FXS", "GAL", "GALA", "GMT", "GMX", "GRT", "GTC",
+            "HBAR", "HIGH", "HOOK", "HOT", "HFT", "ICP", "ICX", "ID", "IMX", "INJ", "IOST", "IOTA", "IOTX", "JASMY",
+            "JOE", "KAVA", "KLAY", "KNC", "KSM", "LDO", "LEVER", "LINA", "LINK", "LIT", "LPT", "LQTY", "LRC", "LTC",
+            "MAGIC", "MANA", "MASK", "MATIC", "MINA", "MKR", "MTL", "NEAR", "NEBL", "NEO", "NKN", "OCEAN", "OGN", "ONE",
+            "ONT", "OP", "PEOPLE", "PERP", "PHB", "QNT", "QTUM", "RDNT", "REEF", "REN", "RLC", "RNDR", "ROSE", "RSR",
+            "RUNE", "RVN", "SAND", "SFP", "SKL", "SNX", "SOL", "SPELL", "SSV", "STG", "STMX", "STORJ", "STX", "SUI",
+            "SUSHI", "SXP", "THETA", "TLM", "TOMO", "TRB", "TRU", "TRX", "UNFI", "UNI", "VET", "WAVES", "XEM", "XLM",
+            "XMR", "XRP", "XTZ", "YFI", "ZEC", "ZEN", "ZIL", "ZRX", "WOO", "RPL");
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
