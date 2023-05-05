@@ -130,8 +130,8 @@ public class Utils {
     public static final String CAPITAL_TIME_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_H1 = "HOUR";
     public static final String CAPITAL_TIME_H4 = "HOUR_4";
-    public static final String CAPITAL_TIME_D1 = "DAY";
-    public static final String CAPITAL_TIME_W1 = "WEEK";
+    public static final String CAPITAL_TIME_H8 = "DAY";
+    public static final String CAPITAL_TIME_D1 = "WEEK";
 
     public static final String CRYPTO_TIME_05 = "5m";
     public static final String CRYPTO_TIME_15 = "15m";
@@ -173,9 +173,9 @@ public class Utils {
             "BICO", "BIFI", "BLZ", "BNB", "BNT", "BNX", "BOND", "BSW", "BTC", "BTS", "BURGER", "C98", "CAKE", "CELO",
             "CELR", "CFX", "CHESS", "CHR", "CHZ", "CITY", "CKB", "CLV", "COCOS", "COMP", "COS", "COTI", "CREAM", "CRV",
             "CTK", "CTSI", "CTXC", "CVP", "CVX", "DAR", "DASH", "DATA", "DCR", "DGB", "DIA", "DOCK", "DODO", "DOGE",
-            "DOT", "DREP", "DUSK", "DYDX", "EDU", "ELF", "ENJ", "ENS", "EOS", "EPX", "ERN", "ETC", "ETH", "FARM",
-            "FET", "FIDA", "FIL", "FIO", "FIRO", "FIS", "FLM", "FLOW", "FLUX", "FOR", "FORTH", "FRONT", "FTM", "FTT",
-            "FUN", "FXS", "GAL", "GALA", "GAS", "GFT", "GHST", "GLM", "GLMR", "GMT", "GMX", "GNS", "GRT", "GTC", "HARD",
+            "DOT", "DREP", "DUSK", "DYDX", "EDU", "ELF", "ENJ", "ENS", "EOS", "EPX", "ERN", "ETC", "ETH", "FARM", "FET",
+            "FIDA", "FIL", "FIO", "FIRO", "FIS", "FLM", "FLOW", "FLUX", "FOR", "FORTH", "FRONT", "FTM", "FTT", "FUN",
+            "FXS", "GAL", "GALA", "GAS", "GFT", "GHST", "GLM", "GLMR", "GMT", "GMX", "GNS", "GRT", "GTC", "HARD",
             "HBAR", "HFT", "HIFI", "HIGH", "HIVE", "HOOK", "HOT", "ID", "ICX", "IDEX", "ILV", "IMX", "INJ", "IOST",
             "IOTA", "IOTX", "IRIS", "JASMY", "JOE", "JST", "JUV", "KAVA", "KDA", "KEY", "KLAY", "KMD", "KNC", "KP3R",
             "KSM", "LAZIO", "LEVER", "LINA", "LINK", "LIT", "LOKA", "LOOM", "LPT", "LQTY", "LRC", "LSK", "LTC", "LTO",
@@ -643,10 +643,10 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
             return "_4h_";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_H8)) {
             return "_1d_";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_W1)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
             return "_1w_";
         }
 
@@ -666,11 +666,11 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
             return "(H4) ";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_H8)) {
             return "(H8) ";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_W1)) {
-            return "(W1) ";
+        if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
+            return "(D1) ";
         }
 
         return TIME;
@@ -2198,7 +2198,7 @@ public class Utils {
             } else if (symbol.contains("_4h_")) {
                 result = "(H4) ";
             } else if (symbol.contains("_1d_")) {
-                result = "(H8) ";
+                result = "(D1) ";
             } else if (symbol.contains("_1w_")) {
                 result = "(W1) ";
             } else {
@@ -2232,10 +2232,10 @@ public class Utils {
                 result = "(H4) ";
             } else if (symbol.contains(CAPITAL_TIME_H1)) {
                 result = "(H1) ";
-            } else if (symbol.contains(CAPITAL_TIME_D1)) {
+            } else if (symbol.contains(CAPITAL_TIME_H8)) {
                 result = "(H8) ";
-            } else if (symbol.contains(CAPITAL_TIME_W1)) {
-                result = "(W1) ";
+            } else if (symbol.contains(CAPITAL_TIME_D1)) {
+                result = "(D1) ";
 
             } else {
                 // symbol = symbol.replace("_00", "");
@@ -3313,8 +3313,8 @@ public class Utils {
 
     public static String getEpicFromId(String id) {
         String EPIC = id;
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_W1, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_D1, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H8, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H4, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H1, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_15, "");
@@ -3459,15 +3459,7 @@ public class Utils {
         }
 
         String type = "";
-        if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(2).isDown()
-                && heken_list.get(3).isDown()) {
-            type = Utils.appendSpace(TREND_LONG, 4) + "(Heken)";
-
-        } else if (heken_list.get(0).isDown() && heken_list.get(1).isDown() && heken_list.get(2).isUptrend()
-                && heken_list.get(3).isUptrend()) {
-            type = Utils.appendSpace(TREND_SHOT, 4) + "(Heken)";
-
-        } else if (heken_list.get(1).isUptrend() && heken_list.get(2).isDown() && heken_list.get(3).isDown()) {
+        if (heken_list.get(1).isUptrend() && heken_list.get(2).isDown() && heken_list.get(3).isDown()) {
             type = Utils.appendSpace(TREND_LONG, 4) + "(Heken)";
 
         } else if (heken_list.get(1).isDown() && heken_list.get(2).isUptrend() && heken_list.get(3).isUptrend()) {
