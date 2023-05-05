@@ -3496,7 +3496,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ---------------------------------------------
             if (Utils.isBlank(note) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
-                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + swith_trend_type + Utils.TEXT_SWITCH_TREND_Ma_1_50;
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
+                        + Utils.TEXT_SWITCH_TREND_Ma_1_50;
             }
         } else if (CAPITAL_TIME_XX.contains("HOUR")) {
             String type = Utils.switchTrendByHeken_12(heken_list);
@@ -3571,21 +3572,21 @@ public class BinanceServiceImpl implements BinanceService {
         String msg = "";
         for (String EPIC : CAPITAL_LIST) {
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
-            Orders dto_h6 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+            Orders dto_h8 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(null);
             Orders dto_dt = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
 
-            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h6) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
+            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h8) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
                     || Objects.isNull(dto_15) || Objects.isNull(dto_05) || Objects.isNull(dto_dt)) {
                 Utils.logWritelnDraft("scapForex (" + EPIC + ") dto is null");
                 return;
             }
 
             String trend_d1 = dto_d1.getTrend();
-            String trend_h6 = dto_h6.getTrend();
+            String trend_h8 = dto_h8.getTrend();
             String trend_h4 = dto_h4.getTrend();
             String trend_h1 = dto_h1.getTrend();
             String trend_15 = dto_15.getTrend();
@@ -3600,21 +3601,22 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if ((Utils.CAPITAL_TIME_H1 + "_" + Utils.CAPITAL_TIME_15 + "_" + Utils.CAPITAL_TIME_05)
-                    .contains(CAPITAL_TIME_XX) && Utils.isBlank(dto_h4.getNote() + dto_h6.getNote())) {
+                    .contains(CAPITAL_TIME_XX)
+                    && Utils.isBlank(dto_h1.getNote() + dto_h4.getNote() + dto_h8.getNote())) {
                 continue;
             }
 
             // TODO: 2. scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
-            if (Utils.isNotBlank(dto_dt.getNote()) && Objects.equals(trend_h6, trend_h4)
+            if (Utils.isNotBlank(dto_dt.getNote()) && Objects.equals(trend_h8, trend_h4)
                     && Objects.equals(trend_h4, trend_dt)) {
                 String prefix = "(D1.H8.H4.H1.15.05) <-- ";
 
                 if (!Objects.equals(trend_d1, trend_dt)) {
                     prefix = prefix.replace("D1.", "   ");
                 }
-                if (!Objects.equals(trend_h6, trend_dt)) {
+                if (!Objects.equals(trend_h8, trend_dt)) {
                     prefix = prefix.replace("H8.", "   ");
                 }
                 if (!Objects.equals(trend_h1, trend_dt)) {
@@ -3687,15 +3689,15 @@ public class BinanceServiceImpl implements BinanceService {
 
         // H1
         List<String> H1_BUYING = Arrays.asList("USOIL", "AUDJPY", "", "GBPJPY", "", "");
-        List<String> H1_SELING = Arrays.asList("", "GER40", "", "", "", "");
+        List<String> H1_SELING = Arrays.asList("", "", "", "", "", "");
 
         // 15
         List<String> M15_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> M15_SELING = Arrays.asList("", "", "", "", "", "");
+        List<String> M15_SELING = Arrays.asList("GER40", "", "", "", "", "");
 
         // 05
         List<String> M05_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> M05_SELING = Arrays.asList("XAGUSD", "", "", "", "", "");
+        List<String> M05_SELING = Arrays.asList("", "", "", "", "", "");
 
         // -------------------------------------------------------------------------------------
         // ---------------------------------------CRYPTO----------------------------------------
