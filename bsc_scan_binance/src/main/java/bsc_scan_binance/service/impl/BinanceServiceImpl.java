@@ -3661,9 +3661,8 @@ public class BinanceServiceImpl implements BinanceService {
         // "USDCAD", "USDCHF", "USDJPY"
 
         // H8
-        List<String> H6_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> H6_SELING = Arrays.asList("", "", "", "", "", "");
-
+        List<String> H8_BUYING = Arrays.asList("", "", "", "", "", "");
+        List<String> H8_SELING = Arrays.asList("", "", "", "", "", "");
         // H4
         List<String> H4_BUYING = Arrays.asList("", "", "", "", "", "");
         List<String> H4_SELING = Arrays.asList("", "", "", "", "", "");
@@ -3671,11 +3670,9 @@ public class BinanceServiceImpl implements BinanceService {
         // H1
         List<String> H1_BUYING = Arrays.asList("", "", "", "", "", "");
         List<String> H1_SELING = Arrays.asList("", "", "", "", "", "");
-
         // 15
         List<String> M15_BUYING = Arrays.asList("", "", "", "", "", "");
         List<String> M15_SELING = Arrays.asList("", "", "", "", "", "");
-
         // 05
         List<String> M05_BUYING = Arrays.asList("", "", "", "", "", "");
         List<String> M05_SELING = Arrays.asList("", "", "", "", "", "");
@@ -3713,7 +3710,7 @@ public class BinanceServiceImpl implements BinanceService {
         alertMsg(Utils.CAPITAL_TIME_15, M15_BUYING, M15_SELING);
         alertMsg(Utils.CAPITAL_TIME_H1, H1_BUYING, H1_SELING);
         alertMsg(Utils.CAPITAL_TIME_H4, H4_BUYING, H4_SELING);
-        alertMsg(Utils.CAPITAL_TIME_H8, H6_BUYING, H6_SELING);
+        alertMsg(Utils.CAPITAL_TIME_H8, H8_BUYING, H8_SELING);
     }
 
 }
