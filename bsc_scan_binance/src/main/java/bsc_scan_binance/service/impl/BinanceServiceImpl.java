@@ -3634,7 +3634,6 @@ public class BinanceServiceImpl implements BinanceService {
             // String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH();
             // sendMsgPerHour(EVENT_ID, Utils.getChartNameCapital(CAPITAL_TIME_XX) + msg,
             // true);
-            Utils.logWritelnDraft("\n");
         }
     }
 
@@ -3675,12 +3674,12 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> H6_SELING = Arrays.asList("", "", "", "", "", "");
 
         // H4
-        List<String> H4_BUYING = Arrays.asList("GER40", "NZDJPY", "CADJPY", "", "", "");
+        List<String> H4_BUYING = Arrays.asList("", "NZDJPY", "CADJPY", "", "", "");
         List<String> H4_SELING = Arrays.asList("GBPAUD", "", "", "", "", "");
 
         // H1
         List<String> H1_BUYING = Arrays.asList("USOIL", "AUDJPY", "", "GBPJPY", "", "");
-        List<String> H1_SELING = Arrays.asList("XAGUSD", "", "", "", "", "");
+        List<String> H1_SELING = Arrays.asList("XAGUSD", "GER40", "", "", "", "");
 
         // 15
         List<String> M15_BUYING = Arrays.asList("", "", "", "", "", "");

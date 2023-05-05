@@ -137,7 +137,9 @@ public class BscScanBinanceApplication {
                                 myScap.delete();
                                 // --------------------------------------------------------------------------
                                 binance_service.scapForex(Utils.CAPITAL_TIME_D1);
+                                Utils.logWritelnDraft("");
                                 binance_service.scapForex(Utils.CAPITAL_TIME_H4);
+                                Utils.logWritelnDraft("");
                                 if (Utils.isHuntTime() || Utils.isKillZoneTime()) {
                                     binance_service.scapForex(Utils.CAPITAL_TIME_H1);
                                     binance_service.scapForex(Utils.CAPITAL_TIME_15);
