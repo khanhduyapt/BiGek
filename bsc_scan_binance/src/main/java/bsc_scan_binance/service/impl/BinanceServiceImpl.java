@@ -3495,29 +3495,17 @@ public class BinanceServiceImpl implements BinanceService {
             String type = "";
             if (Utils.isBlank(type) && Objects.equals(Utils.switchTrendByMaXX(heken_list, 3, 5), trend)) {
                 type = "(Ma3.5)";
-
-                if (heken_list.size() > 30) {
-                    if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
-                        type += "(50)";
-                    }
-                    if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
-                        type += "(50)";
-                    }
-                }
+            }
+            if (Utils.isBlank(type) && Objects.equals(Utils.switchTrendByMaXX(heken_list, 5, 8), trend)) {
+                type = "(Ma5.8)";
             }
 
-            if (Utils.isBlank(type) && Objects.equals(Utils.CAPITAL_TIME_H1, CAPITAL_TIME_XX)) {
-                if (Utils.isBlank(type) && Objects.equals(Utils.switchTrendByMaXX(heken_list, 5, 8), trend)) {
-                    type = "(Ma5.8)";
+            if (heken_list.size() > 30) {
+                if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
+                    type += "(50)";
                 }
-                if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
-                    type = Utils.TEXT_SWITCH_TREND_Ma_1_50;
-                }
-            }
-
-            if (Utils.isBlank(type) && Objects.equals(Utils.CAPITAL_TIME_H4, CAPITAL_TIME_XX)) {
-                if (Utils.isBlank(type) && Objects.equals(Utils.switchTrendByMaXX(heken_list, 5, 8), trend)) {
-                    type = "(Ma5.8)";
+                if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
+                    type += "(50)";
                 }
             }
 
@@ -3655,41 +3643,41 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public void monitorProfit() {
         // -------------------------------------------------------------------------------------
-        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList("GBPJPY", "", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4, Arrays.asList("", "", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("", "", ""));
-        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_15, Arrays.asList("", "", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_15, Arrays.asList("XAUUSD", "", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_05, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_05, Arrays.asList("", "", ""));
         // -------------------------------------------------------------------------------------
 
         // TODO: 3. monitorProfit
-        // "XAUUSD", "XAGUSD", "BTCUSD", "US30", "US100", "GER40", "UK100", "USOIL"
+        // "BTCUSD", "US30", "US100", "GER40", "UK100", "USOIL", "XAGUSD", "XAUUSD"
         // "AUDJPY", "AUDUSD", "CADJPY", "CHFJPY",
         // "EURAUD", "EURCAD", "EURCHF", "EURJPY", "EURNZD", "EURUSD",
         // "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD",
         // "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDJPY"
 
-        // D1
-        List<String> LIST_D1_LONG = Arrays.asList("", "", "", "", "", "");
-        List<String> LIST_D1_SHOT = Arrays.asList("", "", "", "", "", "");
+        // H6
+        List<String> H6_BUYING = Arrays.asList("", "", "", "", "", "");
+        List<String> H6_SELING = Arrays.asList("", "", "", "", "", "");
 
         // H4
-        List<String> LIST_H4_LONG = Arrays.asList("GER40", "NZDJPY", "", "", "", "");
-        List<String> LIST_H4_SHOT = Arrays.asList("GBPAUD", "", "", "", "", "");
+        List<String> H4_BUYING = Arrays.asList("GER40", "NZDJPY", "", "", "", "");
+        List<String> H4_SELING = Arrays.asList("GBPAUD", "", "", "", "", "");
 
         // H1
-        List<String> LIST_H1_LONG = Arrays.asList("", "", "", "", "", "");
-        List<String> LIST_H1_SHOT = Arrays.asList("", "", "", "", "", "");
+        List<String> H1_BUYING = Arrays.asList("USOIL", "", "", "", "", "");
+        List<String> H1_SELING = Arrays.asList("XAGUSD", "", "", "", "", "");
 
         // 15
-        List<String> LIST_15_LONG = Arrays.asList("", "", "", "", "", "");
-        List<String> LIST_15_SHOT = Arrays.asList("", "", "", "", "", "");
+        List<String> M15_BUYING = Arrays.asList("GBPJPY", "", "", "", "", "");
+        List<String> M15_SELING = Arrays.asList("", "", "", "", "", "");
 
         // -------------------------------------------------------------------------------------
         // ---------------------------------------CRYPTO----------------------------------------
@@ -3720,10 +3708,10 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        alertMsg(Utils.CAPITAL_TIME_15, LIST_15_LONG, LIST_15_SHOT);
-        alertMsg(Utils.CAPITAL_TIME_H1, LIST_H1_LONG, LIST_H1_SHOT);
-        alertMsg(Utils.CAPITAL_TIME_H4, LIST_H4_LONG, LIST_H4_SHOT);
-        alertMsg(Utils.CAPITAL_TIME_D1, LIST_D1_LONG, LIST_D1_SHOT);
+        alertMsg(Utils.CAPITAL_TIME_15, M15_BUYING, M15_SELING);
+        alertMsg(Utils.CAPITAL_TIME_H1, H1_BUYING, H1_SELING);
+        alertMsg(Utils.CAPITAL_TIME_H4, H4_BUYING, H4_SELING);
+        alertMsg(Utils.CAPITAL_TIME_D1, H6_BUYING, H6_SELING);
     }
 
 }
