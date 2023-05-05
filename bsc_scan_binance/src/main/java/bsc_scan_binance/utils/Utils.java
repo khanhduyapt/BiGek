@@ -666,7 +666,7 @@ public class Utils {
             return "(H4) ";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
-            return "(H8) ";
+            return "(H6) ";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_W1)) {
             return "(W1) ";
@@ -2197,7 +2197,7 @@ public class Utils {
             } else if (symbol.contains("_4h_")) {
                 result = "(H4) ";
             } else if (symbol.contains("_1d_")) {
-                result = "(H8) ";
+                result = "(H6) ";
             } else if (symbol.contains("_1w_")) {
                 result = "(W1) ";
             } else {
@@ -2232,7 +2232,7 @@ public class Utils {
             } else if (symbol.contains(CAPITAL_TIME_H1)) {
                 result = "(H1) ";
             } else if (symbol.contains(CAPITAL_TIME_D1)) {
-                result = "(H8) ";
+                result = "(H6) ";
             } else if (symbol.contains(CAPITAL_TIME_W1)) {
                 result = "(W1) ";
 
@@ -3440,14 +3440,20 @@ public class Utils {
         }
 
         if (Utils.isBlank(type)) {
-            if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(2).isDown()) {
+            if (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend() && heken_list.get(2).isDown()
+                    && heken_list.get(3).isDown()) {
                 type = Utils.appendSpace(TREND_LONG, 4) + "(Heken)";
-            } else if (heken_list.get(0).isDown() && heken_list.get(1).isDown() && heken_list.get(2).isUptrend()) {
+
+            } else if (heken_list.get(0).isDown() && heken_list.get(1).isDown() && heken_list.get(2).isUptrend()
+                    && heken_list.get(3).isUptrend()) {
                 type = Utils.appendSpace(TREND_SHOT, 4) + "(Heken)";
-            } else if (heken_list.get(1).isUptrend() && heken_list.get(2).isDown()) {
+
+            } else if (heken_list.get(1).isUptrend() && heken_list.get(2).isDown() && heken_list.get(3).isDown()) {
                 type = Utils.appendSpace(TREND_LONG, 4) + "(Heken)";
-            } else if (heken_list.get(1).isDown() && heken_list.get(2).isUptrend()) {
+
+            } else if (heken_list.get(1).isDown() && heken_list.get(2).isUptrend() && heken_list.get(3).isUptrend()) {
                 type = Utils.appendSpace(TREND_SHOT, 4) + "(Heken)";
+
             }
         }
 
