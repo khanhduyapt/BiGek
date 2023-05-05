@@ -3319,6 +3319,7 @@ public class BinanceServiceImpl implements BinanceService {
         // ------------------------------------------------------------------
         String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_Blog2h();
 
+        // TODO: initCryptoTrend
         if (ARR_ALLOW_H4.contains(SYMBOL)) {
             List<BtcFutures> list_w1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_W1, 10);
             if (CollectionUtils.isEmpty(list_w1)) {
@@ -3365,7 +3366,7 @@ public class BinanceServiceImpl implements BinanceService {
             List<BigDecimal> body = Utils.getOpenCloseCandle(list_d1);
             List<BigDecimal> low_high = Utils.getLowHighCandle(list_d1);
 
-            String switch_trend = Utils.switchTrendByHeken12_or_Ma35(heken_list_d1);
+            String switch_trend = Utils.switchTrendByHeken_12(heken_list_d1);
 
             String note = "";
             if (CRYPTO_LIST_BUYING.contains(SYMBOL)) {
@@ -3388,7 +3389,6 @@ public class BinanceServiceImpl implements BinanceService {
         String note = "";
 
         // ------------------------------------------------------------------
-        // TODO: initCryptoTrend
         if (CRYPTO_LIST_BUYING.contains(SYMBOL)
                 || (Objects.equals(trend_d1, Utils.TREND_LONG) && ARR_ALLOW_H4.contains(SYMBOL))
                 || Objects.equals(SYMBOL, "BTC")) {
@@ -3411,7 +3411,7 @@ public class BinanceServiceImpl implements BinanceService {
                 logMsgPerHour(EVENT_ID, msg_d1 + log, Utils.MINUTES_OF_1H);
             }
 
-            String switch_trend = Utils.switchTrendByHeken12_or_Ma35(heken_list_h4);
+            String switch_trend = Utils.switchTrendByHeken_12(heken_list_h4);
             if (Utils.isNotBlank(switch_trend) && Objects.equals(SYMBOL, "BTC")) {
                 logMsgPerHour("switch_trend_btc",
                         Utils.appendSpace("BTC SwitchTrend", 29) + "(H4) " + Utils.appendSpace(switch_trend, 25) + log,
@@ -3601,13 +3601,13 @@ public class BinanceServiceImpl implements BinanceService {
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
             if (Utils.isNotBlank(dto_dt.getNote()) && Objects.equals(trend_h6, trend_h4)
                     && Objects.equals(trend_h4, trend_dt)) {
-                String prefix = "(D1.H6.H4.H1.15.05) <-- ";
+                String prefix = "(D1.H8.H4.H1.15.05) <-- ";
 
                 if (!Objects.equals(trend_d1, trend_dt)) {
                     prefix = prefix.replace("D1.", "   ");
                 }
                 if (!Objects.equals(trend_h6, trend_dt)) {
-                    prefix = prefix.replace("H6.", "   ");
+                    prefix = prefix.replace("H8.", "   ");
                 }
                 if (!Objects.equals(trend_h1, trend_dt)) {
                     prefix = prefix.replace("H1.", "   ");

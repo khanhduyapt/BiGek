@@ -666,7 +666,7 @@ public class Utils {
             return "(H4) ";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
-            return "(H6) ";
+            return "(H8) ";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_W1)) {
             return "(W1) ";
@@ -2197,7 +2197,7 @@ public class Utils {
             } else if (symbol.contains("_4h_")) {
                 result = "(H4) ";
             } else if (symbol.contains("_1d_")) {
-                result = "(H6) ";
+                result = "(H8) ";
             } else if (symbol.contains("_1w_")) {
                 result = "(W1) ";
             } else {
@@ -2232,7 +2232,7 @@ public class Utils {
             } else if (symbol.contains(CAPITAL_TIME_H1)) {
                 result = "(H1) ";
             } else if (symbol.contains(CAPITAL_TIME_D1)) {
-                result = "(H6) ";
+                result = "(H8) ";
             } else if (symbol.contains(CAPITAL_TIME_W1)) {
                 result = "(W1) ";
 
