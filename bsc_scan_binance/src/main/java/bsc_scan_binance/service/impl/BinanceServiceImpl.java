@@ -2787,7 +2787,6 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private String analysis(String prifix, String EPIC, String CAPITAL_TIME_XX) {
-
         Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
         Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
 
@@ -3579,7 +3578,17 @@ public class BinanceServiceImpl implements BinanceService {
             // H4 trở xuống đảo chiều # D1 thì không đánh.
             if ((Utils.CAPITAL_TIME_H4 + "_" + Utils.CAPITAL_TIME_H1 + "_" + Utils.CAPITAL_TIME_15 + "_"
                     + Utils.CAPITAL_TIME_05).contains(CAPITAL_TIME_XX)) {
-                if (!Objects.equals(trend_d1, trend_dt)) {
+                if (Utils.isNotBlank(dto_h8.getNote()) && !Objects.equals(trend_h8, trend_dt)) {
+                    continue;
+                }
+
+                if (Utils.isBlank(dto_h8.getNote()) && Objects.equals(trend_d1, trend_h8)
+                        && !Objects.equals(trend_d1, trend_dt)) {
+                    continue;
+                }
+
+                if ((Utils.CAPITAL_TIME_15 + "_" + Utils.CAPITAL_TIME_05).contains(CAPITAL_TIME_XX)
+                        && !Objects.equals(trend_h8, trend_dt)) {
                     continue;
                 }
             }
