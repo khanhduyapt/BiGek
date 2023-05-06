@@ -3587,8 +3587,7 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                if ((Utils.CAPITAL_TIME_15 + "_" + Utils.CAPITAL_TIME_05).contains(CAPITAL_TIME_XX)
-                        && !Objects.equals(trend_h8, trend_dt)) {
+                if (!Objects.equals(trend_h8, trend_dt)) {
                     continue;
                 }
             }
