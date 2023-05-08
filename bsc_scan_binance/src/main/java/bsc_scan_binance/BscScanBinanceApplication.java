@@ -216,7 +216,7 @@ public class BscScanBinanceApplication {
         LocalTime kill_zone_ny = LocalTime.parse("18:45:00"); // to: 19:15
         LocalTime cur_time = LocalTime.now();
 
-        String EVENT_ID = "KILL_ZONE_" + Utils.getCurrentYyyyMmDd_HH();
+        String EVENT_ID = "KILL_ZONE_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
 
         long elapsedMinutes_tk = Duration.between(kill_zone_tk, cur_time).toMinutes();
         if ((0 <= elapsedMinutes_tk) && (elapsedMinutes_tk <= 30) && isReloadAfter(15, "Start_Tokyo_Kill_Zone")) {
