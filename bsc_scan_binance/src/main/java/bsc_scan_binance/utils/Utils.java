@@ -3493,8 +3493,10 @@ public class Utils {
         // hướng.
         int str = 1;
         int end = 2;
+
         String id = heken_list.get(0).getId();
-        if (id.contains("_1w_") || id.contains("_1d_") || id.contains("_4h_")) {
+        if (id.contains("_1w_") || id.contains("_1d_") || id.contains("_4h_") || id.contains("HOUR_4")
+                || id.contains("DAY") || id.contains("WEEK")) {
             str = 0;
             end = 1;
         }
