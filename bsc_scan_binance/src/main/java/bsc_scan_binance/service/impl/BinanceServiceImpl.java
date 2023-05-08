@@ -3654,10 +3654,9 @@ public class BinanceServiceImpl implements BinanceService {
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
 
-        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("", "", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("EURJPY", "USDJPY", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_05, Arrays.asList("EURJPY", "USDJPY", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_15, Arrays.asList("", "", ""));
-
-        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_05, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_05, Arrays.asList("", "", ""));
         // -------------------------------------------------------------------------------------
 
