@@ -2695,6 +2695,28 @@ public class BinanceServiceImpl implements BinanceService {
         }
     }
 
+    @Transactional
+    private void createOrders(String SYMBOL, String orderId_h12, String switch_trend_h12, String trend_h12,
+            List<BtcFutures> list_h12) {
+        String date_time = LocalDateTime.now().toString();
+
+        List<BigDecimal> body = Utils.getOpenCloseCandle(list_h12);
+        List<BigDecimal> low_high = Utils.getLowHighCandle(list_h12);
+
+        String note = "";
+        if (CRYPTO_LIST_BUYING.contains(SYMBOL)) {
+            note = "(BUYING)" + switch_trend_h12;
+        } else if (Utils.LIST_WAITING.contains(SYMBOL)) {
+            note = "(WAITING)" + switch_trend_h12;
+        } else {
+            note = switch_trend_h12;
+        }
+
+        Orders entity = new Orders(orderId_h12, date_time, trend_h12, list_h12.get(0).getCurrPrice(), body.get(0),
+                body.get(1), low_high.get(0), low_high.get(1), note);
+        ordersRepository.save(entity);
+    }
+
     private void outputLog(String prefix_id, String EPIC, Orders dto_entry, Orders dto_sl, String append) {
         if (Objects.isNull(dto_entry) || Objects.isNull(dto_sl)) {
             return;
@@ -3348,36 +3370,24 @@ public class BinanceServiceImpl implements BinanceService {
         String switch_trend_h12 = Utils.switchTrendByHeken_12(heken_list_h12);
 
         if (Utils.isNotBlank(switch_trend_h12)) {
-            List<BigDecimal> body = Utils.getOpenCloseCandle(list_h12);
-            List<BigDecimal> low_high = Utils.getLowHighCandle(list_h12);
-
-            String note = "";
-            if (CRYPTO_LIST_BUYING.contains(SYMBOL)) {
-                note = "(BUYING)" + switch_trend_h12;
-            } else if (Utils.LIST_WAITING.contains(SYMBOL)) {
-                note = "(WAITING)" + switch_trend_h12;
-            } else {
-                note = switch_trend_h12;
-            }
-
-            Orders entity = new Orders(orderId_h12, date_time, trend_h12, list_h12.get(0).getCurrPrice(), body.get(0),
-                    body.get(1), low_high.get(0), low_high.get(1), note);
-            ordersRepository.save(entity);
+            createOrders(SYMBOL, orderId_h12, switch_trend_h12, switch_trend_h12, heken_list_h12);
 
             String temp = Utils.getTimeHHmm() + "   " + switch_trend_h12 + "   " + Utils.appendSpace(SYMBOL, 10);
             temp += "(H12)" + Utils.appendSpace(trend_h12, 10) + Utils.getCryptoLink_Spot(SYMBOL);
             System.out.println(temp);
+        } else {
+            deleteOrders(orderId_h12);
         }
-        // ------------------------------------------------------------------
-        // ------------------------------------------------------------------
-        // ------------------------------------------------------------------
-        // ------------------------------------------------------------------
-        // ------------------------------------------------------------------
 
         boolean debug = true;
         if (debug) {
             return Utils.CRYPTO_TIME_H1;
         }
+        // ------------------------------------------------------------------
+        // ------------------------------------------------------------------
+        // ------------------------------------------------------------------
+        // ------------------------------------------------------------------
+        // ------------------------------------------------------------------
 
         if (ARR_ALLOW_H4.contains(SYMBOL)) {
             List<BtcFutures> list_w1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_W1, 10);
@@ -3715,7 +3725,7 @@ public class BinanceServiceImpl implements BinanceService {
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
 
-        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("EURJPY", "USDJPY", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_15, Arrays.asList("", "", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_05, Arrays.asList("", "", ""));
@@ -3735,7 +3745,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> H8_SELING = Arrays.asList("", "", "", "", "", "");
         // H4
         List<String> H4_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> H4_SELING = Arrays.asList("GBPNZD", "", "", "", "", "");
+        List<String> H4_SELING = Arrays.asList("", "USDCHF", "", "", "", "");
 
         // H1
         List<String> H1_BUYING = Arrays.asList("", "", "", "", "", "");
