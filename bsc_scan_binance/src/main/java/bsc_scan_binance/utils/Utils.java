@@ -137,7 +137,9 @@ public class Utils {
     public static final String CRYPTO_TIME_15 = "15m";
     public static final String CRYPTO_TIME_H1 = "1h";
     public static final String CRYPTO_TIME_H4 = "4h";
+    public static final String CRYPTO_TIME_H12 = "12h";
     public static final String CRYPTO_TIME_D1 = "1d";
+    public static final String CRYPTO_TIME_D3 = "3d";
     public static final String CRYPTO_TIME_W1 = "1w";
 
     public static final Integer MINUTES_OF_D = 240;// 600;
@@ -670,7 +672,7 @@ public class Utils {
             return "(H8) ";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
-            return "(D1) ";
+            return "(H12) ";
         }
 
         return TIME;
@@ -2235,7 +2237,7 @@ public class Utils {
             } else if (symbol.contains(CAPITAL_TIME_H8)) {
                 result = "(H8) ";
             } else if (symbol.contains(CAPITAL_TIME_D1)) {
-                result = "(D1) ";
+                result = "(H12) ";
 
             } else {
                 // symbol = symbol.replace("_00", "");
@@ -3319,6 +3321,15 @@ public class Utils {
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H1, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_15, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_05, "");
+
+        EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_05, "");
+        EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_15, "");
+        EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_H1, "");
+        EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_H4, "");
+        EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_D1, "");
+        EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_W1, "");
+
+        EPIC = EPIC.replace("00", "");
         EPIC = EPIC.replace("_", "");
 
         return EPIC;
@@ -3454,7 +3465,8 @@ public class Utils {
         }
         if (CollectionUtils.isEmpty(heken_list) || heken_list.size() < 5) {
             Utils.logWritelnDraft(
-                    "(switchTrendByHeken_12)list Size < 5: " + heken_list.get(0).getId() + "  " + heken_list.size());
+                    "(switchTrendByHeken_12)list Size < 5: " + heken_list.get(0).getId() + "  " + heken_list.size()
+                            + "   " + Utils.getCryptoLink_Spot(getEpicFromId(heken_list.get(0).getId())));
             return "";
         }
 

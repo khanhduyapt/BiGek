@@ -99,6 +99,7 @@ public class BscScanBinanceApplication {
             CAPITAL_LIST.addAll(Utils.EPICS_FOREXS);
 
             if (app_flag != Utils.const_app_flag_webonly) {
+                List<String> ARR_ALLOW_H4 = new ArrayList<String>();
                 int total = Utils.COINS.size();
                 int index_crypto = 0;
                 int round_crypto = 0;
