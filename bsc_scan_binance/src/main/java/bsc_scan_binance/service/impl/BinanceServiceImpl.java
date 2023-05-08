@@ -3324,7 +3324,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> ARR_ALLOW_H4 = new ArrayList<String>();
         ARR_ALLOW_H4.addAll(CRYPTO_LIST_BUYING);
         ARR_ALLOW_H4.addAll(Utils.LIST_WAITING);
-        // ARR_ALLOW_H4.addAll(Utils.COINS_FUTURES);
+        ARR_ALLOW_H4.addAll(Utils.COINS_FUTURES);
         if (!ARR_ALLOW_H4.contains(SYMBOL)) {
             return Utils.CRYPTO_TIME_H4;
         }
@@ -3356,6 +3356,8 @@ public class BinanceServiceImpl implements BinanceService {
                 note = "(BUYING)" + switch_trend_h12;
             } else if (Utils.LIST_WAITING.contains(SYMBOL)) {
                 note = "(WAITING)" + switch_trend_h12;
+            } else {
+                note = switch_trend_h12;
             }
 
             Orders entity = new Orders(orderId_h12, date_time, trend_h12, list_h12.get(0).getCurrPrice(), body.get(0),
@@ -3363,8 +3365,7 @@ public class BinanceServiceImpl implements BinanceService {
             ordersRepository.save(entity);
 
             String temp = Utils.getTimeHHmm() + "   " + switch_trend_h12 + "   " + Utils.appendSpace(SYMBOL, 10);
-            temp += "(H12)" + Utils.appendSpace(trend_h12, 5);
-            temp += Utils.appendSpace(trend_h12, 10);
+            temp += "(H12)" + Utils.appendSpace(trend_h12, 10) + Utils.getCryptoLink_Spot(SYMBOL);
             System.out.println(temp);
         }
         // ------------------------------------------------------------------
@@ -3528,7 +3529,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend = Utils.getTrendByHekenAshiList(heken_list);
 
         String note = "";
-        if (CAPITAL_TIME_XX.contains("MINUTE")) {
+        if (Objects.equals(Utils.CAPITAL_TIME_05, CAPITAL_TIME_XX)) {
             String type = "";
             if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
                 type = Utils.TEXT_SWITCH_TREND_Ma_1_50;
@@ -3537,6 +3538,13 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isNotBlank(type)) {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
             }
+        } else if (Objects.equals(Utils.CAPITAL_TIME_15, CAPITAL_TIME_XX)) {
+
+            String type = Utils.switchTrendByHeken12_or_Ma35(heken_list);
+            if (Utils.isNotBlank(type)) {
+                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + type;
+            }
+
         } else if (CAPITAL_TIME_XX.contains("HOUR")) {
             String type = Utils.switchTrendByHeken_12(heken_list);
             if (Utils.isNotBlank(type)) {
@@ -3636,24 +3644,19 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            if (Objects.equals(trend_h12, trend_h8) && !Objects.equals(trend_h8, trend_dt)) {
-                continue;
-            }
+            if (!(Utils.CAPITAL_TIME_05 + "_" + Utils.CAPITAL_TIME_05).contains(CAPITAL_TIME_XX)) {
+                if (Objects.equals(trend_h12, trend_h8) && !Objects.equals(trend_h8, trend_dt)) {
+                    continue;
+                }
 
+                if (Utils.isNotBlank(dto_h8.getNote()) && !Objects.equals(trend_h8, trend_dt)) {
+                    continue;
+                }
+            }
             // TODO: 2. scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
             // H4 trở xuống đảo chiều # H8 thì không đánh.
-            if ((Utils.CAPITAL_TIME_H4 + "_" + Utils.CAPITAL_TIME_H1 + "_" + Utils.CAPITAL_TIME_15 + "_"
-                    + Utils.CAPITAL_TIME_05).contains(CAPITAL_TIME_XX)) {
-                if (Utils.isNotBlank(dto_h8.getNote()) && !Objects.equals(trend_h8, trend_dt)) {
-                    continue;
-                }
-
-                if (!Objects.equals(trend_h8, trend_dt)) {
-                    continue;
-                }
-            }
 
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (H12.H8.H4.H1.15.05) <-- ";
 
@@ -3710,7 +3713,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Arrays.asList("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
-        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("GBPNZD", "", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("EURJPY", "USDJPY", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_15, Arrays.asList("", "", ""));
@@ -3732,7 +3735,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> H8_SELING = Arrays.asList("", "", "", "", "", "");
         // H4
         List<String> H4_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> H4_SELING = Arrays.asList("", "", "", "", "", "");
+        List<String> H4_SELING = Arrays.asList("GBPNZD", "", "", "", "", "");
 
         // H1
         List<String> H1_BUYING = Arrays.asList("", "", "", "", "", "");
