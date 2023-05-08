@@ -666,7 +666,7 @@ public class Utils {
             return "(H1) ";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
-            return "(H4) ";
+            return "(H6) ";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_H8)) {
             return "(H8) ";
@@ -2198,7 +2198,7 @@ public class Utils {
             } else if (symbol.contains("_2h_")) {
                 result = "(H2) ";
             } else if (symbol.contains("_4h_")) {
-                result = "(H4) ";
+                result = "(H6) ";
             } else if (symbol.contains("_1d_")) {
                 result = "(D1) ";
             } else if (symbol.contains("_1w_")) {
@@ -2231,7 +2231,7 @@ public class Utils {
             } else if (symbol.contains(CAPITAL_TIME_15)) {
                 result = "(15) ";
             } else if (symbol.contains(CAPITAL_TIME_H4)) {
-                result = "(H4) ";
+                result = "(H6) ";
             } else if (symbol.contains(CAPITAL_TIME_H1)) {
                 result = "(H1) ";
             } else if (symbol.contains(CAPITAL_TIME_H8)) {
@@ -3464,9 +3464,8 @@ public class Utils {
             return "";
         }
         if (CollectionUtils.isEmpty(heken_list) || heken_list.size() < 5) {
-            Utils.logWritelnDraft(
-                    "(switchTrendByHeken_12)list Size < 5: " + heken_list.get(0).getId() + "  " + heken_list.size()
-                            + "   " + Utils.getCryptoLink_Spot(getEpicFromId(heken_list.get(0).getId())));
+            Utils.logWritelnDraft("(switchTrendByHeken_12)list Size < 5: " + heken_list.get(0).getId() + "  "
+                    + heken_list.size() + "   " + Utils.getCryptoLink_Spot(getEpicFromId(heken_list.get(0).getId())));
             return "";
         }
 
