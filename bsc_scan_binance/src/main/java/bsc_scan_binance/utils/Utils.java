@@ -3442,7 +3442,7 @@ public class Utils {
         return false;
     }
 
-    public static String switchTrendByHeken12_or_Ma35(List<BtcFutures> heken_list) {
+    public static String switchTrendByHeken_12_or_Ma35(List<BtcFutures> heken_list) {
         String type = "";
         if (Utils.isBlank(type)) {
             type = switchTrendByHeken_12(heken_list);
