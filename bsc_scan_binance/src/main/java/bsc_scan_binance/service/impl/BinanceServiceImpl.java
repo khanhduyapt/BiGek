@@ -3552,12 +3552,15 @@ public class BinanceServiceImpl implements BinanceService {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
             }
         } else if (Objects.equals(Utils.CAPITAL_TIME_15, CAPITAL_TIME_XX)) {
-
             String type = Utils.switchTrendByHeken12_or_Ma35(heken_list);
-            if (Utils.isNotBlank(type)) {
-                note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + type;
+            if (Utils.isNotBlank(type) && (heken_list.size() > 30)) {
+                if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + type + "(Low50)";
+                }
+                if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
+                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + type + "(Hig50)";
+                }
             }
-
         } else if (CAPITAL_TIME_XX.contains("HOUR")) {
             String type = Utils.switchTrendByHeken_12(heken_list);
             if (Utils.isNotBlank(type)) {
@@ -3570,9 +3573,10 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isNotBlank(type) && (heken_list.size() > 30)) {
                 if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
                     type += "(Low50)";
-                }
-                if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
+                } else if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
                     type += "(Hig50)";
+                } else if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1)) {
+                    type = "";
                 }
             }
 
@@ -3768,17 +3772,19 @@ public class BinanceServiceImpl implements BinanceService {
         // H8
         List<String> H8_BUYING = Arrays.asList("", "", "", "", "", "");
         List<String> H8_SELING = Arrays.asList("", "", "", "", "", "");
-        // H4
-        List<String> H6_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> H6_SELING = Arrays.asList("", "", "", "", "", "");
+
+        // H6
+        List<String> H6_BUYING = Arrays.asList("USDCHF", "", "", "", "", "");
+        List<String> H6_SELING = Arrays.asList("GBPJPY", "GBPUSD", "NZDUSD", "", "", "");
 
         // H1
         List<String> H1_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> H1_SELING = Arrays.asList("", "", "", "", "", "");
+        List<String> H1_SELING = Arrays.asList("NZDCAD", "", "", "", "", "");
 
         // 15
         List<String> M15_BUYING = Arrays.asList("", "", "", "", "", "");
         List<String> M15_SELING = Arrays.asList("", "", "", "", "", "");
+
         // 05
         List<String> M05_BUYING = Arrays.asList("", "", "", "", "", "");
         List<String> M05_SELING = Arrays.asList("", "", "", "", "", "");
