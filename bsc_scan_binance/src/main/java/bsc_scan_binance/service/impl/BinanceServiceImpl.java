@@ -3655,7 +3655,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Utils.isBlank(dto_dt.getNote())
                     || Utils.isBlank(dto_h12.getNote() + dto_h8.getNote() + dto_h6.getNote())) {
-                continue;
+                // continue;
             }
 
             if (Objects.equals(trend_h12, trend_h8) && Objects.equals(trend_h8, trend_h6)
@@ -3731,10 +3731,10 @@ public class BinanceServiceImpl implements BinanceService {
     public void monitorProfit() {
         // -------------------------------------------------------------------------------------
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H12, Arrays.asList("", "", ""));
-        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H12, Arrays.asList("NZDUSD", "AUDUSD", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H12, Arrays.asList("", "", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H8, Arrays.asList("", "", ""));
-        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H8, Arrays.asList("", "", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H8, Arrays.asList("NZDUSD", "", "", "", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H6,
                 Arrays.asList("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""));
