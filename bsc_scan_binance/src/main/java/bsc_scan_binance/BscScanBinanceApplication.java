@@ -125,7 +125,7 @@ public class BscScanBinanceApplication {
                                 binance_service.initWeekTrend();
 
                                 for (String EPIC : CAPITAL_LIST) {
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_D1);
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H12);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H8);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H6);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
@@ -136,7 +136,7 @@ public class BscScanBinanceApplication {
                                 File myScap = new File(Utils.getDraftLogFile());
                                 myScap.delete();
                                 // --------------------------------------------------------------------------
-                                binance_service.scapForex(Utils.CAPITAL_TIME_D1);
+                                binance_service.scapForex(Utils.CAPITAL_TIME_H12);
                                 Utils.logWritelnDraft("");
                                 binance_service.scapForex(Utils.CAPITAL_TIME_H8);
                                 Utils.logWritelnDraft("");

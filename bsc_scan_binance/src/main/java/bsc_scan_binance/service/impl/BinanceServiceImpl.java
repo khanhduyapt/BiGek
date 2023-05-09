@@ -3075,7 +3075,7 @@ public class BinanceServiceImpl implements BinanceService {
         capital_list.addAll(Utils.EPICS_ONE_WAY);
         capital_list.addAll(Utils.EPICS_FOREXS);
         for (String epic : capital_list) {
-            List<BtcFutures> list = getCapitalData(epic, Utils.CAPITAL_TIME_D1);
+            List<BtcFutures> list = getCapitalData(epic, Utils.CAPITAL_TIME_H12);
             if (CollectionUtils.isEmpty(list)) {
                 continue;
             }
@@ -3133,7 +3133,7 @@ public class BinanceServiceImpl implements BinanceService {
             for (Orders dto_h4 : list_all) {
                 String EPIC = Utils.getEpicFromId(dto_h4.getId());
 
-                Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+                Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
                 Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
                 Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
                 Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
@@ -3544,6 +3544,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String note = "";
         if (Objects.equals(Utils.CAPITAL_TIME_05, CAPITAL_TIME_XX)) {
+
             String type = "";
             if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
                 type = Utils.TEXT_SWITCH_TREND_Ma_1_50;
@@ -3552,8 +3553,11 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isNotBlank(type)) {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
             }
+
         } else if (Objects.equals(Utils.CAPITAL_TIME_15, CAPITAL_TIME_XX)) {
+
             String type = Utils.switchTrendByHeken12_or_Ma35(heken_list);
+
             if (Utils.isNotBlank(type) && (heken_list.size() > 30)) {
                 if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
                     note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + type + "(Low50)";
@@ -3562,14 +3566,9 @@ public class BinanceServiceImpl implements BinanceService {
                     note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + type + "(Hig50)";
                 }
             }
+
         } else if (CAPITAL_TIME_XX.contains("HOUR")) {
-            String type = Utils.switchTrendByHeken_12(heken_list);
-            if (Utils.isNotBlank(type)) {
-                type = "(Heken)";
-            }
-            if (Utils.isBlank(type) && Objects.equals(trend, Utils.switchTrendByMaXX(heken_list, 3, 5))) {
-                type = "(Ma3.5)";
-            }
+            String type = Utils.switchTrendByHeken12_or_Ma35(heken_list).replace(Utils.appendSpace(trend, 4), "");
 
             if (Utils.isNotBlank(type) && (heken_list.size() > 30)) {
                 if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
@@ -3590,7 +3589,7 @@ public class BinanceServiceImpl implements BinanceService {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
             }
         } else {
-            String type = Utils.switchTrendByHeken_12(heken_list);
+            String type = Utils.switchTrendByHeken12_or_Ma35(heken_list);
             if (Utils.isNotBlank(type)) {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + type;
             }
@@ -3637,7 +3636,7 @@ public class BinanceServiceImpl implements BinanceService {
         int index = 1;
         String msg = "";
         for (String EPIC : CAPITAL_LIST) {
-            Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+            Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
             Orders dto_h8 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
             Orders dto_h6 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H6).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
@@ -3664,6 +3663,17 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
+            if (!Objects.equals(trend_h12, trend_dt)) {
+                continue;
+            }
+
+            if (Objects.equals(Utils.CAPITAL_TIME_15, CAPITAL_TIME_XX) && !Objects.equals(trend_h1, trend_dt)) {
+                continue;
+            }
+            if (Objects.equals(Utils.CAPITAL_TIME_05, CAPITAL_TIME_XX) && !Objects.equals(trend_15, trend_dt)) {
+                continue;
+            }
+
             String switch_trend = "(Switch: H12.H8.H6)     ";
             if (Utils.isBlank(dto_h12.getNote())) {
                 switch_trend = switch_trend.replace("H12.", "    ");
@@ -3673,24 +3683,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
             if (Utils.isBlank(dto_h6.getNote())) {
                 switch_trend = switch_trend.replace("H6", "  ");
-            }
-
-            if (Objects.equals(trend_h12, trend_h8) && Objects.equals(trend_h8, trend_h6)
-                    && !Objects.equals(trend_h12, trend_dt)) {
-                continue;
-            }
-
-            if ((Utils.CAPITAL_TIME_H1 + "_" + Utils.CAPITAL_TIME_15 + "_" + Utils.CAPITAL_TIME_05)
-                    .contains(CAPITAL_TIME_XX)) {
-                if (Utils.isNotBlank(dto_h12.getNote()) && !Objects.equals(trend_h12, trend_dt)) {
-                    continue;
-                }
-                if (Utils.isNotBlank(dto_h8.getNote()) && !Objects.equals(trend_h8, trend_dt)) {
-                    continue;
-                }
-                if (Utils.isNotBlank(dto_h6.getNote()) && !Objects.equals(trend_h6, trend_dt)) {
-                    continue;
-                }
             }
 
             // TODO: 2. scapForex
@@ -3743,6 +3735,9 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public void monitorProfit() {
         // -------------------------------------------------------------------------------------
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H12, Arrays.asList("", "", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H12, Arrays.asList("NZDUSD", "", ""));
+
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H8, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H8, Arrays.asList("", "", ""));
 

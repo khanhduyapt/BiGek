@@ -131,7 +131,7 @@ public class Utils {
     public static final String CAPITAL_TIME_H1 = "HOUR";
     public static final String CAPITAL_TIME_H6 = "HOUR_4";
     public static final String CAPITAL_TIME_H8 = "DAY";
-    public static final String CAPITAL_TIME_D1 = "WEEK";
+    public static final String CAPITAL_TIME_H12 = "WEEK";
 
     public static final String CRYPTO_TIME_05 = "5m";
     public static final String CRYPTO_TIME_15 = "15m";
@@ -648,7 +648,7 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_H8)) {
             return "_1d_";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
             return "_1w_";
         }
 
@@ -671,7 +671,7 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_H8)) {
             return "(H8) ";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
             return "(H12) ";
         }
 
@@ -2236,7 +2236,7 @@ public class Utils {
                 result = "(H1) ";
             } else if (symbol.contains(CAPITAL_TIME_H8)) {
                 result = "(H8) ";
-            } else if (symbol.contains(CAPITAL_TIME_D1)) {
+            } else if (symbol.contains(CAPITAL_TIME_H12)) {
                 result = "(H12) ";
 
             } else {
@@ -3315,7 +3315,7 @@ public class Utils {
 
     public static String getEpicFromId(String id) {
         String EPIC = id;
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_D1, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H12, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H8, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H6, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H1, "");
@@ -3499,24 +3499,16 @@ public class Utils {
             return "";
         }
 
-        // Khung nhỏ bắt buộc phải chờ đóng nến, vì khi thị trường giật lên xuống mất xu
-        // hướng.
-        int str = 1;
-        int end = 2;
+        //int str = 1;
+        //int end = 2;
+        //String id = heken_list.get(0).getId();
+        //if (id.contains("_1w_") || id.contains("_1d_") || id.contains("_4h_") || id.contains("HOUR_4")
+        //        || id.contains("DAY") || id.contains("WEEK")) {
+        //    str = 0;
+        //    end = 1;
+        //}
 
-        String id = heken_list.get(0).getId();
-        if (id.contains("_1w_") || id.contains("_1d_") || id.contains("_4h_") || id.contains("HOUR_4")
-                || id.contains("DAY") || id.contains("WEEK")) {
-            str = 0;
-            end = 1;
-        }
-
-        String trend = isUptrendByMa(heken_list, 3, str, end) ? Utils.TREND_LONG : Utils.TREND_SHOT;
-
-        // BigDecimal ma6 = Utils.calcMA(heken_list, 6, 1);
-        // BigDecimal close_price = heken_list.get(1).getPrice_close_candle();
-        // String trend = (close_price.compareTo(ma6) > 0) ? Utils.TREND_LONG :
-        // Utils.TREND_SHOT;
+        String trend = isUptrendByMa(heken_list, 3, 0, 1) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
         return trend;
     }
