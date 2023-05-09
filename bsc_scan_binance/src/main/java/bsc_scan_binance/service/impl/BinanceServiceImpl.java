@@ -3662,20 +3662,10 @@ public class BinanceServiceImpl implements BinanceService {
                     && !Objects.equals(trend_h12, trend_dt)) {
                 continue;
             }
-            if (Utils.isNotBlank(dto_h12.getNote()) && !Objects.equals(trend_h12, trend_dt)) {
+            if (Utils.isNotBlank(dto_h8.getNote()) && !Objects.equals(trend_h12, trend_h8)) {
                 continue;
             }
-            if (Utils.isNotBlank(dto_h8.getNote()) && !Objects.equals(trend_h8, trend_dt)) {
-                continue;
-            }
-            if (Utils.isNotBlank(dto_h6.getNote())
-                    && (!Objects.equals(trend_h8, trend_h6) || !Objects.equals(trend_h6, trend_dt))) {
-                continue;
-            }
-            if (Objects.equals(Utils.CAPITAL_TIME_15, CAPITAL_TIME_XX) && !Objects.equals(trend_h1, trend_dt)) {
-                continue;
-            }
-            if (Objects.equals(Utils.CAPITAL_TIME_05, CAPITAL_TIME_XX) && !Objects.equals(trend_15, trend_dt)) {
+            if (Utils.isNotBlank(dto_h6.getNote()) && !Objects.equals(trend_h8, trend_h6)) {
                 continue;
             }
 
@@ -3771,12 +3761,12 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> H8_SELING = Arrays.asList("", "", "", "", "", "");
 
         // H6
-        List<String> H6_BUYING = Arrays.asList("USDCHF", "USDCAD", "", "", "", "");
-        List<String> H6_SELING = Arrays.asList("GBPJPY", "GBPUSD", "NZDUSD", "GBPCHF", "", "");
+        List<String> H6_BUYING = Arrays.asList("", "", "", "", "", "");
+        List<String> H6_SELING = Arrays.asList("", "", "", "", "", "");
 
         // H1
         List<String> H1_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> H1_SELING = Arrays.asList("", "EURCHF", "EURJPY", "", "", "");
+        List<String> H1_SELING = Arrays.asList("", "", "", "", "", "");
 
         // -------------------------------------------------------------------------------------
         // ---------------------------------------CRYPTO----------------------------------------

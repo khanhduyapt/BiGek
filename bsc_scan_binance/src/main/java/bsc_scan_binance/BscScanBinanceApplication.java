@@ -136,14 +136,11 @@ public class BscScanBinanceApplication {
                                 File myScap = new File(Utils.getDraftLogFile());
                                 myScap.delete();
                                 // --------------------------------------------------------------------------
-                                binance_service.scapForex(Utils.CAPITAL_TIME_H12);
-                                Utils.logWritelnDraft("");
                                 binance_service.scapForex(Utils.CAPITAL_TIME_H8);
                                 Utils.logWritelnDraft("");
                                 binance_service.scapForex(Utils.CAPITAL_TIME_H6);
                                 Utils.logWritelnDraft("");
-                                // if (Utils.isHuntTime() || Utils.isKillZoneTime())
-                                {
+                                if (Utils.isHuntTime() || Utils.isKillZoneTime()) {
                                     binance_service.scapForex(Utils.CAPITAL_TIME_H1);
                                     Utils.logWritelnDraft("");
                                     binance_service.scapForex(Utils.CAPITAL_TIME_15);
