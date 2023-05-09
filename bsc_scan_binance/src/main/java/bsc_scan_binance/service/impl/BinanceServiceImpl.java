@@ -2490,7 +2490,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_H8)
                 || Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_D1)) {
             time = Utils.MINUTES_OF_D;
-        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_H4)
+        } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_H6)
                 || Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_H4)) {
             time = Utils.MINUTES_OF_4H;
         } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_H1)
@@ -2743,7 +2743,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
-            Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+            Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H6).orElse(null);
 
             if (Objects.isNull(dto) || Objects.isNull(dto_sl)) {
                 Utils.logWritelnDraft("monitorProfit (" + EPIC + ") dto is null");
@@ -2810,7 +2810,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     private String analysis(String prifix, String EPIC, String CAPITAL_TIME_XX) {
         Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
-        Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+        Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H6).orElse(null);
 
         if (Objects.isNull(dto) || Objects.isNull(dto_sl)) {
             return "";
@@ -2839,7 +2839,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     @SuppressWarnings("unused")
     private boolean isTrendWeakening(String trend_target, String EPIC, String CAPITAL_TIME_XX) {
-        List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
+        List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H6);
         List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
         String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
         if (!Objects.equals(trend_target, trend_h4)) {
@@ -3634,7 +3634,7 @@ public class BinanceServiceImpl implements BinanceService {
         for (String EPIC : CAPITAL_LIST) {
             Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h8 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
-            Orders dto_h6 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+            Orders dto_h6 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H6).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(null);
@@ -3742,9 +3742,9 @@ public class BinanceServiceImpl implements BinanceService {
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H8, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H8, Arrays.asList("", "", ""));
 
-        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4,
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H6,
                 Arrays.asList("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""));
-        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4,
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H6,
                 Arrays.asList("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
@@ -3769,8 +3769,8 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> H8_BUYING = Arrays.asList("", "", "", "", "", "");
         List<String> H8_SELING = Arrays.asList("", "", "", "", "", "");
         // H4
-        List<String> H4_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> H4_SELING = Arrays.asList("", "USDCHF", "", "", "", "");
+        List<String> H6_BUYING = Arrays.asList("", "", "", "", "", "");
+        List<String> H6_SELING = Arrays.asList("", "", "", "", "", "");
 
         // H1
         List<String> H1_BUYING = Arrays.asList("", "", "", "", "", "");
@@ -3815,7 +3815,7 @@ public class BinanceServiceImpl implements BinanceService {
         alertMsg(Utils.CAPITAL_TIME_05, M05_BUYING, M05_SELING);
         alertMsg(Utils.CAPITAL_TIME_15, M15_BUYING, M15_SELING);
         alertMsg(Utils.CAPITAL_TIME_H1, H1_BUYING, H1_SELING);
-        alertMsg(Utils.CAPITAL_TIME_H4, H4_BUYING, H4_SELING);
+        alertMsg(Utils.CAPITAL_TIME_H6, H6_BUYING, H6_SELING);
         alertMsg(Utils.CAPITAL_TIME_H8, H8_BUYING, H8_SELING);
     }
 

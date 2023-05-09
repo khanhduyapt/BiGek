@@ -129,7 +129,7 @@ public class Utils {
     public static final String CAPITAL_TIME_05 = "MINUTE_5";
     public static final String CAPITAL_TIME_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_H1 = "HOUR";
-    public static final String CAPITAL_TIME_H4 = "HOUR_4";
+    public static final String CAPITAL_TIME_H6 = "HOUR_4";
     public static final String CAPITAL_TIME_H8 = "DAY";
     public static final String CAPITAL_TIME_D1 = "WEEK";
 
@@ -642,7 +642,7 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
             return "_1h_";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_H6)) {
             return "_4h_";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_H8)) {
@@ -665,7 +665,7 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
             return "(H1) ";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_H6)) {
             return "(H6) ";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_H8)) {
@@ -2230,7 +2230,7 @@ public class Utils {
                 result = "(05) ";
             } else if (symbol.contains(CAPITAL_TIME_15)) {
                 result = "(15) ";
-            } else if (symbol.contains(CAPITAL_TIME_H4)) {
+            } else if (symbol.contains(CAPITAL_TIME_H6)) {
                 result = "(H6) ";
             } else if (symbol.contains(CAPITAL_TIME_H1)) {
                 result = "(H1) ";
@@ -3317,7 +3317,7 @@ public class Utils {
         String EPIC = id;
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_D1, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H8, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H4, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H6, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H1, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_15, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_05, "");
@@ -3564,7 +3564,7 @@ public class Utils {
         if (dto_entry.getId().contains("_MINUTE_")) {
             // risk = risk.divide(BigDecimal.valueOf(3), 3, RoundingMode.CEILING);
         }
-        if (dto_entry.getId().contains(CAPITAL_TIME_H1) && !dto_entry.getId().contains(CAPITAL_TIME_H4)) {
+        if (dto_entry.getId().contains(CAPITAL_TIME_H1) && !dto_entry.getId().contains(CAPITAL_TIME_H6)) {
             // risk = risk.divide(BigDecimal.valueOf(2), 3, RoundingMode.CEILING);
         }
         risk = formatPrice(risk, 0);
