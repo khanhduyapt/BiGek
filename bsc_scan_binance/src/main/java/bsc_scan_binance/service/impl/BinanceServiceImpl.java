@@ -3653,19 +3653,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_05 = dto_05.getTrend();
             String trend_dt = dto_dt.getTrend();
 
-            if (Utils.isBlank(dto_dt.getNote())
-                    || Utils.isBlank(dto_h12.getNote() + dto_h8.getNote() + dto_h6.getNote())) {
-                // continue;
-            }
-
-            if (Objects.equals(trend_h12, trend_h8) && Objects.equals(trend_h8, trend_h6)
-                    && !Objects.equals(trend_h12, trend_dt)) {
-                continue;
-            }
-            if (Utils.isNotBlank(dto_h8.getNote()) && !Objects.equals(trend_h12, trend_h8)) {
-                continue;
-            }
-            if (Utils.isNotBlank(dto_h6.getNote()) && !Objects.equals(trend_h8, trend_h6)) {
+            if (Utils.isBlank(dto_dt.getNote()) || !Objects.equals(trend_h12, trend_dt)) {
                 continue;
             }
 
