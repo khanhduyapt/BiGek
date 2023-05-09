@@ -3470,10 +3470,20 @@ public class Utils {
         }
 
         String type = "";
-        if (heken_list.get(1).isUptrend() && heken_list.get(2).isDown() && heken_list.get(3).isDown()) {
-            type = "(Heken)";
-        } else if (heken_list.get(1).isDown() && heken_list.get(2).isUptrend() && heken_list.get(3).isUptrend()) {
-            type = "(Heken)";
+
+        String id = heken_list.get(0).getId();
+        if (id.contains("_1w_") || id.contains("_1d_") || id.contains("DAY") || id.contains("WEEK")) {
+            if (heken_list.get(0).isUptrend() && heken_list.get(1).isDown() && heken_list.get(2).isDown()) {
+                type = "(Heken)";
+            } else if (heken_list.get(0).isDown() && heken_list.get(1).isUptrend() && heken_list.get(2).isUptrend()) {
+                type = "(Heken)";
+            }
+        } else {
+            if (heken_list.get(1).isUptrend() && heken_list.get(2).isDown() && heken_list.get(3).isDown()) {
+                type = "(Heken)";
+            } else if (heken_list.get(1).isDown() && heken_list.get(2).isUptrend() && heken_list.get(3).isUptrend()) {
+                type = "(Heken)";
+            }
         }
 
         if (Utils.isNotBlank(type)) {
