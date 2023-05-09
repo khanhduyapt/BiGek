@@ -3545,16 +3545,17 @@ public class BinanceServiceImpl implements BinanceService {
         String note = "";
         if (CAPITAL_TIME_XX.contains("MINUTE")) {
 
-            String type = Utils.switchTrendByHeken_12_or_Ma35(heken_list);
-
-            if (Utils.isNotBlank(type) && (heken_list.size() > 30)) {
-                if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + type + "(Low50)";
-                }
-                if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
-                    note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + type + "(Hig50)";
-                }
-            }
+            // String type = Utils.switchTrendByHeken_12_or_Ma35(heken_list);
+            // if (Utils.isNotBlank(type) && (heken_list.size() > 30)) {
+            // if (Objects.equals(trend, Utils.TREND_LONG) &&
+            // Utils.isBelowMALine(heken_list, 50)) {
+            // note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + type + "(Low50)";
+            // }
+            // if (Objects.equals(trend, Utils.TREND_SHOT) &&
+            // Utils.isAboveMALine(heken_list, 50)) {
+            // note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + type + "(Hig50)";
+            // }
+            // }
 
             if (Utils.isBlank(note) && (heken_list.size() > 30)
                     && Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
@@ -3654,8 +3655,17 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_05 = dto_05.getTrend();
             String trend_dt = dto_dt.getTrend();
 
-            if (Utils.isBlank(dto_dt.getNote()) || Utils.isBlank(dto_h12.getNote())
-                    || !Objects.equals(trend_h12, trend_dt)) {
+            // || Utils.isBlank(dto_h12.getNote())
+            if (Utils.isBlank(dto_dt.getNote()) || !Objects.equals(trend_h12, trend_dt)) {
+                continue;
+            }
+            if (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, trend_dt)) {
+                continue;
+            }
+            if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, trend_dt)) {
+                continue;
+            }
+            if (CAPITAL_TIME_XX.contains("MINUTE") && !Objects.equals(trend_15, trend_05)) {
                 continue;
             }
 
@@ -3666,19 +3676,19 @@ public class BinanceServiceImpl implements BinanceService {
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (W1.D1.H12   H1.15.05) <-- ";
 
             if (!Objects.equals(trend_w1, trend_dt)) {
-                prefix = prefix.replace("W1.", "   ");
+                prefix = prefix.replace("W1.", "  .");
             }
             if (!Objects.equals(trend_d1, trend_dt)) {
-                prefix = prefix.replace("D1.", "   ");
+                prefix = prefix.replace("D1.", "  .");
             }
             if (!Objects.equals(trend_h12, trend_dt)) {
                 prefix = prefix.replace("H12", "   ");
             }
             if (!Objects.equals(trend_h1, trend_dt)) {
-                prefix = prefix.replace("H1.", "   ");
+                prefix = prefix.replace("H1.", "  .");
             }
             if (!Objects.equals(trend_15, trend_dt)) {
-                prefix = prefix.replace("15.", "   ");
+                prefix = prefix.replace("15.", "  .");
             }
             if (!Objects.equals(trend_05, trend_dt)) {
                 prefix = prefix.replace("05", "  ");
