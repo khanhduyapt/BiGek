@@ -2949,9 +2949,8 @@ public class BinanceServiceImpl implements BinanceService {
             required_update_bars_csv = false;
             if (elapsedMinutes > (MINUTES_OF_XX * 2)) {
                 required_update_bars_csv = true;
-                Utils.logWritelnDraft(
-                        filename + " khong duoc update! " + filename + " khong duoc update! " + filename
-                                + " khong duoc update! " + filename + " khong duoc update! \n");
+                Utils.logWritelnDraft(filename + " khong duoc update! " + filename + " khong duoc update! " + filename
+                        + " khong duoc update! " + filename + " khong duoc update! \n");
 
                 String EVENT_ID = EVENT_PUMP + "_UPDATE_BARS_CSV_" + Utils.getCurrentYyyyMmDd_HH();
                 sendMsgPerHour(EVENT_ID, "Update:" + filename, true);
@@ -3583,7 +3582,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (list.size() < 10)
             size = list.size();
 
-        List<BigDecimal> body = Utils.getOpenCloseCandle(heken_list.subList(0, size));
+        List<BigDecimal> body = Utils.getLowHighCandle(heken_list);
         BigDecimal str_body_price = body.get(0);
         BigDecimal end_body_price = body.get(1);
 
@@ -3685,13 +3684,20 @@ public class BinanceServiceImpl implements BinanceService {
             if (!Objects.equals(trend_h12, trend_dt)) {
                 allowOutput = false;
             }
-            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4) && !Objects.equals(trend_h4, trend_h1)) {
-                allowOutput = false;
-            }
+
             if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1) && !Objects.equals(trend_h4, trend_h1)) {
                 allowOutput = false;
             }
-            if (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_h12, trend_dt)) {
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4) && !Objects.equals(trend_h4, trend_h1)) {
+                allowOutput = false;
+            }
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H12) && !Objects.equals(trend_d1, trend_h12)) {
+                allowOutput = false;
+            }
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1) && Utils.isNotBlank(dto_dt.getNote())) {
+                allowOutput = true;
+            }
+            if (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, trend_dt)) {
                 allowOutput = false;
             }
             // TODO: 2. scapForex
