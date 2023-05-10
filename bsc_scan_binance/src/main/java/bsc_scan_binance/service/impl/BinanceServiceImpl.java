@@ -3642,19 +3642,19 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_dt = dto_dt.getTrend();
 
             // || Utils.isBlank(dto_h12.getNote())
-            if (Utils.isBlank(dto_dt.getNote()) || !Objects.equals(trend_h12, trend_dt)) {
+            if (Utils.isBlank(dto_dt.getNote())) {
                 continue;
             }
-            if (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, trend_dt)) {
+            if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
+                    && !Objects.equals(trend_h12, trend_dt)) {
                 continue;
             }
             if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, trend_dt)) {
                 continue;
             }
-            if (CAPITAL_TIME_XX.contains("MINUTE") && !Objects.equals(trend_15, trend_05)) {
+            if (!Objects.equals(trend_h12, trend_dt)) {
                 continue;
             }
-
             // TODO: 2. scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
             // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
@@ -3711,7 +3711,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Arrays.asList("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
-        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("EURUSD", "", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_15, Arrays.asList("", "", ""));
@@ -3720,7 +3720,7 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO: 3. monitorProfit
         // "BTCUSD", GER40", "US30", "US100", "UK100", "USOIL", "XAGUSD", "XAUUSD"
         // "AUDJPY", "AUDUSD", "CADJPY", "CHFJPY",
-        // "EURAUD", "EURCAD", "EURCHF", "EURJPY", "EURNZD", "EURUSD",
+        // "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
         // "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD",
         // "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD",
         // "USDCAD", "USDCHF", "USDJPY"
