@@ -63,7 +63,7 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 //@Slf4j
 public class Utils {
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.005);
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.01);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -129,9 +129,9 @@ public class Utils {
     public static final String CAPITAL_TIME_05 = "MINUTE_5";
     public static final String CAPITAL_TIME_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_H1 = "HOUR";
-    public static final String CAPITAL_TIME_H6 = "HOUR_4";
-    public static final String CAPITAL_TIME_H8 = "DAY";
-    public static final String CAPITAL_TIME_H12 = "WEEK";
+    public static final String CAPITAL_TIME_H12 = "HOUR_4";
+    public static final String CAPITAL_TIME_D1 = "DAY";
+    public static final String CAPITAL_TIME_W1 = "WEEK";
 
     public static final String CRYPTO_TIME_05 = "5m";
     public static final String CRYPTO_TIME_15 = "15m";
@@ -182,9 +182,9 @@ public class Utils {
             "IOTA", "IOTX", "IRIS", "JASMY", "JOE", "JST", "JUV", "KAVA", "KDA", "KEY", "KLAY", "KMD", "KNC", "KP3R",
             "KSM", "LAZIO", "LEVER", "LINA", "LINK", "LIT", "LOKA", "LOOM", "LPT", "LQTY", "LRC", "LSK", "LTC", "LTO",
             "LUNA", "LUNC", "MAGIC", "MANA", "MASK", "MATIC", "MBOX", "MC", "MDT", "MDX", "MINA", "MKR", "MLN", "MOB",
-            "MOVR", "MTL", "MULTI", "NEAR", "NEO", "NEXO", "NKN", "NMR", "NULS", "OCEAN", "OG", "OGN", "OMG",
-            "ONE", "ONG", "ONT", "OOKI", "OP", "ORN", "OSMO", "OXT", "PEOPLE", "PERL", "PERP", "PHA", "PHB", "PLA",
-            "PNT", "POLS", "POLYX", "POND", "PORTO", "POWR", "PROM", "PROS", "PSG", "PUNDIX", "PYR", "QI", "QKC", "QNT",
+            "MOVR", "MTL", "MULTI", "NEAR", "NEO", "NEXO", "NKN", "NMR", "NULS", "OCEAN", "OG", "OGN", "OMG", "ONE",
+            "ONG", "ONT", "OOKI", "OP", "ORN", "OSMO", "OXT", "PEOPLE", "PERL", "PERP", "PHA", "PHB", "PLA", "PNT",
+            "POLS", "POLYX", "POND", "PORTO", "POWR", "PROM", "PROS", "PSG", "PUNDIX", "PYR", "QI", "QKC", "QNT",
             "QTUM", "QUICK", "RDNT", "RARE", "RAY", "REEF", "REI", "REN", "REQ", "RIF", "RLC", "RNDR", "ROSE", "RPL",
             "RSR", "RUNE", "RVN", "SAND", "SANTOS", "SC", "SCRT", "SFP", "SHIB", "SKL", "SLP", "SNM", "SNT", "SNX",
             "SOL", "SPELL", "SRM", "SSV", "STEEM", "STG", "STMX", "STORJ", "STPT", "STRAX", "STX", "SUI", "SUN",
@@ -215,11 +215,11 @@ public class Utils {
             "EOS", "ETC", "ETH", "FET", "FIL", "FLM", "FLOW", "FTM", "FXS", "GAL", "GALA", "GMT", "GMX", "GRT", "GTC",
             "HBAR", "HIGH", "HOOK", "HOT", "HFT", "ICP", "ICX", "ID", "IMX", "INJ", "IOST", "IOTA", "IOTX", "JASMY",
             "JOE", "KAVA", "KLAY", "KNC", "KSM", "LDO", "LEVER", "LINA", "LINK", "LIT", "LPT", "LQTY", "LRC", "LTC",
-            "MAGIC", "MANA", "MASK", "MATIC", "MINA", "MKR", "MTL", "NEAR", "NEO", "NKN", "OCEAN", "OGN", "ONE",
-            "ONT", "OP", "PEOPLE", "PERP", "PHB", "QNT", "QTUM", "RDNT", "REEF", "REN", "RLC", "RNDR", "ROSE", "RSR",
-            "RUNE", "RVN", "SAND", "SFP", "SKL", "SNX", "SOL", "SPELL", "SSV", "STG", "STMX", "STORJ", "STX", "SUI",
-            "SUSHI", "SXP", "THETA", "TLM", "TOMO", "TRB", "TRU", "TRX", "UNFI", "UNI", "VET", "WAVES", "XEM", "XLM",
-            "XMR", "XRP", "XTZ", "YFI", "ZEC", "ZEN", "ZIL", "ZRX", "WOO", "RPL", "PEPE");
+            "MAGIC", "MANA", "MASK", "MATIC", "MINA", "MKR", "MTL", "NEAR", "NEO", "NKN", "OCEAN", "OGN", "ONE", "ONT",
+            "OP", "PEOPLE", "PERP", "PHB", "QNT", "QTUM", "RDNT", "REEF", "REN", "RLC", "RNDR", "ROSE", "RSR", "RUNE",
+            "RVN", "SAND", "SFP", "SKL", "SNX", "SOL", "SPELL", "SSV", "STG", "STMX", "STORJ", "STX", "SUI", "SUSHI",
+            "SXP", "THETA", "TLM", "TOMO", "TRB", "TRU", "TRX", "UNFI", "UNI", "VET", "WAVES", "XEM", "XLM", "XMR",
+            "XRP", "XTZ", "YFI", "ZEC", "ZEN", "ZIL", "ZRX", "WOO", "RPL", "PEPE");
 
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
@@ -642,13 +642,13 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
             return "_1h_";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_H6)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
             return "_4h_";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_H8)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
             return "_1d_";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_W1)) {
             return "_1w_";
         }
 
@@ -665,14 +665,14 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
             return "(H1) ";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_H6)) {
-            return "(H6) ";
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_H8)) {
-            return "(H8) ";
-        }
         if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
             return "(H12) ";
+        }
+        if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
+            return "(D1) ";
+        }
+        if (Objects.equals(TIME, CAPITAL_TIME_W1)) {
+            return "(W1) ";
         }
 
         return TIME;
@@ -2230,19 +2230,15 @@ public class Utils {
                 result = "(05) ";
             } else if (symbol.contains(CAPITAL_TIME_15)) {
                 result = "(15) ";
-            } else if (symbol.contains(CAPITAL_TIME_H6)) {
-                result = "(H6) ";
             } else if (symbol.contains(CAPITAL_TIME_H1)) {
                 result = "(H1) ";
-            } else if (symbol.contains(CAPITAL_TIME_H8)) {
-                result = "(H8) ";
             } else if (symbol.contains(CAPITAL_TIME_H12)) {
                 result = "(H12) ";
-
+            } else if (symbol.contains(CAPITAL_TIME_D1)) {
+                result = "(D1) ";
+            } else if (symbol.contains(CAPITAL_TIME_W1)) {
+                result = "(W1) ";
             } else {
-                // symbol = symbol.replace("_00", "");
-                // symbol = symbol.substring(symbol.indexOf("_"), symbol.length()).replace("_",
-                // "");
                 result = "(" + symbol + ")";
             }
         } catch (Exception e) {
@@ -3315,9 +3311,9 @@ public class Utils {
 
     public static String getEpicFromId(String id) {
         String EPIC = id;
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_W1, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_D1, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H12, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H8, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H6, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H1, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_15, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_05, "");
@@ -3499,14 +3495,15 @@ public class Utils {
             return "";
         }
 
-        //int str = 1;
-        //int end = 2;
-        //String id = heken_list.get(0).getId();
-        //if (id.contains("_1w_") || id.contains("_1d_") || id.contains("_4h_") || id.contains("HOUR_4")
-        //        || id.contains("DAY") || id.contains("WEEK")) {
-        //    str = 0;
-        //    end = 1;
-        //}
+        // int str = 1;
+        // int end = 2;
+        // String id = heken_list.get(0).getId();
+        // if (id.contains("_1w_") || id.contains("_1d_") || id.contains("_4h_") ||
+        // id.contains("HOUR_4")
+        // || id.contains("DAY") || id.contains("WEEK")) {
+        // str = 0;
+        // end = 1;
+        // }
 
         String trend = isUptrendByMa(heken_list, 3, 0, 1) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
@@ -3566,7 +3563,7 @@ public class Utils {
         if (dto_entry.getId().contains("_MINUTE_")) {
             // risk = risk.divide(BigDecimal.valueOf(3), 3, RoundingMode.CEILING);
         }
-        if (dto_entry.getId().contains(CAPITAL_TIME_H1) && !dto_entry.getId().contains(CAPITAL_TIME_H6)) {
+        if (dto_entry.getId().contains(CAPITAL_TIME_H1) && !dto_entry.getId().contains(CAPITAL_TIME_H12)) {
             // risk = risk.divide(BigDecimal.valueOf(2), 3, RoundingMode.CEILING);
         }
         risk = formatPrice(risk, 0);
