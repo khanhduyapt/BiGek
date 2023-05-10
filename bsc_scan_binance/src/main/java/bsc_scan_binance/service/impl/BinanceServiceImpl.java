@@ -2811,13 +2811,11 @@ public class BinanceServiceImpl implements BinanceService {
     private String analysis(String prifix, String EPIC, String CAPITAL_TIME_XX) {
         Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
         Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
-
-        if (Objects.isNull(dto) || Objects.isNull(dto_sl)) {
+        if (Objects.isNull(dto)) {
             return "";
         }
-
-        if (Utils.isBlank(dto.getNote())) {
-            return "";
+        if (Objects.isNull(dto_sl)) {
+            dto_sl = dto;
         }
 
         // ----------------------------TREND------------------------
@@ -3631,12 +3629,13 @@ public class BinanceServiceImpl implements BinanceService {
             if (!Objects.equals(trend_w1, trend_d1)) {
                 continue;
             }
+
+            String note = "";
             String type = Utils.switchTrendByHeken_12(heken_list_d1);
-            if (Utils.isBlank(type)) {
-                continue;
+            if (Utils.isNotBlank(type)) {
+                note = Utils.getChartNameCapital(Utils.CAPITAL_TIME_D1) + type;
             }
-            String note = Utils.getChartNameCapital(Utils.CAPITAL_TIME_D1) + type;
-            analysis(note, EPIC, Utils.CAPITAL_TIME_D1);
+            // analysis(note, EPIC, Utils.CAPITAL_TIME_D1);
         }
     }
 
@@ -3676,19 +3675,29 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_05 = dto_05.getTrend();
             String trend_dt = dto_dt.getTrend();
 
+            boolean allowOutput = true;
             // || Utils.isBlank(dto_h12.getNote())
             if (Utils.isBlank(dto_dt.getNote())) {
-                continue;
+                allowOutput = false;
             }
-            if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
-                    && !Objects.equals(trend_h12, trend_dt)) {
-                continue;
-            }
+
             if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, trend_dt)) {
-                continue;
+                allowOutput = false;
             }
             if (!Objects.equals(trend_h12, trend_dt)) {
-                continue;
+                allowOutput = false;
+            }
+
+            if (Objects.equals("XAUUSD", EPIC) && Utils.isNotBlank(dto_dt.getNote())) {
+                allowOutput = true;
+            }
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1) && Utils.isNotBlank(dto_dt.getNote())) {
+                allowOutput = true;
+            }
+
+            if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
+                    && !Objects.equals(trend_h12, trend_dt)) {
+                allowOutput = false;
             }
             // TODO: 2. scapForex
             // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
@@ -3714,16 +3723,17 @@ public class BinanceServiceImpl implements BinanceService {
             if (!Objects.equals(trend_05, trend_dt)) {
                 prefix = prefix.replace("05", "  ");
             }
-
             if (!prefix.contains("H12.H1")) {
                 prefix = prefix.replace("<--", "   ");
             }
 
-            if (Utils.isNotBlank(msg)) {
-                msg += ",";
+            if (allowOutput) {
+                if (Utils.isNotBlank(msg)) {
+                    msg += ",";
+                }
+                msg += analysis(prefix, EPIC, CAPITAL_TIME_XX);
+                index += 1;
             }
-            msg += analysis(prefix, EPIC, CAPITAL_TIME_XX);
-            index += 1;
         }
 
         if (Utils.isNotBlank(msg)) {
