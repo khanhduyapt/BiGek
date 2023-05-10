@@ -3549,7 +3549,7 @@ public class BinanceServiceImpl implements BinanceService {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
                         + Utils.TEXT_SWITCH_TREND_Ma_1_50;
             }
-        } else if (CAPITAL_TIME_XX.contains("HOUR")) {
+        } else if (CAPITAL_TIME_XX.contains("HOUR") || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)) {
             String type = "";
             if (heken_list.size() > 30) {
                 if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
@@ -3759,7 +3759,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Arrays.asList("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
-        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("EURUSD", "", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_15, Arrays.asList("", "", ""));
