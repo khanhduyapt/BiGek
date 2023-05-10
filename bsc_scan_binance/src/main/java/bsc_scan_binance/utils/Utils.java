@@ -3233,8 +3233,8 @@ public class Utils {
         BigDecimal ma1_0 = calcMA(heken_list, 1, 0);
         BigDecimal ma1_3 = calcMA(heken_list, 1, 3);
 
-        BigDecimal ma3_0 = calcMA(heken_list, 2, 0);
-        BigDecimal ma3_3 = calcMA(heken_list, 2, 3);
+        BigDecimal ma3_0 = calcMA(heken_list, 3, 0);
+        BigDecimal ma3_3 = calcMA(heken_list, 3, 3);
 
         BigDecimal ma50_0 = calcMA(heken_list, slowIndexXx, 0);
         BigDecimal ma50_3 = calcMA(heken_list, slowIndexXx, 3);
