@@ -3589,7 +3589,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (list.size() < 10)
             size = list.size();
 
-        List<BigDecimal> body = Utils.getLowHighCandle(heken_list);
+        List<BigDecimal> body = Utils.getOpenCloseCandle(list);
         BigDecimal str_body_price = body.get(0);
         BigDecimal end_body_price = body.get(1);
 
