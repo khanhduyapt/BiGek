@@ -2811,6 +2811,10 @@ public class BinanceServiceImpl implements BinanceService {
     private String analysis(String prifix, String EPIC, String CAPITAL_TIME_XX) {
         Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
         Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)) {
+            dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+        }
+
         if (Objects.isNull(dto)) {
             return "";
         }
@@ -3552,13 +3556,16 @@ public class BinanceServiceImpl implements BinanceService {
         } else if (CAPITAL_TIME_XX.contains("HOUR") || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)) {
             String type = "";
             if (heken_list.size() > 30) {
-                if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
-                    type = Utils.switchTrendByHeken_12_or_Ma35(heken_list).replace(Utils.appendSpace(trend, 4), "")
-                            + "(Low50)";
+                String switch_trend = Utils.switchTrendByHeken_12_or_Ma35(heken_list)
+                        .replace(Utils.appendSpace(trend, 4), "");
 
-                } else if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
-                    type = Utils.switchTrendByHeken_12_or_Ma35(heken_list).replace(Utils.appendSpace(trend, 4), "")
-                            + "(Hig50)";
+                if (Utils.isNotBlank(switch_trend) && Objects.equals(trend, Utils.TREND_LONG)
+                        && Utils.isBelowMALine(heken_list, 50)) {
+                    type = switch_trend + "(Low50)";
+
+                } else if (Utils.isNotBlank(switch_trend) && Objects.equals(trend, Utils.TREND_SHOT)
+                        && Utils.isAboveMALine(heken_list, 50)) {
+                    type = switch_trend + "(Hig50)";
 
                 } else if (Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
                     type = Utils.TEXT_SWITCH_TREND_Ma_1_50;
@@ -3592,7 +3599,9 @@ public class BinanceServiceImpl implements BinanceService {
 
         // Chap nhan thua rui ro, khong niu keo sai lam danh sai xu huong.
         BigDecimal bread = Utils.calcMaxBread(list.subList(0, size));
-        // .divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)) {
+            bread = bread.divide(BigDecimal.valueOf(5), 10, RoundingMode.CEILING);
+        }
 
         List<BigDecimal> low_high = Utils.getLowHighCandle(heken_list.subList(0, size));
         BigDecimal sl_long = low_high.get(0).subtract(bread);
@@ -3629,11 +3638,11 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            String note = "";
-            String type = Utils.switchTrendByHeken_12(heken_list_d1);
-            if (Utils.isNotBlank(type)) {
-                note = Utils.getChartNameCapital(Utils.CAPITAL_TIME_D1) + type;
-            }
+            // String note = "";
+            // String type = Utils.switchTrendByHeken_12(heken_list_d1);
+            // if (Utils.isNotBlank(type)) {
+            // note = Utils.getChartNameCapital(Utils.CAPITAL_TIME_D1) + type;
+            // }
             // analysis(note, EPIC, Utils.CAPITAL_TIME_D1);
         }
     }

@@ -3573,8 +3573,8 @@ public class Utils {
         if (dto_entry.getId().contains("_MINUTE_")) {
             // risk = risk.divide(BigDecimal.valueOf(3), 3, RoundingMode.CEILING);
         }
-        if (dto_entry.getId().contains(CAPITAL_TIME_H1) && !dto_entry.getId().contains(CAPITAL_TIME_H12)) {
-            // risk = risk.divide(BigDecimal.valueOf(2), 3, RoundingMode.CEILING);
+        if (dto_entry.getId().contains(CAPITAL_TIME_D1)) {
+            risk = risk.multiply(BigDecimal.valueOf(2));
         }
         risk = formatPrice(risk, 0);
 
