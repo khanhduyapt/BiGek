@@ -121,7 +121,9 @@ public class BscScanBinanceApplication {
 
                         if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
                             if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
-                                binance_service.saveMt5Data();
+                                binance_service.saveMt5Data("Bars.csv", Utils.MINUTES_OF_15M);
+                                binance_service.saveMt5Data("Stocks.csv", Utils.MINUTES_OF_1H);
+
                                 binance_service.initWeekTrend();
 
                                 for (String EPIC : CAPITAL_LIST) {
@@ -136,6 +138,8 @@ public class BscScanBinanceApplication {
                                 File myScap = new File(Utils.getDraftLogFile());
                                 myScap.delete();
                                 // --------------------------------------------------------------------------
+                                binance_service.scapStocks();
+                                Utils.logWritelnDraft("");
                                 binance_service.scapForex(Utils.CAPITAL_TIME_D1);
                                 Utils.logWritelnDraft("");
                                 binance_service.scapForex(Utils.CAPITAL_TIME_H12);
@@ -149,6 +153,7 @@ public class BscScanBinanceApplication {
                                     binance_service.scapForex(Utils.CAPITAL_TIME_05);
                                 }
                                 // --------------------------------------------------------------------------
+
                             }
                         }
 

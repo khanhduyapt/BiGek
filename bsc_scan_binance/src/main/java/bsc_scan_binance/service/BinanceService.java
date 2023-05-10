@@ -53,9 +53,11 @@ public interface BinanceService {
 
     public void scapForex(String CAPITAL_TIME_XX);
 
+    public void scapStocks();
+
     public void deleteConnectTimeOutException();
 
-    public void saveMt5Data();
+    public void saveMt5Data(String filename, Integer MINUTES_OF_XX);
 
     public void sendMsgPerHour(String EVENT_ID, String msg_content, boolean isOnlyMe);
 

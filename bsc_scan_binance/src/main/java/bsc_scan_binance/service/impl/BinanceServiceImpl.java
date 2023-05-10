@@ -2919,19 +2919,21 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     @Transactional
-    public void saveMt5Data() {
+    public void saveMt5Data(String filename, Integer MINUTES_OF_XX) {
         try {
 
             String mt5_data_file = "";
             String pcname = InetAddress.getLocalHost().getHostName().toLowerCase();
             if (Objects.equals(pcname, "pc")) {
                 // MFF Pc cong ty:
-                mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.csv";
+                mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\"
+                        + filename;
 
             } else if (Objects.equals(pcname, "desktop-l4m1ju2")) {
 
                 // MFF Laptop
-                mt5_data_file = "C:\\Users\\DellE5270\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\Bars.csv";
+                mt5_data_file = "C:\\Users\\DellE5270\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\"
+                        + filename;
 
             }
 
@@ -2947,13 +2949,14 @@ public class BinanceServiceImpl implements BinanceService {
                     .toLocalDateTime();
             long elapsedMinutes = Duration.between(created_time, LocalDateTime.now()).toMinutes();
             required_update_bars_csv = false;
-            if (elapsedMinutes > (Utils.MINUTES_OF_15M + 5)) {
+            if (elapsedMinutes > (MINUTES_OF_XX * 2)) {
                 required_update_bars_csv = true;
                 Utils.logWritelnDraft(
-                        "Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! Bars.csv khong duoc update! \n");
+                        filename + " khong duoc update! " + filename + " khong duoc update! " + filename
+                                + " khong duoc update! " + filename + " khong duoc update! \n");
 
                 String EVENT_ID = EVENT_PUMP + "_UPDATE_BARS_CSV_" + Utils.getCurrentYyyyMmDd_HH();
-                sendMsgPerHour(EVENT_ID, "Update_Bars.csv", true);
+                sendMsgPerHour(EVENT_ID, "Update:" + filename, true);
                 return;
             }
 
@@ -3603,6 +3606,38 @@ public class BinanceServiceImpl implements BinanceService {
         ordersRepository.save(entity);
 
         return "";
+    }
+
+    @Override
+    @Transactional
+    public void scapStocks() {
+        if (required_update_bars_csv) {
+            return;
+        }
+        for (String EPIC : Utils.EPICS_STOCKS) {
+            List<BtcFutures> list_w1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_W1);
+            List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
+
+            if (CollectionUtils.isEmpty(list_w1) || CollectionUtils.isEmpty(list_d1)) {
+                Utils.logWritelnDraft("scapStocks (" + EPIC + ") list_w1, list_d1 are empty");
+                return;
+            }
+            List<BtcFutures> heken_list_w1 = Utils.getHekenList(list_w1);
+            String trend_w1 = Utils.getTrendByHekenAshiList(heken_list_w1);
+
+            List<BtcFutures> heken_list_d1 = Utils.getHekenList(list_d1);
+            String trend_d1 = Utils.getTrendByHekenAshiList(heken_list_d1);
+
+            if (!Objects.equals(trend_w1, trend_d1)) {
+                continue;
+            }
+            String type = Utils.switchTrendByHeken_12(heken_list_d1);
+            if (Utils.isBlank(type)) {
+                continue;
+            }
+            String note = Utils.getChartNameCapital(Utils.CAPITAL_TIME_D1) + type;
+            analysis(note, EPIC, Utils.CAPITAL_TIME_D1);
+        }
     }
 
     @Override

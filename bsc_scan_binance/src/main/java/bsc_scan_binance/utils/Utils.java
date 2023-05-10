@@ -167,6 +167,10 @@ public class Utils {
             "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY",
             "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDJPY");
 
+    // "16:30 - 23:00"
+    public static final List<String> EPICS_STOCKS = Arrays.asList("AMZN", "BAC", "GOOG", "MSFT", "NFLX", "AAPL", "NVDA",
+            "META", "PFE", "RACE", "TSLA", "WMT");
+
     // ALL Binance.com
     public static final List<String> COINS = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ARB", "ADA", "ADX", "AERGO",
             "AGIX", "AGLD", "AKRO", "ALCX", "ALGO", "ALICE", "ALPACA", "ALPHA", "ALPINE", "AMB", "AMP", "ANKR", "ANT",
