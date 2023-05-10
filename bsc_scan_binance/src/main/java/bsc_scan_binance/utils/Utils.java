@@ -129,7 +129,8 @@ public class Utils {
     public static final String CAPITAL_TIME_05 = "MINUTE_5";
     public static final String CAPITAL_TIME_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_H1 = "HOUR";
-    public static final String CAPITAL_TIME_H12 = "HOUR_4";
+    public static final String CAPITAL_TIME_H4 = "HOUR_4";
+    public static final String CAPITAL_TIME_H12 = "HOUR_12";
     public static final String CAPITAL_TIME_D1 = "DAY";
     public static final String CAPITAL_TIME_W1 = "WEEK";
 
@@ -668,6 +669,9 @@ public class Utils {
         }
         if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
             return "(H1) ";
+        }
+        if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
+            return "(H4) ";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
             return "(H12) ";
@@ -2236,6 +2240,8 @@ public class Utils {
                 result = "(15) ";
             } else if (symbol.contains(CAPITAL_TIME_H1)) {
                 result = "(H1) ";
+            } else if (symbol.contains(CAPITAL_TIME_H4)) {
+                result = "(H4) ";
             } else if (symbol.contains(CAPITAL_TIME_H12)) {
                 result = "(H12) ";
             } else if (symbol.contains(CAPITAL_TIME_D1)) {
