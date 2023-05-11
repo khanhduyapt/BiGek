@@ -403,6 +403,54 @@ public class MoneyAtRiskResponse {
             standard_lot = BigDecimal.valueOf(0.135);
             unit_risk_per_pip = BigDecimal.valueOf(10000);
             break;
+        case "AMZN":
+            standard_lot = BigDecimal.valueOf(10);
+            unit_risk_per_pip = BigDecimal.valueOf(10);
+            break;
+        case "BAC":
+            standard_lot = BigDecimal.valueOf(10);
+            unit_risk_per_pip = BigDecimal.valueOf(10);
+            break;
+        case "GOOG":
+            standard_lot = BigDecimal.valueOf(10);
+            unit_risk_per_pip = BigDecimal.valueOf(10);
+            break;
+        case "MSFT":
+            standard_lot = BigDecimal.valueOf(10);
+            unit_risk_per_pip = BigDecimal.valueOf(10);
+            break;
+        case "NFLX":
+            standard_lot = BigDecimal.valueOf(10);
+            unit_risk_per_pip = BigDecimal.valueOf(10);
+            break;
+        case "AAPL":
+            standard_lot = BigDecimal.valueOf(10);
+            unit_risk_per_pip = BigDecimal.valueOf(10);
+            break;
+        case "NVDA":
+            standard_lot = BigDecimal.valueOf(10);
+            unit_risk_per_pip = BigDecimal.valueOf(10);
+            break;
+        case "META":
+            standard_lot = BigDecimal.valueOf(10);
+            unit_risk_per_pip = BigDecimal.valueOf(10);
+            break;
+        case "PFE":
+            standard_lot = BigDecimal.valueOf(10);
+            unit_risk_per_pip = BigDecimal.valueOf(10);
+            break;
+        case "RACE":
+            standard_lot = BigDecimal.valueOf(10);
+            unit_risk_per_pip = BigDecimal.valueOf(10);
+            break;
+        case "TSLA":
+            standard_lot = BigDecimal.valueOf(10);
+            unit_risk_per_pip = BigDecimal.valueOf(10);
+            break;
+        case "WMT":
+            standard_lot = BigDecimal.valueOf(10);
+            unit_risk_per_pip = BigDecimal.valueOf(10);
+            break;
 
         default:
             standard_lot = BigDecimal.valueOf(0.01);

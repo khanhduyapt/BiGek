@@ -3578,7 +3578,7 @@ public class BinanceServiceImpl implements BinanceService {
                 type = Utils.switchTrendByHeken_12_or_Ma35(heken_list).replace(Utils.appendSpace(trend, 4), "");
             }
 
-            //&& Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)
+            // && Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)
             if (Utils.isBlank(type)) {
                 type = Utils.switchTrendByHeken_12_or_Ma35(heken_list).replace(Utils.appendSpace(trend, 4), "");
             }
@@ -3608,7 +3608,9 @@ public class BinanceServiceImpl implements BinanceService {
 
         // Chap nhan thua rui ro, khong niu keo sai lam danh sai xu huong.
         BigDecimal bread = Utils.calcMaxBread(heken_list.subList(0, size));
-        bread = bread.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+        if (!Utils.EPICS_STOCKS.contains(EPIC)) {
+            bread = bread.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+        }
 
         List<BigDecimal> low_high = Utils.getLowHighCandle(list.subList(0, size));
         BigDecimal sl_long = low_high.get(0).subtract(bread);
@@ -3644,8 +3646,8 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
 
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4)
-                    || Objects.isNull(dto_h1) || CollectionUtils.isEmpty(list_d1)) {
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
+                    || CollectionUtils.isEmpty(list_d1)) {
                 Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
                 return;
             }
@@ -3689,8 +3691,8 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
 
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4)
-                    || Objects.isNull(dto_h1) || CollectionUtils.isEmpty(list_d1)) {
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
+                    || CollectionUtils.isEmpty(list_d1)) {
                 Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
                 return;
             }
@@ -3745,8 +3747,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if ((dto_h4.getNote() + dto_h1.getNote()).contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)
-                    && Objects.equals(trend_D1, trend_H4)
-                    && Objects.equals(trend_D1, trend_H1)) {
+                    && Objects.equals(trend_D1, trend_H4) && Objects.equals(trend_D1, trend_H1)) {
 
                 if (!Objects.equals(trend_M1, trend_D1)) {
                     prefix = prefix.replace("M1.", "  .");
