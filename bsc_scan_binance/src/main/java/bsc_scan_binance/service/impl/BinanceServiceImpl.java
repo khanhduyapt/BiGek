@@ -2724,7 +2724,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
-            Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
+            Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
 
             if (Objects.isNull(dto)) {
                 Utils.logWritelnDraft("[waiting] (" + EPIC + ") dto is null");
@@ -2739,15 +2739,13 @@ public class BinanceServiceImpl implements BinanceService {
                 String EVENT_ID = "monitorTrend" + Utils.getChartName(dto) + EPIC + ACTION
                         + Utils.getCurrentYyyyMmDdHHByChart(dto.getId());
 
-                String msg = "(MonitorTrend)" + Utils.appendSpace(Utils.getChartName(dto), 10) + "("
+                String msg = "[MonitorTrend]" + Utils.appendSpace(Utils.getChartName(dto), 10) + "("
                         + Utils.appendSpace(ACTION, 4) + ")" + Utils.appendSpace(EPIC, 10);
 
                 sendMsgPerHour(EVENT_ID, msg.trim().replace(" ", "."), true);
 
-                String log = msg + Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
-                outputLog("Analysis_" + Utils.getChartName(dto), EPIC, dto, dto_sl, log);
+                outputLog("Analysis_" + Utils.getChartName(dto), EPIC, dto_sl, dto_sl, msg);
             }
-
         }
     }
 
@@ -3931,7 +3929,7 @@ public class BinanceServiceImpl implements BinanceService {
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_D1, EPICS_WAIT_SEL_D1);
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
-        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("RACE", "", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
 
         // -------------------------------------------------------------------------------------
         // "BTCUSD", GER40", "US30", "US100", "UK100", "USOIL", "XAGUSD", "XAUUSD"
