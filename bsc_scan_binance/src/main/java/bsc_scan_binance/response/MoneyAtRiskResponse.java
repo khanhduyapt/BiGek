@@ -174,11 +174,11 @@ public class MoneyAtRiskResponse {
             break;
         case "USDJPY":
             standard_lot = BigDecimal.valueOf(0.224);
-            unit_risk_per_pip = BigDecimal.valueOf(166.666666666676);
+            unit_risk_per_pip = BigDecimal.valueOf(166.66);
             break;
         case "USDCAD":
             standard_lot = BigDecimal.valueOf(0.0225);
-            unit_risk_per_pip = BigDecimal.valueOf(1666.66666666667);
+            unit_risk_per_pip = BigDecimal.valueOf(1666.66);
             break;
         case "USDCHF":
             standard_lot = BigDecimal.valueOf(0.0462);
@@ -190,7 +190,7 @@ public class MoneyAtRiskResponse {
             break;
         case "GBPAUD":
             standard_lot = BigDecimal.valueOf(0.724);
-            unit_risk_per_pip = BigDecimal.valueOf(49999.9999999944);
+            unit_risk_per_pip = BigDecimal.valueOf(50000);
             break;
         case "EURAUD":
             standard_lot = BigDecimal.valueOf(0.0724);
@@ -198,7 +198,7 @@ public class MoneyAtRiskResponse {
             break;
         case "EURJPY":
             standard_lot = BigDecimal.valueOf(0.672);
-            unit_risk_per_pip = BigDecimal.valueOf(500.000000000028);
+            unit_risk_per_pip = BigDecimal.valueOf(500);
             break;
         case "EURCAD":
             standard_lot = BigDecimal.valueOf(0.0674);
@@ -206,7 +206,7 @@ public class MoneyAtRiskResponse {
             break;
         case "CADJPY":
             standard_lot = BigDecimal.valueOf(0.336);
-            unit_risk_per_pip = BigDecimal.valueOf(249.999999999996);
+            unit_risk_per_pip = BigDecimal.valueOf(250);
             break;
         case "GBPJPY":
             standard_lot = BigDecimal.valueOf(0.0672);
@@ -222,7 +222,7 @@ public class MoneyAtRiskResponse {
             break;
         case "EURNZD":
             standard_lot = BigDecimal.valueOf(0.133);
-            unit_risk_per_pip = BigDecimal.valueOf(8333.33333333333);
+            unit_risk_per_pip = BigDecimal.valueOf(8333);
             break;
         case "AUDNZD":
             standard_lot = BigDecimal.valueOf(0.2);
@@ -230,31 +230,31 @@ public class MoneyAtRiskResponse {
             break;
         case "NZDCAD":
             standard_lot = BigDecimal.valueOf(0.0225);
-            unit_risk_per_pip = BigDecimal.valueOf(1666.66666666667);
+            unit_risk_per_pip = BigDecimal.valueOf(1666.66);
             break;
         case "USDNOK":
             standard_lot = BigDecimal.valueOf(0.128);
-            unit_risk_per_pip = BigDecimal.valueOf(1250.00000000003);
+            unit_risk_per_pip = BigDecimal.valueOf(1250);
             break;
         case "USDPLN":
             standard_lot = BigDecimal.valueOf(0.0222);
-            unit_risk_per_pip = BigDecimal.valueOf(500.000000000002);
+            unit_risk_per_pip = BigDecimal.valueOf(500);
             break;
         case "USDCZK":
             standard_lot = BigDecimal.valueOf(0.111);
-            unit_risk_per_pip = BigDecimal.valueOf(499.999999999993);
+            unit_risk_per_pip = BigDecimal.valueOf(500);
             break;
         case "USDSEK":
             standard_lot = BigDecimal.valueOf(0.129);
-            unit_risk_per_pip = BigDecimal.valueOf(1250.00000000003);
+            unit_risk_per_pip = BigDecimal.valueOf(1250);
             break;
         case "AUDJPY":
             standard_lot = BigDecimal.valueOf(0.225);
-            unit_risk_per_pip = BigDecimal.valueOf(170.000000000002);
+            unit_risk_per_pip = BigDecimal.valueOf(170);
             break;
         case "NZDJPY":
             standard_lot = BigDecimal.valueOf(0.337);
-            unit_risk_per_pip = BigDecimal.valueOf(259.999999999996);
+            unit_risk_per_pip = BigDecimal.valueOf(260);
             break;
 
         case "GBPNZD":
@@ -267,7 +267,7 @@ public class MoneyAtRiskResponse {
             break;
         case "AUDCHF":
             standard_lot = BigDecimal.valueOf(0.0234);
-            unit_risk_per_pip = BigDecimal.valueOf(2500.00000000001);
+            unit_risk_per_pip = BigDecimal.valueOf(2500);
             break;
         case "GBPCHF":
             standard_lot = BigDecimal.valueOf(0.0468);
@@ -279,7 +279,7 @@ public class MoneyAtRiskResponse {
             break;
         case "CHFJPY":
             standard_lot = BigDecimal.valueOf(0.674);
-            unit_risk_per_pip = BigDecimal.valueOf(500.000000000028);
+            unit_risk_per_pip = BigDecimal.valueOf(500);
             break;
         case "NZDCHF":
             standard_lot = BigDecimal.valueOf(0.0468);
@@ -299,12 +299,12 @@ public class MoneyAtRiskResponse {
         case "GER30":
         case "GER40":
             standard_lot = BigDecimal.valueOf(0.158);
-            unit_risk_per_pip = BigDecimal.valueOf(0.166666666666667);
+            unit_risk_per_pip = BigDecimal.valueOf(0.16666);
             break;
         case "DE40":
         case "DAX40":
             standard_lot = BigDecimal.valueOf(0.0158);
-            unit_risk_per_pip = BigDecimal.valueOf(0.166666666666667);
+            unit_risk_per_pip = BigDecimal.valueOf(0.16666);
             break;
         case "EU50":
             standard_lot = BigDecimal.valueOf(0.474);
@@ -312,23 +312,23 @@ public class MoneyAtRiskResponse {
             break;
         case "EURCZK":
             standard_lot = BigDecimal.valueOf(0.0373);
-            unit_risk_per_pip = BigDecimal.valueOf(166.666666666668);
+            unit_risk_per_pip = BigDecimal.valueOf(166.66);
             break;
         case "EURPLN":
             standard_lot = BigDecimal.valueOf(0.112);
-            unit_risk_per_pip = BigDecimal.valueOf(2500.00000000005);
+            unit_risk_per_pip = BigDecimal.valueOf(2500);
             break;
         case "US100":
             standard_lot = BigDecimal.valueOf(0.167);
-            unit_risk_per_pip = BigDecimal.valueOf(0.166666666666667);
+            unit_risk_per_pip = BigDecimal.valueOf(0.16666);
             break;
         case "NAS100":
             standard_lot = BigDecimal.valueOf(0.167);
-            unit_risk_per_pip = BigDecimal.valueOf(0.166666666666667);
+            unit_risk_per_pip = BigDecimal.valueOf(0.16666);
             break;
         case "USDHKD":
             standard_lot = BigDecimal.valueOf(0.131);
-            unit_risk_per_pip = BigDecimal.valueOf(1666.66666666665);
+            unit_risk_per_pip = BigDecimal.valueOf(1666);
             break;
         case "USDHUF":
             standard_lot = BigDecimal.valueOf(0.18);
@@ -336,23 +336,23 @@ public class MoneyAtRiskResponse {
             break;
         case "USDILS":
             standard_lot = BigDecimal.valueOf(0.184);
-            unit_risk_per_pip = BigDecimal.valueOf(5000.00000000011);
+            unit_risk_per_pip = BigDecimal.valueOf(5000);
             break;
         case "USDMXN":
             standard_lot = BigDecimal.valueOf(0.0306);
-            unit_risk_per_pip = BigDecimal.valueOf(166.666666666666);
+            unit_risk_per_pip = BigDecimal.valueOf(166);
             break;
         case "USDTRY":
             standard_lot = BigDecimal.valueOf(0.118);
-            unit_risk_per_pip = BigDecimal.valueOf(625.000000000013);
+            unit_risk_per_pip = BigDecimal.valueOf(625);
             break;
         case "USDZAR":
             standard_lot = BigDecimal.valueOf(0.023);
-            unit_risk_per_pip = BigDecimal.valueOf(124.999999999999);
+            unit_risk_per_pip = BigDecimal.valueOf(125);
             break;
         case "EURDKK":
             standard_lot = BigDecimal.valueOf(0.175);
-            unit_risk_per_pip = BigDecimal.valueOf(2499.99999999994);
+            unit_risk_per_pip = BigDecimal.valueOf(2500);
             break;
         case "EURHUF":
             standard_lot = BigDecimal.valueOf(0.357);
@@ -360,19 +360,19 @@ public class MoneyAtRiskResponse {
             break;
         case "EURMXN":
             standard_lot = BigDecimal.valueOf(0.435);
-            unit_risk_per_pip = BigDecimal.valueOf(2421.30750605329);
+            unit_risk_per_pip = BigDecimal.valueOf(2421);
             break;
         case "EURNOK":
             standard_lot = BigDecimal.valueOf(0.11);
-            unit_risk_per_pip = BigDecimal.valueOf(1063.82978723403);
+            unit_risk_per_pip = BigDecimal.valueOf(1063);
             break;
         case "EURRON":
             standard_lot = BigDecimal.valueOf(0.116);
-            unit_risk_per_pip = BigDecimal.valueOf(2500.00000000005);
+            unit_risk_per_pip = BigDecimal.valueOf(2500);
             break;
         case "EURSEK":
             standard_lot = BigDecimal.valueOf(0.261);
-            unit_risk_per_pip = BigDecimal.valueOf(2500.00000000005);
+            unit_risk_per_pip = BigDecimal.valueOf(2500);
             break;
         case "EURSGD":
             standard_lot = BigDecimal.valueOf(0.336);
@@ -380,34 +380,36 @@ public class MoneyAtRiskResponse {
             break;
         case "EURTRY":
             standard_lot = BigDecimal.valueOf(0.314);
-            unit_risk_per_pip = BigDecimal.valueOf(1666.6666666666);
+            unit_risk_per_pip = BigDecimal.valueOf(1666.66);
             break;
         case "GBPTRY":
             standard_lot = BigDecimal.valueOf(0.314);
-            unit_risk_per_pip = BigDecimal.valueOf(1666.6666666666);
+            unit_risk_per_pip = BigDecimal.valueOf(1666.66);
             break;
         case "USDCNH":
             standard_lot = BigDecimal.valueOf(0.345);
-            unit_risk_per_pip = BigDecimal.valueOf(5000.00000000011);
+            unit_risk_per_pip = BigDecimal.valueOf(5000);
             break;
         case "USDDKK":
             standard_lot = BigDecimal.valueOf(0.35);
-            unit_risk_per_pip = BigDecimal.valueOf(5000.00000000011);
+            unit_risk_per_pip = BigDecimal.valueOf(5000);
             break;
         case "USDRON":
             standard_lot = BigDecimal.valueOf(0.232);
-            unit_risk_per_pip = BigDecimal.valueOf(5000.00000000011);
+            unit_risk_per_pip = BigDecimal.valueOf(5000);
             break;
         case "USDSGD":
             standard_lot = BigDecimal.valueOf(0.135);
-            unit_risk_per_pip = BigDecimal.valueOf(10000.0000000002);
+            unit_risk_per_pip = BigDecimal.valueOf(10000);
             break;
 
         default:
-            String msg = "getStandard_lot: " + EPIC + " not exist!";
+            standard_lot = BigDecimal.valueOf(0.01);
+            unit_risk_per_pip = BigDecimal.valueOf(10000);
+
             System.out.println("getStandard_lot: " + EPIC + " not exist!----------------------------------");
-            Utils.logWritelnWithTime(msg, false);
-            Utils.sendToMyTelegram(msg);
+            // String msg = "getStandard_lot: " + EPIC + " not exist!";
+            // Utils.logWritelnDraft(msg);
             break;
         }
 

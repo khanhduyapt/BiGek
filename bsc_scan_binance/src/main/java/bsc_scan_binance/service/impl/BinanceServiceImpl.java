@@ -3574,6 +3574,10 @@ public class BinanceServiceImpl implements BinanceService {
                 type = Utils.switchTrendByHeken_12_or_Ma35(heken_list).replace(Utils.appendSpace(trend, 4), "");
             }
 
+            if (Utils.isBlank(type) && Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)) {
+                type = Utils.switchTrendByHeken_12_or_Ma35(heken_list).replace(Utils.appendSpace(trend, 4), "");
+            }
+
             if (Utils.isNotBlank(type)) {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
             }
@@ -3620,30 +3624,42 @@ public class BinanceServiceImpl implements BinanceService {
         if (required_update_bars_csv) {
             return;
         }
+        int index = 1;
         for (String EPIC : Utils.EPICS_STOCKS) {
-            List<BtcFutures> list_w1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_W1);
             List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
+            Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
+            Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
 
-            if (CollectionUtils.isEmpty(list_w1) || CollectionUtils.isEmpty(list_d1)) {
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || CollectionUtils.isEmpty(list_d1)) {
                 Utils.logWritelnDraft("scapStocks (" + EPIC + ") list_w1, list_d1 are empty");
                 return;
             }
-            List<BtcFutures> heken_list_w1 = Utils.getHekenList(list_w1);
-            String trend_w1 = Utils.getTrendByHekenAshiList(heken_list_w1);
-
             List<BtcFutures> heken_list_d1 = Utils.getHekenList(list_d1);
-            String trend_d1 = Utils.getTrendByHekenAshiList(heken_list_d1);
 
-            if (!Objects.equals(trend_w1, trend_d1)) {
+            String trend_M1 = Utils.getTrendByMaXx(heken_list_d1, 50);
+            String trend_W1 = dto_w1.getTrend();
+            String trend_D1 = Utils.getTrendByHekenAshiList(heken_list_d1);
+
+            if (!Objects.equals(trend_W1, trend_D1)) {
                 continue;
             }
 
-            // String note = "";
-            // String type = Utils.switchTrendByHeken_12(heken_list_d1);
-            // if (Utils.isNotBlank(type)) {
-            // note = Utils.getChartNameCapital(Utils.CAPITAL_TIME_D1) + type;
-            // }
-            // analysis(note, EPIC, Utils.CAPITAL_TIME_D1);
+            String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (M1.W1)                 ";
+            if (!Objects.equals(trend_M1, trend_D1)) {
+                prefix = prefix.replace("M1.", "  .");
+            }
+            if (!Objects.equals(trend_W1, trend_D1)) {
+                prefix = prefix.replace("W1", "  ");
+            }
+
+            if (Utils.isNotBlank(dto_w1.getNote())) {
+                analysis(prefix, EPIC, Utils.CAPITAL_TIME_W1);
+                index += 1;
+            }
+            if (Utils.isNotBlank(dto_d1.getNote())) {
+                analysis(prefix, EPIC, Utils.CAPITAL_TIME_D1);
+                index += 1;
+            }
         }
     }
 
@@ -3653,6 +3669,10 @@ public class BinanceServiceImpl implements BinanceService {
         if (required_update_bars_csv) {
             return;
         }
+
+        // TODO: 2. scapForex
+        // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
+        // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
 
         List<String> CAPITAL_LIST = new ArrayList<String>();
         CAPITAL_LIST.addAll(Utils.EPICS_ONE_WAY);
@@ -3707,17 +3727,14 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1) && Utils.isNotBlank(dto_dt.getNote())) {
                 allowOutput = true;
             }
-            if (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, trend_dt)) {
-                allowOutput = false;
-            }
             if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_15) && Utils.isNotBlank(dto_15.getNote())
                     && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_15)) {
                 allowOutput = true;
             }
-            // TODO: 2. scapForex
-            // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
-            // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
-            // H4 trở xuống đảo chiều # H8 thì không đánh.
+            if (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, trend_dt)) {
+                allowOutput = false;
+            }
+
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (W1.D1.H12   H4.H1) <-- ";
 
             if (!Objects.equals(trend_w1, trend_dt)) {
@@ -3770,8 +3787,6 @@ public class BinanceServiceImpl implements BinanceService {
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
 
-        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_15, Arrays.asList("", "", ""));
-        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_15, Arrays.asList("", "", ""));
         // -------------------------------------------------------------------------------------
 
         // TODO: 3. monitorProfit
@@ -3784,7 +3799,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // H12
         List<String> H12_BUYING = Arrays.asList("", "", "", "", "", "");
-        List<String> H12_SELING = Arrays.asList("", "", "", "", "", "");
+        List<String> H12_SELING = Arrays.asList("CADJPY", "AUDJPY", "", "", "", "");
 
         // H1
         List<String> H1_BUYING = Arrays.asList("", "", "", "", "", "");
