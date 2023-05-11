@@ -288,6 +288,7 @@ public class MoneyAtRiskResponse {
         case "J225":
         case "JPY225":
         case "JPN225":
+        case "JP225":
             standard_lot = BigDecimal.valueOf(6.8);
             unit_risk_per_pip = BigDecimal.valueOf(0.5);
             break;

@@ -160,9 +160,9 @@ public class Utils {
 
     public static final String EPICS_INDEXS = "_US30_SP500_GER30_GER40_UK100_";
 
-    // "SP35", "HK50", "OIL_CRUDE", "NAS100", "AUS200", "JPY225",
+    // "SP35", "HK50", "OIL_CRUDE", "NAS100", "AUS200", "JP225",
     public static final List<String> EPICS_ONE_WAY = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "US100",
-            "GER40", "UK100", "USOIL");
+            "EU50", "GER40", "UK100", "USOIL", "JP225");
 
     public static final List<String> EPICS_FOREXS = Arrays.asList("AUDJPY", "AUDUSD", "CADJPY", "CHFJPY", "EURAUD",
             "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY",
@@ -957,9 +957,6 @@ public class Utils {
     }
 
     public static String getCapitalLink(String epic) {
-        // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
-        // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
-
         Hashtable<String, String> forex_naming_dict = new Hashtable<String, String>();
         forex_naming_dict.put("NAS100", "US100");
         forex_naming_dict.put("SP500", "US500");
@@ -974,12 +971,24 @@ public class Utils {
         forex_naming_dict.put("XAGUSD", "SILVER");
         forex_naming_dict.put("USOIL", "OIL_CRUDE");
 
-        if (forex_naming_dict.containsKey(epic)) {
-            String epic2 = forex_naming_dict.get(epic);
-            return "https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + epic2 + " ";
-        } else {
-            return "https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A" + epic + " ";
+        String EXCHANGE = "CAPITALCOM";
+
+        if (Utils.EPICS_FOREXS.contains(epic) || "_BTCUSD_XAGUSD_EU50_".contains(epic)) {
+            EXCHANGE = "FOREXCOM";
         }
+        if ("_USOIL_".contains(epic)) {
+            EXCHANGE = "TVC";
+        }
+        if ("_GER40_UK100_US30_XAUUSD_".contains(epic)) {
+            EXCHANGE = "PEPPERSTONE";
+        }
+
+        if (Objects.equals("JP225", epic)) {
+            epic = "JPN225";
+            EXCHANGE = "PEPPERSTONE";
+        }
+
+        return "https://vn.tradingview.com/chart/?symbol=" + EXCHANGE + "%3A" + epic + " ";
     }
 
     public static String getDraftLogFile() {
@@ -1162,7 +1171,7 @@ public class Utils {
 
         result = false;
 
-        return false;
+        return result;
     }
 
     public static boolean isWorkingTime() {

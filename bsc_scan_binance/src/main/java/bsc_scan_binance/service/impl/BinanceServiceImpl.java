@@ -2750,7 +2750,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.isNull(dto)) {
                 Utils.logWritelnDraft("[waiting] (" + EPIC + ") dto is null");
-                return;
+                continue;
             }
 
             if (Objects.isNull(dto_sl)) {
@@ -3639,15 +3639,17 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnDraft("(EPICS_WAIT_SEL_D1)   " + EPICS_WAIT_SEL_D1.toString());
         }
         Utils.logWritelnDraft("");
-        Utils.logWritelnDraft("");
         int index = 1;
         for (String EPIC : Utils.EPICS_STOCKS) {
             List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
 
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || CollectionUtils.isEmpty(list_d1)) {
-                Utils.logWritelnDraft("scapStocks (" + EPIC + ") list_w1, list_d1 are empty");
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4)
+                    || Objects.isNull(dto_h1) || CollectionUtils.isEmpty(list_d1)) {
+                Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
                 return;
             }
             List<BtcFutures> heken_list_d1 = Utils.getHekenList(list_d1);
@@ -3655,13 +3657,10 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_M1 = Utils.getTrendByMaXx(heken_list_d1, 50);
             String trend_W1 = dto_w1.getTrend();
             String trend_D1 = Utils.getTrendByHekenAshiList(heken_list_d1);
-            String trend_D1_Ma5 = Utils.getTrendByMaXx(heken_list_d1, 5);
+            String trend_H4 = dto_h4.getTrend();
+            String trend_H1 = dto_h1.getTrend();
 
-            if (!Objects.equals(trend_W1, trend_D1) && !Objects.equals(trend_D1_Ma5, trend_D1)) {
-                continue;
-            }
-
-            String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (M1.W1.D1ma5)           ";
+            String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (M1.W1.D1      H4.H1)   ";
             if (Utils.isNotBlank(dto_w1.getNote())) {
                 if (!Objects.equals(trend_M1, trend_W1)) {
                     prefix = prefix.replace("M1.", "  .");
@@ -3669,21 +3668,87 @@ public class BinanceServiceImpl implements BinanceService {
                 if (!Objects.equals(trend_W1, trend_W1)) {
                     prefix = prefix.replace("W1", "  ");
                 }
-                if (!Objects.equals(trend_D1_Ma5, trend_W1)) {
-                    prefix = prefix.replace("D1ma5", "     ");
+                if (!Objects.equals(trend_D1, trend_W1)) {
+                    prefix = prefix.replace("D1", "  ");
                 }
 
+                if (!Objects.equals(trend_H4, trend_W1)) {
+                    prefix = prefix.replace("H4", "  ");
+                }
+                if (!Objects.equals(trend_H1, trend_W1)) {
+                    prefix = prefix.replace("H1", "  ");
+                }
                 analysis(prefix, EPIC, Utils.CAPITAL_TIME_W1);
                 index += 1;
             }
+        }
+        Utils.logWritelnDraft("");
+        index = 1;
+        for (String EPIC : Utils.EPICS_STOCKS) {
+            List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
+            Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
+            Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
+
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4)
+                    || Objects.isNull(dto_h1) || CollectionUtils.isEmpty(list_d1)) {
+                Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
+                return;
+            }
+
+            List<BtcFutures> heken_list_d1 = Utils.getHekenList(list_d1);
+
+            String trend_M1 = Utils.getTrendByMaXx(heken_list_d1, 50);
+            String trend_W1 = dto_w1.getTrend();
+            String trend_D1 = Utils.getTrendByHekenAshiList(heken_list_d1);
+            String trend_D1_Ma5 = Utils.getTrendByMaXx(heken_list_d1, 5);
+            String trend_H4 = dto_h4.getTrend();
+            String trend_H1 = dto_h1.getTrend();
+
+            if (!Objects.equals(trend_W1, trend_D1) && !Objects.equals(trend_D1_Ma5, trend_D1)) {
+                continue;
+            }
+
+            if (Objects.equals(trend_M1, trend_W1) && Objects.equals(trend_M1, trend_D1_Ma5)
+                    && !Objects.equals(trend_W1, trend_D1)) {
+                continue;
+            }
+
+            if (EPICS_WAIT_BUY_D1.contains(EPIC) && Objects.equals(Utils.TREND_SHOT, trend_D1)) {
+                continue;
+            }
+            if (EPICS_WAIT_SEL_D1.contains(EPIC) && Objects.equals(Utils.TREND_LONG, trend_D1)) {
+                continue;
+            }
+
+            String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (M1.W1.D1ma5   H4.H1)   ";
 
             if (Utils.isNotBlank(dto_d1.getNote())) {
-                if (EPICS_WAIT_BUY_D1.contains(EPIC) && Objects.equals(Utils.TREND_SHOT, trend_D1)) {
-                    continue;
+                if (!Objects.equals(trend_M1, trend_D1)) {
+                    prefix = prefix.replace("M1.", "  .");
                 }
-                if (EPICS_WAIT_SEL_D1.contains(EPIC) && Objects.equals(Utils.TREND_LONG, trend_D1)) {
-                    continue;
+                if (!Objects.equals(trend_W1, trend_D1)) {
+                    prefix = prefix.replace("W1", "  ");
                 }
+                if (!Objects.equals(trend_D1_Ma5, trend_D1)) {
+                    prefix = prefix.replace("D1ma5", "     ");
+                }
+
+                if (!Objects.equals(trend_H4, trend_D1)) {
+                    prefix = prefix.replace("H4", "  ");
+                }
+                if (!Objects.equals(trend_H1, trend_D1)) {
+                    prefix = prefix.replace("H1", "  ");
+                }
+
+                analysis(prefix, EPIC, Utils.CAPITAL_TIME_D1);
+                index += 1;
+            }
+
+            if ((dto_h4.getNote() + dto_h1.getNote()).contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)
+                    && Objects.equals(trend_D1, trend_H4)
+                    && Objects.equals(trend_D1, trend_H1)) {
 
                 if (!Objects.equals(trend_M1, trend_D1)) {
                     prefix = prefix.replace("M1.", "  .");
@@ -3695,11 +3760,27 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("D1ma5", "     ");
                 }
 
-                analysis(prefix, EPIC, Utils.CAPITAL_TIME_D1);
+                if (!Objects.equals(trend_H4, trend_D1)) {
+                    prefix = prefix.replace("H4", "  ");
+                }
+                if (!Objects.equals(trend_H1, trend_D1)) {
+                    prefix = prefix.replace("H1", "  ");
+                }
+
+                if (dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)) {
+
+                    analysis(prefix, EPIC, Utils.CAPITAL_TIME_H4);
+
+                } else if (dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)) {
+
+                    analysis(prefix, EPIC, Utils.CAPITAL_TIME_H1);
+
+                }
+
                 index += 1;
             }
         }
-
+        Utils.logWritelnDraft("");
         Utils.logWritelnDraft("");
     }
 
@@ -3732,7 +3813,8 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h12) || Objects.isNull(dto_h4)
                     || Objects.isNull(dto_h1) || Objects.isNull(dto_15) || Objects.isNull(dto_dt)) {
                 Utils.logWritelnDraft("[scapForex] (" + EPIC + ") dto is null");
-                return;
+
+                continue;
             }
 
             String trend_w1 = dto_w1.getTrend();
@@ -3829,15 +3911,18 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public void monitorProfit() {
         // TODO: 3. monitorProfit
-        EPICS_WAIT_BUY_D1 = Arrays.asList("EURNZD");
-        EPICS_WAIT_SEL_D1 = Arrays.asList("WMT", "TSLA", "AAPL", "NFLX");
+        EPICS_WAIT_BUY_D1 = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURNZD", "GBPAUD", "USDCAD");
+
+        EPICS_WAIT_SEL_D1 = Arrays.asList("AAPL", "META", "MSFT", "NFLX", "NVDA", "TSLA", "WMT",
+                "AUDUSD", "GBPCAD", "GBPNZD", "NAS100", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USOIL",
+                "NZDUSD", "US100");
 
         // -------------------------------------------------------------------------------------
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_D1, EPICS_WAIT_BUY_D1);
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_D1, EPICS_WAIT_SEL_D1);
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
-        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("RACE", "", ""));
 
         // -------------------------------------------------------------------------------------
         // "BTCUSD", GER40", "US30", "US100", "UK100", "USOIL", "XAGUSD", "XAUUSD"
