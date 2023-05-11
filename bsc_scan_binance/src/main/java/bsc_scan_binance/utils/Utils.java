@@ -29,7 +29,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Formatter;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -154,15 +153,10 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    // CapitalCom: US100, US500, J225, DE40, FR40, AU200, "GOLD", "SILVER",
-    // FTMO______: NAS100, SP500, JPY225, GER30, FRA40, AUS200, "XAUUSD", "XAGUSD"
-    // Main: "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD", "USDCAD", "NZDUSD"
-
     public static final String EPICS_INDEXS = "_US30_SP500_GER30_GER40_UK100_";
 
-    // "SP35", "HK50", "OIL_CRUDE", "NAS100", "AUS200", "JP225",
     public static final List<String> EPICS_ONE_WAY = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "US100",
-            "EU50", "GER40", "UK100", "USOIL", "JP225");
+            "EU50", "GER40", "UK100", "USOIL", "AUS200");
 
     public static final List<String> EPICS_FOREXS = Arrays.asList("AUDJPY", "AUDUSD", "CADJPY", "CHFJPY", "EURAUD",
             "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY",
@@ -957,20 +951,6 @@ public class Utils {
     }
 
     public static String getCapitalLink(String epic) {
-        Hashtable<String, String> forex_naming_dict = new Hashtable<String, String>();
-        forex_naming_dict.put("NAS100", "US100");
-        forex_naming_dict.put("SP500", "US500");
-        forex_naming_dict.put("JPY225", "J225");
-        forex_naming_dict.put("JPN225", "J225");
-        forex_naming_dict.put("GER30", "DE40");
-        forex_naming_dict.put("GER40", "DE40");
-        forex_naming_dict.put("DAX40", "DE40");
-        forex_naming_dict.put("FRA40", "FR40");
-        forex_naming_dict.put("AUS200", "AU200");
-        forex_naming_dict.put("XAUUSD", "GOLD");
-        forex_naming_dict.put("XAGUSD", "SILVER");
-        forex_naming_dict.put("USOIL", "OIL_CRUDE");
-
         String EXCHANGE = "CAPITALCOM";
 
         if (Utils.EPICS_FOREXS.contains(epic) || "_BTCUSD_XAGUSD_EU50_".contains(epic)) {
@@ -979,10 +959,9 @@ public class Utils {
         if ("_USOIL_".contains(epic)) {
             EXCHANGE = "TVC";
         }
-        if ("_GER40_UK100_US30_XAUUSD_".contains(epic)) {
+        if ("_GER40_UK100_US30_XAUUSD_AUS200_".contains(epic)) {
             EXCHANGE = "PEPPERSTONE";
         }
-
         if (Objects.equals("JP225", epic)) {
             epic = "JPN225";
             EXCHANGE = "PEPPERSTONE";
