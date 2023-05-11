@@ -451,6 +451,10 @@ public class MoneyAtRiskResponse {
             standard_lot = BigDecimal.valueOf(10);
             unit_risk_per_pip = BigDecimal.valueOf(10);
             break;
+        case "DX.f":
+            standard_lot = BigDecimal.valueOf(1);
+            unit_risk_per_pip = BigDecimal.valueOf(100);
+            break;
 
         default:
             standard_lot = BigDecimal.valueOf(0.01);

@@ -1099,11 +1099,6 @@ public class BinanceServiceImpl implements BinanceService {
                         // take_profit_percent > 3% ?
                         if ((btc_range_b_s.compareTo(BigDecimal.valueOf(0.015)) >= 0)) {
 
-                            if (Utils.isGoodPriceLong(price_now, price_can_buy_24h, price_can_sell_24h)) {
-
-                                css.setBtc_warning_css("bg-success rounded-lg");
-                            }
-
                             if ((price_now.multiply(BigDecimal.valueOf(1.005)).compareTo(highest_price_today) > 0)) {
 
                                 css.setBtc_warning_css("bg-danger rounded-lg");
@@ -2084,24 +2079,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String getLongShortIn48h(String symbol) {
-        boolean exit = true;
-        if (exit) {
-            return "";
-        }
-
-        List<BtcFutures> btc1hs = Utils.loadData(symbol, Utils.CRYPTO_TIME_H1, 60);
-        if (CollectionUtils.isEmpty(btc1hs)) {
-            return "";
-        }
-        btcFuturesRepository.saveAll(btc1hs);
-        BtcFuturesResponse dto_1h = getBtcFuturesResponse(symbol, Utils.CRYPTO_TIME_H1);
-        if (Objects.equals(null, dto_1h)) {
-            return "";
-        }
-        BigDecimal price_at_binance = btc1hs.get(0).getCurrPrice();
-        String low_height = Utils.getMsgLowHeight(price_at_binance, dto_1h);
-
-        return low_height;
+        return "";
     }
 
     @Transactional
@@ -2729,7 +2707,7 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(append, 35) + " ";
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
 
-        log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 15);
+        log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 11);
         log += Utils.calc_BUF_LO_HI_BUF_Forex(true, dto_entry.getTrend(), EPIC, dto_entry, dto_sl);
 
         // String EVENT_ID = "FX_LOG_" + prefix_id + EPIC + dto_entry.getTrend();
@@ -3629,7 +3607,6 @@ public class BinanceServiceImpl implements BinanceService {
         if (required_update_bars_csv) {
             return;
         }
-
         if (!EPICS_WAIT_BUY_D1.isEmpty()) {
             Utils.logWritelnDraft("(EPICS_WAIT_BUY_D1)   " + EPICS_WAIT_BUY_D1.toString());
         }
@@ -3659,7 +3636,8 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_H4 = dto_h4.getTrend();
             String trend_H1 = dto_h1.getTrend();
 
-            String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (M1.W1.D1      H4.H1)   ";
+            String switch_trend = "                ";
+            String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (M1.W1.D1      H4.H1)   " + switch_trend;
             if (Utils.isNotBlank(dto_w1.getNote())) {
                 if (!Objects.equals(trend_M1, trend_W1)) {
                     prefix = prefix.replace("M1.", "  .");
@@ -3681,7 +3659,7 @@ public class BinanceServiceImpl implements BinanceService {
                 index += 1;
             }
         }
-
+        // TODO: scapStocks
         Utils.logWritelnDraft("");
         index = 1;
         for (String EPIC : Utils.EPICS_STOCKS) {
@@ -3722,7 +3700,8 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (M1.W1.D1ma5   H4.H1)   ";
+            String switch_trend = "                ";
+            String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (M1.W1.D1ma5   H4.H1)   " + switch_trend;
 
             if (Utils.isNotBlank(dto_d1.getNote())) {
                 if (!Objects.equals(trend_M1, trend_D1)) {
@@ -3785,7 +3764,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     @Transactional
-    public void scapForex(String CAPITAL_TIME_XX) {
+    public void scapForex(String alwaysShowTheseEpics, String CAPITAL_TIME_XX) {
         if (required_update_bars_csv) {
             return;
         }
@@ -3871,6 +3850,9 @@ public class BinanceServiceImpl implements BinanceService {
             if (EPICS_WAIT_SEL_D1.contains(EPIC) && Objects.equals(Utils.TREND_LONG, trend_dt)) {
                 allowOutput = false;
             }
+            if (alwaysShowTheseEpics.contains(EPIC)) {
+                allowOutput = true;
+            }
 
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (W1=D1=H12   H4=H1)     ";
 
@@ -3891,13 +3873,13 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String switch_trend = "(D1~H12~H4)     ";
-            if (Utils.isNotBlank(dto_d1.getNote())) {
+            if (Utils.isBlank(dto_d1.getNote())) {
                 switch_trend = switch_trend.replace("D1~", "   ");
             }
-            if (Utils.isNotBlank(dto_h12.getNote())) {
+            if (Utils.isBlank(dto_h12.getNote())) {
                 switch_trend = switch_trend.replace("~H12~", "     ").replace("H12~", "    ").replace("~H12", "    ");
             }
-            if (Utils.isNotBlank(dto_h4.getNote())) {
+            if (Utils.isBlank(dto_h4.getNote())) {
                 switch_trend = switch_trend.replace("~H4", "   ").replace("H4", "  ");
             }
 
@@ -3911,6 +3893,11 @@ public class BinanceServiceImpl implements BinanceService {
                     index += 1;
 
                     BscScanBinanceApplication.EPICS_OUTPUTED += "_" + EPIC + "_";
+
+                    if (alwaysShowTheseEpics.contains(EPIC) && ((alwaysShowTheseEpics.indexOf(EPIC) + EPIC.length()
+                            + EPIC.length()) > alwaysShowTheseEpics.length())) {
+                        Utils.logWritelnDraft("");
+                    }
                 }
             }
         }
@@ -3930,7 +3917,7 @@ public class BinanceServiceImpl implements BinanceService {
     public void monitorProfit() {
         // TODO: 3. monitorProfit
         EPICS_WAIT_BUY_D1 = Arrays.asList();
-        EPICS_WAIT_SEL_D1 = Arrays.asList("AAPL", "META", "MSFT", "NFLX", "NVDA", "TSLA", "WMT");
+        EPICS_WAIT_SEL_D1 = Arrays.asList("AAPL", "META", "MSFT", "NFLX", "WMT");
 
         // -------------------------------------------------------------------------------------
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_D1, EPICS_WAIT_BUY_D1);

@@ -155,12 +155,12 @@ public class Utils {
 
     public static final String EPICS_INDEXS = "_US30_SP500_GER30_GER40_UK100_";
 
-    public static final List<String> EPICS_ONE_WAY = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "US100",
-            "EU50", "GER40", "UK100", "USOIL", "AUS200");
+    public static final List<String> EPICS_ONE_WAY = Arrays.asList("DX.f", "XAUUSD", "BTCUSD", "XAGUSD", "US30",
+            "US100", "EU50", "GER40", "UK100", "USOIL", "AUS200");
 
-    public static final List<String> EPICS_FOREXS = Arrays.asList("AUDJPY", "AUDNZD", "AUDUSD", "CADJPY", "CHFJPY", "EURAUD",
-            "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY",
-            "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDJPY");
+    public static final List<String> EPICS_FOREXS = Arrays.asList("AUDJPY", "AUDNZD", "AUDUSD", "CADJPY", "CHFJPY",
+            "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF",
+            "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDJPY");
 
     // "16:30 - 23:00"
     public static final List<String> EPICS_STOCKS = Arrays.asList("AMZN", "BAC", "GOOG", "MSFT", "NFLX", "AAPL", "NVDA",
@@ -851,10 +851,6 @@ public class Utils {
 
     public static Boolean isVectorUp(BigDecimal vector) {
         return (vector.compareTo(BigDecimal.ZERO) >= 0);
-    }
-
-    public static String whenGoodPrice(BigDecimal curr_price, BigDecimal low_price, BigDecimal hight_price) {
-        return (isGoodPriceLong(curr_price, low_price, hight_price) ? "*5*" : "");
     }
 
     public static boolean isCandidate(CandidateTokenCssResponse css) {
@@ -2521,197 +2517,6 @@ public class Utils {
         return true;
     }
 
-    public static Boolean isGoodPriceLong(BigDecimal cur_price, BigDecimal lo_price, BigDecimal hi_price) {
-        BigDecimal curr_price = Utils.getBigDecimal(cur_price);
-        BigDecimal low_price = Utils.getBigDecimal(lo_price);
-        BigDecimal hight_price = Utils.getBigDecimal(hi_price);
-
-        BigDecimal sl = Utils.getPercent(curr_price, low_price);
-        if (sl.compareTo(BigDecimal.valueOf(10)) > 0) {
-            return false;
-        }
-
-        BigDecimal good_price = getGoodPriceLong(low_price, hight_price);
-
-        if (curr_price.compareTo(good_price) < 0) {
-            return true;
-        }
-        return false;
-    }
-
-    public static Boolean isGoodPriceShort(BigDecimal cur_price, BigDecimal lo_price, BigDecimal hi_price) {
-        BigDecimal curr_price = Utils.getBigDecimal(cur_price);
-        BigDecimal low_price = Utils.getBigDecimal(lo_price);
-        BigDecimal hight_price = Utils.getBigDecimal(hi_price);
-
-        BigDecimal sl = Utils.getPercent(hight_price, curr_price);
-        if (sl.compareTo(BigDecimal.valueOf(10)) > 0) {
-            return false;
-        }
-
-        BigDecimal range = (hight_price.subtract(low_price));
-        range = range.divide(BigDecimal.valueOf(5), 10, RoundingMode.CEILING);
-
-        BigDecimal mid_price = hight_price.subtract(range);
-
-        if (curr_price.compareTo(mid_price) > 0) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static BigDecimal getNextEntry(BtcFuturesResponse dto_1h) {
-        BigDecimal entry0 = dto_1h.getOpen_price_half1().subtract(dto_1h.getOpen_price_half2());
-
-        BigDecimal percent_angle = Utils.getPercent(dto_1h.getOpen_price_half2(), dto_1h.getOpen_price_half1()).abs();
-        if (percent_angle.compareTo(BigDecimal.valueOf(2)) > 0) {
-            return null;
-        }
-        entry0 = entry0.multiply(Utils.getBigDecimal(dto_1h.getId_half1()));
-        int id_haft1 = Utils.getIntValue(dto_1h.getId_half1().replaceAll("BTC_1h_", ""));
-        int id_haft2 = Utils.getIntValue(dto_1h.getId_half2().replaceAll("BTC_1h_", ""));
-        entry0 = entry0.divide(BigDecimal.valueOf(id_haft2 - id_haft1), 0, RoundingMode.CEILING);
-        entry0 = dto_1h.getOpen_price_half1().add(entry0);
-
-        return entry0;
-    }
-
-    public static String checkTrend(BtcFuturesResponse dto) {
-        BigDecimal percent_angle = Utils.getPercent(dto.getOpen_price_half1(), dto.getOpen_price_half2());
-
-        // Uptrend
-        if (percent_angle.compareTo(BigDecimal.valueOf(0.5)) > 0) {
-            return "1:Uptrend";
-        }
-
-        // Downtrend
-        if (percent_angle.compareTo(BigDecimal.valueOf(-0.5)) < 0) {
-            return "2:Downtrend";
-        }
-
-        // Sideway
-        return "3:Sideway";
-    }
-
-    public static String getMsgLong(String symbol, BigDecimal entry, BigDecimal low, BigDecimal open, BigDecimal hig) {
-
-        BigDecimal stop_loss = Utils.getStopLossForLong(low, open);
-        BigDecimal candle_height = hig.subtract(entry);
-        BigDecimal mid_candle = candle_height.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
-        BigDecimal take_porfit_1 = entry.add(mid_candle);
-        BigDecimal take_porfit_2 = hig;
-
-        BigDecimal fee = BigDecimal.valueOf(2);
-        BigDecimal loss = BigDecimal.valueOf(1000).multiply(stop_loss.subtract(entry))
-                .divide(entry, 0, RoundingMode.CEILING).subtract(fee);
-        BigDecimal tp1 = BigDecimal.valueOf(1000).multiply(take_porfit_1.subtract(entry))
-                .divide(entry, 0, RoundingMode.CEILING).subtract(fee);
-        BigDecimal tp2 = BigDecimal.valueOf(1000).multiply(take_porfit_2.subtract(entry))
-                .divide(entry, 0, RoundingMode.CEILING).subtract(fee);
-
-        String msg = "(Long) Scalping: " + symbol + Utils.new_line_from_service;
-
-        msg += "E: " + Utils.removeLastZero(entry.toString()) + "$" + Utils.new_line_from_service;
-
-        msg += "SL: " + Utils.removeLastZero(String.valueOf(stop_loss)) + "(" + Utils.toPercent(stop_loss, entry)
-                + "%) 1000$/" + loss + "$";
-        msg += Utils.new_line_from_service;
-
-        msg += "L: " + Utils.removeLastZero(String.valueOf(low)) + "(" + Utils.toPercent(low, entry) + "%)";
-        msg += Utils.new_line_from_service;
-
-        msg += "TP1: " + Utils.removeLastZero(String.valueOf(take_porfit_1)) + "("
-                + Utils.toPercent(take_porfit_1, entry) + "%) 1000$/" + tp1 + "$";
-        msg += Utils.new_line_from_service;
-
-        msg += "TP2: " + Utils.removeLastZero(String.valueOf(take_porfit_2)) + "("
-                + Utils.toPercent(take_porfit_2, entry) + "%) 1000$/" + tp2 + "$";
-
-        return msg;
-    }
-
-    public static String getMsgLowHeight(BigDecimal price_at_binance, BtcFuturesResponse dto) {
-        String low_height = "";
-
-        String btc_now = Utils.removeLastZero(String.valueOf(price_at_binance)) + " (now)"
-                + Utils.new_line_from_service;
-
-        BigDecimal SL_short = Utils.getStopLossForShort(dto.getHight_price_h(), dto.getClose_candle_h());
-
-        low_height += "SL: " + Utils.removeLastZero(SL_short) + " (" + Utils.toPercent(SL_short, price_at_binance)
-                + "%)" + Utils.new_line_from_service;
-
-        low_height += "H: " + Utils.removeLastZero(dto.getHight_price_h()) + " ("
-                + Utils.toPercent(dto.getHight_price_h(), price_at_binance) + "%)" + Utils.new_line_from_service;
-
-        if (price_at_binance.compareTo(dto.getClose_candle_h()) > 0) {
-            low_height += btc_now;
-        }
-
-        low_height += "C: " + Utils.removeLastZero(dto.getClose_candle_h()) + " ("
-                + Utils.toPercent(dto.getClose_candle_h(), price_at_binance) + "%)" + Utils.new_line_from_service;
-
-        if (price_at_binance.compareTo(dto.getClose_candle_h()) < 0
-                && price_at_binance.compareTo(dto.getOpen_candle_h()) > 0) {
-            low_height += btc_now;
-        }
-
-        low_height += "O: " + Utils.removeLastZero(dto.getOpen_candle_h()) + " ("
-                + Utils.toPercent(dto.getOpen_candle_h(), price_at_binance) + "%)" + Utils.new_line_from_service;
-
-        if (price_at_binance.compareTo(dto.getOpen_candle_h()) < 0) {
-            low_height += btc_now;
-        }
-
-        low_height += "L: " + Utils.removeLastZero(dto.getLow_price_h()) + " ("
-                + Utils.toPercent(dto.getLow_price_h(), price_at_binance) + "%)" + Utils.new_line_from_service;
-
-        BigDecimal SL_long = Utils.getStopLossForLong(dto.getLow_price_h(), dto.getOpen_candle_h());
-
-        low_height += "SL: " + Utils.removeLastZero(SL_long) + " (" + Utils.toPercent(SL_long, price_at_binance) + "%)";
-
-        return low_height;
-    }
-
-    public static String getMsgLong(BigDecimal entry, BtcFuturesResponse dto) {
-        String msg = "";
-
-        BigDecimal stop_loss = Utils.getStopLossForLong(dto.getLow_price_h(), dto.getOpen_candle_h());
-
-        BigDecimal candle_height = dto.getClose_candle_h().subtract(dto.getOpen_candle_h());
-        BigDecimal mid_candle = candle_height.divide(BigDecimal.valueOf(2), 0, RoundingMode.CEILING);
-        BigDecimal take_porfit_1 = dto.getOpen_candle_h().add(mid_candle);
-        BigDecimal take_porfit_2 = dto.getHight_price_h().subtract(BigDecimal.valueOf(10));
-
-        BigDecimal fee = BigDecimal.valueOf(2);
-        BigDecimal loss = BigDecimal.valueOf(1000).multiply(stop_loss.subtract(entry))
-                .divide(entry, 0, RoundingMode.CEILING).subtract(fee);
-        BigDecimal tp1 = BigDecimal.valueOf(1000).multiply(take_porfit_1.subtract(entry))
-                .divide(entry, 0, RoundingMode.CEILING).subtract(fee);
-        BigDecimal tp2 = BigDecimal.valueOf(1000).multiply(take_porfit_2.subtract(entry))
-                .divide(entry, 0, RoundingMode.CEILING).subtract(fee);
-
-        msg += "E: " + Utils.removeLastZero(entry.toString()) + "$" + Utils.new_line_from_service;
-
-        msg += "SL: " + Utils.removeLastZero(stop_loss) + "(" + Utils.toPercent(stop_loss, entry) + "%) 1000$/" + loss
-                + "$";
-        msg += Utils.new_line_from_service;
-
-        msg += "L: " + Utils.removeLastZero(dto.getLow_price_h()) + "(" + Utils.toPercent(dto.getLow_price_h(), entry)
-                + "%)";
-        msg += Utils.new_line_from_service;
-
-        msg += "TP1: " + Utils.removeLastZero(take_porfit_1) + "(" + Utils.toPercent(take_porfit_1, entry) + "%) 1000$/"
-                + tp1 + "$";
-        msg += Utils.new_line_from_service;
-
-        msg += "TP2: " + Utils.removeLastZero(take_porfit_2) + "(" + Utils.toPercent(take_porfit_2, entry) + "%) 1000$/"
-                + tp2 + "$";
-
-        return msg;
-    }
-
     public static FundingResponse loadFundingRate(String symbol) {
         FundingResponse dto = new FundingResponse();
         int limit = 4;
@@ -3568,7 +3373,7 @@ public class Utils {
             result = Utils.appendSpace(result, 135);
         }
 
-        return Utils.getChartName(dto_entry) + ":" + result;
+        return result;
     }
 
     public static String calc_BUF_Long_Forex(BigDecimal risk, String EPIC, BigDecimal cur_price, BigDecimal en_long,
@@ -3580,29 +3385,26 @@ public class Utils {
         MoneyAtRiskResponse money_now = new MoneyAtRiskResponse(EPIC, risk, cur_price, sl_long, tp_long);
         MoneyAtRiskResponse money_long = new MoneyAtRiskResponse(EPIC, risk, en_long, sl_long, tp_long);
 
-        String temp = "";
-        temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)) + " ", 10);
-        temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 8);
-
-        temp += Utils.appendLeft(removeLastZero(money_long.calcLot()), 8) + "(lot)";
-        temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
-
         BigDecimal risk_x5 = risk.multiply(BigDecimal.valueOf(5));
-
         MoneyAtRiskResponse money_x5 = new MoneyAtRiskResponse(EPIC, risk_x5, en_long, sl_long, tp_long);
         MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_long, tp_long);
 
-        temp += " ";
-        temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
-        temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
+        String temp = "";
+        temp += "   SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 10);
 
-        temp += "     Now(" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 5) + "(lot)";
+        temp += "     Buy   Now " + Utils.appendLeft(removeLastZero(money_now.calcLot()), 5) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
         temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
-        temp += ") ";
 
-        String result = Utils.appendSpace("(BUY )" + temp, 38);
+        temp += "     Wait ";
+        temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 9);
+        temp += Utils.appendLeft(removeLastZero(money_long.calcLot()), 8) + "(lot)";
+        temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
+        temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
+        temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
+
+        String result = Utils.appendSpace(temp, 38);
         return result;
     }
 
@@ -3615,27 +3417,26 @@ public class Utils {
         MoneyAtRiskResponse money_now = new MoneyAtRiskResponse(EPIC, risk, cur_price, sl_shot, tp_shot);
         MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, en_shot, sl_shot, tp_shot);
 
-        String temp = "";
-        temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)) + " ", 10);
-        temp += " SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 8);
-        temp += Utils.appendLeft(removeLastZero(money_short.calcLot()), 8) + "(lot)";
-        temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
-
         BigDecimal risk_x5 = risk.multiply(BigDecimal.valueOf(5));
         MoneyAtRiskResponse money_x5 = new MoneyAtRiskResponse(EPIC, risk_x5, en_shot, sl_shot, tp_shot);
         MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_shot, tp_shot);
 
-        temp += " ";
-        temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
-        temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
+        String temp = "";
+        temp += "   SL: " + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10);
 
-        temp += "     Now(" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 5) + "(lot)";
+        temp += "     Sell  Now " + Utils.appendLeft(removeLastZero(money_now.calcLot()), 5) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
         temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
-        temp += ") ";
 
-        String result = Utils.appendSpace("(SELL)" + temp, 38);
+        temp += "     Wait ";
+        temp += " E:" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 9);
+        temp += Utils.appendLeft(removeLastZero(money_short.calcLot()), 8) + "(lot)";
+        temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
+        temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
+        temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
+
+        String result = Utils.appendSpace(temp, 38);
         return result;
     }
 }
