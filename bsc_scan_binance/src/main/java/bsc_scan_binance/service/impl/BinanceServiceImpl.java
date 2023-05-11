@@ -3631,6 +3631,15 @@ public class BinanceServiceImpl implements BinanceService {
         if (required_update_bars_csv) {
             return;
         }
+
+        if (!EPICS_WAIT_BUY_D1.isEmpty()) {
+            Utils.logWritelnDraft("(EPICS_WAIT_BUY_D1)   " + EPICS_WAIT_BUY_D1.toString());
+        }
+        if (!EPICS_WAIT_SEL_D1.isEmpty()) {
+            Utils.logWritelnDraft("(EPICS_WAIT_SEL_D1)   " + EPICS_WAIT_SEL_D1.toString());
+        }
+        Utils.logWritelnDraft("");
+        Utils.logWritelnDraft("");
         int index = 1;
         for (String EPIC : Utils.EPICS_STOCKS) {
             List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
@@ -3653,7 +3662,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (M1.W1.D1ma5)           ";
-
             if (Utils.isNotBlank(dto_w1.getNote())) {
                 if (!Objects.equals(trend_M1, trend_W1)) {
                     prefix = prefix.replace("M1.", "  .");
@@ -3670,6 +3678,13 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isNotBlank(dto_d1.getNote())) {
+                if (EPICS_WAIT_BUY_D1.contains(EPIC) && Objects.equals(Utils.TREND_SHOT, trend_D1)) {
+                    continue;
+                }
+                if (EPICS_WAIT_SEL_D1.contains(EPIC) && Objects.equals(Utils.TREND_LONG, trend_D1)) {
+                    continue;
+                }
+
                 if (!Objects.equals(trend_M1, trend_D1)) {
                     prefix = prefix.replace("M1.", "  .");
                 }
@@ -3684,6 +3699,8 @@ public class BinanceServiceImpl implements BinanceService {
                 index += 1;
             }
         }
+
+        Utils.logWritelnDraft("");
     }
 
     @Override
@@ -3750,14 +3767,17 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1) && Utils.isNotBlank(dto_dt.getNote())) {
                 allowOutput = true;
             }
-            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_15) && Utils.isNotBlank(dto_15.getNote())
-                    && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_15)) {
-                allowOutput = true;
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_15) && Utils.isNotBlank(dto_15.getNote())) {
+                if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_15)) {
+                    allowOutput = true;
+                } else {
+                    allowOutput = false;
+                }
             }
+
             if (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, trend_dt)) {
                 allowOutput = false;
             }
-
             if (EPICS_WAIT_BUY_D1.contains(EPIC) && Objects.equals(Utils.TREND_SHOT, trend_dt)) {
                 allowOutput = false;
             }
@@ -3809,8 +3829,8 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public void monitorProfit() {
         // TODO: 3. monitorProfit
-        EPICS_WAIT_BUY_D1 = Arrays.asList("EURNZD", "", "", "", "", "", "", "");
-        EPICS_WAIT_SEL_D1 = Arrays.asList("WMT", "TSLA", "AAPL", "NFLX", "", "", "", "");
+        EPICS_WAIT_BUY_D1 = Arrays.asList("EURNZD");
+        EPICS_WAIT_SEL_D1 = Arrays.asList("WMT", "TSLA", "AAPL", "NFLX");
 
         // -------------------------------------------------------------------------------------
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_D1, EPICS_WAIT_BUY_D1);

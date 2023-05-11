@@ -123,8 +123,12 @@ public class BscScanBinanceApplication {
                             if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
                                 binance_service.saveMt5Data("Bars.csv", Utils.MINUTES_OF_15M);
                                 binance_service.saveMt5Data("Stocks.csv", Utils.MINUTES_OF_1H);
-
                                 binance_service.initWeekTrend();
+
+                                if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MONITOR_PROFIT")) {
+                                    Utils.logWritelnDraft("");
+                                    binance_service.monitorProfit();
+                                }
 
                                 for (String EPIC : CAPITAL_LIST) {
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_W1);
