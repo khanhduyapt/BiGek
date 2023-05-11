@@ -158,7 +158,7 @@ public class Utils {
     public static final List<String> EPICS_ONE_WAY = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD", "US30", "US100",
             "EU50", "GER40", "UK100", "USOIL", "AUS200");
 
-    public static final List<String> EPICS_FOREXS = Arrays.asList("AUDJPY", "AUDUSD", "CADJPY", "CHFJPY", "EURAUD",
+    public static final List<String> EPICS_FOREXS = Arrays.asList("AUDJPY", "AUDNZD", "AUDUSD", "CADJPY", "CHFJPY", "EURAUD",
             "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY",
             "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDJPY");
 
@@ -992,19 +992,6 @@ public class Utils {
         return PATH + fileName;
     }
 
-    public static String getCryptoLogFile() {
-        return getDraftLogFile();
-
-        // String PATH = "crypto_forex_result/";
-        // String fileName = getToday_YyyyMMdd() + "_Crypto.log";
-        //
-        // File directory = new File(PATH);
-        // if (!directory.exists()) {
-        // directory.mkdir();
-        // }
-        // return PATH + fileName;
-    }
-
     public static void writeBlogCrypto(String symbol, String long_short_content, boolean isFuturesCoin) {
         Utils.logWritelnWithTime(long_short_content, true);
         if (isFuturesCoin) {
@@ -1051,12 +1038,7 @@ public class Utils {
 
     public static void logWritelnWithTime(String text, boolean isCrypto) {
         try {
-            String logFilePath;
-            if (isCrypto) {
-                logFilePath = getCryptoLogFile();
-            } else {
-                logFilePath = getForexLogFile();
-            }
+            String logFilePath = getForexLogFile();
 
             FileWriter fw = new FileWriter(logFilePath, true);
             fw.write(BscScanBinanceApplication.hostname + Utils.getTimeHHmm() + " "
@@ -1080,7 +1062,7 @@ public class Utils {
 
     public static void logWriteln(String text, boolean isNewline) {
         try {
-            FileWriter fw = new FileWriter(getCryptoLogFile(), true);
+            FileWriter fw = new FileWriter(getForexLogFile(), true);
             fw.write(BscScanBinanceApplication.hostname + text.replace(Utils.new_line_from_service, " ")
                     + (isNewline ? "\n" : ""));
             fw.close();
@@ -1101,7 +1083,7 @@ public class Utils {
 
     public static void writelnLogFooter() {
         try {
-            FileWriter fw = new FileWriter(getCryptoLogFile(), true);
+            FileWriter fw = new FileWriter(getForexLogFile(), true);
             fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("", 151, "-") + "\n");
             fw.close();
         } catch (IOException ioe) {

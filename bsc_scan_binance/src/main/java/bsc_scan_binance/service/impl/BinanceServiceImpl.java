@@ -3911,11 +3911,8 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public void monitorProfit() {
         // TODO: 3. monitorProfit
-        EPICS_WAIT_BUY_D1 = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURNZD", "GBPAUD", "USDCAD");
-
-        EPICS_WAIT_SEL_D1 = Arrays.asList("AAPL", "META", "MSFT", "NFLX", "NVDA", "TSLA", "WMT",
-                "AUDUSD", "GBPCAD", "GBPNZD", "NAS100", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USOIL",
-                "NZDUSD", "US100");
+        EPICS_WAIT_BUY_D1 = Arrays.asList();
+        EPICS_WAIT_SEL_D1 = Arrays.asList("AAPL", "META", "MSFT", "NFLX", "NVDA", "TSLA", "WMT");
 
         // -------------------------------------------------------------------------------------
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_D1, EPICS_WAIT_BUY_D1);
