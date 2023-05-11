@@ -35,6 +35,7 @@ public class BscScanBinanceApplication {
     public static ApplicationContext applicationContext;
     public static WandaBot wandaBot;
     public static TelegramBotsApi telegramBotsApi;
+    public static String EPICS_OUTPUTED = "";
 
     public static void main(String[] args) {
         try {
@@ -148,6 +149,7 @@ public class BscScanBinanceApplication {
 
                                 File myScap = new File(Utils.getDraftLogFile());
                                 myScap.delete();
+                                EPICS_OUTPUTED = "";
                                 // --------------------------------------------------------------------------
                                 binance_service.scapStocks();
                                 Utils.logWritelnDraft("");

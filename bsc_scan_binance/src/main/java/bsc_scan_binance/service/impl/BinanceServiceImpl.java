@@ -3901,11 +3901,16 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (allowOutput) {
-                if (Utils.isNotBlank(msg)) {
-                    msg += ",";
+                if (!BscScanBinanceApplication.EPICS_OUTPUTED.contains(EPIC)) {
+
+                    if (Utils.isNotBlank(msg)) {
+                        msg += ",";
+                    }
+                    msg += analysis(prefix + switch_trend, EPIC, CAPITAL_TIME_XX);
+                    index += 1;
+
+                    BscScanBinanceApplication.EPICS_OUTPUTED += "_" + EPIC + "_";
                 }
-                msg += analysis(prefix + switch_trend, EPIC, CAPITAL_TIME_XX);
-                index += 1;
             }
         }
 
