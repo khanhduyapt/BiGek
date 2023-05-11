@@ -3570,10 +3570,7 @@ public class Utils {
         String result = "";
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
-        if (dto_entry.getId().contains("_MINUTE_")) {
-            // risk = risk.divide(BigDecimal.valueOf(3), 3, RoundingMode.CEILING);
-        }
-        if (dto_entry.getId().contains(CAPITAL_TIME_D1)) {
+        if (dto_entry.getId().contains(CAPITAL_TIME_D1) || dto_entry.getId().contains(CAPITAL_TIME_W1)) {
             risk = risk.multiply(BigDecimal.valueOf(2));
         }
         risk = formatPrice(risk, 0);

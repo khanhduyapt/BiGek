@@ -173,6 +173,9 @@ public class BinanceServiceImpl implements BinanceService {
     List<DepthResponse> list_bids_ok = new ArrayList<DepthResponse>();
     List<DepthResponse> list_asks_ok = new ArrayList<DepthResponse>();
 
+    List<String> EPICS_WAIT_BUY_D1 = new ArrayList<String>();
+    List<String> EPICS_WAIT_SEL_D1 = new ArrayList<String>();
+
     private int pre_HH = 0;
     private String sp500 = "";
 
@@ -2745,9 +2748,13 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
             Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
 
-            if (Objects.isNull(dto) || Objects.isNull(dto_sl)) {
-                Utils.logWritelnDraft("monitorProfit (" + EPIC + ") dto is null");
+            if (Objects.isNull(dto)) {
+                Utils.logWritelnDraft("[waiting] (" + EPIC + ") dto is null");
                 return;
+            }
+
+            if (Objects.isNull(dto_sl)) {
+                dto_sl = dto;
             }
 
             if (Objects.equals(ACTION, dto.getTrend()) && Utils.isNotBlank(dto.getNote())) {
@@ -2780,7 +2787,7 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
 
             if (Objects.isNull(dto)) {
-                Utils.logWritelnDraft("monitorProfit (" + EPIC + ") dto is null");
+                Utils.logWritelnDraft("[alertMsg] (" + EPIC + ") dto is null");
                 continue;
             }
 
@@ -3639,24 +3646,40 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_M1 = Utils.getTrendByMaXx(heken_list_d1, 50);
             String trend_W1 = dto_w1.getTrend();
             String trend_D1 = Utils.getTrendByHekenAshiList(heken_list_d1);
+            String trend_D1_Ma5 = Utils.getTrendByMaXx(heken_list_d1, 5);
 
-            if (!Objects.equals(trend_W1, trend_D1)) {
+            if (!Objects.equals(trend_W1, trend_D1) && !Objects.equals(trend_D1_Ma5, trend_D1)) {
                 continue;
             }
 
-            String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (M1.W1)                 ";
-            if (!Objects.equals(trend_M1, trend_D1)) {
-                prefix = prefix.replace("M1.", "  .");
-            }
-            if (!Objects.equals(trend_W1, trend_D1)) {
-                prefix = prefix.replace("W1", "  ");
-            }
+            String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (M1.W1.D1ma5)           ";
 
             if (Utils.isNotBlank(dto_w1.getNote())) {
+                if (!Objects.equals(trend_M1, trend_W1)) {
+                    prefix = prefix.replace("M1.", "  .");
+                }
+                if (!Objects.equals(trend_W1, trend_W1)) {
+                    prefix = prefix.replace("W1", "  ");
+                }
+                if (!Objects.equals(trend_D1_Ma5, trend_W1)) {
+                    prefix = prefix.replace("D1ma5", "     ");
+                }
+
                 analysis(prefix, EPIC, Utils.CAPITAL_TIME_W1);
                 index += 1;
             }
+
             if (Utils.isNotBlank(dto_d1.getNote())) {
+                if (!Objects.equals(trend_M1, trend_D1)) {
+                    prefix = prefix.replace("M1.", "  .");
+                }
+                if (!Objects.equals(trend_W1, trend_D1)) {
+                    prefix = prefix.replace("W1", "  ");
+                }
+                if (!Objects.equals(trend_D1_Ma5, trend_D1)) {
+                    prefix = prefix.replace("D1ma5", "     ");
+                }
+
                 analysis(prefix, EPIC, Utils.CAPITAL_TIME_D1);
                 index += 1;
             }
@@ -3691,7 +3714,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h12) || Objects.isNull(dto_h4)
                     || Objects.isNull(dto_h1) || Objects.isNull(dto_15) || Objects.isNull(dto_dt)) {
-                Utils.logWritelnDraft("scapForex (" + EPIC + ") dto is null");
+                Utils.logWritelnDraft("[scapForex] (" + EPIC + ") dto is null");
                 return;
             }
 
@@ -3732,6 +3755,13 @@ public class BinanceServiceImpl implements BinanceService {
                 allowOutput = true;
             }
             if (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, trend_dt)) {
+                allowOutput = false;
+            }
+
+            if (EPICS_WAIT_BUY_D1.contains(EPIC) && Objects.equals(Utils.TREND_SHOT, trend_dt)) {
+                allowOutput = false;
+            }
+            if (EPICS_WAIT_SEL_D1.contains(EPIC) && Objects.equals(Utils.TREND_LONG, trend_dt)) {
                 allowOutput = false;
             }
 
@@ -3778,18 +3808,18 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public void monitorProfit() {
+        // TODO: 3. monitorProfit
+        EPICS_WAIT_BUY_D1 = Arrays.asList("EURNZD", "", "", "", "", "", "", "");
+        EPICS_WAIT_SEL_D1 = Arrays.asList("WMT", "TSLA", "AAPL", "NFLX", "", "", "", "");
+
         // -------------------------------------------------------------------------------------
-        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H12,
-                Arrays.asList("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""));
-        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H12,
-                Arrays.asList("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_D1, EPICS_WAIT_BUY_D1);
+        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_D1, EPICS_WAIT_SEL_D1);
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));
 
         // -------------------------------------------------------------------------------------
-
-        // TODO: 3. monitorProfit
         // "BTCUSD", GER40", "US30", "US100", "UK100", "USOIL", "XAGUSD", "XAUUSD"
         // "AUDJPY", "AUDUSD", "CADJPY", "CHFJPY",
         // "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
