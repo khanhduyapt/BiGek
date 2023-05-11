@@ -2705,7 +2705,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String log = Utils.appendSpace(EPIC, 10);
         log += Utils.appendSpace(append, 35) + " ";
-        log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 66) + " ";
+        log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 63) + " ";
 
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 11);
         log += Utils.calc_BUF_LO_HI_BUF_Forex(true, dto_entry.getTrend(), EPIC, dto_entry, dto_sl);
@@ -3356,10 +3356,13 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
+
         String trend_h12 = Utils.getTrendByHekenAshiList(heken_list_h12);
+        String trend_h12_ma5 = Utils.getTrendByMaXx(heken_list_h12, 5); // Ma5 ~ D1;
+
         String switch_trend_h12 = Utils.switchTrendByHeken_12_or_Ma35(heken_list_h12);
 
-        if (Utils.isNotBlank(switch_trend_h12)) {
+        if (Utils.isNotBlank(switch_trend_h12) && Objects.equals(trend_h12_ma5, trend_h12)) {
             createOrders(SYMBOL, orderId_h12, switch_trend_h12, switch_trend_h12, heken_list_h12);
 
             String temp = Utils.getTimeHHmm() + "   " + switch_trend_h12 + "   " + Utils.appendSpace(SYMBOL, 10);
@@ -3637,7 +3640,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_H1 = dto_h1.getTrend();
 
             String switch_trend = "                ";
-            String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (M1.W1.D1      H4.H1)   " + switch_trend;
+            String prefix = Utils.appendLeft(String.valueOf(index), 2) + " (M1.W1.D1      H4.H1)   " + switch_trend;
             if (Utils.isNotBlank(dto_w1.getNote())) {
                 if (!Objects.equals(trend_M1, trend_W1)) {
                     prefix = prefix.replace("M1.", "  .");
@@ -3701,7 +3704,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String switch_trend = "                ";
-            String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (M1.W1.D1ma5   H4.H1)   " + switch_trend;
+            String prefix = Utils.appendLeft(String.valueOf(index), 2) + " (M1.W1.D1ma5   H4.H1)   " + switch_trend;
 
             if (Utils.isNotBlank(dto_d1.getNote())) {
                 if (!Objects.equals(trend_M1, trend_D1)) {
@@ -3827,6 +3830,10 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H12) && !Objects.equals(trend_d1, trend_h12)) {
                 allowOutput = false;
             }
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H12) && Objects.equals(trend_d1, trend_h12)
+                    && Utils.isNotBlank(dto_dt.getNote())) {
+                allowOutput = true;
+            }
             if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1) && Utils.isNotBlank(dto_dt.getNote())) {
                 allowOutput = true;
             }
@@ -3854,7 +3861,7 @@ public class BinanceServiceImpl implements BinanceService {
                 allowOutput = true;
             }
 
-            String prefix = Utils.appendLeft(String.valueOf(index), 2) + "     (W1=D1=H12   H4=H1)     ";
+            String prefix = Utils.appendLeft(String.valueOf(index), 2) + " (W1=D1=H12   H4=H1)     ";
 
             if (!Objects.equals(trend_w1, trend_dt)) {
                 prefix = prefix.replace("W1=", "   ");
