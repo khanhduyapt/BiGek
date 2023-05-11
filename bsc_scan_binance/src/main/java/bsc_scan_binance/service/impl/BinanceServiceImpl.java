@@ -3617,6 +3617,7 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.logWritelnDraft("");
 
         int index = 1;
+        String switch_trend = " (M1.W1.D1.   H4.H1)   " + "                  ";
         for (String EPIC : Utils.EPICS_STOCKS) {
             List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
@@ -3637,8 +3638,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_H4 = dto_h4.getTrend();
             String trend_H1 = dto_h1.getTrend();
 
-            String switch_trend = "                ";
-            String prefix = Utils.appendLeft(String.valueOf(index), 2) + " (M1.W1.D1      H4.H1)   " + switch_trend;
+            String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
             if (Utils.isNotBlank(dto_w1.getNote())) {
                 if (!Objects.equals(trend_M1, trend_W1)) {
                     prefix = prefix.replace("M1.", "  .");
@@ -3681,16 +3681,14 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_M1 = Utils.getTrendByMaXx(heken_list_d1, 50);
             String trend_W1 = dto_w1.getTrend();
             String trend_D1 = Utils.getTrendByHekenAshiList(heken_list_d1);
-            String trend_D1_Ma5 = Utils.getTrendByMaXx(heken_list_d1, 5);
             String trend_H4 = dto_h4.getTrend();
             String trend_H1 = dto_h1.getTrend();
 
-            if (!Objects.equals(trend_W1, trend_D1) && !Objects.equals(trend_D1_Ma5, trend_D1)) {
+            if (!Objects.equals(trend_W1, trend_D1)) {
                 continue;
             }
 
-            if (Objects.equals(trend_M1, trend_W1) && Objects.equals(trend_M1, trend_D1_Ma5)
-                    && !Objects.equals(trend_W1, trend_D1)) {
+            if (Objects.equals(trend_M1, trend_W1) && !Objects.equals(trend_W1, trend_D1)) {
                 continue;
             }
 
@@ -3701,8 +3699,7 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            String switch_trend = "                ";
-            String prefix = Utils.appendLeft(String.valueOf(index), 2) + " (M1.W1.D1ma5   H4.H1)   " + switch_trend;
+            String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
 
             if (Utils.isNotBlank(dto_d1.getNote())) {
                 if (!Objects.equals(trend_M1, trend_D1)) {
@@ -3710,9 +3707,6 @@ public class BinanceServiceImpl implements BinanceService {
                 }
                 if (!Objects.equals(trend_W1, trend_D1)) {
                     prefix = prefix.replace("W1", "  ");
-                }
-                if (!Objects.equals(trend_D1_Ma5, trend_D1)) {
-                    prefix = prefix.replace("D1ma5", "     ");
                 }
 
                 if (!Objects.equals(trend_H4, trend_D1)) {
@@ -3734,9 +3728,6 @@ public class BinanceServiceImpl implements BinanceService {
                 }
                 if (!Objects.equals(trend_W1, trend_D1)) {
                     prefix = prefix.replace("W1", "  ");
-                }
-                if (!Objects.equals(trend_D1_Ma5, trend_D1)) {
-                    prefix = prefix.replace("D1ma5", "     ");
                 }
 
                 if (!Objects.equals(trend_H4, trend_D1)) {
@@ -3815,7 +3806,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, trend_dt)) {
                 allowOutput = false;
             }
-            if (!Objects.equals(trend_h12, trend_dt)) {
+            if (!Objects.equals(trend_d1, trend_h12) || !Objects.equals(trend_h12, trend_dt)) {
                 allowOutput = false;
             }
 
@@ -3832,7 +3823,8 @@ public class BinanceServiceImpl implements BinanceService {
                     && Utils.isNotBlank(dto_dt.getNote())) {
                 allowOutput = true;
             }
-            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1) && Utils.isNotBlank(dto_dt.getNote())) {
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1) && Utils.isNotBlank(dto_dt.getNote())
+                    && Objects.equals(trend_d1, trend_h12)) {
                 allowOutput = true;
             }
             if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_15) && Utils.isNotBlank(dto_15.getNote())) {
