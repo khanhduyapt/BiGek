@@ -3094,8 +3094,6 @@ public class BinanceServiceImpl implements BinanceService {
         String w1d1h4 = "";
         String d1h4 = "";
         String d1 = "";
-        List<String> list_w1_log = new ArrayList<String>();
-        List<String> list_d1h4_log = new ArrayList<String>();
         List<String> list_h12_log = new ArrayList<String>();
 
         if (crypto_list.size() > 2) {
@@ -3114,42 +3112,11 @@ public class BinanceServiceImpl implements BinanceService {
                     type = "  (Spot)      ";
                 }
 
-                // Utils.logWritelnReport(tmp_msg);
-
-                Orders dto_w1 = ordersRepository.findById("CRYPTO_" + symbol + "_1w").orElse(null);
-                Orders dto_d1 = ordersRepository.findById("CRYPTO_" + symbol + "_1d").orElse(null);
                 Orders dto_h12 = ordersRepository.findById("CRYPTO_" + symbol + "_12h").orElse(null);
-                Orders dto_h4 = ordersRepository.findById("CRYPTO_" + symbol + "_4h").orElse(null);
 
                 if (Objects.nonNull(dto_h12) && Utils.isNotBlank(dto_h12.getNote())) {
                     list_h12_log.add(Utils.createLineCrypto(dto_h12, symbol, type));
                 }
-
-                if (Objects.nonNull(dto_w1) && Objects.equals(Utils.TREND_LONG, dto_w1.getTrend())
-                        && !w1d1h4.contains("_" + symbol + "_")) {
-                    w1d1h4 += "_" + symbol + "_";
-                    list_w1_log.add(Utils.createLineCrypto(dto_w1, symbol, type));
-
-                    if (Utils.isNotBlank(msg_futu)) {
-                        msg_futu += ",";
-                    }
-                    msg_futu += symbol;
-                }
-
-                if (Utils.LIST_WAITING.contains(symbol) && Objects.nonNull(dto_d1) && Objects.nonNull(dto_h4)
-                        && Objects.equals(dto_d1.getTrend(), dto_h4.getTrend()) && !d1h4.contains("_" + symbol + "_")) {
-
-                    d1h4 += "_" + symbol + "_";
-                    list_d1h4_log.add(Utils.createLineCrypto(dto_h4, symbol, type));
-                }
-
-                if (Utils.LIST_WAITING.contains(symbol) && Objects.nonNull(dto_d1) && Utils.isNotBlank(dto_d1.getNote())
-                        && Objects.equals(Utils.TREND_LONG, dto_d1.getTrend()) && !d1.contains("_" + symbol + "_")) {
-
-                    d1 += "_" + symbol + "_";
-                    list_d1_log.add(Utils.createLineCrypto(dto_d1, symbol, type));
-                }
-
             }
 
             if (list_h12_log.size() > 0) {
@@ -3161,37 +3128,6 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnReport("");
                 Utils.logWritelnReport("");
             }
-
-            if (list_w1_log.size() > 0) {
-                Utils.logWritelnReport("");
-                Utils.logWritelnReport(Utils.appendLeftAndRight("          W1         ", 50, "+"));
-                for (String log : list_w1_log) {
-                    Utils.logWritelnReport(log);
-                }
-                Utils.logWritelnReport("");
-                Utils.logWritelnReport("");
-            }
-
-            if (list_d1h4_log.size() > 0) {
-                Utils.logWritelnReport("");
-                Utils.logWritelnReport(Utils.appendLeftAndRight("        D1 H4        ", 50, "+"));
-                for (String log : list_d1h4_log) {
-                    Utils.logWritelnReport(log);
-                }
-                Utils.logWritelnReport("");
-                Utils.logWritelnReport("");
-            }
-
-            if (list_d1_log.size() > 0) {
-                Utils.logWritelnReport("");
-                Utils.logWritelnReport(Utils.appendLeftAndRight("          D1         ", 50, "+"));
-                for (String log : list_d1_log) {
-                    Utils.logWritelnReport(log);
-                }
-                Utils.logWritelnReport("");
-                Utils.logWritelnReport("");
-            }
-
         }
 
         if (isReloadAfter(Utils.MINUTES_OF_1H * 2, "_REPORT_CRYPTO_") && Utils.isNotBlank(msg_futu)) {
