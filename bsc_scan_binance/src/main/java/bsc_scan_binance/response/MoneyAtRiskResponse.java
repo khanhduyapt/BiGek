@@ -104,9 +104,26 @@ public class MoneyAtRiskResponse {
             unit_risk_per_pip = BigDecimal.valueOf(0.05);
             break;
         case "ETHUSD":
-            standard_lot = BigDecimal.valueOf(0.714);
-            unit_risk_per_pip = BigDecimal.valueOf(0.714285714285714);
+            standard_lot = BigDecimal.valueOf(0.71428);
+            unit_risk_per_pip = BigDecimal.valueOf(0.71428);
             break;
+        case "XRPUSD":
+            standard_lot = BigDecimal.valueOf(10);
+            unit_risk_per_pip = BigDecimal.valueOf(1000);
+            break;
+        case "DOTUSD":
+            standard_lot = BigDecimal.valueOf(10);
+            unit_risk_per_pip = BigDecimal.valueOf(1000);
+            break;
+        case "ADAUSD":
+            standard_lot = BigDecimal.valueOf(10);
+            unit_risk_per_pip = BigDecimal.valueOf(1000);
+            break;
+        case "DOGEUSD":
+            standard_lot = BigDecimal.valueOf(10);
+            unit_risk_per_pip = BigDecimal.valueOf(1000);
+            break;
+
         case "GOLD":
         case "XAUUSD":
             standard_lot = BigDecimal.valueOf(0.0125);
@@ -143,13 +160,20 @@ public class MoneyAtRiskResponse {
             standard_lot = BigDecimal.valueOf(0.0234);
             unit_risk_per_pip = BigDecimal.valueOf(0.25);
             break;
+        case "SPN35":
+            standard_lot = BigDecimal.valueOf(0.234);
+            unit_risk_per_pip = BigDecimal.valueOf(0.25);
+            break;
         case "UK100":
             standard_lot = BigDecimal.valueOf(0.208);
             unit_risk_per_pip = BigDecimal.valueOf(0.25);
             break;
         case "FR40":
-        case "FRA40":
             standard_lot = BigDecimal.valueOf(0.0234);
+            unit_risk_per_pip = BigDecimal.valueOf(0.25);
+            break;
+        case "FRA40":
+            standard_lot = BigDecimal.valueOf(0.234);
             unit_risk_per_pip = BigDecimal.valueOf(0.25);
             break;
         case "HK50":
@@ -451,11 +475,19 @@ public class MoneyAtRiskResponse {
             standard_lot = BigDecimal.valueOf(10);
             unit_risk_per_pip = BigDecimal.valueOf(10);
             break;
+        case "BAYGn":
+            standard_lot = BigDecimal.valueOf(10);
+            unit_risk_per_pip = BigDecimal.valueOf(10);
+            break;
+        case "VOWG_p":
+            standard_lot = BigDecimal.valueOf(10);
+            unit_risk_per_pip = BigDecimal.valueOf(10);
+            break;
+
         case "DX.f":
             standard_lot = BigDecimal.valueOf(1);
             unit_risk_per_pip = BigDecimal.valueOf(100);
             break;
-
         default:
             standard_lot = BigDecimal.valueOf(0.01);
             unit_risk_per_pip = BigDecimal.valueOf(10000);

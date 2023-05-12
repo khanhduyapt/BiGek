@@ -147,15 +147,20 @@ public class Utils {
     public static final Integer MINUTES_OF_15M = 15;
     public static final Integer MINUTES_OF_5M = 5;
 
-    public static final Integer MINUTES_RELOAD_CSV_DATA = 5;
+    public static final Integer MINUTES_RELOAD_CSV_DATA = 15;
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final String EPICS_INDEXS = "_US30_SP500_GER30_GER40_UK100_";
+    public static final String EPICS_INDEXS = "_US30_SP500_GER30_GER40_UK100_FRA40_SPN35_EU50_US100_AUS200_";
 
-    public static final List<String> EPICS_ONE_WAY = Arrays.asList("DX.f", "XAUUSD", "BTCUSD", "XAGUSD", "US30",
-            "US100", "EU50", "GER40", "UK100", "USOIL", "AUS200", "ETHUSD", "DOGEUSD");
+    public static final List<String> EPICS_METALS = Arrays.asList("DX.f", "XAUUSD", "BTCUSD", "XAGUSD");
+
+    public static final List<String> EPICS_CRYPTO_CFD = Arrays.asList("BTCUSD", "ETHUSD", "ADAUSD", "DOGEUSD", "DOTUSD",
+            "XRPUSD");
+
+    public static final List<String> EPICS_CASH_CFD = Arrays.asList("US30", "US100", "EU50", "GER40", "FRA40", "SPN35",
+            "UK100", "USOIL", "AUS200");
 
     public static final List<String> EPICS_FOREXS = Arrays.asList("AUDJPY", "AUDNZD", "AUDUSD", "CADJPY", "CHFJPY",
             "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF",
@@ -951,11 +956,14 @@ public class Utils {
         if ("_USOIL_".contains(epic)) {
             EXCHANGE = "TVC";
 
-        } else if ("_GER40_UK100_US30_XAUUSD_AUS200_".contains(epic)) {
+        } else if ("_GER40_FRA40_UK100_US30_XAUUSD_AUS200_".contains(epic)) {
             EXCHANGE = "PEPPERSTONE";
 
         } else if (Objects.equals("DX.f", epic)) {
             epic = "DXY";
+
+        } else if (Objects.equals("SPN35", epic)) {
+            epic = "SP35";
 
         } else if (Objects.equals("JP225", epic)) {
             epic = "JPN225";

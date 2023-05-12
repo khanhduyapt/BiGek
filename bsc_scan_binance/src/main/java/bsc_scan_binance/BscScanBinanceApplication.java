@@ -96,7 +96,9 @@ public class BscScanBinanceApplication {
             binance_service.deleteConnectTimeOutException();
             // ----------------------------------------
             List<String> CAPITAL_LIST = new ArrayList<String>();
-            CAPITAL_LIST.addAll(Utils.EPICS_ONE_WAY);
+            CAPITAL_LIST.addAll(Utils.EPICS_METALS);
+            CAPITAL_LIST.addAll(Utils.EPICS_CRYPTO_CFD);
+            CAPITAL_LIST.addAll(Utils.EPICS_CASH_CFD);
             CAPITAL_LIST.addAll(Utils.EPICS_FOREXS);
 
             if (app_flag != Utils.const_app_flag_webonly) {
@@ -124,7 +126,6 @@ public class BscScanBinanceApplication {
                             if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
                                 binance_service.saveMt5Data("Forex.csv", Utils.MINUTES_OF_15M);
                                 binance_service.saveMt5Data("Stocks.csv", Utils.MINUTES_OF_1H);
-                                binance_service.initWeekTrend();
 
                                 if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MONITOR_PROFIT")) {
                                     Utils.logWritelnDraft("");
@@ -161,20 +162,7 @@ public class BscScanBinanceApplication {
                                 binance_service.scapStocks();
                                 Utils.logWritelnDraft("");
                                 // --------------------------------------------------------------------------
-                                binance_service.scapForex("_DX.f_XAUUSD_BTCUSD_", Utils.CAPITAL_TIME_H12);
-                                Utils.logWritelnDraft("");
-
-                                binance_service.scapForex("", Utils.CAPITAL_TIME_15);
-                                Utils.logWritelnDraft("");
-
-                                binance_service.scapForex("", Utils.CAPITAL_TIME_H1);
-                                Utils.logWritelnDraft("");
-
-                                binance_service.scapForex("", Utils.CAPITAL_TIME_H4);
-                                Utils.logWritelnDraft("");
-
-                                binance_service.scapForex("", Utils.CAPITAL_TIME_D1);
-                                Utils.logWritelnDraft("");
+                                monitorForex(binance_service);
                                 // --------------------------------------------------------------------------
                                 String cur_epics = EPICS_OUTPUTED;
                                 String[] arr = cur_epics.split("_");
@@ -254,6 +242,27 @@ public class BscScanBinanceApplication {
             e.printStackTrace();
             System.exit(0);
         }
+    }
+
+    public static void monitorForex(BinanceService binance_service) {
+        List<List<String>> list = new ArrayList<List<String>>();
+        list.add(Utils.EPICS_METALS);
+        list.add(Utils.EPICS_CRYPTO_CFD);
+        list.add(Utils.EPICS_CASH_CFD);
+        list.add(Utils.EPICS_FOREXS);
+
+        for (List<String> items : list) {
+            String result = "";
+            result += binance_service.scapForex("_DX.f_XAUUSD_BTCUSD_", Utils.CAPITAL_TIME_H12, items);
+            result += binance_service.scapForex("", Utils.CAPITAL_TIME_15, items);
+            result += binance_service.scapForex("", Utils.CAPITAL_TIME_H1, items);
+            result += binance_service.scapForex("", Utils.CAPITAL_TIME_H4, items);
+            result += binance_service.scapForex("", Utils.CAPITAL_TIME_D1, items);
+            if (Utils.isNotBlank(result)) {
+                Utils.logWritelnDraft("");
+            }
+        }
+
     }
 
     public static void alertMsgKillZone(BinanceService binance_service) {

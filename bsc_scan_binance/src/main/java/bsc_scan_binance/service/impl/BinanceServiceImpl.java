@@ -2699,7 +2699,9 @@ public class BinanceServiceImpl implements BinanceService {
         ordersRepository.save(entity);
     }
 
-    private void outputLog(String prefix_id, String EPIC, Orders dto_entry, Orders dto_sl, String append) {
+    private void outputLog(String prefix_id, String EPIC, Orders dto_entry, Orders dto_sl, String append,
+            String find_trend) {
+
         if (Objects.isNull(dto_entry) || Objects.isNull(dto_sl)) {
             return;
         }
@@ -2709,10 +2711,8 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 63) + " ";
 
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 11);
-        log += Utils.calc_BUF_LO_HI_BUF_Forex(true, dto_entry.getTrend(), EPIC, dto_entry, dto_sl);
+        log += Utils.calc_BUF_LO_HI_BUF_Forex(true, find_trend, EPIC, dto_entry, dto_sl);
 
-        // String EVENT_ID = "FX_LOG_" + prefix_id + EPIC + dto_entry.getTrend();
-        // logMsgPerHour(EVENT_ID, log, Utils.MINUTES_OF_1H);
         Utils.logWritelnDraft(log);
     }
 
@@ -2745,7 +2745,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 sendMsgPerHour(EVENT_ID, msg.trim().replace(" ", "."), true);
 
-                outputLog("Analysis_" + Utils.getChartName(dto), EPIC, dto_sl, dto_sl, msg);
+                outputLog("Analysis_" + Utils.getChartName(dto), EPIC, dto_sl, dto_sl, msg, dto.getTrend());
             }
         }
     }
@@ -2811,7 +2811,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String log = Utils.appendSpace(prifix, 16) + Utils.appendSpace(dto.getNote(), 30);
 
-        outputLog("Analysis_" + char_name, EPIC, dto_sl, dto_sl, log);
+        outputLog("Analysis_" + char_name, EPIC, dto_sl, dto_sl, log, dto.getTrend());
 
         if (!isReloadAfter(Utils.MINUTES_OF_1H, EPIC + trend)) {
             return "";
@@ -3040,33 +3040,6 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         return list;
-    }
-
-    @Override
-    public void initWeekTrend() {
-        GLOBAL_LONG_LIST = new ArrayList<String>();
-        GLOBAL_SHOT_LIST = new ArrayList<String>();
-
-        List<String> capital_list = new ArrayList<String>();
-        capital_list.addAll(Utils.EPICS_ONE_WAY);
-        capital_list.addAll(Utils.EPICS_FOREXS);
-        for (String epic : capital_list) {
-            List<BtcFutures> list = getCapitalData(epic, Utils.CAPITAL_TIME_W1);
-            if (CollectionUtils.isEmpty(list)) {
-                continue;
-            }
-
-            List<BtcFutures> heken_list = Utils.getHekenList(list);
-            String trend = Utils.getTrendByHekenAshiList(heken_list);
-
-            if (Objects.equals(Utils.TREND_LONG, trend) && !GLOBAL_LONG_LIST.contains(epic)) {
-                GLOBAL_LONG_LIST.add(epic);
-            }
-
-            if (Objects.equals(Utils.TREND_SHOT, trend) && !GLOBAL_SHOT_LIST.contains(epic)) {
-                GLOBAL_SHOT_LIST.add(epic);
-            }
-        }
     }
 
     @SuppressWarnings("unused")
@@ -3346,9 +3319,11 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.isNotBlank(switch_trend_h12) && Objects.equals(trend_h12_ma5, trend_h12)) {
             createOrders(SYMBOL, orderId_h12, switch_trend_h12, switch_trend_h12, heken_list_h12);
 
-            String temp = Utils.getTimeHHmm() + "   " + switch_trend_h12 + "   " + Utils.appendSpace(SYMBOL, 10);
-            temp += "(H12)" + Utils.appendSpace(trend_h12, 10) + Utils.getCryptoLink_Spot(SYMBOL);
-            System.out.println(temp);
+            if (Objects.equals(Utils.TREND_LONG, SYMBOL)) {
+                String temp = Utils.getTimeHHmm() + "   " + switch_trend_h12 + "   " + Utils.appendSpace(SYMBOL, 10);
+                temp += "(H12)" + Utils.appendSpace(trend_h12, 10) + Utils.getCryptoLink_Spot(SYMBOL);
+                System.out.println(temp);
+            }
         } else {
             deleteOrders(orderId_h12);
         }
@@ -3476,7 +3451,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // Chap nhan thua rui ro, khong niu keo sai lam danh sai xu huong.
         BigDecimal bread = Utils.calcMaxBread(heken_list.subList(0, size));
-        if (!Utils.EPICS_STOCKS.contains(EPIC)) {
+        if (Utils.EPICS_FOREXS.contains(EPIC)) {
             bread = bread.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
 
@@ -3645,18 +3620,14 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     @Transactional
-    public void scapForex(String alwaysShowTheseEpics, String CAPITAL_TIME_XX) {
+    public String scapForex(String alwaysShowTheseEpics, String CAPITAL_TIME_XX, List<String> CAPITAL_LIST) {
         if (required_update_bars_csv) {
-            return;
+            return "";
         }
 
         // TODO: 2. scapForex
         // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
         // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
-
-        List<String> CAPITAL_LIST = new ArrayList<String>();
-        CAPITAL_LIST.addAll(Utils.EPICS_ONE_WAY);
-        CAPITAL_LIST.addAll(Utils.EPICS_FOREXS);
 
         int index = 1;
         String msg = "";
@@ -3736,6 +3707,9 @@ public class BinanceServiceImpl implements BinanceService {
             if (EPICS_WAIT_SEL_D1.contains(EPIC) && Objects.equals(Utils.TREND_LONG, trend_dt)) {
                 allowOutput = false;
             }
+            if (Utils.EPICS_INDEXS.contains(EPIC) && !Objects.equals(trend_w1, trend_dt)) {
+                allowOutput = false;
+            }
             if (alwaysShowTheseEpics.contains(EPIC)) {
                 allowOutput = true;
             }
@@ -3775,6 +3749,7 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Utils.isNotBlank(msg)) {
                         msg += ",";
                     }
+
                     msg += analysis(prefix + switch_trend, EPIC, CAPITAL_TIME_XX);
                     index += 1;
 
@@ -3788,11 +3763,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        if (Utils.isNotBlank(msg)) {
-            // String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH();
-            // sendMsgPerHour(EVENT_ID, Utils.getChartNameCapital(CAPITAL_TIME_XX) + msg,
-            // true);
-        }
+        return msg;
     }
 
     // H1 & H4 nguoc huong -> thong bao cat lenh.

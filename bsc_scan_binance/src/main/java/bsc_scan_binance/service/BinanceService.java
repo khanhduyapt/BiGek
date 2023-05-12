@@ -51,7 +51,7 @@ public interface BinanceService {
 
     public void createReport();
 
-    public void scapForex(String alwaysShowThisEpic, String CAPITAL_TIME_XX);
+    public String scapForex(String alwaysShowThisEpic, String CAPITAL_TIME_XX, List<String> CAPITAL_LIST);
 
     public void scapStocks();
 
@@ -60,8 +60,6 @@ public interface BinanceService {
     public void saveMt5Data(String filename, Integer MINUTES_OF_XX);
 
     public void sendMsgPerHour(String EVENT_ID, String msg_content, boolean isOnlyMe);
-
-    public void initWeekTrend();
 
     public void logMsgPerHour(String epic_id, String log, Integer MINUTES_OF_Xx);
 
