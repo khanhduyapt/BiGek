@@ -950,8 +950,12 @@ public class Utils {
 
         if ("_USOIL_".contains(epic)) {
             EXCHANGE = "TVC";
+
         } else if ("_GER40_UK100_US30_XAUUSD_AUS200_".contains(epic)) {
             EXCHANGE = "PEPPERSTONE";
+
+        } else if (Objects.equals("DX.f", epic)) {
+            epic = "DXY";
 
         } else if (Objects.equals("JP225", epic)) {
             epic = "JPN225";
