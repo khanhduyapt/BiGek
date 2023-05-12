@@ -163,7 +163,7 @@ public class Utils {
 
     // "16:30 - 23:00"
     public static final List<String> EPICS_STOCKS = Arrays.asList("AMZN", "BAC", "GOOG", "MSFT", "NFLX", "AAPL", "NVDA",
-            "META", "PFE", "RACE", "TSLA", "WMT");
+            "META", "PFE", "RACE", "TSLA", "WMT", "BAYGn", "AIRF", "DBKGn", "VOWG_p", "LVMH");
 
     // ALL Binance.com
     public static final List<String> COINS = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ARB", "ADA", "ADX", "AERGO",
