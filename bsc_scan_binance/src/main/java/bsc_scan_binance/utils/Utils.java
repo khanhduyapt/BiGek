@@ -87,8 +87,8 @@ public class Utils {
     public static final String TEXT_DANGER = "(Danger)";
     public static final String TEXT_START_LONG = "Start:Long";
     public static final String TEXT_STOP_LONG = "Stop:Long";
-    public static final String TEXT_MIN_DAY_AREA = "(Min_D10_Area)";
-    public static final String TEXT_MAX_DAY_AREA = "(Max_D10_Area)";
+    public static final String TEXT_MIN_DAY_AREA = "MinD";
+    public static final String TEXT_MAX_DAY_AREA = "MaxD";
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
@@ -2091,12 +2091,15 @@ public class Utils {
     }
 
     public static boolean isAboveMALine(List<BtcFutures> list, int length) {
-        if (CollectionUtils.isEmpty(list)) {
+        if (CollectionUtils.isEmpty(list) || (list.size() < 1)) {
             Utils.logWritelnDraft("(isAboveMALine)list Empty");
+            return false;
         }
+
         if (list.size() < length) {
             Utils.logWritelnDraft(
                     "(isAboveMALine) " + list.get(0).getId() + " list.size()<" + length + ")" + list.size());
+            return false;
         }
 
         BigDecimal ma = calcMA(list, length, 0);
@@ -2110,12 +2113,14 @@ public class Utils {
     }
 
     public static boolean isBelowMALine(List<BtcFutures> list, int length) {
-        if (CollectionUtils.isEmpty(list)) {
+        if (CollectionUtils.isEmpty(list) || (list.size() < 1)) {
             Utils.logWritelnDraft("(isBelowMALine)list Empty");
+            return false;
         }
         if (list.size() < length) {
             Utils.logWritelnDraft(
                     "(isBelowMALine) " + list.get(0).getId() + " list.size()<" + length + ")" + list.size());
+            return false;
         }
 
         BigDecimal ma = calcMA(list, length, 0);
