@@ -143,8 +143,6 @@ public class BscScanBinanceApplication {
                                 for (String EPIC : Utils.EPICS_STOCKS) {
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_W1);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_D1);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H4);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
                                 }
 
                                 boolean allow_send_msg = true;
