@@ -3143,7 +3143,7 @@ public class Utils {
         EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_D1, "");
         EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_W1, "");
 
-        EPIC = EPIC.replace("00", "");
+        EPIC = EPIC.replace("_00", "");
         EPIC = EPIC.replace("_", "");
 
         return EPIC;

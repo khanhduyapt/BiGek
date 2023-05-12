@@ -138,7 +138,6 @@ public class BscScanBinanceApplication {
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H12);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H4);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_15);
                                 }
 
                                 for (String EPIC : Utils.EPICS_STOCKS) {
@@ -247,19 +246,20 @@ public class BscScanBinanceApplication {
     public static void monitorForex(BinanceService binance_service) {
         List<List<String>> list = new ArrayList<List<String>>();
         list.add(Utils.EPICS_METALS);
-        list.add(Utils.EPICS_CRYPTO_CFD);
         list.add(Utils.EPICS_CASH_CFD);
         list.add(Utils.EPICS_FOREXS);
 
         for (List<String> items : list) {
             binance_service.scapForex("_DX.f_XAUUSD_BTCUSD_", Utils.CAPITAL_TIME_H12, items);
-            binance_service.scapForex("", Utils.CAPITAL_TIME_15, items);
             binance_service.scapForex("", Utils.CAPITAL_TIME_H1, items);
             binance_service.scapForex("", Utils.CAPITAL_TIME_H4, items);
             binance_service.scapForex("", Utils.CAPITAL_TIME_D1, items);
 
             Utils.logWritelnDraft("");
         }
+
+        binance_service.scapForex("", Utils.CAPITAL_TIME_D1, Utils.EPICS_CRYPTO_CFD);
+        Utils.logWritelnDraft("");
     }
 
     public static void alertMsgKillZone(BinanceService binance_service) {

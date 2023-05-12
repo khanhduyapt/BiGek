@@ -3234,7 +3234,8 @@ public class BinanceServiceImpl implements BinanceService {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4)
                         + Utils.TEXT_SWITCH_TREND_Ma_1_50;
             }
-        } else if (CAPITAL_TIME_XX.contains("HOUR") || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)) {
+        } else if (Objects.equals(Utils.CAPITAL_TIME_H1, CAPITAL_TIME_XX)
+                || Objects.equals(Utils.CAPITAL_TIME_H4, CAPITAL_TIME_XX)) {
             String type = "";
             if (heken_list.size() > 30) {
                 String switch_trend = Utils.switchTrendByHeken_12_or_Ma35(heken_list)
@@ -3282,7 +3283,7 @@ public class BinanceServiceImpl implements BinanceService {
                     note = Utils.appendSpace(note, 28) + "(Wait)";
                 }
                 if (Utils.isBelowMALine(heken_list_h1, 50) && Utils.isBelowMALine(heken_list_h4, 50)) {
-                    note = Utils.appendSpace(note, 28) + "      ";
+                    note = Utils.appendSpace(note, 28) + "<-----";
                 }
             }
             if (Objects.equals(trend, Utils.TREND_SHOT)) {
@@ -3290,7 +3291,7 @@ public class BinanceServiceImpl implements BinanceService {
                     note = Utils.appendSpace(note, 28) + "(Wait)";
                 }
                 if (Utils.isAboveMALine(heken_list_h1, 50) && Utils.isAboveMALine(heken_list_h4, 50)) {
-                    note = Utils.appendSpace(note, 28) + "      ";
+                    note = Utils.appendSpace(note, 28) + "<-----";
                 }
             }
         }
@@ -3496,11 +3497,10 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
-            Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
             Orders dto_dt = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
 
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h12) || Objects.isNull(dto_h4)
-                    || Objects.isNull(dto_h1) || Objects.isNull(dto_15) || Objects.isNull(dto_dt)) {
+                    || Objects.isNull(dto_h1) || Objects.isNull(dto_dt)) {
                 Utils.logWritelnDraft("[scapForex] (" + EPIC + ") dto is null: " + CAPITAL_TIME_XX);
 
                 continue;
@@ -3511,7 +3511,6 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h12 = dto_h12.getTrend();
             String trend_h4 = dto_h4.getTrend();
             String trend_h1 = dto_h1.getTrend();
-            String trend_15 = dto_15.getTrend();
             String trend_dt = dto_dt.getTrend();
 
             boolean allowOutput = true;
@@ -3546,13 +3545,6 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(trend_d1, trend_h12)) {
                 allowOutput = true;
             }
-            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_15) && Utils.isNotBlank(dto_15.getNote())) {
-                if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_15)) {
-                    allowOutput = true;
-                } else {
-                    allowOutput = false;
-                }
-            }
 
             if (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, trend_dt)) {
                 allowOutput = false;
@@ -3566,7 +3558,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (EPICS_WAIT_SEL_D1.contains(EPIC) && Objects.equals(Utils.TREND_LONG, trend_dt)) {
                 allowOutput = false;
             }
-            if (Utils.EPICS_INDEXS.contains(EPIC) && !Objects.equals(trend_w1, trend_dt)) {
+            if (Utils.EPICS_CRYPTO_CFD.contains(EPIC) && !Objects.equals(trend_w1, trend_dt)) {
                 // allowOutput = false;
             }
             if (alwaysShowTheseEpics.contains(EPIC)) {
