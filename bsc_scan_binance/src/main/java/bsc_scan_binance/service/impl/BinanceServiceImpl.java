@@ -3256,11 +3256,6 @@ public class BinanceServiceImpl implements BinanceService {
                 type = Utils.switchTrendByHeken_12_or_Ma35(heken_list).replace(Utils.appendSpace(trend, 4), "");
             }
 
-            // && Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)
-            if (Utils.isBlank(type)) {
-                type = Utils.switchTrendByHeken_12_or_Ma35(heken_list).replace(Utils.appendSpace(trend, 4), "");
-            }
-
             if (Utils.isNotBlank(type)) {
                 note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4) + type;
             }
@@ -3531,9 +3526,19 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1) && !Objects.equals(trend_h4, trend_h1)) {
                 allowOutput = false;
             }
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1) && Objects.equals(trend_h4, trend_h1)
+                    && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)) {
+                allowOutput = true;
+            }
+
             if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4) && !Objects.equals(trend_h4, trend_h1)) {
                 allowOutput = false;
             }
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4) && Objects.equals(trend_h12, trend_h4)
+                    && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)) {
+                allowOutput = true;
+            }
+
             if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H12) && !Objects.equals(trend_d1, trend_h12)) {
                 allowOutput = false;
             }
