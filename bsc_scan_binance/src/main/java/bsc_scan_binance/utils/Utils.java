@@ -53,7 +53,6 @@ import org.springframework.web.servlet.LocaleResolver;
 import bsc_scan_binance.BscScanBinanceApplication;
 import bsc_scan_binance.entity.BtcFutures;
 import bsc_scan_binance.entity.Orders;
-import bsc_scan_binance.response.BtcFuturesResponse;
 import bsc_scan_binance.response.CandidateTokenCssResponse;
 import bsc_scan_binance.response.DepthResponse;
 import bsc_scan_binance.response.FundingResponse;
@@ -3396,15 +3395,15 @@ public class Utils {
         MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_long, tp_long);
 
         String temp = "";
-        temp += "   SL" + chartSL + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 10);
+        temp += "   SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 10) + chartSL;
 
         temp += "     (Buy   Now)" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 5) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
         temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
-
+        temp += "     ";
         temp += "     (Wait)";
-        temp += " E" + chartEntry + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 9);
+        temp += " E" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 9) + chartEntry;
         temp += Utils.appendLeft(removeLastZero(money_long.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
         temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
@@ -3428,15 +3427,15 @@ public class Utils {
         MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_shot, tp_shot);
 
         String temp = "";
-        temp += "   SL" + chartSL + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10);
+        temp += "   SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10) + chartSL;
 
         temp += "     (Sell  Now)" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 5) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
         temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
-
+        temp += "     ";
         temp += "     (Wait)";
-        temp += " E" + chartEntry + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 9);
+        temp += " E" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 9) + chartEntry;
         temp += Utils.appendLeft(removeLastZero(money_short.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
         temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";

@@ -154,16 +154,16 @@ public class BscScanBinanceApplication {
                                 binance_service.scapStocks();
                                 Utils.logWritelnDraft("");
                                 // --------------------------------------------------------------------------
-                                binance_service.scapForex("_DX.f_XAUUSD_BTCUSD_", Utils.CAPITAL_TIME_15);
+                                binance_service.scapForex("_DX.f_XAUUSD_BTCUSD_", Utils.CAPITAL_TIME_H12);
+                                Utils.logWritelnDraft("");
+
+                                binance_service.scapForex("", Utils.CAPITAL_TIME_15);
                                 Utils.logWritelnDraft("");
 
                                 binance_service.scapForex("", Utils.CAPITAL_TIME_H1);
                                 Utils.logWritelnDraft("");
 
                                 binance_service.scapForex("", Utils.CAPITAL_TIME_H4);
-                                Utils.logWritelnDraft("");
-
-                                binance_service.scapForex("", Utils.CAPITAL_TIME_H12);
                                 Utils.logWritelnDraft("");
 
                                 binance_service.scapForex("", Utils.CAPITAL_TIME_D1);
