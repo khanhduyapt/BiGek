@@ -149,6 +149,8 @@ public class BscScanBinanceApplication {
 
                                 File myScap = new File(Utils.getDraftLogFile());
                                 myScap.delete();
+
+                                String pre_epics = EPICS_OUTPUTED;
                                 EPICS_OUTPUTED = "";
                                 // --------------------------------------------------------------------------
                                 binance_service.scapStocks();
@@ -169,6 +171,20 @@ public class BscScanBinanceApplication {
                                 binance_service.scapForex("", Utils.CAPITAL_TIME_D1);
                                 Utils.logWritelnDraft("");
                                 // --------------------------------------------------------------------------
+                                String cur_epics = EPICS_OUTPUTED;
+                                String[] arr = cur_epics.split("_");
+                                String add_new = "";
+                                int count = 0;
+                                for (String epic : arr) {
+                                    if (!pre_epics.contains(epic)) {
+                                        count += 1;
+                                        add_new += epic + "   ";
+                                    }
+                                }
+                                if (Utils.isNotBlank(add_new)) {
+                                    Utils.logWritelnDraft("");
+                                    Utils.logWritelnDraft("(Added: " + count + "):   " + add_new);
+                                }
                             }
                         }
 
