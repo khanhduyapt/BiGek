@@ -948,18 +948,35 @@ public class Utils {
     public static String getCapitalLink(String epic) {
         String EXCHANGE = "CAPITALCOM";
 
-        if (Utils.EPICS_FOREXS.contains(epic) || "_BTCUSD_XAGUSD_EU50_".contains(epic)) {
-            EXCHANGE = "FOREXCOM";
-        }
         if ("_USOIL_".contains(epic)) {
             EXCHANGE = "TVC";
-        }
-        if ("_GER40_UK100_US30_XAUUSD_AUS200_".contains(epic)) {
+        } else if ("_GER40_UK100_US30_XAUUSD_AUS200_".contains(epic)) {
             EXCHANGE = "PEPPERSTONE";
-        }
-        if (Objects.equals("JP225", epic)) {
+
+        } else if (Objects.equals("JP225", epic)) {
             epic = "JPN225";
             EXCHANGE = "PEPPERSTONE";
+
+        } else if ("_BAYGN___".contains(epic)) {
+            EXCHANGE = "EUREX";
+
+        } else if (Objects.equals("AIRF", epic)) {
+            epic = "AIRFR";
+
+        } else if (Objects.equals("DBKGn", epic)) {
+            epic = "DB";
+            EXCHANGE = "NYSE";
+
+        } else if (Objects.equals("VOWG_p", epic)) {
+            epic = "VOWG";
+            EXCHANGE = "EUREX";
+
+        } else if (Objects.equals("LVMH", epic)) {
+            epic = "LVMHF";
+            EXCHANGE = "OTC";
+
+        } else if (Utils.EPICS_FOREXS.contains(epic) || "_BTCUSD_XAGUSD_EU50_".contains(epic)) {
+            EXCHANGE = "FOREXCOM";
         }
 
         return "https://vn.tradingview.com/chart/?symbol=" + EXCHANGE + "%3A" + epic + " ";
