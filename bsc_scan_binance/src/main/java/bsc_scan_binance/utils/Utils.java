@@ -957,7 +957,8 @@ public class Utils {
             epic = "JPN225";
             EXCHANGE = "PEPPERSTONE";
 
-        } else if ("_BAYGN___".contains(epic)) {
+        } else if (Objects.equals("BAYGN", epic)) {
+            epic = "BAYG";
             EXCHANGE = "EUREX";
 
         } else if (Objects.equals("AIRF", epic)) {
