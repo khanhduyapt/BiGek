@@ -35,7 +35,7 @@ public class BscScanBinanceApplication {
     public static ApplicationContext applicationContext;
     public static WandaBot wandaBot;
     public static TelegramBotsApi telegramBotsApi;
-    public static String EPICS_OUTPUTED = "";
+    public static String EPICS_OUTPUTED = "INIT";
 
     public static void main(String[] args) {
         try {
@@ -147,6 +147,11 @@ public class BscScanBinanceApplication {
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
                                 }
 
+                                boolean allow_send_msg = true;
+                                if (Objects.equals(EPICS_OUTPUTED, "INIT")) {
+                                    allow_send_msg = false;
+                                }
+
                                 File myScap = new File(Utils.getDraftLogFile());
                                 myScap.delete();
 
@@ -178,12 +183,19 @@ public class BscScanBinanceApplication {
                                 for (String epic : arr) {
                                     if (!pre_epics.contains(epic)) {
                                         count += 1;
+                                        if (Utils.isNotBlank(add_new)) {
+                                            add_new += ",";
+                                        }
                                         add_new += epic + "   ";
                                     }
                                 }
-                                if (Utils.isNotBlank(add_new)) {
+                                if (allow_send_msg && Utils.isNotBlank(add_new)) {
+                                    String msg = "(Added: " + count + "):   " + add_new;
                                     Utils.logWritelnDraft("");
-                                    Utils.logWritelnDraft("(Added: " + count + "):   " + add_new);
+                                    Utils.logWritelnDraft(msg);
+
+                                    String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
+                                    binance_service.sendMsgPerHour(EVENT_ID, msg, true);
                                 }
                             }
                         }

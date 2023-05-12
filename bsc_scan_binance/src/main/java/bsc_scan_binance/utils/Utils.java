@@ -155,7 +155,7 @@ public class Utils {
     public static final String EPICS_INDEXS = "_US30_SP500_GER30_GER40_UK100_";
 
     public static final List<String> EPICS_ONE_WAY = Arrays.asList("DX.f", "XAUUSD", "BTCUSD", "XAGUSD", "US30",
-            "US100", "EU50", "GER40", "UK100", "USOIL", "AUS200");
+            "US100", "EU50", "GER40", "UK100", "USOIL", "AUS200", "ETHUSD", "DOGEUSD");
 
     public static final List<String> EPICS_FOREXS = Arrays.asList("AUDJPY", "AUDNZD", "AUDUSD", "CADJPY", "CHFJPY",
             "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF",
@@ -958,8 +958,8 @@ public class Utils {
             EXCHANGE = "PEPPERSTONE";
 
         } else if (Objects.equals("BAYGN", epic)) {
-            epic = "BAYG";
-            EXCHANGE = "EUREX";
+            epic = "BAYN";
+            EXCHANGE = "XETR";
 
         } else if (Objects.equals("AIRF", epic)) {
             epic = "AIRFR";
@@ -969,8 +969,8 @@ public class Utils {
             EXCHANGE = "NYSE";
 
         } else if (Objects.equals("VOWG_p", epic)) {
-            epic = "VOWG";
-            EXCHANGE = "EUREX";
+            epic = "VOW";
+            EXCHANGE = "XETR";
 
         } else if (Objects.equals("LVMH", epic)) {
             epic = "LVMHF";
