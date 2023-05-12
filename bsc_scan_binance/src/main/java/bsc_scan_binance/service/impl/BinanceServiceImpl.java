@@ -3073,84 +3073,30 @@ public class BinanceServiceImpl implements BinanceService {
         String msg_forx = "";
         String msg_futu = "";
 
-        List<String> list_d1h4h1 = new ArrayList<String>();
-        List<String> list_h4_log = new ArrayList<String>();
-
-        List<Orders> list_all = ordersRepository.getTrend_H4List();
+        List<String> list_d1_log = new ArrayList<String>();
+        List<Orders> list_all = ordersRepository.getTrend_DayList();
         if (!CollectionUtils.isEmpty(list_all)) {
             Utils.logWritelnReport("");
-            for (Orders dto_h4 : list_all) {
-                String EPIC = Utils.getEpicFromId(dto_h4.getId());
 
-                Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
-                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-                Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
-                Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
-                Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(null);
-
-                if (Objects.nonNull(dto_w1) && Objects.nonNull(dto_d1) && Objects.nonNull(dto_h1)
-                        && Objects.nonNull(dto_15) && Objects.nonNull(dto_05)) {
-
-                    if (Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())
-                            && !Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())) {
-                        continue;
-                    }
-
-                    String chart = Utils.getChartName(dto_w1) + ":" + Utils.appendSpace(dto_w1.getTrend(), 8);
-                    chart += Utils.getChartName(dto_d1) + ":" + Utils.appendSpace(dto_d1.getTrend(), 8);
-
-                    String note = "";
-                    note += Utils.isNotBlank(dto_d1.getNote()) ? Utils.appendSpace(dto_d1.getNote(), 20) : "";
-                    note += Utils.isNotBlank(dto_h4.getNote()) ? Utils.appendSpace(dto_h4.getNote(), 20) : "";
-                    note += Utils.isNotBlank(dto_h1.getNote()) ? Utils.appendSpace(dto_h1.getNote(), 20) : "";
-                    note += Utils.isNotBlank(dto_15.getNote()) ? Utils.appendSpace(dto_15.getNote(), 20) : "";
-                    note += Utils.isNotBlank(dto_05.getNote()) ? Utils.appendSpace(dto_05.getNote(), 20) : "";
-
-                    if (Utils.isNotBlank(dto_h4.getNote())) {
-                        String log = Utils.createLineForex_Header(dto_h4, dto_h4, chart);
-                        log += Utils.appendSpace(Utils.removeLastZero(dto_h4.getCurrent_price()), 15);
-                        log += Utils.createLineForex_Body(dto_h4, dto_h4, dto_h4.getTrend()).trim();
-                        log += "   " + note;
-                        list_h4_log.add(log);
-                    }
-
-                    if (Objects.equals(dto_d1.getTrend(), dto_h4.getTrend())
-                            && Objects.equals(dto_h4.getTrend(), dto_h1.getTrend())) {
-                        chart += Utils.getChartName(dto_h4) + ":" + Utils.appendSpace(dto_h4.getTrend(), 8);
-
-                        String log = Utils.createLineForex_Header(dto_h1, dto_h1, chart);
-                        log += Utils.appendSpace(Utils.removeLastZero(dto_h1.getCurrent_price()), 15);
-                        log += Utils.createLineForex_Body(dto_h1, dto_h4, "").trim();
-                        log += "   " + note;
-                        list_d1h4h1.add(log);
-                    }
-
-                }
+            for (Orders dto_d1 : list_all) {
+                String EPIC = Utils.getEpicFromId(dto_d1.getId());
+                String log = Utils.createLineForex_Header(dto_d1, dto_d1, dto_d1.getTrend());
+                log += Utils.appendSpace(Utils.removeLastZero(dto_d1.getCurrent_price()), 15);
+                log += Utils.createLineForex_Body(dto_d1, dto_d1, dto_d1.getTrend()).trim();
+                list_d1_log.add(log);
             }
-
-            Utils.logWritelnReport("");
-            Utils.logWritelnReport("");
         }
 
-        if (list_h4_log.size() > 0) {
+        if (list_d1_log.size() > 0) {
             Utils.logWritelnReport("");
-            Utils.logWritelnReport(Utils.appendLeftAndRight("   Switch Trend H4   ", 50, "+"));
-            for (String log : list_h4_log) {
+            Utils.logWritelnReport(Utils.appendLeftAndRight("   D1   ", 50, "+"));
+            for (String log : list_d1_log) {
                 Utils.logWritelnReport(log);
             }
             Utils.logWritelnReport("");
             Utils.logWritelnReport("");
         }
 
-        if (list_d1h4h1.size() > 0) {
-            Utils.logWritelnReport("");
-            Utils.logWritelnReport(Utils.appendLeftAndRight("       D1 H4 H1      ", 50, "+"));
-            for (String log : list_d1h4h1) {
-                Utils.logWritelnReport(log);
-            }
-            Utils.logWritelnReport("");
-            Utils.logWritelnReport("");
-        }
         // TODO: 4. createReport
         // ==================================================================================
         // ==================================================================================
@@ -3172,7 +3118,6 @@ public class BinanceServiceImpl implements BinanceService {
         String d1 = "";
         List<String> list_w1_log = new ArrayList<String>();
         List<String> list_d1h4_log = new ArrayList<String>();
-        List<String> list_d1_log = new ArrayList<String>();
         List<String> list_h12_log = new ArrayList<String>();
 
         if (crypto_list.size() > 2) {
@@ -3773,18 +3718,18 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public void monitorProfit() {
         // TODO: 3. monitorProfit
-        EPICS_WAIT_BUY_D1 = Arrays.asList("GBPJPY", "CHFJPY", "EURJPY", "USDJPY", "GBPUSD");
-        EPICS_WAIT_SEL_D1 = Arrays.asList("AAPL", "META", "MSFT", "NFLX", "WMT", "US100", "GBPAUD");
+        EPICS_WAIT_BUY_D1 = Arrays.asList("GBPJPY", "CHFJPY", "EURJPY", "USDJPY", "GBPUSD", "AUDJPY", "CADJPY");
+        EPICS_WAIT_SEL_D1 = Arrays.asList("AAPL", "META", "MSFT", "NFLX", "WMT", "US100", "GBPAUD", "");
 
         // -------------------------------------------------------------------------------------
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_D1, EPICS_WAIT_BUY_D1);
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_D1, EPICS_WAIT_SEL_D1);
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H12,
-                Arrays.asList("AUDJPY", "AUDUSD", "BTCUSD", "CADJPY", "", "", "", "", ""));
+                Arrays.asList("", "", "", "", "", "", "", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H12, Arrays.asList("", "", ""));
 
-        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList("NZDCHF", "USDCHF", "NZDCAD", "NZDCHF", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList("EURGBP", "", "", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4, Arrays.asList("", "", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList("", "", ""));

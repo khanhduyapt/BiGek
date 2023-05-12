@@ -428,58 +428,26 @@ public class MoneyAtRiskResponse {
             unit_risk_per_pip = BigDecimal.valueOf(10000);
             break;
         case "AMZN":
-            standard_lot = BigDecimal.valueOf(10);
-            unit_risk_per_pip = BigDecimal.valueOf(10);
-            break;
         case "BAC":
-            standard_lot = BigDecimal.valueOf(10);
-            unit_risk_per_pip = BigDecimal.valueOf(10);
-            break;
         case "GOOG":
-            standard_lot = BigDecimal.valueOf(10);
-            unit_risk_per_pip = BigDecimal.valueOf(10);
-            break;
         case "MSFT":
-            standard_lot = BigDecimal.valueOf(10);
-            unit_risk_per_pip = BigDecimal.valueOf(10);
-            break;
         case "NFLX":
-            standard_lot = BigDecimal.valueOf(10);
-            unit_risk_per_pip = BigDecimal.valueOf(10);
-            break;
         case "AAPL":
-            standard_lot = BigDecimal.valueOf(10);
-            unit_risk_per_pip = BigDecimal.valueOf(10);
-            break;
         case "NVDA":
-            standard_lot = BigDecimal.valueOf(10);
-            unit_risk_per_pip = BigDecimal.valueOf(10);
-            break;
         case "META":
-            standard_lot = BigDecimal.valueOf(10);
-            unit_risk_per_pip = BigDecimal.valueOf(10);
-            break;
         case "PFE":
-            standard_lot = BigDecimal.valueOf(10);
-            unit_risk_per_pip = BigDecimal.valueOf(10);
-            break;
         case "RACE":
-            standard_lot = BigDecimal.valueOf(10);
-            unit_risk_per_pip = BigDecimal.valueOf(10);
-            break;
         case "TSLA":
-            standard_lot = BigDecimal.valueOf(10);
-            unit_risk_per_pip = BigDecimal.valueOf(10);
-            break;
         case "WMT":
-            standard_lot = BigDecimal.valueOf(10);
-            unit_risk_per_pip = BigDecimal.valueOf(10);
-            break;
         case "BAYGn":
-            standard_lot = BigDecimal.valueOf(10);
-            unit_risk_per_pip = BigDecimal.valueOf(10);
-            break;
         case "VOWG_p":
+        case "LVMH":
+        case "AIRF":
+        case "DBKGn":
+        case "VOWGp":
+        case "UK1":
+        case "US1":
+        case "AUS2":
             standard_lot = BigDecimal.valueOf(10);
             unit_risk_per_pip = BigDecimal.valueOf(10);
             break;
