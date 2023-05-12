@@ -3149,13 +3149,13 @@ public class Utils {
         return EPIC;
     }
 
-    public static String createLineForex_Body(Orders dto_entry, Orders dto_sl, String find_trend) {
+    public static String createLineForex_Body(Orders dto_entry, Orders dto_sl, String find_trend, boolean onlyWait) {
         String log = "";
         if (Objects.nonNull(dto_entry) && Objects.nonNull(dto_sl)) {
             String EPIC = getEpicFromId(dto_entry.getId());
 
             String buffer = Utils.appendSpace("", 14);
-            buffer += Utils.calc_BUF_LO_HI_BUF_Forex(false, find_trend, EPIC, dto_entry, dto_sl);
+            buffer += Utils.calc_BUF_LO_HI_BUF_Forex(onlyWait, find_trend, EPIC, dto_entry, dto_sl);
             log = buffer;
         }
 
@@ -3373,7 +3373,7 @@ public class Utils {
         return tmp_msg;
     }
 
-    public static String calc_BUF_LO_HI_BUF_Forex(boolean is15m, String trend, String EPIC, Orders dto_entry,
+    public static String calc_BUF_LO_HI_BUF_Forex(boolean onlyWait, String trend, String EPIC, Orders dto_entry,
             Orders dto_sl) {
         String result = "";
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
@@ -3392,10 +3392,11 @@ public class Utils {
         BigDecimal tp_long = Utils.getBigDecimal(dto_entry.getEnd_body_price());
         BigDecimal tp_shot = Utils.getBigDecimal(dto_entry.getStr_body_price());
 
-        String str_long = calc_BUF_Long_Forex(risk, EPIC, dto_entry.getCurrent_price(), en_long, sl_long, tp_long,
-                getChartNameCapital(dto_entry.getId()).trim(), getChartNameCapital(dto_sl.getId()).trim());
-        String str_shot = calc_BUF_Shot_Forex(risk, EPIC, dto_entry.getCurrent_price(), en_shot, sl_shot, tp_shot,
-                getChartNameCapital(dto_entry.getId()).trim(), getChartNameCapital(dto_sl.getId()).trim());
+        String str_long = calc_BUF_Long_Forex(onlyWait, risk, EPIC, dto_entry.getCurrent_price(), en_long, sl_long,
+                tp_long, getChartNameCapital(dto_entry.getId()).trim(), getChartNameCapital(dto_sl.getId()).trim());
+
+        String str_shot = calc_BUF_Shot_Forex(onlyWait, risk, EPIC, dto_entry.getCurrent_price(), en_shot, sl_shot,
+                tp_shot, getChartNameCapital(dto_entry.getId()).trim(), getChartNameCapital(dto_sl.getId()).trim());
 
         if (Objects.equals(trend, Utils.TREND_LONG)) {
             result += str_long;
@@ -3403,7 +3404,7 @@ public class Utils {
             result += str_shot;
         } else {
             result += str_long;
-            result = appendSpace(result, 65) + "   ";
+            result = appendSpace(result, 65) + "     ";
             result += str_shot;
             result = Utils.appendSpace(result, 135);
         }
@@ -3411,8 +3412,8 @@ public class Utils {
         return result;
     }
 
-    public static String calc_BUF_Long_Forex(BigDecimal risk, String EPIC, BigDecimal cur_price, BigDecimal en_long,
-            BigDecimal sl_long, BigDecimal tp_long, String chartEntry, String chartSL) {
+    public static String calc_BUF_Long_Forex(boolean onlyWait, BigDecimal risk, String EPIC, BigDecimal cur_price,
+            BigDecimal en_long, BigDecimal sl_long, BigDecimal tp_long, String chartEntry, String chartSL) {
 
         BigDecimal entry_calc = en_long.add(tp_long);
         entry_calc = entry_calc.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
@@ -3425,14 +3426,17 @@ public class Utils {
         MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_long, tp_long);
 
         String temp = "";
-        temp += "   SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 10) + chartSL;
+        temp += "   SL(Buy )" + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 10) + chartSL;
 
-        temp += "     (Buy   Now)" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 5) + "(lot)";
-        temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
-        temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) + "(lot)";
-        temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
-        temp += "     ";
-        temp += "     (Wait)";
+        if (!onlyWait) {
+            temp += "     (Now)" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 7) + "(lot)";
+            temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
+            temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) + "(lot)";
+            temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
+            temp += "     ";
+            temp += "     (Wait)";
+        }
+
         temp += " E" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 9) + chartEntry;
         temp += Utils.appendLeft(removeLastZero(money_long.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
@@ -3443,8 +3447,8 @@ public class Utils {
         return result;
     }
 
-    public static String calc_BUF_Shot_Forex(BigDecimal risk, String EPIC, BigDecimal cur_price, BigDecimal en_shot,
-            BigDecimal sl_shot, BigDecimal tp_shot, String chartEntry, String chartSL) {
+    public static String calc_BUF_Shot_Forex(boolean onlyWait, BigDecimal risk, String EPIC, BigDecimal cur_price,
+            BigDecimal en_shot, BigDecimal sl_shot, BigDecimal tp_shot, String chartEntry, String chartSL) {
 
         BigDecimal entry_calc = en_shot.add(tp_shot);
         entry_calc = entry_calc.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
@@ -3457,14 +3461,17 @@ public class Utils {
         MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_shot, tp_shot);
 
         String temp = "";
-        temp += "   SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10) + chartSL;
+        temp += "   SL(Sell)" + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10) + chartSL;
 
-        temp += "     (Sell  Now)" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 5) + "(lot)";
-        temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
-        temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) + "(lot)";
-        temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
-        temp += "     ";
-        temp += "     (Wait)";
+        if (!onlyWait) {
+            temp += "     (Now)" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 7) + "(lot)";
+            temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
+            temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) + "(lot)";
+            temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
+            temp += "     ";
+            temp += "     (Wait)";
+        }
+
         temp += " E" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 9) + chartEntry;
         temp += Utils.appendLeft(removeLastZero(money_short.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";

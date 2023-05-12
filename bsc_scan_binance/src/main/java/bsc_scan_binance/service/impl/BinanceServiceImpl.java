@@ -2689,7 +2689,7 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 63) + " ";
 
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 11);
-        log += Utils.calc_BUF_LO_HI_BUF_Forex(true, find_trend, EPIC, dto_entry, dto_sl);
+        log += Utils.calc_BUF_LO_HI_BUF_Forex(false, find_trend, EPIC, dto_entry, dto_sl);
 
         Utils.logWritelnDraft(log);
     }
@@ -3060,7 +3060,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String EPIC = Utils.getEpicFromId(dto_d1.getId());
                 String log = Utils.createLineForex_Header(dto_d1, dto_d1, dto_d1.getTrend());
                 log += Utils.appendSpace(Utils.removeLastZero(dto_d1.getCurrent_price()), 15);
-                log += Utils.createLineForex_Body(dto_d1, dto_d1, "").trim();
+                log += Utils.createLineForex_Body(dto_d1, dto_d1, "", true).trim();
                 list_d1_log.add(log);
             }
         }
@@ -3282,7 +3282,7 @@ public class BinanceServiceImpl implements BinanceService {
                     note = Utils.appendSpace(note, 28) + "(Wait)";
                 }
                 if (Utils.isBelowMALine(heken_list_h1, 50) && Utils.isBelowMALine(heken_list_h4, 50)) {
-                    note = Utils.appendSpace(note, 28) + "(Good)";
+                    note = Utils.appendSpace(note, 28) + "      ";
                 }
             }
             if (Objects.equals(trend, Utils.TREND_SHOT)) {
@@ -3290,7 +3290,7 @@ public class BinanceServiceImpl implements BinanceService {
                     note = Utils.appendSpace(note, 28) + "(Wait)";
                 }
                 if (Utils.isAboveMALine(heken_list_h1, 50) && Utils.isAboveMALine(heken_list_h4, 50)) {
-                    note = Utils.appendSpace(note, 28) + "(Good)";
+                    note = Utils.appendSpace(note, 28) + "      ";
                 }
             }
         }
@@ -3567,7 +3567,7 @@ public class BinanceServiceImpl implements BinanceService {
                 allowOutput = false;
             }
             if (Utils.EPICS_INDEXS.contains(EPIC) && !Objects.equals(trend_w1, trend_dt)) {
-                allowOutput = false;
+                // allowOutput = false;
             }
             if (alwaysShowTheseEpics.contains(EPIC)) {
                 allowOutput = true;
@@ -3639,8 +3639,7 @@ public class BinanceServiceImpl implements BinanceService {
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_D1, EPICS_WAIT_BUY_D1);
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_D1, EPICS_WAIT_SEL_D1);
 
-        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H12,
-                Arrays.asList("", "", "", "", "", "", "", "", ""));
+        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H12, Arrays.asList("", "", "", "", "", "", "", "", ""));
         waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H12, Arrays.asList("", "", ""));
 
         waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList("EURGBP", "", "", "", ""));

@@ -252,17 +252,14 @@ public class BscScanBinanceApplication {
         list.add(Utils.EPICS_FOREXS);
 
         for (List<String> items : list) {
-            String result = "";
-            result += binance_service.scapForex("_DX.f_XAUUSD_BTCUSD_", Utils.CAPITAL_TIME_H12, items);
-            result += binance_service.scapForex("", Utils.CAPITAL_TIME_15, items);
-            result += binance_service.scapForex("", Utils.CAPITAL_TIME_H1, items);
-            result += binance_service.scapForex("", Utils.CAPITAL_TIME_H4, items);
-            result += binance_service.scapForex("", Utils.CAPITAL_TIME_D1, items);
-            if (Utils.isNotBlank(result)) {
-                Utils.logWritelnDraft("");
-            }
-        }
+            binance_service.scapForex("_DX.f_XAUUSD_BTCUSD_", Utils.CAPITAL_TIME_H12, items);
+            binance_service.scapForex("", Utils.CAPITAL_TIME_15, items);
+            binance_service.scapForex("", Utils.CAPITAL_TIME_H1, items);
+            binance_service.scapForex("", Utils.CAPITAL_TIME_H4, items);
+            binance_service.scapForex("", Utils.CAPITAL_TIME_D1, items);
 
+            Utils.logWritelnDraft("");
+        }
     }
 
     public static void alertMsgKillZone(BinanceService binance_service) {
