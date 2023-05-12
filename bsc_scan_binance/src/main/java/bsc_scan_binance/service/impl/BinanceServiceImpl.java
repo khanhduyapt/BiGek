@@ -2876,14 +2876,14 @@ public class BinanceServiceImpl implements BinanceService {
                 isOnlyMe = false;
             }
 
-            String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_h12.get(0).getCurrPrice()), 5) + ")";
-
             if (Objects.equals(Utils.TREND_LONG, trend_h12)) {
-                msg = " 💹 " + Utils.getChartName(list_h12) + SYMBOL + "_kill_Short 💔 " + str_price;
+                msg = " 💹 (D1)" + SYMBOL + "_kill_Short 💔 ";
             }
             if (Objects.equals(Utils.TREND_SHOT, trend_h12)) {
-                msg = " 🔻 " + Utils.getChartName(list_h12) + SYMBOL + "_kill_Long 💔 " + str_price;
+                msg = " 🔻 (D1)" + SYMBOL + "_kill_Long 💔 ";
             }
+            msg += "(" + Utils.appendSpace(Utils.removeLastZero(list_h12.get(0).getCurrPrice()), 5) + ")";
+
             String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_Blog4h();
             sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
         }
