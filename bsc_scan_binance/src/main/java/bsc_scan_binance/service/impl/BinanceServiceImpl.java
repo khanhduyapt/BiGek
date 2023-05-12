@@ -2588,28 +2588,6 @@ public class BinanceServiceImpl implements BinanceService {
         note += ",H10d:" + Utils.getPercentToEntry(current_price, max_days, false);
         note += ",L10w:" + Utils.getPercentToEntry(current_price, min_week, true) + ",";
         // ---------------------------------------------------------
-        // String position = "";
-        // if (Objects.equals(Utils.TEXT_TREND_BY_MA,
-        // Utils.switchTrendByHekenAshi_3_to_6(list_h4))) {
-        // position = "_PositionH4";
-        // }
-        // if (Objects.equals(Utils.TEXT_TREND_BY_MA,
-        // Utils.switchTrendByHekenAshi_3_to_6(list_days))) {
-        // position = "_PositionD1";
-        //
-        // PriorityCoinHistory his = new PriorityCoinHistory();
-        // his.setGeckoid(gecko_id);
-        // his.setSymbol(Utils.getMmDD_TimeHHmm());
-        // String history = scapLongD1.replace(" ", "");
-        // if (history.length() > 255) {
-        // history = history.substring(0, 250) + "...";
-        // }
-        // his.setName(history);
-        //
-        // priorityCoinHistoryRepository.save(his);
-        // }
-        // note += position;
-        // ---------------------------------------------------------
         String mUpMa = "";
         String today = Utils.getToday_MMdd();
         mUpMa += allow_long_d1 ? "↑" + today + "(Up) " : " ";
@@ -2809,7 +2787,7 @@ public class BinanceServiceImpl implements BinanceService {
         String type = Objects.equals(Utils.TREND_LONG, trend) ? "(B)"
                 : Objects.equals(Utils.TREND_SHOT, trend) ? "(S)" : "(x)";
 
-        String log = Utils.appendSpace(prifix, 16) + Utils.appendSpace(dto.getNote(), 30);
+        String log = Utils.appendSpace(prifix, 16) + Utils.appendSpace(dto.getNote(), 38);
 
         outputLog("Analysis_" + char_name, EPIC, dto_sl, dto_sl, log, dto.getTrend());
 
@@ -3082,7 +3060,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String EPIC = Utils.getEpicFromId(dto_d1.getId());
                 String log = Utils.createLineForex_Header(dto_d1, dto_d1, dto_d1.getTrend());
                 log += Utils.appendSpace(Utils.removeLastZero(dto_d1.getCurrent_price()), 15);
-                log += Utils.createLineForex_Body(dto_d1, dto_d1, dto_d1.getTrend()).trim();
+                log += Utils.createLineForex_Body(dto_d1, dto_d1, "").trim();
                 list_d1_log.add(log);
             }
         }
@@ -3365,18 +3343,18 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.equals(trend, Utils.TREND_LONG)) {
                 if (Utils.isAboveMALine(heken_list_h1, 50) && Utils.isAboveMALine(heken_list_h4, 50)) {
-                    note = Utils.appendSpace(note, 26) + "(Ng)";
+                    note = Utils.appendSpace(note, 28) + "(Wait)";
                 }
                 if (Utils.isBelowMALine(heken_list_h1, 50) && Utils.isBelowMALine(heken_list_h4, 50)) {
-                    note = Utils.appendSpace(note, 26) + "(Ok)";
+                    note = Utils.appendSpace(note, 28) + "(Good)";
                 }
             }
             if (Objects.equals(trend, Utils.TREND_SHOT)) {
                 if (Utils.isBelowMALine(heken_list_h1, 50) && Utils.isBelowMALine(heken_list_h4, 50)) {
-                    note = Utils.appendSpace(note, 26) + "(Ng)";
+                    note = Utils.appendSpace(note, 28) + "(Wait)";
                 }
                 if (Utils.isAboveMALine(heken_list_h1, 50) && Utils.isAboveMALine(heken_list_h4, 50)) {
-                    note = Utils.appendSpace(note, 26) + "(Ok)";
+                    note = Utils.appendSpace(note, 28) + "(Good)";
                 }
             }
         }
