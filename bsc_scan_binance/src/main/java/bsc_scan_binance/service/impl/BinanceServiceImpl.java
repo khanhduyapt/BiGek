@@ -2656,24 +2656,24 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     @Transactional
-    private void createOrders(String SYMBOL, String orderId_h12, String switch_trend_h12, String trend_h12,
-            List<BtcFutures> list_h12) {
+    private void createOrders(String SYMBOL, String orderId, String switch_trend_type, String trend,
+            List<BtcFutures> list) {
         String date_time = LocalDateTime.now().toString();
 
-        List<BigDecimal> body = Utils.getOpenCloseCandle(list_h12);
-        List<BigDecimal> low_high = Utils.getLowHighCandle(list_h12);
+        List<BigDecimal> body = Utils.getOpenCloseCandle(list);
+        List<BigDecimal> low_high = Utils.getLowHighCandle(list);
 
         String note = "";
         if (CRYPTO_LIST_BUYING.contains(SYMBOL)) {
-            note = "**BUYING** " + switch_trend_h12;
+            note = "**BUYING** " + switch_trend_type;
         } else if (Utils.LIST_WAITING.contains(SYMBOL)) {
-            note = "(WATCHLIST)" + switch_trend_h12;
+            note = "(WATCHLIST)" + switch_trend_type;
         } else {
-            note = switch_trend_h12;
+            note = switch_trend_type;
         }
 
-        Orders entity = new Orders(orderId_h12, date_time, trend_h12, list_h12.get(0).getCurrPrice(), body.get(0),
-                body.get(1), low_high.get(0), low_high.get(1), note);
+        Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
+                low_high.get(0), low_high.get(1), note);
         ordersRepository.save(entity);
     }
 
@@ -2836,17 +2836,16 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String sendMsgKillLongShort(String SYMBOL) {
-        List<BtcFutures> list_h12 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_H12, 10);
-        if (CollectionUtils.isEmpty(list_h12)) {
+        List<BtcFutures> list = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_D1, 15);
+        if (CollectionUtils.isEmpty(list)) {
             return Utils.CRYPTO_TIME_H1;
         }
 
-        List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
-        String trend_h12 = Utils.getTrendByHekenAshiList(heken_list_h12);
-        String trend_h12_ma5 = Utils.getTrendByMaXx(heken_list_h12, 5); // Ma5 ~ D1;
-        String switch_trend_h12 = Utils.switchTrendByHeken_12_or_Ma35(heken_list_h12);
+        List<BtcFutures> heken_list_h12 = Utils.getHekenList(list);
+        String trend = Utils.getTrendByHekenAshiList(heken_list_h12);
+        String switch_trend_h12 = Utils.switchTrendByHeken_12(heken_list_h12);
 
-        if (Utils.isNotBlank(switch_trend_h12) && Objects.equals(trend_h12_ma5, trend_h12)) {
+        if (Utils.isNotBlank(switch_trend_h12)) {
             // TODO: sendMsgKillLongShort
             String msg = "";
             boolean isOnlyMe = true;
@@ -2854,13 +2853,13 @@ public class BinanceServiceImpl implements BinanceService {
                 isOnlyMe = false;
             }
 
-            if (Objects.equals(Utils.TREND_LONG, trend_h12)) {
+            if (Objects.equals(Utils.TREND_LONG, trend)) {
                 msg = " 💹 (D1)" + SYMBOL + "_kill_Short 💔 ";
             }
-            if (Objects.equals(Utils.TREND_SHOT, trend_h12)) {
+            if (Objects.equals(Utils.TREND_SHOT, trend)) {
                 msg = " 🔻 (D1)" + SYMBOL + "_kill_Long 💔 ";
             }
-            msg += "(" + Utils.appendSpace(Utils.removeLastZero(list_h12.get(0).getCurrPrice()), 5) + ")";
+            msg += "(" + Utils.appendSpace(Utils.removeLastZero(list.get(0).getCurrPrice()), 5) + ")";
 
             String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_Blog4h();
             sendMsgPerHour(EVENT_ID, msg, isOnlyMe);
@@ -3080,29 +3079,20 @@ public class BinanceServiceImpl implements BinanceService {
         // ==================================================================================
         // ==================================================================================
         List<Orders> crypto_list = new ArrayList<Orders>();
-        crypto_list.addAll(ordersRepository.getCrypto_W1());
-        crypto_list.add(null);
-        crypto_list.add(null);
         crypto_list.addAll(ordersRepository.getCrypto_D1());
-        crypto_list.add(null);
-        crypto_list.add(null);
-        crypto_list.addAll(ordersRepository.getCrypto_H12());
-        crypto_list.add(null);
-        crypto_list.add(null);
-        crypto_list.addAll(ordersRepository.getCrypto_H4());
 
         String w1d1h4 = "";
         String d1h4 = "";
         String d1 = "";
-        List<String> list_h12_log = new ArrayList<String>();
+        List<String> list_crypto_log = new ArrayList<String>();
 
         if (crypto_list.size() > 2) {
 
-            for (Orders entity : crypto_list) {
-                if (Objects.isNull(entity)) {
+            for (Orders dto : crypto_list) {
+                if (Objects.isNull(dto)) {
                     continue;
                 }
-                String symbol = entity.getId().replace("CRYPTO_", "").replace("_1w", "").replace("_1d", "")
+                String symbol = dto.getId().replace("CRYPTO_", "").replace("_1w", "").replace("_1d", "")
                         .replace("_12h", "").replace("_4h", "").replace("_1h", "");
 
                 String type = "";
@@ -3112,17 +3102,15 @@ public class BinanceServiceImpl implements BinanceService {
                     type = "  (Spot)      ";
                 }
 
-                Orders dto_h12 = ordersRepository.findById("CRYPTO_" + symbol + "_12h").orElse(null);
-
-                if (Objects.nonNull(dto_h12) && Utils.isNotBlank(dto_h12.getNote())) {
-                    list_h12_log.add(Utils.createLineCrypto(dto_h12, symbol, type));
+                if (Objects.nonNull(dto) && Utils.isNotBlank(dto.getNote())) {
+                    list_crypto_log.add(Utils.createLineCrypto(dto, symbol, type));
                 }
             }
 
-            if (list_h12_log.size() > 0) {
+            if (list_crypto_log.size() > 0) {
                 Utils.logWritelnReport("");
-                Utils.logWritelnReport(Utils.appendLeftAndRight("          H12         ", 50, "+"));
-                for (String log : list_h12_log) {
+                Utils.logWritelnReport(Utils.appendLeftAndRight("          D1         ", 50, "+"));
+                for (String log : list_crypto_log) {
                     Utils.logWritelnReport(log);
                 }
                 Utils.logWritelnReport("");
@@ -3140,7 +3128,6 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnDraft(msg_crypto.replace(Utils.new_line_from_service, "\n"));
                 // sendMsgPerHour(EVENT_ID, msg_crypto, true);
             }
-
         }
 
         Utils.writelnLogFooter_Forex();
@@ -3157,34 +3144,39 @@ public class BinanceServiceImpl implements BinanceService {
         WATCHLIST.addAll(CRYPTO_LIST_BUYING);
         WATCHLIST.addAll(Utils.LIST_WAITING);
         WATCHLIST.addAll(Utils.COINS_FUTURES);
+
         if (!WATCHLIST.contains(SYMBOL)) {
+            deleteOrders("CRYPTO_" + SYMBOL + "_1w");
+            deleteOrders("CRYPTO_" + SYMBOL + "_1d");
+            deleteOrders("CRYPTO_" + SYMBOL + "_12h");
+            deleteOrders("CRYPTO_" + SYMBOL + "_4h");
+
             return Utils.CRYPTO_TIME_H4;
         }
 
-        String orderId_h12 = "CRYPTO_" + SYMBOL + "_12h";
+        String orderId_d1 = "CRYPTO_" + SYMBOL + "_1d";
         // ------------------------------------------------------------------
         String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_Blog2h();
 
-        List<BtcFutures> list_h12 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_H12, 15);
-        if (CollectionUtils.isEmpty(list_h12)) {
+        List<BtcFutures> list = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_D1, 15);
+        if (CollectionUtils.isEmpty(list)) {
             return Utils.CRYPTO_TIME_H1;
         }
-        List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
+        List<BtcFutures> heken_list = Utils.getHekenList(list);
 
-        String trend_h12 = Utils.getTrendByHekenAshiList(heken_list_h12);
-        String trend_h12_ma5 = Utils.getTrendByMaXx(heken_list_h12, 5); // Ma5 ~ D1;
-        String switch_trend_h12 = Utils.switchTrendByHeken_12_or_Ma35(heken_list_h12);
+        String trend = Utils.getTrendByHekenAshiList(heken_list);
+        String switch_trend = Utils.switchTrendByHeken_12(heken_list);
 
-        if (Utils.isNotBlank(switch_trend_h12) && Objects.equals(trend_h12_ma5, trend_h12)) {
-            createOrders(SYMBOL, orderId_h12, switch_trend_h12, switch_trend_h12, heken_list_h12);
+        if (Utils.isNotBlank(switch_trend)) {
+            createOrders(SYMBOL, orderId_d1, switch_trend, switch_trend, heken_list);
 
             if (Objects.equals(Utils.TREND_LONG, SYMBOL)) {
-                String temp = Utils.getTimeHHmm() + "   " + switch_trend_h12 + "   " + Utils.appendSpace(SYMBOL, 10);
-                temp += "(H12)" + Utils.appendSpace(trend_h12, 10) + Utils.getCryptoLink_Spot(SYMBOL);
+                String temp = Utils.getTimeHHmm() + "   " + switch_trend + "   " + Utils.appendSpace(SYMBOL, 10);
+                temp += "(D1)" + Utils.appendSpace(trend, 10) + Utils.getCryptoLink_Spot(SYMBOL);
                 System.out.println(temp);
             }
         } else {
-            deleteOrders(orderId_h12);
+            deleteOrders(orderId_d1);
         }
 
         // ------------------------------------------------------------------
@@ -3198,13 +3190,13 @@ public class BinanceServiceImpl implements BinanceService {
             findTrend = Utils.TREND_SHOT;
         }
 
-        if (Utils.isNotBlank(findTrend) && !Objects.equals(findTrend, trend_h12)) {
+        if (Utils.isNotBlank(findTrend) && !Objects.equals(findTrend, trend)) {
             String msg_d1 = " 🔻 (STOP_BUY)";
-            String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list_h12.get(0).getCurrPrice()), 5) + ")";
+            String str_price = "(" + Utils.appendSpace(Utils.removeLastZero(list.get(0).getCurrPrice()), 5) + ")";
             String log = Utils.appendSpace(Utils.getCryptoLink_Spot(SYMBOL), 70) + Utils.appendSpace(str_price, 15);
 
             msg_d1 += Utils.appendSpace(SYMBOL, 10) + Utils.appendSpace(str_price, 10);
-            msg_d1 += ".D1:" + Utils.appendSpace(trend_h12, 5);
+            msg_d1 += ".D1:" + Utils.appendSpace(trend, 5);
 
             sendMsgPerHour(EVENT_ID, msg_d1, true);
             logMsgPerHour(EVENT_ID, msg_d1 + log, Utils.MINUTES_OF_1H);
