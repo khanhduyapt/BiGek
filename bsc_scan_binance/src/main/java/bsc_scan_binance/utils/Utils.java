@@ -95,6 +95,7 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_BELOW_Ma_LONG = "(B_50)";
     public static final String TEXT_SWITCH_TREND_ABOVE_Ma_SHOT = "(S_50)";
     public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma.1.3)";
+    public static final String TEXT_WAIT = "(Wait)";
 
     public static final String TEXT_SWITCH_TREND_Ma_1_10 = "(Ma1_10)";
     public static final String TEXT_SWITCH_TREND_Ma_1_20 = "(Ma1_20)";
@@ -128,6 +129,7 @@ public class Utils {
     public static final String CAPITAL_TIME_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_H1 = "HOUR";
     public static final String CAPITAL_TIME_H4 = "HOUR_4";
+    public static final String CAPITAL_TIME_H8 = "HOUR_8";
     public static final String CAPITAL_TIME_H12 = "HOUR_12";
     public static final String CAPITAL_TIME_D1 = "DAY";
     public static final String CAPITAL_TIME_W1 = "WEEK";
@@ -645,8 +647,14 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
             return "_1h_";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
             return "_4h_";
+        }
+        if (Objects.equals(TIME, CAPITAL_TIME_H8)) {
+            return "_8h_";
+        }
+        if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
+            return "_12h_";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
             return "_1d_";
@@ -668,6 +676,9 @@ public class Utils {
         if (TIME.contains(CAPITAL_TIME_H4)) {
             return "(H4)  ";
         }
+        if (TIME.contains(CAPITAL_TIME_H8)) {
+            return "(H8)  ";
+        }
         if (TIME.contains(CAPITAL_TIME_H12)) {
             return "(H12) ";
         }
@@ -682,6 +693,48 @@ public class Utils {
         }
 
         return "(  )  ";
+    }
+
+    public static String getPrefix(int index, String trend_w1, String trend_d1, String trend_h12, String trend_h8,
+            String trend_h4, String trend_h1, String trend_dt,
+
+            String note_d1, String note_h12, String note_h8, String note_h4) {
+
+        String prefix = Utils.appendLeft(String.valueOf(index), 2) + ".[W1=D1=H12   H8=H4=H1]  ";
+        if (!Objects.equals(trend_w1, trend_dt)) {
+            prefix = prefix.replace("W1=", "   ");
+        }
+        if (!Objects.equals(trend_d1, trend_dt)) {
+            prefix = prefix.replace("D1=", "   ");
+        }
+        if (!Objects.equals(trend_h12, trend_dt)) {
+            prefix = prefix.replace("=H12", "    ").replace("H12", "   ");
+        }
+        if (!Objects.equals(trend_h8, trend_dt)) {
+            prefix = prefix.replace("=H8=", "    ").replace("H8=", "   ");
+        }
+        if (!Objects.equals(trend_h4, trend_dt)) {
+            prefix = prefix.replace("=H4=", "    ").replace("H4=", "   ");
+        }
+        if (!Objects.equals(trend_h1, trend_dt)) {
+            prefix = prefix.replace("=H1)", "   )").replace("H1)", "  )");
+        }
+
+        String switch_trend = "(D1~H12~H8~H4)     ";
+        if (Utils.isBlank(note_d1)) {
+            switch_trend = switch_trend.replace("D1~", "   ");
+        }
+        if (Utils.isBlank(note_h12)) {
+            switch_trend = switch_trend.replace("~H12~", "     ").replace("H12~", "    ").replace("~H12", "    ");
+        }
+        if (Utils.isBlank(note_h8)) {
+            switch_trend = switch_trend.replace("~H8~", "    ").replace("H8~", "   ").replace("~H8", "   ");
+        }
+        if (Utils.isBlank(note_h4)) {
+            switch_trend = switch_trend.replace("~H4", "   ").replace("H4", "  ");
+        }
+
+        return prefix + switch_trend;
     }
 
     public static String createMsg(CandidateTokenCssResponse css) {
@@ -2238,12 +2291,14 @@ public class Utils {
                 result = "(05)  ";
             } else if (symbol.contains(CAPITAL_TIME_15)) {
                 result = "(15)  ";
-            } else if (symbol.contains(CAPITAL_TIME_H1)) {
-                result = "(H1)  ";
             } else if (symbol.contains(CAPITAL_TIME_H4)) {
                 result = "(H4)  ";
+            } else if (symbol.contains(CAPITAL_TIME_H8)) {
+                result = "(H8)  ";
             } else if (symbol.contains(CAPITAL_TIME_H12)) {
                 result = "(H12) ";
+            } else if (symbol.contains(CAPITAL_TIME_H1)) {
+                result = "(H1)  ";
             } else if (symbol.contains(CAPITAL_TIME_D1)) {
                 result = "(D1) ";
             } else if (symbol.contains(CAPITAL_TIME_W1)) {
@@ -3137,6 +3192,8 @@ public class Utils {
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_W1, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_D1, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H12, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H8, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H4, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H1, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_15, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_05, "");
@@ -3217,9 +3274,7 @@ public class Utils {
 
     public static List<BtcFutures> getHekenList(List<BtcFutures> list) {
         List<BtcFutures> list1 = calcHeikenLine(list);
-        List<BtcFutures> list2 = calcHeikenLine(list1);
-        List<BtcFutures> list3 = calcHeikenLine(list2);
-        return list3;
+        return list1;
     }
 
     public static boolean isSameTrendByHekenAshi_Ma1_6(List<BtcFutures> list) {
@@ -3381,7 +3436,7 @@ public class Utils {
         int LENGTH = 280;
         String chart = entity.getId().replace("CRYPTO_" + symbol, "").replace("_", "").toUpperCase();
 
-        String sl = "   (Entry:";
+        String sl = " (Entry:";
         if (Objects.equals(Utils.TREND_LONG, entity.getTrend())) {
             sl += Utils.appendLeft(Utils.removeLastZero(entity.getStr_body_price()), 10);
             sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getLow_price()), 10);
@@ -3391,15 +3446,15 @@ public class Utils {
         }
         sl += ")  ";
 
-        String tmp_msg = type + Utils.appendSpace(chart, 8) + Utils.appendSpace(entity.getTrend(), 8)
+        String tmp_msg = type + Utils.appendSpace(chart, 8) + Utils.appendSpace(entity.getTrend(), 15)
                 + Utils.appendSpace(symbol, 10);
 
-        tmp_msg += Utils.appendLeft(Utils.removeLastZero(entity.getCurrent_price()), 8) + sl;
-        String url = Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70);
+        String price = Utils.appendSpace(Utils.removeLastZero(entity.getCurrent_price()), 10);
+        String url = Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70) + price + sl;
 
-        tmp_msg = Utils.appendSpace(Utils.appendSpace(tmp_msg, 35) + url + entity.getNote(), LENGTH - 12);
+        tmp_msg = Utils.appendSpace(tmp_msg + url, LENGTH - 12);
 
-        return tmp_msg;
+        return tmp_msg.trim();
     }
 
     public static String calc_BUF_LO_HI_BUF_Forex(boolean onlyWait, String trend, String EPIC, Orders dto_entry,
@@ -3455,7 +3510,7 @@ public class Utils {
         MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_long, tp_long);
 
         String temp = "";
-        temp += "   SL(Buy )" + chartSL + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 10);
+        temp += "   SL(Buy )" + chartSL + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 12);
 
         if (!onlyWait) {
             temp += "     (Now)" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 7) + "(lot)";
@@ -3466,8 +3521,8 @@ public class Utils {
             temp += "     (Wait)";
         }
 
-        temp += "   E" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 9) + chartEntry;
-        temp += Utils.appendLeft(removeLastZero(money_long.calcLot()), 8) + "(lot)";
+        temp += "     E" + chartEntry + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 12);
+        temp += Utils.appendLeft(removeLastZero(money_long.calcLot()), 12) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
         temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
@@ -3490,7 +3545,7 @@ public class Utils {
         MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_shot, tp_shot);
 
         String temp = "";
-        temp += "   SL(Sell)" + chartSL + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10);
+        temp += "   SL(Sell)" + chartSL + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 12);
 
         if (!onlyWait) {
             temp += "     (Now)" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 7) + "(lot)";
@@ -3501,8 +3556,8 @@ public class Utils {
             temp += "     (Wait)";
         }
 
-        temp += "   E" + chartEntry + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 9);
-        temp += Utils.appendLeft(removeLastZero(money_short.calcLot()), 8) + "(lot)";
+        temp += "     E" + chartEntry + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 12);
+        temp += Utils.appendLeft(removeLastZero(money_short.calcLot()), 12) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
         temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";

@@ -137,6 +137,7 @@ public class BscScanBinanceApplication {
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_W1);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_D1);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H12);
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H8);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H4);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
                                 }
@@ -250,6 +251,11 @@ public class BscScanBinanceApplication {
 
         for (List<String> items : list) {
             String result = binance_service.scapForex("_DX.f_XAUUSD_BTCUSD_", Utils.CAPITAL_TIME_H12, items);
+            if (Utils.isNotBlank(result)) {
+                Utils.logWritelnDraft("");
+            }
+
+            result = binance_service.scapForex("", Utils.CAPITAL_TIME_H8, items);
             if (Utils.isNotBlank(result)) {
                 Utils.logWritelnDraft("");
             }
