@@ -3167,7 +3167,7 @@ public class Utils {
         return log;
     }
 
-    public static List<BtcFutures> getHekenList(List<BtcFutures> list) {
+    private static List<BtcFutures> calcHeikenLine(List<BtcFutures> list) {
         List<BtcFutures> heken_list = new ArrayList<BtcFutures>();
         if (list.size() < 2) {
             return heken_list;
@@ -3213,6 +3213,13 @@ public class Utils {
         Collections.reverse(heken_list);
 
         return heken_list;
+    }
+
+    public static List<BtcFutures> getHekenList(List<BtcFutures> list) {
+        List<BtcFutures> list1 = calcHeikenLine(list);
+        List<BtcFutures> list2 = calcHeikenLine(list1);
+        List<BtcFutures> list3 = calcHeikenLine(list2);
+        return list3;
     }
 
     public static boolean isSameTrendByHekenAshi_Ma1_6(List<BtcFutures> list) {
@@ -3333,21 +3340,38 @@ public class Utils {
         return trend;
     }
 
-    public static String createLineForex_Header(Orders dto_entry, Orders dto_sl, String trend_d1) {
+    public static String createLineForex_Header(Orders dto_entry, Orders dto_sl, String note) {
         if (Objects.isNull(dto_entry) || Objects.isNull(dto_sl)) {
             return "";
         }
         String EPIC = getEpicFromId(dto_entry.getId());
-        String chart_h4 = getChartName(dto_entry);
+        String chart_name = getChartName(dto_entry);
 
         // String insert_time = Utils.getStringValue(dto_entry.getInsertTime());
         // LocalDateTime pre_time = LocalDateTime.parse(insert_time);
         // String time = pre_time.format(DateTimeFormatter.ofPattern("HH:mm"));
+        String type = "";
+        if (Utils.EPICS_CASH_CFD.contains(EPIC)) {
+            type = "Cash";
+        }
+        if (Utils.EPICS_METALS.contains(EPIC)) {
+            type = "Metal";
+        }
+        if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
+            type = "Cryto";
+        }
+        if (Utils.EPICS_STOCKS.contains(EPIC)) {
+            type = "Eq";
+        }
+        if (Utils.EPICS_FOREXS.contains(EPIC)) {
+            type = "Fx";
+        }
+        type = appendSpace(type, 8);
 
         String header = "";// time + " ";
-        header += Utils.appendSpace(trend_d1, 8);
-        header += chart_h4 + ":" + Utils.appendSpace(dto_entry.getTrend(), 8);
-        header += Utils.appendSpace(EPIC, 12);
+        header += Utils.appendSpace(note, 8);
+        header += chart_name + ":" + Utils.appendSpace(dto_entry.getTrend(), 8);
+        header += Utils.appendSpace(EPIC, 12) + type;
         header += Utils.appendSpace(Utils.getCapitalLink(EPIC), 68);
 
         return header;
@@ -3431,7 +3455,7 @@ public class Utils {
         MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_long, tp_long);
 
         String temp = "";
-        temp += "   SL(Buy )" + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 10) + chartSL;
+        temp += "   SL(Buy )" + chartSL + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 10);
 
         if (!onlyWait) {
             temp += "     (Now)" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 7) + "(lot)";
@@ -3442,7 +3466,7 @@ public class Utils {
             temp += "     (Wait)";
         }
 
-        temp += " E" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 9) + chartEntry;
+        temp += "   E" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 9) + chartEntry;
         temp += Utils.appendLeft(removeLastZero(money_long.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
         temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
@@ -3466,7 +3490,7 @@ public class Utils {
         MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_shot, tp_shot);
 
         String temp = "";
-        temp += "   SL(Sell)" + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10) + chartSL;
+        temp += "   SL(Sell)" + chartSL + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10);
 
         if (!onlyWait) {
             temp += "     (Now)" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 7) + "(lot)";
@@ -3477,7 +3501,7 @@ public class Utils {
             temp += "     (Wait)";
         }
 
-        temp += " E" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 9) + chartEntry;
+        temp += "   E" + chartEntry + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 9);
         temp += Utils.appendLeft(removeLastZero(money_short.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
         temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
