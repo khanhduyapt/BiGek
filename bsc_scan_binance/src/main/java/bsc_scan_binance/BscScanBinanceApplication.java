@@ -128,7 +128,7 @@ public class BscScanBinanceApplication {
                                 binance_service.saveMt5Data("Forex.csv", Utils.MINUTES_OF_15M);
                                 binance_service.saveMt5Data("Stocks.csv", Utils.MINUTES_OF_1H);
 
-                                if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MONITOR_PROFIT")) {
+                                if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MONITOR_PROFIT_INIT")) {
                                     Utils.logWritelnDraft("");
                                     binance_service.monitorProfit();
                                 }
