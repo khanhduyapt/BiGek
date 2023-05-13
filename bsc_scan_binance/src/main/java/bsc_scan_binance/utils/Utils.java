@@ -3433,7 +3433,6 @@ public class Utils {
     }
 
     public static String createLineCrypto(Orders entity, String symbol, String type) {
-        int LENGTH = 280;
         String chart = entity.getId().replace("CRYPTO_" + symbol, "").replace("_", "").toUpperCase();
 
         String sl = " (Entry:";
@@ -3450,11 +3449,9 @@ public class Utils {
                 + Utils.appendSpace(symbol, 10);
 
         String price = Utils.appendSpace(Utils.removeLastZero(entity.getCurrent_price()), 10);
-        String url = Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70) + price + sl;
+        String url = Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70) + price + sl + entity.getNote();
 
-        tmp_msg = Utils.appendSpace(tmp_msg + url, LENGTH - 12);
-
-        return tmp_msg.trim();
+        return tmp_msg + url;
     }
 
     public static String calc_BUF_LO_HI_BUF_Forex(boolean onlyWait, String trend, String EPIC, Orders dto_entry,

@@ -2665,15 +2665,21 @@ public class BinanceServiceImpl implements BinanceService {
 
         String note = "";
         if (CRYPTO_LIST_BUYING.contains(SYMBOL)) {
-            note = "**BUYING** " + switch_trend_type;
+            note = switch_trend_type + "   **BUYING** ";
+
+        } else if (Utils.COINS_NEW_LISTING.contains(SYMBOL)) {
+            note = switch_trend_type + "   NEW_LISTING";
+
         } else if (Utils.LIST_WAITING.contains(SYMBOL)) {
-            note = "(WATCHLIST)" + switch_trend_type;
+            note = switch_trend_type + "   WATCH_LIST";
+
         } else {
             note = switch_trend_type;
         }
 
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
-                low_high.get(0), low_high.get(1), note);
+                low_high.get(0), low_high.get(1), Utils.appendSpace(note, 50));
+
         ordersRepository.save(entity);
     }
 
