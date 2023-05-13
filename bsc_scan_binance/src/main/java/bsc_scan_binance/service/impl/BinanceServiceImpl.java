@@ -3135,6 +3135,10 @@ public class BinanceServiceImpl implements BinanceService {
 
                 log += Utils.appendSpace(Utils.removeLastZero(dto_d1.getCurrent_price()), 15);
                 log += Utils.createLineForex_Body(dto_d1, dto_d1, findTrend, true).trim();
+                if (GLOBAL_SAME_TREND_D1_H12.contains(EPIC)) {
+                    log = log.replace(Utils.TEXT_WAIT, Utils.TEXT_EXPERT_ADVISOR);
+                }
+
                 list_d1_log.add(log);
 
                 index += 1;
@@ -3184,7 +3188,8 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Objects.nonNull(dto) && Utils.isNotBlank(dto.getNote())) {
-                    list_crypto_log.add(Utils.createLineCrypto(dto, symbol, type));
+                    String log = Utils.createLineCrypto(dto, symbol, type);
+                    list_crypto_log.add(log);
                 }
 
                 pre_trend = dto.getTrend();
