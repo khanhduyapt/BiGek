@@ -2726,10 +2726,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Objects.equals(ACTION, dto.getTrend()) && Utils.isNotBlank(dto.getNote())) {
-                msg += Utils.appendSpace(EPIC, 11, "_") + Utils.appendSpace(dto.getNote(), 50)
+                msg += Utils.appendSpace(EPIC + " ", 11, "_") + Utils.appendSpace(dto.getNote(), 50)
                         + Utils.new_line_from_service;
 
-                outputLog("Analysis_" + Utils.getChartName(dto), EPIC, dto_sl, dto_sl, "[MonitorTrend]  " + msg,
+                outputLog("Analysis_" + Utils.getChartName(dto) + EPIC, EPIC, dto_sl, dto_sl, "[MonitorTrend]  " + msg,
                         dto.getTrend());
             }
         }
