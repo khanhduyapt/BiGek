@@ -2729,8 +2729,7 @@ public class BinanceServiceImpl implements BinanceService {
                 msg += Utils.appendSpace(EPIC + " ", 11, "_") + Utils.appendSpace(dto.getNote(), 50)
                         + Utils.new_line_from_service;
 
-                outputLog("Analysis_" + EPIC, EPIC, dto_sl, dto_sl, "[MonitorTrend]  " + msg,
-                        dto.getTrend());
+                outputLog("Analysis_" + EPIC, EPIC, dto_sl, dto_sl, "[MonitorTrend]  " + msg, dto.getTrend());
             }
         }
 
@@ -2881,7 +2880,6 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public void saveMt5Data(String filename, Integer MINUTES_OF_XX) {
         try {
-
             String mt5_data_file = "";
             String pcname = InetAddress.getLocalHost().getHostName().toLowerCase();
             if (Objects.equals(pcname, "pc")) {
@@ -3318,7 +3316,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h1)
                     || CollectionUtils.isEmpty(list_d1)) {
                 Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
-                return;
+                continue;
             }
             List<BtcFutures> heken_list_d1 = Utils.getHekenList(list_d1);
 
@@ -3358,7 +3356,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h1)
                     || CollectionUtils.isEmpty(list_d1)) {
                 Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
-                return;
+                continue;
             }
 
             List<BtcFutures> heken_list_d1 = Utils.getHekenList(list_d1);
@@ -3440,8 +3438,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_dt = dto_dt.getTrend();
 
             if (!GLOBAL_SAME_TREND_D1_H12.contains(EPIC)) {
-                if (Objects.equals(trend_d1, trend_h12)
-                        || Utils.isNotBlank(dto_d1.getNote())
+                if (Objects.equals(trend_d1, trend_h12) || Utils.isNotBlank(dto_d1.getNote())
                         || Utils.isNotBlank(dto_h12.getNote())
                         || (Utils.isNotBlank(dto_h8.getNote()) && Objects.equals(trend_h12, trend_h8))
                         || (Utils.isNotBlank(dto_h4.getNote()) && Objects.equals(trend_h12, trend_h4))) {
