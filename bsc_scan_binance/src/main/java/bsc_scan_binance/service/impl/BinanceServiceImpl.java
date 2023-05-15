@@ -3578,11 +3578,24 @@ public class BinanceServiceImpl implements BinanceService {
                 BigDecimal end = body.get(1);
                 BigDecimal price = list_10d.get(0).getCurrPrice();
 
-                if (Objects.equals(Utils.TREND_LONG, trend) && (price.compareTo(str) <= 0)) {
-                    type = temp + "   " + Utils.TEXT_MIN_DAY_AREA + size;
+                if (Utils.isBlank(type) && Objects.equals(Utils.TREND_LONG, trend) && (price.compareTo(str) <= 0)) {
+                    type = temp + "   " + Utils.TEXT_MIN_DAY_AREA + "D" + size;
                 }
-                if (Objects.equals(Utils.TREND_SHOT, trend) && (price.compareTo(end) >= 0)) {
-                    type = temp + "   " + Utils.TEXT_MAX_DAY_AREA + size;
+                if (Utils.isBlank(type) && Objects.equals(Utils.TREND_SHOT, trend) && (price.compareTo(end) >= 0)) {
+                    type = temp + "   " + Utils.TEXT_MAX_DAY_AREA + "D" + size;
+                }
+
+                List<BtcFutures> list_10w = getCapitalData(EPIC, Utils.CAPITAL_TIME_W1);
+                List<BtcFutures> heken_list_10w = Utils.getHekenList(list_10w);
+                size = heken_list_10w.size();
+                body = Utils.getOpenCloseCandle(heken_list_10w);
+                str = body.get(0);
+                end = body.get(1);
+                if (Utils.isBlank(type) && Objects.equals(Utils.TREND_LONG, trend) && (price.compareTo(str) <= 0)) {
+                    type = temp + "   " + Utils.TEXT_MIN_DAY_AREA + "W" + size;
+                }
+                if (Utils.isBlank(type) && Objects.equals(Utils.TREND_SHOT, trend) && (price.compareTo(end) >= 0)) {
+                    type = temp + "   " + Utils.TEXT_MAX_DAY_AREA + "W" + size;
                 }
             }
 
