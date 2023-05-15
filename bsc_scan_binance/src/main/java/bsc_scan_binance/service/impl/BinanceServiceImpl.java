@@ -2725,8 +2725,7 @@ public class BinanceServiceImpl implements BinanceService {
                 dto_sl = dto;
             }
 
-            if (Objects.equals(ACTION, dto.getTrend()) && Utils.isNotBlank(dto.getNote())
-                    && isReloadAfter(Utils.MINUTES_OF_1H, EPIC)) {
+            if (Objects.equals(ACTION, dto.getTrend()) && Utils.isNotBlank(dto.getNote())) {
                 msg += Utils.appendSpace(EPIC + " ", 11, "_") + Utils.appendSpace(dto.getNote(), 50)
                         + Utils.new_line_from_service;
 
