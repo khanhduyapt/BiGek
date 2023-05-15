@@ -3453,7 +3453,9 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isBlank(dto_dt.getNote())) {
                 allowOutput = false;
             }
-
+            if (!Objects.equals(trend_h12, trend_dt)) {
+                allowOutput = false;
+            }
             if (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, trend_dt)) {
                 allowOutput = false;
             }
@@ -3507,9 +3509,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(trend_d1, trend_h12)) {
                 allowOutput = true;
             }
-            if (!Objects.equals(trend_h12, trend_dt)) {
-                allowOutput = false;
-            }
+
             if (alwaysShowTheseEpics.contains(EPIC)) {
                 allowOutput = true;
             }
@@ -3660,7 +3660,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.EPICS_FOREXS.contains(EPIC)) {
             bread = bread.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         } else if (Utils.EPICS_STOCKS.contains(EPIC)) {
-            bread = bread.add(bread);
+            bread = Utils.calcMaxCandleHigh(heken_list.subList(0, size));
         }
 
         List<BigDecimal> low_high = Utils.getLowHighCandle(list.subList(0, size));
