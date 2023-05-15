@@ -3323,7 +3323,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_M1 = Utils.getTrendByMaXx(heken_list_d1, 50);
             String trend_W1 = dto_w1.getTrend();
             String trend_D1 = Utils.getTrendByHekenAshiList(heken_list_d1);
-            String trend_H1 = dto_d1.getTrend();
+            String trend_H1 = dto_h1.getTrend();
 
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
             if (Utils.isNotBlank(dto_w1.getNote())) {
@@ -3364,7 +3364,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_M1 = Utils.getTrendByMaXx(heken_list_d1, 50);
             String trend_W1 = dto_w1.getTrend();
             String trend_D1 = Utils.getTrendByHekenAshiList(heken_list_d1);
-            String trend_H1 = dto_d1.getTrend();
+            String trend_H1 = dto_h1.getTrend();
 
             if (Objects.equals(trend_M1, trend_W1) && !Objects.equals(trend_W1, trend_D1)) {
                 continue;
