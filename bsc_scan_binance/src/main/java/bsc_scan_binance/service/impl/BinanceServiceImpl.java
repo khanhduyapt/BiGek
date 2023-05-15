@@ -2705,9 +2705,10 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.logWritelnDraft(log);
     }
 
-    private void waiting(String ACTION, String CAPITAL_TIME_XX, List<String> list) {
-        Collections.sort(list);
+    private String waiting(String ACTION, String CAPITAL_TIME_XX, List<String> list) {
+        String msg = "";
 
+        Collections.sort(list);
         for (String EPIC : list) {
             if (Utils.isBlank(EPIC)) {
                 continue;
@@ -2726,16 +2727,14 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Objects.equals(ACTION, dto.getTrend()) && Utils.isNotBlank(dto.getNote())) {
-                String EVENT_ID = "monitorTrend" + Utils.getChartName(dto) + EPIC + ACTION
-                        + Utils.getCurrentYyyyMmDdHHByChart(dto.getId());
+                msg += Utils.appendSpace(EPIC, 10) + ":" + Utils.appendSpace(dto.getNote(), 50);
 
-                String msg = "[MonitorTrend]" + Utils.appendSpace(dto.getNote(), 50) + Utils.appendSpace(EPIC, 10);
-
-                sendMsgPerHour(EVENT_ID, msg.trim().replace(" ", "."), true);
-
-                outputLog("Analysis_" + Utils.getChartName(dto), EPIC, dto_sl, dto_sl, msg, dto.getTrend());
+                outputLog("Analysis_" + Utils.getChartName(dto), EPIC, dto_sl, dto_sl, "[MonitorTrend]" + msg,
+                        dto.getTrend());
             }
         }
+
+        return msg;
     }
 
     private void alertMsg(String CAPITAL_TIME_XX, List<String> LIST_BUYING, List<String> LIST_SELLING) {
@@ -3508,6 +3507,10 @@ public class BinanceServiceImpl implements BinanceService {
                     && Utils.isNotBlank(dto_dt.getNote())) {
                 allowOutput = true;
             }
+
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H8) && !Objects.equals(trend_h12, trend_h8)) {
+                allowOutput = false;
+            }
             if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H8) && Objects.equals(trend_h12, trend_h8)
                     && Utils.isNotBlank(dto_dt.getNote())) {
                 allowOutput = true;
@@ -3750,8 +3753,8 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
+        String msg = "";
         for (String EPIC : GLOBAL_SAME_TREND_D1_H12) {
-
             Orders dto_dt = null;
             if (Utils.EPICS_STOCKS.contains(EPIC)) {
                 dto_dt = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
@@ -3772,19 +3775,19 @@ public class BinanceServiceImpl implements BinanceService {
             if ((switch_trend_h1 + switch_trend_h1_ma50).contains(trend_dt)) {
                 if (Objects.equals(trend_dt, Utils.TREND_LONG)) {
                     if (switch_trend_h1.contains(trend_dt) && Utils.isBelowMALine(heken_list_h1, 50)) {
-                        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList(EPIC));
+                        msg += waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList(EPIC));
                     }
                     if (switch_trend_h1_ma50.contains(trend_dt)) {
-                        waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList(EPIC));
+                        msg += waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H1, Arrays.asList(EPIC));
                     }
                 }
 
                 if (Objects.equals(trend_dt, Utils.TREND_SHOT)) {
                     if (switch_trend_h1.contains(trend_dt) && Utils.isAboveMALine(heken_list_h1, 50)) {
-                        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList(EPIC));
+                        msg += waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList(EPIC));
                     }
                     if (switch_trend_h1_ma50.contains(trend_dt)) {
-                        waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList(EPIC));
+                        msg += waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H1, Arrays.asList(EPIC));
                     }
                 }
             }
@@ -3805,27 +3808,31 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.equals(trend_dt, Utils.TREND_LONG)) {
                         if (switch_trend_h4.contains(trend_dt) && Utils.isBelowMALine(heken_list_h4, 50)
                                 && Objects.equals(trend_h4, trend_h1)) {
-                            waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList(EPIC));
+                            msg += waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList(EPIC));
                         }
 
                         if (switch_trend_h4_ma50.contains(trend_dt) && Objects.equals(trend_h4, trend_h1)) {
-                            waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList(EPIC));
+                            msg += waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList(EPIC));
                         }
                     }
 
                     if (Objects.equals(trend_dt, Utils.TREND_SHOT)) {
                         if (switch_trend_h4.contains(trend_dt) && Utils.isAboveMALine(heken_list_h4, 50)
                                 && Objects.equals(trend_h4, trend_h1)) {
-                            waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4, Arrays.asList(EPIC));
+                            msg += waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4, Arrays.asList(EPIC));
                         }
 
                         if (switch_trend_h4_ma50.contains(trend_dt) && Objects.equals(trend_h4, trend_h1)) {
-                            waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4, Arrays.asList(EPIC));
+                            msg += waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4, Arrays.asList(EPIC));
                         }
                     }
                 }
             }
+        }
 
+        if (Utils.isNotBlank(msg)) {
+            String EVENT_ID = "monitorTrend" + Utils.getCurrentYyyyMmDd_HH();
+            sendMsgPerHour(EVENT_ID, "[MonitorTrend]" + msg, true);
         }
 
         alertMsg(Utils.CAPITAL_TIME_H1, H1_BUYING, H1_SELING);
