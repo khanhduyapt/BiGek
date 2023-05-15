@@ -3448,7 +3448,8 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_dt = dto_dt.getTrend();
 
             if (!GLOBAL_SAME_TREND_D1_H12.contains(EPIC)) {
-                if (Objects.equals(trend_d1, trend_h12) || Utils.isNotBlank(dto_h12.getTrend())) {
+                if (Objects.equals(trend_d1, trend_h12) || Utils.isNotBlank(dto_h12.getNote())
+                        || (Utils.isNotBlank(dto_h8.getNote()) && Objects.equals(trend_h12, trend_h8))) {
                     GLOBAL_SAME_TREND_D1_H12.add(EPIC);
                 }
             }
@@ -3592,10 +3593,10 @@ public class BinanceServiceImpl implements BinanceService {
                 BigDecimal price = list_10d.get(0).getCurrPrice();
 
                 if (Objects.equals(Utils.TREND_LONG, trend) && (price.compareTo(str) <= 0)) {
-                    type = temp + " " + Utils.TEXT_MIN_DAY_AREA + size;
+                    type = temp + "   " + Utils.TEXT_MIN_DAY_AREA + size;
                 }
                 if (Objects.equals(Utils.TREND_SHOT, trend) && (price.compareTo(end) >= 0)) {
-                    type = temp + " " + Utils.TEXT_MAX_DAY_AREA + size;
+                    type = temp + "   " + Utils.TEXT_MAX_DAY_AREA + size;
                 }
             }
 
