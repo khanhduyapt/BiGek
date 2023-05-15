@@ -706,7 +706,7 @@ public class Utils {
             prefix = prefix.replace("W1=", "   ");
         }
         if (!Objects.equals(trend_d1, trend_dt)) {
-            prefix = prefix.replace("D1=", "   ");
+            prefix = prefix.replace("=D1=", "    ").replace("D1=", "   ");
         }
         if (!Objects.equals(trend_h12, trend_dt)) {
             prefix = prefix.replace("=H12", "    ").replace("H12", "   ");

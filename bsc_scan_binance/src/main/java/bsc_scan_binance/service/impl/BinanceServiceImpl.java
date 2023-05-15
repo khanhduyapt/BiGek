@@ -3455,15 +3455,6 @@ public class BinanceServiceImpl implements BinanceService {
                 allowOutput = false;
             }
 
-            if (!Objects.equals(trend_d1, trend_h12)) {
-                allowOutput = false;
-            }
-            if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, trend_dt)) {
-                allowOutput = false;
-            }
-            if (!Objects.equals(trend_d1, trend_h12) || !Objects.equals(trend_h12, trend_dt)) {
-                allowOutput = false;
-            }
             if (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, trend_dt)) {
                 allowOutput = false;
             }
@@ -3517,11 +3508,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(trend_d1, trend_h12)) {
                 allowOutput = true;
             }
-
-            if (EPICS_WAIT_BUY_D1.contains(EPIC) && Objects.equals(Utils.TREND_SHOT, trend_dt)) {
-                allowOutput = false;
-            }
-            if (EPICS_WAIT_SEL_D1.contains(EPIC) && Objects.equals(Utils.TREND_LONG, trend_dt)) {
+            if (!Objects.equals(trend_h12, trend_dt)) {
                 allowOutput = false;
             }
             if (alwaysShowTheseEpics.contains(EPIC)) {
