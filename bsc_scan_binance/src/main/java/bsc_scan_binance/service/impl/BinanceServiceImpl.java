@@ -3490,51 +3490,54 @@ public class BinanceServiceImpl implements BinanceService {
                     && !CollectionUtils.isEmpty(list_w1)) {
 
                 List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
-                int size = heken_list_h12.size();
                 List<BigDecimal> body = Utils.getOpenCloseCandle(heken_list_h12);
                 BigDecimal str = body.get(0);
                 BigDecimal end = body.get(1);
 
                 BigDecimal price = heken_list_h12.get(0).getPrice_close_candle();
                 if (Objects.equals(Utils.TREND_LONG, trend) && (price.compareTo(str) <= 0)) {
-                    type += " " + Utils.TEXT_MIN_DAY_AREA + "12H" + size;
+                    type += Utils.TEXT_MIN_DAY_AREA + "H";
                 }
                 if (Objects.equals(Utils.TREND_SHOT, trend) && (price.compareTo(end) >= 0)) {
-                    type += " " + Utils.TEXT_MAX_DAY_AREA + "12H" + size;
+                    type += Utils.TEXT_MAX_DAY_AREA + "H";
                 }
                 // ----------------------------------------------------------------------
 
                 List<BtcFutures> heken_list_10d = Utils.getHekenList(list_d1);
-                size = heken_list_10d.size();
                 body = Utils.getOpenCloseCandle(heken_list_10d);
                 str = body.get(0);
                 end = body.get(1);
 
                 price = heken_list_10d.get(0).getPrice_close_candle();
                 if (Objects.equals(Utils.TREND_LONG, trend) && (price.compareTo(str) <= 0)) {
-                    type += " " + Utils.TEXT_MIN_DAY_AREA + "D" + size;
+                    type += Utils.TEXT_MIN_DAY_AREA + "D";
                 }
                 if (Objects.equals(Utils.TREND_SHOT, trend) && (price.compareTo(end) >= 0)) {
-                    type += " " + Utils.TEXT_MAX_DAY_AREA + "D" + size;
+                    type += Utils.TEXT_MAX_DAY_AREA + "D";
                 }
                 // ----------------------------------------------------------------------
 
                 List<BtcFutures> heken_list_10w = Utils.getHekenList(list_w1);
-                size = heken_list_10w.size();
                 body = Utils.getOpenCloseCandle(heken_list_10w);
                 str = body.get(0);
                 end = body.get(1);
 
                 price = heken_list_10w.get(0).getPrice_close_candle();
                 if (Objects.equals(Utils.TREND_LONG, trend) && (price.compareTo(str) <= 0)) {
-                    type += " " + Utils.TEXT_MIN_DAY_AREA + "W" + size;
+                    type += Utils.TEXT_MIN_DAY_AREA + "W";
                 }
                 if (Objects.equals(Utils.TREND_SHOT, trend) && (price.compareTo(end) >= 0)) {
-                    type += " " + Utils.TEXT_MAX_DAY_AREA + "W" + size;
+                    type += Utils.TEXT_MAX_DAY_AREA + "W";
                 }
                 // ----------------------------------------------------------------------
                 if (Utils.isNotBlank(type)) {
-                    note = note + type;
+                    if (type.contains(Utils.TEXT_MIN_DAY_AREA)) {
+                        type = Utils.TEXT_MIN_DAY_AREA + "(" + type.replace(Utils.TEXT_MIN_DAY_AREA, "") + ")";
+                    }
+                    if (type.contains(Utils.TEXT_MAX_DAY_AREA)) {
+                        type = Utils.TEXT_MAX_DAY_AREA + "(" + type.replace(Utils.TEXT_MAX_DAY_AREA, "") + ")";
+                    }
+                    note = note + " " + type;
                 }
             }
         }
