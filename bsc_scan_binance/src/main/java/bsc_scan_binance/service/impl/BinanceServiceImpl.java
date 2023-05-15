@@ -3707,6 +3707,7 @@ public class BinanceServiceImpl implements BinanceService {
         // "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD",
         // "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD",
         // "USDCAD", "USDCHF", "USDJPY"
+        // -------------------------------------------------------------------------------------
         // H12
         List<String> H12_BUYING = Arrays.asList("", "", "", "", "", "");
         List<String> H12_SELING = Arrays.asList("", "", "", "", "", "");
@@ -3718,7 +3719,6 @@ public class BinanceServiceImpl implements BinanceService {
         // H1
         List<String> H1_BUYING = Arrays.asList("", "", "", "", "", "");
         List<String> H1_SELING = Arrays.asList("", "", "", "", "", "");
-        // -------------------------------------------------------------------------------------
         // ---------------------------------------CRYPTO----------------------------------------
 
         CRYPTO_LIST_BUYING = Arrays.asList("");
