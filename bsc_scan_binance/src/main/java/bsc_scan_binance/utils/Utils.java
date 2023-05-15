@@ -3396,16 +3396,7 @@ public class Utils {
         return trend;
     }
 
-    public static String createLineForex_Header(Orders dto_entry, Orders dto_sl, String note) {
-        if (Objects.isNull(dto_entry) || Objects.isNull(dto_sl)) {
-            return "";
-        }
-        String EPIC = getEpicFromId(dto_entry.getId());
-        String chart_name = getChartName(dto_entry);
-
-        // String insert_time = Utils.getStringValue(dto_entry.getInsertTime());
-        // LocalDateTime pre_time = LocalDateTime.parse(insert_time);
-        // String time = pre_time.format(DateTimeFormatter.ofPattern("HH:mm"));
+    public static String getTypeOfEpic(String EPIC) {
         String type = "";
         if (Utils.EPICS_CASH_CFD.contains(EPIC)) {
             type = "Cash";
@@ -3424,10 +3415,24 @@ public class Utils {
         }
         type = appendSpace(type, 8);
 
+        return type;
+    }
+
+    public static String createLineForex_Header(Orders dto_entry, Orders dto_sl, String note) {
+        if (Objects.isNull(dto_entry) || Objects.isNull(dto_sl)) {
+            return "";
+        }
+        String EPIC = getEpicFromId(dto_entry.getId());
+        String chart_name = getChartName(dto_entry);
+
+        // String insert_time = Utils.getStringValue(dto_entry.getInsertTime());
+        // LocalDateTime pre_time = LocalDateTime.parse(insert_time);
+        // String time = pre_time.format(DateTimeFormatter.ofPattern("HH:mm"));
+
         String header = "";// time + " ";
         header += Utils.appendSpace(note, 8);
         header += chart_name + ":" + Utils.appendSpace(dto_entry.getTrend(), 8);
-        header += Utils.appendSpace(EPIC, 12) + type;
+        header += Utils.appendSpace(EPIC, 12) + getTypeOfEpic(EPIC);
         header += Utils.appendSpace(Utils.getCapitalLink(EPIC), 68);
 
         return header;

@@ -2691,7 +2691,7 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        String log = Utils.appendSpace(EPIC, 10);
+        String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 10);
         log += Utils.appendSpace(append, 35) + " ";
 
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 63) + " ";
@@ -3369,12 +3369,6 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_D1 = Utils.getTrendByHekenAshiList(heken_list_d1);
             String trend_H1 = dto_d1.getTrend();
 
-            if (!Objects.equals(trend_W1, trend_D1)) {
-                continue;
-            }
-            if (!GLOBAL_SAME_TREND_D1_H12.contains(EPIC)) {
-                GLOBAL_SAME_TREND_D1_H12.add(EPIC);
-            }
             if (Objects.equals(trend_M1, trend_W1) && !Objects.equals(trend_W1, trend_D1)) {
                 continue;
             }
@@ -3383,6 +3377,9 @@ public class BinanceServiceImpl implements BinanceService {
             }
             if (EPICS_WAIT_SEL_D1.contains(EPIC) && Objects.equals(Utils.TREND_LONG, trend_D1)) {
                 continue;
+            }
+            if (!GLOBAL_SAME_TREND_D1_H12.contains(EPIC) && Objects.equals(trend_W1, trend_D1)) {
+                GLOBAL_SAME_TREND_D1_H12.add(EPIC);
             }
 
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
@@ -3756,6 +3753,10 @@ public class BinanceServiceImpl implements BinanceService {
 
         String msg = "";
         for (String EPIC : GLOBAL_SAME_TREND_D1_H12) {
+            if (Utils.EPICS_CRYPTO_CFD.contains(EPIC) && !EPIC.contains("BTC")) {
+                continue;
+            }
+
             Orders dto_dt = null;
             if (Utils.EPICS_STOCKS.contains(EPIC)) {
                 dto_dt = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
