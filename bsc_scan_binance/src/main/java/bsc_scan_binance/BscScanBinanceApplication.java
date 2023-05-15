@@ -252,17 +252,17 @@ public class BscScanBinanceApplication {
         for (List<String> items : list) {
             String result = binance_service.scapForex("_DX.f_XAUUSD_XAGUSD_BTCUSD_", Utils.CAPITAL_TIME_H12, items);
             if (Utils.isNotBlank(result)) {
-                Utils.logWritelnDraft("");
+                // Utils.logWritelnDraft("");
             }
 
             result = binance_service.scapForex("", Utils.CAPITAL_TIME_H8, items);
             if (Utils.isNotBlank(result)) {
-                Utils.logWritelnDraft("");
+                // Utils.logWritelnDraft("");
             }
 
             result = binance_service.scapForex("", Utils.CAPITAL_TIME_H1, items);
             if (Utils.isNotBlank(result)) {
-                Utils.logWritelnDraft("");
+                // Utils.logWritelnDraft("");
             }
 
             binance_service.scapForex("", Utils.CAPITAL_TIME_H4, items);
