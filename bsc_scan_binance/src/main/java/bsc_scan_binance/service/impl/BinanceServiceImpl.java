@@ -2725,11 +2725,12 @@ public class BinanceServiceImpl implements BinanceService {
                 dto_sl = dto;
             }
 
-            if (Objects.equals(ACTION, dto.getTrend()) && Utils.isNotBlank(dto.getNote())) {
+            if (Objects.equals(ACTION, dto.getTrend()) && Utils.isNotBlank(dto.getNote())
+                    && isReloadAfter(Utils.MINUTES_OF_1H, EPIC)) {
                 msg += Utils.appendSpace(EPIC + " ", 11, "_") + Utils.appendSpace(dto.getNote(), 50)
                         + Utils.new_line_from_service;
 
-                outputLog("Analysis_" + Utils.getChartName(dto) + EPIC, EPIC, dto_sl, dto_sl, "[MonitorTrend]  " + msg,
+                outputLog("Analysis_" + EPIC, EPIC, dto_sl, dto_sl, "[MonitorTrend]  " + msg,
                         dto.getTrend());
             }
         }
@@ -3709,7 +3710,7 @@ public class BinanceServiceImpl implements BinanceService {
         // "USDCAD", "USDCHF", "USDJPY"
         // -------------------------------------------------------------------------------------
         // H12
-        List<String> H12_BUYING = Arrays.asList("", "", "", "", "", "");
+        List<String> H12_BUYING = Arrays.asList("AUDJPY", "CADJPY", "EURJPY", "", "", "");
         List<String> H12_SELING = Arrays.asList("", "", "", "", "", "");
 
         // H4
@@ -3802,16 +3803,11 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_h1 = Utils.getTrendByHekenAshiList(heken_list_h1);
                 String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
                 String switch_trend_h4 = Utils.switchTrendByHeken_12_or_Ma35(heken_list_h4);
-                String switch_trend_h4_ma50 = Utils.switchTrendByMa13_XX(heken_list_h4, 50);
 
-                if ((switch_trend_h4 + switch_trend_h4_ma50).contains(trend_dt)) {
+                if ((switch_trend_h4).contains(trend_dt)) {
                     if (Objects.equals(trend_dt, Utils.TREND_LONG)) {
                         if (switch_trend_h4.contains(trend_dt) && Utils.isBelowMALine(heken_list_h4, 50)
                                 && Objects.equals(trend_h4, trend_h1)) {
-                            msg += waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList(EPIC));
-                        }
-
-                        if (switch_trend_h4_ma50.contains(trend_dt) && Objects.equals(trend_h4, trend_h1)) {
                             msg += waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList(EPIC));
                         }
                     }
@@ -3819,10 +3815,6 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.equals(trend_dt, Utils.TREND_SHOT)) {
                         if (switch_trend_h4.contains(trend_dt) && Utils.isAboveMALine(heken_list_h4, 50)
                                 && Objects.equals(trend_h4, trend_h1)) {
-                            msg += waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4, Arrays.asList(EPIC));
-                        }
-
-                        if (switch_trend_h4_ma50.contains(trend_dt) && Objects.equals(trend_h4, trend_h1)) {
                             msg += waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4, Arrays.asList(EPIC));
                         }
                     }
