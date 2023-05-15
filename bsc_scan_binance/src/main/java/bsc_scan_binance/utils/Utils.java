@@ -92,11 +92,11 @@ public class Utils {
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
-    public static final String TEXT_SWITCH_TREND_BELOW_Ma_LONG = "(B_50)";
-    public static final String TEXT_SWITCH_TREND_ABOVE_Ma_SHOT = "(S_50)";
+    public static final String TEXT_SWITCH_TREND_LONG_BELOW_Ma = "(B.H4H1)";
+    public static final String TEXT_SWITCH_TREND_SHOT_ABOVE_Ma = "(S.H4H1)";
     public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma.1.3)";
-    public static final String TEXT_WAIT = "(Wait)";
-    public static final String TEXT_EXPERT_ADVISOR = "( EA )";
+    public static final String TEXT_WAIT = "( Wait )";
+    public static final String TEXT_EXPERT_ADVISOR = "(  EA  )";
 
     public static final String TEXT_SWITCH_TREND_Ma_1_10 = "(Ma1_10)";
     public static final String TEXT_SWITCH_TREND_Ma_1_20 = "(Ma1_20)";

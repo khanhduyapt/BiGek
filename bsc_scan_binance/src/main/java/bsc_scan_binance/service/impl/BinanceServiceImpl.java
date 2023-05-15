@@ -3406,131 +3406,6 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     @Transactional
-    public String scapForex(String alwaysShowTheseEpics, String CAPITAL_TIME_XX, List<String> CAPITAL_LIST) {
-        if (required_update_bars_csv) {
-            return "";
-        }
-
-        // TODO: 2. scapForex
-        // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
-        // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
-
-        int index = 1;
-        String msg = "";
-        for (String EPIC : CAPITAL_LIST) {
-            Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
-            Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-            Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
-            Orders dto_h8 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
-            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
-            Orders dto_dt = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
-
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h12) || Objects.isNull(dto_h8)
-                    || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_dt)) {
-                Utils.logWritelnDraft("[scapForex] (" + EPIC + ") dto is null: " + CAPITAL_TIME_XX);
-
-                continue;
-            }
-
-            String trend_w1 = dto_w1.getTrend();
-            String trend_d1 = dto_d1.getTrend();
-            String trend_h12 = dto_h12.getTrend();
-            String trend_h8 = dto_h8.getTrend();
-            String trend_h4 = dto_h4.getTrend();
-            String trend_h1 = dto_h1.getTrend();
-            String trend_dt = dto_dt.getTrend();
-
-            if (!GLOBAL_SAME_TREND_D1_H12.contains(EPIC)) {
-                if (Objects.equals(trend_d1, trend_h12) || Utils.isNotBlank(dto_d1.getNote())
-                        || Utils.isNotBlank(dto_h12.getNote())
-                        || (Utils.isNotBlank(dto_h8.getNote()) && Objects.equals(trend_h12, trend_h8))
-                        || (Utils.isNotBlank(dto_h4.getNote()) && Objects.equals(trend_h12, trend_h4))) {
-                    GLOBAL_SAME_TREND_D1_H12.add(EPIC);
-                }
-            }
-
-            boolean allowOutput = true;
-            if (Utils.isBlank(dto_dt.getNote())) {
-                allowOutput = false;
-            }
-            if (!Objects.equals(trend_h12, trend_dt)) {
-                allowOutput = false;
-            }
-            if (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, trend_dt)) {
-                allowOutput = false;
-            }
-            if (Utils.isBlank(dto_h4.getNote() + dto_h8.getNote() + dto_h12.getNote() + dto_d1.getNote())) {
-                allowOutput = false;
-            }
-
-            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1) && !Objects.equals(trend_h4, trend_h1)) {
-                allowOutput = false;
-            }
-            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4) && !Objects.equals(trend_h4, trend_h1)) {
-                allowOutput = false;
-            }
-
-            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1) && Objects.equals(trend_h4, trend_h1)
-                    && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)) {
-                allowOutput = true;
-            }
-            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1) && Objects.equals(trend_h4, trend_h1)
-                    && (dto_h1.getNote().contains(Utils.TEXT_MIN_DAY_AREA)
-                            || dto_h1.getNote().contains(Utils.TEXT_MAX_DAY_AREA))) {
-                allowOutput = true;
-            }
-
-            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4) && Objects.equals(trend_h12, trend_h4)
-                    && (dto_h4.getNote().contains(Utils.TEXT_MIN_DAY_AREA)
-                            || dto_h4.getNote().contains(Utils.TEXT_MAX_DAY_AREA))) {
-                allowOutput = true;
-            }
-
-            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H8) && Utils.isNotBlank(dto_dt.getNote())) {
-                allowOutput = true;
-            }
-
-            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H12) && Utils.isNotBlank(dto_dt.getNote())) {
-                allowOutput = true;
-            }
-
-            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1) && Utils.isNotBlank(dto_dt.getNote())
-                    && Objects.equals(trend_d1, trend_h12)) {
-                allowOutput = true;
-            }
-
-            if (alwaysShowTheseEpics.contains(EPIC)) {
-                allowOutput = true;
-            }
-
-            if (allowOutput) {
-                if (!BscScanBinanceApplication.EPICS_OUTPUTED.contains(EPIC)) {
-                    if (Utils.isNotBlank(msg)) {
-                        msg += ",";
-                    }
-
-                    String prefix = Utils.getPrefix(index, trend_w1, trend_d1, trend_h12, trend_h8, trend_h4, trend_h1,
-                            trend_dt, dto_d1.getNote(), dto_h12.getNote(), dto_h8.getNote(), dto_h4.getNote());
-
-                    msg += analysis(prefix, EPIC, CAPITAL_TIME_XX);
-                    index += 1;
-
-                    BscScanBinanceApplication.EPICS_OUTPUTED += "_" + EPIC + "_";
-
-                    if (alwaysShowTheseEpics.contains(EPIC) && ((alwaysShowTheseEpics.indexOf(EPIC) + EPIC.length()
-                            + EPIC.length()) > alwaysShowTheseEpics.length())) {
-                        Utils.logWritelnDraft("");
-                    }
-                }
-            }
-        }
-
-        return msg;
-    }
-
-    @Override
-    @Transactional
     public String initForexTrend(String EPIC, String CAPITAL_TIME_XX) {
         if (required_update_bars_csv) {
             return "";
@@ -3655,7 +3530,7 @@ public class BinanceServiceImpl implements BinanceService {
                     note = Utils.appendSpace(note, 28) + Utils.TEXT_WAIT; // "(Wait)"
                 }
                 if (Utils.isBelowMALine(heken_list_h1, 50) && Utils.isBelowMALine(heken_list_h4, 50)) {
-                    note = Utils.appendSpace(note, 28) + "------";
+                    note = Utils.appendSpace(note, 28) + Utils.TEXT_SWITCH_TREND_LONG_BELOW_Ma;
                 }
             }
             if (Objects.equals(trend, Utils.TREND_SHOT)) {
@@ -3663,7 +3538,7 @@ public class BinanceServiceImpl implements BinanceService {
                     note = Utils.appendSpace(note, 28) + Utils.TEXT_WAIT; // "(Wait)"
                 }
                 if (Utils.isAboveMALine(heken_list_h1, 50) && Utils.isAboveMALine(heken_list_h4, 50)) {
-                    note = Utils.appendSpace(note, 28) + "------";
+                    note = Utils.appendSpace(note, 28) + Utils.TEXT_SWITCH_TREND_SHOT_ABOVE_Ma;
                 }
             }
         }
@@ -3698,6 +3573,137 @@ public class BinanceServiceImpl implements BinanceService {
         ordersRepository.save(entity);
 
         return "";
+    }
+
+    @Override
+    @Transactional
+    public String scapForex(String alwaysShowTheseEpics, String CAPITAL_TIME_XX, List<String> CAPITAL_LIST) {
+        if (required_update_bars_csv) {
+            return "";
+        }
+
+        // TODO: 2. scapForex
+        // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
+        // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
+
+        int index = 1;
+        String msg = "";
+        for (String EPIC : CAPITAL_LIST) {
+            Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
+            Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+            Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
+            Orders dto_h8 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
+            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
+            Orders dto_dt = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
+
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h12) || Objects.isNull(dto_h8)
+                    || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_dt)) {
+                Utils.logWritelnDraft("[scapForex] (" + EPIC + ") dto is null: " + CAPITAL_TIME_XX);
+
+                continue;
+            }
+
+            String trend_w1 = dto_w1.getTrend();
+            String trend_d1 = dto_d1.getTrend();
+            String trend_h12 = dto_h12.getTrend();
+            String trend_h8 = dto_h8.getTrend();
+            String trend_h4 = dto_h4.getTrend();
+            String trend_h1 = dto_h1.getTrend();
+            String trend_dt = dto_dt.getTrend();
+
+            if (!GLOBAL_SAME_TREND_D1_H12.contains(EPIC)) {
+                if (Objects.equals(trend_d1, trend_h12) || Utils.isNotBlank(dto_d1.getNote())
+                        || Utils.isNotBlank(dto_h12.getNote())
+                        || (Utils.isNotBlank(dto_h8.getNote()) && Objects.equals(trend_h12, trend_h8))
+                        || (Utils.isNotBlank(dto_h4.getNote()) && Objects.equals(trend_h12, trend_h4))) {
+                    GLOBAL_SAME_TREND_D1_H12.add(EPIC);
+                }
+            }
+
+            boolean allowOutput = true;
+            if (Utils.isBlank(dto_dt.getNote())) {
+                allowOutput = false;
+            }
+            if (!Objects.equals(trend_h12, trend_dt)) {
+                allowOutput = false;
+            }
+            if (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, trend_dt)) {
+                allowOutput = false;
+            }
+            if (Utils.isBlank(dto_h4.getNote() + dto_h8.getNote() + dto_h12.getNote() + dto_d1.getNote())) {
+                allowOutput = false;
+            }
+
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1) && !Objects.equals(trend_h4, trend_h1)) {
+                allowOutput = false;
+            }
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4) && !Objects.equals(trend_h4, trend_h1)) {
+                allowOutput = false;
+            }
+
+            if ((dto_dt.getNote().contains(Utils.TEXT_SWITCH_TREND_LONG_BELOW_Ma)
+                    || dto_dt.getNote().contains(Utils.TEXT_SWITCH_TREND_SHOT_ABOVE_Ma))
+                    && Objects.equals(trend_h4, trend_h1)) {
+                allowOutput = true;
+            }
+
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1) && Objects.equals(trend_h4, trend_h1)
+                    && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)) {
+                allowOutput = true;
+            }
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1) && Objects.equals(trend_h4, trend_h1)
+                    && (dto_h1.getNote().contains(Utils.TEXT_MIN_DAY_AREA)
+                            || dto_h1.getNote().contains(Utils.TEXT_MAX_DAY_AREA))) {
+                allowOutput = true;
+            }
+
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4) && Objects.equals(trend_h12, trend_h4)
+                    && (dto_h4.getNote().contains(Utils.TEXT_MIN_DAY_AREA)
+                            || dto_h4.getNote().contains(Utils.TEXT_MAX_DAY_AREA))) {
+                allowOutput = true;
+            }
+
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H8) && Utils.isNotBlank(dto_dt.getNote())) {
+                allowOutput = true;
+            }
+
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H12) && Utils.isNotBlank(dto_dt.getNote())) {
+                allowOutput = true;
+            }
+
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1) && Utils.isNotBlank(dto_dt.getNote())
+                    && Objects.equals(trend_d1, trend_h12)) {
+                allowOutput = true;
+            }
+
+            if (alwaysShowTheseEpics.contains(EPIC)) {
+                allowOutput = true;
+            }
+
+            if (allowOutput) {
+                if (!BscScanBinanceApplication.EPICS_OUTPUTED.contains(EPIC)) {
+                    if (Utils.isNotBlank(msg)) {
+                        msg += ",";
+                    }
+
+                    String prefix = Utils.getPrefix(index, trend_w1, trend_d1, trend_h12, trend_h8, trend_h4, trend_h1,
+                            trend_dt, dto_d1.getNote(), dto_h12.getNote(), dto_h8.getNote(), dto_h4.getNote());
+
+                    msg += analysis(prefix, EPIC, CAPITAL_TIME_XX);
+                    index += 1;
+
+                    BscScanBinanceApplication.EPICS_OUTPUTED += "_" + EPIC + "_";
+
+                    if (alwaysShowTheseEpics.contains(EPIC) && ((alwaysShowTheseEpics.indexOf(EPIC) + EPIC.length()
+                            + EPIC.length()) > alwaysShowTheseEpics.length())) {
+                        Utils.logWritelnDraft("");
+                    }
+                }
+            }
+        }
+
+        return msg;
     }
 
     // H1 & H4 nguoc huong -> thong bao cat lenh.
