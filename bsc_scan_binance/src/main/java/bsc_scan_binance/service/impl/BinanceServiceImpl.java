@@ -3682,8 +3682,8 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public void monitorProfit() {
         // TODO: 3. monitorProfit
-        EPICS_WAIT_BUY_D1 = Arrays.asList("GBPJPY", "CHFJPY", "EURJPY", "USDJPY", "GBPUSD", "AUDJPY", "CADJPY");
-        EPICS_WAIT_SEL_D1 = Arrays.asList("AAPL", "META", "MSFT", "NFLX", "WMT", "US100", "GBPAUD", "");
+        EPICS_WAIT_BUY_D1 = Arrays.asList("");
+        EPICS_WAIT_SEL_D1 = Arrays.asList("");
         // -------------------------------------------------------------------------------------
         // "BTCUSD", GER40", "US30", "US100", "UK100", "USOIL", "XAGUSD", "XAUUSD"
         // "AUDJPY", "AUDUSD", "CADJPY", "CHFJPY",
@@ -3693,7 +3693,7 @@ public class BinanceServiceImpl implements BinanceService {
         // "USDCAD", "USDCHF", "USDJPY"
         // -------------------------------------------------------------------------------------
         // H12
-        List<String> H12_BUYING = Arrays.asList("AUDJPY", "CADJPY", "EURJPY", "", "", "");
+        List<String> H12_BUYING = Arrays.asList("", "", "", "", "", "");
         List<String> H12_SELING = Arrays.asList("", "", "", "", "", "");
 
         // H4
