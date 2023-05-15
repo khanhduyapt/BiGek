@@ -3396,10 +3396,6 @@ public class BinanceServiceImpl implements BinanceService {
                 analysis(prefix, EPIC, Utils.CAPITAL_TIME_D1);
                 index += 1;
             }
-            if (dto_h1.getNote().contains(trend_D1)) {
-                analysis(prefix, EPIC, Utils.CAPITAL_TIME_H1);
-                index += 1;
-            }
         }
 
         Utils.logWritelnDraft("");
@@ -3444,8 +3440,11 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_dt = dto_dt.getTrend();
 
             if (!GLOBAL_SAME_TREND_D1_H12.contains(EPIC)) {
-                if (Objects.equals(trend_d1, trend_h12) || Utils.isNotBlank(dto_h12.getNote())
-                        || (Utils.isNotBlank(dto_h8.getNote()) && Objects.equals(trend_h12, trend_h8))) {
+                if (Objects.equals(trend_d1, trend_h12)
+                        || Utils.isNotBlank(dto_d1.getNote())
+                        || Utils.isNotBlank(dto_h12.getNote())
+                        || (Utils.isNotBlank(dto_h8.getNote()) && Objects.equals(trend_h12, trend_h8))
+                        || (Utils.isNotBlank(dto_h4.getNote()) && Objects.equals(trend_h12, trend_h4))) {
                     GLOBAL_SAME_TREND_D1_H12.add(EPIC);
                 }
             }
