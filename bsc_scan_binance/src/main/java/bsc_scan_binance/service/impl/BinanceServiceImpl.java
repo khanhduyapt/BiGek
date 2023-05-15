@@ -2729,7 +2729,7 @@ public class BinanceServiceImpl implements BinanceService {
                 msg += Utils.appendSpace(EPIC, 10, "_") + Utils.appendSpace(dto.getNote(), 50)
                         + Utils.new_line_from_service;
 
-                outputLog("Analysis_" + Utils.getChartName(dto), EPIC, dto_sl, dto_sl, "[MonitorTrend]" + msg,
+                outputLog("Analysis_" + Utils.getChartName(dto), EPIC, dto_sl, dto_sl, "[MonitorTrend]  " + msg,
                         dto.getTrend());
             }
         }
