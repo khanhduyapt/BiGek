@@ -3458,88 +3458,91 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (Utils.isNotBlank(note)) {
-            List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
-            List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
+            String type_below_above = "";
+            {
+                List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
+                List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
+                List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
+                List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
 
-            List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
-            List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
-
-            if (Objects.equals(trend, Utils.TREND_LONG)) {
-                if (Utils.isAboveMALine(heken_list_h1, 50) && Utils.isAboveMALine(heken_list_h4, 50)) {
-                    note = Utils.appendSpace(note, 28) + Utils.TEXT_WAIT; // "(Wait)"
+                if (Objects.equals(trend, Utils.TREND_LONG)) {
+                    if (Utils.isAboveMALine(heken_list_h1, 50) && Utils.isAboveMALine(heken_list_h4, 50)) {
+                        type_below_above = Utils.TEXT_WAIT; // "(Wait)"
+                    }
+                    if (Utils.isBelowMALine(heken_list_h1, 50) && Utils.isBelowMALine(heken_list_h4, 50)) {
+                        type_below_above = Utils.TEXT_SWITCH_TREND_LONG_BELOW_Ma;
+                    }
                 }
-                if (Utils.isBelowMALine(heken_list_h1, 50) && Utils.isBelowMALine(heken_list_h4, 50)) {
-                    note = Utils.appendSpace(note, 28) + Utils.TEXT_SWITCH_TREND_LONG_BELOW_Ma;
+                if (Objects.equals(trend, Utils.TREND_SHOT)) {
+                    if (Utils.isBelowMALine(heken_list_h1, 50) && Utils.isBelowMALine(heken_list_h4, 50)) {
+                        type_below_above = Utils.TEXT_WAIT; // "(Wait)"
+                    }
+                    if (Utils.isAboveMALine(heken_list_h1, 50) && Utils.isAboveMALine(heken_list_h4, 50)) {
+                        type_below_above = Utils.TEXT_SWITCH_TREND_SHOT_ABOVE_Ma;
+                    }
                 }
             }
-            if (Objects.equals(trend, Utils.TREND_SHOT)) {
-                if (Utils.isBelowMALine(heken_list_h1, 50) && Utils.isBelowMALine(heken_list_h4, 50)) {
-                    note = Utils.appendSpace(note, 28) + Utils.TEXT_WAIT; // "(Wait)"
-                }
-                if (Utils.isAboveMALine(heken_list_h1, 50) && Utils.isAboveMALine(heken_list_h4, 50)) {
-                    note = Utils.appendSpace(note, 28) + Utils.TEXT_SWITCH_TREND_SHOT_ABOVE_Ma;
-                }
-            }
-
             // ----------------------------------------------------------------------
-            String type = "";
-            List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
-            List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
-            List<BtcFutures> list_w1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_W1);
-            if (!CollectionUtils.isEmpty(list_h12) && !CollectionUtils.isEmpty(list_d1)
-                    && !CollectionUtils.isEmpty(list_w1)) {
+            String type_min_max_area = "";
+            {
+                List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
+                List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
+                List<BtcFutures> list_w1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_W1);
+                if (!CollectionUtils.isEmpty(list_h12) && !CollectionUtils.isEmpty(list_d1)
+                        && !CollectionUtils.isEmpty(list_w1)) {
 
-                List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
-                List<BigDecimal> body = Utils.getOpenCloseCandle(heken_list_h12);
-                BigDecimal str = body.get(0);
-                BigDecimal end = body.get(1);
+                    List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
+                    List<BigDecimal> body = Utils.getOpenCloseCandle(heken_list_h12);
+                    BigDecimal str = body.get(0);
+                    BigDecimal end = body.get(1);
 
-                BigDecimal price = heken_list_h12.get(0).getPrice_close_candle();
-                if (Objects.equals(Utils.TREND_LONG, trend) && (price.compareTo(str) <= 0)) {
-                    type += Utils.TEXT_MIN_DAY_AREA + "H";
-                }
-                if (Objects.equals(Utils.TREND_SHOT, trend) && (price.compareTo(end) >= 0)) {
-                    type += Utils.TEXT_MAX_DAY_AREA + "H";
-                }
-                // ----------------------------------------------------------------------
-
-                List<BtcFutures> heken_list_10d = Utils.getHekenList(list_d1);
-                body = Utils.getOpenCloseCandle(heken_list_10d);
-                str = body.get(0);
-                end = body.get(1);
-
-                price = heken_list_10d.get(0).getPrice_close_candle();
-                if (Objects.equals(Utils.TREND_LONG, trend) && (price.compareTo(str) <= 0)) {
-                    type += Utils.TEXT_MIN_DAY_AREA + "D";
-                }
-                if (Objects.equals(Utils.TREND_SHOT, trend) && (price.compareTo(end) >= 0)) {
-                    type += Utils.TEXT_MAX_DAY_AREA + "D";
-                }
-                // ----------------------------------------------------------------------
-
-                List<BtcFutures> heken_list_10w = Utils.getHekenList(list_w1);
-                body = Utils.getOpenCloseCandle(heken_list_10w);
-                str = body.get(0);
-                end = body.get(1);
-
-                price = heken_list_10w.get(0).getPrice_close_candle();
-                if (Objects.equals(Utils.TREND_LONG, trend) && (price.compareTo(str) <= 0)) {
-                    type += Utils.TEXT_MIN_DAY_AREA + "W";
-                }
-                if (Objects.equals(Utils.TREND_SHOT, trend) && (price.compareTo(end) >= 0)) {
-                    type += Utils.TEXT_MAX_DAY_AREA + "W";
-                }
-                // ----------------------------------------------------------------------
-                if (Utils.isNotBlank(type)) {
-                    if (type.contains(Utils.TEXT_MIN_DAY_AREA)) {
-                        type = Utils.TEXT_MIN_DAY_AREA + "(" + type.replace(Utils.TEXT_MIN_DAY_AREA, "") + ")";
+                    BigDecimal price = heken_list_h12.get(0).getPrice_close_candle();
+                    if (Objects.equals(Utils.TREND_LONG, trend) && (price.compareTo(str) <= 0)) {
+                        type_min_max_area += Utils.TEXT_MIN_DAY_AREA + "H";
                     }
-                    if (type.contains(Utils.TEXT_MAX_DAY_AREA)) {
-                        type = Utils.TEXT_MAX_DAY_AREA + "(" + type.replace(Utils.TEXT_MAX_DAY_AREA, "") + ")";
+                    if (Objects.equals(Utils.TREND_SHOT, trend) && (price.compareTo(end) >= 0)) {
+                        type_min_max_area += Utils.TEXT_MAX_DAY_AREA + "H";
                     }
-                    note = note + " " + type;
+                    // ----------------------------------------------------------------------
+                    List<BtcFutures> heken_list_10d = Utils.getHekenList(list_d1);
+                    body = Utils.getOpenCloseCandle(heken_list_10d);
+                    str = body.get(0);
+                    end = body.get(1);
+
+                    price = heken_list_10d.get(0).getPrice_close_candle();
+                    if (Objects.equals(Utils.TREND_LONG, trend) && (price.compareTo(str) <= 0)) {
+                        type_min_max_area += Utils.TEXT_MIN_DAY_AREA + "D";
+                    }
+                    if (Objects.equals(Utils.TREND_SHOT, trend) && (price.compareTo(end) >= 0)) {
+                        type_min_max_area += Utils.TEXT_MAX_DAY_AREA + "D";
+                    }
+                    // ----------------------------------------------------------------------
+                    List<BtcFutures> heken_list_10w = Utils.getHekenList(list_w1);
+                    body = Utils.getOpenCloseCandle(heken_list_10w);
+                    str = body.get(0);
+                    end = body.get(1);
+
+                    price = heken_list_10w.get(0).getPrice_close_candle();
+                    if (Objects.equals(Utils.TREND_LONG, trend) && (price.compareTo(str) <= 0)) {
+                        type_min_max_area += Utils.TEXT_MIN_DAY_AREA + "W";
+                    }
+                    if (Objects.equals(Utils.TREND_SHOT, trend) && (price.compareTo(end) >= 0)) {
+                        type_min_max_area += Utils.TEXT_MAX_DAY_AREA + "W";
+                    }
+                    // ----------------------------------------------------------------------
+                    if (type_min_max_area.contains(Utils.TEXT_MIN_DAY_AREA)) {
+                        type_min_max_area = Utils.TEXT_MIN_DAY_AREA + "("
+                                + type_min_max_area.replace(Utils.TEXT_MIN_DAY_AREA, "") + ")";
+                    }
+                    if (type_min_max_area.contains(Utils.TEXT_MAX_DAY_AREA)) {
+                        type_min_max_area = Utils.TEXT_MAX_DAY_AREA + "("
+                                + type_min_max_area.replace(Utils.TEXT_MAX_DAY_AREA, "") + ")";
+                    }
                 }
             }
+            // ----------------------------------------------------------------------
+            note = Utils.appendSpace(note, 20) + " " + Utils.appendSpace(type_min_max_area, 10) + " "
+                    + Utils.appendSpace(type_below_above, 10);
         }
 
         // TODO: 1. initForexTrend
