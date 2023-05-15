@@ -250,7 +250,7 @@ public class BscScanBinanceApplication {
         list.add(Utils.EPICS_FOREXS);
 
         for (List<String> items : list) {
-            String result = binance_service.scapForex("_DX.f_XAUUSD_BTCUSD_", Utils.CAPITAL_TIME_H12, items);
+            String result = binance_service.scapForex("_DX.f_XAUUSD_XAGUSD_BTCUSD_", Utils.CAPITAL_TIME_H12, items);
             if (Utils.isNotBlank(result)) {
                 Utils.logWritelnDraft("");
             }

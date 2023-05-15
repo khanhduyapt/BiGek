@@ -157,7 +157,7 @@ public class Utils {
 
     public static final String EPICS_INDEXS = "_US30_SP500_GER30_GER40_UK100_FRA40_SPN35_EU50_US100_AUS200_";
 
-    public static final List<String> EPICS_METALS = Arrays.asList("DX.f", "XAUUSD", "BTCUSD", "XAGUSD");
+    public static final List<String> EPICS_METALS = Arrays.asList("DX.f", "XAUUSD", "XAGUSD", "BTCUSD");
 
     public static final List<String> EPICS_CRYPTO_CFD = Arrays.asList("BTCUSD", "ETHUSD", "ADAUSD", "DOGEUSD", "DOTUSD",
             "XRPUSD");
