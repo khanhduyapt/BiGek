@@ -2721,13 +2721,13 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnDraft("[waiting] (" + EPIC + ") dto is null: " + CAPITAL_TIME_XX);
                 continue;
             }
-
             if (Objects.isNull(dto_sl)) {
                 dto_sl = dto;
             }
 
             if (Objects.equals(ACTION, dto.getTrend()) && Utils.isNotBlank(dto.getNote())) {
-                msg += Utils.appendSpace(EPIC, 10) + ":" + Utils.appendSpace(dto.getNote(), 50);
+                msg += Utils.appendSpace(EPIC, 10, "_") + Utils.appendSpace(dto.getNote(), 50)
+                        + Utils.new_line_from_service;
 
                 outputLog("Analysis_" + Utils.getChartName(dto), EPIC, dto_sl, dto_sl, "[MonitorTrend]" + msg,
                         dto.getTrend());
@@ -3832,7 +3832,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (Utils.isNotBlank(msg)) {
             String EVENT_ID = "monitorTrend" + Utils.getCurrentYyyyMmDd_HH();
-            sendMsgPerHour(EVENT_ID, "[MonitorTrend]" + msg, true);
+            sendMsgPerHour(EVENT_ID, "[MonitorTrend]" + Utils.new_line_from_service + msg, true);
         }
 
         alertMsg(Utils.CAPITAL_TIME_H1, H1_BUYING, H1_SELING);
