@@ -125,7 +125,9 @@ public class BscScanBinanceApplication {
                         if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
                             if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
                                 binance_service.saveMt5Data("Forex.csv", Utils.MINUTES_OF_15M);
+                                wait(SLEEP_MINISECONDS);
                                 binance_service.saveMt5Data("Stocks.csv", Utils.MINUTES_OF_1H);
+                                wait(SLEEP_MINISECONDS);
 
                                 if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MONITOR_PROFIT_INIT")) {
                                     Utils.logWritelnDraft("");
