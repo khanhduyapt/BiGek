@@ -2784,15 +2784,17 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String msg = "";
-        if ((Objects.equals(TREND, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50))
-                || (Objects.equals(TREND, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50))) {
+        if (Objects.equals(TREND, dto.getTrend())) {
+            if ((Objects.equals(TREND, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50))
+                    || (Objects.equals(TREND, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50))) {
 
-            msg = Utils.appendSpace(EPIC + " ", 11, "_") + Utils.appendSpace(dto.getNote(), 50)
-                    + Utils.new_line_from_service;
+                msg = Utils.appendSpace(EPIC + " ", 11, "_") + Utils.appendSpace(dto.getNote(), 50)
+                        + Utils.new_line_from_service;
 
-            String prefix = getPrefix(1, EPIC);
+                String prefix = getPrefix(1, EPIC);
 
-            outputLog("Analysis_" + EPIC, EPIC, dto_sl, dto_sl, "[MonitorTrend]  " + prefix + msg, dto.getTrend());
+                outputLog("Analysis_" + EPIC, EPIC, dto_sl, dto_sl, "[MonitorTrend]  " + prefix + msg, dto.getTrend());
+            }
         }
 
         return msg;
@@ -3751,6 +3753,9 @@ public class BinanceServiceImpl implements BinanceService {
         String result = "";
         for (String EPIC : CAPITAL_LIST) {
             String prefix = getPrefix(index, EPIC) + Utils.TEXT_EXPERT_ADVISOR_SPACE;
+            if (!prefix.contains("H2=30")) {
+                // continue;
+            }
 
             Orders dto_30 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
             String note = "";
@@ -3970,9 +3975,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
             if (Utils.isBlank(result)) {
                 result = waiting(trend_dt, EPIC, Utils.CAPITAL_TIME_H2);
-            }
-            if (Utils.isBlank(result)) {
-                result = waiting(trend_dt, EPIC, Utils.CAPITAL_TIME_H4);
             }
 
             if (Objects.nonNull(dto_30)) {
