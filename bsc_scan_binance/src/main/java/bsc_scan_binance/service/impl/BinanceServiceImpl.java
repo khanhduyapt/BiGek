@@ -2703,7 +2703,7 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.calc_BUF_LO_HI_BUF_Forex(false, find_trend, EPIC, dto_entry, dto_sl);
 
         if (GLOBAL_SAME_TREND_D1_H12.contains(EPIC)) {
-            log = log.replace(Utils.TEXT_WAIT, Utils.TEXT_EXPERT_ADVISOR);
+            log = log.replace(Utils.TEXT_WAIT, Utils.TEXT_EXPERT_ADVISOR_SPACE);
         }
 
         Utils.logWritelnDraft(log);
@@ -2783,8 +2783,8 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private String analysis(String prifix, String EPIC, String CAPITAL_TIME_XX) {
-        Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
         Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+        Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
 
         if (Objects.isNull(dto)) {
             return "";
@@ -3074,10 +3074,10 @@ public class BinanceServiceImpl implements BinanceService {
                 Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
                 Orders dto_h8 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
                 Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-                Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H2).orElse(null);
+                Orders dto_h2 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H2).orElse(null);
 
                 if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h12)
-                        || Objects.isNull(dto_h8) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
+                        || Objects.isNull(dto_h8) || Objects.isNull(dto_h4) || Objects.isNull(dto_h2)) {
                     continue;
                 }
 
@@ -3086,7 +3086,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_h12 = dto_h12.getTrend();
                 String trend_h8 = dto_h8.getTrend();
                 String trend_h4 = dto_h4.getTrend();
-                String trend_h1 = dto_h1.getTrend();
+                String trend_h1 = dto_h2.getTrend();
 
                 String note = "";
                 String findTrend = "";
@@ -3101,15 +3101,15 @@ public class BinanceServiceImpl implements BinanceService {
                     findTrend = trend_h12;
 
                 } else if (Objects.equals(trend_h4, trend_h1)
-                        && dto_h1.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)) {
+                        && dto_h2.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)) {
 
-                    note = dto_h1.getNote();
+                    note = dto_h2.getNote();
                     findTrend = trend_h4;
 
-                } else if (Objects.equals(trend_h4, trend_h1) && (dto_h1.getNote().contains(Utils.TEXT_MIN_DAY_AREA)
-                        || dto_h1.getNote().contains(Utils.TEXT_MAX_DAY_AREA))) {
+                } else if (Objects.equals(trend_h4, trend_h1) && (dto_h2.getNote().contains(Utils.TEXT_MIN_DAY_AREA)
+                        || dto_h2.getNote().contains(Utils.TEXT_MAX_DAY_AREA))) {
 
-                    note = dto_h1.getNote();
+                    note = dto_h2.getNote();
                     findTrend = trend_h4;
 
                 } else if (Objects.equals(trend_h12, trend_h4)
@@ -3130,14 +3130,15 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 String prefix = Utils.getPrefix(index, trend_w1, trend_d1, trend_h12, trend_h8, trend_h4, trend_h1,
-                        findTrend, dto_d1.getNote(), dto_h12.getNote(), dto_h8.getNote(), dto_h4.getNote());
+                        findTrend, dto_d1.getNote(), dto_h12.getNote(), dto_h8.getNote(), dto_h4.getNote(),
+                        dto_h2.getNote());
 
                 String log = Utils.createLineForex_Header(dto_d1, dto_d1, prefix + Utils.appendSpace(note, 36));
 
                 log += Utils.appendSpace(Utils.removeLastZero(dto_d1.getCurrent_price()), 15);
                 log += Utils.createLineForex_Body(dto_d1, dto_d1, findTrend, true).trim();
                 if (GLOBAL_SAME_TREND_D1_H12.contains(EPIC)) {
-                    log = log.replace(Utils.TEXT_WAIT, Utils.TEXT_EXPERT_ADVISOR);
+                    log = log.replace(Utils.TEXT_WAIT, Utils.TEXT_EXPERT_ADVISOR_EA);
                 }
 
                 list_d1_log.add(log);
@@ -3543,8 +3544,8 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // TODO: 1. initForexTrend
-        int size = 10;
-        if (list.size() < 10)
+        int size = 8;
+        if (list.size() < 8)
             size = list.size();
 
         List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(0, size));
@@ -3603,8 +3604,7 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            String CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
-
+            String CAPITAL_TIME_XX = Utils.CAPITAL_TIME_D1;
             if (Utils.isNotBlank(dto_h12.getNote())) {
                 CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
             } else if (Utils.isNotBlank(dto_h8.getNote())) {
@@ -3614,6 +3614,7 @@ public class BinanceServiceImpl implements BinanceService {
             } else if (Utils.isNotBlank(dto_h2.getNote())) {
                 CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H2;
             }
+
             Orders dto_dt = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
 
             String trend_w1 = dto_w1.getTrend();
@@ -3700,7 +3701,8 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     String prefix = Utils.getPrefix(index, trend_w1, trend_d1, trend_h12, trend_h8, trend_h4, trend_h2,
-                            trend_dt, dto_d1.getNote(), dto_h12.getNote(), dto_h8.getNote(), dto_h4.getNote());
+                            trend_dt, dto_d1.getNote(), dto_h12.getNote(), dto_h8.getNote(), dto_h4.getNote(),
+                            dto_h2.getNote());
 
                     msg += analysis(prefix, EPIC, CAPITAL_TIME_XX);
                     index += 1;

@@ -256,11 +256,12 @@ public class BscScanBinanceApplication {
         binance_service.scapForex(Utils.EPICS_FOREXS_EUR.toString(), Utils.EPICS_FOREXS_EUR);
 
         binance_service.scapForex("", Utils.EPICS_FOREXS_ALL);
+        Utils.logWritelnDraft("");
         binance_service.scapForex("", Utils.EPICS_CASH_CFD);
         Utils.logWritelnDraft("");
 
         binance_service.scapForex("", Utils.EPICS_CRYPTO_CFD);
-        Utils.logWritelnDraft("");
+        Utils.logWritelnDraftFooter();
     }
 
     public static void alertMsgKillZone(BinanceService binance_service) {

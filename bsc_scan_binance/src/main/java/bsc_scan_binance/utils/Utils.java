@@ -96,7 +96,8 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_SHOT_ABOVE_Ma = "(S.H4H2)";
     public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma.1.3)";
     public static final String TEXT_WAIT = "( Wait )";
-    public static final String TEXT_EXPERT_ADVISOR = "(  EA  )";
+    public static final String TEXT_EXPERT_ADVISOR_EA = "(  EA  )";
+    public static final String TEXT_EXPERT_ADVISOR_SPACE = "        ";
 
     public static final String TEXT_SWITCH_TREND_Ma_1_10 = "(Ma1_10)";
     public static final String TEXT_SWITCH_TREND_Ma_1_20 = "(Ma1_20)";
@@ -711,9 +712,9 @@ public class Utils {
     public static String getPrefix(int index, String trend_w1, String trend_d1, String trend_h12, String trend_h8,
             String trend_h4, String trend_h1, String trend_dt,
 
-            String note_d1, String note_h12, String note_h8, String note_h4) {
+            String note_d1, String note_h12, String note_h8, String note_h4, String note_h2) {
 
-        String prefix = Utils.appendLeft(String.valueOf(index), 2) + ".[W1=D1=H12   H8=H4=H1]  ";
+        String prefix = Utils.appendLeft(String.valueOf(index), 2) + ".[W1=D1=H12   H8=H4=H2]  ";
         if (!Objects.equals(trend_w1, trend_dt)) {
             prefix = prefix.replace("W1=", "   ");
         }
@@ -730,10 +731,10 @@ public class Utils {
             prefix = prefix.replace("=H4=", "    ").replace("H4=", "   ");
         }
         if (!Objects.equals(trend_h1, trend_dt)) {
-            prefix = prefix.replace("=H1)", "   )").replace("H1)", "  )");
+            prefix = prefix.replace("=H2", "   ").replace("H2", "  ");
         }
 
-        String switch_trend = "(D1~H12~H8~H4)     ";
+        String switch_trend = "(D1~H12~H8~H4~H2)  ";
         if (Utils.isBlank(note_d1)) {
             switch_trend = switch_trend.replace("D1~", "   ");
         }
@@ -744,10 +745,21 @@ public class Utils {
             switch_trend = switch_trend.replace("~H8~", "    ").replace("H8~", "   ").replace("~H8", "   ");
         }
         if (Utils.isBlank(note_h4)) {
-            switch_trend = switch_trend.replace("~H4", "   ").replace("H4", "  ");
+            switch_trend = switch_trend.replace("~H4~", "    ").replace("H4~", "   ").replace("~H4", "   ");
+        }
+        if (Utils.isBlank(note_h2)) {
+            switch_trend = switch_trend.replace("~H2", "   ").replace("H2", "  ");
+        }
+        switch_trend = switch_trend.replace("(               )", "                 ");
+
+        String result = prefix + switch_trend;
+        if (prefix.contains("H12")) {
+            result += " ●　";
+        } else {
+            result += "   ";
         }
 
-        return prefix + switch_trend;
+        return result;
     }
 
     public static String createMsg(CandidateTokenCssResponse css) {
