@@ -151,46 +151,7 @@ public class BscScanBinanceApplication {
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H2);
                                 }
 
-                                // Start Forex
-                                {
-                                    boolean allow_send_msg = true;
-                                    String pre_epics = EPICS_OUTPUT_MSG;
-                                    if (Objects.equals(EPICS_OUTPUT_MSG, "INIT")) {
-                                        allow_send_msg = false;
-                                    }
-                                    // --------------------------------------------------------------------------
-                                    File myScap = new File(Utils.getDraftLogFile());
-                                    myScap.delete();
-                                    EPICS_OUTPUTED = "";
-                                    EPICS_OUTPUT_MSG = "";
-
-                                    monitorForex(binance_service);
-
-                                    // --------------------------------------------------------------------------
-                                    String cur_epics = EPICS_OUTPUT_MSG;
-                                    String[] arr = cur_epics.split("_");
-                                    String add_new = "";
-                                    int count = 0;
-                                    for (String epic : arr) {
-                                        if (!pre_epics.contains(epic)) {
-                                            count += 1;
-                                            if (Utils.isNotBlank(add_new)) {
-                                                add_new += ",";
-                                            }
-                                            add_new += epic + "   ";
-                                        }
-                                    }
-                                    if (allow_send_msg && Utils.isNotBlank(add_new)) {
-                                        String msg = "(Added: " + count + "):   " + add_new;
-                                        Utils.logWritelnDraft("");
-                                        Utils.logWritelnDraft(msg);
-
-                                        String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
-                                        binance_service.sendMsgPerHour(EVENT_ID, msg, true);
-                                    }
-                                }
-                                // END Forex
-
+                                monitorForex(binance_service);
                             }
                         }
 
@@ -234,7 +195,6 @@ public class BscScanBinanceApplication {
                         index_crypto = 0;
 
                         System.out.println(msg);
-                        // Utils.logWritelnDraft(msg);
                     } else {
                         index_crypto += 1;
                     }
@@ -251,6 +211,19 @@ public class BscScanBinanceApplication {
     }
 
     public static void monitorForex(BinanceService binance_service) {
+        boolean allow_send_msg = true;
+        String pre_epics = EPICS_OUTPUT_MSG;
+        if (Objects.equals(EPICS_OUTPUT_MSG, "INIT")) {
+            allow_send_msg = false;
+        }
+        // --------------------------------------------------------------------------
+        File myScap = new File(Utils.getDraftLogFile());
+        myScap.delete();
+        EPICS_OUTPUTED = "";
+        EPICS_OUTPUT_MSG = "";
+
+        // --------------------------------------------------------------------------
+
         binance_service.scapForex(Utils.EPICS_METALS);
         Utils.logWritelnDraft("");
         binance_service.scapForex(Utils.EPICS_FOREXS_JPY);
@@ -269,6 +242,29 @@ public class BscScanBinanceApplication {
         Utils.logWritelnDraftFooter();
         binance_service.scapStocks();
         Utils.logWritelnDraftFooter();
+
+        // --------------------------------------------------------------------------
+        String cur_epics = EPICS_OUTPUT_MSG;
+        String[] arr = cur_epics.split("_");
+        String add_new = "";
+        int count = 0;
+        for (String epic : arr) {
+            if (!pre_epics.contains(epic)) {
+                count += 1;
+                if (Utils.isNotBlank(add_new)) {
+                    add_new += ",";
+                }
+                add_new += epic + "   ";
+            }
+        }
+        if (allow_send_msg && Utils.isNotBlank(add_new)) {
+            String msg = "(Added: " + count + "):   " + add_new;
+            Utils.logWritelnDraft("");
+            Utils.logWritelnDraft(msg);
+
+            String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
+            binance_service.sendMsgPerHour(EVENT_ID, msg, true);
+        }
     }
 
     public static void alertMsgKillZone(BinanceService binance_service) {
