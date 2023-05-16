@@ -164,9 +164,8 @@ public class BscScanBinanceApplication {
                                     EPICS_OUTPUTED = "";
                                     EPICS_OUTPUT_MSG = "";
 
-                                    binance_service.scapStocks();
-                                    Utils.logWritelnDraftFooter();
                                     monitorForex(binance_service);
+
                                     // --------------------------------------------------------------------------
                                     String cur_epics = EPICS_OUTPUT_MSG;
                                     String[] arr = cur_epics.split("_");
@@ -267,6 +266,8 @@ public class BscScanBinanceApplication {
         binance_service.scapForex(Utils.EPICS_CASH_CFD);
         Utils.logWritelnDraft("");
         binance_service.scapForex(Utils.EPICS_CRYPTO_CFD);
+        Utils.logWritelnDraftFooter();
+        binance_service.scapStocks();
         Utils.logWritelnDraftFooter();
     }
 

@@ -163,8 +163,8 @@ public class Utils {
     public static final List<String> EPICS_CRYPTO_CFD = Arrays.asList("BTCUSD", "ETHUSD", "ADAUSD", "DOGEUSD", "DOTUSD",
             "XRPUSD");
 
-    public static final List<String> EPICS_CASH_CFD = Arrays.asList("US30", "US100", "EU50", "GER40", "FRA40", "SPN35",
-            "UK100", "USOIL", "AUS200");
+    public static final List<String> EPICS_CASH_CFD = Arrays.asList("AUS200", "EU50", "FRA40", "GER40", "SPN35",
+            "UK100", "US100", "US30", "USOIL");
 
     public static final List<String> EPICS_FOREXS_JPY = Arrays.asList("AUDJPY", "CADJPY", "CHFJPY", "EURJPY",
             "GBPJPY", "NZDJPY", "USDJPY");
@@ -183,8 +183,8 @@ public class Utils {
             "USDJPY");
 
     // "16:30 - 23:00"
-    public static final List<String> EPICS_STOCKS = Arrays.asList("AMZN", "BAC", "GOOG", "MSFT", "NFLX", "AAPL", "NVDA",
-            "META", "PFE", "RACE", "TSLA", "WMT", "BAYGn", "AIRF", "DBKGn", "VOWG_p", "LVMH");
+    public static final List<String> EPICS_STOCKS = Arrays.asList("AAPL", "AIRF", "AMZN", "BAC", "BAYGn", "DBKGn",
+            "GOOG", "LVMH", "META", "MSFT", "NFLX", "NVDA", "PFE", "RACE", "TSLA", "VOWG_p", "WMT");
 
     // ALL Binance.com
     public static final List<String> COINS = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ARB", "ADA", "ADX", "AERGO",

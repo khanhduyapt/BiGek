@@ -3303,16 +3303,14 @@ public class BinanceServiceImpl implements BinanceService {
         if (required_update_bars_csv) {
             return;
         }
-        if (!EPICS_WAIT_BUY_D1.isEmpty()) {
+        if (EPICS_WAIT_BUY_D1.size() > 1) {
             Utils.logWritelnDraft("(EPICS_WAIT_BUY_D1)   " + EPICS_WAIT_BUY_D1.toString());
         }
-        if (!EPICS_WAIT_SEL_D1.isEmpty()) {
+        if (EPICS_WAIT_SEL_D1.size() > 1) {
             Utils.logWritelnDraft("(EPICS_WAIT_SEL_D1)   " + EPICS_WAIT_SEL_D1.toString());
         }
-        Utils.logWritelnDraft("");
 
         int index = 1;
-
         // TODO: scapStocks
         String switch_trend = ".[M1.W1.D1.H1         ]" + "                     ";
         for (String EPIC : Utils.EPICS_STOCKS) {
