@@ -3609,7 +3609,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (CAPITAL_TIME_XX.contains("MINUTE")) {
                     if (Objects.equals(trend_h4, trend_h2) && !Objects.equals(trend_h2, trend)) {
-                        note = "";
+                        // note = "";
                     }
                 }
             }
@@ -3754,7 +3754,7 @@ public class BinanceServiceImpl implements BinanceService {
         int index = 1;
         String result = "";
         for (String EPIC : CAPITAL_LIST) {
-            String prefix = getPrefix(index, EPIC);
+            String prefix = getPrefix(index, EPIC) + Utils.TEXT_EXPERT_ADVISOR_SPACE;
 
             Orders dto_30 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
             String note = "";
@@ -3762,9 +3762,7 @@ public class BinanceServiceImpl implements BinanceService {
                 note = dto_30.getNote();
             }
 
-            if (prefix.contains("H2=30]") && prefix.contains("30}")
-                    && (note.contains(Utils.TEXT_MIN_AREA) || note.contains(Utils.TEXT_MAX_AREA))) {
-
+            if (note.contains(Utils.TEXT_MIN_AREA) || note.contains(Utils.TEXT_MAX_AREA)) {
                 analysis(prefix, EPIC, Utils.CAPITAL_TIME_30);
 
                 if (Utils.isNotBlank(result)) {
