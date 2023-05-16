@@ -234,6 +234,8 @@ public class BscScanBinanceApplication {
         Utils.logWritelnDraft("");
         binance_service.scapForex(Utils.EPICS_FOREXS_EUR);
         Utils.logWritelnDraft("");
+        binance_service.scapForex(Utils.EPICS_FOREXS_AUD);
+        Utils.logWritelnDraft("");
         binance_service.scapForex(Utils.EPICS_FOREXS_ALL);
         Utils.logWritelnDraft("");
         binance_service.scapForex(Utils.EPICS_CASH_CFD);

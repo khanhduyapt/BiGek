@@ -3576,27 +3576,30 @@ public class BinanceServiceImpl implements BinanceService {
                 List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
                 List<BtcFutures> heken_list_h2 = Utils.getHekenList(list_h2);
                 List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
+                String trend_h2 = Utils.getTrendByHekenAshiList(heken_list_h2);
+                String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
 
                 if (Objects.equals(trend, Utils.TREND_LONG)) {
                     if (Utils.isAboveMALine(heken_list_h2, 50) && Utils.isAboveMALine(heken_list_h4, 50)) {
                         type_below_above = Utils.TEXT_WAIT; // "(Wait)"
                     }
-                    if (Utils.isBelowMALine(heken_list_h2, 50) && Utils.isBelowMALine(heken_list_h4, 50)) {
+                    if (Utils.isBelowMALine(heken_list_h2, 50) && Utils.isBelowMALine(heken_list_h4, 50)
+                            && (trend_h2 + trend_h4).contains(trend)) {
                         type_below_above = Utils.TEXT_SWITCH_TREND_LONG_BELOW_Ma;
                     }
                 }
+
                 if (Objects.equals(trend, Utils.TREND_SHOT)) {
                     if (Utils.isBelowMALine(heken_list_h2, 50) && Utils.isBelowMALine(heken_list_h4, 50)) {
                         type_below_above = Utils.TEXT_WAIT; // "(Wait)"
                     }
-                    if (Utils.isAboveMALine(heken_list_h2, 50) && Utils.isAboveMALine(heken_list_h4, 50)) {
+                    if (Utils.isAboveMALine(heken_list_h2, 50) && Utils.isAboveMALine(heken_list_h4, 50)
+                            && (trend_h2 + trend_h4).contains(trend)) {
                         type_below_above = Utils.TEXT_SWITCH_TREND_SHOT_ABOVE_Ma;
                     }
                 }
 
                 if (CAPITAL_TIME_XX.contains("MINUTE")) {
-                    String trend_h2 = Utils.getTrendByHekenAshiList(heken_list_h2);
-                    String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
                     if (Objects.equals(trend_h4, trend_h2) && !Objects.equals(trend_h2, trend)) {
                         note = "";
                     }
