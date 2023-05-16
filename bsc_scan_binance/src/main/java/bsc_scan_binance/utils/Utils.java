@@ -766,8 +766,14 @@ public class Utils {
         switch_trend = switch_trend.replace("(                  )", "                    ");
 
         String result = prefix + switch_trend;
-        if (prefix.contains("H12") && Utils.isNotBlank(switch_trend.trim())) {
-            result += " ●　";
+        if (Utils.isNotBlank(switch_trend.trim())) {
+            if (Utils.isNotBlank(note_30)) {
+                result += " ○　";
+            } else if (prefix.contains("H12")) {
+                result += " ●　";
+            } else {
+                result += "   ";
+            }
         } else {
             result += "   ";
         }

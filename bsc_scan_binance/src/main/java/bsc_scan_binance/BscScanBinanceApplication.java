@@ -36,6 +36,7 @@ public class BscScanBinanceApplication {
     public static WandaBot wandaBot;
     public static TelegramBotsApi telegramBotsApi;
     public static String EPICS_OUTPUTED = "INIT";
+    public static String EPICS_OUTPUT_MSG = "INIT";
 
     public static void main(String[] args) {
         try {
@@ -153,19 +154,21 @@ public class BscScanBinanceApplication {
                                 // Start Forex
                                 {
                                     boolean allow_send_msg = true;
-                                    if (Objects.equals(EPICS_OUTPUTED, "INIT")) {
+                                    String pre_epics = EPICS_OUTPUT_MSG;
+                                    if (Objects.equals(EPICS_OUTPUT_MSG, "INIT")) {
                                         allow_send_msg = false;
                                     }
+                                    // --------------------------------------------------------------------------
                                     File myScap = new File(Utils.getDraftLogFile());
                                     myScap.delete();
-                                    String pre_epics = EPICS_OUTPUTED;
                                     EPICS_OUTPUTED = "";
-                                    // --------------------------------------------------------------------------
+                                    EPICS_OUTPUT_MSG = "";
+
                                     binance_service.scapStocks();
                                     Utils.logWritelnDraftFooter();
                                     monitorForex(binance_service);
                                     // --------------------------------------------------------------------------
-                                    String cur_epics = EPICS_OUTPUTED;
+                                    String cur_epics = EPICS_OUTPUT_MSG;
                                     String[] arr = cur_epics.split("_");
                                     String add_new = "";
                                     int count = 0;

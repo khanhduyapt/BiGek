@@ -3708,6 +3708,13 @@ public class BinanceServiceImpl implements BinanceService {
 
                 BscScanBinanceApplication.EPICS_OUTPUTED += "_" + EPIC + "_";
             }
+
+            if (!BscScanBinanceApplication.EPICS_OUTPUT_MSG.contains(EPIC)) {
+                if (dto_dt.getNote().contains(Utils.TEXT_MIN_DAY_AREA)
+                        || dto_dt.getNote().contains(Utils.TEXT_MAX_DAY_AREA)) {
+                    BscScanBinanceApplication.EPICS_OUTPUT_MSG += "_" + EPIC + "_";
+                }
+            }
         }
 
         return msg;
@@ -3798,23 +3805,22 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_dt = dto_dt.getTrend();
             String switch_trend_h1 = Utils.switchTrendByHeken_12_or_Ma35(heken_list_h1);
             String switch_trend_h1_ma50 = Utils.switchTrendByMa13_XX(heken_list_h1, 50);
+            String result = "";
 
             if ((switch_trend_h1 + switch_trend_h1_ma50).contains(trend_dt)) {
                 if (Objects.equals(trend_dt, Utils.TREND_LONG)) {
                     if (switch_trend_h1.contains(trend_dt) && Utils.isBelowMALine(heken_list_h1, 50)) {
-                        msg += waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H2, Arrays.asList(EPIC));
-                    }
-                    if (switch_trend_h1_ma50.contains(trend_dt)) {
-                        msg += waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H2, Arrays.asList(EPIC));
+                        result = waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H2, Arrays.asList(EPIC));
+                    } else if (switch_trend_h1_ma50.contains(trend_dt)) {
+                        result = waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H2, Arrays.asList(EPIC));
                     }
                 }
 
                 if (Objects.equals(trend_dt, Utils.TREND_SHOT)) {
                     if (switch_trend_h1.contains(trend_dt) && Utils.isAboveMALine(heken_list_h1, 50)) {
-                        msg += waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H2, Arrays.asList(EPIC));
-                    }
-                    if (switch_trend_h1_ma50.contains(trend_dt)) {
-                        msg += waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H2, Arrays.asList(EPIC));
+                        result = waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H2, Arrays.asList(EPIC));
+                    } else if (switch_trend_h1_ma50.contains(trend_dt)) {
+                        result = waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H2, Arrays.asList(EPIC));
                     }
                 }
             }
@@ -3834,17 +3840,26 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.equals(trend_dt, Utils.TREND_LONG)) {
                         if (switch_trend_h4.contains(trend_dt) && Utils.isBelowMALine(heken_list_h4, 50)
                                 && Objects.equals(trend_h4, trend_h1)) {
-                            msg += waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList(EPIC));
+                            result = waiting(Utils.TREND_LONG, Utils.CAPITAL_TIME_H4, Arrays.asList(EPIC));
                         }
                     }
 
                     if (Objects.equals(trend_dt, Utils.TREND_SHOT)) {
                         if (switch_trend_h4.contains(trend_dt) && Utils.isAboveMALine(heken_list_h4, 50)
                                 && Objects.equals(trend_h4, trend_h1)) {
-                            msg += waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4, Arrays.asList(EPIC));
+                            result = waiting(Utils.TREND_SHOT, Utils.CAPITAL_TIME_H4, Arrays.asList(EPIC));
                         }
                     }
                 }
+            }
+
+            Orders dto_30 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
+            if (Objects.nonNull(dto_30)) {
+                if (Objects.equals(dto_30.getTrend(), trend_dt)) {
+                    msg += result;
+                }
+            } else {
+                msg += result;
             }
         }
 
