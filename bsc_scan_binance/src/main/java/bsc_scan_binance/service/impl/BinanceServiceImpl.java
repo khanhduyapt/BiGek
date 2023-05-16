@@ -3519,7 +3519,7 @@ public class BinanceServiceImpl implements BinanceService {
                     BigDecimal end = BigDecimal.ZERO;
                     BigDecimal price = BigDecimal.ZERO;
                     List<BigDecimal> body = new ArrayList<BigDecimal>();
-
+                    // ----------------------------------------------------------------------
                     List<BtcFutures> heken_list_h8 = Utils.getHekenList(list_h8);
                     body = Utils.getOpenCloseCandle(heken_list_h8);
                     str = body.get(0);
