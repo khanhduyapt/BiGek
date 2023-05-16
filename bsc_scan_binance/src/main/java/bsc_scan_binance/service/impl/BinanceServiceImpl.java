@@ -176,9 +176,6 @@ public class BinanceServiceImpl implements BinanceService {
     List<DepthResponse> list_bids_ok = new ArrayList<DepthResponse>();
     List<DepthResponse> list_asks_ok = new ArrayList<DepthResponse>();
 
-    List<String> EPICS_WAIT_BUY_D1 = new ArrayList<String>();
-    List<String> EPICS_WAIT_SEL_D1 = new ArrayList<String>();
-
     private int pre_HH = 0;
     private String sp500 = "";
 
@@ -2829,7 +2826,12 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private String analysis(String prifix, String EPIC, String CAPITAL_TIME_XX) {
-        Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+        Orders dto_sl = null;
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_30)) {
+            dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
+        } else {
+            dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+        }
         Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
 
         if (Objects.isNull(dto)) {
@@ -2961,7 +2963,7 @@ public class BinanceServiceImpl implements BinanceService {
                     .toLocalDateTime();
             long elapsedMinutes = Duration.between(created_time, LocalDateTime.now()).toMinutes();
             required_update_bars_csv = false;
-            if (elapsedMinutes > (MINUTES_OF_XX * 2)) {
+            if (elapsedMinutes > (MINUTES_OF_XX * 3)) {
                 required_update_bars_csv = true;
                 Utils.logWritelnDraft(filename + " khong duoc update! " + filename + " khong duoc update! " + filename
                         + " khong duoc update! " + filename + " khong duoc update! \n");
@@ -3355,12 +3357,6 @@ public class BinanceServiceImpl implements BinanceService {
         if (required_update_bars_csv) {
             return;
         }
-        if (EPICS_WAIT_BUY_D1.size() > 1) {
-            Utils.logWritelnDraft("(EPICS_WAIT_BUY_D1)   " + EPICS_WAIT_BUY_D1.toString());
-        }
-        if (EPICS_WAIT_SEL_D1.size() > 1) {
-            Utils.logWritelnDraft("(EPICS_WAIT_SEL_D1)   " + EPICS_WAIT_SEL_D1.toString());
-        }
 
         int index = 1;
         // TODO: scapStocks
@@ -3426,12 +3422,6 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_H2 = dto_h2.getTrend();
 
             if (Objects.equals(trend_M1, trend_W1) && !Objects.equals(trend_W1, trend_D1)) {
-                continue;
-            }
-            if (EPICS_WAIT_BUY_D1.contains(EPIC) && Objects.equals(Utils.TREND_SHOT, trend_D1)) {
-                continue;
-            }
-            if (EPICS_WAIT_SEL_D1.contains(EPIC) && Objects.equals(Utils.TREND_LONG, trend_D1)) {
                 continue;
             }
             if (!GLOBAL_SAME_TREND_D1_H12.contains(EPIC) && Objects.equals(trend_W1, trend_D1)) {
@@ -3721,7 +3711,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
             bread = bread.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
-        if (Utils.EPICS_STOCKS.contains(EPIC)) {
+        if (Utils.EPICS_STOCKS.contains(EPIC) || CAPITAL_TIME_XX.contains("MINUTE")) {
             bread = Utils.calcMaxCandleHigh(heken_list.subList(0, size));
         }
 
@@ -3734,6 +3724,40 @@ public class BinanceServiceImpl implements BinanceService {
         ordersRepository.save(entity);
 
         return "";
+    }
+
+    @Override
+    @Transactional
+    public void scapM30() {
+        if (required_update_bars_csv) {
+            return;
+        }
+
+        List<String> CAPITAL_LIST = new ArrayList<String>();
+        CAPITAL_LIST.addAll(Utils.EPICS_METALS);
+        CAPITAL_LIST.addAll(Utils.EPICS_CASH_CFD);
+        CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_ALL);
+
+        int index = 1;
+        String result = "";
+        for (String EPIC : CAPITAL_LIST) {
+            String prefix = getPrefix(index, EPIC);
+            if (prefix.contains("H2=30]") && prefix.contains("30}")) {
+                analysis(prefix, EPIC, Utils.CAPITAL_TIME_30);
+                index += 1;
+
+                if (Utils.isNotBlank(result)) {
+                    result += ", ";
+                }
+                result += EPIC;
+            }
+        }
+
+        if (Utils.isNotBlank(result)) {
+            String msg = "(Forex)(H2_M30)" + Utils.new_line_from_service + result;
+            String EVENT_ID = "FX_H_" + result + Utils.getCurrentYyyyMmDd_HH_Blog30m();
+            sendMsgPerHour(EVENT_ID, msg, true);
+        }
     }
 
     @Override
@@ -3823,7 +3847,6 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         return msg;
-
     }
 
     // H1 & H4 nguoc huong -> thong bao cat lenh.
@@ -3833,8 +3856,6 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public void monitorProfit() {
         // TODO: 3. monitorProfit
-        EPICS_WAIT_BUY_D1 = Arrays.asList("");
-        EPICS_WAIT_SEL_D1 = Arrays.asList("");
         // -------------------------------------------------------------------------------------
         // "BTCUSD", GER40", "US30", "US100", "UK100", "USOIL", "XAGUSD", "XAUUSD"
         // "AUDJPY", "AUDUSD", "CADJPY", "CHFJPY",

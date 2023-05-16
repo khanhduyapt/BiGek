@@ -130,11 +130,6 @@ public class BscScanBinanceApplication {
                                 binance_service.saveMt5Data("Stocks.csv", Utils.MINUTES_OF_1H);
                                 wait(SLEEP_MINISECONDS);
 
-                                if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MONITOR_PROFIT_INIT")) {
-                                    Utils.logWritelnDraft("");
-                                    binance_service.monitorProfit();
-                                }
-
                                 for (String EPIC : CAPITAL_LIST) {
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_W1);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_D1);
@@ -221,11 +216,11 @@ public class BscScanBinanceApplication {
         myScap.delete();
         EPICS_OUTPUTED = "";
         EPICS_OUTPUT_MSG = "";
-
         // --------------------------------------------------------------------------
-
         binance_service.scapForex(Utils.EPICS_METALS);
-        Utils.logWritelnDraft("");
+        Utils.logWritelnDraftFooter();
+        binance_service.scapM30();
+        Utils.logWritelnDraftFooter();
         binance_service.scapForex(Utils.EPICS_FOREXS_JPY);
         Utils.logWritelnDraft("");
         binance_service.scapForex(Utils.EPICS_FOREXS_GBP);
@@ -267,6 +262,7 @@ public class BscScanBinanceApplication {
             String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
             binance_service.sendMsgPerHour(EVENT_ID, msg, true);
         }
+
     }
 
     public static void alertMsgKillZone(BinanceService binance_service) {

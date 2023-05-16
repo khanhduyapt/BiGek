@@ -166,6 +166,11 @@ public class Utils {
     public static final List<String> EPICS_CASH_CFD = Arrays.asList("AUS200", "EU50", "FRA40", "GER40", "SPN35",
             "UK100", "US100", "US30", "USOIL");
 
+    public static final List<String> EPICS_FOREXS_ALL = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
+            "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD",
+            "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD",
+            "USDCHF", "USDCZK", "USDSEK", "USDJPY");
+
     public static final List<String> EPICS_FOREXS_JPY = Arrays.asList("AUDJPY", "CADJPY", "CHFJPY", "EURJPY",
             "GBPJPY", "NZDJPY", "USDJPY");
 
@@ -178,11 +183,6 @@ public class Utils {
     public static final List<String> EPICS_FOREXS_NZD = Arrays.asList("NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD");
 
     public static final List<String> EPICS_FOREXS_AUD = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD");
-
-    public static final List<String> EPICS_FOREXS_ALL = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
-            "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD",
-            "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD",
-            "USDCHF", "USDCZK", "USDSEK", "USDJPY");
 
     // "16:30 - 23:00"
     public static final List<String> EPICS_STOCKS = Arrays.asList("AAPL", "AIRF", "AMZN", "BAC", "BAYGn", "DBKGn",
@@ -746,7 +746,7 @@ public class Utils {
             prefix = prefix.replace("=30", "   ").replace("30", "  ");
         }
 
-        String switch_trend = "  [D1~H12~H8~H4~H2~30]  ";
+        String switch_trend = "  {D1~H12~H8~H4~H2~30}  ";
         if (Utils.isBlank(note_d1)) {
             switch_trend = switch_trend.replace("D1~", "   ");
         }
@@ -1146,7 +1146,7 @@ public class Utils {
     public static void logWritelnDraftFooter() {
         try {
             FileWriter fw = new FileWriter(getDraftLogFile(), true);
-            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("", 151, "-") + "\n");
+            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("", 361, "-") + "\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
