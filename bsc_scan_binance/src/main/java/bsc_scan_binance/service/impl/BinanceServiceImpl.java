@@ -3944,6 +3944,12 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
+            String note_m30 = "";
+            Orders dto_30 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
+            if (Objects.nonNull(dto_30)) {
+                note_m30 = dto_30.getNote();
+            }
+
             Orders dto_dt = null;
             if (Utils.EPICS_STOCKS.contains(EPIC)) {
                 dto_dt = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
@@ -3953,10 +3959,16 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.isNull(dto_dt)) {
                 continue;
             }
-
-            String result = "";
             String trend_dt = dto_dt.getTrend();
 
+            if ((note_m30 + dto_dt.getNote()).contains(Utils.TEXT_MIN_AREA)) {
+                trend_dt = Utils.TREND_LONG;
+            }
+            if ((note_m30 + dto_dt.getNote()).contains(Utils.TEXT_MAX_AREA)) {
+                trend_dt = Utils.TREND_SHOT;
+            }
+
+            String result = "";
             if (Utils.isBlank(result)) {
                 result = waiting(trend_dt, EPIC, Utils.CAPITAL_TIME_30);
             }
@@ -3967,7 +3979,6 @@ public class BinanceServiceImpl implements BinanceService {
                 result = waiting(trend_dt, EPIC, Utils.CAPITAL_TIME_H4);
             }
 
-            Orders dto_30 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
             if (Objects.nonNull(dto_30)) {
                 if (Objects.equals(dto_30.getTrend(), trend_dt)) {
                     msg += result;
