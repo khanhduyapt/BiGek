@@ -87,17 +87,17 @@ public class Utils {
     public static final String TEXT_DANGER = "(Danger)";
     public static final String TEXT_START_LONG = "Start:Long";
     public static final String TEXT_STOP_LONG = "Stop:Long";
-    public static final String TEXT_MIN_DAY_AREA = "Min";
-    public static final String TEXT_MAX_DAY_AREA = "Max";
+    public static final String TEXT_MIN_AREA = "Min";
+    public static final String TEXT_MAX_AREA = "Max";
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
     public static final String TEXT_SWITCH_TREND_LONG_BELOW_Ma = "(B.H4H2)";
     public static final String TEXT_SWITCH_TREND_SHOT_ABOVE_Ma = "(S.H4H2)";
     public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma.1.3)";
-    public static final String TEXT_WAIT = "( Wait )";
-    public static final String TEXT_EXPERT_ADVISOR_EA = "(  EA  )";
-    public static final String TEXT_EXPERT_ADVISOR_SPACE = "        ";
+    public static final String TEXT_WAIT = "Wait";
+    public static final String TEXT_EXPERT_ADVISOR_EA = "..  ";
+    public static final String TEXT_EXPERT_ADVISOR_SPACE = "    ";
 
     public static final String TEXT_SWITCH_TREND_Ma_1_10 = "(Ma1_10)";
     public static final String TEXT_SWITCH_TREND_Ma_1_20 = "(Ma1_20)";
@@ -171,11 +171,11 @@ public class Utils {
             "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD",
             "USDCHF", "USDCZK", "USDSEK", "USDJPY");
 
-    public static final List<String> EPICS_FOREXS_JPY = Arrays.asList("AUDJPY", "CADJPY", "CHFJPY", "EURJPY",
-            "GBPJPY", "NZDJPY", "USDJPY");
+    public static final List<String> EPICS_FOREXS_JPY = Arrays.asList("AUDJPY", "CADJPY", "CHFJPY", "EURJPY", "GBPJPY",
+            "NZDJPY", "USDJPY");
 
-    public static final List<String> EPICS_FOREXS_GBP = Arrays.asList("GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY",
-            "GBPNZD", "GBPUSD");
+    public static final List<String> EPICS_FOREXS_GBP = Arrays.asList("GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD",
+            "GBPUSD");
 
     public static final List<String> EPICS_FOREXS_EUR = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY",
             "EURNZD", "EURUSD");
@@ -654,12 +654,12 @@ public class Utils {
 
     public static String getChartNameCapital_(String TIME) {
 
-        //if (Objects.equals(TIME, CAPITAL_TIME_05)) {
-        //    return "_5m_";
-        //}
-        //if (Objects.equals(TIME, CAPITAL_TIME_15)) {
-        //    return "_15m_";
-        //}
+        // if (Objects.equals(TIME, CAPITAL_TIME_05)) {
+        // return "_5m_";
+        // }
+        // if (Objects.equals(TIME, CAPITAL_TIME_15)) {
+        // return "_15m_";
+        // }
         if (Objects.equals(TIME, CAPITAL_TIME_30)) {
             return "_30m_";
         }
@@ -686,12 +686,12 @@ public class Utils {
     }
 
     public static String getChartNameCapital(String TIME) {
-        //if (TIME.contains(CAPITAL_TIME_05)) {
-        //    return "(05)  ";
-        //}
-        //if (TIME.contains(CAPITAL_TIME_15)) {
-        //    return "(15)  ";
-        //}
+        // if (TIME.contains(CAPITAL_TIME_05)) {
+        // return "(05) ";
+        // }
+        // if (TIME.contains(CAPITAL_TIME_15)) {
+        // return "(15) ";
+        // }
         if (TIME.contains(CAPITAL_TIME_30)) {
             return "(30)  ";
         }
@@ -722,7 +722,9 @@ public class Utils {
 
             String note_d1, String note_h12, String note_h8, String note_h4, String note_h2, String note_30) {
 
-        String prefix = Utils.appendLeft(String.valueOf(index), 2) + ".[W1=D1=H12  H8=H4=H2=30]";
+        String prefix = "D:" + appendSpace(trend_d1, 5) + Utils.appendLeft(String.valueOf(index), 2)
+                + ".[W1=D1=H12  H8=H4=H2=30]";
+
         if (!Objects.equals(trend_w1, trend_dt)) {
             prefix = prefix.replace("W1=", "   ");
         }
@@ -765,21 +767,9 @@ public class Utils {
         if (Utils.isBlank(note_30) || !Objects.equals(trend_h2, trend_30)) {
             switch_trend = switch_trend.replace("~30", "   ").replace("30", "  ");
         }
-        switch_trend = switch_trend.replace("(                  )", "                    ");
+        switch_trend = switch_trend.replace("{                  }", "                    ");
 
         String result = prefix + switch_trend;
-        if (Utils.isNotBlank(switch_trend.trim())) {
-            if (Utils.isNotBlank(note_30)) {
-                result += " ○　";
-            } else if (prefix.contains("H12")) {
-                result += " ●　";
-            } else {
-                result += "   ";
-            }
-        } else {
-            result += "   ";
-        }
-
         return result;
     }
 
@@ -2343,10 +2333,10 @@ public class Utils {
 
             String symbol = dto.getId().toUpperCase();
 
-            //if (symbol.contains(CAPITAL_TIME_05)) {
-            //    result = "(05)  ";
-            //} else if (symbol.contains(CAPITAL_TIME_15)) {
-            //    result = "(15)  ";
+            // if (symbol.contains(CAPITAL_TIME_05)) {
+            // result = "(05) ";
+            // } else if (symbol.contains(CAPITAL_TIME_15)) {
+            // result = "(15) ";
             if (symbol.contains(CAPITAL_TIME_30)) {
                 result = "(30)  ";
             } else if (symbol.contains(CAPITAL_TIME_H4)) {
@@ -3571,7 +3561,7 @@ public class Utils {
         MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_long, tp_long);
 
         String temp = "";
-        temp += "   SL(Buy )" + chartSL + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 12);
+        temp += "   SL(Buy )" + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 12);
 
         if (!onlyWait) {
             temp += "     (Now)" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 7) + "(lot)";
@@ -3606,7 +3596,7 @@ public class Utils {
         MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_shot, tp_shot);
 
         String temp = "";
-        temp += "   SL(Sell)" + chartSL + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 12);
+        temp += "   SL(Sell)" + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 12);
 
         if (!onlyWait) {
             temp += "     (Now)" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 7) + "(lot)";
