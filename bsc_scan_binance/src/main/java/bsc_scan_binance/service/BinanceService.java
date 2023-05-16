@@ -51,7 +51,7 @@ public interface BinanceService {
 
     public void createReport();
 
-    public String scapForex(String alwaysShowThisEpic, String CAPITAL_TIME_XX, List<String> CAPITAL_LIST);
+    public String scapForex(String alwaysShowThisEpic, List<String> CAPITAL_LIST);
 
     public void scapStocks();
 

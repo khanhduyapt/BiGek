@@ -92,8 +92,8 @@ public class Utils {
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
-    public static final String TEXT_SWITCH_TREND_LONG_BELOW_Ma = "(B.H4H1)";
-    public static final String TEXT_SWITCH_TREND_SHOT_ABOVE_Ma = "(S.H4H1)";
+    public static final String TEXT_SWITCH_TREND_LONG_BELOW_Ma = "(B.H4H2)";
+    public static final String TEXT_SWITCH_TREND_SHOT_ABOVE_Ma = "(S.H4H2)";
     public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma.1.3)";
     public static final String TEXT_WAIT = "( Wait )";
     public static final String TEXT_EXPERT_ADVISOR = "(  EA  )";
@@ -128,7 +128,7 @@ public class Utils {
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
     public static final String CAPITAL_TIME_05 = "MINUTE_5";
     public static final String CAPITAL_TIME_15 = "MINUTE_15";
-    public static final String CAPITAL_TIME_H1 = "HOUR";
+    public static final String CAPITAL_TIME_H2 = "HOUR_2";
     public static final String CAPITAL_TIME_H4 = "HOUR_4";
     public static final String CAPITAL_TIME_H8 = "HOUR_8";
     public static final String CAPITAL_TIME_H12 = "HOUR_12";
@@ -165,9 +165,21 @@ public class Utils {
     public static final List<String> EPICS_CASH_CFD = Arrays.asList("US30", "US100", "EU50", "GER40", "FRA40", "SPN35",
             "UK100", "USOIL", "AUS200");
 
-    public static final List<String> EPICS_FOREXS = Arrays.asList("AUDJPY", "AUDNZD", "AUDUSD", "CADJPY", "CHFJPY",
-            "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF",
-            "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDJPY");
+    public static final List<String> EPICS_FOREXS_JPY = Arrays.asList("AUDJPY", "CADJPY", "CHFJPY", "EURJPY",
+            "GBPJPY", "NZDJPY", "USDJPY");
+
+    public static final List<String> EPICS_FOREXS_GBP = Arrays.asList("GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY",
+            "GBPNZD", "GBPUSD");
+
+    public static final List<String> EPICS_FOREXS_EUR = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY",
+            "EURNZD", "EURUSD");
+
+    public static final List<String> EPICS_FOREXS_NZD = Arrays.asList("NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD");
+
+    public static final List<String> EPICS_FOREXS_ALL = Arrays.asList("AUDJPY", "AUDNZD", "AUDUSD", "CADJPY",
+            "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD", "GBPCAD",
+            "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF",
+            "USDJPY");
 
     // "16:30 - 23:00"
     public static final List<String> EPICS_STOCKS = Arrays.asList("AMZN", "BAC", "GOOG", "MSFT", "NFLX", "AAPL", "NVDA",
@@ -645,8 +657,8 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_15)) {
             return "_15m_";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
-            return "_1h_";
+        if (Objects.equals(TIME, CAPITAL_TIME_H2)) {
+            return "_2h_";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
             return "_4h_";
@@ -683,8 +695,8 @@ public class Utils {
         if (TIME.contains(CAPITAL_TIME_H12)) {
             return "(H12) ";
         }
-        if (TIME.contains(CAPITAL_TIME_H1)) {
-            return "(H1)  ";
+        if (TIME.contains(CAPITAL_TIME_H2)) {
+            return "(H2)  ";
         }
         if (TIME.contains(CAPITAL_TIME_D1)) {
             return "(D1)  ";
@@ -1042,7 +1054,7 @@ public class Utils {
             epic = "LVMHF";
             EXCHANGE = "OTC";
 
-        } else if (Utils.EPICS_FOREXS.contains(epic) || "_BTCUSD_XAGUSD_EU50_".contains(epic)) {
+        } else if (Utils.EPICS_FOREXS_ALL.contains(epic) || "_BTCUSD_XAGUSD_EU50_".contains(epic)) {
             EXCHANGE = "FOREXCOM";
         }
 
@@ -1092,6 +1104,16 @@ public class Utils {
 
             FileWriter fw = new FileWriter(logFilePath, true);
             fw.write(msg + "\n");
+            fw.close();
+        } catch (IOException ioe) {
+            System.err.println("IOException: " + ioe.getMessage());
+        }
+    }
+
+    public static void logWritelnDraftFooter() {
+        try {
+            FileWriter fw = new FileWriter(getDraftLogFile(), true);
+            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("", 151, "-") + "\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -2298,8 +2320,8 @@ public class Utils {
                 result = "(H8)  ";
             } else if (symbol.contains(CAPITAL_TIME_H12)) {
                 result = "(H12) ";
-            } else if (symbol.contains(CAPITAL_TIME_H1)) {
-                result = "(H1)  ";
+            } else if (symbol.contains(CAPITAL_TIME_H2)) {
+                result = "(H2)  ";
             } else if (symbol.contains(CAPITAL_TIME_D1)) {
                 result = "(D1) ";
             } else if (symbol.contains(CAPITAL_TIME_W1)) {
@@ -3195,7 +3217,7 @@ public class Utils {
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H12, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H8, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H4, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H1, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H2, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_15, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_05, "");
 
@@ -3410,7 +3432,7 @@ public class Utils {
         if (Utils.EPICS_STOCKS.contains(EPIC)) {
             type = "Eq";
         }
-        if (Utils.EPICS_FOREXS.contains(EPIC)) {
+        if (Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
             type = "Fx";
         }
         type = appendSpace(type, 8);
