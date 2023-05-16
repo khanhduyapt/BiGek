@@ -2797,7 +2797,7 @@ public class BinanceServiceImpl implements BinanceService {
         String type = Objects.equals(Utils.TREND_LONG, trend) ? "(B)"
                 : Objects.equals(Utils.TREND_SHOT, trend) ? "(S)" : "(x)";
 
-        String log = Utils.appendSpace(prifix, 16) + Utils.appendSpace(dto.getNote(), 42);
+        String log = Utils.appendSpace(prifix, 16) + Utils.appendSpace(dto.getNote(), 45);
 
         outputLog("Analysis_" + char_name, EPIC, dto_sl, dto_sl, log, dto.getTrend());
 
@@ -3508,23 +3508,42 @@ public class BinanceServiceImpl implements BinanceService {
             // ----------------------------------------------------------------------
             String type_min_max_area = "";
             {
+                List<BtcFutures> list_h8 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H8);
                 List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
                 List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
                 List<BtcFutures> list_w1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_W1);
-                if (!CollectionUtils.isEmpty(list_h12) && !CollectionUtils.isEmpty(list_d1)
+                if (!CollectionUtils.isEmpty(list_h8) && !CollectionUtils.isEmpty(list_h12)
+                        && !CollectionUtils.isEmpty(list_d1)
                         && !CollectionUtils.isEmpty(list_w1)) {
+                    BigDecimal str = BigDecimal.ZERO;
+                    BigDecimal end = BigDecimal.ZERO;
+                    BigDecimal price = BigDecimal.ZERO;
+                    List<BigDecimal> body = new ArrayList<BigDecimal>();
 
-                    List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
-                    List<BigDecimal> body = Utils.getOpenCloseCandle(heken_list_h12);
-                    BigDecimal str = body.get(0);
-                    BigDecimal end = body.get(1);
+                    List<BtcFutures> heken_list_h8 = Utils.getHekenList(list_h8);
+                    body = Utils.getOpenCloseCandle(heken_list_h8);
+                    str = body.get(0);
+                    end = body.get(1);
 
-                    BigDecimal price = heken_list_h12.get(0).getPrice_close_candle();
+                    price = heken_list_h8.get(0).getPrice_close_candle();
                     if (Objects.equals(Utils.TREND_LONG, trend) && (price.compareTo(str) <= 0)) {
-                        type_min_max_area += Utils.TEXT_MIN_DAY_AREA + "H";
+                        type_min_max_area += Utils.TEXT_MIN_DAY_AREA + "8H";
                     }
                     if (Objects.equals(Utils.TREND_SHOT, trend) && (price.compareTo(end) >= 0)) {
-                        type_min_max_area += Utils.TEXT_MAX_DAY_AREA + "H";
+                        type_min_max_area += Utils.TEXT_MAX_DAY_AREA + "8H";
+                    }
+                    // ----------------------------------------------------------------------
+                    List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
+                    body = Utils.getOpenCloseCandle(heken_list_h12);
+                    str = body.get(0);
+                    end = body.get(1);
+
+                    price = heken_list_h12.get(0).getPrice_close_candle();
+                    if (Objects.equals(Utils.TREND_LONG, trend) && (price.compareTo(str) <= 0)) {
+                        type_min_max_area += Utils.TEXT_MIN_DAY_AREA + "12H";
+                    }
+                    if (Objects.equals(Utils.TREND_SHOT, trend) && (price.compareTo(end) >= 0)) {
+                        type_min_max_area += Utils.TEXT_MAX_DAY_AREA + "12H";
                     }
                     // ----------------------------------------------------------------------
                     List<BtcFutures> heken_list_10d = Utils.getHekenList(list_d1);
@@ -3573,10 +3592,10 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ----------------------------------------------------------------------
             if (Utils.isNotBlank(note)) {
-                note = Utils.appendSpace(note, 20) + " " + Utils.appendSpace(type_min_max_area, 10) + " "
+                note = Utils.appendSpace(note, 20) + Utils.appendSpace(type_min_max_area, 15)
                         + Utils.appendSpace(type_below_above, 10);
             } else {
-                note = Utils.appendSpace(note, 42);
+                note = Utils.appendSpace(note, 45);
             }
         }
 
