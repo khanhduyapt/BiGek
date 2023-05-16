@@ -141,6 +141,7 @@ public class BscScanBinanceApplication {
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H8);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H4);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H2);
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_30);
                                 }
 
                                 for (String EPIC : Utils.EPICS_STOCKS) {
@@ -248,19 +249,21 @@ public class BscScanBinanceApplication {
     }
 
     public static void monitorForex(BinanceService binance_service) {
-        binance_service.scapForex(Utils.EPICS_METALS.toString(), Utils.EPICS_METALS);
-
-        binance_service.scapForex(Utils.EPICS_FOREXS_JPY.toString(), Utils.EPICS_FOREXS_JPY);
-        binance_service.scapForex(Utils.EPICS_FOREXS_GBP.toString(), Utils.EPICS_FOREXS_GBP);
-        binance_service.scapForex(Utils.EPICS_FOREXS_NZD.toString(), Utils.EPICS_FOREXS_NZD);
-        binance_service.scapForex(Utils.EPICS_FOREXS_EUR.toString(), Utils.EPICS_FOREXS_EUR);
-
-        binance_service.scapForex("", Utils.EPICS_FOREXS_ALL);
+        binance_service.scapForex(Utils.EPICS_METALS);
         Utils.logWritelnDraft("");
-        binance_service.scapForex("", Utils.EPICS_CASH_CFD);
+        binance_service.scapForex(Utils.EPICS_FOREXS_JPY);
         Utils.logWritelnDraft("");
-
-        binance_service.scapForex("", Utils.EPICS_CRYPTO_CFD);
+        binance_service.scapForex(Utils.EPICS_FOREXS_GBP);
+        Utils.logWritelnDraft("");
+        binance_service.scapForex(Utils.EPICS_FOREXS_NZD);
+        Utils.logWritelnDraft("");
+        binance_service.scapForex(Utils.EPICS_FOREXS_EUR);
+        Utils.logWritelnDraft("");
+        binance_service.scapForex(Utils.EPICS_FOREXS_ALL);
+        Utils.logWritelnDraft("");
+        binance_service.scapForex(Utils.EPICS_CASH_CFD);
+        Utils.logWritelnDraft("");
+        binance_service.scapForex(Utils.EPICS_CRYPTO_CFD);
         Utils.logWritelnDraftFooter();
     }
 

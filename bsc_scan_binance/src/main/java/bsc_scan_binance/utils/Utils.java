@@ -103,6 +103,7 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_Ma_1_20 = "(Ma1_20)";
     public static final String TEXT_SWITCH_TREND_Ma_1_30 = "(Ma1_30)";
     public static final String TEXT_SWITCH_TREND_Ma_1_50 = "(Ma1_50)";
+    public static final String TEXT_SWITCH_TREND_50 = "(~50~)";
 
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
@@ -127,8 +128,7 @@ public class Utils {
     public static String CST = "";
     public static String X_SECURITY_TOKEN = "";
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
-    public static final String CAPITAL_TIME_05 = "MINUTE_5";
-    public static final String CAPITAL_TIME_15 = "MINUTE_15";
+    public static final String CAPITAL_TIME_30 = "MINUTE_30";
     public static final String CAPITAL_TIME_H2 = "HOUR_2";
     public static final String CAPITAL_TIME_H4 = "HOUR_4";
     public static final String CAPITAL_TIME_H8 = "HOUR_8";
@@ -652,11 +652,14 @@ public class Utils {
 
     public static String getChartNameCapital_(String TIME) {
 
-        if (Objects.equals(TIME, CAPITAL_TIME_05)) {
-            return "_5m_";
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_15)) {
-            return "_15m_";
+        //if (Objects.equals(TIME, CAPITAL_TIME_05)) {
+        //    return "_5m_";
+        //}
+        //if (Objects.equals(TIME, CAPITAL_TIME_15)) {
+        //    return "_15m_";
+        //}
+        if (Objects.equals(TIME, CAPITAL_TIME_30)) {
+            return "_30m_";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_H2)) {
             return "_2h_";
@@ -681,11 +684,14 @@ public class Utils {
     }
 
     public static String getChartNameCapital(String TIME) {
-        if (TIME.contains(CAPITAL_TIME_05)) {
-            return "(05)  ";
-        }
-        if (TIME.contains(CAPITAL_TIME_15)) {
-            return "(15)  ";
+        //if (TIME.contains(CAPITAL_TIME_05)) {
+        //    return "(05)  ";
+        //}
+        //if (TIME.contains(CAPITAL_TIME_15)) {
+        //    return "(15)  ";
+        //}
+        if (TIME.contains(CAPITAL_TIME_30)) {
+            return "(30)  ";
         }
         if (TIME.contains(CAPITAL_TIME_H4)) {
             return "(H4)  ";
@@ -710,11 +716,11 @@ public class Utils {
     }
 
     public static String getPrefix(int index, String trend_w1, String trend_d1, String trend_h12, String trend_h8,
-            String trend_h4, String trend_h1, String trend_dt,
+            String trend_h4, String trend_h1, String trend_30, String trend_dt,
 
-            String note_d1, String note_h12, String note_h8, String note_h4, String note_h2) {
+            String note_d1, String note_h12, String note_h8, String note_h4, String note_h2, String note_30) {
 
-        String prefix = Utils.appendLeft(String.valueOf(index), 2) + ".[W1=D1=H12   H8=H4=H2]  ";
+        String prefix = Utils.appendLeft(String.valueOf(index), 2) + ".[W1=D1=H12  H8=H4=H2=30]";
         if (!Objects.equals(trend_w1, trend_dt)) {
             prefix = prefix.replace("W1=", "   ");
         }
@@ -724,6 +730,7 @@ public class Utils {
         if (!Objects.equals(trend_h12, trend_dt)) {
             prefix = prefix.replace("=H12", "    ").replace("H12", "   ");
         }
+
         if (!Objects.equals(trend_h8, trend_dt)) {
             prefix = prefix.replace("=H8=", "    ").replace("H8=", "   ");
         }
@@ -731,10 +738,13 @@ public class Utils {
             prefix = prefix.replace("=H4=", "    ").replace("H4=", "   ");
         }
         if (!Objects.equals(trend_h1, trend_dt)) {
-            prefix = prefix.replace("=H2", "   ").replace("H2", "  ");
+            prefix = prefix.replace("=H2=", "    ").replace("H2=", "   ");
+        }
+        if (!Objects.equals(trend_30, trend_dt)) {
+            prefix = prefix.replace("=30", "   ").replace("30", "  ");
         }
 
-        String switch_trend = "(D1~H12~H8~H4~H2)  ";
+        String switch_trend = "  (D1~H12~H8~H4~H2~30)  ";
         if (Utils.isBlank(note_d1)) {
             switch_trend = switch_trend.replace("D1~", "   ");
         }
@@ -748,12 +758,15 @@ public class Utils {
             switch_trend = switch_trend.replace("~H4~", "    ").replace("H4~", "   ").replace("~H4", "   ");
         }
         if (Utils.isBlank(note_h2)) {
-            switch_trend = switch_trend.replace("~H2", "   ").replace("H2", "  ");
+            switch_trend = switch_trend.replace("~H2~", "    ").replace("H2~", "   ").replace("H2", "  ");
         }
-        switch_trend = switch_trend.replace("(               )", "                 ");
+        if (Utils.isBlank(note_30)) {
+            switch_trend = switch_trend.replace("~30", "   ").replace("30", "  ");
+        }
+        switch_trend = switch_trend.replace("(                  )", "                    ");
 
         String result = prefix + switch_trend;
-        if (prefix.contains("H12")) {
+        if (prefix.contains("H12") && Utils.isNotBlank(switch_trend.trim())) {
             result += " ●　";
         } else {
             result += "   ";
@@ -839,7 +852,7 @@ public class Utils {
     }
 
     public static boolean isNotBlank(String value) {
-        if (Objects.equals(null, value) || Objects.equals("", value)) {
+        if (Objects.equals(null, value) || Objects.equals("", value.trim())) {
             return false;
         }
         return true;
@@ -2322,10 +2335,12 @@ public class Utils {
 
             String symbol = dto.getId().toUpperCase();
 
-            if (symbol.contains(CAPITAL_TIME_05)) {
-                result = "(05)  ";
-            } else if (symbol.contains(CAPITAL_TIME_15)) {
-                result = "(15)  ";
+            //if (symbol.contains(CAPITAL_TIME_05)) {
+            //    result = "(05)  ";
+            //} else if (symbol.contains(CAPITAL_TIME_15)) {
+            //    result = "(15)  ";
+            if (symbol.contains(CAPITAL_TIME_30)) {
+                result = "(30)  ";
             } else if (symbol.contains(CAPITAL_TIME_H4)) {
                 result = "(H4)  ";
             } else if (symbol.contains(CAPITAL_TIME_H8)) {
@@ -3230,8 +3245,9 @@ public class Utils {
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H8, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H4, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H2, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_15, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_05, "");
+        // EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_15, "");
+        // EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_05, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_30, "");
 
         EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_05, "");
         EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_15, "");
