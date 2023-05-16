@@ -3434,24 +3434,8 @@ public class BinanceServiceImpl implements BinanceService {
                 GLOBAL_SAME_TREND_D1_H12.add(EPIC);
             }
 
-            String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
-            if (!Objects.equals(trend_M1, trend_D1)) {
-                prefix = prefix.replace("M1", "  ");
-            }
-            if (!Objects.equals(trend_W1, trend_D1)) {
-                prefix = prefix.replace("W1", "  ");
-            }
-            if (!Objects.equals(trend_H2, trend_D1)) {
-                prefix = prefix.replace("H2", "  ");
-            }
-
-            if (Utils.isNotBlank(dto_d1.getNote())) {
-                analysis(prefix, EPIC, Utils.CAPITAL_TIME_D1);
-                index += 1;
-            }
-
+            String type_min_max_area = "";
             {
-                String type_min_max_area = "";
                 List<BtcFutures> list_w1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_W1);
                 if (!CollectionUtils.isEmpty(list_d1) && !CollectionUtils.isEmpty(list_w1)) {
                     BigDecimal str = BigDecimal.ZERO;
@@ -3494,18 +3478,27 @@ public class BinanceServiceImpl implements BinanceService {
                                 + type_min_max_area.replace(Utils.TEXT_MAX_DAY_AREA, "") + ")";
                     }
                 }
+            }
 
-                if (Objects.equals(Utils.TREND_LONG, trend_H2) && type_min_max_area.contains(Utils.TEXT_MAX_DAY_AREA)) {
-                    type_min_max_area = "";
-                }
-                if (Objects.equals(Utils.TREND_SHOT, trend_H2) && type_min_max_area.contains(Utils.TEXT_MIN_DAY_AREA)) {
-                    type_min_max_area = "";
-                }
+            String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
+            if (!Objects.equals(trend_M1, trend_D1)) {
+                prefix = prefix.replace("M1", "  ");
+            }
+            if (!Objects.equals(trend_W1, trend_D1)) {
+                prefix = prefix.replace("W1", "  ");
+            }
+            if (!Objects.equals(trend_H2, trend_D1)) {
+                prefix = prefix.replace("H2", "  ");
+            }
 
-                if (Utils.isNotBlank(type_min_max_area) && Utils.isNotBlank(dto_h2.getNote())) {
-                    analysis(prefix, EPIC, Utils.CAPITAL_TIME_H2);
-                    index += 1;
-                }
+            if (Utils.isNotBlank(dto_d1.getNote())) {
+                analysis(Utils.appendSpace(type_min_max_area, 15) + prefix, EPIC, Utils.CAPITAL_TIME_D1);
+                index += 1;
+            }
+
+            if (Utils.isNotBlank(dto_h2.getNote())) {
+                analysis(Utils.appendSpace(type_min_max_area, 15) + prefix, EPIC, Utils.CAPITAL_TIME_H2);
+                index += 1;
             }
         }
     }
