@@ -718,7 +718,7 @@ public class Utils {
     }
 
     public static String getPrefix(int index, String trend_w1, String trend_d1, String trend_h12, String trend_h8,
-            String trend_h4, String trend_h1, String trend_30, String trend_dt,
+            String trend_h4, String trend_h2, String trend_30, String trend_dt,
 
             String note_d1, String note_h12, String note_h8, String note_h4, String note_h2, String note_30) {
 
@@ -739,7 +739,7 @@ public class Utils {
         if (!Objects.equals(trend_h4, trend_dt)) {
             prefix = prefix.replace("=H4=", "    ").replace("H4=", "   ");
         }
-        if (!Objects.equals(trend_h1, trend_dt)) {
+        if (!Objects.equals(trend_h2, trend_dt)) {
             prefix = prefix.replace("=H2=", "    ").replace("H2=", "   ");
         }
         if (!Objects.equals(trend_30, trend_dt)) {
@@ -762,7 +762,7 @@ public class Utils {
         if (Utils.isBlank(note_h2)) {
             switch_trend = switch_trend.replace("~H2~", "    ").replace("H2~", "   ").replace("H2", "  ");
         }
-        if (Utils.isBlank(note_30)) {
+        if (Utils.isBlank(note_30) || !Objects.equals(trend_h2, trend_30)) {
             switch_trend = switch_trend.replace("~30", "   ").replace("30", "  ");
         }
         switch_trend = switch_trend.replace("(                  )", "                    ");
