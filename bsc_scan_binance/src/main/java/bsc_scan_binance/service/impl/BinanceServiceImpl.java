@@ -3524,6 +3524,10 @@ public class BinanceServiceImpl implements BinanceService {
                     && Utils.isAboveMALine(heken_list, 50)) {
 
                 type = type.replace(Utils.appendSpace(trend, 4), "");
+
+            } else if (Objects.equals(trend, Utils.switchTrendByMa13_XX(heken_list, 50))) {
+                type = Utils.TEXT_SWITCH_TREND_Ma_1_50;
+
             } else {
                 type = "";
             }
