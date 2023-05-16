@@ -2760,29 +2760,25 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.isBlank(EPIC)) {
             return "";
         }
-
-        List<BtcFutures> list_h2 = getCapitalData(EPIC, CAPITAL_TIME_XX);
-        if (CollectionUtils.isEmpty(list_h2)) {
-            return "";
-        }
-
-        List<BtcFutures> heken_list = Utils.getHekenList(list_h2);
-
-        String switch_trend = Utils.switchTrendByHeken_12_or_Ma35(heken_list);
-        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_30)
-                || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H2)) {
-            switch_trend += Utils.switchTrendByMa13_XX(heken_list, 50);
-        }
-
-        if (!switch_trend.contains(TREND)) {
-            return "";
-        }
-
         Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
-        Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
         if (Objects.isNull(dto)) {
             return "";
         }
+
+        List<BtcFutures> list = getCapitalData(EPIC, CAPITAL_TIME_XX);
+        if (CollectionUtils.isEmpty(list)) {
+            return "";
+        }
+        List<BtcFutures> heken_list = Utils.getHekenList(list);
+
+        if (dto.getNote().contains(Utils.TEXT_MIN_AREA)) {
+            TREND = Utils.TREND_LONG;
+        }
+        if (dto.getNote().contains(Utils.TEXT_MAX_AREA)) {
+            TREND = Utils.TREND_SHOT;
+        }
+
+        Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
         if (Objects.isNull(dto_sl)) {
             dto_sl = dto;
         }
