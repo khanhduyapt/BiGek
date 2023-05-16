@@ -2845,7 +2845,11 @@ public class BinanceServiceImpl implements BinanceService {
         String type = Objects.equals(Utils.TREND_LONG, trend) ? "(B)"
                 : Objects.equals(Utils.TREND_SHOT, trend) ? "(S)" : "(x)";
 
-        String log = Utils.appendSpace(prifix, 16) + Utils.appendSpace(dto.getNote(), 45);
+        String note = dto.getNote();
+        if (Utils.isBlank(dto.getNote())) {
+            note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.appendSpace(trend, 4);
+        }
+        String log = Utils.appendSpace(prifix, 16) + Utils.appendSpace(note, 45);
 
         outputLog("Analysis_" + char_name, EPIC, dto_sl, dto_sl, log, dto.getTrend());
 

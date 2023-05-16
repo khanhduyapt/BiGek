@@ -746,7 +746,7 @@ public class Utils {
             prefix = prefix.replace("=30", "   ").replace("30", "  ");
         }
 
-        String switch_trend = "  (D1~H12~H8~H4~H2~30)  ";
+        String switch_trend = "  [D1~H12~H8~H4~H2~30]  ";
         if (Utils.isBlank(note_d1)) {
             switch_trend = switch_trend.replace("D1~", "   ");
         }
