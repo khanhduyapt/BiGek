@@ -2406,7 +2406,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public void sendMsgPerHour(String EVENT_ID, String msg_content, boolean isOnlyMe) {
-        if (!Utils.isWorkingTime()) {
+        if (!Utils.isBusinessTime_6h_to_22h()) {
             return;
         }
 
@@ -3746,38 +3746,40 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        // List<String> CAPITAL_LIST = new ArrayList<String>();
-        // CAPITAL_LIST.addAll(Utils.EPICS_METALS);
-        // CAPITAL_LIST.addAll(Utils.EPICS_CASH_CFD);
-        // CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_ALL);
-        //
-        // int index = 1;
-        // String result = "";
-        // for (String EPIC : CAPITAL_LIST) {
-        // String prefix = getPrefix(index, EPIC);
-        // int index_of_switch_trend = prefix.indexOf("{");
-        //
-        // if (prefix.contains("H2=30]") && prefix.contains("30}")
-        // && ((prefix.indexOf("H8") > index_of_switch_trend)
-        // || (prefix.indexOf("H12") > index_of_switch_trend))
-        // || prefix.contains(Utils.TEXT_MIN_AREA) ||
-        // prefix.contains(Utils.TEXT_MAX_AREA)) {
-        //
-        // analysis(prefix, EPIC, Utils.CAPITAL_TIME_30);
-        //
-        // if (Utils.isNotBlank(result)) {
-        // result += ", ";
-        // }
-        // result += EPIC;
-        // index += 1;
-        // }
-        // }
-        //
-        // if (Utils.isNotBlank(result)) {
-        // String msg = "(Forex)(H2_M30)" + Utils.new_line_from_service + result;
-        // String EVENT_ID = "FX_H_" + result + Utils.getCurrentYyyyMmDd_HH_Blog30m();
-        // sendMsgPerHour(EVENT_ID, msg, true);
-        // }
+        List<String> CAPITAL_LIST = new ArrayList<String>();
+        CAPITAL_LIST.addAll(Utils.EPICS_METALS);
+        CAPITAL_LIST.addAll(Utils.EPICS_CASH_CFD);
+        CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_ALL);
+
+        int index = 1;
+        String result = "";
+        for (String EPIC : CAPITAL_LIST) {
+            String prefix = getPrefix(index, EPIC);
+
+            Orders dto_30 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
+            String note = "";
+            if (Objects.nonNull(dto_30)) {
+                note = dto_30.getNote();
+            }
+
+            if (prefix.contains("H2=30]") && prefix.contains("30}")
+                    && (note.contains(Utils.TEXT_MIN_AREA) || note.contains(Utils.TEXT_MAX_AREA))) {
+
+                analysis(prefix, EPIC, Utils.CAPITAL_TIME_30);
+
+                if (Utils.isNotBlank(result)) {
+                    result += ", ";
+                }
+                result += EPIC;
+                index += 1;
+            }
+        }
+
+        if (Utils.isNotBlank(result)) {
+            String msg = "(Forex)(H2_M30)" + Utils.new_line_from_service + result;
+            String EVENT_ID = "FX_H_" + result + Utils.getCurrentYyyyMmDd_HH_Blog30m();
+            sendMsgPerHour(EVENT_ID, msg, true);
+        }
     }
 
     @Override
@@ -3841,10 +3843,10 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_dt = dto_dt.getTrend();
 
             String ea = Utils.TEXT_EXPERT_ADVISOR_SPACE;
-            if (!GLOBAL_SAME_TREND_D1_H12.contains(EPIC)) {
-                if (Utils.isNotBlank(dto_d1.getNote()) || Utils.isNotBlank(dto_h12.getNote())
-                        || (Utils.isNotBlank(dto_h8.getNote()) && Objects.equals(trend_h12, trend_h8))
-                        || dto_dt.getNote().contains(Utils.TEXT_MIN_AREA)
+            if (!GLOBAL_SAME_TREND_D1_H12.contains(EPIC) && Utils.isNotBlank(
+                    dto_d1.getNote() + dto_h12.getNote() + dto_h8.getNote() + dto_h4.getNote() + dto_h2.getNote())) {
+
+                if (Objects.equals(trend_h12, trend_h8) || dto_dt.getNote().contains(Utils.TEXT_MIN_AREA)
                         || dto_dt.getNote().contains(Utils.TEXT_MAX_AREA)) {
 
                     GLOBAL_SAME_TREND_D1_H12.add(EPIC);
