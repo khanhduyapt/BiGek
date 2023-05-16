@@ -3840,15 +3840,12 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_30 = dto_30.getTrend();
             String trend_dt = dto_dt.getTrend();
 
-            String prefix = Utils.getPrefix(index, trend_w1, trend_d1, trend_h12, trend_h8, trend_h4, trend_h2,
-                    trend_30, trend_dt, dto_d1.getNote(), dto_h12.getNote(), dto_h8.getNote(), dto_h4.getNote(),
-                    dto_h2.getNote(), dto_30.getNote());
-
             String ea = Utils.TEXT_EXPERT_ADVISOR_SPACE;
             if (!GLOBAL_SAME_TREND_D1_H12.contains(EPIC)) {
                 if (Utils.isNotBlank(dto_d1.getNote()) || Utils.isNotBlank(dto_h12.getNote())
                         || (Utils.isNotBlank(dto_h8.getNote()) && Objects.equals(trend_h12, trend_h8))
-                        || prefix.contains(Utils.TEXT_MIN_AREA) || prefix.contains(Utils.TEXT_MAX_AREA)) {
+                        || dto_dt.getNote().contains(Utils.TEXT_MIN_AREA)
+                        || dto_dt.getNote().contains(Utils.TEXT_MAX_AREA)) {
 
                     GLOBAL_SAME_TREND_D1_H12.add(EPIC);
                     ea = Utils.TEXT_EXPERT_ADVISOR_EA;
@@ -3859,6 +3856,10 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Utils.isNotBlank(msg)) {
                     msg += ",";
                 }
+
+                String prefix = Utils.getPrefix(index, trend_w1, trend_d1, trend_h12, trend_h8, trend_h4, trend_h2,
+                        trend_30, trend_dt, dto_d1.getNote(), dto_h12.getNote(), dto_h8.getNote(), dto_h4.getNote(),
+                        dto_h2.getNote(), dto_30.getNote());
 
                 msg += analysis(prefix + ea, EPIC, CAPITAL_TIME_XX);
                 index += 1;

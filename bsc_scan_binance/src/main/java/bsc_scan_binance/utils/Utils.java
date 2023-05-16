@@ -722,8 +722,7 @@ public class Utils {
 
             String note_d1, String note_h12, String note_h8, String note_h4, String note_h2, String note_30) {
 
-        String prefix = "D:" + appendSpace(trend_d1, 5) + Utils.appendLeft(String.valueOf(index), 2)
-                + ".[W1=D1=H12  H8=H4=H2=30]";
+        String prefix = Utils.appendLeft(String.valueOf(index), 2) + ".[W1=D1=H12  H8=H4=H2=30]";
 
         if (!Objects.equals(trend_w1, trend_dt)) {
             prefix = prefix.replace("W1=", "   ");
@@ -769,7 +768,8 @@ public class Utils {
         }
         switch_trend = switch_trend.replace("{                  }", "                    ");
 
-        String result = prefix + switch_trend;
+        String result = appendSpace("H12:" + trend_h12, 5) + prefix + switch_trend;
+
         return result;
     }
 
