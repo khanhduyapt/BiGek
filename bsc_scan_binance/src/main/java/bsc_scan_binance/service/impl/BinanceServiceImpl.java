@@ -2663,7 +2663,7 @@ public class BinanceServiceImpl implements BinanceService {
             List<BtcFutures> list) {
         String date_time = LocalDateTime.now().toString();
 
-        List<BigDecimal> body = Utils.getOpenCloseCandle(list);
+        List<BigDecimal> body = Utils.getBodyCandle(list);
         List<BigDecimal> low_high = Utils.getLowHighCandle(list);
 
         String note = "";
@@ -2789,7 +2789,7 @@ public class BinanceServiceImpl implements BinanceService {
                 result += ",";
 
             result += chart_name + ":";
-            result += Objects.equals(dto.getTrend(), Utils.TREND_LONG) ? "Buy" : "Sell";
+            result += Objects.equals(dto.getTrend(), Utils.TREND_LONG) ? "Buy " : "Sell";
         }
         result = Utils.appendSpace("(" + result + ")", 30);
 
@@ -3585,7 +3585,7 @@ public class BinanceServiceImpl implements BinanceService {
                     List<BigDecimal> body = new ArrayList<BigDecimal>();
                     // ----------------------------------------------------------------------
                     List<BtcFutures> heken_list_10d = Utils.getHekenList(list_d1);
-                    body = Utils.getOpenCloseCandle(heken_list_10d);
+                    body = Utils.getBodyCandle(heken_list_10d);
                     str = body.get(0);
                     end = body.get(1);
 
@@ -3598,7 +3598,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                     // ----------------------------------------------------------------------
                     List<BtcFutures> heken_list_10w = Utils.getHekenList(list_w1);
-                    body = Utils.getOpenCloseCandle(heken_list_10w);
+                    body = Utils.getBodyCandle(heken_list_10w);
                     str = body.get(0);
                     end = body.get(1);
 
@@ -3717,19 +3717,35 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.isNotBlank(note)) {
             String type_min_max_area = "";
             {
+                List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
                 List<BtcFutures> list_h8 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H8);
                 List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
                 List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
                 List<BtcFutures> list_w1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_W1);
-                if (!CollectionUtils.isEmpty(list_h8) && !CollectionUtils.isEmpty(list_h12)
-                        && !CollectionUtils.isEmpty(list_d1) && !CollectionUtils.isEmpty(list_w1)) {
+
+                if (!CollectionUtils.isEmpty(list_h4) && !CollectionUtils.isEmpty(list_h8)
+                        && !CollectionUtils.isEmpty(list_h12) && !CollectionUtils.isEmpty(list_d1)
+                        && !CollectionUtils.isEmpty(list_w1)) {
                     BigDecimal str = BigDecimal.ZERO;
                     BigDecimal end = BigDecimal.ZERO;
                     BigDecimal price = BigDecimal.ZERO;
                     List<BigDecimal> body = new ArrayList<BigDecimal>();
                     // ----------------------------------------------------------------------
+                    List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
+                    body = Utils.getBodyCandle(heken_list_h4);
+                    str = body.get(0);
+                    end = body.get(1);
+
+                    price = heken_list_h4.get(0).getPrice_close_candle();
+                    if (Objects.equals(Utils.TREND_LONG, trend) && (price.compareTo(str) <= 0)) {
+                        type_min_max_area += Utils.TEXT_MIN_AREA + "4H";
+                    }
+                    if (Objects.equals(Utils.TREND_SHOT, trend) && (price.compareTo(end) >= 0)) {
+                        type_min_max_area += Utils.TEXT_MAX_AREA + "4H";
+                    }
+                    // ----------------------------------------------------------------------
                     List<BtcFutures> heken_list_h8 = Utils.getHekenList(list_h8);
-                    body = Utils.getOpenCloseCandle(heken_list_h8);
+                    body = Utils.getBodyCandle(heken_list_h8);
                     str = body.get(0);
                     end = body.get(1);
 
@@ -3742,7 +3758,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                     // ----------------------------------------------------------------------
                     List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
-                    body = Utils.getOpenCloseCandle(heken_list_h12);
+                    body = Utils.getBodyCandle(heken_list_h12);
                     str = body.get(0);
                     end = body.get(1);
 
@@ -3755,7 +3771,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                     // ----------------------------------------------------------------------
                     List<BtcFutures> heken_list_10d = Utils.getHekenList(list_d1);
-                    body = Utils.getOpenCloseCandle(heken_list_10d);
+                    body = Utils.getBodyCandle(heken_list_10d);
                     str = body.get(0);
                     end = body.get(1);
 
@@ -3768,7 +3784,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                     // ----------------------------------------------------------------------
                     List<BtcFutures> heken_list_10w = Utils.getHekenList(list_w1);
-                    body = Utils.getOpenCloseCandle(heken_list_10w);
+                    body = Utils.getBodyCandle(heken_list_10w);
                     str = body.get(0);
                     end = body.get(1);
 
@@ -3807,11 +3823,8 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // TODO: 1. initForexTrend
-        int size = 8;
-        if (list.size() < 8)
-            size = list.size();
 
-        List<BigDecimal> body = Utils.getOpenCloseCandle(list.subList(0, size));
+        List<BigDecimal> body = Utils.getBodyCandle(list);
         BigDecimal str_body_price = body.get(0);
         BigDecimal end_body_price = body.get(1);
 
@@ -3820,15 +3833,15 @@ public class BinanceServiceImpl implements BinanceService {
         String date_time = LocalDateTime.now().toString();
 
         // Chap nhan thua rui ro, khong niu keo sai lam danh sai xu huong.
-        BigDecimal bread = Utils.calcMaxBread(heken_list.subList(0, size));
+        BigDecimal bread = Utils.calcMaxBread(heken_list);
         if (Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
             bread = bread.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
         if (Utils.EPICS_STOCKS.contains(EPIC) || CAPITAL_TIME_XX.contains("MINUTE")) {
-            bread = Utils.calcMaxCandleHigh(heken_list.subList(0, size));
+            bread = Utils.calcMaxCandleHigh(heken_list);
         }
 
-        List<BigDecimal> low_high = Utils.getLowHighCandle(list.subList(0, size));
+        List<BigDecimal> low_high = Utils.getLowHighCandle(list);
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
 
@@ -4055,8 +4068,9 @@ public class BinanceServiceImpl implements BinanceService {
         List<Mt5DataTrade> tradeList = getTradeList();
         BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT).multiply(BigDecimal.valueOf(2.5));
 
+        String msg = "";
         for (Mt5DataTrade trade : tradeList) {
-            String msg = "";
+
             String trend = "";
             String trends = getTrendTimeframes(trade.getSymbol());
 
@@ -4065,31 +4079,37 @@ public class BinanceServiceImpl implements BinanceService {
                 trend = dto_ref.getTrend();
             }
 
+            String result = "(" + Utils.appendSpace(trade.getType(), 4) + ")";
+
             // PROFIT
             if (trade.getProfit().add(risk).compareTo(BigDecimal.ZERO) < 0) {
-                msg = "(Stop_Loss:" + trade.getType() + ")" + trade.getSymbol() + trends + "(Profit):"
-                        + Utils.removeLastZero(trade.getProfit()) + Utils.getChartName(dto_ref) + ":" + trend
-                        + "(MaxRisk):" + risk;
+                result += "(Stop_Loss)" + "(MaxRisk):" + risk;
             }
 
             // TREND
             if (trade.getProfit().compareTo(BigDecimal.ZERO) > 0) {
                 if (!Objects.equals(trend, trade.getType())) {
-                    msg = "(Switch_Trend:" + trade.getType() + ")" + trade.getSymbol() + trends + "(Profit):"
-                            + Utils.removeLastZero(trade.getProfit()) + Utils.getChartName(dto_ref) + ":" + trend;
+                    result += "(Take_Profit)";
                 }
             }
 
-            if (Utils.isNotBlank(msg)) {
-                Utils.logWritelnDraft(msg);
+            result += Utils.appendSpace(trade.getSymbol(), 10) + trends;
+            result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(trade.getProfit()), 10);
 
-                String EVENT_ID = "TradeProfit_" + trade.getSymbol() + Utils.getCurrentYyyyMmDd_HH_Blog15m();
-                sendMsgPerHour(EVENT_ID, msg, true);
-            }
+            msg += result + Utils.new_line_from_service;
         }
-        Utils.logWritelnDraft("");
+        if (Utils.isNotBlank(msg)) {
+            msg = Utils.new_line_from_service + msg;
+            Utils.logWritelnDraft(msg);
 
-        String msg = "";
+            String EVENT_ID = "TradeProfit" + Utils.getCurrentYyyyMmDd_HH();
+            sendMsgPerHour(EVENT_ID, msg, true);
+            Utils.logWritelnDraft("");
+        }
+
+        // ------------------------------------------------------------------------------
+
+        msg = "";
         for (String EPIC : GLOBAL_SAME_TREND_D1_H12) {
             if (Utils.EPICS_CRYPTO_CFD.contains(EPIC) && !EPIC.contains("BTC")) {
                 continue;

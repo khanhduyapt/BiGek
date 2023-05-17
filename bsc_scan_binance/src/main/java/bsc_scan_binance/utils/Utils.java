@@ -92,8 +92,8 @@ public class Utils {
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
-    //    public static final String TEXT_SWITCH_TREND_LONG_BELOW_Ma = "(B.H4H2)";
-    //    public static final String TEXT_SWITCH_TREND_SHOT_ABOVE_Ma = "(S.H4H2)";
+    // public static final String TEXT_SWITCH_TREND_LONG_BELOW_Ma = "(B.H4H2)";
+    // public static final String TEXT_SWITCH_TREND_SHOT_ABOVE_Ma = "(S.H4H2)";
     public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma.1.3)";
     public static final String TEXT_WAIT = "Wait";
     public static final String TEXT_EXPERT_ADVISOR_EA = "ea  ";
@@ -1121,7 +1121,7 @@ public class Utils {
             String msg = text.trim();
             if (Utils.isNotBlank(msg)) {
                 msg = BscScanBinanceApplication.hostname + Utils.getMmDD_TimeHHmm() + " "
-                        + text.replace(Utils.new_line_from_service, " ");
+                        + text.replace(Utils.new_line_from_service, "\n");
             }
 
             FileWriter fw = new FileWriter(logFilePath, true);
@@ -2212,7 +2212,7 @@ public class Utils {
 
     public static boolean isBelowMALine(List<BtcFutures> list, int length) {
         if (CollectionUtils.isEmpty(list) || (list.size() < 1)) {
-            //Utils.logWritelnDraft("(isBelowMALine)list Empty");
+            // Utils.logWritelnDraft("(isBelowMALine)list Empty");
             return false;
         }
         if (list.size() < length) {
@@ -2273,13 +2273,13 @@ public class Utils {
     }
 
     public static String textBuyTopSellBottom(String trend_target, String note) {
-        if (Objects.equals(Utils.TREND_LONG, trend_target) && (note.contains(Utils.TEXT_MAX_AREA)
-                || note.contains("H12:A H8:A H4:A H2:A"))) {
+        if (Objects.equals(Utils.TREND_LONG, trend_target)
+                && (note.contains(Utils.TEXT_MAX_AREA) || note.contains("H12:A H8:A H4:A H2:A"))) {
             return "BuyTop";
         }
 
-        if (Objects.equals(Utils.TREND_SHOT, trend_target) && (note.contains(Utils.TEXT_MIN_AREA)
-                || note.contains("H12:B H8:B H4:B H2:B"))) {
+        if (Objects.equals(Utils.TREND_SHOT, trend_target)
+                && (note.contains(Utils.TEXT_MIN_AREA) || note.contains("H12:B H8:B H4:B H2:B"))) {
             return "SellBottom";
         }
 
@@ -2288,14 +2288,14 @@ public class Utils {
 
     public static boolean isBuyTopSellBottom(String trend_target, String note) {
         // Sell đáy
-        if (Objects.equals(Utils.TREND_SHOT, trend_target) && (note.contains(Utils.TEXT_MIN_AREA)
-                || note.contains("H12:B H8:B H4:B H2:B"))) {
+        if (Objects.equals(Utils.TREND_SHOT, trend_target)
+                && (note.contains(Utils.TEXT_MIN_AREA) || note.contains("H12:B H8:B H4:B H2:B"))) {
             return true;
         }
 
-        //Buy đỉnh
-        if (Objects.equals(Utils.TREND_LONG, trend_target) && (note.contains(Utils.TEXT_MAX_AREA)
-                || note.contains("H12:A H8:A H4:A H2:A"))) {
+        // Buy đỉnh
+        if (Objects.equals(Utils.TREND_LONG, trend_target)
+                && (note.contains(Utils.TEXT_MAX_AREA) || note.contains("H12:A H8:A H4:A H2:A"))) {
             return true;
         }
 
@@ -2560,6 +2560,30 @@ public class Utils {
         return false;
     }
 
+    public static List<BigDecimal> getBodyCandle(List<BtcFutures> list) {
+        List<BigDecimal> result = new ArrayList<BigDecimal>();
+
+        BigDecimal min = BigDecimal.valueOf(1000000);
+        BigDecimal max = BigDecimal.ZERO;
+
+        for (int index = 0; index < list.size(); index++) {
+            BigDecimal ma3 = calcMA(list, 3, index);
+
+            if (min.compareTo(ma3) > 0) {
+                min = ma3;
+            }
+
+            if (max.compareTo(ma3) < 0) {
+                max = ma3;
+            }
+        }
+
+        result.add(min);
+        result.add(max);
+
+        return result;
+    }
+
     public static List<BigDecimal> getLowHighCandle(List<BtcFutures> list) {
         List<BigDecimal> result = new ArrayList<BigDecimal>();
 
@@ -2602,7 +2626,7 @@ public class Utils {
             List<BtcFutures> sub_list = new ArrayList<BtcFutures>();
             sub_list.add(dto);
 
-            List<BigDecimal> body = Utils.getOpenCloseCandle(sub_list);
+            List<BigDecimal> body = Utils.getBodyCandle(sub_list);
             List<BigDecimal> low_high = Utils.getLowHighCandle(sub_list);
 
             BigDecimal beard_buy = (body.get(0).subtract(low_high.get(0))).abs();
@@ -2615,38 +2639,6 @@ public class Utils {
         }
 
         return max_bread;
-    }
-
-    public static List<BigDecimal> getOpenCloseCandle(List<BtcFutures> list) {
-        List<BigDecimal> result = new ArrayList<BigDecimal>();
-
-        BigDecimal min_low = BigDecimal.valueOf(1000000);
-        BigDecimal max_Hig = BigDecimal.ZERO;
-
-        for (BtcFutures dto : list) {
-            if (dto.isUptrend()) {
-                if (min_low.compareTo(dto.getPrice_open_candle()) > 0) {
-                    min_low = dto.getPrice_open_candle();
-                }
-
-                if (max_Hig.compareTo(dto.getPrice_open_candle()) < 0) {
-                    max_Hig = dto.getPrice_close_candle();
-                }
-            } else {
-                if (min_low.compareTo(dto.getPrice_close_candle()) > 0) {
-                    min_low = dto.getPrice_close_candle();
-                }
-
-                if (max_Hig.compareTo(dto.getPrice_close_candle()) < 0) {
-                    max_Hig = dto.getPrice_open_candle();
-                }
-            }
-        }
-
-        result.add(min_low);
-        result.add(max_Hig);
-
-        return result;
     }
 
     public static String getTypeLongOrShort(List<BtcFutures> list) {
