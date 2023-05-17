@@ -2734,14 +2734,15 @@ public class BinanceServiceImpl implements BinanceService {
         //[   1D=12H  8H=4H=2H=30]  {D1~H12    H4~H2   }
 
         String CAPITAL_TIME_XX = "";
-        if (prefix.contains("H8") && prefix.contains("4H")) {
-            CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H8;
 
-        } else if (prefix.contains("H12") && prefix.contains("8H")) {
+        if (prefix.contains("H12") && prefix.contains("8H"))
             CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
 
-        } else if ((prefix.contains("H4") && prefix.contains("12H") && prefix.contains("2H"))
-                || (prefix.contains("H4") && prefix.contains("8H") && prefix.contains("2H"))) {
+        else if (prefix.contains("H8") && prefix.contains("12H") && prefix.contains("4H")) {
+            CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H8;
+
+        } else if ((prefix.contains("H4") && prefix.contains("1D") && prefix.contains("12H") && prefix.contains("2H"))
+                || (prefix.contains("H4") && prefix.contains("1D") && prefix.contains("8H") && prefix.contains("2H"))) {
             CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
         }
 
@@ -4011,26 +4012,32 @@ public class BinanceServiceImpl implements BinanceService {
 
         for (Mt5DataTrade dto : tradeList) {
             String msg = "";
+            String trend_h4 = "";
+            Orders dto_H4 = ordersRepository.findById(dto.getSymbol() + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+            if (Objects.nonNull(dto_H4)) {
+                trend_h4 = dto_H4.getTrend();
+            }
 
             // PROFIT
             if (dto.getProfit().add(risk).compareTo(BigDecimal.ZERO) < 0) {
-                msg = "[StopLoss]" + dto.getSymbol() + "___Profit:" + Utils.removeLastZero(dto.getProfit())
+                msg = "(Stop_Loss)" + dto.getSymbol() + "___Profit:" + Utils.removeLastZero(dto.getProfit())
+                        + "___Trade:" + dto.getType() + "___Trend(H4):" + trend_h4
                         + "___MaxRisk:" + risk;
             }
 
             // TREND
             if (dto.getProfit().compareTo(BigDecimal.ZERO) > 0) {
-                Orders dto_H4 = ordersRepository.findById(dto.getSymbol() + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-                if (Objects.nonNull(dto_H4) && !Objects.equals(dto_H4.getTrend(), dto.getType())) {
-                    msg = "[SwitchTrend]" + dto.getSymbol() + "___Profit:" + Utils.removeLastZero(dto.getProfit())
-                            + "___Trade:" + dto.getType() + "___Trend(H4):" + dto_H4.getTrend();
+                if (!Objects.equals(trend_h4, dto.getType())) {
+                    msg = "(Switch_Trend)" + dto.getSymbol() + "___Profit:" + Utils.removeLastZero(dto.getProfit())
+                            + "___Trade:" + dto.getType() + "___Trend(H4):" + trend_h4;
                 }
             }
 
             if (Utils.isNotBlank(msg)) {
+                Utils.logWritelnDraft(msg);
+
                 String EVENT_ID = "TradeProfit_" + dto.getSymbol() + Utils.getCurrentYyyyMmDd_HH_Blog15m();
                 sendMsgPerHour(EVENT_ID, msg, true);
-                Utils.logWritelnDraft(msg);
             }
         }
 
