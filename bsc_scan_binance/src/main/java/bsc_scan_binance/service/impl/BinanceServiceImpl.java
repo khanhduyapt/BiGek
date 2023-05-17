@@ -3,6 +3,7 @@ package bsc_scan_binance.service.impl;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigDecimal;
@@ -56,6 +57,7 @@ import bsc_scan_binance.entity.GeckoVolumeMonth;
 import bsc_scan_binance.entity.GeckoVolumeMonthKey;
 import bsc_scan_binance.entity.Mt5DataCandle;
 import bsc_scan_binance.entity.Mt5DataCandleKey;
+import bsc_scan_binance.entity.Mt5DataTrade;
 import bsc_scan_binance.entity.Orders;
 import bsc_scan_binance.repository.BinanceFuturesRepository;
 import bsc_scan_binance.repository.BinanceVolumeDateTimeRepository;
@@ -2996,11 +2998,10 @@ public class BinanceServiceImpl implements BinanceService {
         return Utils.CRYPTO_TIME_H1;
     }
 
-    @Override
-    @Transactional
-    public void saveMt5Data(String filename, Integer MINUTES_OF_XX) {
+    private String mt5_data_file(String filename, Integer MINUTES_OF_XX) {
+        String mt5_data_file = "";
         try {
-            String mt5_data_file = "";
+
             String pcname = InetAddress.getLocalHost().getHostName().toLowerCase();
             if (Objects.equals(pcname, "pc")) {
                 // MFF Pc cong ty:
@@ -3018,7 +3019,7 @@ public class BinanceServiceImpl implements BinanceService {
             File file = new File(mt5_data_file);
             if (!file.exists()) {
                 Utils.logWritelnDraft("[saveMt5Data_FileNotFound]: " + mt5_data_file);
-                return;
+                return "";
             }
 
             // TODO: saveMt5Data
@@ -3034,11 +3035,71 @@ public class BinanceServiceImpl implements BinanceService {
 
                 String EVENT_ID = EVENT_PUMP + "_UPDATE_BARS_CSV_" + Utils.getCurrentYyyyMmDd_HH();
                 sendMsgPerHour(EVENT_ID, "Update:" + filename, true);
-                return;
+                return "";
+            }
+        } catch (Exception e) {
+        }
+
+        return mt5_data_file;
+    }
+
+    /*
+    Symbol   Ticket  Type    PriceOpen   StopLoss    TakeProfit  Profit
+    GER40.cash  81258050    0   15895.35    16111.0 0.0 -185.77
+    EURCAD  81249169    0   1.46448 1.45172 0.0 -22.2
+    EURGBP  81246958    0   0.87056 0.86395 0.0 108.2
+     */
+    public List<Mt5DataTrade> getTradeList() {
+        List<Mt5DataTrade> result = new ArrayList<Mt5DataTrade>();
+        String mt5_data_file = mt5_data_file("Trade.csv", Utils.MINUTES_OF_5M);
+        if (Utils.isBlank(mt5_data_file)) {
+            return result;
+        }
+
+        try {
+            String line;
+            int count = 0;
+            Reader reader = new InputStreamReader(new FileInputStream(mt5_data_file), "UTF-8");
+            BufferedReader fin = new BufferedReader(reader);
+            while ((line = fin.readLine()) != null) {
+                count += 1;
+
+                if (count == 1) {
+                    continue;
+                }
+                String[] tempArr = line.replace(".cash", "").split("\\t");
+                if (tempArr.length == 7) {
+                    Mt5DataTrade dto = new Mt5DataTrade();
+                    dto.setSymbol(tempArr[0].toUpperCase());
+                    dto.setTicket(tempArr[1].toUpperCase());
+                    dto.setType(tempArr[2].toUpperCase());
+                    dto.setPriceOpen(Utils.getBigDecimal(tempArr[3]));
+                    dto.setStopLoss(Utils.getBigDecimal(tempArr[4]));
+                    dto.setTakeProfit(Utils.getBigDecimal(tempArr[5]));
+                    dto.setProfit(Utils.getBigDecimal(tempArr[6]));
+
+                    result.add(dto);
+                }
             }
 
-            // ------------------------------------------------------------------------
+            fin.close();
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public void saveMt5Data(String filename, Integer MINUTES_OF_XX) {
+        try {
+            String mt5_data_file = mt5_data_file(filename, MINUTES_OF_XX);
+            if (Utils.isBlank(mt5_data_file)) {
+                return;
+            }
+            // ------------------------------------------------------------------------
             String line;
             int total_line = 0;
             int total_data = 0;
@@ -3105,12 +3166,11 @@ public class BinanceServiceImpl implements BinanceService {
             if (not_found > 0) {
                 log += "/NOT_FOUND:" + epic_not_found;
             }
-            log += "      LastModifiedTime: " + Utils.formatDateTime(attr.lastModifiedTime());
 
             if (log.contains("NOT_FOUND")) {
                 Utils.logWritelnDraft("\n\n\n");
                 Utils.logWritelnDraft(log);
-                Utils.logWritelnDraft("file:" + file.getAbsolutePath());
+                Utils.logWritelnDraft("file:" + mt5_data_file.replace("\\", "/"));
                 Utils.logWritelnDraft("\n\n\n");
             }
         } catch (Exception e) {
@@ -3944,6 +4004,34 @@ public class BinanceServiceImpl implements BinanceService {
         }
         if (required_update_bars_csv) {
             return;
+        }
+
+        List<Mt5DataTrade> tradeList = getTradeList();
+        BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
+
+        for (Mt5DataTrade dto : tradeList) {
+            String msg = "";
+
+            // PROFIT
+            if (dto.getProfit().add(risk).compareTo(BigDecimal.ZERO) < 0) {
+                msg = "[StopLoss]" + dto.getSymbol() + "___Profit:" + Utils.removeLastZero(dto.getProfit())
+                        + "___MaxRisk:" + risk;
+            }
+
+            // TREND
+            if (dto.getProfit().compareTo(BigDecimal.ZERO) > 0) {
+                Orders dto_H4 = ordersRepository.findById(dto.getSymbol() + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+                if (Objects.nonNull(dto_H4) && !Objects.equals(dto_H4.getTrend(), dto.getType())) {
+                    msg = "[SwitchTrend]" + dto.getSymbol() + "___Profit:" + Utils.removeLastZero(dto.getProfit())
+                            + "___Trade:" + dto.getType() + "___Trend(H4):" + dto_H4.getTrend();
+                }
+            }
+
+            if (Utils.isNotBlank(msg)) {
+                String EVENT_ID = "TradeProfit_" + dto.getSymbol() + Utils.getCurrentYyyyMmDd_HH_Blog15m();
+                sendMsgPerHour(EVENT_ID, msg, true);
+                Utils.logWritelnDraft(msg);
+            }
         }
 
         String msg = "";

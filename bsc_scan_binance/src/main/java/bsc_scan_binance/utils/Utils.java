@@ -60,8 +60,8 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 
 //@Slf4j
 public class Utils {
-    public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.005);
+    public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000); // 20k
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.01);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -3542,7 +3542,7 @@ public class Utils {
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
 
         if (dto_entry.getId().contains(CAPITAL_TIME_D1) || dto_entry.getId().contains(CAPITAL_TIME_W1)) {
-            risk = risk.multiply(BigDecimal.valueOf(2));
+            // risk = risk.multiply(BigDecimal.valueOf(2));
         }
         risk = formatPrice(risk, 0);
 
