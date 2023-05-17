@@ -2942,13 +2942,10 @@ public class BinanceServiceImpl implements BinanceService {
 
     private String analysis(String prifix, String EPIC, String CAPITAL_TIME_XX) {
         Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
-        Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-
+        Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(dto);
+        Orders dto_en = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(dto);
         if (Objects.isNull(dto)) {
             return "";
-        }
-        if (Objects.isNull(dto_sl)) {
-            dto_sl = dto;
         }
 
         // ----------------------------TREND------------------------
@@ -2967,7 +2964,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String log = Utils.appendSpace(prifix, 16) + Utils.appendSpace(note, 65);
 
-        outputLog("Analysis_" + char_name, EPIC, dto_sl, dto_sl, log, dto.getTrend());
+        outputLog("Analysis_" + char_name, EPIC, dto_en, dto_sl, log, dto.getTrend());
 
         if (!isReloadAfter(Utils.MINUTES_OF_1H, EPIC + trend)) {
             return "";
@@ -3924,7 +3921,6 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        // TODO: 2. scapForex
         // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
         // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
 
@@ -3964,8 +3960,8 @@ public class BinanceServiceImpl implements BinanceService {
                     trend_30, trend_dt, dto_d1.getNote(), dto_h12.getNote(), dto_h8.getNote(), dto_h4.getNote(),
                     dto_h2.getNote(), dto_30.getNote());
 
+            // TODO: 2. scapForex
             String ea = Utils.TEXT_EXPERT_ADVISOR_SPACE;
-
             if (!GLOBAL_SAME_TREND_D1_H12.contains(EPIC)) {
                 String CAPITAL_TIME_SWITCH = getCAPITAL_TIME_SwitchTrend_H8_H12_H4(EPIC, prefix);
 
