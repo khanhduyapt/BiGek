@@ -2774,9 +2774,9 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private String getTrendTimeframes(String EPIC) {
-        String result = "";// "(H12:A,H8:B,H4:A,H2:B,30:A)";
-        List<String> times = Arrays.asList(Utils.CAPITAL_TIME_H12, Utils.CAPITAL_TIME_H8, Utils.CAPITAL_TIME_H4,
-                Utils.CAPITAL_TIME_H2, Utils.CAPITAL_TIME_30);
+        String result = "";// "(D1:Buy ,H12:Buy ,H8:Buy ,H4:Buy ,H2:Sell,30:Buy )";
+        List<String> times = Arrays.asList(Utils.CAPITAL_TIME_D1, Utils.CAPITAL_TIME_H12, Utils.CAPITAL_TIME_H8,
+                Utils.CAPITAL_TIME_H4, Utils.CAPITAL_TIME_H2, Utils.CAPITAL_TIME_30);
 
         for (String CAPITAL_TIME_XX : times) {
             String chart_name = Utils.getChartNameCapital(CAPITAL_TIME_XX).replace("(", "").replace(")", "").trim();
@@ -4072,8 +4072,6 @@ public class BinanceServiceImpl implements BinanceService {
         for (Mt5DataTrade trade : tradeList) {
 
             String trend = "";
-            String trends = getTrendTimeframes(trade.getSymbol());
-
             Orders dto_ref = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             if (Objects.nonNull(dto_ref)) {
                 trend = dto_ref.getTrend();
@@ -4093,7 +4091,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            result += Utils.appendSpace(trade.getSymbol(), 10) + trends;
+            result += Utils.appendSpace(trade.getSymbol(), 10) + getTrendTimeframes(trade.getSymbol());
             result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(trade.getProfit()), 10);
 
             msg += result + Utils.new_line_from_service;
