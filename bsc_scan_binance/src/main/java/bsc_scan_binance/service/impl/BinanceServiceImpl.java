@@ -2730,7 +2730,7 @@ public class BinanceServiceImpl implements BinanceService {
         return CAPITAL_TIME_XX;
     }
 
-    private String getCAPITAL_TIME_SwitchTrend_H8_H12_H4(String prefix) {
+    private String getCAPITAL_TIME_SwitchTrend_H8_H12_H4(String EPIC, String prefix) {
         //[   1D=12H  8H=4H=2H=30]  {D1~H12    H4~H2   }
 
         String CAPITAL_TIME_XX = "";
@@ -2744,6 +2744,38 @@ public class BinanceServiceImpl implements BinanceService {
         } else if ((prefix.contains("H4") && prefix.contains("1D") && prefix.contains("12H") && prefix.contains("2H"))
                 || (prefix.contains("H4") && prefix.contains("1D") && prefix.contains("8H") && prefix.contains("2H"))) {
             CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
+        }
+        if (Utils.isNotBlank(CAPITAL_TIME_XX)) {
+            return CAPITAL_TIME_XX;
+        }
+
+        String TIME = "";
+        if (prefix.contains("H12")) {
+            TIME = Utils.CAPITAL_TIME_H12;
+
+        } else if (prefix.contains("H8")) {
+            TIME = Utils.CAPITAL_TIME_H8;
+
+        } else if (prefix.contains("H4")) {
+            TIME = Utils.CAPITAL_TIME_H4;
+
+        } else if (prefix.contains("H2")) {
+            TIME = Utils.CAPITAL_TIME_H2;
+
+        } else if (prefix.contains("D1")) {
+            TIME = Utils.CAPITAL_TIME_D1;
+        }
+
+        if (Utils.isNotBlank(TIME)) {
+            Orders dto_wt = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
+            if (Objects.nonNull(dto_wt)) {
+                if (dto_wt.getNote().contains(Utils.TEXT_MIN_AREA) || dto_wt.getNote().contains(Utils.TEXT_MAX_AREA)) {
+
+                    if (!Utils.isBuyTopSellBottom(dto_wt.getTrend(), dto_wt.getNote())) {
+                        return TIME;
+                    }
+                }
+            }
         }
 
         return CAPITAL_TIME_XX;
@@ -2810,7 +2842,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.isBlank(EPIC)) {
             return "";
         }
-        String CAPITAL_TIME_XX = getCAPITAL_TIME_SwitchTrend_H8_H12_H4(prefix);
+        String CAPITAL_TIME_XX = getCAPITAL_TIME_SwitchTrend_H8_H12_H4(EPIC, prefix);
         if (Utils.isBlank(CAPITAL_TIME_XX)) {
             return "";
         }
@@ -3814,7 +3846,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         for (String EPIC : CAPITAL_LIST) {
             String prefix = getPrefix(index, EPIC) + Utils.TEXT_EXPERT_ADVISOR_EA;
-            String CAPITAL_TIME_XX = getCAPITAL_TIME_SwitchTrend_H8_H12_H4(prefix);
+            String CAPITAL_TIME_XX = getCAPITAL_TIME_SwitchTrend_H8_H12_H4(EPIC, prefix);
 
             Orders dto_30 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
             Orders dto_switch_trend = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
@@ -3849,7 +3881,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         for (int i = 0; i < epics.size(); i++) {
-            analysis(prifixs.get(index), epics.get(i), times.get(i));
+            analysis(prifixs.get(i), epics.get(i), times.get(i));
         }
 
         if (Utils.isNotBlank(result)) {
@@ -3909,7 +3941,7 @@ public class BinanceServiceImpl implements BinanceService {
             String ea = Utils.TEXT_EXPERT_ADVISOR_SPACE;
 
             if (!GLOBAL_SAME_TREND_D1_H12.contains(EPIC)) {
-                String CAPITAL_TIME_SWITCH = getCAPITAL_TIME_SwitchTrend_H8_H12_H4(prefix);
+                String CAPITAL_TIME_SWITCH = getCAPITAL_TIME_SwitchTrend_H8_H12_H4(EPIC, prefix);
 
                 if (Utils.isNotBlank(CAPITAL_TIME_SWITCH)) {
                     Orders dto_switch_trend = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_SWITCH).orElse(null);
@@ -4050,7 +4082,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String prefix = getPrefix(1, EPIC);
-            String CAPITAL_TIME_XX = getCAPITAL_TIME_SwitchTrend_H8_H12_H4(prefix);
+            String CAPITAL_TIME_XX = getCAPITAL_TIME_SwitchTrend_H8_H12_H4(EPIC, prefix);
 
             if (Utils.isBlank(CAPITAL_TIME_XX)) {
                 continue;
