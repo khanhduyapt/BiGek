@@ -217,10 +217,12 @@ public class BscScanBinanceApplication {
         EPICS_OUTPUTED = "";
         EPICS_OUTPUT_MSG = "";
         // --------------------------------------------------------------------------
-        binance_service.scapForex(Utils.EPICS_METALS);
+
         Utils.logWritelnDraftFooter();
         binance_service.scapM30();
         Utils.logWritelnDraftFooter();
+        binance_service.scapForex(Utils.EPICS_METALS);
+        Utils.logWritelnDraft("");
         binance_service.scapForex(Utils.EPICS_FOREXS_JPY);
         Utils.logWritelnDraft("");
         binance_service.scapForex(Utils.EPICS_FOREXS_GBP);
@@ -254,6 +256,7 @@ public class BscScanBinanceApplication {
                 add_new += epic + "   ";
             }
         }
+
         if (allow_send_msg && Utils.isNotBlank(add_new)) {
             String msg = "(Added: " + count + "):   " + add_new;
             Utils.logWritelnDraft("");

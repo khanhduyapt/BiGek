@@ -2272,6 +2272,20 @@ public class Utils {
         return Utils.appendSpace("(" + Utils.removeLastZero(list.get(0).getCurrPrice()) + ")", 12);
     }
 
+    public static String textBuyTopSellBottom(String trend_target, String note) {
+        if (Objects.equals(Utils.TREND_LONG, trend_target) && (note.contains(Utils.TEXT_MAX_AREA)
+                || note.contains("H12:A H8:A H4:A H2:A"))) {
+            return "BuyTop";
+        }
+
+        if (Objects.equals(Utils.TREND_SHOT, trend_target) && (note.contains(Utils.TEXT_MIN_AREA)
+                || note.contains("H12:B H8:B H4:B H2:B"))) {
+            return "SellBottom";
+        }
+
+        return "";
+    }
+
     public static boolean isBuyTopSellBottom(String trend_target, String note) {
         // Sell đáy
         if (Objects.equals(Utils.TREND_SHOT, trend_target) && (note.contains(Utils.TEXT_MIN_AREA)
