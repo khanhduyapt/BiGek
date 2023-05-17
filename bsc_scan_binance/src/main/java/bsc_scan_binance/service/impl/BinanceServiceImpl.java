@@ -4010,33 +4010,34 @@ public class BinanceServiceImpl implements BinanceService {
         List<Mt5DataTrade> tradeList = getTradeList();
         BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
 
-        for (Mt5DataTrade dto : tradeList) {
+        for (Mt5DataTrade trade : tradeList) {
             String msg = "";
-            String trend_h4 = "";
-            Orders dto_H4 = ordersRepository.findById(dto.getSymbol() + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-            if (Objects.nonNull(dto_H4)) {
-                trend_h4 = dto_H4.getTrend();
+            String trend = "";
+
+            Orders dto_ref = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+            if (Objects.nonNull(dto_ref)) {
+                trend = dto_ref.getTrend();
             }
 
             // PROFIT
-            if (dto.getProfit().add(risk).compareTo(BigDecimal.ZERO) < 0) {
-                msg = "(Stop_Loss)" + dto.getSymbol() + "___Profit:" + Utils.removeLastZero(dto.getProfit())
-                        + "___Trade:" + dto.getType() + "___Trend(H4):" + trend_h4
+            if (trade.getProfit().add(risk).compareTo(BigDecimal.ZERO) < 0) {
+                msg = "(Stop_Loss)" + trade.getSymbol() + "___Profit:" + Utils.removeLastZero(trade.getProfit())
+                        + "___Trade:" + trade.getType() + "___" + Utils.getChartName(dto_ref) + ":" + trend
                         + "___MaxRisk:" + risk;
             }
 
             // TREND
-            if (dto.getProfit().compareTo(BigDecimal.ZERO) > 0) {
-                if (!Objects.equals(trend_h4, dto.getType())) {
-                    msg = "(Switch_Trend)" + dto.getSymbol() + "___Profit:" + Utils.removeLastZero(dto.getProfit())
-                            + "___Trade:" + dto.getType() + "___Trend(H4):" + trend_h4;
+            if (trade.getProfit().compareTo(BigDecimal.ZERO) > 0) {
+                if (!Objects.equals(trend, trade.getType())) {
+                    msg = "(Switch_Trend)" + trade.getSymbol() + "___Profit:" + Utils.removeLastZero(trade.getProfit())
+                            + "___Trade:" + trade.getType() + "___" + Utils.getChartName(dto_ref) + ":" + trend;
                 }
             }
 
             if (Utils.isNotBlank(msg)) {
                 Utils.logWritelnDraft(msg);
 
-                String EVENT_ID = "TradeProfit_" + dto.getSymbol() + Utils.getCurrentYyyyMmDd_HH_Blog15m();
+                String EVENT_ID = "TradeProfit_" + trade.getSymbol() + Utils.getCurrentYyyyMmDd_HH_Blog15m();
                 sendMsgPerHour(EVENT_ID, msg, true);
             }
         }
