@@ -4069,6 +4069,7 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT).multiply(BigDecimal.valueOf(2.5));
 
         String msg = "";
+        BigDecimal total = BigDecimal.ZERO;
         for (Mt5DataTrade trade : tradeList) {
 
             String trend = "";
@@ -4077,6 +4078,7 @@ public class BinanceServiceImpl implements BinanceService {
                 trend = dto_ref.getTrend();
             }
 
+            total = total.add(trade.getProfit());
             String result = "(" + Utils.appendSpace(trade.getType(), 4) + ")";
 
             // PROFIT
@@ -4097,7 +4099,7 @@ public class BinanceServiceImpl implements BinanceService {
             msg += result + Utils.new_line_from_service;
         }
         if (Utils.isNotBlank(msg)) {
-            msg = Utils.new_line_from_service + msg;
+            msg = Utils.appendLeft(String.valueOf(total), 10) + Utils.new_line_from_service + msg;
             Utils.logWritelnDraft(msg);
 
             String EVENT_ID = "TradeProfit" + Utils.getCurrentYyyyMmDd_HH();
