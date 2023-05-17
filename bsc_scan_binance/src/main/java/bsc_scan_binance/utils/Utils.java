@@ -3494,7 +3494,7 @@ public class Utils {
         return type;
     }
 
-    public static String createLineForex_Header(Orders dto_entry, Orders dto_sl, String note) {
+    public static String createLineForex_Header(Orders dto_entry, Orders dto_sl, String append) {
         if (Objects.isNull(dto_entry) || Objects.isNull(dto_sl)) {
             return "";
         }
@@ -3506,7 +3506,7 @@ public class Utils {
         // String time = pre_time.format(DateTimeFormatter.ofPattern("HH:mm"));
 
         String header = "";// time + " ";
-        header += Utils.appendSpace(note, 8);
+        header += Utils.appendSpace(append, 8);
         header += chart_name + ":" + Utils.appendSpace(dto_entry.getTrend(), 8);
         header += Utils.appendSpace(EPIC, 12) + getTypeOfEpic(EPIC);
         header += Utils.appendSpace(Utils.getCapitalLink(EPIC), 68);

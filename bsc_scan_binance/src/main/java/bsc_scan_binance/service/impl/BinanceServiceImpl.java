@@ -3207,46 +3207,15 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_h2 = dto_h2.getTrend();
                 String trend_30 = dto_30.getTrend();
 
-                String note = "";
-                String findTrend = "";
-                if (Utils.isNotBlank(dto_h12.getNote())) {
-
-                    note = dto_h12.getNote();
-                    findTrend = trend_h12;
-
-                } else if (Utils.isNotBlank(dto_h8.getNote())) {
-
-                    note = dto_h12.getNote();
-                    findTrend = trend_h12;
-
-                } else if (Objects.equals(trend_h4, trend_h2)
-                        && dto_h2.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)) {
-
-                    note = dto_h2.getNote();
-                    findTrend = trend_h4;
-
-                } else if (Objects.equals(trend_h4, trend_h2) && (dto_h2.getNote().contains(Utils.TEXT_MIN_AREA)
-                        || dto_h2.getNote().contains(Utils.TEXT_MAX_AREA))) {
-
-                    note = dto_h2.getNote();
-                    findTrend = trend_h4;
-
-                } else if (Objects.equals(trend_h12, trend_h4)
-                        && dto_h4.getNote().contains(Utils.TEXT_SWITCH_TREND_Ma_1_50)) {
-
-                    note = dto_h4.getNote();
-                    findTrend = trend_h12;
-
-                } else if (Objects.equals(trend_h12, trend_h4) && (dto_h4.getNote().contains(Utils.TEXT_MIN_AREA)
-                        || dto_h4.getNote().contains(Utils.TEXT_MAX_AREA))) {
-
-                    note = dto_h4.getNote();
-                    findTrend = trend_h12;
-
-                } else {
-                    note = dto_d1.getNote();
-                    findTrend = trend_d1;
+                String CAPITAL_TIME_XX = getCAPITAL_TIME_SwitchTrend_D1_30(dto_h12.getNote(), dto_h8.getNote(),
+                        dto_h4.getNote(), dto_h2.getNote(), dto_30.getNote());
+                Orders dto_target = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
+                if (Objects.isNull(dto_target)) {
+                    continue;
                 }
+
+                String findTrend = dto_target.getTrend();
+                String note = dto_target.getNote();
 
                 String prefix = Utils.getPrefix(index, trend_w1, trend_d1, trend_h12, trend_h8, trend_h4, trend_h2,
                         trend_30, findTrend,
@@ -3254,8 +3223,15 @@ public class BinanceServiceImpl implements BinanceService {
                         dto_d1.getNote(), dto_h12.getNote(), dto_h8.getNote(), dto_h4.getNote(), dto_h2.getNote(),
                         dto_30.getNote());
 
-                String log = Utils.createLineForex_Header(dto_d1, dto_d1,
-                        Utils.appendSpace(prefix + Utils.appendSpace(note, 36) + getSideMa50(EPIC), 65));
+                if (Utils.isBuyTopSellBottom(findTrend, note)) {
+                    if (note.contains("(H12:")) {
+                        note = note.substring(0, note.indexOf("(H12:"))
+                                + Utils.textBuyTopSellBottom(findTrend, note);
+                    }
+                }
+                String append = Utils.appendSpace(prefix + Utils.appendSpace(note, 65) + getSideMa50(EPIC), 150);
+
+                String log = Utils.createLineForex_Header(dto_d1, dto_d1, append);
 
                 log += Utils.appendSpace(Utils.removeLastZero(dto_d1.getCurrent_price()), 15);
                 log += Utils.createLineForex_Body(dto_d1, dto_d1, findTrend, true).trim();
