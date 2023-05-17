@@ -3583,7 +3583,8 @@ public class Utils {
         // cur_price, sl_long, tp_long);
 
         String temp = "";
-        temp += "   SL(Buy )" + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 12);
+        temp += "   E(Buy )" + chartEntry + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 12);
+        temp += "   SL" + chartSL + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 12);
 
         // if (!onlyWait) {
         // temp += " (Now)" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 7) +
@@ -3596,8 +3597,7 @@ public class Utils {
         // temp += " (Wait)";
         // }
 
-        temp += "     E" + chartEntry + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 12);
-        temp += Utils.appendLeft(removeLastZero(money_long.calcLot()), 12) + "(lot)";
+        temp += Utils.appendLeft(removeLastZero(money_long.calcLot()), 10) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
         temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
@@ -3622,7 +3622,8 @@ public class Utils {
         // cur_price, sl_shot, tp_shot);
 
         String temp = "";
-        temp += "   SL(Sell)" + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 12);
+        temp += "   E(Sell)" + chartEntry + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 12);
+        temp += "   SL" + chartSL + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 12);
 
         // if (!onlyWait) {
         // temp += " (Now)" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 7) +
@@ -3635,8 +3636,7 @@ public class Utils {
         // temp += " (Wait)";
         // }
 
-        temp += "     E" + chartEntry + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 12);
-        temp += Utils.appendLeft(removeLastZero(money_short.calcLot()), 12) + "(lot)";
+        temp += Utils.appendLeft(removeLastZero(money_short.calcLot()), 10) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
         temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
