@@ -92,11 +92,11 @@ public class Utils {
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
-    public static final String TEXT_SWITCH_TREND_LONG_BELOW_Ma = "(B.H4H2)";
-    public static final String TEXT_SWITCH_TREND_SHOT_ABOVE_Ma = "(S.H4H2)";
+    //    public static final String TEXT_SWITCH_TREND_LONG_BELOW_Ma = "(B.H4H2)";
+    //    public static final String TEXT_SWITCH_TREND_SHOT_ABOVE_Ma = "(S.H4H2)";
     public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma.1.3)";
     public static final String TEXT_WAIT = "Wait";
-    public static final String TEXT_EXPERT_ADVISOR_EA = "..  ";
+    public static final String TEXT_EXPERT_ADVISOR_EA = "ea  ";
     public static final String TEXT_EXPERT_ADVISOR_SPACE = "    ";
 
     public static final String TEXT_SWITCH_TREND_Ma_1_10 = "(Ma1_10)";
@@ -722,26 +722,25 @@ public class Utils {
 
             String note_d1, String note_h12, String note_h8, String note_h4, String note_h2, String note_30) {
 
-        String prefix = Utils.appendLeft(String.valueOf(index), 2) + ".[W1=D1=H12  H8=H4=H2=30]";
+        String prefix = Utils.appendLeft(String.valueOf(index), 2) + ".[1W=1D=12H  8H=4H=2H=30]";
 
         if (!Objects.equals(trend_w1, trend_dt)) {
-            prefix = prefix.replace("W1=", "   ");
+            prefix = prefix.replace("1W=", "   ");
         }
         if (!Objects.equals(trend_d1, trend_dt)) {
-            prefix = prefix.replace("=D1=", "    ").replace("D1=", "   ");
+            prefix = prefix.replace("=1D=", "    ").replace("1D=", "   ");
         }
         if (!Objects.equals(trend_h12, trend_dt)) {
-            prefix = prefix.replace("=H12", "    ").replace("H12", "   ");
+            prefix = prefix.replace("=12H", "    ").replace("12H", "   ");
         }
-
         if (!Objects.equals(trend_h8, trend_dt)) {
-            prefix = prefix.replace("=H8=", "    ").replace("H8=", "   ");
+            prefix = prefix.replace("=8H=", "    ").replace("8H=", "   ");
         }
         if (!Objects.equals(trend_h4, trend_dt)) {
-            prefix = prefix.replace("=H4=", "    ").replace("H4=", "   ");
+            prefix = prefix.replace("=4H=", "    ").replace("4H=", "   ");
         }
         if (!Objects.equals(trend_h2, trend_dt)) {
-            prefix = prefix.replace("=H2=", "    ").replace("H2=", "   ");
+            prefix = prefix.replace("=2H=", "    ").replace("2H=", "   ");
         }
         if (!Objects.equals(trend_30, trend_dt)) {
             prefix = prefix.replace("=30", "   ").replace("30", "  ");
@@ -768,7 +767,7 @@ public class Utils {
         }
         switch_trend = switch_trend.replace("{                  }", "                    ");
 
-        String result = appendSpace("H12:" + trend_h12, 10) + prefix + switch_trend;
+        String result = prefix + switch_trend;
 
         return result;
     }
@@ -2191,7 +2190,7 @@ public class Utils {
 
     public static boolean isAboveMALine(List<BtcFutures> list, int length) {
         if (CollectionUtils.isEmpty(list) || (list.size() < 1)) {
-            Utils.logWritelnDraft("(isAboveMALine)list Empty");
+            // Utils.logWritelnDraft("(isAboveMALine)list Empty");
             return false;
         }
 
@@ -2213,7 +2212,7 @@ public class Utils {
 
     public static boolean isBelowMALine(List<BtcFutures> list, int length) {
         if (CollectionUtils.isEmpty(list) || (list.size() < 1)) {
-            Utils.logWritelnDraft("(isBelowMALine)list Empty");
+            //Utils.logWritelnDraft("(isBelowMALine)list Empty");
             return false;
         }
         if (list.size() < length) {
@@ -2271,6 +2270,22 @@ public class Utils {
 
     public static String getCurrentPrice(List<BtcFutures> list) {
         return Utils.appendSpace("(" + Utils.removeLastZero(list.get(0).getCurrPrice()) + ")", 12);
+    }
+
+    public static boolean isBuyTopSellBottom(String trend_target, String note) {
+        // Sell đáy
+        if (Objects.equals(Utils.TREND_SHOT, trend_target) && (note.contains(Utils.TEXT_MIN_AREA)
+                || note.contains("H12:B H8:B H4:B H2:B"))) {
+            return true;
+        }
+
+        //Buy đỉnh
+        if (Objects.equals(Utils.TREND_LONG, trend_target) && (note.contains(Utils.TEXT_MAX_AREA)
+                || note.contains("H12:A H8:A H4:A H2:A"))) {
+            return true;
+        }
+
+        return false;
     }
 
     public static String getChartNameAndEpic(String id) {

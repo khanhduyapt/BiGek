@@ -260,7 +260,7 @@ public class BscScanBinanceApplication {
             Utils.logWritelnDraft(msg);
 
             String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
-            binance_service.sendMsgPerHour(EVENT_ID, msg, true);
+            // binance_service.sendMsgPerHour(EVENT_ID, msg, true);
         }
 
     }
