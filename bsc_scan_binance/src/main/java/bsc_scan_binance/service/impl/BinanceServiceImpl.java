@@ -2967,16 +2967,16 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String sendMsgKillLongShort(String SYMBOL) {
-        List<BtcFutures> list = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_D1, 15);
+        List<BtcFutures> list = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_H12, 15);
         if (CollectionUtils.isEmpty(list)) {
             return Utils.CRYPTO_TIME_H1;
         }
 
-        List<BtcFutures> heken_list_h12 = Utils.getHekenList(list);
-        String trend = Utils.getTrendByHekenAshiList(heken_list_h12);
-        String switch_trend_h12 = Utils.switchTrendByHeken_12(heken_list_h12);
+        List<BtcFutures> heken_list = Utils.getHekenList(list);
+        String trend = Utils.getTrendByHekenAshiList(heken_list);
+        String switch_trend = Utils.switchTrendByHeken_12(heken_list);
 
-        if (Utils.isNotBlank(switch_trend_h12)) {
+        if (Utils.isNotBlank(switch_trend)) {
             // TODO: sendMsgKillLongShort
             String msg = "";
             boolean isOnlyMe = true;
@@ -3953,7 +3953,7 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO: 3. monitorProfit
         Utils.logWritelnDraft(
                 "Monitored by EA: " + GLOBAL_SAME_TREND_D1_H12.size() + GLOBAL_SAME_TREND_D1_H12.toString() + "\n");
-
+        Utils.logWritelnDraft("");
         // -------------------------------------------------------------------------------------
         // "BTCUSD", GER40", "US30", "US100", "UK100", "USOIL", "XAGUSD", "XAUUSD"
         // "AUDJPY", "AUDUSD", "CADJPY", "CHFJPY",
@@ -4041,6 +4041,7 @@ public class BinanceServiceImpl implements BinanceService {
                 sendMsgPerHour(EVENT_ID, msg, true);
             }
         }
+        Utils.logWritelnDraft("");
 
         String msg = "";
         for (String EPIC : GLOBAL_SAME_TREND_D1_H12) {
