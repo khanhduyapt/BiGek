@@ -4072,8 +4072,8 @@ public class BinanceServiceImpl implements BinanceService {
         String msg = "";
         BigDecimal total = BigDecimal.ZERO;
         List<String> scalpingList = new ArrayList<String>();
-        for (Mt5DataTrade trade : tradeList) {
 
+        for (Mt5DataTrade trade : tradeList) {
             total = total.add(trade.getProfit());
             String result = "(" + Utils.appendSpace(trade.getType(), 4) + ")";
             if (trade.getProfit().add(risk).compareTo(BigDecimal.ZERO) < 0) {
@@ -4095,6 +4095,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
         }
+
         if (Utils.isNotBlank(msg)) {
             msg = Utils.appendLeft(String.valueOf(total), 10) + Utils.new_line_from_service + msg;
             Utils.logWritelnDraft(msg);
