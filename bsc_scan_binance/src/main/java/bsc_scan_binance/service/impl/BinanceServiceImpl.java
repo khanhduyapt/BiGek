@@ -3838,29 +3838,28 @@ public class BinanceServiceImpl implements BinanceService {
         if (required_update_bars_csv) {
             return;
         }
+
         int index = 1;
         String result = "";
-
         for (String EPIC : CAPITAL_LIST) {
+            if (BscScanBinanceApplication.EPICS_OUTPUT_MSG.contains(EPIC)) {
+                continue;
+            }
+
             Orders dto_xx = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
             Orders dto_30 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
             Orders dto_h2 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H2).orElse(null);
             Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-            Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             if (Objects.isNull(dto_xx) || Objects.isNull(dto_30) || Objects.isNull(dto_h2) || Objects.isNull(dto_h12)
-                    || Objects.isNull(dto_d1) || Objects.isNull(dto_w1)) {
+                    || Objects.isNull(dto_d1)) {
                 continue;
             }
-
-            String trend_ref = dto_h12.getTrend();
-            if (!Objects.equals(dto_h12.getTrend(), dto_d1.getTrend())
-                    && Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())) {
-                trend_ref = dto_d1.getTrend();
+            if (!Objects.equals(dto_h12.getTrend(), dto_d1.getTrend())) {
+                continue;
             }
-
             if (!Objects.equals(dto_30.getTrend(), dto_xx.getTrend())
-                    || !Objects.equals(trend_ref, dto_xx.getTrend())) {
+                    || !Objects.equals(dto_h12.getTrend(), dto_xx.getTrend())) {
                 continue;
             }
 
@@ -3874,14 +3873,16 @@ public class BinanceServiceImpl implements BinanceService {
                 } else {
                     prefix += Utils.TEXT_EXPERT_ADVISOR_SPACE;
                 }
+                String type = Objects.equals(dto_xx.getTrend(), Utils.TREND_LONG) ? "(B)" : "(S)";
 
                 analysis(prefix, EPIC, CAPITAL_TIME_XX);
-
                 if (Utils.isNotBlank(result)) {
                     result += ", ";
                 }
-                result += EPIC;
+                result += type + EPIC;
                 index += 1;
+
+                BscScanBinanceApplication.EPICS_OUTPUT_MSG += "_" + EPIC + "_";
             }
         }
 
@@ -3951,7 +3952,7 @@ public class BinanceServiceImpl implements BinanceService {
                 GLOBAL_SAME_TREND_D1_H12.add(EPIC);
             }
 
-            if (!BscScanBinanceApplication.EPICS_OUTPUTED.contains(EPIC)) {
+            if (!BscScanBinanceApplication.EPICS_OUTPUTED_LOG.contains(EPIC)) {
                 if (Utils.isNotBlank(msg)) {
                     msg += ",";
                 }
@@ -3959,14 +3960,7 @@ public class BinanceServiceImpl implements BinanceService {
                 msg += analysis(prefix + ea, EPIC, CAPITAL_TIME_XX);
                 index += 1;
 
-                BscScanBinanceApplication.EPICS_OUTPUTED += "_" + EPIC + "_";
-            }
-
-            if (!BscScanBinanceApplication.EPICS_OUTPUT_MSG.contains(EPIC)) {
-                if (dto_dt.getNote().contains(Utils.TEXT_MIN_AREA) || dto_dt.getNote().contains(Utils.TEXT_MAX_AREA)
-                        || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_30)) {
-                    BscScanBinanceApplication.EPICS_OUTPUT_MSG += "_" + EPIC + "_";
-                }
+                BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
             }
         }
 

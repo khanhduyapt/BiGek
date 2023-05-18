@@ -35,7 +35,7 @@ public class BscScanBinanceApplication {
     public static ApplicationContext applicationContext;
     public static WandaBot wandaBot;
     public static TelegramBotsApi telegramBotsApi;
-    public static String EPICS_OUTPUTED = "INIT";
+    public static String EPICS_OUTPUTED_LOG = "INIT";
     public static String EPICS_OUTPUT_MSG = "INIT";
 
     public static void main(String[] args) {
@@ -214,7 +214,7 @@ public class BscScanBinanceApplication {
         // --------------------------------------------------------------------------
         File myScap = new File(Utils.getDraftLogFile());
         myScap.delete();
-        EPICS_OUTPUTED = "";
+        EPICS_OUTPUTED_LOG = "";
         EPICS_OUTPUT_MSG = "";
 
         // --------------------------------------------------------------------------
