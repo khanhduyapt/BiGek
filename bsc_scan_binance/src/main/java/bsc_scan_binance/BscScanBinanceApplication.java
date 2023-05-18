@@ -236,24 +236,25 @@ public class BscScanBinanceApplication {
         binance_service.scapWithM30(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_H2);
         Utils.logWritelnDraftFooter();
         // --------------------------------------------------------------------------
-
         binance_service.scapForex(Utils.EPICS_METALS);
-        Utils.logWritelnDraft(Utils.appendSpace("", 350, "."));
+        Utils.logWritelnDraft("...");
         binance_service.scapForex(Utils.EPICS_FOREXS_JPY);
-        Utils.logWritelnDraft(Utils.appendSpace("", 350, "."));
+        Utils.logWritelnDraft("...");
         binance_service.scapForex(Utils.EPICS_FOREXS_GBP);
-        Utils.logWritelnDraft(Utils.appendSpace("", 350, "."));
+        Utils.logWritelnDraft("...");
         binance_service.scapForex(Utils.EPICS_FOREXS_NZD);
-        Utils.logWritelnDraft(Utils.appendSpace("", 350, "."));
+        Utils.logWritelnDraft("...");
         binance_service.scapForex(Utils.EPICS_FOREXS_EUR);
-        Utils.logWritelnDraft(Utils.appendSpace("", 350, "."));
+        Utils.logWritelnDraft("...");
         binance_service.scapForex(Utils.EPICS_FOREXS_AUD);
-        Utils.logWritelnDraft(Utils.appendSpace("", 350, "."));
+        Utils.logWritelnDraft("...");
         binance_service.scapForex(Utils.EPICS_FOREXS_ALL);
-        Utils.logWritelnDraft(Utils.appendSpace("", 350, "."));
+        Utils.logWritelnDraft("...");
         binance_service.scapForex(Utils.EPICS_CASH_CFD);
-        Utils.logWritelnDraft(Utils.appendSpace("", 350, "."));
+        Utils.logWritelnDraft("...");
         binance_service.scapForex(Utils.EPICS_CRYPTO_CFD);
+        // --------------------------------------------------------------------------
+
         Utils.logWritelnDraftFooter();
         binance_service.scapStocks();
         Utils.logWritelnDraftFooter();

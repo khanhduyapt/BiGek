@@ -97,6 +97,7 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma.1.3)";
     public static final String TEXT_WAIT = "Wait";
     public static final String TEXT_EXPERT_ADVISOR_EA = "ea  ";
+    public static final String TEXT_EXPERT_ADVISORING = "..  ";
     public static final String TEXT_EXPERT_ADVISOR_SPACE = "    ";
 
     public static final String TEXT_ABOVE_MA50 = "AboveMa50";
@@ -723,80 +724,119 @@ public class Utils {
         return "(  )  ";
     }
 
-    public static String getCAPITAL_TIME_SwitchTrend_FollowTrend_W1(String trend_w1, String trend_d1, String trend_h12,
-            String trend_h8, String trend_h4, String trend_h2, String trend_30,
+    public static String getEATrackingTimeframe(String trend_w1, String trend_d1, String trend_h12) {
+        // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
+        // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
 
-            String note_d1, String note_h12, String note_h8, String note_h4, String note_h2, String note_30) {
-
-        String CAPITAL_TIME_XX = Utils.CAPITAL_TIME_W1;
-
-        if (Utils.isNotBlank(note_h12)) {
-            CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
-
-        } else if (Objects.equals(trend_w1, trend_h8) && Utils.isNotBlank(note_h8)) {
-            CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H8;
-
-        } else if (Objects.equals(trend_w1, trend_h4) && Utils.isNotBlank(note_h4)) {
-            CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
-
-        } else if (Objects.equals(trend_w1, trend_h2) && Utils.isNotBlank(note_h2)) {
-            CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H2;
-
-        } else if (Objects.equals(trend_w1, trend_30) && Utils.isNotBlank(note_30)) {
-            CAPITAL_TIME_XX = Utils.CAPITAL_TIME_30;
-
-        } else if (Objects.equals(trend_w1, trend_d1) && Utils.isNotBlank(note_d1)) {
-            CAPITAL_TIME_XX = Utils.CAPITAL_TIME_D1;
+        // [1W=1D=12H 8H=4H=2H=30] {D1~H12~H8~H4~H2~30}
+        if (Objects.equals(trend_w1, trend_d1)) {
+            return Utils.CAPITAL_TIME_D1;
+        }
+        if (Objects.equals(trend_d1, trend_h12)) {
+            return Utils.CAPITAL_TIME_H12;
+        }
+        if (Objects.equals(trend_w1, trend_h12)) {
+            return Utils.CAPITAL_TIME_H12;
         }
 
-        return CAPITAL_TIME_XX;
+        return Utils.CAPITAL_TIME_W1;
+    }
+
+    public static String getEATrackingTrend(String trend_w1, String trend_d1, String trend_h12) {
+        // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
+        // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
+
+        // [1W=1D=12H 8H=4H=2H=30] {D1~H12~H8~H4~H2~30}
+        if (Objects.equals(trend_w1, trend_d1)) {
+            return trend_d1;
+        }
+        if (Objects.equals(trend_d1, trend_h12)) {
+            return trend_d1;
+        }
+        if (Objects.equals(trend_w1, trend_h12)) {
+            return trend_h12;
+        }
+
+        return trend_w1;
+    }
+
+    public static String getTimeframe_FollowTrackingTrend(String trend_w1, String trend_d1, String trend_h12,
+            String trend_h8, String trend_h4, String trend_h2, String trend_30,
+
+            String note_d1, String note_h12, String note_h8, String note_h4, String note_h2, String note_30,
+            String tracking_trend) {
+
+        if (Objects.equals(tracking_trend, trend_30) && Utils.isNotBlank(note_30)) {
+            return Utils.CAPITAL_TIME_30;
+        }
+        if (Objects.equals(tracking_trend, trend_h2) && Utils.isNotBlank(note_h2)) {
+            return Utils.CAPITAL_TIME_H2;
+        }
+        if (Objects.equals(tracking_trend, trend_h4) && Utils.isNotBlank(note_h4)) {
+            return Utils.CAPITAL_TIME_H4;
+        }
+        if (Objects.equals(tracking_trend, trend_h8) && Utils.isNotBlank(note_h8)) {
+            return Utils.CAPITAL_TIME_H8;
+        }
+        if (Objects.equals(tracking_trend, trend_h12) && Utils.isNotBlank(note_h12)) {
+            return Utils.CAPITAL_TIME_H12;
+        }
+        if (Objects.equals(tracking_trend, trend_d1) && Utils.isNotBlank(note_d1)) {
+            return Utils.CAPITAL_TIME_D1;
+        }
+
+        return Utils.CAPITAL_TIME_W1;
     }
 
     // [1W=1D=12H 8H=4H=2H=30] {D1~H12~H8~H4~H2~30}
-    public static String getPrefix_FollowTrend_W1(int index, String trend_w1, String trend_d1, String trend_h12,
+    public static String getPrefix_FollowTrackingTrend(int index, String trend_w1, String trend_d1, String trend_h12,
             String trend_h8, String trend_h4, String trend_h2, String trend_30,
 
-            String note_d1, String note_h12, String note_h8, String note_h4, String note_h2, String note_30) {
+            String note_d1, String note_h12, String note_h8, String note_h4, String note_h2, String note_30,
+            String tracking_trend) {
 
-        String prefix = Utils.appendLeft(String.valueOf(index), 2) + "." + appendSpace(trend_w1, 4);
+        String prefix = Utils.appendLeft(String.valueOf(index), 2) + "." + appendSpace(tracking_trend, 4);
         prefix += " [1W=1D=12H  8H=4H=2H=30]";
 
-        if (!Objects.equals(trend_d1, trend_w1)) {
+        if (!Objects.equals(trend_w1, tracking_trend)) {
+            prefix = prefix.replace("1W=", "   ");
+        }
+        if (!Objects.equals(trend_d1, tracking_trend)) {
             prefix = prefix.replace("=1D=", "    ").replace("1D=", "   ");
         }
-        if (!Objects.equals(trend_h12, trend_w1)) {
+        if (!Objects.equals(trend_h12, tracking_trend)) {
             prefix = prefix.replace("=12H", "    ").replace("12H", "   ");
         }
-        if (!Objects.equals(trend_h8, trend_w1)) {
+        if (!Objects.equals(trend_h8, tracking_trend)) {
             prefix = prefix.replace("=8H=", "    ").replace("8H=", "   ");
         }
-        if (!Objects.equals(trend_h4, trend_w1)) {
+        if (!Objects.equals(trend_h4, tracking_trend)) {
             prefix = prefix.replace("=4H=", "    ").replace("4H=", "   ");
         }
-        if (!Objects.equals(trend_h2, trend_w1)) {
+        if (!Objects.equals(trend_h2, tracking_trend)) {
             prefix = prefix.replace("=2H=", "    ").replace("2H=", "   ");
         }
-        if (!Objects.equals(trend_30, trend_w1)) {
+        if (!Objects.equals(trend_30, tracking_trend)) {
             prefix = prefix.replace("=30", "   ").replace("30", "  ");
         }
 
         String switch_trend = "  {D1~H12~H8~H4~H2~30}  ";
-        if (Utils.isBlank(note_d1)) {
+        if (!Objects.equals(tracking_trend, trend_d1) || Utils.isBlank(note_d1)) {
             switch_trend = switch_trend.replace("D1~", "   ");
         }
-        if (!Objects.equals(trend_w1, trend_h12) || Utils.isBlank(note_h12)) {
+        if (!Objects.equals(tracking_trend, trend_h12) || Utils.isBlank(note_h12)) {
             switch_trend = switch_trend.replace("~H12~", "     ").replace("H12~", "    ").replace("~H12", "    ");
         }
-        if (!Objects.equals(trend_w1, trend_h8) || Utils.isBlank(note_h8)) {
+        if (!Objects.equals(tracking_trend, trend_h8) || Utils.isBlank(note_h8)) {
             switch_trend = switch_trend.replace("~H8~", "    ").replace("H8~", "   ").replace("~H8", "   ");
         }
-        if (!Objects.equals(trend_w1, trend_h4) || Utils.isBlank(note_h4)) {
+        if (!Objects.equals(tracking_trend, trend_h4) || Utils.isBlank(note_h4)) {
             switch_trend = switch_trend.replace("~H4~", "    ").replace("H4~", "   ").replace("~H4", "   ");
         }
-        if (!Objects.equals(trend_w1, trend_h2) || Utils.isBlank(note_h2)) {
+        if (!Objects.equals(tracking_trend, trend_h2) || Utils.isBlank(note_h2)) {
             switch_trend = switch_trend.replace("~H2~", "    ").replace("H2~", "   ").replace("H2", "  ");
         }
-        if (!Objects.equals(trend_w1, trend_30) || Utils.isBlank(note_30)) {
+        if (!Objects.equals(tracking_trend, trend_30) || Utils.isBlank(note_30)) {
             switch_trend = switch_trend.replace("~30", "   ").replace("30", "  ");
         }
         switch_trend = switch_trend.replace("{                  }", "                    ");
@@ -1154,8 +1194,12 @@ public class Utils {
             String logFilePath = getDraftLogFile();
             String msg = text.trim();
             if (Utils.isNotBlank(msg)) {
-                msg = BscScanBinanceApplication.hostname + Utils.getMmDD_TimeHHmm() + " "
-                        + text.replace(Utils.new_line_from_service, "\n");
+                if (Objects.equals(text, "...")) {
+                    msg = Utils.appendSpace("", 300, ".");
+                } else {
+                    msg = BscScanBinanceApplication.hostname + Utils.getMmDD_TimeHHmm() + " "
+                            + text.replace(Utils.new_line_from_service, "\n");
+                }
             }
 
             FileWriter fw = new FileWriter(logFilePath, true);
@@ -1169,7 +1213,7 @@ public class Utils {
     public static void logWritelnDraftFooter() {
         try {
             FileWriter fw = new FileWriter(getDraftLogFile(), true);
-            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("", 361, "-") + "\n");
+            fw.write(Utils.appendSpace("", 300, "-") + "\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());
@@ -3523,13 +3567,13 @@ public class Utils {
     public static String getTypeOfEpic(String EPIC) {
         String type = "";
         if (Utils.EPICS_CASH_CFD.contains(EPIC)) {
-            type = "Cash";
+            type = "Dx";
         }
         if (Utils.EPICS_METALS.contains(EPIC)) {
-            type = "Metal";
+            type = "Au";
         }
         if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
-            type = "Cryto";
+            type = "Cr";
         }
         if (Utils.EPICS_STOCKS.contains(EPIC)) {
             type = "Eq";
@@ -3537,7 +3581,7 @@ public class Utils {
         if (Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
             type = "Fx";
         }
-        type = appendSpace(type, 8);
+        type = appendSpace(type, 6);
 
         return type;
     }
@@ -3643,7 +3687,7 @@ public class Utils {
 
         temp += Utils.appendLeft(removeLastZero(money_long.calcLot()), 10) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
-        temp += "   E" + chartEntry + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 12);
+        temp += "   E" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 10);
         String result = Utils.appendSpace(temp, 38);
         return result;
     }
@@ -3668,7 +3712,7 @@ public class Utils {
 
         temp += Utils.appendLeft(removeLastZero(money_short.calcLot()), 10) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
-        temp += "   E" + chartEntry + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 12);
+        temp += "   E" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 10);
 
         String result = Utils.appendSpace(temp, 38);
         return result;
