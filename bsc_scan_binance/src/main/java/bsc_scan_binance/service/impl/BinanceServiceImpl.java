@@ -3885,7 +3885,7 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(dto_h2.getTrend(), dto_30.getTrend())) {
 
                     if (!Utils.isBuyTopSellBottom(dto_30.getTrend(), dto_30.getNote())) {
-                        String prefix = getPrefix(index, EPIC);
+                        String prefix = getPrefix(index, EPIC) + Utils.TEXT_EXPERT_ADVISOR_SPACE;
                         analysis(prefix, EPIC, Utils.CAPITAL_TIME_30);
                         if (Utils.isNotBlank(result)) {
                             result += ", ";
@@ -3907,7 +3907,7 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(dto_h4.getTrend(), dto_30.getTrend())) {
 
                     if (!Utils.isBuyTopSellBottom(dto_h2.getTrend(), dto_h2.getNote())) {
-                        String prefix = getPrefix(index, EPIC);
+                        String prefix = getPrefix(index, EPIC) + Utils.TEXT_EXPERT_ADVISOR_SPACE;
                         analysis(prefix, EPIC, Utils.CAPITAL_TIME_H4);
                         index += 1;
                     }
@@ -4068,24 +4068,25 @@ public class BinanceServiceImpl implements BinanceService {
 
         List<Mt5DataTrade> tradeList = getTradeList();
         BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT).multiply(BigDecimal.valueOf(2.5));
+        String max_risk = "     MaxRisk:" + Utils.appendLeft(String.valueOf(risk).replace(".0000", ""), 10) + "$";
 
         String msg = "";
+        String msg_stop_loss = "";
         BigDecimal total = BigDecimal.ZERO;
         List<String> scalpingList = new ArrayList<String>();
 
         for (Mt5DataTrade trade : tradeList) {
-            total = total.add(trade.getProfit());
-            String result = "(" + Utils.appendSpace(trade.getType(), 4) + ")";
+            String result = "";
             if (trade.getProfit().add(risk).compareTo(BigDecimal.ZERO) < 0) {
                 result += "(Stop_Loss)";
             }
-
-            result = Utils.appendSpace(result, 20) + Utils.appendSpace(trade.getSymbol(), 10);
+            result = Utils.appendSpace(result, 15);
+            result += "(" + Utils.appendSpace(trade.getType(), 4) + ")";
+            result += Utils.appendSpace(trade.getSymbol(), 10);
             result += getTrendTimeframes(trade.getSymbol());
             result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(trade.getProfit()), 10);
-            msg += result + Utils.new_line_from_service;
 
-            // SCAP
+            // M30_STOP
             Orders dto_30 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_30).orElse(null);
             if (Objects.nonNull(dto_30)) {
                 if (!Objects.equals(dto_30.getTrend(), trade.getType())) {
@@ -4094,16 +4095,25 @@ public class BinanceServiceImpl implements BinanceService {
                     scalpingList.add(scalping);
                 }
             }
+
+            total = total.add(trade.getProfit());
+            msg += result + Utils.new_line_from_service;
+            if (result.contains("Stop_Loss")) {
+                msg_stop_loss += result + Utils.new_line_from_service;
+            }
         }
 
         if (Utils.isNotBlank(msg)) {
-            msg = Utils.appendLeft(String.valueOf(total), 10) + Utils.new_line_from_service + msg;
+            msg = Utils.appendLeft(String.valueOf(total), 10) + max_risk + Utils.new_line_from_service + msg;
             Utils.logWritelnDraft(msg);
+        }
+        if (Utils.isNotBlank(msg_stop_loss)) {
+            msg_stop_loss = max_risk + Utils.new_line_from_service + msg_stop_loss;
 
             String EVENT_ID = "TradeProfit" + Utils.getCurrentYyyyMmDd_HH();
-            sendMsgPerHour(EVENT_ID, msg, true);
-            Utils.logWritelnDraft("");
+            sendMsgPerHour(EVENT_ID, msg_stop_loss, true);
         }
+
         if (scalpingList.size() > 0) {
             Utils.logWritelnDraft("");
             for (String scalping : scalpingList) {
