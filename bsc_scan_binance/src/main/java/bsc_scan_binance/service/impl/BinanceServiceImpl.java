@@ -3747,13 +3747,11 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_h8 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h2 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H2).orElse(null);
-            Orders dto_30 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
 
-            Orders dto_xx = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
+            Orders dto_ea = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
 
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h12) || Objects.isNull(dto_h8)
-                    || Objects.isNull(dto_h4) || Objects.isNull(dto_h2) || Objects.isNull(dto_30)
-                    || Objects.isNull(dto_xx)) {
+                    || Objects.isNull(dto_h4) || Objects.isNull(dto_h2) || Objects.isNull(dto_ea)) {
                 continue;
             }
 
@@ -3763,10 +3761,9 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h8 = dto_h8.getTrend();
             String trend_h4 = dto_h4.getTrend();
             String trend_h2 = dto_h2.getTrend();
-            String trend_30 = dto_30.getTrend();
 
             String ea_tracking_trend = Utils.getEATrackingTrend(trend_w1, trend_d1, trend_h12);
-            if (!Objects.equals(dto_xx.getTrend(), trend_30) || !Objects.equals(dto_xx.getTrend(), ea_tracking_trend)) {
+            if (!Objects.equals(dto_ea.getTrend(), ea_tracking_trend)) {
                 continue;
             }
 
@@ -3789,14 +3786,14 @@ public class BinanceServiceImpl implements BinanceService {
 
             // -----------------------------------------------------------------------
             // TODO: 6. scapWithM30
-            if (Utils.isNotBlank(dto_xx.getNote()) && !Utils.isBuyTopSellBottom(dto_xx.getTrend(), dto_xx.getNote())) {
+            if (Utils.isNotBlank(dto_ea.getNote()) && !Utils.isBuyTopSellBottom(dto_ea.getTrend(), dto_ea.getNote())) {
                 String prefix = getPrefix(index, EPIC);
                 if (Utils.isNotBlank(ea_tracking_trend)) {
                     prefix += Utils.TEXT_EXPERT_ADVISOR_EA;
                 } else {
                     prefix += Utils.TEXT_EXPERT_ADVISOR_SPACE;
                 }
-                String type = Objects.equals(dto_xx.getTrend(), Utils.TREND_LONG) ? "(B)" : "(S)";
+                String type = Objects.equals(dto_ea.getTrend(), Utils.TREND_LONG) ? "(B)" : "(S)";
 
                 analysis(prefix, EPIC, CAPITAL_TIME_XX);
 
