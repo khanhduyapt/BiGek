@@ -51,7 +51,7 @@ public interface BinanceService {
 
     public void createReport();
 
-    public void scapM30();
+    public void scapWithM30(List<String> CAPITAL_LIST, String CAPITAL_TIME_XX);
 
     public String scapForex(List<String> CAPITAL_LIST);
 

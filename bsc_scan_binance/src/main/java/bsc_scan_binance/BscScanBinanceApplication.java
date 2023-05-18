@@ -216,11 +216,21 @@ public class BscScanBinanceApplication {
         myScap.delete();
         EPICS_OUTPUTED = "";
         EPICS_OUTPUT_MSG = "";
+
+        // --------------------------------------------------------------------------
+        Utils.logWritelnDraftFooter();
+        binance_service.scapWithM30(Utils.EPICS_METALS, Utils.CAPITAL_TIME_30);
+        binance_service.scapWithM30(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_30);
+        binance_service.scapWithM30(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_30);
+
+        Utils.logWritelnDraft("");
+
+        binance_service.scapWithM30(Utils.EPICS_METALS, Utils.CAPITAL_TIME_H4);
+        binance_service.scapWithM30(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_H4);
+        binance_service.scapWithM30(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_H4);
+        Utils.logWritelnDraftFooter();
         // --------------------------------------------------------------------------
 
-        Utils.logWritelnDraftFooter();
-        binance_service.scapM30();
-        Utils.logWritelnDraftFooter();
         binance_service.scapForex(Utils.EPICS_METALS);
         Utils.logWritelnDraft("");
         binance_service.scapForex(Utils.EPICS_FOREXS_JPY);
@@ -262,10 +272,9 @@ public class BscScanBinanceApplication {
             Utils.logWritelnDraft("");
             Utils.logWritelnDraft(msg);
 
-            String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
+            // String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
             // binance_service.sendMsgPerHour(EVENT_ID, msg, true);
         }
-
     }
 
     public static void alertMsgKillZone(BinanceService binance_service) {
