@@ -723,75 +723,60 @@ public class Utils {
         return "(  )  ";
     }
 
-    public static String getCAPITAL_TIME_SwitchTrend_FollowTrendH12(
-            String trend_w1, String trend_d1, String trend_h12, String trend_h8, String trend_h4, String trend_h2,
-            String trend_30,
+    public static String getCAPITAL_TIME_SwitchTrend_FollowTrend_W1(String trend_w1, String trend_d1, String trend_h12,
+            String trend_h8, String trend_h4, String trend_h2, String trend_30,
 
             String note_d1, String note_h12, String note_h8, String note_h4, String note_h2, String note_30) {
 
-        String CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
+        String CAPITAL_TIME_XX = Utils.CAPITAL_TIME_W1;
 
         if (Utils.isNotBlank(note_h12)) {
             CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
 
-        } else if (Objects.equals(trend_h12, trend_h8) && Utils.isNotBlank(note_h8)) {
+        } else if (Objects.equals(trend_w1, trend_h8) && Utils.isNotBlank(note_h8)) {
             CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H8;
 
-        } else if (Objects.equals(trend_h12, trend_h4) && Utils.isNotBlank(note_h4)) {
+        } else if (Objects.equals(trend_w1, trend_h4) && Utils.isNotBlank(note_h4)) {
             CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
 
-        } else if (Objects.equals(trend_h12, trend_h2) && Utils.isNotBlank(note_h2)) {
+        } else if (Objects.equals(trend_w1, trend_h2) && Utils.isNotBlank(note_h2)) {
             CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H2;
 
-        } else if (Objects.equals(trend_h12, trend_30) && Utils.isNotBlank(note_30)) {
+        } else if (Objects.equals(trend_w1, trend_30) && Utils.isNotBlank(note_30)) {
             CAPITAL_TIME_XX = Utils.CAPITAL_TIME_30;
 
-        } else if (Objects.equals(trend_h12, trend_d1) && Utils.isNotBlank(note_d1)) {
-            CAPITAL_TIME_XX = Utils.CAPITAL_TIME_D1;
-        }
-
-        if (!Objects.equals(trend_h12, trend_d1) && Objects.equals(trend_w1, trend_d1)) {
+        } else if (Objects.equals(trend_w1, trend_d1) && Utils.isNotBlank(note_d1)) {
             CAPITAL_TIME_XX = Utils.CAPITAL_TIME_D1;
         }
 
         return CAPITAL_TIME_XX;
     }
 
-    //[1W=1D=12H  8H=4H=2H=30]  {D1~H12~H8~H4~H2~30}
-    public static String getPrefix(int index, String trend_w1, String trend_d1, String trend_h12, String trend_h8,
-            String trend_h4, String trend_h2, String trend_30, String trend_dt,
+    // [1W=1D=12H 8H=4H=2H=30] {D1~H12~H8~H4~H2~30}
+    public static String getPrefix_FollowTrend_W1(int index, String trend_w1, String trend_d1, String trend_h12,
+            String trend_h8, String trend_h4, String trend_h2, String trend_30,
 
             String note_d1, String note_h12, String note_h8, String note_h4, String note_h2, String note_30) {
 
-        String type = "H_";
-        String trend_xx = trend_h12;
-        if (!Objects.equals(trend_h12, trend_d1) && Objects.equals(trend_w1, trend_d1)) {
-            type = "D_";
-            trend_xx = trend_d1;
-        }
-
-        String prefix = Utils.appendLeft(String.valueOf(index), 2) + "." + appendSpace(type + trend_xx, 6);
+        String prefix = Utils.appendLeft(String.valueOf(index), 2) + "." + appendSpace(trend_w1, 4);
         prefix += " [1W=1D=12H  8H=4H=2H=30]";
 
-        if (!Objects.equals(trend_w1, trend_dt)) {
-            prefix = prefix.replace("1W=", "   ");
-        }
-        if (!Objects.equals(trend_d1, trend_dt)) {
+        if (!Objects.equals(trend_d1, trend_w1)) {
             prefix = prefix.replace("=1D=", "    ").replace("1D=", "   ");
         }
-        if (!Objects.equals(trend_h12, trend_dt)) {
+        if (!Objects.equals(trend_h12, trend_w1)) {
             prefix = prefix.replace("=12H", "    ").replace("12H", "   ");
         }
-        if (!Objects.equals(trend_h8, trend_dt)) {
+        if (!Objects.equals(trend_h8, trend_w1)) {
             prefix = prefix.replace("=8H=", "    ").replace("8H=", "   ");
         }
-        if (!Objects.equals(trend_h4, trend_dt)) {
+        if (!Objects.equals(trend_h4, trend_w1)) {
             prefix = prefix.replace("=4H=", "    ").replace("4H=", "   ");
         }
-        if (!Objects.equals(trend_h2, trend_dt)) {
+        if (!Objects.equals(trend_h2, trend_w1)) {
             prefix = prefix.replace("=2H=", "    ").replace("2H=", "   ");
         }
-        if (!Objects.equals(trend_30, trend_dt)) {
+        if (!Objects.equals(trend_30, trend_w1)) {
             prefix = prefix.replace("=30", "   ").replace("30", "  ");
         }
 
@@ -799,19 +784,19 @@ public class Utils {
         if (Utils.isBlank(note_d1)) {
             switch_trend = switch_trend.replace("D1~", "   ");
         }
-        if (Utils.isBlank(note_h12)) {
+        if (!Objects.equals(trend_w1, trend_h12) || Utils.isBlank(note_h12)) {
             switch_trend = switch_trend.replace("~H12~", "     ").replace("H12~", "    ").replace("~H12", "    ");
         }
-        if (!Objects.equals(trend_xx, trend_h8) || Utils.isBlank(note_h8)) {
+        if (!Objects.equals(trend_w1, trend_h8) || Utils.isBlank(note_h8)) {
             switch_trend = switch_trend.replace("~H8~", "    ").replace("H8~", "   ").replace("~H8", "   ");
         }
-        if (!Objects.equals(trend_xx, trend_h4) || Utils.isBlank(note_h4)) {
+        if (!Objects.equals(trend_w1, trend_h4) || Utils.isBlank(note_h4)) {
             switch_trend = switch_trend.replace("~H4~", "    ").replace("H4~", "   ").replace("~H4", "   ");
         }
-        if (!Objects.equals(trend_xx, trend_h2) || Utils.isBlank(note_h2)) {
+        if (!Objects.equals(trend_w1, trend_h2) || Utils.isBlank(note_h2)) {
             switch_trend = switch_trend.replace("~H2~", "    ").replace("H2~", "   ").replace("H2", "  ");
         }
-        if (!Objects.equals(trend_xx, trend_30) || Utils.isBlank(note_30)) {
+        if (!Objects.equals(trend_w1, trend_30) || Utils.isBlank(note_30)) {
             switch_trend = switch_trend.replace("~30", "   ").replace("30", "  ");
         }
         switch_trend = switch_trend.replace("{                  }", "                    ");
@@ -2337,16 +2322,14 @@ public class Utils {
 
     public static boolean isBuyTopSellBottom(String trend_target, String note) {
         // Sell đáy
-        if (Objects.equals(Utils.TREND_SHOT, trend_target)
-                && (note.contains(Utils.TEXT_MIN_AREA) || note.contains(Utils.TEXT_H12_to_H2_BELOW_MA50)
-                        || note.contains(Utils.TEXT_BELOW_MA50))) {
+        if (Objects.equals(Utils.TREND_SHOT, trend_target) && (note.contains(Utils.TEXT_MIN_AREA)
+                || note.contains(Utils.TEXT_H12_to_H2_BELOW_MA50) || note.contains(Utils.TEXT_BELOW_MA50))) {
             return true;
         }
 
         // Buy đỉnh
-        if (Objects.equals(Utils.TREND_LONG, trend_target)
-                && (note.contains(Utils.TEXT_MAX_AREA) || note.contains(Utils.TEXT_H12_to_H2_ABOVE_MA50)
-                        || note.contains(Utils.TEXT_ABOVE_MA50))) {
+        if (Objects.equals(Utils.TREND_LONG, trend_target) && (note.contains(Utils.TEXT_MAX_AREA)
+                || note.contains(Utils.TEXT_H12_to_H2_ABOVE_MA50) || note.contains(Utils.TEXT_ABOVE_MA50))) {
             return true;
         }
 
@@ -3444,17 +3427,30 @@ public class Utils {
         return false;
     }
 
-    public static String switchTrendByHeken_12_or_Ma35(List<BtcFutures> heken_list) {
+    public static String switchTrendByHeken_Ma368(List<BtcFutures> heken_list, String find_trend) {
+        if (Utils.isBlank(find_trend)) {
+            return "";
+        }
+
         String type = "";
         if (Utils.isBlank(type)) {
-            type = switchTrendByHeken_12(heken_list);
+            String switch_trend = Utils.switchTrendByMaXX(heken_list, 3, 6);
+            if (Objects.equals(switch_trend, find_trend)) {
+                type = Utils.appendSpace(find_trend, 4) + "(Ma3.6)";
+            }
         }
 
         if (Utils.isBlank(type)) {
-            String trend = Utils.getTrendByHekenAshiList(heken_list);
-            String switch_trend = Utils.switchTrendByMaXX(heken_list, 3, 5);
-            if (Objects.equals(switch_trend, trend)) {
-                type = Utils.appendSpace(trend, 4) + "(Ma3.5)";
+            String switch_trend = Utils.switchTrendByMaXX(heken_list, 3, 8);
+            if (Objects.equals(switch_trend, find_trend)) {
+                type = Utils.appendSpace(find_trend, 4) + "(Ma3.8)";
+            }
+        }
+
+        if (Utils.isBlank(type)) {
+            String switch_trend = Utils.switchTrendByMaXX(heken_list, 6, 8);
+            if (Objects.equals(switch_trend, find_trend)) {
+                type = Utils.appendSpace(find_trend, 4) + "(Ma6.8)";
             }
         }
 
@@ -3633,31 +3629,17 @@ public class Utils {
         BigDecimal entry_calc = en_long.add(tp_long);
         entry_calc = entry_calc.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
 
-        // MoneyAtRiskResponse money_now = new MoneyAtRiskResponse(EPIC, risk,
-        // cur_price, sl_long, tp_long);
         MoneyAtRiskResponse money_long = new MoneyAtRiskResponse(EPIC, risk, en_long, sl_long, tp_long);
+        MoneyAtRiskResponse money_now = new MoneyAtRiskResponse(EPIC, risk, cur_price, sl_long, tp_long);
 
         BigDecimal risk_x5 = risk.multiply(BigDecimal.valueOf(5));
         MoneyAtRiskResponse money_x5 = new MoneyAtRiskResponse(EPIC, risk_x5, en_long, sl_long, tp_long);
-        // MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5,
-        // cur_price, sl_long, tp_long);
 
         String temp = "";
-        temp += "   (Buy )SL" + chartSL + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 12);
+        temp += "(Buy )SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 10);
 
-        // if (!onlyWait) {
-        // temp += " (Now)" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 7) +
-        // "(lot)";
-        // temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
-        // temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) +
-        // "(lot)";
-        // temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
-        // temp += " ";
-        // temp += " (Wait)";
-        // }
-
-        temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
-        temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
+        temp += Utils.appendLeft(removeLastZero(money_now.calcLot()), 8) + "(lot)";
+        temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$"; // 500$
 
         temp += Utils.appendLeft(removeLastZero(money_long.calcLot()), 10) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
@@ -3672,30 +3654,16 @@ public class Utils {
         BigDecimal entry_calc = en_shot.add(tp_shot);
         entry_calc = entry_calc.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
 
-        // MoneyAtRiskResponse money_now = new MoneyAtRiskResponse(EPIC, risk,
-        // cur_price, sl_shot, tp_shot);
         MoneyAtRiskResponse money_short = new MoneyAtRiskResponse(EPIC, risk, en_shot, sl_shot, tp_shot);
+        MoneyAtRiskResponse money_now = new MoneyAtRiskResponse(EPIC, risk, cur_price, sl_shot, tp_shot);
 
         BigDecimal risk_x5 = risk.multiply(BigDecimal.valueOf(5));
         MoneyAtRiskResponse money_x5 = new MoneyAtRiskResponse(EPIC, risk_x5, en_shot, sl_shot, tp_shot);
-        // MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5,
-        // cur_price, sl_shot, tp_shot);
 
         String temp = "";
-        temp += "   (Sell)SL" + chartSL + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 12);
+        temp += "(Sell)SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10);
 
-        // if (!onlyWait) {
-        // temp += " (Now)" + Utils.appendLeft(removeLastZero(money_now.calcLot()), 7) +
-        // "(lot)";
-        // temp += "/" + appendLeft(removeLastZero(risk).replace(".0", ""), 4) + "$";
-        // temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) +
-        // "(lot)";
-        // temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
-        // temp += " ";
-        // temp += " (Wait)";
-        // }
-
-        temp += Utils.appendLeft(removeLastZero(money_x5.calcLot()), 8) + "(lot)";
+        temp += Utils.appendLeft(removeLastZero(money_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
 
         temp += Utils.appendLeft(removeLastZero(money_short.calcLot()), 10) + "(lot)";
