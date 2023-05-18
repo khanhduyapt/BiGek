@@ -169,7 +169,7 @@ public class BscScanBinanceApplication {
                             binance_service.createReport();
                         }
 
-                        if (isReloadAfter(5, "MONITOR_PROFIT")) {
+                        if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MONITOR_PROFIT")) {
                             Utils.logWritelnDraft("");
                             binance_service.monitorProfit();
                         }
@@ -219,15 +219,15 @@ public class BscScanBinanceApplication {
 
         // --------------------------------------------------------------------------
         Utils.logWritelnDraftFooter();
-        binance_service.scapWithM30(Utils.EPICS_METALS, Utils.CAPITAL_TIME_30);
-        binance_service.scapWithM30(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_30);
-        binance_service.scapWithM30(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_30);
+        binance_service.scapWithD1(Utils.EPICS_METALS, Utils.CAPITAL_TIME_30);
+        binance_service.scapWithD1(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_30);
+        binance_service.scapWithD1(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_30);
 
         Utils.logWritelnDraft("");
 
-        binance_service.scapWithM30(Utils.EPICS_METALS, Utils.CAPITAL_TIME_H4);
-        binance_service.scapWithM30(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_H4);
-        binance_service.scapWithM30(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_H4);
+        binance_service.scapWithD1(Utils.EPICS_METALS, Utils.CAPITAL_TIME_H4);
+        binance_service.scapWithD1(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_H4);
+        binance_service.scapWithD1(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_H4);
         Utils.logWritelnDraftFooter();
         // --------------------------------------------------------------------------
 
