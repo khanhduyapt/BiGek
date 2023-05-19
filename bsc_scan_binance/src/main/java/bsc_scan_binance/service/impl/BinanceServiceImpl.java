@@ -3921,7 +3921,7 @@ public class BinanceServiceImpl implements BinanceService {
                 result += "(Stop_Loss)";
             }
             result = Utils.appendSpace(result, 15);
-            result += "(" + Utils.appendSpace(trade.getType(), 4) + ")";
+            result += "(Trade:" + Utils.appendSpace(trade.getType(), 4) + ")";
             result += Utils.appendSpace(trade.getSymbol(), 10);
             result += multi_timeframes;
             result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(trade.getProfit()), 10);
@@ -3937,7 +3937,7 @@ public class BinanceServiceImpl implements BinanceService {
             total = total.add(trade.getProfit());
             msg += result + Utils.new_line_from_service;
             if (result.contains("Stop_Loss")) {
-                msg_stop_loss += result + Utils.new_line_from_service;
+                msg_stop_loss += result.replace(multi_timeframes, "") + Utils.new_line_from_service;
             }
         }
 
@@ -3946,16 +3946,16 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnDraft(msg);
         }
         if (Utils.isNotBlank(msg_stop_loss)) {
-            msg_stop_loss = max_risk + Utils.new_line_from_service + msg_stop_loss;
+            msg_stop_loss = "[STOP_LOSS]" + max_risk + Utils.new_line_from_service + msg_stop_loss;
 
             String EVENT_ID = "stop_loss" + Utils.getCurrentYyyyMmDd_HH();
             sendMsgPerHour(EVENT_ID, msg_stop_loss, true);
         }
         if (Utils.isNotBlank(msg_stop_scalping)) {
-            msg_stop_scalping = "[STOP] (Scalping)" + Utils.new_line_from_service + msg_stop_scalping;
+            msg_stop_scalping = "[STOP_SCALPING]" + Utils.new_line_from_service + msg_stop_scalping;
 
             String EVENT_ID = "stop_scalping" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
-            sendMsgPerHour(EVENT_ID, msg_stop_loss, true);
+            sendMsgPerHour(EVENT_ID, msg_stop_scalping, true);
         }
 
         if (scalpingList.size() > 0) {
