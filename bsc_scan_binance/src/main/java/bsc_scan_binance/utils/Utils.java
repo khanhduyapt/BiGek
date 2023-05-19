@@ -3564,22 +3564,27 @@ public class Utils {
 
         String id = heken_list.get(0).getId();
         if (id.contains("_1w_") || id.contains("_1d_") || id.contains("DAY") || id.contains("WEEK")) {
-            if (heken_list.get(0).isUptrend() && heken_list.get(1).isDown() && heken_list.get(2).isDown()) {
-                type = "(Heken)";
-            } else if (heken_list.get(0).isDown() && heken_list.get(1).isUptrend() && heken_list.get(2).isUptrend()) {
-                type = "(Heken)";
-            }
+
         } else {
-            if (heken_list.get(1).isUptrend() && heken_list.get(2).isDown() && heken_list.get(3).isDown()) {
-                type = "(Heken)";
-            } else if (heken_list.get(1).isDown() && heken_list.get(2).isUptrend() && heken_list.get(3).isUptrend()) {
-                type = "(Heken)";
-            }
+
+        }
+
+        String trend_by_heiken = "";
+        if (heken_list.get(1).isUptrend() && heken_list.get(2).isDown()) {
+            type = "(Heken)";
+            trend_by_heiken = Utils.TREND_LONG;
+        } else if (heken_list.get(1).isDown() && heken_list.get(2).isUptrend()) {
+            type = "(Heken)";
+            trend_by_heiken = Utils.TREND_SHOT;
         }
 
         if (Utils.isNotBlank(type)) {
             String trend = Utils.getTrendByHekenAshiList(heken_list);
-            type = Utils.appendSpace(trend, 4) + type;
+            if (Objects.equals(trend, trend_by_heiken)) {
+                type = Utils.appendSpace(trend, 4) + type;
+            } else {
+                type = Utils.appendSpace(trend_by_heiken, 4) + type + ", " + Utils.appendSpace(trend, 4) + "(Ma3)";
+            }
         }
 
         return type;

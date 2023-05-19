@@ -3638,13 +3638,10 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String type = "";
-        if (CAPITAL_TIME_XX.contains("MINUTE") || CAPITAL_TIME_XX.contains("HOUR")) {
+        if (CAPITAL_TIME_XX.contains("MINUTE") || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H2)) {
             type = Utils.switchTrendByHeken_Ma368(heken_list, find_trend);
         } else {
-            type = Utils.switchTrendByHeken_Ma368(heken_list, find_trend);
-            if (Utils.isBlank(type)) {
-                type = Utils.switchTrendByHeken_12(heken_list);
-            }
+            type = Utils.switchTrendByHeken_12(heken_list);
         }
 
         String note = "";
