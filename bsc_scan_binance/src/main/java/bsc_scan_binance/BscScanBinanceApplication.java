@@ -226,14 +226,6 @@ public class BscScanBinanceApplication {
         binance_service.scapWithM30(Utils.EPICS_METALS, Utils.CAPITAL_TIME_H4);
         binance_service.scapWithM30(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_H4);
         binance_service.scapWithM30(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_H4);
-
-        binance_service.scapWithM30(Utils.EPICS_METALS, Utils.CAPITAL_TIME_H8);
-        binance_service.scapWithM30(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_H8);
-        binance_service.scapWithM30(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_H8);
-
-        binance_service.scapWithM30(Utils.EPICS_METALS, Utils.CAPITAL_TIME_H12);
-        binance_service.scapWithM30(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_H12);
-        binance_service.scapWithM30(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_H12);
         Utils.logWritelnDraftFooter();
         // --------------------------------------------------------------------------
         Utils.logWritelnDraft("");

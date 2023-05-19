@@ -87,8 +87,8 @@ public class Utils {
     public static final String TEXT_DANGER = "(Danger)";
     public static final String TEXT_START_LONG = "Start:Long";
     public static final String TEXT_STOP_LONG = "Stop:Long";
-    public static final String TEXT_MIN_AREA = "Min";
-    public static final String TEXT_MAX_AREA = "Max";
+    public static final String TEXT_MIN_AREA = "MinArea";
+    public static final String TEXT_MAX_AREA = "MaxArea";
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
@@ -99,7 +99,6 @@ public class Utils {
 
     public static final String TEXT_EXPERT_ADVISORING = "....  ";
     public static final String TEXT_EXPERT_ADVISOR_SPACE = "      ";
-    public static final String TEXT_EXPERT_ADVISOR_TRADING = "deal  ";
 
     public static final String TEXT_ABOVE_MA50 = "AboveMa50";
     public static final String TEXT_BELOW_MA50 = "BelowMa50";
@@ -809,7 +808,7 @@ public class Utils {
     }
 
     public static boolean isBlank(String value) {
-        if (Objects.equals(null, value) || Objects.equals("", value)) {
+        if (Objects.equals(null, value) || Objects.equals("", value.trim())) {
             return true;
         }
         return false;
@@ -2229,15 +2228,19 @@ public class Utils {
         return Utils.appendSpace("(" + Utils.removeLastZero(list.get(0).getCurrPrice()) + ")", 12);
     }
 
-    public static String textBuyTopSellBottom(String trend_target, String note) {
-        if (Objects.equals(Utils.TREND_LONG, trend_target)
-                && (note.contains(Utils.TEXT_MAX_AREA) || note.contains("H12:A H8:A H4:A H2:A"))) {
-            return "BuyTop";
+    public static String textBuyTopSellBottom2(String type_min_max_area, String find_trend) {
+        if (Objects.equals(Utils.TREND_LONG, find_trend) && type_min_max_area.contains(TEXT_MAX_AREA)) {
+            return "Danger";
+        }
+        if (Objects.equals(Utils.TREND_LONG, find_trend) && type_min_max_area.contains(TEXT_MIN_AREA)) {
+            return "ok";
         }
 
-        if (Objects.equals(Utils.TREND_SHOT, trend_target)
-                && (note.contains(Utils.TEXT_MIN_AREA) || note.contains("H12:B H8:B H4:B H2:B"))) {
-            return "SellBottom";
+        if (Objects.equals(Utils.TREND_SHOT, find_trend) && type_min_max_area.contains(TEXT_MIN_AREA)) {
+            return "Danger";
+        }
+        if (Objects.equals(Utils.TREND_SHOT, find_trend) && type_min_max_area.contains(TEXT_MAX_AREA)) {
+            return "ok";
         }
 
         return "";
@@ -2537,6 +2540,36 @@ public class Utils {
 
         result.add(min);
         result.add(max);
+
+        return result;
+    }
+
+    public static String textMinMaxArea(List<BtcFutures> heken_list) {
+        List<BigDecimal> min_max_area = Utils.getMinMaxArea(heken_list);
+
+        String result = "(Range: ";
+        result += Utils.appendSpace(Utils.removeLastZero(formatPrice(min_max_area.get(0), 5)), 10);
+        result += " ~ ";
+        result += Utils.appendSpace(Utils.removeLastZero(formatPrice(min_max_area.get(1), 5)), 10);
+        result += ")";
+
+        return result;
+    }
+
+    public static List<BigDecimal> getMinMaxArea(List<BtcFutures> heken_list) {
+        List<BigDecimal> body = Utils.getBodyCandle(heken_list);
+        List<BigDecimal> low_high = Utils.getLowHighCandle(heken_list);
+
+        BigDecimal bread0 = body.get(0).subtract(low_high.get(0));
+        BigDecimal bread1 = low_high.get(1).subtract(body.get(1));
+        BigDecimal bread = bread0.compareTo(bread1) > 0 ? bread0 : bread1;
+
+        BigDecimal str = body.get(0).add(bread);
+        BigDecimal end = body.get(1).subtract(bread);
+
+        List<BigDecimal> result = new ArrayList<BigDecimal>();
+        result.add(str);
+        result.add(end);
 
         return result;
     }
