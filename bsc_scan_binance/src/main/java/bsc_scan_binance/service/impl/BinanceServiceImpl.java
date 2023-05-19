@@ -3910,13 +3910,29 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> scalpingList = new ArrayList<String>();
 
         for (Mt5DataTrade trade : tradeList) {
-            String result = "";
-            String trend_h4 = "";
-            String multi_timeframes = getTrendTimeframes(trade.getSymbol());
-            Orders dto_xx = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-            if (Objects.nonNull(dto_xx)) {
-                trend_h4 = dto_xx.getTrend();
+
+            List<BtcFutures> list_h4 = getCapitalData(trade.getSymbol(), Utils.CAPITAL_TIME_H4);
+            List<BtcFutures> list_h8 = getCapitalData(trade.getSymbol(), Utils.CAPITAL_TIME_H8);
+            if (CollectionUtils.isEmpty(list_h4) || CollectionUtils.isEmpty(list_h8)) {
+                continue;
             }
+
+            List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
+            List<BtcFutures> heken_list_h8 = Utils.getHekenList(list_h8);
+            String trend_h8 = Utils.getTrendByHekenAshiList(heken_list_h8);
+
+            String witch_trend = Utils.switchTrendByHeken_12(heken_list_h4);
+            witch_trend += Utils.switchTrendByHeken_Ma368(heken_list_h4, trade.getType());
+
+            boolean isStopCalping = false;
+            if ((Utils.isNotBlank(witch_trend) && !witch_trend.contains(trade.getType()))
+                    || !Objects.equals(trend_h8, trade.getType())) {
+                isStopCalping = true;
+            }
+
+            String result = "";
+            String multi_timeframes = getTrendTimeframes(trade.getSymbol());
+
             if (trade.getProfit().add(risk).compareTo(BigDecimal.ZERO) < 0) {
                 result += "(Stop_Loss)";
             }
@@ -3927,9 +3943,8 @@ public class BinanceServiceImpl implements BinanceService {
             result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(trade.getProfit()), 10);
 
             // Scalping
-
-            if (!Objects.equals(trend_h4, trade.getType())) {
-                String scalping = Utils.getChartName(dto_xx) + result;
+            if (isStopCalping) {
+                String scalping = "(H4)" + result;
                 msg_stop_scalping += scalping.replace(multi_timeframes, "") + Utils.new_line_from_service;
                 scalpingList.add("[STOP] (Scalping):" + scalping);
             }
@@ -3965,6 +3980,12 @@ public class BinanceServiceImpl implements BinanceService {
             }
             Utils.logWritelnDraft("");
         }
+
+        Utils.logWritelnDraft("");
+        Utils.logWritelnDraft("");
+        Utils.logWritelnDraft("");
+        Utils.logWritelnDraft("");
+        Utils.logWritelnDraft("");
 
         // ------------------------------------------------------------------------------
 
