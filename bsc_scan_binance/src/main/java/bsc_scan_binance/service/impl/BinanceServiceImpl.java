@@ -2695,13 +2695,10 @@ public class BinanceServiceImpl implements BinanceService {
 
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(append, 35) + " ";
-        log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 63) + " ";
+        log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 10);
         log += Utils.calc_BUF_LO_HI_BUF_Forex(false, find_trend, EPIC, dto_entry, dto_sl);
-
-        if (GLOBAL_SAME_TREND_D1_H12.contains(EPIC)) {
-            log = log.replace(Utils.TEXT_WAIT, Utils.TEXT_EXPERT_ADVISOR_SPACE);
-        }
+        log += "     " + getTrendTimeframes(EPIC);
 
         Utils.logWritelnDraft(log);
     }
@@ -3374,7 +3371,7 @@ public class BinanceServiceImpl implements BinanceService {
                 log += Utils.createLineForex_Body(dto_d1, dto_d1, trend_w1, true).trim();
 
                 if (GLOBAL_SAME_TREND_D1_H12.contains(EPIC)) {
-                    log = log.replace(Utils.TEXT_WAIT, Utils.TEXT_EXPERT_ADVISOR_EA);
+                    log = log.replace(Utils.TEXT_WAIT, Utils.TEXT_EXPERT_ADVISORING);
                 }
 
                 list_d1_log.add(log);
@@ -3653,7 +3650,12 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isNotBlank(note) || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_W1)) {
                 String side = getSideMa50(EPIC, true);
                 String type_min_max_area = getMinMaxArea(EPIC, trend);
-                note = Utils.appendSpace(note, 20) + Utils.appendSpace(type_min_max_area, 15) + side;
+
+                if (Utils.isBlank(type_min_max_area)) {
+                    note = Utils.appendSpace(note, 35) + side;
+                } else {
+                    note = Utils.appendSpace(note, 20) + Utils.appendSpace(type_min_max_area, 15) + side;
+                }
             }
 
             note = Utils.appendSpace(note, 65);
@@ -3701,6 +3703,11 @@ public class BinanceServiceImpl implements BinanceService {
     public void scapWithM30(List<String> CAPITAL_LIST, String CAPITAL_TIME_XX) {
         if (required_update_bars_csv) {
             return;
+        }
+
+        String trading = "";
+        for (Mt5DataTrade trade : tradeList) {
+            trading += "_" + trade.getSymbol() + "_";
         }
 
         int index = 1;
@@ -3756,11 +3763,16 @@ public class BinanceServiceImpl implements BinanceService {
             // TODO: 6. scapWithM30
             if (Utils.isNotBlank(dto_ea.getNote()) && !Utils.isBuyTopSellBottom(dto_ea.getTrend(), dto_ea.getNote())) {
                 String prefix = getPrefix(index, EPIC);
+                String ea = Utils.TEXT_EXPERT_ADVISOR_SPACE;
+
                 if (Utils.isNotBlank(ea_tracking_trend)) {
-                    prefix += Utils.TEXT_EXPERT_ADVISOR_EA;
-                } else {
-                    prefix += Utils.TEXT_EXPERT_ADVISOR_SPACE;
+                    ea = Utils.TEXT_EXPERT_ADVISORING;
                 }
+                if (trading.contains(EPIC)) {
+                    ea = Utils.TEXT_EXPERT_ADVISOR_TRADING;
+                }
+                prefix += ea;
+
                 String type = Objects.equals(dto_ea.getTrend(), Utils.TREND_LONG) ? "(B)" : "(S)";
 
                 analysis(prefix, EPIC, CAPITAL_TIME_XX);
@@ -3837,23 +3849,22 @@ public class BinanceServiceImpl implements BinanceService {
 
             // TODO: 2. scapForex
             String ea = Utils.TEXT_EXPERT_ADVISOR_SPACE;
+
             if (!GLOBAL_SAME_TREND_D1_H12.contains(EPIC)) {
                 if (BscScanBinanceApplication.EPICS_OUTPUT_MSG.contains(EPIC)) {
-                    ea = Utils.TEXT_EXPERT_ADVISOR_EA;
+                    ea = Utils.TEXT_EXPERT_ADVISORING;
                     GLOBAL_SAME_TREND_D1_H12.add(EPIC);
                 } else if (Objects.equals(trend_w1, trend_d1) || Objects.equals(trend_h12, trend_d1)) {
                     ea = Utils.TEXT_EXPERT_ADVISORING;
                     GLOBAL_SAME_TREND_D1_H12.add(EPIC);
                 }
             }
-
             if (trading.contains(EPIC)) {
                 ea = Utils.TEXT_EXPERT_ADVISOR_TRADING;
             }
 
             if (!BscScanBinanceApplication.EPICS_OUTPUTED_LOG.contains(EPIC)) {
                 index += 1;
-
                 if (Utils.isNotBlank(msg)) {
                     msg += ",";
                 }
@@ -3905,7 +3916,6 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> H1_BUYING = Arrays.asList("", "", "", "", "", "");
         List<String> H1_SELING = Arrays.asList("", "", "", "", "", "");
         // ---------------------------------------CRYPTO----------------------------------------
-
         CRYPTO_LIST_BUYING = Arrays.asList("");
         if (isReloadAfter(Utils.MINUTES_OF_1H, "MONITOR_CRYPTO_BUY")) {
             for (String SYMBOL : CRYPTO_LIST_BUYING) {
@@ -3929,7 +3939,6 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS);
             }
         }
-
         // ----------------------------------------FOREX----------------------------------------
         if (!(Utils.isWeekday() && Utils.isAllowSendMsg())) {
             return;
