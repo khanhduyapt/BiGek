@@ -798,11 +798,6 @@ public class Utils {
         }
 
         // -----------------------------------------
-        if (Objects.equals(tracking_trend, trend_h4) && note_h4.contains(tracking_trend)) {
-            return Utils.CAPITAL_TIME_H4;
-        }
-
-        // -----------------------------------------
         if (Utils.isBlank(note_d1))
             return Utils.CAPITAL_TIME_D1;
         if (Utils.isBlank(note_h12))
@@ -870,7 +865,8 @@ public class Utils {
             switch_trend = switch_trend.replace("~H8~", "    ").replace("H8~", "   ").replace("~H8", "   ");
         }
 
-        if (!(Objects.equals(tracking_trend, trend_h4) && note_h4.contains(tracking_trend))) {
+        if (!(Objects.equals(tracking_trend, trend_h4) && note_h4.contains(tracking_trend)
+                && Objects.equals(tracking_trend, trend_h2))) {
 
             switch_trend = switch_trend.replace("~H4~", "    ").replace("H4~", "   ").replace("~H4", "   ");
         }
