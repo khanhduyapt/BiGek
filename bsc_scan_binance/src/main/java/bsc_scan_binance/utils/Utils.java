@@ -773,17 +773,19 @@ public class Utils {
         }
 
         if (Objects.equals(tracking_trend, trend_h12) && note_h12.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h8) && Objects.equals(tracking_trend, trend_h4)) {
+                && Objects.equals(tracking_trend, trend_d1) && Objects.equals(tracking_trend, trend_h8)
+                && Objects.equals(tracking_trend, trend_h4)) {
             return Utils.CAPITAL_TIME_H12;
         }
 
         if (Objects.equals(tracking_trend, trend_h8) && note_h8.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h4) && Objects.equals(tracking_trend, trend_h2)) {
+                && Objects.equals(tracking_trend, trend_h12) && Objects.equals(tracking_trend, trend_h4)
+                && Objects.equals(tracking_trend, trend_h2)) {
             return Utils.CAPITAL_TIME_H8;
         }
 
         if (Objects.equals(tracking_trend, trend_h4) && note_h4.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h2)) {
+                && Objects.equals(tracking_trend, trend_h8) && Objects.equals(tracking_trend, trend_h2)) {
             return Utils.CAPITAL_TIME_H4;
         }
 
@@ -854,19 +856,21 @@ public class Utils {
         }
 
         if (!(Objects.equals(tracking_trend, trend_h12) && note_h12.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h8) && Objects.equals(tracking_trend, trend_h4))) {
+                && Objects.equals(tracking_trend, trend_d1) && Objects.equals(tracking_trend, trend_h8)
+                && Objects.equals(tracking_trend, trend_h4))) {
 
             switch_trend = switch_trend.replace("~H12~", "     ").replace("H12~", "    ").replace("~H12", "    ");
         }
 
         if (!(Objects.equals(tracking_trend, trend_h8) && note_h8.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h4) && Objects.equals(tracking_trend, trend_h2))) {
+                && Objects.equals(tracking_trend, trend_h12) && Objects.equals(tracking_trend, trend_h4)
+                && Objects.equals(tracking_trend, trend_h2))) {
 
             switch_trend = switch_trend.replace("~H8~", "    ").replace("H8~", "   ").replace("~H8", "   ");
         }
 
         if (!(Objects.equals(tracking_trend, trend_h4) && note_h4.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h2))) {
+                && Objects.equals(tracking_trend, trend_h8) && Objects.equals(tracking_trend, trend_h2))) {
 
             switch_trend = switch_trend.replace("~H4~", "    ").replace("H4~", "   ").replace("~H4", "   ");
         }

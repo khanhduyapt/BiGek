@@ -3509,30 +3509,23 @@ public class BinanceServiceImpl implements BinanceService {
 
         int index = 1;
         // TODO: scapStocks
-        String switch_trend = ".[M1.W1.D1.H2         ]" + "                     ";
+        String switch_trend = ".[W1.D1.H2            ]" + "                     ";
         for (String EPIC : Utils.EPICS_STOCKS) {
-            List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h2 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H2).orElse(null);
 
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h2)
-                    || CollectionUtils.isEmpty(list_d1)) {
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h2)) {
                 Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
                 continue;
             }
-            List<BtcFutures> heken_list_d1 = Utils.getHekenList(list_d1);
 
-            String trend_M1 = Utils.getTrendByMaXx(heken_list_d1, 50);
             String trend_W1 = dto_w1.getTrend();
-            String trend_D1 = Utils.getTrendByHekenAshiList(heken_list_d1);
+            String trend_D1 = dto_d1.getTrend();
             String trend_H2 = dto_h2.getTrend();
 
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
             if (Utils.isNotBlank(dto_w1.getNote())) {
-                if (!Objects.equals(trend_M1, trend_W1)) {
-                    prefix = prefix.replace("M1", "  ");
-                }
                 if (!Objects.equals(trend_W1, trend_W1)) {
                     prefix = prefix.replace("W1", "  ");
                 }
@@ -3552,81 +3545,23 @@ public class BinanceServiceImpl implements BinanceService {
 
         index = 1;
         for (String EPIC : Utils.EPICS_STOCKS) {
-            List<BtcFutures> list_d1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h2 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H2).orElse(null);
 
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h2)
-                    || CollectionUtils.isEmpty(list_d1)) {
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h2)) {
                 Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
                 continue;
             }
-
-            List<BtcFutures> heken_list_d1 = Utils.getHekenList(list_d1);
-
-            String trend_M1 = Utils.getTrendByMaXx(heken_list_d1, 50);
             String trend_W1 = dto_w1.getTrend();
-            String trend_D1 = Utils.getTrendByHekenAshiList(heken_list_d1);
+            String trend_D1 = dto_d1.getTrend();
             String trend_H2 = dto_h2.getTrend();
 
-            if (Objects.equals(trend_M1, trend_W1) && !Objects.equals(trend_W1, trend_D1)) {
+            if (!Objects.equals(trend_W1, trend_D1)) {
                 continue;
-            }
-            if (!GLOBAL_SAME_TREND_D1_H12.contains(EPIC) && Objects.equals(trend_W1, trend_D1)) {
-                // GLOBAL_SAME_TREND_D1_H12.add(EPIC);
-            }
-
-            String type_min_max_area = "";
-            {
-                List<BtcFutures> list_w1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_W1);
-                if (!CollectionUtils.isEmpty(list_d1) && !CollectionUtils.isEmpty(list_w1)) {
-                    BigDecimal str = BigDecimal.ZERO;
-                    BigDecimal end = BigDecimal.ZERO;
-                    BigDecimal price = BigDecimal.ZERO;
-                    List<BigDecimal> body = new ArrayList<BigDecimal>();
-                    // ----------------------------------------------------------------------
-                    List<BtcFutures> heken_list_10d = Utils.getHekenList(list_d1);
-                    body = Utils.getBodyCandle(heken_list_10d);
-                    str = body.get(0);
-                    end = body.get(1);
-
-                    price = heken_list_10d.get(0).getPrice_close_candle();
-                    if (Objects.equals(Utils.TREND_LONG, trend_H2) && (price.compareTo(str) <= 0)) {
-                        type_min_max_area += Utils.TEXT_MIN_AREA + "D";
-                    }
-                    if (Objects.equals(Utils.TREND_SHOT, trend_H2) && (price.compareTo(end) >= 0)) {
-                        type_min_max_area += Utils.TEXT_MAX_AREA + "D";
-                    }
-                    // ----------------------------------------------------------------------
-                    List<BtcFutures> heken_list_10w = Utils.getHekenList(list_w1);
-                    body = Utils.getBodyCandle(heken_list_10w);
-                    str = body.get(0);
-                    end = body.get(1);
-
-                    price = heken_list_10w.get(0).getPrice_close_candle();
-                    if (Objects.equals(Utils.TREND_LONG, trend_H2) && (price.compareTo(str) <= 0)) {
-                        type_min_max_area += Utils.TEXT_MIN_AREA + "W";
-                    }
-                    if (Objects.equals(Utils.TREND_SHOT, trend_H2) && (price.compareTo(end) >= 0)) {
-                        type_min_max_area += Utils.TEXT_MAX_AREA + "W";
-                    }
-                    // ----------------------------------------------------------------------
-                    if (type_min_max_area.contains(Utils.TEXT_MIN_AREA)) {
-                        type_min_max_area = Utils.TEXT_MIN_AREA + "("
-                                + type_min_max_area.replace(Utils.TEXT_MIN_AREA, "") + ")";
-                    }
-                    if (type_min_max_area.contains(Utils.TEXT_MAX_AREA)) {
-                        type_min_max_area = Utils.TEXT_MAX_AREA + "("
-                                + type_min_max_area.replace(Utils.TEXT_MAX_AREA, "") + ")";
-                    }
-                }
             }
 
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
-            if (!Objects.equals(trend_M1, trend_D1)) {
-                prefix = prefix.replace("M1", "  ");
-            }
             if (!Objects.equals(trend_W1, trend_D1)) {
                 prefix = prefix.replace("W1", "  ");
             }
@@ -3635,12 +3570,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isNotBlank(dto_d1.getNote())) {
-                analysis(Utils.appendSpace(type_min_max_area, 15) + prefix, EPIC, Utils.CAPITAL_TIME_D1);
-                index += 1;
-            }
-
-            if (Utils.isNotBlank(dto_h2.getNote()) && Objects.equals(trend_H2, trend_D1)) {
-                analysis(Utils.appendSpace(type_min_max_area, 15) + prefix, EPIC, Utils.CAPITAL_TIME_H2);
+                analysis(prefix, EPIC, Utils.CAPITAL_TIME_D1);
                 index += 1;
             }
         }
@@ -3794,7 +3724,6 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
             }
-
             // -----------------------------------------------------------------------
             // TODO: 6. scapWithM30
             if (Utils.isNotBlank(dto_ea.getNote()) && !Utils.isBuyTopSellBottom(dto_ea.getTrend(), dto_ea.getNote())) {
@@ -3814,14 +3743,8 @@ public class BinanceServiceImpl implements BinanceService {
                 result += type + EPIC;
                 index += 1;
 
-                BscScanBinanceApplication.EPICS_OUTPUT_MSG += "_" + EPIC + "_";
+                BscScanBinanceApplication.EPICS_OUTPUT_MSG += "_" + result + "_";
             }
-        }
-
-        if (Utils.isNotBlank(result)) {
-            String msg = "(Forex)" + Utils.new_line_from_service + result;
-            String EVENT_ID = "FX_H_" + result.length() + Utils.getCurrentYyyyMmDd_HH_Blog30m();
-            sendMsgPerHour(EVENT_ID, msg, true);
         }
     }
 

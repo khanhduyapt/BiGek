@@ -215,11 +215,10 @@ public class BscScanBinanceApplication {
         File myScap = new File(Utils.getDraftLogFile());
         myScap.delete();
         EPICS_OUTPUTED_LOG = "";
-        EPICS_OUTPUT_MSG = "";
-
         // --------------------------------------------------------------------------
         Utils.logWritelnDraft("");
         Utils.logWritelnDraftFooter();
+        EPICS_OUTPUT_MSG = "";
         binance_service.scapWithM30(Utils.EPICS_METALS, Utils.CAPITAL_TIME_H12);
         binance_service.scapWithM30(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_H12);
         binance_service.scapWithM30(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_H12);
@@ -281,8 +280,8 @@ public class BscScanBinanceApplication {
             Utils.logWritelnDraft("");
             Utils.logWritelnDraft(msg);
 
-            // String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
-            // binance_service.sendMsgPerHour(EVENT_ID, msg, true);
+            String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH();
+            binance_service.sendMsgPerHour(EVENT_ID, msg, true);
         }
     }
 
