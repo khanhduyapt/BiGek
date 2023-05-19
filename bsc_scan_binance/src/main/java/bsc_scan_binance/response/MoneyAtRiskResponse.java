@@ -108,17 +108,10 @@ public class MoneyAtRiskResponse {
             unit_risk_per_pip = BigDecimal.valueOf(0.71428);
             break;
         case "XRPUSD":
-            standard_lot = BigDecimal.valueOf(10);
-            unit_risk_per_pip = BigDecimal.valueOf(1000);
-            break;
         case "DOTUSD":
-            standard_lot = BigDecimal.valueOf(10);
-            unit_risk_per_pip = BigDecimal.valueOf(1000);
-            break;
         case "ADAUSD":
-            standard_lot = BigDecimal.valueOf(10);
-            unit_risk_per_pip = BigDecimal.valueOf(1000);
-            break;
+        case "LTCUSD":
+        case "DASHUSD":
         case "DOGEUSD":
             standard_lot = BigDecimal.valueOf(10);
             unit_risk_per_pip = BigDecimal.valueOf(1000);
@@ -460,9 +453,7 @@ public class MoneyAtRiskResponse {
             standard_lot = BigDecimal.valueOf(0.01);
             unit_risk_per_pip = BigDecimal.valueOf(10000);
 
-            System.out.println("getStandard_lot: " + EPIC + " not exist!----------------------------------");
-            // String msg = "getStandard_lot: " + EPIC + " not exist!";
-            // Utils.logWritelnDraft(msg);
+            System.out.println("MoneyAtRiskResponse: " + EPIC + " not exist!----------------------------------");
             break;
         }
 

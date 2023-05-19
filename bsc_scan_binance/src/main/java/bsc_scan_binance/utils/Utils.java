@@ -739,7 +739,7 @@ public class Utils {
             return Utils.CAPITAL_TIME_H12;
         }
 
-        return Utils.CAPITAL_TIME_W1;
+        return Utils.CAPITAL_TIME_D1;
     }
 
     public static String getEATrackingTrend(String trend_w1, String trend_d1, String trend_h12) {
@@ -757,7 +757,7 @@ public class Utils {
             return trend_h12;
         }
 
-        return trend_w1;
+        return trend_d1;
     }
 
     public static String getTimeframe_SwitchTrend(String trend_w1, String trend_d1, String trend_h12,
@@ -766,24 +766,10 @@ public class Utils {
             String note_d1, String note_h12, String note_h8, String note_h4, String note_h2, String note_30,
             String tracking_trend) {
 
-        if (Objects.equals(tracking_trend, trend_h2) && note_h2.contains(tracking_trend)
+        if (Objects.equals(tracking_trend, trend_d1) && note_d1.contains(tracking_trend)
+                && Objects.equals(tracking_trend, trend_h12) && Objects.equals(tracking_trend, trend_h8)
                 && Objects.equals(tracking_trend, trend_h4)) {
-            return Utils.CAPITAL_TIME_H2;
-        }
-
-        if (Objects.equals(tracking_trend, trend_h4) && note_h4.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h2)) {
-            return Utils.CAPITAL_TIME_H4;
-        }
-
-        if (Objects.equals(tracking_trend, trend_30) && note_30.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h2)) {
-            return Utils.CAPITAL_TIME_30;
-        }
-
-        if (Objects.equals(tracking_trend, trend_h8) && note_h8.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h4) && Objects.equals(tracking_trend, trend_h2)) {
-            return Utils.CAPITAL_TIME_H8;
+            return Utils.CAPITAL_TIME_D1;
         }
 
         if (Objects.equals(tracking_trend, trend_h12) && note_h12.contains(tracking_trend)
@@ -791,10 +777,24 @@ public class Utils {
             return Utils.CAPITAL_TIME_H12;
         }
 
-        if (Objects.equals(tracking_trend, trend_d1) && note_d1.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h12) && Objects.equals(tracking_trend, trend_h8)
+        if (Objects.equals(tracking_trend, trend_h8) && note_h8.contains(tracking_trend)
+                && Objects.equals(tracking_trend, trend_h4) && Objects.equals(tracking_trend, trend_h2)) {
+            return Utils.CAPITAL_TIME_H8;
+        }
+
+        if (Objects.equals(tracking_trend, trend_h4) && note_h4.contains(tracking_trend)
+                && Objects.equals(tracking_trend, trend_h2)) {
+            return Utils.CAPITAL_TIME_H4;
+        }
+
+        if (Objects.equals(tracking_trend, trend_h2) && note_h2.contains(tracking_trend)
                 && Objects.equals(tracking_trend, trend_h4)) {
-            return Utils.CAPITAL_TIME_D1;
+            return Utils.CAPITAL_TIME_H2;
+        }
+
+        if (Objects.equals(tracking_trend, trend_30) && note_30.contains(tracking_trend)
+                && Objects.equals(tracking_trend, trend_h2)) {
+            return Utils.CAPITAL_TIME_30;
         }
 
         // -----------------------------------------
