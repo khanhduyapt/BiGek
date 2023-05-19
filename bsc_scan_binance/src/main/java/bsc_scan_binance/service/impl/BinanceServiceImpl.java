@@ -3593,7 +3593,7 @@ public class BinanceServiceImpl implements BinanceService {
         // Chap nhan thua rui ro, khong niu keo sai lam danh sai xu huong.
         BigDecimal bread = Utils.calcMaxBread(heken_list.subList(0, 5));
         if (Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
-            bread = bread.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+            // bread = bread.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
         if (Utils.EPICS_STOCKS.contains(EPIC) || CAPITAL_TIME_XX.contains("MINUTE")) {
             bread = Utils.calcMaxCandleHigh(heken_list.subList(0, 5));
