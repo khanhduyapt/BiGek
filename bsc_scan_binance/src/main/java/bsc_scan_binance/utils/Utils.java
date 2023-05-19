@@ -97,7 +97,7 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma.1.3)";
     public static final String TEXT_WAIT = "Wait";
 
-    public static final String TEXT_EXPERT_ADVISORING = "....  ";
+    public static final String TEXT_EXPERT_ADVISORING = "...   ";
     public static final String TEXT_EXPERT_ADVISOR_SPACE = "      ";
 
     public static final String TEXT_ABOVE_MA50 = "AboveMa50";
