@@ -2935,6 +2935,9 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private String analysis(String prifix, String EPIC, String CAPITAL_TIME_XX) {
+        if (Utils.isBlank(CAPITAL_TIME_XX)) {
+            return "";
+        }
         Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
         if (Objects.isNull(dto)) {
             return "";
@@ -3707,16 +3710,24 @@ public class BinanceServiceImpl implements BinanceService {
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
         String date_time = LocalDateTime.now().toString();
 
+        int size = heken_list.size();
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)) {
+            if (size > 5) {
+                size = 5;
+            }
+        }
+
         // Chap nhan thua rui ro, khong niu keo sai lam danh sai xu huong.
-        BigDecimal bread = Utils.calcMaxBread(heken_list);
+        BigDecimal bread = Utils.calcMaxBread(heken_list.subList(0, 5));
         if (Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
             bread = bread.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
         if (Utils.EPICS_STOCKS.contains(EPIC) || CAPITAL_TIME_XX.contains("MINUTE")) {
-            bread = Utils.calcMaxCandleHigh(heken_list);
+            bread = Utils.calcMaxCandleHigh(heken_list.subList(0, 5));
         }
 
-        List<BigDecimal> low_high = Utils.getLowHighCandle(list);
+        List<BigDecimal> low_high = Utils.getLowHighCandle(list.subList(0, 5));
+
         BigDecimal sl_long = low_high.get(0).subtract(bread);
         BigDecimal sl_shot = low_high.get(1).add(bread);
 
@@ -3856,6 +3867,14 @@ public class BinanceServiceImpl implements BinanceService {
 
             String ea_tracking_trend = Utils.getEATrackingTrend(trend_w1, trend_d1, trend_h12);
 
+            String CAPITAL_TIME_XX = Utils.getTimeframe_SwitchTrend(trend_w1, trend_d1, trend_h12, trend_h8,
+                    trend_h4, trend_h2, trend_30, note_d1, note_h12, note_h8, note_h4, note_h2, note_30,
+                    ea_tracking_trend);
+
+            if (Utils.isBlank(CAPITAL_TIME_XX)) {
+                continue;
+            }
+
             String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h8,
                     trend_h4, trend_h2, trend_30, note_d1, note_h12, note_h8, note_h4, note_h2, note_30,
                     ea_tracking_trend);
@@ -3874,10 +3893,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (!BscScanBinanceApplication.EPICS_OUTPUTED_LOG.contains(EPIC)) {
                 index += 1;
-
-                String CAPITAL_TIME_XX = Utils.getTimeframe_FollowTrackingTrend(trend_w1, trend_d1, trend_h12, trend_h8,
-                        trend_h4, trend_h2, trend_30, note_d1, note_h12, note_h8, note_h4, note_h2, note_30,
-                        ea_tracking_trend);
 
                 if (Utils.isNotBlank(msg)) {
                     msg += ",";
