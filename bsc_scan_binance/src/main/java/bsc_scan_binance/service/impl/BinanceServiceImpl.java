@@ -3710,8 +3710,7 @@ public class BinanceServiceImpl implements BinanceService {
             trading += "_" + trade.getSymbol() + "_";
         }
 
-        int index = 1;
-        String result = "";
+        int index = 0;
         for (String EPIC : CAPITAL_LIST) {
             if (BscScanBinanceApplication.EPICS_OUTPUT_MSG.contains(EPIC)) {
                 continue;
@@ -3762,28 +3761,22 @@ public class BinanceServiceImpl implements BinanceService {
             // -----------------------------------------------------------------------
             // TODO: 6. scapWithM30
             if (Utils.isNotBlank(dto_ea.getNote()) && !Utils.isBuyTopSellBottom(dto_ea.getTrend(), dto_ea.getNote())) {
+                String type = Objects.equals(dto_ea.getTrend(), Utils.TREND_LONG) ? "(B)" : "(S)";
+                index += 1;
                 String prefix = getPrefix(index, EPIC);
-                String ea = Utils.TEXT_EXPERT_ADVISOR_SPACE;
 
+                String ea = Utils.TEXT_EXPERT_ADVISOR_SPACE;
                 if (Utils.isNotBlank(ea_tracking_trend)) {
                     ea = Utils.TEXT_EXPERT_ADVISORING;
                 }
+
                 if (trading.contains(EPIC)) {
                     ea = Utils.TEXT_EXPERT_ADVISOR_TRADING;
+                } else {
+                    BscScanBinanceApplication.EPICS_OUTPUT_MSG += "_" + type + EPIC + "_";
                 }
-                prefix += ea;
 
-                String type = Objects.equals(dto_ea.getTrend(), Utils.TREND_LONG) ? "(B)" : "(S)";
-
-                analysis(prefix, EPIC, CAPITAL_TIME_XX);
-
-                if (Utils.isNotBlank(result)) {
-                    result += ", ";
-                }
-                result += type + EPIC;
-                index += 1;
-
-                BscScanBinanceApplication.EPICS_OUTPUT_MSG += "_" + result + "_";
+                analysis(prefix + ea, EPIC, CAPITAL_TIME_XX);
             }
         }
     }
