@@ -3727,9 +3727,9 @@ public class Utils {
         temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$"; // 500$
 
-        temp += Utils.appendLeft(removeLastZero(money_x1_now.calcLot()), 10) + "(lot)";
+        temp += Utils.appendLeft(removeLastZero(money_x1_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x1).replace(".0", ""), 4) + "$";
-        temp += "   E" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 10);
+        temp += "  E" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 10);
         String result = Utils.appendSpace(temp, 38);
         return result;
     }
@@ -3747,9 +3747,9 @@ public class Utils {
         temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
 
-        temp += Utils.appendLeft(removeLastZero(money_x1_now.calcLot()), 10) + "(lot)";
+        temp += Utils.appendLeft(removeLastZero(money_x1_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x1).replace(".0", ""), 4) + "$";
-        temp += "   E" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 10);
+        temp += "  E" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 10);
 
         String result = Utils.appendSpace(temp, 38);
         return result;
