@@ -2698,7 +2698,7 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 10);
         log += Utils.calc_BUF_LO_HI_BUF_Forex(false, find_trend, EPIC, dto_entry, dto_sl);
-        log += "     " + getTrendTimeframes(EPIC);
+        // log += "     " + getTrendTimeframes(EPIC);
 
         Utils.logWritelnDraft(log);
     }
