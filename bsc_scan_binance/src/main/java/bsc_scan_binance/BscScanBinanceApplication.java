@@ -206,11 +206,7 @@ public class BscScanBinanceApplication {
     }
 
     public static void monitorForex(BinanceService binance_service) {
-        boolean allow_send_msg = true;
         String pre_epics = EPICS_OUTPUT_MSG;
-        if (Objects.equals(EPICS_OUTPUT_MSG, "INIT")) {
-            allow_send_msg = false;
-        }
         // --------------------------------------------------------------------------
         File myScap = new File(Utils.getDraftLogFile());
         myScap.delete();
@@ -219,21 +215,17 @@ public class BscScanBinanceApplication {
         Utils.logWritelnDraft("");
         Utils.logWritelnDraftFooter();
         EPICS_OUTPUT_MSG = "";
-        binance_service.scapWithM30(Utils.EPICS_METALS, Utils.CAPITAL_TIME_H12);
-        binance_service.scapWithM30(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_H12);
-        binance_service.scapWithM30(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_H12);
-
-        binance_service.scapWithM30(Utils.EPICS_METALS, Utils.CAPITAL_TIME_H8);
-        binance_service.scapWithM30(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_H8);
-        binance_service.scapWithM30(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_H8);
-
-        binance_service.scapWithM30(Utils.EPICS_METALS, Utils.CAPITAL_TIME_H4);
-        binance_service.scapWithM30(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_H4);
-        binance_service.scapWithM30(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_H4);
+        binance_service.scapWithM30(Utils.EPICS_METALS, Utils.CAPITAL_TIME_30);
+        binance_service.scapWithM30(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_30);
+        binance_service.scapWithM30(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_30);
 
         binance_service.scapWithM30(Utils.EPICS_METALS, Utils.CAPITAL_TIME_H2);
         binance_service.scapWithM30(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_H2);
         binance_service.scapWithM30(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_H2);
+
+        binance_service.scapWithM30(Utils.EPICS_METALS, Utils.CAPITAL_TIME_H4);
+        binance_service.scapWithM30(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_H4);
+        binance_service.scapWithM30(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_H4);
         Utils.logWritelnDraftFooter();
         // --------------------------------------------------------------------------
         Utils.logWritelnDraft("");
@@ -276,8 +268,7 @@ public class BscScanBinanceApplication {
                 add_new += epic + "   ";
             }
         }
-
-        if (allow_send_msg && Utils.isNotBlank(add_new)) {
+        if (Utils.isNotBlank(add_new)) {
             String msg = "(Added: " + count + "):   " + add_new;
             Utils.logWritelnDraft("");
             Utils.logWritelnDraft(msg);
