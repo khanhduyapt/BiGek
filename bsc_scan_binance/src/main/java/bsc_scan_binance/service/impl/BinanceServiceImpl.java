@@ -3020,7 +3020,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String sendMsgKillLongShort(String SYMBOL) {
-        List<BtcFutures> list = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_H12, 15);
+        List<BtcFutures> list = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_D1, 15);
         if (CollectionUtils.isEmpty(list)) {
             return Utils.CRYPTO_TIME_H1;
         }
