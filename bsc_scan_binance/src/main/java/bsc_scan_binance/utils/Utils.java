@@ -96,9 +96,11 @@ public class Utils {
     // public static final String TEXT_SWITCH_TREND_SHOT_ABOVE_Ma = "(S.H4H2)";
     public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma.1.3)";
     public static final String TEXT_WAIT = "Wait";
-    public static final String TEXT_EXPERT_ADVISOR_EA = "ea  ";
-    public static final String TEXT_EXPERT_ADVISORING = "..  ";
-    public static final String TEXT_EXPERT_ADVISOR_SPACE = "    ";
+
+    public static final String TEXT_EXPERT_ADVISOR_EA = "ea   ";
+    public static final String TEXT_EXPERT_ADVISORING = "..   ";
+    public static final String TEXT_EXPERT_ADVISOR_SPACE = "     ";
+    public static final String TEXT_EXPERT_ADVISOR_TRADING = "deal ";
 
     public static final String TEXT_ABOVE_MA50 = "AboveMa50";
     public static final String TEXT_BELOW_MA50 = "BelowMa50";
@@ -3593,9 +3595,10 @@ public class Utils {
         int end = 1;
 
         String id = heken_list.get(0).getId();
-        if (id.contains("_30m_") || id.contains("_1h_") || id.contains("_2h_")) {
-            // str = 1;
-            // end = 2;
+        // Khung nhỏ cần xác nhận trend khi đóng nến.
+        if (id.contains("_30m_") || id.contains("_2h_") || id.contains("_4h_")) {
+            str = 1;
+            end = 2;
         }
 
         boolean isUptrend_0 = heken_list.get(str).isUptrend();
@@ -3628,7 +3631,7 @@ public class Utils {
         if (Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
             type = "Fx";
         }
-        type = appendSpace(type, 6);
+        type = appendSpace(type, 5);
 
         return type;
     }

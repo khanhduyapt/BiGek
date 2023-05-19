@@ -98,6 +98,7 @@ public class BinanceServiceImpl implements BinanceService {
     private static List<String> GLOBAL_SHOT_LIST = new ArrayList<String>();
 
     private static List<String> GLOBAL_SAME_TREND_D1_H12 = new ArrayList<String>();
+    List<Mt5DataTrade> tradeList = new ArrayList<Mt5DataTrade>();
 
     private String str_long_suggest = "";
     private String str_shot_suggest = "";
@@ -2759,6 +2760,30 @@ public class BinanceServiceImpl implements BinanceService {
         return result;
     }
 
+    private String getMinMaxAreaW10(String EPIC) {
+        List<BtcFutures> list_w1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_W1);
+        if (CollectionUtils.isEmpty(list_w1)) {
+            return "";
+        }
+        List<BtcFutures> heken_list_w1 = Utils.getHekenList(list_w1);
+        String trend_w1 = Utils.getTrendByHekenAshiList(heken_list_w1);
+
+        List<BigDecimal> body = Utils.getBodyCandle(heken_list_w1);
+        BigDecimal str = body.get(0);
+        BigDecimal end = body.get(1);
+
+        String type_min_max_area = "";
+        BigDecimal price = list_w1.get(0).getCurrPrice();
+        if (Objects.equals(Utils.TREND_LONG, trend_w1) && (price.compareTo(str) <= 0)) {
+            type_min_max_area += Utils.TEXT_MIN_AREA + "_W_Area";
+        }
+        if (Objects.equals(Utils.TREND_SHOT, trend_w1) && (price.compareTo(end) >= 0)) {
+            type_min_max_area += Utils.TEXT_MAX_AREA + "_W_Area";
+        }
+
+        return type_min_max_area;
+    }
+
     private String getMinMaxArea(String EPIC, String trend) {
         String type_min_max_area = "";
         List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
@@ -3231,6 +3256,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
         } catch (Exception e) {
         }
+
+        if (Objects.equals("Stocks.csv", filename)) {
+            tradeList = getTradeList();
+        }
     }
 
     private List<BtcFutures> getCapitalData(String EPIC, String CAPITAL_TIME_XXX) {
@@ -3509,20 +3538,20 @@ public class BinanceServiceImpl implements BinanceService {
 
         int index = 1;
         // TODO: scapStocks
-        String switch_trend = ".[W1.D1.H2            ]" + "                     ";
+
         for (String EPIC : Utils.EPICS_STOCKS) {
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-            Orders dto_h2 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H2).orElse(null);
 
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h2)) {
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1)) {
                 Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
                 continue;
             }
 
             String trend_W1 = dto_w1.getTrend();
             String trend_D1 = dto_d1.getTrend();
-            String trend_H2 = dto_h2.getTrend();
+            String switch_trend = "." + Utils.appendSpace(trend_W1, 4) + " [W1.D1                 ]     ";
+            switch_trend += Utils.appendSpace(getMinMaxAreaW10(EPIC), 15);
 
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
             if (Utils.isNotBlank(dto_w1.getNote())) {
@@ -3531,9 +3560,6 @@ public class BinanceServiceImpl implements BinanceService {
                 }
                 if (!Objects.equals(trend_D1, trend_W1)) {
                     prefix = prefix.replace("D1", "  ");
-                }
-                if (!Objects.equals(trend_H2, trend_W1)) {
-                    prefix = prefix.replace("H2", "  ");
                 }
 
                 analysis(prefix, EPIC, Utils.CAPITAL_TIME_W1);
@@ -3553,24 +3579,28 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
                 continue;
             }
-            String trend_W1 = dto_w1.getTrend();
-            String trend_D1 = dto_d1.getTrend();
-            String trend_H2 = dto_h2.getTrend();
+            String trend_w1 = dto_w1.getTrend();
+            String trend_d1 = dto_d1.getTrend();
+            String trend_h2 = dto_h2.getTrend();
 
-            if (!Objects.equals(trend_W1, trend_D1)) {
-                continue;
-            }
+            String switch_trend = "." + Utils.appendSpace(trend_w1, 4) + " [W1.D1.H2              ]     ";
+            switch_trend += Utils.appendSpace(getMinMaxAreaW10(EPIC), 15);
 
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
-            if (!Objects.equals(trend_W1, trend_D1)) {
+            if (!Objects.equals(trend_w1, trend_d1)) {
                 prefix = prefix.replace("W1", "  ");
             }
-            if (!Objects.equals(trend_H2, trend_D1)) {
+            if (!Objects.equals(trend_h2, trend_d1)) {
                 prefix = prefix.replace("H2", "  ");
             }
 
-            if (Utils.isNotBlank(dto_d1.getNote())) {
+            if (Objects.equals(trend_w1, trend_d1) && Utils.isNotBlank(dto_d1.getNote())) {
                 analysis(prefix, EPIC, Utils.CAPITAL_TIME_D1);
+                index += 1;
+            }
+
+            if (Objects.equals(trend_d1, trend_h2) && Utils.isNotBlank(dto_h2.getNote())) {
+                analysis(prefix, EPIC, Utils.CAPITAL_TIME_H2);
                 index += 1;
             }
         }
@@ -3598,7 +3628,8 @@ public class BinanceServiceImpl implements BinanceService {
                 find_trend = Utils.TREND_LONG;
             } else if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
                 find_trend = Utils.TREND_SHOT;
-            } else if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_30)
+            } else if ((Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_30)
+                    || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H2))
                     && Objects.equals(Utils.switchTrendByMa13_XX(heken_list, 50), trend)) {
                 find_trend = trend;
             }
@@ -3755,6 +3786,11 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
+        String trading = "";
+        for (Mt5DataTrade trade : tradeList) {
+            trading += "_" + trade.getSymbol() + "_";
+        }
+
         int index = 1;
         String msg = "";
         for (String EPIC : CAPITAL_LIST) {
@@ -3814,6 +3850,10 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
+            if (trading.contains(EPIC)) {
+                ea = Utils.TEXT_EXPERT_ADVISOR_TRADING;
+            }
+
             if (!BscScanBinanceApplication.EPICS_OUTPUTED_LOG.contains(EPIC)) {
                 index += 1;
 
@@ -3822,7 +3862,9 @@ public class BinanceServiceImpl implements BinanceService {
                 }
                 msg += analysis(prefix + ea, EPIC, CAPITAL_TIME_XX);
 
-                BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
+                if (!Objects.equals(EPIC, "BTCUSD")) {
+                    BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
+                }
             }
         }
 
@@ -3899,16 +3941,18 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        List<Mt5DataTrade> tradeList = getTradeList();
         BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT).multiply(BigDecimal.valueOf(2.5));
         String max_risk = "     MaxRisk:" + Utils.appendLeft(String.valueOf(risk).replace(".0000", ""), 10) + "$/Trade";
 
         String msg = "";
-        String msg_stop_loss = "";
-        String msg_stop_scalping = "";
+        String msgStopLoss = "";
+        String msgStopScalping = "";
         BigDecimal total = BigDecimal.ZERO;
         List<String> scalpingList = new ArrayList<String>();
 
+        if (CollectionUtils.isEmpty(tradeList)) {
+            tradeList = getTradeList();
+        }
         for (Mt5DataTrade trade : tradeList) {
 
             List<BtcFutures> list_h4 = getCapitalData(trade.getSymbol(), Utils.CAPITAL_TIME_H4);
@@ -3919,22 +3963,25 @@ public class BinanceServiceImpl implements BinanceService {
 
             List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
             List<BtcFutures> heken_list_h8 = Utils.getHekenList(list_h8);
+            String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
             String trend_h8 = Utils.getTrendByHekenAshiList(heken_list_h8);
 
             String witch_trend = Utils.switchTrendByHeken_12(heken_list_h4);
             witch_trend += Utils.switchTrendByHeken_Ma368(heken_list_h4, trade.getType());
 
             boolean isStopCalping = false;
-            if ((Utils.isNotBlank(witch_trend) && !witch_trend.contains(trade.getType()))
-                    || !Objects.equals(trend_h8, trade.getType())) {
+            if (Utils.isNotBlank(witch_trend) && !witch_trend.contains(trade.getType())) {
+                isStopCalping = true;
+            }
+            if (!Objects.equals(trend_h4, trade.getType()) && !Objects.equals(trend_h8, trade.getType())) {
                 isStopCalping = true;
             }
 
             String result = "";
             String multi_timeframes = getTrendTimeframes(trade.getSymbol());
 
-            if (trade.getProfit().add(risk).compareTo(BigDecimal.ZERO) < 0) {
-                result += "(Stop_Loss)";
+            if ((trade.getProfit().add(risk).compareTo(BigDecimal.ZERO) < 0) && isStopCalping) {
+                result += "(StopLoss)";
             }
             result = Utils.appendSpace(result, 15);
             result += "(Trade:" + Utils.appendSpace(trade.getType(), 4) + ")";
@@ -3945,14 +3992,14 @@ public class BinanceServiceImpl implements BinanceService {
             // Scalping
             if (isStopCalping) {
                 String scalping = "(H4)" + result;
-                msg_stop_scalping += scalping.replace(multi_timeframes, "") + Utils.new_line_from_service;
+                msgStopScalping += scalping.replace(multi_timeframes, "") + Utils.new_line_from_service;
                 scalpingList.add("[STOP] (Scalping):" + scalping);
             }
 
             total = total.add(trade.getProfit());
             msg += result + Utils.new_line_from_service;
-            if (result.contains("Stop_Loss")) {
-                msg_stop_loss += result.replace(multi_timeframes, "") + Utils.new_line_from_service;
+            if (result.contains("StopLoss")) {
+                msgStopLoss += result.replace(multi_timeframes, "") + Utils.new_line_from_service;
             }
         }
 
@@ -3960,17 +4007,17 @@ public class BinanceServiceImpl implements BinanceService {
             msg = Utils.appendLeft(String.valueOf(total), 10) + max_risk + Utils.new_line_from_service + msg;
             Utils.logWritelnDraft(msg);
         }
-        if (Utils.isNotBlank(msg_stop_loss)) {
-            msg_stop_loss = "[STOP_LOSS]" + max_risk + Utils.new_line_from_service + msg_stop_loss;
+        if (Utils.isNotBlank(msgStopLoss)) {
+            msgStopLoss = "[STOP_LOSS]" + max_risk + Utils.new_line_from_service + msgStopLoss;
 
-            String EVENT_ID = "stop_loss" + Utils.getCurrentYyyyMmDd_HH();
-            sendMsgPerHour(EVENT_ID, msg_stop_loss, true);
+            String EVENT_ID = "StopLoss" + Utils.getCurrentYyyyMmDd_HH();
+            sendMsgPerHour(EVENT_ID, msgStopLoss, true);
         }
-        if (Utils.isNotBlank(msg_stop_scalping)) {
-            msg_stop_scalping = "[STOP_SCALPING]" + Utils.new_line_from_service + msg_stop_scalping;
+        if (Utils.isNotBlank(msgStopScalping)) {
+            msgStopScalping = "[STOP_SCALPING]" + Utils.new_line_from_service + msgStopScalping;
 
-            String EVENT_ID = "stop_scalping" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
-            sendMsgPerHour(EVENT_ID, msg_stop_scalping, true);
+            String EVENT_ID = "StopScalping" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
+            // sendMsgPerHour(EVENT_ID, msgStopScalping, true);
         }
 
         if (scalpingList.size() > 0) {

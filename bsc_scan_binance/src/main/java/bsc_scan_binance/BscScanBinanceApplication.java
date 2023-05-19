@@ -235,10 +235,12 @@ public class BscScanBinanceApplication {
         binance_service.scapWithM30(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_H2);
         binance_service.scapWithM30(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_H2);
         Utils.logWritelnDraftFooter();
+        // --------------------------------------------------------------------------
+        Utils.logWritelnDraft("");
+        binance_service.scapForex(Utils.EPICS_METALS);
         Utils.logWritelnDraft("");
         // --------------------------------------------------------------------------
-        binance_service.scapForex(Utils.EPICS_METALS);
-        Utils.logWritelnDraft("...");
+        Utils.logWritelnDraftFooter();
         binance_service.scapForex(Utils.EPICS_FOREXS_JPY);
         Utils.logWritelnDraft("...");
         binance_service.scapForex(Utils.EPICS_FOREXS_GBP);
