@@ -2693,24 +2693,21 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
-        log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 10);
-        log += Utils.appendSpace(append, 35) + " ";
-        log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
-        log += Utils.calc_BUF_LO_HI_BUF_Forex(false, find_trend, EPIC, dto_entry, dto_sl);
-
-        List<BtcFutures> list = new ArrayList<BtcFutures>();
-        if (Utils.EPICS_STOCKS.contains(EPIC)) {
-            list = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
-        } else {
-            list = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
-        }
-
+        String text_body = "";
+        String text_BuySellArea = "";
+        List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_W1);
         if (!CollectionUtils.isEmpty(list)) {
             List<BtcFutures> heken_list = Utils.getHekenList(list);
-            String text_body = Utils.textBodyArea(heken_list);
-            log += "   " + text_body;
+            text_body = Utils.textBodyArea(heken_list);
+            text_BuySellArea = Utils.getTextBuySellArea(heken_list);
         }
+
+        String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
+        log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 11);
+        log += Utils.appendSpace(append.trim(), 100) + " " + text_BuySellArea + " ";
+        log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
+        log += Utils.calc_BUF_LO_HI_BUF_Forex(false, find_trend, EPIC, dto_entry, dto_sl);
+        log += "   " + text_body;
 
         Utils.logWritelnDraft(log);
     }
@@ -3688,6 +3685,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String ea = getTradeAction(EPIC);
 
                 analysis(prefix + ea, EPIC, Utils.CAPITAL_TIME_30);
+
                 BscScanBinanceApplication.EPICS_OUTPUT_MSG += "_" + type + EPIC + "_";
             }
         }

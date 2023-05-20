@@ -88,8 +88,8 @@ public class Utils {
     public static final String TEXT_START_LONG = "Start:Long";
     public static final String TEXT_STOP_LONG = "Stop:Long";
 
-    public static final String TEXT_BUY_AREA = " buy_area  ";
-    public static final String TEXT_SELL_AREA = " sell_area ";
+    public static final String TEXT_BUY_AREA = " w buy  area ";
+    public static final String TEXT_SEL_AREA = " w sell area ";
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
@@ -2534,34 +2534,30 @@ public class Utils {
 //
 //        return "";
 //    }
-//
-//    private String getMinMaxArea(String EPIC) {
-//        String type_min_max_area = "";
-//        List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_W1);
-//
-//        if (!CollectionUtils.isEmpty(list)) {
-//            BigDecimal str = BigDecimal.ZERO;
-//            BigDecimal end = BigDecimal.ZERO;
-//            BigDecimal price = BigDecimal.ZERO;
-//            // ----------------------------------------------------------------------
-//            List<BtcFutures> heken_list = Utils.getHekenList(list);
-//            List<BigDecimal> area = Utils.getBuySellArea(heken_list);
-//            str = area.get(0);
-//            end = area.get(1);
-//            price = heken_list.get(0).getCurrPrice();
-//
-//            if ((price.compareTo(str) <= 0)) {
-//                type_min_max_area = Utils.TEXT_BUY_AREA;
-//            }
-//
-//            if ((price.compareTo(end) >= 0)) {
-//                type_min_max_area = Utils.TEXT_SELL_AREA;
-//            }
-//        }
-//
-//        return type_min_max_area;
-//    }
-//
+
+    public static String getTextBuySellArea(List<BtcFutures> heken_list) {
+        String type_min_max_area = "";
+
+        BigDecimal str = BigDecimal.ZERO;
+        BigDecimal end = BigDecimal.ZERO;
+        BigDecimal price = BigDecimal.ZERO;
+        // ----------------------------------------------------------------------
+        List<BigDecimal> area = Utils.getBuySellArea(heken_list);
+        str = area.get(0);
+        end = area.get(1);
+        price = heken_list.get(0).getCurrPrice();
+
+        if ((price.compareTo(str) <= 0)) {
+            type_min_max_area = Utils.TEXT_BUY_AREA;
+        }
+
+        if ((price.compareTo(end) >= 0)) {
+            type_min_max_area = Utils.TEXT_SEL_AREA;
+        }
+
+        return appendSpace(type_min_max_area, TEXT_SEL_AREA.length());
+    }
+
     public static String textBodyArea(List<BtcFutures> heken_list) {
         List<BigDecimal> min_max_area = Utils.getBuySellArea(heken_list);
         String result = "(Body: ";
