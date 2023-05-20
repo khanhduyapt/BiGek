@@ -104,14 +104,12 @@ public class Utils {
     public static final String TEXT_ABOVE_MA50 = "AboveMa50";
     public static final String TEXT_BELOW_MA50 = "BelowMa50";
 
-    public static final String TEXT_H12_to_H2_ABOVE_MA50 = "H12:a H8:a H4:a H2:a";
-    public static final String TEXT_H12_to_H2_BELOW_MA50 = "H12:b H8:b H4:b H2:b";
-
     public static final String TEXT_SWITCH_TREND_Ma_1_10 = "(Ma1_10)";
     public static final String TEXT_SWITCH_TREND_Ma_1_20 = "(Ma1_20)";
     public static final String TEXT_SWITCH_TREND_Ma_1_30 = "(Ma1_30)";
     public static final String TEXT_SWITCH_TREND_Ma_1_50 = "(Ma1_50)";
     public static final String TEXT_SWITCH_TREND_50 = "(~50~)";
+    public static final String TEXT_SWITCH_TREND_HEIKEN = "(Heiken)";
 
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
     public static final String TEXT_TREND_HEKEN_LONG = TEXT_TREND_HEKEN_ + TREND_LONG;
@@ -3335,10 +3333,10 @@ public class Utils {
 
             boolean uptrend = (ope.compareTo(clo) < 0) ? true : false;
 
-            BtcFutures heken = new BtcFutures(dto.getId(), dto.getCurrPrice(), low, hig, ope, clo, BigDecimal.ZERO,
+            BtcFutures heiken = new BtcFutures(dto.getId(), dto.getCurrPrice(), low, hig, ope, clo, BigDecimal.ZERO,
                     BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, uptrend);
 
-            heken_list.add(heken);
+            heken_list.add(heiken);
             heken_index += 1;
         }
         Collections.reverse(heken_list);
@@ -3397,37 +3395,6 @@ public class Utils {
         return false;
     }
 
-    public static String switchTrendByHeken_Ma368(List<BtcFutures> heken_list, String find_trend) {
-        if (Utils.isBlank(find_trend)) {
-            return "";
-        }
-
-        String type = switchTrendByHeken_12(heken_list);
-
-        if (Utils.isBlank(type)) {
-            String switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 6);
-            if (Objects.equals(switch_trend, find_trend)) {
-                type = Utils.appendSpace(find_trend, 4) + "(Ma1.6)";
-            }
-        }
-
-        if (Utils.isBlank(type)) {
-            String switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 8);
-            if (Objects.equals(switch_trend, find_trend)) {
-                type = Utils.appendSpace(find_trend, 4) + "(Ma1.8)";
-            }
-        }
-
-        if (Utils.isBlank(type)) {
-            String switch_trend = Utils.switchTrendByMaXX(heken_list, 3, 6);
-            if (Objects.equals(switch_trend, find_trend)) {
-                type = Utils.appendSpace(find_trend, 4) + "(Ma3.6)";
-            }
-        }
-
-        return type;
-    }
-
     public static String switchTrendByHeken_12(List<BtcFutures> heken_list) {
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
@@ -3456,7 +3423,7 @@ public class Utils {
 
         String trend = Utils.getTrendByHekenAshiList(heken_list);
         if (Objects.equals(trend, trend_by_heiken)) {
-            return Utils.appendSpace(trend, 4) + "(Heken)";
+            return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
         }
 
         return "";
@@ -3664,10 +3631,29 @@ public class Utils {
         switch_trend += getTrendPrefix("D", note_d1, " ");
         switch_trend += getTrendPrefix("H12", note_h12, " ");
         switch_trend += getTrendPrefix("H8", note_h8, " ");
-        switch_trend += getTrendPrefix("H4", note_h4, " ");
-        switch_trend += getTrendPrefix("H2", note_h2, " ");
-        switch_trend += getTrendPrefix("30", note_30, " ");
+
+        if (Objects.equals(trend_w1, trend_h4)) {
+            switch_trend += getTrendPrefix("H4", note_h4, " ");
+        } else {
+            switch_trend += getTrendPrefix("H4", "", " ");
+        }
+
+        if (Objects.equals(trend_w1, trend_h2)) {
+            switch_trend += getTrendPrefix("H2", note_h2, " ");
+        } else {
+            switch_trend += getTrendPrefix("H2", "", " ");
+        }
+
+        if (Objects.equals(trend_w1, trend_30)) {
+            switch_trend += getTrendPrefix("30", note_30, " ");
+        } else {
+            switch_trend += getTrendPrefix("30", "", " ");
+        }
         switch_trend += "}  ";
+
+        if (!Objects.equals(trend_w1, trend_d1)) {
+            switch_trend = switch_trend.toLowerCase();
+        }
 
         String result = prefix + switch_trend;
         return result;

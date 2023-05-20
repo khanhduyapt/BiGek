@@ -216,13 +216,7 @@ public class BscScanBinanceApplication {
         EPICS_OUTPUT_MSG = "";
         Utils.logWritelnDraft("");
         Utils.logWritelnDraftFooter();
-        binance_service.waitM30SwitchTrend(Utils.EPICS_METALS, Utils.CAPITAL_TIME_30);
-        binance_service.waitM30SwitchTrend(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_30);
-        binance_service.waitM30SwitchTrend(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_30);
-
-        binance_service.waitM30SwitchTrend(Utils.EPICS_METALS, Utils.CAPITAL_TIME_H2);
-        binance_service.waitM30SwitchTrend(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_H2);
-        binance_service.waitM30SwitchTrend(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_H2);
+        binance_service.waitM30SwitchTrend();
         Utils.logWritelnDraftFooter();
         // --------------------------------------------------------------------------
         Utils.logWritelnDraft("");
@@ -266,11 +260,11 @@ public class BscScanBinanceApplication {
             }
         }
         if (Utils.isNotBlank(add_new)) {
-            String msg = "(Added: " + count + "):   " + add_new;
+            String msg = "(Forex30: " + count + "):   " + add_new;
             Utils.logWritelnDraft("");
             Utils.logWritelnDraft(msg);
 
-            String EVENT_ID = "FX_H_" + Utils.getCurrentYyyyMmDd_HH();
+            String EVENT_ID = "FX_M_30" + Utils.getCurrentYyyyMmDd_HH();
             binance_service.sendMsgPerHour(EVENT_ID, msg, true);
         }
     }
