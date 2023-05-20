@@ -2709,7 +2709,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 11);
-        log += Utils.appendSpace(append.trim(), 95) + " " + ea + text_BuySellArea + " ";
+        log += Utils.appendSpace(Utils.appendSpace(append.trim(), 98) + " " + ea, 102) + text_BuySellArea;
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
         log += Utils.calc_BUF_LO_HI_BUF_Forex(false, find_trend, EPIC, dto_entry, dto_sl);
         log += "   " + text_body;
@@ -3637,24 +3637,15 @@ public class BinanceServiceImpl implements BinanceService {
             if (BscScanBinanceApplication.EPICS_OUTPUT_MSG.contains(EPIC)) {
                 continue;
             }
-            List<BtcFutures> list_m30 = getCapitalData(EPIC, Utils.CAPITAL_TIME_30);
-            if (CollectionUtils.isEmpty(list_m30)) {
-                continue;
-            }
-            List<BtcFutures> heken_list = Utils.getHekenList(list_m30);
-            String switch_trend = Utils.switchTrendByHeken_12(heken_list);
-            switch_trend += Utils.switchTrendByMa5_8(heken_list);
-            if (Utils.isBlank(switch_trend)) {
-                continue;
-            }
 
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
             Orders dto_h8 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+            Orders dto_30 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h12) || Objects.isNull(dto_h8)
-                    || Objects.isNull(dto_h4)) {
+                    || Objects.isNull(dto_h4) || Objects.isNull(dto_30)) {
                 continue;
             }
 
@@ -3663,28 +3654,24 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h12 = dto_h12.getTrend();
             String trend_h8 = dto_h8.getTrend();
             String trend_h4 = dto_h4.getTrend();
+            String trend_30 = dto_30.getTrend();
 
             String note_h12 = dto_h12.getNote();
             String note_h8 = dto_h8.getNote();
             String note_h4 = dto_h4.getNote();
-            String trend_30 = Utils.getTrendByHekenAshiList(heken_list);
 
             // TODO: 6. scapWithM30
             boolean allowEa = false;
-            if ((Utils.isNotBlank(note_h12) && Objects.equals(trend_w1, trend_h12))
-                    || (Utils.isNotBlank(note_h8) && Objects.equals(trend_w1, trend_h8))
-                    || (Utils.isNotBlank(note_h4) && Objects.equals(trend_w1, trend_h4))) {
-                allowEa = true;
-                GLOBAL_SWITCH_TREND_H12.add(EPIC);
+            if (Objects.equals(trend_w1, trend_d1)) {
+                if ((Utils.isNotBlank(note_h12) && Objects.equals(trend_w1, trend_h12))
+                        || (Utils.isNotBlank(note_h8) && Objects.equals(trend_w1, trend_h8))
+                        || (Utils.isNotBlank(note_h4) && Objects.equals(trend_w1, trend_h4))) {
+                    allowEa = true;
+                    GLOBAL_SWITCH_TREND_H12.add(EPIC);
+                }
             }
 
-            boolean allowOutput = false;
-            if (allowEa && Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_30)) {
-                allowOutput = true;
-            }
-
-            // -----------------------------------------------------------------------
-            if (allowOutput) {
+            if (allowEa && Utils.isNotBlank(dto_30.getNote()) && Objects.equals(trend_w1, trend_30)) {
                 index += 1;
                 String type = Objects.equals(trend_w1, Utils.TREND_LONG) ? "(B)" : "(S)";
                 String prefix = getPrefix(index, EPIC);

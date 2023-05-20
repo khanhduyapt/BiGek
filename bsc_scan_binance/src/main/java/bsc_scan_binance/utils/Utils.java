@@ -2570,7 +2570,7 @@ public class Utils {
 
     public static List<BigDecimal> getBuySellArea(List<BtcFutures> heken_list) {
         List<BigDecimal> body = Utils.getBodyCandle(heken_list);
-        BigDecimal max_candle_high = calcMaxBread(heken_list);
+        BigDecimal max_candle_high = BigDecimal.ZERO; // calcMaxBread(heken_list);
 
         BigDecimal str = body.get(0).add(max_candle_high);
         BigDecimal end = body.get(1).subtract(max_candle_high);
@@ -3637,7 +3637,7 @@ public class Utils {
         if (Objects.equals(trend_w1, trend_h2)) {
             switch_trend += getTrendPrefix("H2", note_h2, " ");
         } else {
-            switch_trend += getTrendPrefix("H2", "", " ");
+            switch_trend += getTrendPrefix("H2", note_h2, " ").toLowerCase();
         }
 
         if (Objects.equals(trend_w1, trend_30)) {
@@ -3646,10 +3646,6 @@ public class Utils {
             switch_trend += getTrendPrefix("30", "", " ");
         }
         switch_trend += "}  ";
-
-        if (!Objects.equals(trend_w1, trend_d1)) {
-            switch_trend = switch_trend.toLowerCase();
-        }
 
         String result = prefix + switch_trend;
         return result;
