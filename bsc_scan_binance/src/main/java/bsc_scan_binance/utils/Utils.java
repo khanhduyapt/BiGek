@@ -87,8 +87,9 @@ public class Utils {
     public static final String TEXT_DANGER = "(Danger)";
     public static final String TEXT_START_LONG = "Start:Long";
     public static final String TEXT_STOP_LONG = "Stop:Long";
-    public static final String TEXT_MIN_AREA = "MinArea";
-    public static final String TEXT_MAX_AREA = "MaxArea";
+
+    public static final String TEXT_BUY_AREA = " buy_area  ";
+    public static final String TEXT_SELL_AREA = " sell_area ";
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
@@ -2228,40 +2229,6 @@ public class Utils {
         return Utils.appendSpace("(" + Utils.removeLastZero(list.get(0).getCurrPrice()) + ")", 12);
     }
 
-    public static String textBuyTopSellBottom2(String type_min_max_area, String find_trend) {
-        if (Objects.equals(Utils.TREND_LONG, find_trend) && type_min_max_area.contains(TEXT_MAX_AREA)) {
-            return "Danger";
-        }
-        if (Objects.equals(Utils.TREND_LONG, find_trend) && type_min_max_area.contains(TEXT_MIN_AREA)) {
-            return "ok";
-        }
-
-        if (Objects.equals(Utils.TREND_SHOT, find_trend) && type_min_max_area.contains(TEXT_MIN_AREA)) {
-            return "Danger";
-        }
-        if (Objects.equals(Utils.TREND_SHOT, find_trend) && type_min_max_area.contains(TEXT_MAX_AREA)) {
-            return "ok";
-        }
-
-        return "";
-    }
-
-    public static boolean isBuyTopSellBottom(String trend_target, String note) {
-        // Sell đáy
-        if (Objects.equals(Utils.TREND_SHOT, trend_target) && (note.contains(Utils.TEXT_MIN_AREA)
-                || note.contains(Utils.TEXT_H12_to_H2_BELOW_MA50) || note.contains(Utils.TEXT_BELOW_MA50))) {
-            return true;
-        }
-
-        // Buy đỉnh
-        if (Objects.equals(Utils.TREND_LONG, trend_target) && (note.contains(Utils.TEXT_MAX_AREA)
-                || note.contains(Utils.TEXT_H12_to_H2_ABOVE_MA50) || note.contains(Utils.TEXT_ABOVE_MA50))) {
-            return true;
-        }
-
-        return false;
-    }
-
     public static String getChartNameAndEpic(String id) {
         String result = id;
         String[] arr = id.split("_");
@@ -2294,7 +2261,7 @@ public class Utils {
             } else if (symbol.contains("_2h_")) {
                 result = "(H2) ";
             } else if (symbol.contains("_4h_")) {
-                result = "(H6) ";
+                result = "(H4) ";
             } else if (symbol.contains("_1d_")) {
                 result = "(D1) ";
             } else if (symbol.contains("_1w_")) {
@@ -2544,28 +2511,75 @@ public class Utils {
         return result;
     }
 
-    public static String textMinMaxArea(List<BtcFutures> heken_list) {
-        List<BigDecimal> min_max_area = Utils.getMinMaxArea(heken_list);
-
-        String result = "(Range: ";
+//
+//    private String getTrendArea(String EPIC, String CAPITAL_TIME_XX) {
+//        List<BtcFutures> list = getCapitalData(EPIC, CAPITAL_TIME_XX);
+//        if (!CollectionUtils.isEmpty(list)) {
+//            BigDecimal str = BigDecimal.ZERO;
+//            BigDecimal end = BigDecimal.ZERO;
+//            BigDecimal price = BigDecimal.ZERO;
+//            // ----------------------------------------------------------------------
+//            List<BtcFutures> heken_list = Utils.getHekenList(list);
+//            List<BigDecimal> area = Utils.getBuySellArea(heken_list);
+//            str = area.get(0);
+//            end = area.get(1);
+//            price = heken_list.get(0).getCurrPrice();
+//
+//            if ((price.compareTo(str) <= 0)) {
+//                return Utils.TREND_LONG;
+//            }
+//
+//            if ((price.compareTo(end) >= 0)) {
+//                return Utils.TREND_SHOT;
+//            }
+//        }
+//
+//        return "";
+//    }
+//
+//    private String getMinMaxArea(String EPIC) {
+//        String type_min_max_area = "";
+//        List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_W1);
+//
+//        if (!CollectionUtils.isEmpty(list)) {
+//            BigDecimal str = BigDecimal.ZERO;
+//            BigDecimal end = BigDecimal.ZERO;
+//            BigDecimal price = BigDecimal.ZERO;
+//            // ----------------------------------------------------------------------
+//            List<BtcFutures> heken_list = Utils.getHekenList(list);
+//            List<BigDecimal> area = Utils.getBuySellArea(heken_list);
+//            str = area.get(0);
+//            end = area.get(1);
+//            price = heken_list.get(0).getCurrPrice();
+//
+//            if ((price.compareTo(str) <= 0)) {
+//                type_min_max_area = Utils.TEXT_BUY_AREA;
+//            }
+//
+//            if ((price.compareTo(end) >= 0)) {
+//                type_min_max_area = Utils.TEXT_SELL_AREA;
+//            }
+//        }
+//
+//        return type_min_max_area;
+//    }
+//
+    public static String textBodyArea(List<BtcFutures> heken_list) {
+        List<BigDecimal> min_max_area = Utils.getBuySellArea(heken_list);
+        String result = "(Body: ";
         result += Utils.appendSpace(Utils.removeLastZero(formatPrice(min_max_area.get(0), 5)), 10);
         result += " ~ ";
         result += Utils.appendSpace(Utils.removeLastZero(formatPrice(min_max_area.get(1), 5)), 10);
         result += ")";
-
         return result;
     }
 
-    public static List<BigDecimal> getMinMaxArea(List<BtcFutures> heken_list) {
+    public static List<BigDecimal> getBuySellArea(List<BtcFutures> heken_list) {
         List<BigDecimal> body = Utils.getBodyCandle(heken_list);
-        List<BigDecimal> low_high = Utils.getLowHighCandle(heken_list);
+        BigDecimal max_candle_high = calcMaxBread(heken_list);
 
-        BigDecimal bread0 = body.get(0).subtract(low_high.get(0));
-        BigDecimal bread1 = low_high.get(1).subtract(body.get(1));
-        BigDecimal bread = bread0.compareTo(bread1) > 0 ? bread0 : bread1;
-
-        BigDecimal str = body.get(0).add(bread);
-        BigDecimal end = body.get(1).subtract(bread);
+        BigDecimal str = body.get(0).add(max_candle_high);
+        BigDecimal end = body.get(1).subtract(max_candle_high);
 
         List<BigDecimal> result = new ArrayList<BigDecimal>();
         result.add(str);
@@ -3388,25 +3402,26 @@ public class Utils {
             return "";
         }
 
-        String type = "";
+        String type = switchTrendByHeken_12(heken_list);
+
+        if (Utils.isBlank(type)) {
+            String switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 6);
+            if (Objects.equals(switch_trend, find_trend)) {
+                type = Utils.appendSpace(find_trend, 4) + "(Ma1.6)";
+            }
+        }
+
+        if (Utils.isBlank(type)) {
+            String switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 8);
+            if (Objects.equals(switch_trend, find_trend)) {
+                type = Utils.appendSpace(find_trend, 4) + "(Ma1.8)";
+            }
+        }
+
         if (Utils.isBlank(type)) {
             String switch_trend = Utils.switchTrendByMaXX(heken_list, 3, 6);
             if (Objects.equals(switch_trend, find_trend)) {
                 type = Utils.appendSpace(find_trend, 4) + "(Ma3.6)";
-            }
-        }
-
-        if (Utils.isBlank(type)) {
-            String switch_trend = Utils.switchTrendByMaXX(heken_list, 3, 8);
-            if (Objects.equals(switch_trend, find_trend)) {
-                type = Utils.appendSpace(find_trend, 4) + "(Ma3.8)";
-            }
-        }
-
-        if (Utils.isBlank(type)) {
-            String switch_trend = Utils.switchTrendByMaXX(heken_list, 6, 8);
-            if (Objects.equals(switch_trend, find_trend)) {
-                type = Utils.appendSpace(find_trend, 4) + "(Ma6.8)";
             }
         }
 
@@ -3423,34 +3438,28 @@ public class Utils {
             return "";
         }
 
-        String type = "";
-
+        int str = 1;
+        int end = 2;
         String id = heken_list.get(0).getId();
-        if (id.contains("_1w_") || id.contains("_1d_") || id.contains("DAY") || id.contains("WEEK")) {
-
-        } else {
-
+        if (id.contains("_8h_") || id.contains("_12h_") || id.contains("_1d_") || id.contains("_1w_")) {
+            str = 0;
+            end = 1;
         }
 
         String trend_by_heiken = "";
-        if (heken_list.get(1).isUptrend() && heken_list.get(2).isDown()) {
-            type = "(Heken)";
+        if (heken_list.get(str).isUptrend() && heken_list.get(end).isDown()) {
             trend_by_heiken = Utils.TREND_LONG;
-        } else if (heken_list.get(1).isDown() && heken_list.get(2).isUptrend()) {
-            type = "(Heken)";
+        }
+        if (heken_list.get(str).isDown() && heken_list.get(end).isUptrend()) {
             trend_by_heiken = Utils.TREND_SHOT;
         }
 
-        if (Utils.isNotBlank(type)) {
-            String trend = Utils.getTrendByHekenAshiList(heken_list);
-            if (Objects.equals(trend, trend_by_heiken)) {
-                type = Utils.appendSpace(trend, 4) + type;
-            } else {
-                type = Utils.appendSpace(trend_by_heiken, 4) + type + ", " + Utils.appendSpace(trend, 4) + "(Ma3)";
-            }
+        String trend = Utils.getTrendByHekenAshiList(heken_list);
+        if (Objects.equals(trend, trend_by_heiken)) {
+            return Utils.appendSpace(trend, 4) + "(Heken)";
         }
 
-        return type;
+        return "";
     }
 
     public static String getTrendByHekenAshiList(List<BtcFutures> heken_list) {
@@ -3459,14 +3468,14 @@ public class Utils {
         }
         int count = 0;
 
-        int str = 0;
-        int end = 1;
+        // Cần xác nhận trend khi đóng nến.
+        int str = 1;
+        int end = 2;
 
         String id = heken_list.get(0).getId();
-        // Khung nhỏ cần xác nhận trend khi đóng nến.
-        if (id.contains("_30m_") || id.contains("_2h_") || id.contains("_4h_")) {
-            str = 1;
-            end = 2;
+        if (id.contains("_8h_") || id.contains("_12h_") || id.contains("_1d_") || id.contains("_1w_")) {
+            str = 0;
+            end = 1;
         }
 
         boolean isUptrend_0 = heken_list.get(str).isUptrend();
@@ -3511,11 +3520,7 @@ public class Utils {
         String EPIC = getEpicFromId(dto_entry.getId());
         String chart_name = getChartName(dto_entry);
 
-        // String insert_time = Utils.getStringValue(dto_entry.getInsertTime());
-        // LocalDateTime pre_time = LocalDateTime.parse(insert_time);
-        // String time = pre_time.format(DateTimeFormatter.ofPattern("HH:mm"));
-
-        String header = "";// time + " ";
+        String header = "";
         header += Utils.appendSpace(append, 8);
         header += chart_name + ":" + Utils.appendSpace(dto_entry.getTrend(), 8);
         header += Utils.appendSpace(EPIC, 12) + getTypeOfEpic(EPIC);
@@ -3585,102 +3590,49 @@ public class Utils {
         return result;
     }
 
-    public static String getEATrackingTimeframe(String trend_w1, String trend_d1, String trend_h12) {
-        // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
-        // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
-
-        // [1W=1D=12H 8H=4H=2H=30] {D1~H12~H8~H4~H2~30}
-        if (Objects.equals(trend_w1, trend_d1)) {
-            return Utils.CAPITAL_TIME_D1;
-        }
-        if (Objects.equals(trend_d1, trend_h12)) {
-            return Utils.CAPITAL_TIME_H12;
-        }
-        if (Objects.equals(trend_w1, trend_h12)) {
-            return Utils.CAPITAL_TIME_H12;
-        }
-
-        return Utils.CAPITAL_TIME_D1;
-    }
-
-    public static String getEATrackingTrend(String trend_w1, String trend_d1, String trend_h12) {
-        // Bat buoc phai danh theo khung D1 khi W & D cung xu huong.
-        // (2023/04/12 da chay 3 tai khoan 20k vi danh khung nho nguoc xu huong D1 & H4)
-
-        // [1W=1D=12H 8H=4H=2H=30] {D1~H12~H8~H4~H2~30}
-        if (Objects.equals(trend_w1, trend_d1)) {
-            return trend_d1;
-        }
-        if (Objects.equals(trend_d1, trend_h12)) {
-            return trend_d1;
-        }
-        if (Objects.equals(trend_w1, trend_h12)) {
-            return trend_h12;
-        }
-
-        return trend_d1;
-    }
-
-    public static String getTimeframe_SwitchTrend(String trend_w1, String trend_d1, String trend_h12,
-            String trend_h8, String trend_h4, String trend_h2, String trend_30,
-
-            String note_d1, String note_h12, String note_h8, String note_h4, String note_h2, String note_30,
-            String tracking_trend) {
-
-        if (Objects.equals(tracking_trend, trend_d1) && note_d1.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h12) && Objects.equals(tracking_trend, trend_h8)
-                && Objects.equals(tracking_trend, trend_h4) && Objects.equals(tracking_trend, trend_h2)) {
-            return Utils.CAPITAL_TIME_D1;
-        }
-
-        if (Objects.equals(tracking_trend, trend_h12) && note_h12.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_d1) && Objects.equals(tracking_trend, trend_h8)
-                && Objects.equals(tracking_trend, trend_h4) && Objects.equals(tracking_trend, trend_h2)) {
-            return Utils.CAPITAL_TIME_H12;
-        }
-
-        if (Objects.equals(tracking_trend, trend_h8) && note_h8.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h12) && Objects.equals(tracking_trend, trend_h4)
-                && Objects.equals(tracking_trend, trend_h2)) {
-            return Utils.CAPITAL_TIME_H8;
-        }
-
-        if (Objects.equals(tracking_trend, trend_h4) && note_h4.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h8) && Objects.equals(tracking_trend, trend_h2)) {
-            return Utils.CAPITAL_TIME_H4;
-        }
-
-        if (Objects.equals(tracking_trend, trend_h2) && note_h2.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h4)) {
-            return Utils.CAPITAL_TIME_H2;
-        }
-
-        if (Objects.equals(tracking_trend, trend_30) && note_30.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h2)) {
+    public static String getTimeframe_SwitchTrend(String note_d1, String note_h12, String note_h8, String note_h4,
+            String note_h2, String note_30) {
+        if (isNotBlank(note_30)) {
             return Utils.CAPITAL_TIME_30;
         }
-
-        // -----------------------------------------
-        if (Utils.isBlank(note_d1))
-            return Utils.CAPITAL_TIME_D1;
-        if (Utils.isBlank(note_h12))
-            return Utils.CAPITAL_TIME_H12;
-        if (Utils.isBlank(note_h8))
-            return Utils.CAPITAL_TIME_H8;
-        if (Utils.isBlank(note_h4))
-            return Utils.CAPITAL_TIME_H4;
-        if (Utils.isBlank(note_h2))
+        if (isNotBlank(note_h2)) {
             return Utils.CAPITAL_TIME_H2;
+        }
+        if (isNotBlank(note_h4)) {
+            return Utils.CAPITAL_TIME_H4;
+        }
+        if (isNotBlank(note_h8)) {
+            return Utils.CAPITAL_TIME_H8;
+        }
+        if (isNotBlank(note_h12)) {
+            return Utils.CAPITAL_TIME_H12;
+        }
+        if (isNotBlank(note_d1)) {
+            return Utils.CAPITAL_TIME_D1;
+        }
 
-        return Utils.CAPITAL_TIME_D1;
+        return Utils.CAPITAL_TIME_W1;
+    }
+
+    public static String getTrendPrefix(String chart_name, String note, String append) {
+        String type = " ";
+        if (note.contains(TREND_LONG)) {
+            type = chart_name + "~B" + append;
+        } else if (note.contains(TREND_SHOT)) {
+            type = chart_name + "~S" + append;
+        } else {
+            type = appendSpace("", chart_name.length()) + "  " + appendSpace("", append.length());
+        }
+
+        return type;
     }
 
     // [1W=1D=12H 8H=4H=2H=30] {D1~H12~H8~H4~H2~30}
     public static String getPrefix_FollowTrackingTrend(int index, String trend_w1, String trend_d1, String trend_h12,
             String trend_h8, String trend_h4, String trend_h2, String trend_30,
 
-            String note_d1, String note_h12, String note_h8, String note_h4, String note_h2, String note_30,
-            String tracking_trend) {
+            String note_w1, String note_d1, String note_h12, String note_h8, String note_h4, String note_h2,
+            String note_30, String tracking_trend) {
 
         String prefix = Utils.appendLeft(String.valueOf(index), 2) + "." + appendSpace(tracking_trend, 4);
         prefix += " [1W=1D=12H  8H=4H=2H=30]";
@@ -3707,50 +3659,17 @@ public class Utils {
             prefix = prefix.replace("=30", "   ").replace("30", "  ");
         }
 
-        String switch_trend = "  {D1~H12~H8~H4~H2~30}  ";
+        String switch_trend = "  { ";
+        switch_trend += getTrendPrefix("W", note_w1, " ");
+        switch_trend += getTrendPrefix("D", note_d1, " ");
+        switch_trend += getTrendPrefix("H12", note_h12, " ");
+        switch_trend += getTrendPrefix("H8", note_h8, " ");
+        switch_trend += getTrendPrefix("H4", note_h4, " ");
+        switch_trend += getTrendPrefix("H2", note_h2, " ");
+        switch_trend += getTrendPrefix("30", note_30, " ");
+        switch_trend += "}  ";
 
-        if (!(Objects.equals(tracking_trend, trend_d1) && note_d1.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h12) && Objects.equals(tracking_trend, trend_h8)
-                && Objects.equals(tracking_trend, trend_h4) && Objects.equals(tracking_trend, trend_h2))) {
-
-            switch_trend = switch_trend.replace("D1~", "   ");
-        }
-
-        if (!(Objects.equals(tracking_trend, trend_h12) && note_h12.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_d1) && Objects.equals(tracking_trend, trend_h8)
-                && Objects.equals(tracking_trend, trend_h4) && Objects.equals(tracking_trend, trend_h2))) {
-
-            switch_trend = switch_trend.replace("~H12~", "     ").replace("H12~", "    ").replace("~H12", "    ");
-        }
-
-        if (!(Objects.equals(tracking_trend, trend_h8) && note_h8.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h12) && Objects.equals(tracking_trend, trend_h4)
-                && Objects.equals(tracking_trend, trend_h2))) {
-
-            switch_trend = switch_trend.replace("~H8~", "    ").replace("H8~", "   ").replace("~H8", "   ");
-        }
-
-        if (!(Objects.equals(tracking_trend, trend_h4) && note_h4.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h8) && Objects.equals(tracking_trend, trend_h2))) {
-
-            switch_trend = switch_trend.replace("~H4~", "    ").replace("H4~", "   ").replace("~H4", "   ");
-        }
-
-        if (!(Objects.equals(tracking_trend, trend_h2) && note_h2.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h4))) {
-
-            switch_trend = switch_trend.replace("~H2~", "    ").replace("H2~", "   ").replace("H2", "  ");
-        }
-
-        if (!(Objects.equals(tracking_trend, trend_30) && note_30.contains(tracking_trend)
-                && Objects.equals(tracking_trend, trend_h2))) {
-
-            switch_trend = switch_trend.replace("~30", "   ").replace("30", "  ");
-        }
-
-        switch_trend = switch_trend.replace("{                  }", "                    ");
         String result = prefix + switch_trend;
-
         return result;
     }
 

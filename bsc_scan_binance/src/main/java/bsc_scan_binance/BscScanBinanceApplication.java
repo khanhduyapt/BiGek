@@ -123,7 +123,8 @@ public class BscScanBinanceApplication {
                             alertMsgKillZone(binance_service);
                         }
 
-                        if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
+                        // if (Utils.isWeekday() && Utils.isAllowSendMsg())
+                        {
                             if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
                                 binance_service.saveMt5Data("Forex.csv", Utils.MINUTES_OF_15M);
                                 wait(SLEEP_MINISECONDS);
@@ -215,13 +216,13 @@ public class BscScanBinanceApplication {
         EPICS_OUTPUT_MSG = "";
         Utils.logWritelnDraft("");
         Utils.logWritelnDraftFooter();
-        binance_service.scapWithM30(Utils.EPICS_METALS, Utils.CAPITAL_TIME_30);
-        binance_service.scapWithM30(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_30);
-        binance_service.scapWithM30(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_30);
+        binance_service.waitM30SwitchTrend(Utils.EPICS_METALS, Utils.CAPITAL_TIME_30);
+        binance_service.waitM30SwitchTrend(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_30);
+        binance_service.waitM30SwitchTrend(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_30);
 
-        binance_service.scapWithM30(Utils.EPICS_METALS, Utils.CAPITAL_TIME_H2);
-        binance_service.scapWithM30(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_H2);
-        binance_service.scapWithM30(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_H2);
+        binance_service.waitM30SwitchTrend(Utils.EPICS_METALS, Utils.CAPITAL_TIME_H2);
+        binance_service.waitM30SwitchTrend(Utils.EPICS_FOREXS_ALL, Utils.CAPITAL_TIME_H2);
+        binance_service.waitM30SwitchTrend(Utils.EPICS_CASH_CFD, Utils.CAPITAL_TIME_H2);
         Utils.logWritelnDraftFooter();
         // --------------------------------------------------------------------------
         Utils.logWritelnDraft("");
