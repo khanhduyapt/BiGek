@@ -2702,9 +2702,14 @@ public class BinanceServiceImpl implements BinanceService {
             text_BuySellArea = Utils.getTextBuySellArea(heken_list);
         }
 
+        String ea = Utils.TEXT_EXPERT_ADVISOR_SPACE;
+        if (GLOBAL_SWITCH_TREND_H12.contains(EPIC)) {
+            ea = Utils.TEXT_EXPERT_ADVISORING;
+        }
+
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 11);
-        log += Utils.appendSpace(append.trim(), 100) + " " + text_BuySellArea + " ";
+        log += Utils.appendSpace(append.trim(), 95) + " " + ea + text_BuySellArea + " ";
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
         log += Utils.calc_BUF_LO_HI_BUF_Forex(false, find_trend, EPIC, dto_entry, dto_sl);
         log += "   " + text_body;
@@ -2990,13 +2995,14 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private String getTradeAction(String EPIC) {
+        int length = 6;
         for (Mt5DataTrade trade : tradeList) {
             if (Objects.equals(trade.getSymbol(), EPIC)) {
-                return Utils.appendSpace(trade.getType().toLowerCase(), 6);
+                return Utils.appendSpace(trade.getType().toLowerCase(), length);
             }
         }
 
-        return Utils.TEXT_EXPERT_ADVISOR_SPACE;
+        return Utils.appendSpace(Utils.TEXT_EXPERT_ADVISOR_SPACE, length);
     }
 
     /*
@@ -3620,7 +3626,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (required_update_bars_csv) {
             return;
         }
-
+        GLOBAL_SWITCH_TREND_H12 = new ArrayList<String>();
         List<String> CAPITAL_LIST = new ArrayList<String>();
         CAPITAL_LIST.addAll(Utils.EPICS_METALS);
         CAPITAL_LIST.addAll(Utils.EPICS_CASH_CFD);
@@ -3637,6 +3643,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             List<BtcFutures> heken_list = Utils.getHekenList(list_m30);
             String switch_trend = Utils.switchTrendByHeken_12(heken_list);
+            switch_trend += Utils.switchTrendByMa5_8(heken_list);
             if (Utils.isBlank(switch_trend)) {
                 continue;
             }
@@ -3646,12 +3653,11 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
             Orders dto_h8 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-            Orders dto_30 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
-
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h12) || Objects.isNull(dto_h8)
-                    || Objects.isNull(dto_h4) || Objects.isNull(dto_30)) {
+                    || Objects.isNull(dto_h4)) {
                 continue;
             }
+
             String trend_w1 = dto_w1.getTrend();
             String trend_d1 = dto_d1.getTrend();
             String trend_h12 = dto_h12.getTrend();
@@ -3663,21 +3669,21 @@ public class BinanceServiceImpl implements BinanceService {
             String note_h4 = dto_h4.getNote();
             String trend_30 = Utils.getTrendByHekenAshiList(heken_list);
 
-            boolean allowOutput = false;
-            if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_30)) {
-                if (Utils.isNotBlank(dto_30.getNote())) {
-                    allowOutput = true;
-                }
+            // TODO: 6. scapWithM30
+            boolean allowEa = false;
+            if ((Utils.isNotBlank(note_h12) && Objects.equals(trend_w1, trend_h12))
+                    || (Utils.isNotBlank(note_h8) && Objects.equals(trend_w1, trend_h8))
+                    || (Utils.isNotBlank(note_h4) && Objects.equals(trend_w1, trend_h4))) {
+                allowEa = true;
+                GLOBAL_SWITCH_TREND_H12.add(EPIC);
+            }
 
-                if ((Utils.isNotBlank(note_h12) && Objects.equals(trend_w1, trend_h12))
-                        || (Utils.isNotBlank(note_h8) && Objects.equals(trend_w1, trend_h8))
-                        || (Utils.isNotBlank(note_h4) && Objects.equals(trend_w1, trend_h4))) {
-                    allowOutput = true;
-                }
+            boolean allowOutput = false;
+            if (allowEa && Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_30)) {
+                allowOutput = true;
             }
 
             // -----------------------------------------------------------------------
-            // TODO: 6. scapWithM30
             if (allowOutput) {
                 index += 1;
                 String type = Objects.equals(trend_w1, Utils.TREND_LONG) ? "(B)" : "(S)";
