@@ -3429,29 +3429,26 @@ public class Utils {
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
         }
-        int count = 0;
 
-        // Cần xác nhận trend khi đóng nến.
-        int str = 1;
-        int end = 2;
+        // Cần xác nhận trend khi đóng nến, nhưng lấy Candle1,2 thì trend chạy lộn xộn.
+        int str = 0;
+        int end = 1;
 
         String id = heken_list.get(0).getId();
         if (id.contains("_8h_") || id.contains("_12h_") || id.contains("_1d_") || id.contains("_1w_")) {
             str = 0;
             end = 1;
+    }
+
+        boolean isUptrend_1 = isUptrendByMa(heken_list, 1, str, end);
+        boolean isUptrend_2 = isUptrendByMa(heken_list, 2, str, end);
+        boolean isUptrend_3 = isUptrendByMa(heken_list, 3, str, end);
+
+        if ((isUptrend_1 == isUptrend_2) && (isUptrend_1 == isUptrend_3)) {
+            return isUptrend_1 ? Utils.TREND_LONG : Utils.TREND_SHOT;
         }
 
-        boolean isUptrend_0 = heken_list.get(str).isUptrend();
-        count += (isUptrend_0) ? 1 : -1;
-
-        boolean isUptrend_2 = isUptrendByMa(heken_list, 2, str, end);
-        count += (isUptrend_2) ? 1 : -1;
-
-        boolean isUptrend_3 = isUptrendByMa(heken_list, 3, str, end);
-        count += (isUptrend_3) ? 1 : -1;
-
-        String trend = (count > 0) ? Utils.TREND_LONG : Utils.TREND_SHOT;
-        return trend;
+        return isUptrend_3 ? Utils.TREND_LONG : Utils.TREND_SHOT;
     }
 
     public static String getTypeOfEpic(String EPIC) {
