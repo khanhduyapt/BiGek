@@ -2509,31 +2509,31 @@ public class Utils {
         return result;
     }
 
-//
-//    private String getTrendArea(String EPIC, String CAPITAL_TIME_XX) {
-//        List<BtcFutures> list = getCapitalData(EPIC, CAPITAL_TIME_XX);
-//        if (!CollectionUtils.isEmpty(list)) {
-//            BigDecimal str = BigDecimal.ZERO;
-//            BigDecimal end = BigDecimal.ZERO;
-//            BigDecimal price = BigDecimal.ZERO;
-//            // ----------------------------------------------------------------------
-//            List<BtcFutures> heken_list = Utils.getHekenList(list);
-//            List<BigDecimal> area = Utils.getBuySellArea(heken_list);
-//            str = area.get(0);
-//            end = area.get(1);
-//            price = heken_list.get(0).getCurrPrice();
-//
-//            if ((price.compareTo(str) <= 0)) {
-//                return Utils.TREND_LONG;
-//            }
-//
-//            if ((price.compareTo(end) >= 0)) {
-//                return Utils.TREND_SHOT;
-//            }
-//        }
-//
-//        return "";
-//    }
+    //
+    //    private String getTrendArea(String EPIC, String CAPITAL_TIME_XX) {
+    //        List<BtcFutures> list = getCapitalData(EPIC, CAPITAL_TIME_XX);
+    //        if (!CollectionUtils.isEmpty(list)) {
+    //            BigDecimal str = BigDecimal.ZERO;
+    //            BigDecimal end = BigDecimal.ZERO;
+    //            BigDecimal price = BigDecimal.ZERO;
+    //            // ----------------------------------------------------------------------
+    //            List<BtcFutures> heken_list = Utils.getHekenList(list);
+    //            List<BigDecimal> area = Utils.getBuySellArea(heken_list);
+    //            str = area.get(0);
+    //            end = area.get(1);
+    //            price = heken_list.get(0).getCurrPrice();
+    //
+    //            if ((price.compareTo(str) <= 0)) {
+    //                return Utils.TREND_LONG;
+    //            }
+    //
+    //            if ((price.compareTo(end) >= 0)) {
+    //                return Utils.TREND_SHOT;
+    //            }
+    //        }
+    //
+    //        return "";
+    //    }
 
     public static String getTextBuySellArea(List<BtcFutures> heken_list) {
         String type_min_max_area = "";
@@ -3628,19 +3628,19 @@ public class Utils {
         switch_trend += getTrendPrefix("H12", note_h12, " ");
         switch_trend += getTrendPrefix("H8", note_h8, " ");
 
-        if (Objects.equals(trend_w1, trend_h4)) {
+        if (Objects.equals(trend_h8, trend_h4)) {
             switch_trend += getTrendPrefix("H4", note_h4, " ");
         } else {
             switch_trend += getTrendPrefix("H4", "", " ");
         }
 
-        if (Objects.equals(trend_w1, trend_h2)) {
+        if (Objects.equals(trend_h4, trend_h2)) {
             switch_trend += getTrendPrefix("H2", note_h2, " ");
         } else {
-            switch_trend += getTrendPrefix("H2", note_h2, " ").toLowerCase();
+            switch_trend += getTrendPrefix("H2", "", " ");
         }
 
-        if (Objects.equals(trend_w1, trend_30)) {
+        if (Objects.equals(trend_h2, trend_30)) {
             switch_trend += getTrendPrefix("30", note_30, " ");
         } else {
             switch_trend += getTrendPrefix("30", "", " ");
