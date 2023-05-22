@@ -3506,21 +3506,13 @@ public class BinanceServiceImpl implements BinanceService {
         String trend = Utils.getTrendByHekenAshiList(heken_list);
 
         String type = "";
-        if (CAPITAL_TIME_XX.contains("MINUTE") || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H2)
-                || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4)) {
-
-            List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
-            List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
-
-            if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)
-                    && Utils.isBelowMALine(heken_list_h4, 50)) {
+        if ((heken_list.size() > 50) && (CAPITAL_TIME_XX.contains("MINUTE") || CAPITAL_TIME_XX.contains("HOUR"))) {
+            if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
                 type = Utils.switchTrendByHeken_12(heken_list);
             }
-            if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)
-                    && Utils.isAboveMALine(heken_list_h4, 50)) {
+            if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
                 type = Utils.switchTrendByHeken_12(heken_list);
             }
-
             if (Utils.isBlank(type) && Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_30)
                     && Utils.isNotBlank(Utils.switchTrendByMa13_XX(heken_list, 50))) {
                 type = Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_Ma_1_50;
@@ -3676,6 +3668,12 @@ public class BinanceServiceImpl implements BinanceService {
                 } else if (Utils.isNotBlank(note_h4)) {
                     find_trend = dto_h4.getTrend();
                 }
+            }
+
+            if (Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())
+                    && Objects.equals(dto_d1.getTrend(), dto_h12.getTrend())
+                    && !Objects.equals(dto_h12.getTrend(), dto_30.getTrend())) {
+                continue;
             }
 
             if (allowEa && Objects.equals(find_trend, dto_30.getTrend())

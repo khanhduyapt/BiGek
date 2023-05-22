@@ -3401,27 +3401,29 @@ public class Utils {
             return "";
         }
 
-        int str = 1;
-        int end = 2;
-        String id = heken_list.get(0).getId();
-        if (id.contains("_8h_") || id.contains("_12h_") || id.contains("_1d_") || id.contains("_1w_")) {
-            str = 0;
-            end = 1;
-        }
-
-        String trend_by_heiken = "";
-        if (heken_list.get(str).isUptrend() && heken_list.get(end).isDown()) {
-            trend_by_heiken = Utils.TREND_LONG;
-        }
-        if (heken_list.get(str).isDown() && heken_list.get(end).isUptrend()) {
-            trend_by_heiken = Utils.TREND_SHOT;
-        }
-
         String trend = Utils.getTrendByHekenAshiList(heken_list);
-        if (Objects.equals(trend, trend_by_heiken)) {
+        // --------------------------------------------------------------------
+        if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(0).isUptrend()
+                && heken_list.get(1).isDown()) {
             return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
         }
-
+        if (Objects.equals(trend, Utils.TREND_SHOT) && heken_list.get(0).isDown()
+                && heken_list.get(1).isUptrend()) {
+            return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
+        }
+        // --------------------------------------------------------------------
+        String id = heken_list.get(0).getId();
+        if (!(id.contains("_1d_") || id.contains("_1w_"))) {
+            if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(1).isUptrend()
+                    && heken_list.get(2).isDown()) {
+                return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
+            }
+            if (Objects.equals(trend, Utils.TREND_SHOT) && heken_list.get(1).isDown()
+                    && heken_list.get(2).isUptrend()) {
+                return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
+            }
+        }
+        // --------------------------------------------------------------------
         return "";
     }
 
@@ -3438,7 +3440,7 @@ public class Utils {
         if (id.contains("_8h_") || id.contains("_12h_") || id.contains("_1d_") || id.contains("_1w_")) {
             str = 0;
             end = 1;
-    }
+        }
 
         boolean isUptrend_1 = isUptrendByMa(heken_list, 1, str, end);
         boolean isUptrend_2 = isUptrendByMa(heken_list, 2, str, end);
@@ -3619,29 +3621,61 @@ public class Utils {
             prefix = prefix.replace("=30", "   ").replace("30", "  ");
         }
 
+        boolean isW1eqD1 = Objects.equals(trend_w1, trend_d1);
+
         String switch_trend = "  { ";
         switch_trend += getTrendPrefix("W", note_w1, " ");
         switch_trend += getTrendPrefix("D", note_d1, " ");
         switch_trend += getTrendPrefix("H12", note_h12, " ");
-        switch_trend += getTrendPrefix("H8", note_h8, " ");
 
-        if (Objects.equals(trend_h8, trend_h4)) {
-            switch_trend += getTrendPrefix("H4", note_h4, " ");
+        if (Objects.equals(trend_h12, trend_h8)) {
+            switch_trend += getTrendPrefix("H8", note_h8, " ");
         } else {
-            switch_trend += getTrendPrefix("H4", note_h4, " ").toLowerCase();
+            switch_trend += getTrendPrefix("H8", "", " ");
         }
 
-        if (Objects.equals(trend_h4, trend_h2)) {
-            switch_trend += getTrendPrefix("H2", note_h2, " ");
+        if (isW1eqD1) {
+            if (Objects.equals(trend_d1, trend_h4)) {
+                switch_trend += getTrendPrefix("H4", note_h4, " ");
+            } else {
+                switch_trend += getTrendPrefix("H4", "", " ");
+            }
         } else {
-            switch_trend += getTrendPrefix("H2", note_h2, " ").toLowerCase();
+            if (Objects.equals(trend_h8, trend_h4)) {
+                switch_trend += getTrendPrefix("H4", note_h4, " ");
+            } else {
+                switch_trend += getTrendPrefix("H4", note_h4, " ").toLowerCase();
+            }
         }
 
-        if (Objects.equals(trend_h2, trend_30)) {
-            switch_trend += getTrendPrefix("30", note_30, " ");
+        if (isW1eqD1) {
+            if (Objects.equals(trend_d1, trend_h2)) {
+                switch_trend += getTrendPrefix("H2", note_h2, " ");
+            } else {
+                switch_trend += getTrendPrefix("H2", "", " ");
+            }
         } else {
-            switch_trend += getTrendPrefix("30", note_30, " ").toLowerCase();
+            if (Objects.equals(trend_h4, trend_h2)) {
+                switch_trend += getTrendPrefix("H2", note_h2, " ");
+            } else {
+                switch_trend += getTrendPrefix("H2", note_h2, " ").toLowerCase();
+            }
         }
+
+        if (isW1eqD1) {
+            if (Objects.equals(trend_d1, trend_30)) {
+                switch_trend += getTrendPrefix("30", note_30, " ");
+            } else {
+                switch_trend += getTrendPrefix("30", "", " ");
+            }
+        } else {
+            if (Objects.equals(trend_h2, trend_30)) {
+                switch_trend += getTrendPrefix("H2", note_h2, " ");
+            } else {
+                switch_trend += getTrendPrefix("H2", note_h2, " ").toLowerCase();
+            }
+        }
+
         switch_trend += "}  ";
 
         String result = prefix + switch_trend;
