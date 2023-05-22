@@ -3513,7 +3513,10 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
                 type = Utils.switchTrendByHeken_12(heken_list);
             }
-            if (Utils.isBlank(type) && Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_30)
+
+            if (Utils.isBlank(type)
+                    && (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_30)
+                            || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H2))
                     && Utils.isNotBlank(Utils.switchTrendByMa13_XX(heken_list, 50))) {
                 type = Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_Ma_1_50;
             }
@@ -3600,8 +3603,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String tracking_trend = trend_w1;
             String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h8,
-                    trend_h4, trend_h2, "", note_w1, note_d1, note_h12, note_h8, note_h4, "", "",
-                    tracking_trend);
+                    trend_h4, trend_h2, "", note_w1, note_d1, note_h12, note_h8, note_h4, "", "", tracking_trend);
 
             String CAPITAL_TIME_XX = Utils.getTimeframe_SwitchTrend(note_d1, note_h12, note_h8, note_h4, note_h2, "");
 
