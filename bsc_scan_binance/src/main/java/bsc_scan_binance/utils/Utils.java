@@ -3631,19 +3631,19 @@ public class Utils {
         if (Objects.equals(trend_h8, trend_h4)) {
             switch_trend += getTrendPrefix("H4", note_h4, " ");
         } else {
-            switch_trend += getTrendPrefix("H4", "", " ");
+            switch_trend += getTrendPrefix("H4", note_h4, " ").toLowerCase();
         }
 
         if (Objects.equals(trend_h4, trend_h2)) {
             switch_trend += getTrendPrefix("H2", note_h2, " ");
         } else {
-            switch_trend += getTrendPrefix("H2", "", " ");
+            switch_trend += getTrendPrefix("H2", note_h2, " ").toLowerCase();
         }
 
         if (Objects.equals(trend_h2, trend_30)) {
             switch_trend += getTrendPrefix("30", note_30, " ");
         } else {
-            switch_trend += getTrendPrefix("30", "", " ");
+            switch_trend += getTrendPrefix("30", note_30, " ").toLowerCase();
         }
         switch_trend += "}  ";
 

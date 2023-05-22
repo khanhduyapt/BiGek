@@ -3514,14 +3514,16 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)
                     && Utils.isBelowMALine(heken_list_h4, 50)) {
-
                 type = Utils.switchTrendByHeken_12(heken_list);
-
-            } else if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)
+            }
+            if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)
                     && Utils.isAboveMALine(heken_list_h4, 50)) {
-
                 type = Utils.switchTrendByHeken_12(heken_list);
+            }
 
+            if (Utils.isBlank(type) && Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_30)
+                    && Utils.isNotBlank(Utils.switchTrendByMa13_XX(heken_list, 50))) {
+                type = Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_Ma_1_50;
             }
         } else {
             type = Utils.switchTrendByHeken_12(heken_list);
@@ -3649,27 +3651,14 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            String trend_w1 = dto_w1.getTrend();
-            String trend_d1 = dto_d1.getTrend();
-            String trend_h12 = dto_h12.getTrend();
-            String trend_h8 = dto_h8.getTrend();
-            String trend_h4 = dto_h4.getTrend();
-
+            String note_d1 = dto_d1.getNote();
             String note_h12 = dto_h12.getNote();
             String note_h8 = dto_h8.getNote();
             String note_h4 = dto_h4.getNote();
 
             // TODO: 6. scapWithM30
             boolean allowEa = false;
-            if (Objects.equals(trend_w1, trend_d1)) {
-                if ((Utils.isNotBlank(note_h12) && Objects.equals(trend_w1, trend_h12))
-                        || (Utils.isNotBlank(note_h8) && Objects.equals(trend_w1, trend_h8))
-                        || (Utils.isNotBlank(note_h4) && Objects.equals(trend_w1, trend_h4))) {
-                    allowEa = true;
-                    GLOBAL_SWITCH_TREND_H12.add(EPIC);
-                }
-            }
-            if (Utils.isNotBlank(note_h12 + note_h8 + note_h4)) {
+            if (Utils.isNotBlank(note_d1 + note_h12 + note_h8 + note_h4)) {
                 allowEa = true;
                 GLOBAL_SWITCH_TREND_H12.add(EPIC);
             }
@@ -3679,7 +3668,7 @@ public class BinanceServiceImpl implements BinanceService {
                 index += 1;
                 String ea = getTradeAction(EPIC);
                 String prefix = getPrefix(index, EPIC);
-                String type = Objects.equals(trend_w1, Utils.TREND_LONG) ? "(B)" : "(S)";
+                String type = Objects.equals(dto_30.getTrend(), Utils.TREND_LONG) ? "(B)" : "(S)";
 
                 analysis(prefix + ea, EPIC, Utils.CAPITAL_TIME_30);
 
@@ -3820,7 +3809,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.isNotBlank(msgStopScalping)) {
             msgStopScalping = "[STOP_SCALPING]" + Utils.new_line_from_service + msgStopScalping;
 
-            String EVENT_ID = "StopScalping" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
+            String EVENT_ID = "StopScalping" + Utils.getCurrentYyyyMmDd_HH();
             sendMsgPerHour(EVENT_ID, msgStopScalping, true);
         }
 
