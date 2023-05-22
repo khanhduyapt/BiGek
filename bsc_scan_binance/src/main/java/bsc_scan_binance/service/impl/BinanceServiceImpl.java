@@ -3685,7 +3685,6 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (Utils.isNotBlank(dto_30.getNote())) {
                     analysis(prefix + ea, EPIC, Utils.CAPITAL_TIME_30);
-
                 } else if (Utils.isNotBlank(dto_h2.getNote()) && Objects.equals(dto_h2.getTrend(), dto_30.getTrend())) {
                     analysis(prefix + ea, EPIC, Utils.CAPITAL_TIME_H2);
                 }
@@ -3766,28 +3765,17 @@ public class BinanceServiceImpl implements BinanceService {
             tradeList = getTradeList();
         }
         for (Mt5DataTrade trade : tradeList) {
-            List<BtcFutures> list_h4 = getCapitalData(trade.getSymbol(), Utils.CAPITAL_TIME_H4);
             List<BtcFutures> list_h8 = getCapitalData(trade.getSymbol(), Utils.CAPITAL_TIME_H8);
-            if (CollectionUtils.isEmpty(list_h4) || CollectionUtils.isEmpty(list_h8)) {
+            if (CollectionUtils.isEmpty(list_h8)) {
                 continue;
             }
-
-            List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
             List<BtcFutures> heken_list_h8 = Utils.getHekenList(list_h8);
-            String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
             String trend_h8 = Utils.getTrendByHekenAshiList(heken_list_h8);
 
-            String witch_trend = Utils.switchTrendByHeken_12(heken_list_h4);
-            witch_trend += Utils.switchTrendByHeken_12(heken_list_h4);
-
             boolean isStopCalping = false;
-            if (Utils.isNotBlank(witch_trend) && !witch_trend.contains(trade.getType())) {
+            if (!Objects.equals(trend_h8, trade.getType())) {
                 isStopCalping = true;
             }
-            if (!Objects.equals(trend_h4, trade.getType()) && !Objects.equals(trend_h8, trade.getType())) {
-                isStopCalping = true;
-            }
-
             String result = "";
             String multi_timeframes = getTrendTimeframes(trade.getSymbol());
 
