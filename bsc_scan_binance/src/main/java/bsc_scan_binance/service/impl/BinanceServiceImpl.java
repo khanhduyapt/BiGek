@@ -2696,11 +2696,11 @@ public class BinanceServiceImpl implements BinanceService {
 
         String text_body = "";
         String text_BuySellArea = "";
-        List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_W1);
-        if (!CollectionUtils.isEmpty(list)) {
-            List<BtcFutures> heken_list = Utils.getHekenList(list);
-            text_body = Utils.textBodyArea(heken_list);
-            text_BuySellArea = Utils.getTextBuySellArea(heken_list);
+        List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
+        if (!CollectionUtils.isEmpty(list_h12)) {
+            List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
+            text_body = Utils.textBodyArea(heken_list_h12);
+            text_BuySellArea = Utils.getTextBuySellArea(heken_list_h12);
         }
 
         String ea = Utils.TEXT_EXPERT_ADVISOR_SPACE;
@@ -3660,15 +3660,12 @@ public class BinanceServiceImpl implements BinanceService {
                             && Objects.equals(trend_d1, trend_h2) && Objects.equals(trend_h4, trend_h2)) {
 
                         Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h2, dto_30, dto_h12);
-
                         BscScanBinanceApplication.mt5_open_trade_List.add(dto);
 
                     } else if (Utils.isNotBlank(note_30) && note_30.contains(trend_30)
                             && Objects.equals(trend_d1, trend_30) && Objects.equals(trend_h4, trend_30)) {
 
                         Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_30, dto_30, dto_h12);
-                        dto.setOrder_type(trend_30.toLowerCase() + "_limit");
-
                         BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                     }
 
