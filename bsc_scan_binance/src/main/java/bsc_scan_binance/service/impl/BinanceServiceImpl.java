@@ -3663,9 +3663,12 @@ public class BinanceServiceImpl implements BinanceService {
                         BscScanBinanceApplication.mt5_open_trade_List.add(dto);
 
                     } else if (Utils.isNotBlank(note_30) && note_30.contains(trend_30)
-                            && Objects.equals(trend_d1, trend_30) && Objects.equals(trend_h4, trend_30)) {
+                            && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h2)
+                            && Objects.equals(trend_h2, trend_30)) {
 
                         Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_30, dto_30, dto_h12);
+                        dto.setOrder_type(trend_30.toLowerCase() + "_limit");
+
                         BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                     }
 
@@ -3791,18 +3794,21 @@ public class BinanceServiceImpl implements BinanceService {
                 // continue;
             }
 
-            Orders dto_h8 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
             List<BtcFutures> list_ref = getCapitalData(trade.getSymbol(), Utils.CAPITAL_TIME_H4);
-            if (CollectionUtils.isEmpty(list_ref) || Objects.isNull(dto_h8)) {
+            Orders dto_h8 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
+            Orders dto_30 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_30).orElse(null);
+            if (CollectionUtils.isEmpty(list_ref) || Objects.isNull(dto_h8) || Objects.isNull(dto_30)) {
                 continue;
             }
+
             List<BtcFutures> heken_list = Utils.getHekenList(list_ref);
             String trend_ref = Utils.getTrendByHekenAshiList(heken_list);
             String trend_ref_1 = heken_list.get(1).isUptrend() ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
             boolean isStopCalping = false;
             if (!Objects.equals(trend_ref, trade.getType()) && !Objects.equals(trend_ref_1, trade.getType())
-                    && !Objects.equals(dto_h8.getTrend(), trade.getType())) {
+                    && !Objects.equals(dto_h8.getTrend(), trade.getType())
+                    && !Objects.equals(dto_30.getTrend(), trade.getType())) {
                 isStopCalping = true;
             }
 
@@ -3816,7 +3822,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (trade.getProfit().compareTo(profit) > 0) {
                 Orders dto_h2 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_H2).orElse(null);
-                Orders dto_30 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_30).orElse(null);
 
                 if (Objects.isNull(dto_h2) || Objects.isNull(dto_30)
                         || !Objects.equals(dto_h2.getTrend(), trade.getType())
