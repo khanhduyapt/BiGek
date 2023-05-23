@@ -116,7 +116,6 @@ public class BscScanBinanceApplication {
 
                 log = new File(Utils.getDraftLogFile());
                 System.out.println(log.getAbsolutePath());
-                System.out.println();
 
                 System.out.println(Utils.getMt5DataFolder() + "OpenTrade.csv");
                 System.out.println();

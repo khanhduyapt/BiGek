@@ -3618,16 +3618,17 @@ public class BinanceServiceImpl implements BinanceService {
             String ea = getTradeAction(EPIC);
             analysis(prefix + ea, EPIC, CAPITAL_TIME_XX);
 
-            if (Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4)) {
-                if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)) {
-                    if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
-                            || Utils.EPICS_METALS.contains(EPIC))) {
+            if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
+                    || Utils.EPICS_METALS.contains(EPIC))) {
+                if (Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4)) {
+
+                    if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)) {
 
                         List<BigDecimal> list = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_h12);
                         if (list.size() == 4) {
                             Mt5OpenTrade dto = new Mt5OpenTrade();
                             dto.setEpic(EPIC);
-                            dto.setOrder_type(trend_h4);
+                            dto.setOrder_type(trend_h4.toLowerCase());
                             dto.setLots(list.get(0));
                             dto.setEntry(list.get(1));
                             dto.setStop_loss(list.get(2));
@@ -3635,7 +3636,23 @@ public class BinanceServiceImpl implements BinanceService {
 
                             BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                         }
+                    } else if (Objects.equals(trend_h8, trend_h4)) {
+
+                        List<BigDecimal> list = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_d1);
+                        if (list.size() == 4) {
+                            Mt5OpenTrade dto = new Mt5OpenTrade();
+                            dto.setEpic(EPIC);
+                            dto.setOrder_type(trend_h4.toLowerCase() + "_limit");
+                            dto.setLots(list.get(0));
+                            dto.setEntry(list.get(1));
+                            dto.setStop_loss(list.get(2));
+                            dto.setTake_profit(list.get(3));
+
+                            BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                        }
+
                     }
+
                 }
             }
 
