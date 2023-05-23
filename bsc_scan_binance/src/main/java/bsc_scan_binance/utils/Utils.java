@@ -1009,18 +1009,18 @@ public class Utils {
             epic = "JPN225";
             EXCHANGE = "PEPPERSTONE";
 
-        } else if (Objects.equals("BAYGN", epic)) {
+        } else if (Objects.equals("BAYGN", epic.toUpperCase())) {
             epic = "BAYN";
             EXCHANGE = "XETR";
 
         } else if (Objects.equals("AIRF", epic)) {
             epic = "AIRFR";
 
-        } else if (Objects.equals("DBKGn", epic)) {
+        } else if (Objects.equals("DBKGN", epic.toUpperCase())) {
             epic = "DB";
             EXCHANGE = "NYSE";
 
-        } else if (Objects.equals("VOWG_p", epic)) {
+        } else if (Objects.equals("VOWG_P", epic.toUpperCase())) {
             epic = "VOW";
             EXCHANGE = "XETR";
 
