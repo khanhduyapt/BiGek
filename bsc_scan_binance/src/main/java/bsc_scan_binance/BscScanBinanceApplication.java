@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 
+import bsc_scan_binance.entity.Mt5OpenTrade;
 import bsc_scan_binance.service.BinanceService;
 import bsc_scan_binance.service.impl.WandaBot;
 import bsc_scan_binance.utils.Utils;
@@ -37,6 +38,8 @@ public class BscScanBinanceApplication {
     public static TelegramBotsApi telegramBotsApi;
     public static String EPICS_OUTPUTED_LOG = "INIT";
     public static String EPICS_OUTPUT_MSG = "INIT";
+
+    public static List<Mt5OpenTrade> mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
 
     public static void main(String[] args) {
         try {
@@ -206,6 +209,14 @@ public class BscScanBinanceApplication {
     }
 
     public static void monitorForex(BinanceService binance_service) {
+        mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
+        try {
+            String mt5_open_trade_file = Utils.getMt5DataFolder() + "OpenTrade.csv";
+            File myScap = new File(mt5_open_trade_file);
+            myScap.delete();
+        } catch (Exception e) {
+        }
+
         String pre_epics = EPICS_OUTPUT_MSG;
         // --------------------------------------------------------------------------
         File myScap = new File(Utils.getDraftLogFile());
@@ -243,6 +254,8 @@ public class BscScanBinanceApplication {
         Utils.logWritelnDraftFooter();
         binance_service.scapStocks();
         Utils.logWritelnDraftFooter();
+
+        binance_service.mt5OpenTrade(mt5_open_trade_List);
 
         // --------------------------------------------------------------------------
         String cur_epics = EPICS_OUTPUT_MSG;

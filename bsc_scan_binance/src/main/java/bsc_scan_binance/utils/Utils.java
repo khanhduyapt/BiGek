@@ -1066,6 +1066,26 @@ public class Utils {
         logWriteln("_______________________________________________________________", true);
     }
 
+    public static String getMt5DataFolder() {
+        String mt5_data_file = "";
+        try {
+            String pcname = InetAddress.getLocalHost().getHostName().toLowerCase();
+            if (Objects.equals(pcname, "pc")) {
+                // MFF Pc cong ty:
+                mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\";
+
+            } else if (Objects.equals(pcname, "desktop-l4m1ju2")) {
+
+                // MFF Laptop
+                mt5_data_file = "C:\\Users\\DellE5270\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\";
+
+            }
+        } catch (UnknownHostException e) {
+        }
+
+        return mt5_data_file;
+    }
+
     public static void logWritelnDraft(String text) {
         try {
             String logFilePath = getDraftLogFile();
@@ -2277,36 +2297,30 @@ public class Utils {
         return Utils.appendSpace(result, 6);
     }
 
-    public static String getChartName(Orders dto) {
+    public static String getChartName(String dto_id) {
         String result = "";
 
         try {
-            if (Objects.isNull(dto)) {
-                return "";
-            }
-
-            String symbol = dto.getId().toUpperCase();
-
             // if (symbol.contains(CAPITAL_TIME_05)) {
             // result = "(05) ";
             // } else if (symbol.contains(CAPITAL_TIME_15)) {
             // result = "(15) ";
-            if (symbol.contains(CAPITAL_TIME_30)) {
+            if (dto_id.contains(CAPITAL_TIME_30) || dto_id.contains("_30m_")) {
                 result = "(30)  ";
-            } else if (symbol.contains(CAPITAL_TIME_H4)) {
+            } else if (dto_id.contains(CAPITAL_TIME_H4) || dto_id.contains("_12h_")) {
                 result = "(H4)  ";
-            } else if (symbol.contains(CAPITAL_TIME_H8)) {
+            } else if (dto_id.contains(CAPITAL_TIME_H8) || dto_id.contains("_8h_")) {
                 result = "(H8)  ";
-            } else if (symbol.contains(CAPITAL_TIME_H12)) {
+            } else if (dto_id.contains(CAPITAL_TIME_H12) || dto_id.contains("_12h_")) {
                 result = "(H12) ";
-            } else if (symbol.contains(CAPITAL_TIME_H2)) {
+            } else if (dto_id.contains(CAPITAL_TIME_H2) || dto_id.contains("_2h_")) {
                 result = "(H2)  ";
-            } else if (symbol.contains(CAPITAL_TIME_D1)) {
+            } else if (dto_id.contains(CAPITAL_TIME_D1) || dto_id.contains("_1d_")) {
                 result = "(D1) ";
-            } else if (symbol.contains(CAPITAL_TIME_W1)) {
+            } else if (dto_id.contains(CAPITAL_TIME_W1) || dto_id.contains("_1w_")) {
                 result = "(W1)  ";
             } else {
-                result = "(" + symbol + ")";
+                result = "(" + dto_id + ")";
             }
         } catch (Exception e) {
             return "";
@@ -3480,7 +3494,7 @@ public class Utils {
             return "";
         }
         String EPIC = getEpicFromId(dto_entry.getId());
-        String chart_name = getChartName(dto_entry);
+        String chart_name = getChartName(dto_entry.getId());
 
         String header = "";
         header += Utils.appendSpace(append, 8);
@@ -3511,6 +3525,31 @@ public class Utils {
         String url = Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70) + price + sl + entity.getNote();
 
         return tmp_msg + url;
+    }
+
+    public static List<BigDecimal> calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_entry, Orders dto_sl) {
+        BigDecimal entry, stop_loss, tp;
+        BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT);
+
+        if (Objects.equals(Utils.TREND_LONG, trend)) {
+            entry = Utils.getBigDecimal(dto_entry.getStr_body_price());
+            stop_loss = Utils.getBigDecimal(dto_sl.getLow_price());
+            tp = Utils.getBigDecimal(dto_sl.getEnd_body_price());
+        } else {
+            entry = Utils.getBigDecimal(dto_entry.getEnd_body_price());
+            stop_loss = Utils.getBigDecimal(dto_sl.getHigh_price());
+            tp = Utils.getBigDecimal(dto_sl.getStr_body_price());
+        }
+        MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, dto_entry.getCurrent_price(),
+                stop_loss, tp);
+
+        List<BigDecimal> list = new ArrayList<BigDecimal>();
+        list.add(money_x1_now.calcLot());
+        list.add(entry);
+        list.add(stop_loss);
+        list.add(tp);
+
+        return list;
     }
 
     public static String calc_BUF_LO_HI_BUF_Forex(boolean onlyWait, String trend, String EPIC, Orders dto_entry,
@@ -3621,61 +3660,42 @@ public class Utils {
             prefix = prefix.replace("=30", "   ").replace("30", "  ");
         }
 
+        // Khong danh khi W&D nguoc xu huong
         boolean isW1eqD1 = Objects.equals(trend_w1, trend_d1);
 
         String switch_trend = "  { ";
         switch_trend += getTrendPrefix("W", note_w1, " ");
         switch_trend += getTrendPrefix("D", note_d1, " ");
 
-        if (isW1eqD1) {
-            if (Objects.equals(trend_d1, trend_h12)) {
-                switch_trend += getTrendPrefix("H12", note_h12, " ");
-            } else {
-                switch_trend += getTrendPrefix("H12", "", " ");
-            }
-        } else {
-            switch_trend += getTrendPrefix("H12", note_h12, " ");
-        }
+        //if (isW1eqD1 && Objects.equals(trend_d1, trend_h12)) {
+        //    switch_trend += getTrendPrefix("H12", note_h12, " ");
+        //} else {
+        //    switch_trend += getTrendPrefix("H12", "", " ");
+        //}
+        //
+        //if (isW1eqD1 && Objects.equals(trend_d1, trend_h8)) {
+        //    switch_trend += getTrendPrefix("H8", note_h8, " ");
+        //} else {
+        //    switch_trend += getTrendPrefix("H8", "", " ");
+        //}
 
-        if (isW1eqD1) {
-            if (Objects.equals(trend_d1, trend_h8)) {
-                switch_trend += getTrendPrefix("H8", note_h8, " ");
-            } else {
-                switch_trend += getTrendPrefix("H8", "", " ");
-            }
-        } else {
-            switch_trend += getTrendPrefix("H8", note_h8, " ");
-        }
-
-        if (isW1eqD1) {
-            if (Objects.equals(trend_d1, trend_h4)) {
-                switch_trend += getTrendPrefix("H4", note_h4, " ");
-            } else {
-                switch_trend += getTrendPrefix("H4", "", " ");
-            }
-        } else {
+        if (isW1eqD1 && Objects.equals(trend_d1, trend_h4)) {
             switch_trend += getTrendPrefix("H4", note_h4, " ");
+        } else {
+            switch_trend += getTrendPrefix("H4", note_h4, " ").toLowerCase();
         }
 
-        if (isW1eqD1) {
-            if (Objects.equals(trend_d1, trend_h2)) {
-                switch_trend += getTrendPrefix("H2", note_h2, " ");
-            } else {
-                switch_trend += getTrendPrefix("H2", "", " ");
-            }
-        } else {
-            switch_trend += getTrendPrefix("H2", note_h2, " ");
-        }
-
-        if (isW1eqD1) {
-            if (Objects.equals(trend_d1, trend_30)) {
-                switch_trend += getTrendPrefix("30", note_30, " ");
-            } else {
-                switch_trend += getTrendPrefix("30", note_30, " ").toLowerCase();
-            }
-        } else {
-            switch_trend += getTrendPrefix("30", note_30, " ");
-        }
+        //if (isW1eqD1 && Objects.equals(trend_d1, trend_h2)) {
+        //    switch_trend += getTrendPrefix("H2", note_h2, " ");
+        //} else {
+        //    switch_trend += getTrendPrefix("H2", "", " ");
+        //}
+        //
+        //if (isW1eqD1 && Objects.equals(trend_d1, trend_30)) {
+        //    switch_trend += getTrendPrefix("30", note_30, " ");
+        //} else {
+        //    switch_trend += getTrendPrefix("30", "", " ");
+        //}
 
         switch_trend += "}  ";
         String result = prefix + switch_trend;

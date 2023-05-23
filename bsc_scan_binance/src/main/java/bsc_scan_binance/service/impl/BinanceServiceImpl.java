@@ -3,13 +3,13 @@ package bsc_scan_binance.service.impl;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Duration;
@@ -58,6 +58,7 @@ import bsc_scan_binance.entity.GeckoVolumeMonthKey;
 import bsc_scan_binance.entity.Mt5DataCandle;
 import bsc_scan_binance.entity.Mt5DataCandleKey;
 import bsc_scan_binance.entity.Mt5DataTrade;
+import bsc_scan_binance.entity.Mt5OpenTrade;
 import bsc_scan_binance.entity.Orders;
 import bsc_scan_binance.repository.BinanceFuturesRepository;
 import bsc_scan_binance.repository.BinanceVolumeDateTimeRepository;
@@ -2831,10 +2832,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (!Objects.equals(ACTION, trend)) {
-                String EVENT_ID = "PROFIT" + Utils.getChartName(dto) + EPIC + ACTION
+                String EVENT_ID = "PROFIT" + Utils.getChartName(dto.getId()) + EPIC + ACTION
                         + Utils.getCurrentYyyyMmDdHHByChart(dto.getId());
 
-                String msg = "(Danger)" + Utils.getChartName(dto) + Utils.appendSpace(ACTION, 8)
+                String msg = "(Danger)" + Utils.getChartName(dto.getId()) + Utils.appendSpace(ACTION, 8)
                         + Utils.appendSpace(EPIC, 10);
                 sendMsgPerHour(EVENT_ID, msg.trim().replace(" ", "."), true);
 
@@ -2862,7 +2863,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // ----------------------------TREND------------------------
         String trend = dto.getTrend();
-        String char_name = Utils.getChartName(dto);
+        String char_name = Utils.getChartName(dto.getId());
         String type = Objects.equals(Utils.TREND_LONG, trend) ? "(B)"
                 : Objects.equals(Utils.TREND_SHOT, trend) ? "(S)" : "(x)";
 
@@ -2877,41 +2878,6 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         return type + EPIC;
-    }
-
-    @SuppressWarnings("unused")
-    private boolean isTrendWeakening(String trend_target, String EPIC, String CAPITAL_TIME_XX) {
-        List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
-        List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
-        String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
-        if (!Objects.equals(trend_target, trend_h4)) {
-            return false;
-        }
-
-        int count = 0;
-        BtcFutures dto_1 = heken_list_h4.get(1);
-        for (int index = 2; index <= 5; index++) {
-            BtcFutures dto = heken_list_h4.get(index);
-            if (dto_1.isUptrend() != dto.isUptrend()) {
-                count += 1;
-            }
-
-            if (dto_1.isUptrend()) {
-                if (dto_1.getPrice_close_candle().compareTo(dto.getPrice_close_candle()) <= 0) {
-                    count += 1;
-                }
-            } else {
-                if (dto.getPrice_close_candle().compareTo(dto_1.getPrice_close_candle()) >= 0) {
-                    count += 1;
-                }
-            }
-        }
-
-        if (count > 0) {
-            return true;
-        }
-
-        return false;
     }
 
     @Override
@@ -2949,27 +2915,65 @@ public class BinanceServiceImpl implements BinanceService {
         return Utils.CRYPTO_TIME_H1;
     }
 
+    @Override
+    public void mt5OpenTrade(List<Mt5OpenTrade> list) {
+        String mt5_open_trade_file = Utils.getMt5DataFolder() + "OpenTrade.csv";
+
+        try {
+            FileWriter writer = new FileWriter(mt5_open_trade_file, true);
+            for (Mt5OpenTrade dto : list) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(dto.getEpic());
+                sb.append('\t');
+                sb.append(dto.getOrder_type());
+                sb.append('\t');
+                sb.append(dto.getLots());
+                sb.append('\t');
+                sb.append(dto.getEntry());
+                sb.append('\t');
+                sb.append(dto.getStop_loss());
+                sb.append('\t');
+                sb.append(dto.getTake_profit());
+                sb.append('\n');
+                writer.write(sb.toString());
+
+                System.out.println("mt5OpenTrade: " + dto.getEpic());
+            }
+            writer.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void mt5CloseTrade(List<String> epics) {
+        String mt5_data_file = Utils.getMt5DataFolder() + "CloseSymbols.csv";
+
+        try {
+            FileWriter writer = new FileWriter(mt5_data_file, true);
+
+            for (String EPIC : epics) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(EPIC);
+                sb.append('\n');
+
+                writer.write(sb.toString());
+                System.out.println("mt5CloseSymbol: " + EPIC);
+            }
+
+            writer.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     private String mt5_data_file(String filename, Integer MINUTES_OF_XX) {
         String mt5_data_file = "";
         try {
-
-            String pcname = InetAddress.getLocalHost().getHostName().toLowerCase();
-            if (Objects.equals(pcname, "pc")) {
-                // MFF Pc cong ty:
-                mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\"
-                        + filename;
-
-            } else if (Objects.equals(pcname, "desktop-l4m1ju2")) {
-
-                // MFF Laptop
-                mt5_data_file = "C:\\Users\\DellE5270\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\"
-                        + filename;
-
-            }
+            mt5_data_file = Utils.getMt5DataFolder() + filename;
 
             File file = new File(mt5_data_file);
             if (!file.exists()) {
-                Utils.logWritelnDraft("[saveMt5Data_FileNotFound]: " + mt5_data_file);
+                Utils.logWritelnDraft("[mt5_data_file FileNotFound]: " + mt5_data_file);
                 return "";
             }
 
@@ -3568,6 +3572,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         int index = 1;
         String msg = "";
+
         for (String EPIC : CAPITAL_LIST) {
             if (BscScanBinanceApplication.EPICS_OUTPUTED_LOG.contains(EPIC)) {
                 continue;
@@ -3600,16 +3605,33 @@ public class BinanceServiceImpl implements BinanceService {
             String note_h8 = dto_h8.getNote();
             String note_h4 = dto_h4.getNote();
             String note_h2 = dto_h2.getNote();
+            String note_30 = dto_30.getNote();
 
             String tracking_trend = trend_w1;
             String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h8,
-                    trend_h4, trend_h2, "", note_w1, note_d1, note_h12, note_h8, note_h4, "", "", tracking_trend);
+                    trend_h4, trend_h2, "", note_w1, note_d1, note_h12, note_h8, note_h4, note_h2, note_30,
+                    tracking_trend);
 
-            String CAPITAL_TIME_XX = Utils.getTimeframe_SwitchTrend(note_d1, note_h12, note_h8, note_h4, note_h2, "");
+            String CAPITAL_TIME_XX = Utils.getTimeframe_SwitchTrend("", "", "", note_h4, "", "");
 
             index += 1;
             String ea = getTradeAction(EPIC);
             analysis(prefix + ea, EPIC, CAPITAL_TIME_XX);
+
+            if (Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4)) {
+                List<BigDecimal> list = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_h12);
+                if (list.size() == 4) {
+                    Mt5OpenTrade dto = new Mt5OpenTrade();
+                    dto.setEpic(EPIC);
+                    dto.setOrder_type(trend_h4);
+                    dto.setLots(list.get(0));
+                    dto.setEntry(list.get(1));
+                    dto.setStop_loss(list.get(2));
+                    dto.setTake_profit(list.get(3));
+
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                }
+            }
 
             if (!Objects.equals(EPIC, "BTCUSD")) {
                 BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
@@ -3710,6 +3732,7 @@ public class BinanceServiceImpl implements BinanceService {
         // "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD",
         // "USDCAD", "USDCHF", "USDJPY"
         // -------------------------------------------------------------------------------------
+
         // H12
         List<String> H12_BUYING = Arrays.asList("", "", "", "", "", "");
         List<String> H12_SELING = Arrays.asList("", "", "", "", "", "");
@@ -3765,24 +3788,39 @@ public class BinanceServiceImpl implements BinanceService {
         if (CollectionUtils.isEmpty(tradeList)) {
             tradeList = getTradeList();
         }
+        List<String> mt5_close_trade_list = new ArrayList<String>();
+
+        try {
+            String mt5_close_trade_file = Utils.getMt5DataFolder() + "CloseSymbols.csv";
+            File myScap = new File(mt5_close_trade_file);
+            myScap.delete();
+        } catch (Exception e) {
+        }
+
         for (Mt5DataTrade trade : tradeList) {
-            List<BtcFutures> list_h8 = getCapitalData(trade.getSymbol(), Utils.CAPITAL_TIME_H8);
-            if (CollectionUtils.isEmpty(list_h8)) {
+            Orders dto_h8 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
+            List<BtcFutures> list_ref = getCapitalData(trade.getSymbol(), Utils.CAPITAL_TIME_H4);
+            if (CollectionUtils.isEmpty(list_ref) || Objects.isNull(dto_h8)) {
                 continue;
             }
-            List<BtcFutures> heken_list_h8 = Utils.getHekenList(list_h8);
-            String trend_h8 = Utils.getTrendByHekenAshiList(heken_list_h8);
+            List<BtcFutures> heken_list = Utils.getHekenList(list_ref);
+            String trend_ref = Utils.getTrendByHekenAshiList(heken_list);
+            String trend_ref_1 = heken_list.get(1).isUptrend() ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
             boolean isStopCalping = false;
-            if (!Objects.equals(trend_h8, trade.getType())) {
+            if (!Objects.equals(trend_ref, trade.getType()) && !Objects.equals(trend_ref_1, trade.getType())
+                    && !Objects.equals(dto_h8.getTrend(), trade.getType())) {
                 isStopCalping = true;
             }
+
             String result = "";
             String multi_timeframes = getTrendTimeframes(trade.getSymbol());
-
-            if ((trade.getProfit().add(risk).compareTo(BigDecimal.ZERO) < 0) && isStopCalping) {
+            if (isStopCalping && (trade.getProfit().add(risk).compareTo(BigDecimal.ZERO) < 0)) {
                 result += "(StopLoss)";
+
+                mt5_close_trade_list.add(trade.getSymbol());
             }
+
             result = Utils.appendSpace(result, 15);
             result += "(Trade:" + Utils.appendSpace(trade.getType(), 4) + ")";
             result += Utils.appendSpace(trade.getSymbol(), 10);
@@ -3790,18 +3828,23 @@ public class BinanceServiceImpl implements BinanceService {
             result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(trade.getProfit()), 10);
 
             // Scalping
-            if (isStopCalping) {
-                String scalping = "(H4)" + result;
+            if (isStopCalping && (trade.getProfit().compareTo(BigDecimal.ZERO) > 0)) {
+                String scalping = Utils.getChartName(list_ref.get(0).getId()) + result;
                 msgStopScalping += scalping.replace(multi_timeframes, "") + Utils.new_line_from_service;
                 scalpingList.add("[STOP] (Scalping):" + scalping);
+
+                mt5_close_trade_list.add(trade.getSymbol());
             }
 
             total = total.add(trade.getProfit());
             msg += result + Utils.new_line_from_service;
+
             if (result.contains("StopLoss")) {
                 msgStopLoss += result.replace(multi_timeframes, "") + Utils.new_line_from_service;
             }
         }
+
+        mt5CloseTrade(mt5_close_trade_list);
 
         if (Utils.isNotBlank(msg)) {
             msg = Utils.appendLeft(String.valueOf(total), 10) + max_risk + Utils.new_line_from_service + msg;
