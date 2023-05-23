@@ -226,10 +226,6 @@ public class BscScanBinanceApplication {
         EPICS_OUTPUTED_LOG = "";
         // --------------------------------------------------------------------------
         EPICS_OUTPUT_MSG = "";
-        Utils.logWritelnDraft("");
-        Utils.logWritelnDraftFooter();
-        binance_service.waitM30SwitchTrend();
-        Utils.logWritelnDraftFooter();
         // --------------------------------------------------------------------------
         Utils.logWritelnDraft("");
         binance_service.scapForex(Utils.EPICS_METALS);

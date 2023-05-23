@@ -52,8 +52,6 @@ public interface BinanceService {
 
     public void createReport();
 
-    public void waitM30SwitchTrend();
-
     public String scapForex(List<String> CAPITAL_LIST);
 
     public void scapStocks();
