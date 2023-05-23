@@ -3619,17 +3619,23 @@ public class BinanceServiceImpl implements BinanceService {
             analysis(prefix + ea, EPIC, CAPITAL_TIME_XX);
 
             if (Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4)) {
-                List<BigDecimal> list = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_h12);
-                if (list.size() == 4) {
-                    Mt5OpenTrade dto = new Mt5OpenTrade();
-                    dto.setEpic(EPIC);
-                    dto.setOrder_type(trend_h4);
-                    dto.setLots(list.get(0));
-                    dto.setEntry(list.get(1));
-                    dto.setStop_loss(list.get(2));
-                    dto.setTake_profit(list.get(3));
+                if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)) {
+                    if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
+                            || Utils.EPICS_METALS.contains(EPIC))) {
 
-                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                        List<BigDecimal> list = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_h12);
+                        if (list.size() == 4) {
+                            Mt5OpenTrade dto = new Mt5OpenTrade();
+                            dto.setEpic(EPIC);
+                            dto.setOrder_type(trend_h4);
+                            dto.setLots(list.get(0));
+                            dto.setEntry(list.get(1));
+                            dto.setStop_loss(list.get(2));
+                            dto.setTake_profit(list.get(3));
+
+                            BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                        }
+                    }
                 }
             }
 

@@ -157,7 +157,7 @@ public class Utils {
     public static final Integer MINUTES_OF_15M = 15;
     public static final Integer MINUTES_OF_5M = 5;
 
-    public static final Integer MINUTES_RELOAD_CSV_DATA = 15;
+    public static final Integer MINUTES_RELOAD_CSV_DATA = 5;
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
@@ -3530,6 +3530,7 @@ public class Utils {
     public static List<BigDecimal> calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_entry, Orders dto_sl) {
         BigDecimal entry, stop_loss, tp;
         BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT);
+        risk_x1 = risk_x1.multiply(BigDecimal.valueOf(5));
 
         if (Objects.equals(Utils.TREND_LONG, trend)) {
             entry = Utils.getBigDecimal(dto_entry.getStr_body_price());

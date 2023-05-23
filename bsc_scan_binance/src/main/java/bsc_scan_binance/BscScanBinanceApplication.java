@@ -118,6 +118,9 @@ public class BscScanBinanceApplication {
                 System.out.println(log.getAbsolutePath());
                 System.out.println();
 
+                System.out.println(Utils.getMt5DataFolder() + "OpenTrade.csv");
+                System.out.println();
+
                 Utils.writelnLogFooter();
 
                 while (index_crypto < total) {
