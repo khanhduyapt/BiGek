@@ -2585,10 +2585,11 @@ public class Utils {
 
     public static List<BigDecimal> getBuySellArea(List<BtcFutures> heken_list) {
         List<BigDecimal> body = Utils.getBodyCandle(heken_list);
-        BigDecimal max_candle_high = BigDecimal.ZERO; // calcMaxBread(heken_list);
+        BigDecimal max_bread = calcMaxBread(heken_list);
+        max_bread = max_bread.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
 
-        BigDecimal str = body.get(0).add(max_candle_high);
-        BigDecimal end = body.get(1).subtract(max_candle_high);
+        BigDecimal str = body.get(0).add(max_bread);
+        BigDecimal end = body.get(1).subtract(max_bread);
 
         List<BigDecimal> result = new ArrayList<BigDecimal>();
         result.add(str);

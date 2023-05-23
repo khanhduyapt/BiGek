@@ -253,7 +253,7 @@ public class BscScanBinanceApplication {
         binance_service.scapStocks();
         Utils.logWritelnDraftFooter();
 
-        binance_service.mt5OpenTrade(mt5_open_trade_List);
+        binance_service.openTradeOrders(mt5_open_trade_List);
 
         // --------------------------------------------------------------------------
         String cur_epics = EPICS_OUTPUT_MSG;

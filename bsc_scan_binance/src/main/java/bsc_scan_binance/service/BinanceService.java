@@ -64,6 +64,6 @@ public interface BinanceService {
 
     public void logMsgPerHour(String epic_id, String log, Integer MINUTES_OF_Xx);
 
-    public void mt5OpenTrade(List<Mt5OpenTrade> list);
+    public void openTradeOrders(List<Mt5OpenTrade> list);
 
 }

@@ -2916,12 +2916,33 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     @Override
-    public void mt5OpenTrade(List<Mt5OpenTrade> list) {
+    public void openTradeOrders(List<Mt5OpenTrade> list) {
         String mt5_open_trade_file = Utils.getMt5DataFolder() + "OpenTrade.csv";
 
         try {
             FileWriter writer = new FileWriter(mt5_open_trade_file, true);
             for (Mt5OpenTrade dto : list) {
+
+                List<BtcFutures> list_h12 = getCapitalData(dto.getEpic(), Utils.CAPITAL_TIME_H12);
+                if (CollectionUtils.isEmpty(list_h12)) {
+                    continue;
+                }
+
+                List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
+                List<BigDecimal> area = Utils.getBuySellArea(heken_list_h12);
+                if (dto.getOrder_type().toUpperCase().contains(Utils.TREND_LONG)) {
+                    if (dto.getEntry().compareTo(area.get(1)) > 0) {
+                        // SELL area
+                        continue;
+                    }
+                }
+                if (dto.getOrder_type().toUpperCase().contains(Utils.TREND_SHOT)) {
+                    if (dto.getEntry().compareTo(area.get(0)) < 0) {
+                        // BUY area
+                        continue;
+                    }
+                }
+
                 StringBuilder sb = new StringBuilder();
                 sb.append(dto.getEpic());
                 sb.append('\t');
