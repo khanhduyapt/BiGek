@@ -3620,39 +3620,28 @@ public class BinanceServiceImpl implements BinanceService {
 
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
-                if (Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4)) {
 
-                    if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)) {
+                if (Objects.equals(trend_w1, trend_d1)) {
+                    if (Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4) && Objects.equals(trend_d1, trend_h4)) {
 
-                        List<BigDecimal> list = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_h12);
-                        if (list.size() == 4) {
-                            Mt5OpenTrade dto = new Mt5OpenTrade();
-                            dto.setEpic(EPIC);
-                            dto.setOrder_type(trend_h4.toLowerCase());
-                            dto.setLots(list.get(0));
-                            dto.setEntry(list.get(1));
-                            dto.setStop_loss(list.get(2));
-                            dto.setTake_profit(list.get(3));
+                        Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_h12);
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
 
-                            BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-                        }
-                    } else if (Objects.equals(trend_h8, trend_h4)) {
+                    } else if (Utils.isNotBlank(note_h2) && note_h2.contains(trend_h2)
+                            && Objects.equals(trend_d1, trend_h2) && Objects.equals(trend_h4, trend_h2)) {
 
-                        List<BigDecimal> list = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_d1);
-                        if (list.size() == 4) {
-                            Mt5OpenTrade dto = new Mt5OpenTrade();
-                            dto.setEpic(EPIC);
-                            dto.setOrder_type(trend_h4.toLowerCase() + "_limit");
-                            dto.setLots(list.get(0));
-                            dto.setEntry(list.get(1));
-                            dto.setStop_loss(list.get(2));
-                            dto.setTake_profit(list.get(3));
+                        Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h2, dto_30, dto_h12);
+                        dto.setOrder_type(trend_h2.toLowerCase() + "_limit");
 
-                            BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-                        }
-
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                     }
+                } else if (Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4)
+                        && Objects.equals(trend_h8, trend_h4)) {
 
+                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_h4, dto_d1);
+                    dto.setOrder_type(trend_h4.toLowerCase() + "_limit");
+
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
             }
 
@@ -3662,6 +3651,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         return msg;
+
     }
 
     @Override
@@ -3801,6 +3791,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT).multiply(BigDecimal.valueOf(2.5));
         String max_risk = "     MaxRisk:" + Utils.appendLeft(String.valueOf(risk).replace(".0000", ""), 10) + "$/Trade";
+        BigDecimal profit = risk.multiply(BigDecimal.valueOf(2));
 
         String msg = "";
         String msgStopLoss = "";
@@ -3844,8 +3835,14 @@ public class BinanceServiceImpl implements BinanceService {
                 mt5_close_trade_list.add(trade.getSymbol());
             }
 
+            if (trade.getProfit().compareTo(profit) > 0) {
+                result += "(TakeProfit)";
+
+                mt5_close_trade_list.add(trade.getSymbol());
+            }
+
             result = Utils.appendSpace(result, 15);
-            result += "(Trade:" + Utils.appendSpace(trade.getType(), 4) + ")";
+            result += "(Trade:" + Utils.appendSpace(trade.getType(), 10) + ")";
             result += Utils.appendSpace(trade.getSymbol(), 10);
             result += multi_timeframes;
             result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(trade.getProfit()), 10);
@@ -3864,6 +3861,14 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (result.contains("StopLoss")) {
                 msgStopLoss += result.replace(multi_timeframes, "") + Utils.new_line_from_service;
+            }
+        }
+
+        if (total.compareTo(BigDecimal.valueOf(2000)) > 0) {
+            for (Mt5DataTrade trade : tradeList) {
+                if (!mt5_close_trade_list.contains(trade.getSymbol())) {
+                    mt5_close_trade_list.add(trade.getSymbol());
+                }
             }
         }
 

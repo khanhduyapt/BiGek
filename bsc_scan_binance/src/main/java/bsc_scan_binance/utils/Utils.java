@@ -52,6 +52,7 @@ import org.springframework.web.servlet.LocaleResolver;
 
 import bsc_scan_binance.BscScanBinanceApplication;
 import bsc_scan_binance.entity.BtcFutures;
+import bsc_scan_binance.entity.Mt5OpenTrade;
 import bsc_scan_binance.entity.Orders;
 import bsc_scan_binance.response.CandidateTokenCssResponse;
 import bsc_scan_binance.response.DepthResponse;
@@ -2524,30 +2525,30 @@ public class Utils {
     }
 
     //
-    //    private String getTrendArea(String EPIC, String CAPITAL_TIME_XX) {
-    //        List<BtcFutures> list = getCapitalData(EPIC, CAPITAL_TIME_XX);
-    //        if (!CollectionUtils.isEmpty(list)) {
-    //            BigDecimal str = BigDecimal.ZERO;
-    //            BigDecimal end = BigDecimal.ZERO;
-    //            BigDecimal price = BigDecimal.ZERO;
-    //            // ----------------------------------------------------------------------
-    //            List<BtcFutures> heken_list = Utils.getHekenList(list);
-    //            List<BigDecimal> area = Utils.getBuySellArea(heken_list);
-    //            str = area.get(0);
-    //            end = area.get(1);
-    //            price = heken_list.get(0).getCurrPrice();
+    // private String getTrendArea(String EPIC, String CAPITAL_TIME_XX) {
+    // List<BtcFutures> list = getCapitalData(EPIC, CAPITAL_TIME_XX);
+    // if (!CollectionUtils.isEmpty(list)) {
+    // BigDecimal str = BigDecimal.ZERO;
+    // BigDecimal end = BigDecimal.ZERO;
+    // BigDecimal price = BigDecimal.ZERO;
+    // // ----------------------------------------------------------------------
+    // List<BtcFutures> heken_list = Utils.getHekenList(list);
+    // List<BigDecimal> area = Utils.getBuySellArea(heken_list);
+    // str = area.get(0);
+    // end = area.get(1);
+    // price = heken_list.get(0).getCurrPrice();
     //
-    //            if ((price.compareTo(str) <= 0)) {
-    //                return Utils.TREND_LONG;
-    //            }
+    // if ((price.compareTo(str) <= 0)) {
+    // return Utils.TREND_LONG;
+    // }
     //
-    //            if ((price.compareTo(end) >= 0)) {
-    //                return Utils.TREND_SHOT;
-    //            }
-    //        }
+    // if ((price.compareTo(end) >= 0)) {
+    // return Utils.TREND_SHOT;
+    // }
+    // }
     //
-    //        return "";
-    //    }
+    // return "";
+    // }
 
     public static String getTextBuySellArea(List<BtcFutures> heken_list) {
         String type_min_max_area = "";
@@ -3417,12 +3418,10 @@ public class Utils {
 
         String trend = Utils.getTrendByHekenAshiList(heken_list);
         // --------------------------------------------------------------------
-        if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(0).isUptrend()
-                && heken_list.get(1).isDown()) {
+        if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(0).isUptrend() && heken_list.get(1).isDown()) {
             return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
         }
-        if (Objects.equals(trend, Utils.TREND_SHOT) && heken_list.get(0).isDown()
-                && heken_list.get(1).isUptrend()) {
+        if (Objects.equals(trend, Utils.TREND_SHOT) && heken_list.get(0).isDown() && heken_list.get(1).isUptrend()) {
             return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
         }
         // --------------------------------------------------------------------
@@ -3527,7 +3526,7 @@ public class Utils {
         return tmp_msg + url;
     }
 
-    public static List<BigDecimal> calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_entry, Orders dto_sl) {
+    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_entry, Orders dto_sl) {
         BigDecimal entry, stop_loss, tp;
         BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT);
         risk_x1 = risk_x1.multiply(BigDecimal.valueOf(5));
@@ -3544,13 +3543,15 @@ public class Utils {
         MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, dto_entry.getCurrent_price(),
                 stop_loss, tp);
 
-        List<BigDecimal> list = new ArrayList<BigDecimal>();
-        list.add(money_x1_now.calcLot());
-        list.add(entry);
-        list.add(stop_loss);
-        list.add(tp);
+        Mt5OpenTrade dto = new Mt5OpenTrade();
+        dto.setEpic(EPIC);
+        dto.setOrder_type(trend.toLowerCase());
+        dto.setLots(money_x1_now.calcLot());
+        dto.setEntry(entry);
+        dto.setStop_loss(stop_loss);
+        dto.setTake_profit(tp);
 
-        return list;
+        return dto;
     }
 
     public static String calc_BUF_LO_HI_BUF_Forex(boolean onlyWait, String trend, String EPIC, Orders dto_entry,
@@ -3668,17 +3669,17 @@ public class Utils {
         switch_trend += getTrendPrefix("W", note_w1, " ");
         switch_trend += getTrendPrefix("D", note_d1, " ");
 
-        //if (isW1eqD1 && Objects.equals(trend_d1, trend_h12)) {
-        //    switch_trend += getTrendPrefix("H12", note_h12, " ");
-        //} else {
-        //    switch_trend += getTrendPrefix("H12", "", " ");
-        //}
+        // if (isW1eqD1 && Objects.equals(trend_d1, trend_h12)) {
+        // switch_trend += getTrendPrefix("H12", note_h12, " ");
+        // } else {
+        // switch_trend += getTrendPrefix("H12", "", " ");
+        // }
         //
-        //if (isW1eqD1 && Objects.equals(trend_d1, trend_h8)) {
-        //    switch_trend += getTrendPrefix("H8", note_h8, " ");
-        //} else {
-        //    switch_trend += getTrendPrefix("H8", "", " ");
-        //}
+        // if (isW1eqD1 && Objects.equals(trend_d1, trend_h8)) {
+        // switch_trend += getTrendPrefix("H8", note_h8, " ");
+        // } else {
+        // switch_trend += getTrendPrefix("H8", "", " ");
+        // }
 
         if (isW1eqD1 && Objects.equals(trend_d1, trend_h4)) {
             switch_trend += getTrendPrefix("H4", note_h4, " ");
@@ -3686,17 +3687,17 @@ public class Utils {
             switch_trend += getTrendPrefix("H4", note_h4, " ").toLowerCase();
         }
 
-        //if (isW1eqD1 && Objects.equals(trend_d1, trend_h2)) {
-        //    switch_trend += getTrendPrefix("H2", note_h2, " ");
-        //} else {
-        //    switch_trend += getTrendPrefix("H2", "", " ");
-        //}
+        // if (isW1eqD1 && Objects.equals(trend_d1, trend_h2)) {
+        // switch_trend += getTrendPrefix("H2", note_h2, " ");
+        // } else {
+        // switch_trend += getTrendPrefix("H2", "", " ");
+        // }
         //
-        //if (isW1eqD1 && Objects.equals(trend_d1, trend_30)) {
-        //    switch_trend += getTrendPrefix("30", note_30, " ");
-        //} else {
-        //    switch_trend += getTrendPrefix("30", "", " ");
-        //}
+        // if (isW1eqD1 && Objects.equals(trend_d1, trend_30)) {
+        // switch_trend += getTrendPrefix("30", note_30, " ");
+        // } else {
+        // switch_trend += getTrendPrefix("30", "", " ");
+        // }
 
         switch_trend += "}  ";
         String result = prefix + switch_trend;
