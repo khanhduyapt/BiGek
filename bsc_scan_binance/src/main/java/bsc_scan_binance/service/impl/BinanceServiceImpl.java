@@ -3509,9 +3509,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(trend_w1, trend_d1) && Utils.isNotBlank(dto_d1.getNote())) {
                 analysis(prefix, EPIC, Utils.CAPITAL_TIME_D1);
                 index += 1;
-            }
-
-            if (Objects.equals(trend_d1, trend_h2) && Utils.isNotBlank(dto_h2.getNote())) {
+            } else if (Objects.equals(trend_d1, trend_h2) && Utils.isNotBlank(dto_h2.getNote())) {
                 analysis(prefix, EPIC, Utils.CAPITAL_TIME_H2);
                 index += 1;
             }
