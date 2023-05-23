@@ -2697,6 +2697,10 @@ public class BinanceServiceImpl implements BinanceService {
         String text_body = "";
         String text_BuySellArea = "";
         List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
+        if (CollectionUtils.isEmpty(list_h12)) {
+            list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
+        }
+
         if (!CollectionUtils.isEmpty(list_h12)) {
             List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
             text_body = Utils.textBodyArea(heken_list_h12);

@@ -89,8 +89,8 @@ public class Utils {
     public static final String TEXT_START_LONG = "Start:Long";
     public static final String TEXT_STOP_LONG = "Stop:Long";
 
-    public static final String TEXT_BUY_AREA = " w buy  area ";
-    public static final String TEXT_SEL_AREA = " w sell area ";
+    public static final String TEXT_BUY_AREA = " buy  area ";
+    public static final String TEXT_SEL_AREA = " sell area ";
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
