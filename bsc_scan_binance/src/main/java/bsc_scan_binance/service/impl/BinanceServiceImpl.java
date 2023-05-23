@@ -3510,6 +3510,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend = Utils.getTrendByHekenAshiList(heken_list);
 
         String type = "";
+        // TODO: 1. initForexTrend
         if ((heken_list.size() > 50) && (CAPITAL_TIME_XX.contains("MINUTE") || CAPITAL_TIME_XX.contains("HOUR"))) {
             if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
                 type = Utils.switchTrendByHeken_12(heken_list);
@@ -3533,10 +3534,16 @@ public class BinanceServiceImpl implements BinanceService {
             note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + type;
         }
 
-        // TODO: 1. initForexTrend
-        List<BigDecimal> body = Utils.getBodyCandle(heken_list);
+        // Khong the lay list_heiken vi phat sinh error: invalid price
+        List<BigDecimal> body = Utils.getBodyCandle(list);
+        List<BigDecimal> lohi = Utils.getLowHighCandle(heken_list);
         BigDecimal str_body_price = body.get(0);
         BigDecimal end_body_price = body.get(1);
+
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_30)) {
+            str_body_price = lohi.get(0);
+            end_body_price = lohi.get(1);
+        }
 
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
@@ -3552,9 +3559,8 @@ public class BinanceServiceImpl implements BinanceService {
             bread = Utils.calcMaxCandleHigh(heken_list.subList(1, 5));
         }
 
-        List<BigDecimal> low_high = Utils.getLowHighCandle(heken_list);
-        BigDecimal sl_long = low_high.get(0).subtract(bread);
-        BigDecimal sl_shot = low_high.get(1).add(bread);
+        BigDecimal sl_long = lohi.get(0).subtract(bread);
+        BigDecimal sl_shot = lohi.get(1).add(bread);
 
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), str_body_price,
                 end_body_price, sl_long, sl_shot, note);
@@ -3598,6 +3604,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h8 = dto_h8.getTrend();
             String trend_h4 = dto_h4.getTrend();
             String trend_h2 = dto_h2.getTrend();
+            String trend_30 = dto_30.getTrend();
 
             String note_w1 = dto_w1.getNote();
             String note_d1 = dto_d1.getNote();
@@ -3634,14 +3641,40 @@ public class BinanceServiceImpl implements BinanceService {
                         dto.setOrder_type(trend_h2.toLowerCase() + "_limit");
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+
+                    } else if (Utils.isNotBlank(note_30) && note_30.contains(trend_30)
+                            && Objects.equals(trend_d1, trend_30) && Objects.equals(trend_h4, trend_30)) {
+
+                        Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_30, dto_30, dto_h12);
+                        dto.setOrder_type(trend_h2.toLowerCase() + "_limit");
+
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                     }
-                } else if (Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4)
-                        && Objects.equals(trend_h8, trend_h4)) {
 
-                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_h4, dto_d1);
-                    dto.setOrder_type(trend_h4.toLowerCase() + "_limit");
+                } else {
+                    if (Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4) && Objects.equals(trend_h8, trend_h4)) {
+                        Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_d1);
+                        dto.setOrder_type(trend_h4.toLowerCase() + "_limit");
 
-                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+
+                    } else if (Utils.isNotBlank(note_h2) && note_h2.contains(trend_h2)
+                            && Objects.equals(trend_h4, trend_h2) && Objects.equals(trend_30, trend_h2)) {
+
+                        Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h2, dto_30, dto_d1);
+                        dto.setOrder_type(trend_h4.toLowerCase() + "_limit");
+
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+
+                    } else if (Utils.isNotBlank(note_30) && note_30.contains(trend_30)
+                            && Objects.equals(trend_h4, trend_h2) && Objects.equals(trend_h2, trend_30)) {
+
+                        Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_30, dto_30, dto_d1);
+                        dto.setOrder_type(trend_h4.toLowerCase() + "_limit");
+
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                    }
+
                 }
             }
 
@@ -3668,7 +3701,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         int index = 0;
         for (String EPIC : CAPITAL_LIST) {
-            if (BscScanBinanceApplication.EPICS_OUTPUT_MSG.contains(EPIC)) {
+            // TODO: 6. scapWithM30
+            if (!BscScanBinanceApplication.EPICS_OUTPUT_MSG.contains(EPIC)) {
                 continue;
             }
 
@@ -3689,7 +3723,6 @@ public class BinanceServiceImpl implements BinanceService {
             String note_h8 = dto_h8.getNote();
             String note_h4 = dto_h4.getNote();
 
-            // TODO: 6. scapWithM30
             boolean allowEa = false;
             String find_trend = "";
             if (Utils.isNotBlank(note_d1 + note_h12 + note_h8 + note_h4)) {
