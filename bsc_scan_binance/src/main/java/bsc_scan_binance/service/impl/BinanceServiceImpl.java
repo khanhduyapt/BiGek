@@ -3673,8 +3673,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())
-                    && Objects.equals(dto_d1.getTrend(), dto_h12.getTrend())
-                    && !Objects.equals(dto_h12.getTrend(), dto_30.getTrend())) {
+                    && !Objects.equals(dto_d1.getTrend(), dto_30.getTrend())) {
                 continue;
             }
 
