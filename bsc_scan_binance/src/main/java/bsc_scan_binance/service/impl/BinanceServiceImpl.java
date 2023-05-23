@@ -3812,6 +3812,10 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         for (Mt5DataTrade trade : tradeList) {
+            if (trade.getType().toLowerCase().contains("limit")) {
+                // continue;
+            }
+
             Orders dto_h8 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
             List<BtcFutures> list_ref = getCapitalData(trade.getSymbol(), Utils.CAPITAL_TIME_H4);
             if (CollectionUtils.isEmpty(list_ref) || Objects.isNull(dto_h8)) {
@@ -3836,9 +3840,16 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (trade.getProfit().compareTo(profit) > 0) {
-                result += "(TakeProfit)";
+                Orders dto_h2 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_H2).orElse(null);
+                Orders dto_30 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_30).orElse(null);
 
-                mt5_close_trade_list.add(trade.getSymbol());
+                if (Objects.isNull(dto_h2) || Objects.isNull(dto_30)
+                        || !Objects.equals(dto_h2.getTrend(), trade.getType())
+                        || !Objects.equals(dto_30.getTrend(), trade.getType())) {
+
+                    result += "(TakeProfit)";
+                    mt5_close_trade_list.add(trade.getSymbol());
+                }
             }
 
             result = Utils.appendSpace(result, 15);
