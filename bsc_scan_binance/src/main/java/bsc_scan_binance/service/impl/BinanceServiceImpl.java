@@ -3859,6 +3859,7 @@ public class BinanceServiceImpl implements BinanceService {
             result += "(Trade:" + Utils.appendSpace(trade.getType(), 10) + ")";
             result += Utils.appendSpace(EPIC, 10);
             result += multi_timeframes;
+            result += Utils.appendSpace("   " + trade.getComment(), 35);
             result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(trade.getProfit()), 10);
 
             // Scalping
