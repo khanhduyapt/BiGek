@@ -3706,8 +3706,8 @@ public class BinanceServiceImpl implements BinanceService {
                     || Utils.EPICS_METALS.contains(EPIC))) {
 
                 if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_h4)
-                        && Objects.equals(trend_30, trend_h4)
-                        && Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4)) {
+                        && Objects.equals(trend_30, trend_h4) && Utils.isNotBlank(note_h4)
+                        && note_h4.contains(trend_h4)) {
 
                     Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto);
@@ -3859,17 +3859,16 @@ public class BinanceServiceImpl implements BinanceService {
 
             List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
             Orders dto_h8 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
-            Orders dto_30 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
-            if (CollectionUtils.isEmpty(list_h4) || Objects.isNull(dto_h8) || Objects.isNull(dto_30)) {
+            Orders dto_h2 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H2).orElse(null);
+            if (CollectionUtils.isEmpty(list_h4) || Objects.isNull(dto_h8) || Objects.isNull(dto_h2)) {
                 continue;
             }
             List<BtcFutures> heken_list = Utils.getHekenList(list_h4);
             String trend_h4 = Utils.getTrendByHekenAshiList(heken_list);
 
             boolean is_stop_trend = false;
-            if (!Objects.equals(trend_h4, trade.getType())
-                    && !Objects.equals(dto_h8.getTrend(), trade.getType())
-                    && !Objects.equals(dto_30.getTrend(), trade.getType())) {
+            if (!Objects.equals(trend_h4, trade.getType()) && !Objects.equals(dto_h8.getTrend(), trade.getType())
+                    && !Objects.equals(dto_h2.getTrend(), trade.getType())) {
 
                 is_stop_trend = true;
             }
@@ -3897,12 +3896,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (trade.getProfit().compareTo(profit_500usd) > 0) {
-                Orders dto_h2 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H2).orElse(null);
-
-                if (Objects.isNull(dto_h2) || Objects.isNull(dto_30)
-                        || !Objects.equals(dto_h2.getTrend(), trade.getType())
-                        || !Objects.equals(dto_30.getTrend(), trade.getType())) {
-
+                if (Objects.isNull(dto_h2) || !Objects.equals(dto_h2.getTrend(), trade.getType())) {
                     result += "(TakeProfit_500$)";
                     mt5_close_trade_list.add(EPIC);
                 }
@@ -3915,7 +3909,7 @@ public class BinanceServiceImpl implements BinanceService {
             result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(trade.getProfit()), 10);
 
             // Scalping
-            if (is_stop_trend && (trade.getProfit().compareTo(BigDecimal.ZERO) > 0)) {
+            if (is_stop_trend && (trade.getProfit().compareTo(risk) > 0)) {
                 String scalping = Utils.getChartName(list_h4.get(0).getId()) + result;
                 msgStopScalping += scalping.replace(multi_timeframes, "") + Utils.new_line_from_service;
                 scalpingList.add("[STOP] (Trend_Reversed):" + scalping);
