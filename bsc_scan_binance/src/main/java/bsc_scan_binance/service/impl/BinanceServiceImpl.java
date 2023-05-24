@@ -3900,7 +3900,11 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (trade.getProfit().compareTo(profit_500usd) > 0) {
-                if (Objects.isNull(dto_h2) || !Objects.equals(dto_h2.getTrend(), trade.getType())) {
+                Orders dto_30 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
+                if (Objects.isNull(dto_h2) || Objects.isNull(dto_30)
+                        || !Objects.equals(dto_h2.getTrend(), trade.getType())
+                        || !Objects.equals(dto_30.getTrend(), trade.getType())) {
+
                     result += "(TakeProfit_500$)";
                     mt5_close_trade_list.add(TICKET);
                 }
