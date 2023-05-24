@@ -3853,6 +3853,7 @@ public class BinanceServiceImpl implements BinanceService {
                 // continue;
             }
             String EPIC = trade.getSymbol();
+            String TICKET = trade.getTicket();
 
             Mt5OpenTradeEntity mt5Entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
             if (Objects.isNull(mt5Entity)) {
@@ -3887,21 +3888,21 @@ public class BinanceServiceImpl implements BinanceService {
                         && (close_price_candle_1.compareTo(stop_loss_m30) < 0)) {
 
                     result += "(StopLoss)";
-                    mt5_close_trade_list.add(EPIC);
+                    mt5_close_trade_list.add(TICKET);
                 }
 
                 if (Objects.equals(Utils.TREND_SHOT, trade.getType())
                         && (close_price_candle_1.compareTo(stop_loss_m30) > 0)) {
 
                     result += "(StopLoss)";
-                    mt5_close_trade_list.add(EPIC);
+                    mt5_close_trade_list.add(TICKET);
                 }
             }
 
             if (trade.getProfit().compareTo(profit_500usd) > 0) {
                 if (Objects.isNull(dto_h2) || !Objects.equals(dto_h2.getTrend(), trade.getType())) {
                     result += "(TakeProfit_500$)";
-                    mt5_close_trade_list.add(EPIC);
+                    mt5_close_trade_list.add(TICKET);
                 }
             }
 
@@ -3918,7 +3919,7 @@ public class BinanceServiceImpl implements BinanceService {
                 msgStopScalping += scalping.replace(multi_timeframes, "") + Utils.new_line_from_service;
                 scalpingList.add("[STOP] (Trend_Reversed):" + scalping);
 
-                mt5_close_trade_list.add(EPIC);
+                mt5_close_trade_list.add(TICKET);
             }
 
             total = total.add(trade.getProfit());
@@ -3939,18 +3940,22 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.equals(Utils.TREND_LONG, trade.getType()) && (currPrice.compareTo(stopLossCalc) < 0)) {
                 result += "(StopLoss NOW)";
-                mt5_close_trade_list.add(EPIC);
+                mt5_close_trade_list.add(TICKET);
             }
             if (Objects.equals(Utils.TREND_SHOT, trade.getType()) && (currPrice.compareTo(stopLossCalc) > 0)) {
                 result += "(StopLoss NOW)";
-                mt5_close_trade_list.add(EPIC);
+                mt5_close_trade_list.add(TICKET);
+            }
+
+            if (trade.getProfit().compareTo(BigDecimal.valueOf(-200)) < 0) {
+                // mt5_close_trade_list.add(TICKET);
             }
         }
 
         if (total.compareTo(BigDecimal.valueOf(2000)) > 0) {
             for (Mt5DataTrade trade : tradeList) {
-                if (!mt5_close_trade_list.contains(trade.getSymbol())) {
-                    mt5_close_trade_list.add(trade.getSymbol());
+                if (!mt5_close_trade_list.contains(trade.getTicket())) {
+                    mt5_close_trade_list.add(trade.getTicket());
                 }
             }
         }
@@ -3960,8 +3965,6 @@ public class BinanceServiceImpl implements BinanceService {
             String EPIC_open = open_dto.getEpic().toUpperCase();
             String open_action = open_dto.getOrder_type().contains(Utils.TREND_LONG.toLowerCase()) ? "buy" : "sell";
 
-            boolean has_open_need_close = false;
-            boolean has_trade = false;
             for (Mt5DataTrade trade : tradeList) {
                 String EPIC_trade = trade.getSymbol().toUpperCase();
                 if (Objects.equals(EPIC_open, EPIC_trade)) {
@@ -3969,16 +3972,10 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (trade_action.contains("limit")) {
                         if (!trade_action.contains(open_action)) {
-                            has_open_need_close = true;
+                            mt5_close_trade_list.add(trade.getTicket());
                         }
-                    } else {
-                        has_trade = true;
                     }
                 }
-            }
-
-            if (has_open_need_close && !has_trade) {
-                mt5_close_trade_list.add(EPIC_open);
             }
         }
 
