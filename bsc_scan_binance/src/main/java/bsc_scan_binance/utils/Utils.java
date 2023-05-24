@@ -3527,22 +3527,29 @@ public class Utils {
         return tmp_msg + url;
     }
 
-    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_entry, Orders dto_sl) {
-        BigDecimal entry, stop_loss, tp;
+    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_entry,
+            Orders dto_sl, String CAPITAL_TIME_XX) {
+        BigDecimal entry, stop_loss_m30, stop_loss, tp;
         BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT);
         risk_x1 = risk_x1.multiply(BigDecimal.valueOf(5));
 
         if (Objects.equals(Utils.TREND_LONG, trend)) {
             entry = Utils.getBigDecimal(dto_entry.getStr_body_price());
             stop_loss = Utils.getBigDecimal(dto_sl.getLow_price());
+            stop_loss_m30 = Utils.getBigDecimal(dto_entry.getLow_price());
             tp = Utils.getBigDecimal(dto_sl.getEnd_body_price());
         } else {
             entry = Utils.getBigDecimal(dto_entry.getEnd_body_price());
             stop_loss = Utils.getBigDecimal(dto_sl.getHigh_price());
+            stop_loss_m30 = Utils.getBigDecimal(dto_entry.getHigh_price());
             tp = Utils.getBigDecimal(dto_sl.getStr_body_price());
         }
         MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, dto_entry.getCurrent_price(),
                 stop_loss, tp);
+
+        String comment = EPIC + getChartNameCapital_(CAPITAL_TIME_XX)
+                + Utils.getStringValue(stop_loss_m30)
+                + Utils.convertDateToString("_dd:HH:mm", Calendar.getInstance().getTime());
 
         Mt5OpenTrade dto = new Mt5OpenTrade();
         dto.setEpic(EPIC);
@@ -3551,7 +3558,8 @@ public class Utils {
         dto.setEntry(entry);
         dto.setStop_loss(stop_loss);
         dto.setTake_profit(tp);
-
+        dto.setComment(comment.toLowerCase());
+        dto.setStop_loss_m30(stop_loss_m30);
         return dto;
     }
 
@@ -3670,17 +3678,17 @@ public class Utils {
         switch_trend += getTrendPrefix("W", note_w1, " ");
         switch_trend += getTrendPrefix("D", note_d1, " ");
 
-        // if (isW1eqD1 && Objects.equals(trend_d1, trend_h12)) {
-        // switch_trend += getTrendPrefix("H12", note_h12, " ");
-        // } else {
-        // switch_trend += getTrendPrefix("H12", "", " ");
-        // }
-        //
-        // if (isW1eqD1 && Objects.equals(trend_d1, trend_h8)) {
-        // switch_trend += getTrendPrefix("H8", note_h8, " ");
-        // } else {
-        // switch_trend += getTrendPrefix("H8", "", " ");
-        // }
+        if (isW1eqD1 && Objects.equals(trend_d1, trend_h12)) {
+            switch_trend += getTrendPrefix("H12", note_h12, " ");
+        } else {
+            switch_trend += getTrendPrefix("H12", note_h12, " ").toLowerCase();
+        }
+
+        if (isW1eqD1 && Objects.equals(trend_d1, trend_h8)) {
+            switch_trend += getTrendPrefix("H8", note_h8, " ");
+        } else {
+            switch_trend += getTrendPrefix("H8", note_h8, " ").toLowerCase();
+        }
 
         if (isW1eqD1 && Objects.equals(trend_d1, trend_h4)) {
             switch_trend += getTrendPrefix("H4", note_h4, " ");

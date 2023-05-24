@@ -24,4 +24,7 @@ public class Mt5DataTrade {
 
     private BigDecimal Profit = BigDecimal.ZERO;
 
+    private String comment;
+
+    private BigDecimal stop_loss_m30 = BigDecimal.ZERO;
 }

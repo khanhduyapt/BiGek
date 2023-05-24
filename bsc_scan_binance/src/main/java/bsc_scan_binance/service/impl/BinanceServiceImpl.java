@@ -18,6 +18,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -59,23 +60,21 @@ import bsc_scan_binance.entity.Mt5DataCandle;
 import bsc_scan_binance.entity.Mt5DataCandleKey;
 import bsc_scan_binance.entity.Mt5DataTrade;
 import bsc_scan_binance.entity.Mt5OpenTrade;
+import bsc_scan_binance.entity.Mt5OpenTradeEntity;
 import bsc_scan_binance.entity.Orders;
 import bsc_scan_binance.repository.BinanceFuturesRepository;
 import bsc_scan_binance.repository.BinanceVolumeDateTimeRepository;
 import bsc_scan_binance.repository.BinanceVolumnDayRepository;
 import bsc_scan_binance.repository.BinanceVolumnWeekRepository;
-import bsc_scan_binance.repository.BollAreaRepository;
-import bsc_scan_binance.repository.BtcFuturesRepository;
 import bsc_scan_binance.repository.BtcVolumeDayRepository;
 import bsc_scan_binance.repository.CandidateCoinRepository;
 import bsc_scan_binance.repository.DepthAsksRepository;
 import bsc_scan_binance.repository.DepthBidsRepository;
 import bsc_scan_binance.repository.FundingHistoryRepository;
 import bsc_scan_binance.repository.GeckoVolumeMonthRepository;
-import bsc_scan_binance.repository.GeckoVolumeUpPre4hRepository;
 import bsc_scan_binance.repository.Mt5DataCandleRepository;
+import bsc_scan_binance.repository.Mt5OpenTradeRepository;
 import bsc_scan_binance.repository.OrdersRepository;
-import bsc_scan_binance.repository.PriorityCoinHistoryRepository;
 import bsc_scan_binance.response.BtcFuturesResponse;
 import bsc_scan_binance.response.CandidateTokenCssResponse;
 import bsc_scan_binance.response.CandidateTokenResponse;
@@ -123,10 +122,7 @@ public class BinanceServiceImpl implements BinanceService {
     private BtcVolumeDayRepository btcVolumeDayRepository;
 
     @Autowired
-    private GeckoVolumeUpPre4hRepository geckoVolumeUpPre4hRepository;
-
-    @Autowired
-    private BollAreaRepository bollAreaRepository;
+    private Mt5OpenTradeRepository mt5OpenTradeRepository;
 
     @Autowired
     private OrdersRepository ordersRepository;
@@ -139,12 +135,6 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Autowired
     private DepthAsksRepository depthAsksRepository;
-
-    @Autowired
-    private BtcFuturesRepository btcFuturesRepository;
-
-    @Autowired
-    private PriorityCoinHistoryRepository priorityCoinHistoryRepository;
 
     @Autowired
     private CandidateCoinRepository candidateCoinRepository;
@@ -2959,7 +2949,10 @@ public class BinanceServiceImpl implements BinanceService {
                 sb.append(dto.getStop_loss());
                 sb.append('\t');
                 sb.append(dto.getTake_profit());
+                sb.append('\t');
+                sb.append(dto.getComment());
                 sb.append('\n');
+
                 writer.write(sb.toString());
 
                 System.out.println("mt5OpenTrade: " + dto.getEpic());
@@ -3024,7 +3017,7 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private String getTradeAction(String EPIC) {
-        int length = 6;
+        int length = 12;
         for (Mt5DataTrade trade : tradeList) {
             if (Objects.equals(trade.getSymbol(), EPIC)) {
                 return Utils.appendSpace(trade.getType().toLowerCase(), length);
@@ -3039,11 +3032,12 @@ public class BinanceServiceImpl implements BinanceService {
      * 15895.35 16111.0 0.0 -185.77 EURCAD 81249169 0 1.46448 1.45172 0.0 -22.2
      * EURGBP 81246958 0 0.87056 0.86395 0.0 108.2
      */
-    public List<Mt5DataTrade> getTradeList() {
-        List<Mt5DataTrade> result = new ArrayList<Mt5DataTrade>();
+    @Transactional
+    public void getTradeList() {
+        tradeList = new ArrayList<Mt5DataTrade>();
         String mt5_data_file = mt5_data_file("Trade.csv", Utils.MINUTES_OF_5M);
         if (Utils.isBlank(mt5_data_file)) {
-            return result;
+            return;
         }
 
         try {
@@ -3058,7 +3052,7 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
                 String[] tempArr = line.replace(".cash", "").split("\\t");
-                if (tempArr.length == 7) {
+                if (tempArr.length == 8) {
                     Mt5DataTrade dto = new Mt5DataTrade();
 
                     dto.setSymbol(tempArr[0].toUpperCase());
@@ -3071,7 +3065,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                     dto.setProfit(Utils.roundDefault(Utils.getBigDecimal(tempArr[6])));
 
-                    result.add(dto);
+                    dto.setComment(Utils.getStringValue(tempArr[7]).trim().toUpperCase());
+                    tradeList.add(dto);
                 }
             }
 
@@ -3081,7 +3076,59 @@ public class BinanceServiceImpl implements BinanceService {
             e.printStackTrace();
         }
 
-        return result;
+        for (Mt5DataTrade trade : tradeList) {
+            String commentId = Utils.getStringValue(trade.getComment());
+            Mt5OpenTradeEntity entity = mt5OpenTradeRepository.findById(commentId).orElse(null);
+            if (Objects.isNull(entity)) {
+                Orders dto_30 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_30).orElse(null);
+                if (Objects.isNull(dto_30)) {
+                    continue;
+                }
+
+                entity = new Mt5OpenTradeEntity();
+                BigDecimal stop_loss_m30 = BigDecimal.ZERO;
+                if (trade.getType().toUpperCase().contains(Utils.TREND_LONG)) {
+                    stop_loss_m30 = dto_30.getLow_price();
+                }
+                if (trade.getType().toUpperCase().contains(Utils.TREND_SHOT)) {
+                    stop_loss_m30 = dto_30.getHigh_price();
+                }
+
+                if (Utils.isNotBlank(commentId)) {
+                    String arr[] = commentId.split("_");
+                    if (arr.length == 4) {
+                        stop_loss_m30 = Utils.getBigDecimal(arr[2]);
+                    }
+                }
+
+                if (Utils.isBlank(commentId)) {
+                    commentId = trade.getSymbol() + Utils.getChartNameCapital_(Utils.CAPITAL_TIME_30)
+                            + Utils.getStringValue(stop_loss_m30)
+                            + Utils.convertDateToString("_dd:HH:mm", Calendar.getInstance().getTime());
+                }
+                commentId = commentId.toLowerCase();
+
+                String timeframe = Utils.CAPITAL_TIME_30;
+                if (commentId.contains(Utils.getChartNameCapital_(Utils.CAPITAL_TIME_H4).toLowerCase())) {
+                    timeframe = Utils.CAPITAL_TIME_H4;
+                }
+
+                entity.setCommentId(commentId);
+                entity.setTimeframe(timeframe);
+                entity.setSymbol(trade.getSymbol());
+                entity.setTicket(trade.getTicket());
+                entity.setPriceOpen(trade.getPriceOpen());
+                entity.setStopLossM30(stop_loss_m30);
+            }
+
+            entity.setTypeDescription(trade.getType());
+            entity.setStopLossCalc(trade.getStopLoss());
+            entity.setTakeProfit(trade.getTakeProfit());
+            entity.setProfit(trade.getProfit());
+
+            mt5OpenTradeRepository.save(entity);
+        }
+
     }
 
     @Override
@@ -3170,7 +3217,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (Objects.equals("Stocks.csv", filename)) {
-            tradeList = getTradeList();
+            getTradeList();
         }
     }
 
@@ -3578,8 +3625,10 @@ public class BinanceServiceImpl implements BinanceService {
         if (!Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_W1)) {
             bread = Utils.calcMaxBread(heken_list.subList(1, 5));
         }
-
-        if (Utils.EPICS_STOCKS.contains(EPIC) || CAPITAL_TIME_XX.contains("MINUTE")) {
+        if (CAPITAL_TIME_XX.contains("MINUTE")) {
+            bread = Utils.calcMaxBread(heken_list.subList(1, 10));
+        }
+        if (Utils.EPICS_STOCKS.contains(EPIC)) {
             bread = Utils.calcMaxCandleHigh(heken_list.subList(1, 5));
         }
 
@@ -3652,52 +3701,29 @@ public class BinanceServiceImpl implements BinanceService {
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
 
-                if (Objects.equals(trend_w1, trend_d1)) {
-                    if (Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4) && Objects.equals(trend_d1, trend_h4)) {
+                if (Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4)) {
+                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
+                    dto.setOrder_type(trend_h4.toLowerCase() + "_limit");
 
-                        Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_h12);
-                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
 
-                    } else if (Utils.isNotBlank(note_h2) && note_h2.contains(trend_h2)
-                            && Objects.equals(trend_d1, trend_h2) && Objects.equals(trend_h4, trend_h2)) {
+                } else if (Utils.isNotBlank(note_h8) && note_h8.contains(trend_h8)) {
+                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h8, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
+                    dto.setOrder_type(trend_h8.toLowerCase() + "_limit");
 
-                        Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h2, dto_30, dto_h12);
-                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
 
-                    } else if (Utils.isNotBlank(note_30) && note_30.contains(trend_30)
-                            && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h2)
-                            && Objects.equals(trend_h2, trend_30)) {
+                } else if (Utils.isNotBlank(note_h12) && note_h12.contains(trend_h12)) {
+                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h12, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
+                    dto.setOrder_type(trend_h12.toLowerCase() + "_limit");
 
-                        Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_30, dto_30, dto_h12);
-                        dto.setOrder_type(trend_30.toLowerCase() + "_limit");
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
 
-                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-                    }
+                } else if (Utils.isNotBlank(note_d1) && note_d1.contains(trend_d1)) {
+                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
+                    dto.setOrder_type(trend_d1.toLowerCase() + "_limit");
 
-                } else {
-                    if (Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4) && Objects.equals(trend_h8, trend_h4)) {
-                        Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_d1);
-                        dto.setOrder_type(trend_h4.toLowerCase() + "_limit");
-
-                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-
-                    } else if (Utils.isNotBlank(note_h2) && note_h2.contains(trend_h2)
-                            && Objects.equals(trend_h4, trend_h2) && Objects.equals(trend_30, trend_h2)) {
-
-                        Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h2, dto_30, dto_d1);
-                        dto.setOrder_type(trend_h2.toLowerCase() + "_limit");
-
-                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-
-                    } else if (Utils.isNotBlank(note_30) && note_30.contains(trend_30)
-                            && Objects.equals(trend_h4, trend_h2) && Objects.equals(trend_h2, trend_30)) {
-
-                        Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_30, dto_30, dto_d1);
-                        dto.setOrder_type(trend_30.toLowerCase() + "_limit");
-
-                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-                    }
-
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
             }
 
@@ -3716,7 +3742,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public void monitorProfit() {
-        // TODO: 3. monitorProfit
+
         // -------------------------------------------------------------------------------------
         // "BTCUSD", GER40", "US30", "US100", "UK100", "USOIL", "XAGUSD", "XAUUSD"
         // "AUDJPY", "AUDUSD", "CADJPY", "CHFJPY",
@@ -3780,8 +3806,9 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> scalpingList = new ArrayList<String>();
 
         if (CollectionUtils.isEmpty(tradeList)) {
-            tradeList = getTradeList();
+            getTradeList();
         }
+
         List<String> mt5_close_trade_list = new ArrayList<String>();
 
         try {
@@ -3854,6 +3881,11 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (result.contains("StopLoss")) {
                 msgStopLoss += result.replace(multi_timeframes, "") + Utils.new_line_from_service;
+            }
+
+            // TODO: 3. monitorProfit
+            if ("_NZDCAD_EURGBP_GBPJPY_".contains(trade.getSymbol())) {
+                mt5_close_trade_list.remove(trade.getSymbol());
             }
         }
 
