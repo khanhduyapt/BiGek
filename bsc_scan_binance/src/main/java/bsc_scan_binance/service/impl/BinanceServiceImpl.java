@@ -3955,6 +3955,33 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
+        // Xu huong dao chieu nhung dang dat lenh nguoc xu huong
+        for (Mt5OpenTrade open_dto : BscScanBinanceApplication.mt5_open_trade_List) {
+            String EPIC_open = open_dto.getEpic().toUpperCase();
+            String open_action = open_dto.getOrder_type().contains(Utils.TREND_LONG.toLowerCase()) ? "buy" : "sell";
+
+            boolean has_open_need_close = false;
+            boolean has_trade = false;
+            for (Mt5DataTrade trade : tradeList) {
+                String EPIC_trade = trade.getSymbol().toUpperCase();
+                if (Objects.equals(EPIC_open, EPIC_trade)) {
+                    String trade_action = trade.getType().toLowerCase();
+
+                    if (trade_action.contains("limit")) {
+                        if (!trade_action.contains(open_action)) {
+                            has_open_need_close = true;
+                        }
+                    } else {
+                        has_trade = true;
+                    }
+                }
+            }
+
+            if (has_open_need_close && !has_trade) {
+                mt5_close_trade_list.add(EPIC_open);
+            }
+        }
+
         mt5CloseTrade(mt5_close_trade_list);
 
         if (Utils.isNotBlank(msg)) {
