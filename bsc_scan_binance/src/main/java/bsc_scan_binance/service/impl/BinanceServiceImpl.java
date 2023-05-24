@@ -3930,7 +3930,7 @@ public class BinanceServiceImpl implements BinanceService {
                 mt5_close_trade_list.remove(EPIC);
             }
 
-            BigDecimal currPrice = dto_30.getCurrent_price();
+            BigDecimal currPrice = dto_h2.getCurrent_price();
             BigDecimal stopLossCalc = mt5Entity.getStopLossCalc();
 
             if (Objects.equals(Utils.TREND_LONG, trade.getType()) && (currPrice.compareTo(stopLossCalc) < 0)) {
