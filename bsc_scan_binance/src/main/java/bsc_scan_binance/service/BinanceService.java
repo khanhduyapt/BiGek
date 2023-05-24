@@ -2,7 +2,6 @@ package bsc_scan_binance.service;
 
 import java.util.List;
 
-import bsc_scan_binance.entity.Mt5OpenTrade;
 import bsc_scan_binance.response.CandidateTokenCssResponse;
 import bsc_scan_binance.response.DepthResponse;
 import bsc_scan_binance.response.EntryCssResponse;
@@ -64,6 +63,6 @@ public interface BinanceService {
 
     public void logMsgPerHour(String epic_id, String log, Integer MINUTES_OF_Xx);
 
-    public void openTradeOrders(List<Mt5OpenTrade> list);
+    public void openTradeOrders();
 
 }
