@@ -35,7 +35,7 @@ import lombok.NoArgsConstructor;
 public class Mt5OpenTradeEntity {
     @Id
     @Column(name = "comment_id")
-    private String commentId;
+    private String ticket;
 
     @Column(name = "timeframe")
     private String timeframe;
@@ -44,7 +44,7 @@ public class Mt5OpenTradeEntity {
     private String symbol;
 
     @Column(name = "ticket")
-    private String ticket;
+    private String commentId;
 
     @Column(name = "typedescription")
     private String typeDescription;

@@ -2757,46 +2757,6 @@ public class BinanceServiceImpl implements BinanceService {
         return result;
     }
 
-    // TODO: getPrefix
-    // [1W=1D=12H 8H=4H=2H=30] {D1~H12~H8~H4~H2~30}
-    private String getPrefix(int index, String EPIC) {
-        Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
-        Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-        Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
-        Orders dto_h8 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
-        Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-        Orders dto_h2 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H2).orElse(null);
-        Orders dto_30 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
-
-        if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h12) || Objects.isNull(dto_h8)
-                || Objects.isNull(dto_h4) || Objects.isNull(dto_h2) || Objects.isNull(dto_30)) {
-            return "";
-        }
-
-        String trend_w1 = dto_w1.getTrend();
-        String trend_d1 = dto_d1.getTrend();
-        String trend_h12 = dto_h12.getTrend();
-        String trend_h8 = dto_h8.getTrend();
-        String trend_h4 = dto_h4.getTrend();
-        String trend_h2 = dto_h2.getTrend();
-        String trend_30 = dto_30.getTrend();
-
-        String note_w1 = dto_w1.getNote();
-        String note_d1 = dto_d1.getNote();
-        String note_h12 = dto_h12.getNote();
-        String note_h8 = dto_h8.getNote();
-        String note_h4 = dto_h4.getNote();
-        String note_h2 = dto_h2.getNote();
-        String note_30 = dto_30.getNote();
-
-        String tracking_trend = trend_w1;
-
-        String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h8, trend_h4,
-                trend_h2, trend_30, note_w1, note_d1, note_h12, note_h8, note_h4, note_h2, note_30, tracking_trend);
-
-        return prefix;
-    }
-
     private void alertMsg(String CAPITAL_TIME_XX, List<String> LIST_BUYING, List<String> LIST_SELLING) {
         List<String> ARR = new ArrayList<String>();
         ARR.addAll(LIST_BUYING);
@@ -3078,61 +3038,60 @@ public class BinanceServiceImpl implements BinanceService {
 
         for (Mt5DataTrade trade : tradeList) {
             String commentId = Utils.getStringValue(trade.getComment());
-            Mt5OpenTradeEntity entity = mt5OpenTradeRepository.findById(commentId).orElse(null);
+            Mt5OpenTradeEntity entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
+
+            String timeframe = Utils.CAPITAL_TIME_30;
+            BigDecimal stop_loss_m30 = BigDecimal.ZERO;
+            BigDecimal stop_loss_calc = BigDecimal.ZERO;
+            Orders dto_30 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_30).orElse(null);
+            Orders dto_d1 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+            if (Objects.isNull(dto_30) || Objects.isNull(dto_d1)) {
+                continue;
+            }
+            if (trade.getType().toUpperCase().contains(Utils.TREND_LONG)) {
+                stop_loss_m30 = dto_30.getLow_price();
+                stop_loss_calc = dto_d1.getLow_price();
+            }
+            if (trade.getType().toUpperCase().contains(Utils.TREND_SHOT)) {
+                stop_loss_m30 = dto_30.getHigh_price();
+                stop_loss_calc = dto_d1.getHigh_price();
+            }
+
             if (Objects.isNull(entity)) {
-                Orders dto_30 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_30).orElse(null);
-                Orders dto_d1 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-                if (Objects.isNull(dto_30) || Objects.isNull(dto_d1)) {
-                    continue;
-                }
-
                 entity = new Mt5OpenTradeEntity();
-                BigDecimal stop_loss_m30 = BigDecimal.ZERO;
-                BigDecimal stop_loss_calc = BigDecimal.ZERO;
 
-                if (trade.getType().toUpperCase().contains(Utils.TREND_LONG)) {
-                    stop_loss_m30 = dto_30.getLow_price();
-                    stop_loss_calc = dto_d1.getLow_price();
-                }
-                if (trade.getType().toUpperCase().contains(Utils.TREND_SHOT)) {
-                    stop_loss_m30 = dto_30.getHigh_price();
-                    stop_loss_calc = dto_d1.getHigh_price();
-                }
-
+                entity.setTicket(trade.getTicket());
+                entity.setSymbol(trade.getSymbol());
+                entity.setPriceOpen(trade.getPriceOpen());
+                entity.setStopLossM30(stop_loss_m30);
+                entity.setStopLossCalc(stop_loss_calc);
+            } else {
                 if (Utils.isNotBlank(commentId)) {
                     String arr[] = commentId.split("_");
                     if (arr.length == 4) {
                         stop_loss_m30 = Utils.getBigDecimal(arr[2]);
                     }
                 }
-
-                if (Utils.isBlank(commentId)) {
-                    commentId = trade.getSymbol() + Utils.getChartNameCapital_(Utils.CAPITAL_TIME_30)
-                            + Utils.getStringValue(stop_loss_m30)
-                            + Utils.convertDateToString("_dd:HH:mm", Calendar.getInstance().getTime());
-                }
-                commentId = commentId.toLowerCase();
-
-                String timeframe = Utils.CAPITAL_TIME_30;
-                if (commentId.contains(Utils.getChartNameCapital_(Utils.CAPITAL_TIME_H4).toLowerCase())) {
-                    timeframe = Utils.CAPITAL_TIME_H4;
-                }
-
-                entity.setCommentId(commentId);
-                entity.setTimeframe(timeframe);
-                entity.setSymbol(trade.getSymbol());
-                entity.setTicket(trade.getTicket());
-                entity.setPriceOpen(trade.getPriceOpen());
-                entity.setStopLossM30(stop_loss_m30);
-                entity.setStopLossCalc(stop_loss_calc);
             }
             entity.setTypeDescription(trade.getType());
             entity.setTakeProfit(trade.getTakeProfit());
             entity.setProfit(trade.getProfit());
 
+            if (Utils.isBlank(entity.getCommentId())) {
+                commentId = trade.getSymbol() + Utils.getChartNameCapital_(Utils.CAPITAL_TIME_30)
+                        + Utils.getStringValue(stop_loss_m30)
+                        + Utils.convertDateToString("_dd:HH:mm", Calendar.getInstance().getTime());
+
+                if (commentId.contains(Utils.getChartNameCapital_(Utils.CAPITAL_TIME_H4).toLowerCase())) {
+                    timeframe = Utils.CAPITAL_TIME_H4;
+                }
+            }
+
+            entity.setTimeframe(timeframe);
+            entity.setCommentId(commentId.toLowerCase());
+
             mt5OpenTradeRepository.save(entity);
         }
-
     }
 
     @Override
@@ -3592,13 +3551,6 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
                 type = Utils.switchTrendByHeken_12(heken_list);
             }
-
-            if (Utils.isBlank(type)
-                    && (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_30)
-                            || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H2))
-                    && Utils.isNotBlank(Utils.switchTrendByMa13_XX(heken_list, 50))) {
-                type = Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_Ma_1_50;
-            }
         } else {
             type = Utils.switchTrendByHeken_12(heken_list);
         }
@@ -3634,6 +3586,9 @@ public class BinanceServiceImpl implements BinanceService {
         }
         if (CAPITAL_TIME_XX.contains("MINUTE")) {
             bread = Utils.calcMaxBread(heken_list.subList(1, 10));
+        }
+        if (Utils.EPICS_FOREXS_ALL.contains(EPIC) && Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)) {
+            bread = bread.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         }
 
         BigDecimal sl_long = lohi.get(0).subtract(bread);
@@ -3849,13 +3804,11 @@ public class BinanceServiceImpl implements BinanceService {
             }
             String EPIC = trade.getSymbol();
 
-            List<Mt5OpenTradeEntity> mt5OpenList = mt5OpenTradeRepository.findAllByTicket(trade.getTicket());
-            if (CollectionUtils.isEmpty(mt5OpenList)) {
+            Mt5OpenTradeEntity mt5Entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
+            if (Objects.isNull(mt5Entity)) {
                 Utils.logWritelnDraft("monitorProfit Mt5OpenTradeEntity not found Ticket: " + trade.getTicket());
-
                 continue;
             }
-            Mt5OpenTradeEntity mt5Entity = mt5OpenList.get(0);
 
             List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
             Orders dto_h8 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
@@ -3909,7 +3862,7 @@ public class BinanceServiceImpl implements BinanceService {
             result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(trade.getProfit()), 10);
 
             // Scalping
-            if (is_stop_trend && (trade.getProfit().compareTo(risk) > 0)) {
+            if (is_stop_trend && (trade.getProfit().compareTo(BigDecimal.valueOf(100)) > 0)) {
                 String scalping = Utils.getChartName(list_h4.get(0).getId()) + result;
                 msgStopScalping += scalping.replace(multi_timeframes, "") + Utils.new_line_from_service;
                 scalpingList.add("[STOP] (Trend_Reversed):" + scalping);
