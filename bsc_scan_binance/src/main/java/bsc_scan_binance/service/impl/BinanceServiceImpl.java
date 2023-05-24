@@ -3818,7 +3818,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT).multiply(BigDecimal.valueOf(2.5));
         String max_risk = "     MaxRisk:" + Utils.appendLeft(String.valueOf(risk).replace(".0000", ""), 10) + "$/Trade";
-        BigDecimal profit = risk.multiply(BigDecimal.valueOf(2));
+        BigDecimal profit_500usd = risk.multiply(BigDecimal.valueOf(2));
 
         String msg = "";
         String msgStopLoss = "";
@@ -3886,14 +3886,14 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            if (trade.getProfit().compareTo(profit) > 0) {
+            if (trade.getProfit().compareTo(profit_500usd) > 0) {
                 Orders dto_h2 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H2).orElse(null);
 
                 if (Objects.isNull(dto_h2) || Objects.isNull(dto_30)
                         || !Objects.equals(dto_h2.getTrend(), trade.getType())
                         || !Objects.equals(dto_30.getTrend(), trade.getType())) {
 
-                    result += "(TakeProfit)";
+                    result += "(TakeProfit_500$)";
                     mt5_close_trade_list.add(EPIC);
                 }
             }
