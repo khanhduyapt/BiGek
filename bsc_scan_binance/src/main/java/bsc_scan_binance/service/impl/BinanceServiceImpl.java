@@ -3081,17 +3081,22 @@ public class BinanceServiceImpl implements BinanceService {
             Mt5OpenTradeEntity entity = mt5OpenTradeRepository.findById(commentId).orElse(null);
             if (Objects.isNull(entity)) {
                 Orders dto_30 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_30).orElse(null);
-                if (Objects.isNull(dto_30)) {
+                Orders dto_d1 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+                if (Objects.isNull(dto_30) || Objects.isNull(dto_d1)) {
                     continue;
                 }
 
                 entity = new Mt5OpenTradeEntity();
                 BigDecimal stop_loss_m30 = BigDecimal.ZERO;
+                BigDecimal stop_loss_calc = BigDecimal.ZERO;
+
                 if (trade.getType().toUpperCase().contains(Utils.TREND_LONG)) {
                     stop_loss_m30 = dto_30.getLow_price();
+                    stop_loss_calc = dto_d1.getLow_price();
                 }
                 if (trade.getType().toUpperCase().contains(Utils.TREND_SHOT)) {
                     stop_loss_m30 = dto_30.getHigh_price();
+                    stop_loss_calc = dto_d1.getHigh_price();
                 }
 
                 if (Utils.isNotBlank(commentId)) {
@@ -3119,10 +3124,9 @@ public class BinanceServiceImpl implements BinanceService {
                 entity.setTicket(trade.getTicket());
                 entity.setPriceOpen(trade.getPriceOpen());
                 entity.setStopLossM30(stop_loss_m30);
+                entity.setStopLossCalc(stop_loss_calc);
             }
-
             entity.setTypeDescription(trade.getType());
-            entity.setStopLossCalc(trade.getStopLoss());
             entity.setTakeProfit(trade.getTakeProfit());
             entity.setProfit(trade.getProfit());
 
@@ -3851,6 +3855,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 continue;
             }
+            Mt5OpenTradeEntity mt5Entity = mt5OpenList.get(0);
 
             List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
             Orders dto_h8 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
@@ -3873,7 +3878,7 @@ public class BinanceServiceImpl implements BinanceService {
             String multi_timeframes = getTrendTimeframes(EPIC);
             if (is_stop_trend && (trade.getProfit().add(risk).compareTo(BigDecimal.ZERO) < 0)) {
                 BigDecimal stop_loss_m30 = BigDecimal.ZERO;
-                stop_loss_m30 = Utils.getBigDecimal(mt5OpenList.get(0).getStopLossM30());
+                stop_loss_m30 = Utils.getBigDecimal(mt5Entity.getStopLossM30());
                 BigDecimal close_price_candle_1 = heken_list.get(1).getPrice_close_candle();
 
                 if (Objects.equals(Utils.TREND_LONG, trade.getType())
@@ -3929,6 +3934,18 @@ public class BinanceServiceImpl implements BinanceService {
             String manual_stoploss = "_NZDCAD_";
             if (manual_stoploss.contains(EPIC)) {
                 mt5_close_trade_list.remove(EPIC);
+            }
+
+            BigDecimal currPrice = dto_30.getCurrent_price();
+            BigDecimal stopLossCalc = mt5Entity.getStopLossCalc();
+
+            if (Objects.equals(Utils.TREND_LONG, trade.getType()) && (currPrice.compareTo(stopLossCalc) < 0)) {
+                result += "(StopLoss NOW)";
+                mt5_close_trade_list.add(EPIC);
+            }
+            if (Objects.equals(Utils.TREND_SHOT, trade.getType()) && (currPrice.compareTo(stopLossCalc) > 0)) {
+                result += "(StopLoss NOW)";
+                mt5_close_trade_list.add(EPIC);
             }
         }
 
