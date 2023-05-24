@@ -3660,49 +3660,99 @@ public class BinanceServiceImpl implements BinanceService {
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
 
-                if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_h4)
-                        && Objects.equals(trend_30, trend_h4) && Utils.isNotBlank(note_h4)
-                        && note_h4.contains(trend_h4)) {
+                String action = "";
+                Mt5OpenTrade dto = null;
+                boolean allow_trade_h2 = false;
 
-                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
-                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                if (Objects.equals(trend_h4, trend_h2) && Utils.isNotBlank(note_h2)) {
 
-                } else if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_h4)
-                        && Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4)) {
+                    List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
+                    if (!CollectionUtils.isEmpty(list_h4)) {
+                        List<BtcFutures> heken_list = Utils.getHekenList(list_h4);
+                        if (Objects.equals(trend_h4, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
+                            allow_trade_h2 = true;
+                        }
+                        if (Objects.equals(trend_h4, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
+                            allow_trade_h2 = true;
+                        }
+                    }
 
-                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
-                    dto.setOrder_type(trend_h4.toLowerCase() + "_limit");
-                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                    if (allow_trade_h2) {
+                        action = trend_h4;
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
+                    }
+                }
 
-                } else if (Objects.equals(trend_h8, trend_h4) && Utils.isNotBlank(note_h4)
-                        && note_h4.contains(trend_h4)) {
+                if (!allow_trade_h2) {
+                    if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)
+                            && Utils.isNotBlank(note_h4)) {
 
-                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
-                    dto.setOrder_type(trend_h4.toLowerCase() + "_limit");
-                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                        action = trend_h4;
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
 
-                } else if (Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4)) {
+                    } else if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_h4)
+                            && Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4)) {
 
-                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
-                    dto.setOrder_type(trend_h4.toLowerCase() + "_limit");
-                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                        action = trend_h4;
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
 
-                } else if (Utils.isNotBlank(note_h8) && note_h8.contains(trend_h8)) {
-                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h8, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
-                    dto.setOrder_type(trend_h8.toLowerCase() + "_limit");
+                    } else if (Objects.equals(trend_h8, trend_h4) && Utils.isNotBlank(note_h4)
+                            && note_h4.contains(trend_h4)) {
 
-                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                        action = trend_h4;
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
 
-                } else if (Utils.isNotBlank(note_h12) && note_h12.contains(trend_h12)) {
+                    } else if (Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4)) {
 
-                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h12, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
-                    dto.setOrder_type(trend_h12.toLowerCase() + "_limit");
-                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                        action = trend_h4;
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
 
-                } else if (Utils.isNotBlank(note_d1) && note_d1.contains(trend_d1)) {
+                    } else if (Utils.isNotBlank(note_h8) && note_h8.contains(trend_h8)) {
 
-                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
-                    dto.setOrder_type(trend_d1.toLowerCase() + "_limit");
+                        action = trend_h8;
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h8, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
+
+                    } else if (Utils.isNotBlank(note_h12) && note_h12.contains(trend_h12)) {
+
+                        action = trend_h12;
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h12, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
+
+                    } else if (Utils.isNotBlank(note_d1) && note_d1.contains(trend_d1)) {
+
+                        action = trend_d1;
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
+
+                    }
+                }
+
+                if (Objects.nonNull(dto)) {
+                    boolean is_same_wdh12 = false;
+                    if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)) {
+                        is_same_wdh12 = true;
+                    }
+                    if (is_same_wdh12 && !Objects.equals(trend_d1, action)) {
+                        continue;
+                    }
+
+                    boolean allow_trade_now_m30 = false;
+                    List<BtcFutures> list_30 = getCapitalData(EPIC, Utils.CAPITAL_TIME_30);
+                    if (!CollectionUtils.isEmpty(list_30)) {
+                        List<BtcFutures> heken_list_30 = Utils.getHekenList(list_30);
+                        if (Objects.equals(action, Utils.TREND_LONG) && Objects.equals(trend_30, Utils.TREND_LONG)
+                                && Utils.isBelowMALine(heken_list_30, 50)) {
+                            allow_trade_now_m30 = true;
+                        }
+                        if (Objects.equals(action, Utils.TREND_SHOT) && Objects.equals(trend_30, Utils.TREND_SHOT)
+                                && Utils.isAboveMALine(heken_list_30, 50)) {
+                            allow_trade_now_m30 = true;
+                        }
+                    }
+
+                    if ((allow_trade_h2 || is_same_wdh12) && allow_trade_now_m30) {
+                        dto.setOrder_type(action.toLowerCase());
+                    } else {
+                        dto.setOrder_type(action.toLowerCase() + "_limit");
+                    }
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
             }
