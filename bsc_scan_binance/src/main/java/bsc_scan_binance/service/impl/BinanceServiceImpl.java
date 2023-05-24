@@ -3701,10 +3701,22 @@ public class BinanceServiceImpl implements BinanceService {
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
 
-                if (Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4)) {
+                if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_h4)
+                        && Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4)) {
+                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
+
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+
+                } else if (Objects.equals(trend_h8, trend_h4) && Utils.isNotBlank(note_h4)
+                        && note_h4.contains(trend_h4)) {
+
+                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+
+                } else if (Utils.isNotBlank(note_h4) && note_h4.contains(trend_h4)) {
+
                     Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
                     dto.setOrder_type(trend_h4.toLowerCase() + "_limit");
-
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto);
 
                 } else if (Utils.isNotBlank(note_h8) && note_h8.contains(trend_h8)) {
