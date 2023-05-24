@@ -9,5 +9,6 @@ import bsc_scan_binance.entity.Mt5OpenTradeEntity;
 
 @Repository
 public interface Mt5OpenTradeRepository extends JpaRepository<Mt5OpenTradeEntity, String> {
+
     public List<Mt5OpenTradeEntity> findAllByTicket(String ticket);
 }

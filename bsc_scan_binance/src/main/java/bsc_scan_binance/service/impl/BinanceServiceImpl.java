@@ -3835,22 +3835,37 @@ public class BinanceServiceImpl implements BinanceService {
                 // continue;
             }
 
-            List<BtcFutures> list_ref = getCapitalData(trade.getSymbol(), Utils.CAPITAL_TIME_H4);
+            List<BtcFutures> list_h4 = getCapitalData(trade.getSymbol(), Utils.CAPITAL_TIME_H4);
             Orders dto_h8 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
             Orders dto_30 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_30).orElse(null);
-            if (CollectionUtils.isEmpty(list_ref) || Objects.isNull(dto_h8) || Objects.isNull(dto_30)) {
+            if (CollectionUtils.isEmpty(list_h4) || Objects.isNull(dto_h8) || Objects.isNull(dto_30)) {
                 continue;
             }
 
-            List<BtcFutures> heken_list = Utils.getHekenList(list_ref);
+            List<BtcFutures> heken_list = Utils.getHekenList(list_h4);
             String trend_ref = Utils.getTrendByHekenAshiList(heken_list);
-            String trend_ref_1 = heken_list.get(1).isUptrend() ? Utils.TREND_LONG : Utils.TREND_SHOT;
+            BigDecimal close_price_candle_1 = heken_list.get(1).getPrice_close_candle();
 
             boolean isStopCalping = false;
-            if (!Objects.equals(trend_ref, trade.getType()) && !Objects.equals(trend_ref_1, trade.getType())
+            if (!Objects.equals(trend_ref, trade.getType())
                     && !Objects.equals(dto_h8.getTrend(), trade.getType())
                     && !Objects.equals(dto_30.getTrend(), trade.getType())) {
-                isStopCalping = true;
+
+                BigDecimal stop_loss_m30 = BigDecimal.ZERO;
+                List<Mt5OpenTradeEntity> mt5OpenList = mt5OpenTradeRepository.findAllByTicket(trade.getTicket());
+                if (!CollectionUtils.isEmpty(mt5OpenList)) {
+                    stop_loss_m30 = Utils.getBigDecimal(mt5OpenList.get(0).getStopLossM30());
+                }
+
+                if (Objects.equals(Utils.TREND_LONG, trade.getType())
+                        && (close_price_candle_1.compareTo(stop_loss_m30) < 0)) {
+                    isStopCalping = true;
+                }
+
+                if (Objects.equals(Utils.TREND_SHOT, trade.getType())
+                        && (close_price_candle_1.compareTo(stop_loss_m30) > 0)) {
+                    isStopCalping = true;
+                }
             }
 
             String result = "";
@@ -3881,7 +3896,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // Scalping
             if (isStopCalping && (trade.getProfit().compareTo(BigDecimal.ZERO) > 0)) {
-                String scalping = Utils.getChartName(list_ref.get(0).getId()) + result;
+                String scalping = Utils.getChartName(list_h4.get(0).getId()) + result;
                 msgStopScalping += scalping.replace(multi_timeframes, "") + Utils.new_line_from_service;
                 scalpingList.add("[STOP] (Scalping):" + scalping);
 

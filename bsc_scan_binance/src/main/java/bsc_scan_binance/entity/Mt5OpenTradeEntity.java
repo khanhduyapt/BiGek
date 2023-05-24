@@ -38,30 +38,30 @@ public class Mt5OpenTradeEntity {
     private String commentId;
 
     @Column(name = "timeframe")
-    private String Timeframe;
+    private String timeframe;
 
     @Column(name = "symbol")
-    private String Symbol;
+    private String symbol;
 
     @Column(name = "ticket")
-    private String Ticket;
+    private String ticket;
 
     @Column(name = "typedescription")
-    private String TypeDescription;
+    private String typeDescription;
 
     @Column(name = "priceopen")
-    private BigDecimal PriceOpen;
+    private BigDecimal priceOpen;
 
     @Column(name = "stoplosscalc")
-    private BigDecimal StopLossCalc;
+    private BigDecimal stopLossCalc;
 
     @Column(name = "stoplossm30")
-    private BigDecimal StopLossM30;
+    private BigDecimal stopLossM30;
 
     @Column(name = "takeprofit")
-    private BigDecimal TakeProfit;
+    private BigDecimal takeProfit;
 
     @Column(name = "profit")
-    private BigDecimal Profit;
+    private BigDecimal profit;
 
 }
