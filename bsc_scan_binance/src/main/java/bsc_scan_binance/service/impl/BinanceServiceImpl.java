@@ -3844,6 +3844,14 @@ public class BinanceServiceImpl implements BinanceService {
                 // continue;
             }
             String EPIC = trade.getSymbol();
+
+            List<Mt5OpenTradeEntity> mt5OpenList = mt5OpenTradeRepository.findAllByTicket(trade.getTicket());
+            if (CollectionUtils.isEmpty(mt5OpenList)) {
+                Utils.logWritelnDraft("monitorProfit Mt5OpenTradeEntity not found Ticket: " + trade.getTicket());
+
+                continue;
+            }
+
             List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
             Orders dto_h8 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
             Orders dto_30 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
@@ -3865,10 +3873,7 @@ public class BinanceServiceImpl implements BinanceService {
             String multi_timeframes = getTrendTimeframes(EPIC);
             if (is_stop_trend && (trade.getProfit().add(risk).compareTo(BigDecimal.ZERO) < 0)) {
                 BigDecimal stop_loss_m30 = BigDecimal.ZERO;
-                List<Mt5OpenTradeEntity> mt5OpenList = mt5OpenTradeRepository.findAllByTicket(trade.getTicket());
-                if (!CollectionUtils.isEmpty(mt5OpenList)) {
-                    stop_loss_m30 = Utils.getBigDecimal(mt5OpenList.get(0).getStopLossM30());
-                }
+                stop_loss_m30 = Utils.getBigDecimal(mt5OpenList.get(0).getStopLossM30());
                 BigDecimal close_price_candle_1 = heken_list.get(1).getPrice_close_candle();
 
                 if (Objects.equals(Utils.TREND_LONG, trade.getType())
