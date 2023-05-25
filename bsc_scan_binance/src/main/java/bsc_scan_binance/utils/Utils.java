@@ -698,12 +698,12 @@ public class Utils {
 
     public static String getEncryptedChartNameCapital(String TIME) {
         if (Objects.equals(TIME, CAPITAL_TIME_30)) {
-            return "bamuoiph";
+            return "bamp";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_H2)) {
-            return "haih";
+            return "haig";
         }
-        return "bonh";
+        return "bong";
     }
 
     public static String getChartNameCapital(String TIME) {
