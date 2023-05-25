@@ -63,10 +63,10 @@ public class Mt5OpenTradeEntity {
     private BigDecimal currprice;
 
     @Column(name = "stoplosscalc")
-    private BigDecimal stopLossCalc;
+    private BigDecimal stopLossCalcVol;
 
     @Column(name = "stoplossm30")
-    private BigDecimal stopLossM30;
+    private BigDecimal stopLossTimeFam;
 
     @Column(name = "takeprofit")
     private BigDecimal takeProfit;
