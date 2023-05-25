@@ -3585,9 +3585,11 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
+        // TODO: 2. scapForex
         if (!Utils.isHuntTime()) {
-            BscScanBinanceApplication.mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
-            return "";
+            // BscScanBinanceApplication.mt5_open_trade_List = new
+            // ArrayList<Mt5OpenTrade>();
+            // return "";
         }
 
         int index = 1;
@@ -3635,7 +3637,6 @@ public class BinanceServiceImpl implements BinanceService {
             String ea = getTradeAction(EPIC);
             analysis(prefix + ea, EPIC, CAPITAL_TIME_XX);
 
-            // TODO: 2. scapForex
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
 
