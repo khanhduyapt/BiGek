@@ -3640,6 +3640,11 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
+        if (!Utils.isHuntTime()) {
+            BscScanBinanceApplication.mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
+            return "";
+        }
+
         int index = 1;
         String msg = "";
 
@@ -3883,10 +3888,9 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean isPriceHit_SL = false;
                 boolean isPriceHit_TP = false;
                 BigDecimal close_price = heken_list_30.get(1).getPrice_close_candle();
-                String trend_30 = Utils.isUptrendByMa(heken_list_30, 3, 1, 2) ? Utils.TREND_LONG
-                        : Utils.TREND_SHOT;
+                String trend_30 = Utils.isUptrendByMa(heken_list_30, 3, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
-                //TP -> Trailing stops
+                // TP -> Trailing stops
                 {
                     if (Objects.equals(Utils.TREND_LONG, TRADE_TREND)
                             && (curr_price.compareTo(mt5Entity.getTakeProfit()) > 0)) {
@@ -3899,15 +3903,13 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                //SL
+                // SL
                 {
-                    if (Objects.equals(Utils.TREND_LONG, TRADE_TREND)
-                            && (close_price.compareTo(stopLossM30) < 0)) {
+                    if (Objects.equals(Utils.TREND_LONG, TRADE_TREND) && (close_price.compareTo(stopLossM30) < 0)) {
                         result += "(StopLoss)";
                         isPriceHit_SL = true;
                     }
-                    if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND)
-                            && (close_price.compareTo(stopLossM30) > 0)) {
+                    if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND) && (close_price.compareTo(stopLossM30) > 0)) {
                         result += "(StopLoss)";
                         isPriceHit_SL = true;
                     }
@@ -3937,8 +3939,7 @@ public class BinanceServiceImpl implements BinanceService {
                 List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
                 Orders dto_h8 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H8).orElse(null);
                 Orders dto_h2 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H2).orElse(null);
-                if (CollectionUtils.isEmpty(list_h4) || Objects.isNull(dto_h8)
-                        || Objects.isNull(dto_h2)) {
+                if (CollectionUtils.isEmpty(list_h4) || Objects.isNull(dto_h8) || Objects.isNull(dto_h2)) {
                     continue;
                 }
                 List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
@@ -3948,7 +3949,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_candle_1 = Utils.isUptrendByMa(heken_list_h4, 3, 1, 2) ? Utils.TREND_LONG
                         : Utils.TREND_SHOT;
 
-                //TP -> Trailing stops
+                // TP -> Trailing stops
                 {
                     boolean startTrailingStops = false;
                     BigDecimal close_price_h4_1 = heken_list_h4.get(1).getPrice_close_candle();
@@ -3972,17 +3973,15 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                //SL
+                // SL
                 {
                     if (Objects.equals(Utils.TREND_LONG, TRADE_TREND)
-                            && (heken_list_h4.get(1).getPrice_close_candle()
-                                    .compareTo(stopLossM30) < 0)) {
+                            && (heken_list_h4.get(1).getPrice_close_candle().compareTo(stopLossM30) < 0)) {
                         result += "(StopLoss)";
                         isPriceHit_SL = true;
                     }
                     if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND)
-                            && (heken_list_h4.get(1).getPrice_close_candle()
-                                    .compareTo(stopLossM30) > 0)) {
+                            && (heken_list_h4.get(1).getPrice_close_candle().compareTo(stopLossM30) > 0)) {
                         result += "(StopLoss)";
                         isPriceHit_SL = true;
                     }
@@ -3991,8 +3990,7 @@ public class BinanceServiceImpl implements BinanceService {
                 // SwitchTrend
                 boolean isHasProfitButTrendRevered = false;
                 if (trade.getProfit().compareTo(BigDecimal.ZERO) > 0) {
-                    if (!Objects.equals(trend_h4, TRADE_TREND)
-                            && !Objects.equals(dto_h2.getTrend(), TRADE_TREND)) {
+                    if (!Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(dto_h2.getTrend(), TRADE_TREND)) {
                         isHasProfitButTrendRevered = true;
                     }
                 }
