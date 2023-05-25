@@ -2344,24 +2344,24 @@ public class Utils {
         return result;
     }
 
-    public static BigDecimal calcFiboTP_2168(String trend, BigDecimal low_or_heigh, BigDecimal ma6) {
+    public static BigDecimal calcFiboTP_3168(String trend, BigDecimal low_or_heigh, BigDecimal ma6) {
         BigDecimal bread = ma6.subtract(low_or_heigh);
         bread = bread.abs();
 
-        BigDecimal bread_2168 = (bread.multiply(BigDecimal.valueOf(2.618)));
-        //BigDecimal tp_3168 = low_or_heigh.add((sub1_0.multiply(BigDecimal.valueOf(3.618))));
-        //BigDecimal tp_4236 = low_or_heigh.add((sub1_0.multiply(BigDecimal.valueOf(4.236))));
-        //BigDecimal tp_6854 = low_or_heigh.add((sub1_0.multiply(BigDecimal.valueOf(6.854))));
+        BigDecimal bread_tp = (bread.multiply(BigDecimal.valueOf(3.618)));
+        // bread.multiply(BigDecimal.valueOf(3.618));
+        // bread.multiply(BigDecimal.valueOf(4.236));
+        // bread.multiply(BigDecimal.valueOf(6.854));
 
-        BigDecimal tp_2168 = BigDecimal.ZERO;
+        BigDecimal tp_3168 = BigDecimal.ZERO;
         if (Objects.equals(trend, TREND_LONG)) {
-            tp_2168 = ma6.add(bread_2168);
+            tp_3168 = ma6.add(bread_tp);
         }
         if (Objects.equals(trend, TREND_SHOT)) {
-            tp_2168 = ma6.subtract(bread_2168);
+            tp_3168 = ma6.subtract(bread_tp);
         }
 
-        return tp_2168;
+        return tp_3168;
     }
 
     public static String timingTarget(String chartName, int length) {

@@ -3188,11 +3188,11 @@ public class BinanceServiceImpl implements BinanceService {
                 BigDecimal ma6 = Utils.calcMA(heken_list, 6, 1);
                 if (trade.getType().contains(Utils.TREND_LONG)) {
                     trend = Utils.TREND_LONG;
-                    TP = Utils.calcFiboTP_2168(trend, lohi.get(0), ma6);
+                    TP = Utils.calcFiboTP_3168(trend, lohi.get(0), ma6);
                 }
                 if (trade.getType().contains(Utils.TREND_SHOT)) {
                     trend = Utils.TREND_SHOT;
-                    TP = Utils.calcFiboTP_2168(trend, lohi.get(1), ma6);
+                    TP = Utils.calcFiboTP_3168(trend, lohi.get(1), ma6);
                 }
 
                 BigDecimal stop_loss_30 = BigDecimal.ZERO;
@@ -3729,9 +3729,17 @@ public class BinanceServiceImpl implements BinanceService {
 
                         String switch_trend_m30 = Utils.switchTrendByMaXX(heken_list_30, 3, 5);
                         switch_trend_m30 += Utils.switchTrendByHeken_12(heken_list_30);
-
                         if (switch_trend_m30.contains(action) && Objects.equals(action, trend_30)) {
                             allow_trade_now_m30 = true;
+                        }
+
+                        if (Objects.equals(action, trend_30)) {
+                            if (Objects.equals(action, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list_30, 50)) {
+                                allow_trade_now_m30 = true;
+                            }
+                            if (Objects.equals(action, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list_30, 50)) {
+                                allow_trade_now_m30 = true;
+                            }
                         }
                     }
 
@@ -3875,30 +3883,21 @@ public class BinanceServiceImpl implements BinanceService {
             // (M30) Dong ngay lap tuc khi dao chieu
             if (Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_30)) {
                 boolean isPriceHit_SL = false;
+                boolean isPriceHit_TP = false;
                 BigDecimal close_price = heken_list_30.get(1).getPrice_close_candle();
                 String trend_30 = Utils.isUptrendByMa(heken_list_30, 3, 1, 2) ? Utils.TREND_LONG
                         : Utils.TREND_SHOT;
 
                 //TP -> Trailing stops
                 {
-                    boolean startTrailingStops = false;
-                    BigDecimal close_price_30_1 = heken_list_30.get(1).getPrice_close_candle();
                     if (Objects.equals(Utils.TREND_LONG, TRADE_TREND)
                             && (curr_price.compareTo(mt5Entity.getTakeProfit()) > 0)) {
-                        startTrailingStops = true;
+                        isPriceHit_TP = true;
 
                     }
                     if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND)
                             && (curr_price.compareTo(mt5Entity.getTakeProfit()) < 0)) {
-                        startTrailingStops = true;
-                    }
-
-                    if (startTrailingStops) {
-                        stopLossM30 = close_price_30_1;
-                        stopLossCalc = close_price_30_1;
-                        mt5Entity.setStopLossCalc(close_price_30_1);
-                        mt5Entity.setStopLossM30(close_price_30_1);
-                        mt5OpenTradeRepository.save(mt5Entity);
+                        isPriceHit_TP = true;
                     }
                 }
 
@@ -3925,7 +3924,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // 1 là SL; 2 là TP; 3 là đảo chiều có profit > 50$;
-                if (isPriceHit_SL || isHasProfitButTrendRevered) {
+                if (isPriceHit_SL || isPriceHit_TP || isHasProfitButTrendRevered) {
                     String prefix = "(M30)Closed.   ";
                     prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
                     prefix += "(Trade):" + Utils.appendSpace(TRADE_TREND, 10);
@@ -4107,7 +4106,6 @@ public class BinanceServiceImpl implements BinanceService {
                 String EPIC = trade.getSymbol().toUpperCase();
                 Orders dto_30 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
                 if (Objects.isNull(dto_30) || !Objects.equals(dto_30.getTrend(), TRADE_TREND)) {
-
                     String prefix = "Must close the transaction:   ";
                     prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
                     prefix += "(Trade):" + Utils.appendSpace(TRADE_TREND, 10);
