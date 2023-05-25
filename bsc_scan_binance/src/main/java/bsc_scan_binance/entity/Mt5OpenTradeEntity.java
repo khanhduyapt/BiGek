@@ -28,6 +28,7 @@ import lombok.NoArgsConstructor;
 //typedescription character varying(255) COLLATE pg_catalog."default",
 //volume numeric(30,5) DEFAULT 0,
 //priceopen numeric(30,5) DEFAULT 0,
+//currprice numeric(30,5) DEFAULT 0,
 //stoplosscalc numeric(30,5) DEFAULT 0,
 //stoplossm30 numeric(30,5) DEFAULT 0,
 //takeprofit numeric(30,5) DEFAULT 0,
@@ -57,6 +58,9 @@ public class Mt5OpenTradeEntity {
 
     @Column(name = "priceopen")
     private BigDecimal priceOpen;
+
+    @Column(name = "currprice")
+    private BigDecimal currprice;
 
     @Column(name = "stoplosscalc")
     private BigDecimal stopLossCalc;

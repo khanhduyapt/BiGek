@@ -3069,10 +3069,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
         } catch (Exception e) {
         }
-
-        if (Objects.equals("Stocks.csv", filename)) {
-            getTradeList();
-        }
     }
 
     private List<BtcFutures> getCapitalData(String EPIC, String CAPITAL_TIME_XXX) {
@@ -3112,7 +3108,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public void getTradeList() {
         tradeList = new ArrayList<Mt5DataTrade>();
-        String mt5_data_file = mt5_data_file("Trade.csv", Utils.MINUTES_OF_5M);
+        String mt5_data_file = mt5_data_file("Trade.csv", 3);
         if (Utils.isBlank(mt5_data_file)) {
             return;
         }
@@ -3129,7 +3125,7 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
                 String[] tempArr = line.replace(".cash", "").split("\\t");
-                if (tempArr.length == 9) {
+                if (tempArr.length == 10) {
                     Mt5DataTrade dto = new Mt5DataTrade();
 
                     dto.setSymbol(tempArr[0].toUpperCase());
@@ -3143,7 +3139,7 @@ public class BinanceServiceImpl implements BinanceService {
                     dto.setProfit(Utils.roundDefault(Utils.getBigDecimal(tempArr[6])));
                     dto.setComment(Utils.getStringValue(tempArr[7]).trim().toUpperCase());
                     dto.setVolume(Utils.roundDefault(Utils.getBigDecimal(tempArr[8])));
-
+                    dto.setCurrprice(Utils.roundDefault(Utils.getBigDecimal(tempArr[9])));
                     tradeList.add(dto);
                 }
             }
@@ -3227,6 +3223,7 @@ public class BinanceServiceImpl implements BinanceService {
             entity.setTypeDescription(trade.getType());
             entity.setProfit(trade.getProfit());
             entity.setVolume(trade.getVolume());
+            entity.setCurrprice(trade.getCurrprice());
 
             mt5OpenTradeRepository.save(entity);
         }
@@ -3731,13 +3728,12 @@ public class BinanceServiceImpl implements BinanceService {
                     if (!CollectionUtils.isEmpty(list_30)) {
                         List<BtcFutures> heken_list_30 = Utils.getHekenList(list_30);
 
-                        String switch_trend_m30 = Utils.switchTrendByMaXX(heken_list_30, 3, 5);
-                        switch_trend_m30 += Utils.switchTrendByHeken_12(heken_list_30);
+                        String switch_trend_m30 = Utils.switchTrendByHeken_12(heken_list_30);
                         if (switch_trend_m30.contains(action) && Objects.equals(action, trend_30)) {
                             allow_trade_now_m30 = true;
                         }
 
-                        if (Objects.equals(action, trend_30)) {
+                        if (Objects.equals(action, trend_30) && Objects.equals(action, trend_h2)) {
                             if (Objects.equals(action, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list_30, 50)) {
                                 allow_trade_now_m30 = true;
                             }
@@ -3820,6 +3816,9 @@ public class BinanceServiceImpl implements BinanceService {
         if (required_update_bars_csv) {
             return;
         }
+        getTradeList();
+
+        // ----------------------------------------PROFIT--------------------------------------
 
         List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAll();
         if (!CollectionUtils.isEmpty(mt5Openlist)) {
@@ -3845,11 +3844,6 @@ public class BinanceServiceImpl implements BinanceService {
         String msgStopScalping = "";
         BigDecimal total = BigDecimal.ZERO;
         List<String> scalpingList = new ArrayList<String>();
-
-        if (CollectionUtils.isEmpty(tradeList)) {
-            getTradeList();
-        }
-
         List<String> mt5_close_trade_list = new ArrayList<String>();
 
         try {

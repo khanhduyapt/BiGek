@@ -2348,7 +2348,7 @@ public class Utils {
         BigDecimal bread = ma6.subtract(low_or_heigh);
         bread = bread.abs();
 
-        BigDecimal bread_tp = (bread.multiply(BigDecimal.valueOf(3.618)));
+        BigDecimal bread_tp = (bread.multiply(BigDecimal.valueOf(3))); // 3.618
         // bread.multiply(BigDecimal.valueOf(3.618));
         // bread.multiply(BigDecimal.valueOf(4.236));
         // bread.multiply(BigDecimal.valueOf(6.854));

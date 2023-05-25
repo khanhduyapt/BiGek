@@ -174,7 +174,7 @@ public class BscScanBinanceApplication {
                             binance_service.createReport();
                         }
 
-                        if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MONITOR_PROFIT")) {
+                        if (isReloadAfter(3, "MONITOR_PROFIT")) {
                             Utils.logWritelnDraft("");
                             binance_service.monitorProfit();
                         }
