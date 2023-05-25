@@ -3860,6 +3860,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnDraft("monitorProfit Mt5OpenTradeEntity not found Ticket: " + trade.getTicket());
                 continue;
             }
+            BigDecimal stopLossM30 = mt5Entity.getStopLossM30();
             BigDecimal stopLossCalc = mt5Entity.getStopLossCalc();
 
             List<BtcFutures> list_30 = getCapitalData(EPIC, Utils.CAPITAL_TIME_30);
@@ -3880,19 +3881,20 @@ public class BinanceServiceImpl implements BinanceService {
 
                 //TP -> Trailing stops
                 {
-                    boolean isTrailingStops = false;
+                    boolean startTrailingStops = false;
                     BigDecimal close_price_30_1 = heken_list_30.get(1).getPrice_close_candle();
                     if (Objects.equals(Utils.TREND_LONG, TRADE_TREND)
                             && (curr_price.compareTo(mt5Entity.getTakeProfit()) > 0)) {
-                        isTrailingStops = true;
+                        startTrailingStops = true;
 
                     }
                     if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND)
                             && (curr_price.compareTo(mt5Entity.getTakeProfit()) < 0)) {
-                        isTrailingStops = true;
+                        startTrailingStops = true;
                     }
 
-                    if (isTrailingStops) {
+                    if (startTrailingStops) {
+                        stopLossM30 = close_price_30_1;
                         stopLossCalc = close_price_30_1;
                         mt5Entity.setStopLossCalc(close_price_30_1);
                         mt5Entity.setStopLossM30(close_price_30_1);
@@ -3903,12 +3905,12 @@ public class BinanceServiceImpl implements BinanceService {
                 //SL
                 {
                     if (Objects.equals(Utils.TREND_LONG, TRADE_TREND)
-                            && (close_price.compareTo(mt5Entity.getStopLossM30()) < 0)) {
+                            && (close_price.compareTo(stopLossM30) < 0)) {
                         result += "(StopLoss)";
                         isPriceHit_SL = true;
                     }
                     if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND)
-                            && (close_price.compareTo(mt5Entity.getStopLossM30()) > 0)) {
+                            && (close_price.compareTo(stopLossM30) > 0)) {
                         result += "(StopLoss)";
                         isPriceHit_SL = true;
                     }
@@ -3951,20 +3953,22 @@ public class BinanceServiceImpl implements BinanceService {
 
                 //TP -> Trailing stops
                 {
-                    boolean isTrailingStops = false;
+                    boolean startTrailingStops = false;
                     BigDecimal close_price_h4_1 = heken_list_h4.get(1).getPrice_close_candle();
                     if (Objects.equals(Utils.TREND_LONG, TRADE_TREND)
                             && (curr_price.compareTo(mt5Entity.getTakeProfit()) > 0)) {
-                        isTrailingStops = true;
+                        startTrailingStops = true;
 
                     }
                     if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND)
                             && (curr_price.compareTo(mt5Entity.getTakeProfit()) < 0)) {
-                        isTrailingStops = true;
+                        startTrailingStops = true;
                     }
 
-                    if (isTrailingStops) {
+                    if (startTrailingStops) {
+                        stopLossM30 = close_price_h4_1;
                         stopLossCalc = close_price_h4_1;
+
                         mt5Entity.setStopLossCalc(close_price_h4_1);
                         mt5Entity.setStopLossM30(close_price_h4_1);
                         mt5OpenTradeRepository.save(mt5Entity);
@@ -3975,13 +3979,13 @@ public class BinanceServiceImpl implements BinanceService {
                 {
                     if (Objects.equals(Utils.TREND_LONG, TRADE_TREND)
                             && (heken_list_h4.get(1).getPrice_close_candle()
-                                    .compareTo(mt5Entity.getStopLossM30()) < 0)) {
+                                    .compareTo(stopLossM30) < 0)) {
                         result += "(StopLoss)";
                         isPriceHit_SL = true;
                     }
                     if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND)
                             && (heken_list_h4.get(1).getPrice_close_candle()
-                                    .compareTo(mt5Entity.getStopLossM30()) > 0)) {
+                                    .compareTo(stopLossM30) > 0)) {
                         result += "(StopLoss)";
                         isPriceHit_SL = true;
                     }
