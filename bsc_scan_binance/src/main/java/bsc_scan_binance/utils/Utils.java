@@ -96,7 +96,7 @@ public class Utils {
 
     // public static final String TEXT_SWITCH_TREND_LONG_BELOW_Ma = "(B.H4H2)";
     // public static final String TEXT_SWITCH_TREND_SHOT_ABOVE_Ma = "(S.H4H2)";
-    public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma.1.3)";
+
     public static final String TEXT_WAIT = "Wait";
 
     public static final String TEXT_EXPERT_ADVISORING = "EA ";
@@ -105,7 +105,8 @@ public class Utils {
     public static final String TEXT_ABOVE_MA50 = "AboveMa50";
     public static final String TEXT_BELOW_MA50 = "BelowMa50";
 
-    public static final String TEXT_SWITCH_TREND_Ma_1_10 = "(Ma1_10)";
+    public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma3.5)";
+    public static final String TEXT_SWITCH_TREND_Ma_1_8 = "(Ma1.8)";
     public static final String TEXT_SWITCH_TREND_Ma_1_20 = "(Ma1_20)";
     public static final String TEXT_SWITCH_TREND_Ma_1_30 = "(Ma1_30)";
     public static final String TEXT_SWITCH_TREND_Ma_1_50 = "(Ma1_50)";
@@ -172,6 +173,9 @@ public class Utils {
 
     public static final List<String> EPICS_CASH_CFD = Arrays.asList("AUS200", "EU50", "FRA40", "GER40", "SPN35",
             "UK100", "US100", "US30", "USOIL");
+
+    public static final List<String> EPICS_M30 = Arrays.asList("XAUUSD", "GER40", "US30", "AUDUSD", "EURUSD", "GBPJPY",
+            "GBPUSD", "NZDUSD", "USDJPY");
 
     public static final List<String> EPICS_FOREXS_ALL = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
             "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD",
@@ -690,6 +694,16 @@ public class Utils {
         }
 
         return TIME;
+    }
+
+    public static String getEncryptedChartNameCapital(String TIME) {
+        if (Objects.equals(TIME, CAPITAL_TIME_30)) {
+            return "bamuoiph";
+        }
+        if (Objects.equals(TIME, CAPITAL_TIME_H2)) {
+            return "haih";
+        }
+        return "bonh";
     }
 
     public static String getChartNameCapital(String TIME) {
@@ -2330,30 +2344,24 @@ public class Utils {
         return result;
     }
 
-    public static List<BigDecimal> calcFiboTakeProfit(BigDecimal low_heigh, BigDecimal entry) {
-        BigDecimal sub1_0 = entry.subtract(low_heigh);
+    public static BigDecimal calcFiboTP_2168(String trend, BigDecimal low_or_heigh, BigDecimal ma6) {
+        BigDecimal bread = ma6.subtract(low_or_heigh);
+        bread = bread.abs();
 
-        List<BigDecimal> result = new ArrayList<BigDecimal>();
-        BigDecimal tp_3618 = low_heigh.add((sub1_0.multiply(BigDecimal.valueOf(3.618))));
-        BigDecimal tp_4236 = low_heigh.add((sub1_0.multiply(BigDecimal.valueOf(4.236))));
-        BigDecimal tp_6854 = low_heigh.add((sub1_0.multiply(BigDecimal.valueOf(6.854))));
+        BigDecimal bread_2168 = (bread.multiply(BigDecimal.valueOf(2.618)));
+        //BigDecimal tp_3168 = low_or_heigh.add((sub1_0.multiply(BigDecimal.valueOf(3.618))));
+        //BigDecimal tp_4236 = low_or_heigh.add((sub1_0.multiply(BigDecimal.valueOf(4.236))));
+        //BigDecimal tp_6854 = low_or_heigh.add((sub1_0.multiply(BigDecimal.valueOf(6.854))));
 
-        BigDecimal SL = low_heigh;
-        BigDecimal entry2 = entry;
+        BigDecimal tp_2168 = BigDecimal.ZERO;
+        if (Objects.equals(trend, TREND_LONG)) {
+            tp_2168 = ma6.add(bread_2168);
+        }
+        if (Objects.equals(trend, TREND_SHOT)) {
+            tp_2168 = ma6.subtract(bread_2168);
+        }
 
-        SL = roundDefault(SL);
-        entry2 = roundDefault(entry2);
-        tp_3618 = roundDefault(tp_3618);
-        tp_4236 = roundDefault(tp_4236);
-        tp_6854 = roundDefault(tp_6854);
-
-        result.add(SL); // 1
-        result.add(entry2); // 1
-        result.add(tp_3618); // 3.618
-        result.add(tp_4236); // 4.236
-        result.add(tp_6854); // 6.854
-
-        return result;
+        return tp_2168;
     }
 
     public static String timingTarget(String chartName, int length) {
@@ -3547,10 +3555,6 @@ public class Utils {
         MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, dto_entry.getCurrent_price(),
                 stop_loss, tp);
 
-        String comment = EPIC + getChartNameCapital_(CAPITAL_TIME_XX)
-                + Utils.getStringValue(stop_loss_m30)
-                + Utils.convertDateToString("_dd:HH:mm", Calendar.getInstance().getTime());
-
         Mt5OpenTrade dto = new Mt5OpenTrade();
         dto.setEpic(EPIC);
         dto.setOrder_type(trend.toLowerCase());
@@ -3558,7 +3562,7 @@ public class Utils {
         dto.setEntry(entry);
         dto.setStop_loss(stop_loss);
         dto.setTake_profit(tp);
-        dto.setComment(comment.toLowerCase());
+        dto.setComment(getEncryptedChartNameCapital(CAPITAL_TIME_XX));
         dto.setStop_loss_m30(stop_loss_m30);
         return dto;
     }

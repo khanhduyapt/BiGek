@@ -27,4 +27,6 @@ public class Mt5DataTrade {
     private String comment;
 
     private BigDecimal stop_loss_m30 = BigDecimal.ZERO;
+
+    private BigDecimal volume = BigDecimal.ZERO;
 }
