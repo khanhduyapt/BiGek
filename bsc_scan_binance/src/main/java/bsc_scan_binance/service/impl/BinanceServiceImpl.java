@@ -3698,7 +3698,11 @@ public class BinanceServiceImpl implements BinanceService {
                 String action = "";
                 Mt5OpenTrade dto = null;
 
-                if (Utils.isNotBlank(note_h4) && Objects.equals(trend_h8, trend_h4)) {
+                if (Utils.isNotBlank(note_h2) && Objects.equals(trend_h4, trend_h2)) {
+                    action = trend_h2;
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
+
+                } else if (Utils.isNotBlank(note_h4) && Objects.equals(trend_h8, trend_h4)) {
                     action = trend_h4;
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_30, dto_d1, Utils.CAPITAL_TIME_H4);
 
