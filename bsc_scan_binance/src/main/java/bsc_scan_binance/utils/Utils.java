@@ -3459,9 +3459,9 @@ public class Utils {
         int end = 1;
 
         String id = heken_list.get(0).getId();
-        if (id.contains("_8h_") || id.contains("_12h_") || id.contains("_1d_") || id.contains("_1w_")) {
-            str = 0;
-            end = 1;
+        if (id.contains("_1w_")) {
+            String trend = heken_list.get(0).isUptrend() ? Utils.TREND_LONG : Utils.TREND_SHOT;
+            return trend;
         }
 
         boolean isUptrend_1 = isUptrendByMa(heken_list, 1, str, end);
