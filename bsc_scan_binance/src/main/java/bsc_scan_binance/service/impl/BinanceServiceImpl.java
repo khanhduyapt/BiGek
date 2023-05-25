@@ -3644,7 +3644,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // Đánh trên 2 timeframes là CAPITAL_TIME_05 và CAPITAL_TIME_H4
                 if (Utils.isNotBlank(note_h4) && Objects.equals(trend_h12, trend_h4)) {
-                    action = trend_h4;
+                    action = trend_h12;
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4);
                 } else if (Objects.equals(trend_h12, trend_h4) || Objects.equals(trend_h4, trend_h1)) {
                     action = trend_h4;
@@ -3876,7 +3876,6 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.equals(Utils.TREND_LONG, TRADE_TREND)
                             && (curr_price.compareTo(mt5Entity.getTakeProfit()) > 0)) {
                         startTrailingStops = true;
-
                     }
                     if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND)
                             && (curr_price.compareTo(mt5Entity.getTakeProfit()) < 0)) {
