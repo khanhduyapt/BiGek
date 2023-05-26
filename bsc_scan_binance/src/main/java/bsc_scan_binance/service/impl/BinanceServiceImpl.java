@@ -3644,10 +3644,11 @@ public class BinanceServiceImpl implements BinanceService {
                 Mt5OpenTrade dto = null;
 
                 // Đánh trên 2 timeframes là CAPITAL_TIME_05 và CAPITAL_TIME_H4
-                if (Utils.isNotBlank(note_h4) && Objects.equals(trend_h12, trend_h4)) {
+                if (Utils.isNotBlank(note_h4) && Objects.equals(trend_d1, trend_h12)
+                        && Objects.equals(trend_h12, trend_h4)) {
                     action = trend_h12;
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4);
-                } else if (Objects.equals(trend_h12, trend_h4) || Objects.equals(trend_h4, trend_h1)) {
+                } else if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)) {
                     action = trend_h4;
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_05);
                 }
