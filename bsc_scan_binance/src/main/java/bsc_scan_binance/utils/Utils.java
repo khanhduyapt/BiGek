@@ -702,33 +702,33 @@ public class Utils {
         String result = "";
 
         if (Objects.equals(Utils.TREND_LONG, trend_w1)) {
-            result += "t_m ";
+            result += "1 ";
         } else {
-            result += "t_b ";
+            result += "2 ";
         }
 
         if (Objects.equals(Utils.TREND_LONG, trend_d1)) {
-            result += "n_m ";
+            result += "1 ";
         } else {
-            result += "n_b ";
+            result += "2 ";
         }
 
         if (Objects.equals(Utils.TREND_LONG, trend_h12)) {
-            result += "mhg_m ";
+            result += "1 ";
         } else {
-            result += "mhg_b ";
+            result += "2 ";
         }
 
         if (Objects.equals(Utils.TREND_LONG, trend_h4)) {
-            result += "bg_m ";
+            result += "1 ";
         } else {
-            result += "bg_b ";
+            result += "2 ";
         }
 
         if (Objects.equals(Utils.TREND_LONG, trend_h1)) {
-            result += "mg_m";
+            result += "1";
         } else {
-            result += "mg_b";
+            result += "2";
         }
 
         return result;
@@ -2547,6 +2547,22 @@ public class Utils {
     // return "";
     // }
 
+    public static String getZone(List<BtcFutures> heken_list) {
+        BigDecimal curr_price = heken_list.get(0).getCurrPrice();
+        List<BigDecimal> min_max_area = Utils.getBuySellArea(heken_list);
+
+        String zone = "Zone:";
+        if (curr_price.compareTo(min_max_area.get(0)) < 0) {
+            zone += Utils.TREND_LONG;
+        } else if (curr_price.compareTo(min_max_area.get(1)) > 0) {
+            zone += Utils.TREND_SHOT;
+        } else {
+            zone += "B+S";
+        }
+
+        return Utils.appendSpace(zone, 12);
+    }
+
     public static String textBodyArea(List<BtcFutures> heken_list) {
         List<BigDecimal> min_max_area = Utils.getBuySellArea(heken_list);
         String result = "(Body: ";
@@ -2558,16 +2574,20 @@ public class Utils {
     }
 
     public static List<BigDecimal> getBuySellArea(List<BtcFutures> heken_list) {
-        List<BigDecimal> body = Utils.getBodyCandle(heken_list);
-        BigDecimal max_bread = calcMaxBread(heken_list);
-        max_bread = max_bread.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+        List<BigDecimal> LoHi = Utils.getLowHighCandle(heken_list);
+        BigDecimal high = LoHi.get(1).subtract(LoHi.get(0));
+        BigDecimal quarter = high.divide(BigDecimal.valueOf(4), 10, RoundingMode.CEILING);
+        BigDecimal bread = Utils.calcMaxBread(heken_list);
+        if (bread.compareTo(quarter) > 0) {
+            quarter = bread;
+        }
 
-        BigDecimal str = body.get(0).add(max_bread);
-        BigDecimal end = body.get(1).subtract(max_bread);
+        BigDecimal buy_boundary = LoHi.get(0).add(quarter);
+        BigDecimal sal_boundary = LoHi.get(1).subtract(quarter);
 
         List<BigDecimal> result = new ArrayList<BigDecimal>();
-        result.add(str);
-        result.add(end);
+        result.add(buy_boundary);
+        result.add(sal_boundary);
 
         return result;
     }
