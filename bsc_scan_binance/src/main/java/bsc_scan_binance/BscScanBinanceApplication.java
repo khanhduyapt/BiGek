@@ -227,25 +227,25 @@ public class BscScanBinanceApplication {
         EPICS_OUTPUT_MSG = "";
         // --------------------------------------------------------------------------
         Utils.logWritelnDraft("");
-        binance_service.scapForex(Utils.EPICS_METALS);
+        binance_service.controlMt5(Utils.EPICS_METALS);
         Utils.logWritelnDraft("");
         // --------------------------------------------------------------------------
         Utils.logWritelnDraftFooter();
-        binance_service.scapForex(Utils.EPICS_FOREXS_JPY);
+        binance_service.controlMt5(Utils.EPICS_FOREXS_JPY);
         Utils.logWritelnDraft("...");
-        binance_service.scapForex(Utils.EPICS_FOREXS_GBP);
+        binance_service.controlMt5(Utils.EPICS_FOREXS_GBP);
         Utils.logWritelnDraft("...");
-        binance_service.scapForex(Utils.EPICS_FOREXS_NZD);
+        binance_service.controlMt5(Utils.EPICS_FOREXS_NZD);
         Utils.logWritelnDraft("...");
-        binance_service.scapForex(Utils.EPICS_FOREXS_EUR);
+        binance_service.controlMt5(Utils.EPICS_FOREXS_EUR);
         Utils.logWritelnDraft("...");
-        binance_service.scapForex(Utils.EPICS_FOREXS_AUD);
+        binance_service.controlMt5(Utils.EPICS_FOREXS_AUD);
         Utils.logWritelnDraft("...");
-        binance_service.scapForex(Utils.EPICS_FOREXS_ALL);
+        binance_service.controlMt5(Utils.EPICS_FOREXS_ALL);
         Utils.logWritelnDraft("...");
-        binance_service.scapForex(Utils.EPICS_CASH_CFD);
+        binance_service.controlMt5(Utils.EPICS_CASH_CFD);
         Utils.logWritelnDraft("...");
-        binance_service.scapForex(Utils.EPICS_CRYPTO_CFD);
+        binance_service.controlMt5(Utils.EPICS_CRYPTO_CFD);
         // --------------------------------------------------------------------------
 
         Utils.logWritelnDraftFooter();

@@ -3586,16 +3586,15 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     @Transactional
-    public String scapForex(List<String> CAPITAL_LIST) {
+    public String controlMt5(List<String> CAPITAL_LIST) {
         if (required_update_bars_csv) {
             return "";
         }
 
-        // TODO: 2. scapForex
+        // TODO: 2. controlMt5
         if (!Utils.isHuntTime()) {
-            // BscScanBinanceApplication.mt5_open_trade_List = new
-            // ArrayList<Mt5OpenTrade>();
-            // return "";
+            BscScanBinanceApplication.mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
+            return "";
         }
 
         int index = 1;
@@ -3654,6 +3653,13 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_h12, trend_h4)) {
                     action = trend_h12;
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4);
+
+                } else if (Utils.isNotBlank(note_h1) && Objects.equals(trend_d1, trend_h12)
+                        && Objects.equals(trend_h12, trend_h1)) {
+
+                    action = trend_h12;
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4);
+
                 } else if (Objects.equals(trend_d1, trend_h12)) {
                     action = trend_h12;
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_05);
