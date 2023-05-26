@@ -89,8 +89,7 @@ public class Utils {
     public static final String TEXT_START_LONG = "Start:Long";
     public static final String TEXT_STOP_LONG = "Stop:Long";
 
-    public static final String TEXT_BUY_AREA = " buy  area ";
-    public static final String TEXT_SEL_AREA = " sell area ";
+    public static final String TEXT_WAITING_ = " waiting: ";
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
 
@@ -2514,29 +2513,6 @@ public class Utils {
     // return "";
     // }
 
-    public static String getTextBuySellArea(List<BtcFutures> heken_list) {
-        String type_min_max_area = "";
-
-        BigDecimal str = BigDecimal.ZERO;
-        BigDecimal end = BigDecimal.ZERO;
-        BigDecimal price = BigDecimal.ZERO;
-        // ----------------------------------------------------------------------
-        List<BigDecimal> area = Utils.getBuySellArea(heken_list);
-        str = area.get(0);
-        end = area.get(1);
-        price = heken_list.get(0).getCurrPrice();
-
-        if ((price.compareTo(str) <= 0)) {
-            type_min_max_area = Utils.TEXT_BUY_AREA;
-        }
-
-        if ((price.compareTo(end) >= 0)) {
-            type_min_max_area = Utils.TEXT_SEL_AREA;
-        }
-
-        return appendSpace(type_min_max_area, TEXT_SEL_AREA.length());
-    }
-
     public static String textBodyArea(List<BtcFutures> heken_list) {
         List<BigDecimal> min_max_area = Utils.getBuySellArea(heken_list);
         String result = "(Body: ";
@@ -3651,7 +3627,13 @@ public class Utils {
             switch_trend += getTrendPrefix("H4", note_h4, " ").toLowerCase();
         }
 
+        if (isW1eqD1 && Objects.equals(trend_d1, trend_h1)) {
+            switch_trend += getTrendPrefix("H1", note_h1, " ");
+        } else {
+            switch_trend += getTrendPrefix("H1", note_h1, " ").toLowerCase();
+        }
         switch_trend += "}  ";
+
         String result = prefix + switch_trend;
         return result;
     }

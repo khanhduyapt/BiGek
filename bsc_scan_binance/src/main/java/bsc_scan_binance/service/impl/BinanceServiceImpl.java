@@ -2696,7 +2696,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String text_body = "";
-        String text_BuySellArea = "";
+
         List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
         if (CollectionUtils.isEmpty(list_h12)) {
             list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
@@ -2705,8 +2705,18 @@ public class BinanceServiceImpl implements BinanceService {
         if (!CollectionUtils.isEmpty(list_h12)) {
             List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
             text_body = Utils.textBodyArea(heken_list_h12);
-            text_BuySellArea = Utils.getTextBuySellArea(heken_list_h12);
         }
+
+        String text_waiting = "";
+        List<PrepareOrders> prepareOrdes = prepareOrdersRepository.findAll();
+        if (!CollectionUtils.isEmpty(prepareOrdes)) {
+            for (PrepareOrders entity : prepareOrdes) {
+                if (entity.getEpic_and_capital_timeframe().contains(EPIC)) {
+                    text_waiting = Utils.TEXT_WAITING_ + entity.getTrend().toLowerCase();
+                }
+            }
+        }
+        text_waiting = Utils.appendSpace(text_waiting, 20);
 
         String ea = Utils.TEXT_EXPERT_ADVISOR_SPACE;
         if (GLOBAL_SWITCH_TREND_H12.contains(EPIC)) {
@@ -2715,7 +2725,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 11);
-        log += Utils.appendSpace(Utils.appendSpace(append.trim(), 98) + " " + ea, 102) + text_BuySellArea;
+        log += Utils.appendSpace(Utils.appendSpace(append.trim(), 98) + " " + ea, 102) + text_waiting;
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
         log += Utils.calc_BUF_LO_HI_BUF_Forex(false, find_trend, EPIC, dto_entry, dto_sl);
         log += "   " + text_body;
@@ -3538,7 +3548,7 @@ public class BinanceServiceImpl implements BinanceService {
                     type = Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_Ma_1_50;
                 }
             }
-        } else if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1)) {
+        } else if (CAPITAL_TIME_XX.contains("HOUR")) {
             if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
                 type = Utils.switchTrendByHeken_12(heken_list);
             }
@@ -3554,17 +3564,27 @@ public class BinanceServiceImpl implements BinanceService {
             note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + type;
         }
 
+        // -----------------------------PREPARE ORDER---------------------------
         // Khi đảo chiều khung H thì lưu vào DB, rồi chờ điểm vào trên m05.
         if (CAPITAL_TIME_XX.contains("HOUR")) {
+
+            String id = EPIC + "_" + CAPITAL_TIME_XX;
+
             boolean is_same_trend_h12 = false;
             Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
             if (Objects.nonNull(dto_h12) && Objects.equals(dto_h12.getTrend(), trend)) {
                 is_same_trend_h12 = true;
             }
 
-            String id = EPIC + "_" + CAPITAL_TIME_XX;
+            boolean ma50Condition = false;
+            if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
+                ma50Condition = true;
+            }
+            if (Objects.equals(trend, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
+                ma50Condition = true;
+            }
 
-            if (Utils.isNotBlank(type) && is_same_trend_h12) {
+            if (Utils.isNotBlank(type) && is_same_trend_h12 && ma50Condition) {
                 PrepareOrders order = new PrepareOrders();
                 order.setEpic_and_capital_timeframe(id);
                 order.setTrend(trend);
@@ -3575,7 +3595,7 @@ public class BinanceServiceImpl implements BinanceService {
                 // Trường hợp: 1: không đảo chiều xu hướng; 2: đảo chiều ngược trend H12
                 PrepareOrders order = prepareOrdersRepository.findById(id).orElse(null);
                 if (Objects.nonNull(order)) {
-                    if (Utils.isBlank(type)) {
+                    if (Utils.isBlank(type) && ma50Condition) {
                         //1: không đảo chiều xu hướng -> check thời gian hết hạn chờ, nếu hết hiệu lực thì xóa.
                         int minutes = order.getWaiting_time_in_minutes();
 
@@ -3598,22 +3618,17 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
         }
-
+        // -----------------------------DATABASE---------------------------
         List<BigDecimal> lohi;
         BigDecimal bread = BigDecimal.ZERO;
 
         // Chap nhan thua rui ro, khong niu keo sai lam danh sai xu huong.
         if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_05)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1)) {
-
             lohi = Utils.getLowHighCandle(heken_list);
             bread = Utils.calcMaxBread(heken_list);
-
         } else {
-            int size = heken_list.size();
-            if ((!CAPITAL_TIME_XX.contains("MINUTE")) && (heken_list.size() > 10)) {
-                size = 5;
-            }
+            int size = heken_list.size() > 10 ? 5 : heken_list.size();
             lohi = Utils.getLowHighCandle(heken_list.subList(0, size));
             bread = Utils.calcMaxBread(heken_list.subList(0, size));
         }
@@ -3621,7 +3636,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.EPICS_STOCKS.contains(EPIC)) {
             bread = Utils.calcMaxCandleHigh(heken_list.subList(1, 5));
         }
-        // -----------------------------DATABASE---------------------------
+
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
         String date_time = LocalDateTime.now().toString();
         List<BigDecimal> body = Utils.getBodyCandle(list);
@@ -3702,8 +3717,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String action = trend_h12;
 
                 // Đánh trên timeframes là CAPITAL_TIME_H4
-                if (Objects.equals(trend_d1, trend_h12)) {
-
+                if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)) {
                     String id_h1 = EPIC + "_" + Utils.CAPITAL_TIME_H1;
                     PrepareOrders order_h1 = prepareOrdersRepository.findById(id_h1).orElse(null);
                     if (Objects.nonNull(order_h1) && Objects.equals(trend_h12, order_h1.getTrend())
@@ -3711,37 +3725,26 @@ public class BinanceServiceImpl implements BinanceService {
                         dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4);
                     }
 
-                    String id_h4 = EPIC + "_" + Utils.CAPITAL_TIME_H4;
-                    PrepareOrders order_h4 = prepareOrdersRepository.findById(id_h4).orElse(null);
-                    if (Objects.nonNull(order_h4) && Objects.equals(trend_h12, order_h4.getTrend())) {
-                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4);
-                    }
-
-                    String id_h12 = EPIC + "_" + Utils.CAPITAL_TIME_H12;
-                    PrepareOrders order_h12 = prepareOrdersRepository.findById(id_h12).orElse(null);
-                    if (Objects.nonNull(order_h12) && Objects.equals(trend_d1, trend_h12)) {
-                        // Loại trừ trường hợp mua đỉnh bán đáy.
-                        {
-                            List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
-                            if (CollectionUtils.isEmpty(list_h1)) {
-                                continue;
-                            }
-                            List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
-                            if (Objects.equals(action, Utils.TREND_LONG) && Utils.isAboveMALine(heken_list_h1, 50)) {
-                                continue;
-                            }
-                            if (Objects.equals(action, Utils.TREND_SHOT) && Utils.isBelowMALine(heken_list_h1, 50)) {
-                                continue;
-                            }
+                    if (Objects.equals(trend_h4, trend_h1)) {
+                        String id_h4 = EPIC + "_" + Utils.CAPITAL_TIME_H4;
+                        PrepareOrders order_h4 = prepareOrdersRepository.findById(id_h4).orElse(null);
+                        if (Objects.nonNull(order_h4) && Objects.equals(trend_h12, order_h4.getTrend())) {
+                            dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4);
                         }
-
-                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4);
+                    }
+                }
+                if (!Objects.equals(trend_w1, trend_d1)) {
+                    String id_h1 = EPIC + "_" + Utils.CAPITAL_TIME_H1;
+                    PrepareOrders order_h1 = prepareOrdersRepository.findById(id_h1).orElse(null);
+                    if (Objects.nonNull(order_h1) && Objects.equals(trend_h4, order_h1.getTrend())) {
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H1);
                     }
                 }
 
                 if (Objects.nonNull(dto)) {
                     // Đánh thuận trend khung lớn.
-                    if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
+                    if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
+                            && !Objects.equals(trend_h12, action)) {
                         continue;
                     }
 
@@ -3753,7 +3756,6 @@ public class BinanceServiceImpl implements BinanceService {
                             continue;
                         }
                         List<BtcFutures> heken_list_05 = Utils.getHekenList(list_05);
-
                         String switch_trend_05 = Utils.switchTrendByHeken_12(heken_list_05);
                         switch_trend_05 += Utils.switchTrendByMa5_8(heken_list_05);
 
@@ -3848,7 +3850,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // ----------------------------------------PROFIT--------------------------------------
         BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT).multiply(BigDecimal.valueOf(2.5));
-        String max_risk = "     MaxRisk:" + Utils.appendLeft(String.valueOf(risk).replace(".0000", ""), 10) + "$/Trade";
+        String max_risk = "     MaxRisk:" + Utils.appendLeft(String.valueOf(risk).replace(".0000", ""), 10) + "$1Trade";
         BigDecimal profit_1_3R = risk.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
         BigDecimal profit_2R = risk.multiply(BigDecimal.valueOf(2));
 
@@ -3934,7 +3936,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                // SL
+                // SL khi H4_1 đóng cửa ở giá LoHi+Bread của H1.
                 {
                     if (Objects.equals(Utils.TREND_LONG, TRADE_TREND)
                             && (heken_list_h4.get(1).getPrice_close_candle().compareTo(stopLossTfam) < 0)) {
@@ -3986,7 +3988,6 @@ public class BinanceServiceImpl implements BinanceService {
             result += "(Trade:" + Utils.appendSpace(TRADE_TREND, 10) + ")   ";
             result += Utils.appendSpace(EPIC, 10);
             result += multi_timeframes;
-            result += Utils.appendSpace("   " + trade.getComment(), 35);
             result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(trade.getProfit()), 10);
 
             total = total.add(trade.getProfit());
