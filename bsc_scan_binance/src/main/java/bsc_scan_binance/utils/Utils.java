@@ -688,8 +688,11 @@ public class Utils {
     }
 
     public static String getEncryptedChartNameCapital(String TIME) {
-        if (Objects.equals(TIME, CAPITAL_TIME_05)) {
-            return "lamp";
+        if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
+            return "motg";
+        }
+        if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
+            return "mhag";
         }
         return "bong";
     }
@@ -1230,10 +1233,17 @@ public class Utils {
     public static boolean isWeekday() {
         LocalDate today = LocalDate.now();
         DayOfWeek day = DayOfWeek.of(today.get(ChronoField.DAY_OF_WEEK));
-        boolean value = day == DayOfWeek.SUNDAY || day == DayOfWeek.SATURDAY;
-        value = !value;
+        boolean isWeekend = (day == DayOfWeek.SUNDAY) || (day == DayOfWeek.SATURDAY);
+        boolean isWeekday = !isWeekend;
 
-        return value;
+        if (day == DayOfWeek.SATURDAY) {
+            int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
+            if (hh < 5) {
+                isWeekday = true;
+            }
+        }
+
+        return isWeekday;
     }
 
     public static boolean isNewsTime() {
