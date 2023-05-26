@@ -3654,7 +3654,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (Objects.nonNull(dto)) {
                     // Đánh thuận trend khung lớn.
-                    if (!Objects.equals(trend_h12, action)) {
+                    if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
+                            && !Objects.equals(trend_h12, action)) {
                         continue;
                     }
 
