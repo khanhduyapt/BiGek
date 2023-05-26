@@ -2292,20 +2292,20 @@ public class Utils {
         return result;
     }
 
-    public static BigDecimal calcFiboTP_3168(String trend, BigDecimal low_or_heigh, BigDecimal ma6) {
-        BigDecimal bread = ma6.subtract(low_or_heigh);
+    public static BigDecimal calcFiboTP_3168(String trend, BigDecimal low_or_heigh, BigDecimal curr_price) {
+        BigDecimal bread = curr_price.subtract(low_or_heigh);
         bread = bread.abs();
 
-        BigDecimal bread_tp = (bread.multiply(BigDecimal.valueOf(3.168))); // 3.168
+        BigDecimal bread_tp = (bread.multiply(BigDecimal.valueOf(1.168))); // 3.168
         // bread.multiply(BigDecimal.valueOf(4.236));
         // bread.multiply(BigDecimal.valueOf(6.854));
 
         BigDecimal tp_3168 = BigDecimal.ZERO;
         if (Objects.equals(trend, TREND_LONG)) {
-            tp_3168 = ma6.add(bread_tp);
+            tp_3168 = curr_price.add(bread_tp);
         }
         if (Objects.equals(trend, TREND_SHOT)) {
-            tp_3168 = ma6.subtract(bread_tp);
+            tp_3168 = curr_price.subtract(bread_tp);
         }
 
         return tp_3168;
