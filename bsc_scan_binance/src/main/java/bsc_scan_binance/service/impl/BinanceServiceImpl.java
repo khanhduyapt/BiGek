@@ -3654,8 +3654,8 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_h12, trend_h4)) {
                     action = trend_h12;
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4);
-                } else if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)) {
-                    action = trend_h4;
+                } else if (Objects.equals(trend_d1, trend_h12)) {
+                    action = trend_h12;
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_05);
                 }
 
@@ -3685,17 +3685,16 @@ public class BinanceServiceImpl implements BinanceService {
 
                     // -------------------------------------------------------------
                     boolean allow_trade_now = false;
-                    List<BtcFutures> heken_list = Utils.getHekenList(list_05);
+                    List<BtcFutures> heken_list_05 = Utils.getHekenList(list_05);
 
-                    String switch_trend_05 = Utils.switchTrendByMa5_8(heken_list);
-                    switch_trend_05 += Utils.switchTrendByMaXX(heken_list, 1, 10);
-                    switch_trend_05 += Utils.switchTrendByMaXX(heken_list, 1, 20);
+                    String switch_trend_05 = Utils.switchTrendByHeken_12(heken_list_05);
+                    switch_trend_05 += Utils.switchTrendByMa5_8(heken_list_05);
 
                     if (switch_trend_05.contains(action) && Objects.equals(action, trend_05)) {
-                        if (Objects.equals(action, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
+                        if (Objects.equals(action, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list_05, 50)) {
                             allow_trade_now = true;
                         }
-                        if (Objects.equals(action, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50)) {
+                        if (Objects.equals(action, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list_05, 50)) {
                             allow_trade_now = true;
                         }
                     }
