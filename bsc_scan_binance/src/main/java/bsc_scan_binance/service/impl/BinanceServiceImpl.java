@@ -3718,7 +3718,7 @@ public class BinanceServiceImpl implements BinanceService {
             analysis(prefix + ea, EPIC, CAPITAL_TIME_XX);
 
             // TODO: 3. controlMt5
-            if (!Utils.isHuntTime()) {
+            if (!Utils.isHuntTime_7h_to_22h()) {
                 BscScanBinanceApplication.mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
                 return "";
             }
@@ -3938,10 +3938,15 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> mt5_close_trade_list = new ArrayList<String>();
 
         // TODO: 4. monitorProfit (Đóng lệnh dương 50$ sau 23h)
-        if (!Utils.isHuntTime()) {
+        if (!Utils.isHuntTime_7h_to_22h()) {
             for (Mt5DataTrade trade : tradeList) {
-                if (trade.getProfit().compareTo(BigDecimal.valueOf(50)) > 0) {
-                    mt5_close_trade_list.add(trade.getTicket());
+                Orders dto_05 = ordersRepository.findById(trade.getSymbol().toUpperCase() + "_" + Utils.CAPITAL_TIME_05)
+                        .orElse(null);
+
+                if (Objects.nonNull(dto_05) && !Objects.equals(trade.getType(), dto_05.getTrend())) {
+                    if (trade.getProfit().compareTo(BigDecimal.valueOf(50)) > 0) {
+                        mt5_close_trade_list.add(trade.getTicket());
+                    }
                 }
             }
         }
