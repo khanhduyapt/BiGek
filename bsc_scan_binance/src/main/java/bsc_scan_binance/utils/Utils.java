@@ -98,7 +98,7 @@ public class Utils {
     // public static final String TEXT_SWITCH_TREND_SHOT_ABOVE_Ma = "(S.H4H2)";
 
     public static final String TEXT_WAIT = "Wait";
-
+    public static final String TEXT_LIMIT = "_limit";
     public static final String TEXT_EXPERT_ADVISORING = "EA ";
     public static final String TEXT_EXPERT_ADVISOR_SPACE = "   ";
 
@@ -156,8 +156,9 @@ public class Utils {
     public static final String PREFIX_1d_ = "_1d_";
     public static final String PREFIX_1w_ = "_1w_";
 
-    public static final Integer MINUTES_OF_D = 240;// 600;
-    public static final Integer MINUTES_OF_4H = 120;
+    public static final Integer MINUTES_OF_D = 1440;
+    public static final Integer MINUTES_OF_12H = 720;
+    public static final Integer MINUTES_OF_4H = 240;
     public static final Integer MINUTES_OF_1H = 60;
     public static final Integer MINUTES_OF_15M = 15;
     public static final Integer MINUTES_OF_5M = 5;
@@ -1418,6 +1419,14 @@ public class Utils {
 
     public static String getTimeHHmm() {
         return Utils.convertDateToString("(HH:mm) ", Calendar.getInstance().getTime());
+    }
+
+    public static String getYyyyMmDd_HHmmss() {
+        return Utils.convertDateToString("yyyyMMdd_HHmmss", Calendar.getInstance().getTime());
+    }
+
+    public static Date getYyyyMmDd_HHmmss(String yyyyMMdd_HHmmss) {
+        return convertStringToDate("yyyyMMdd_HHmmss", yyyyMMdd_HHmmss);
     }
 
     public static String getToday_YyyyMMdd() {
@@ -3245,6 +3254,23 @@ public class Utils {
         EPIC = EPIC.replace("_", "");
 
         return EPIC;
+    }
+
+    public static int capitalTimeToWaitingMimutes(String CAPITAL_TIME_XX) {
+        switch (CAPITAL_TIME_XX) {
+
+        case CAPITAL_TIME_05:
+            return MINUTES_OF_1H;
+
+        case CAPITAL_TIME_H1:
+            return MINUTES_OF_4H;
+
+        case CAPITAL_TIME_H4:
+            return MINUTES_OF_12H;
+
+        default:
+            return MINUTES_OF_12H;
+        }
     }
 
     public static String createLineForex_Body(Orders dto_entry, Orders dto_sl, String find_trend, boolean onlyWait) {

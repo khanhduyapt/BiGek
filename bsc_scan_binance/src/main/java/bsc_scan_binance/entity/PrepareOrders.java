@@ -15,17 +15,28 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "prepare_orders")
 
+//DROP TABLE IF EXISTS public.prepare_orders;
+//
+//CREATE TABLE IF NOT EXISTS public.prepare_orders
+//(
+//   epic_and_capital_timeframe character varying(255) COLLATE pg_catalog."default" NOT NULL,
+//   trend character varying(225) COLLATE pg_catalog."default" NOT NULL,
+//   trend_reversal_time character varying(255) COLLATE pg_catalog."default" NOT NULL,
+//   waiting_time_in_minutes integer,
+//   CONSTRAINT prepare_orders_pkey PRIMARY KEY (epic_and_capital_timeframe)
+//)
+
 public class PrepareOrders {
     @Id
-    @Column(name = "gecko_id")
-    private String id;
+    @Column(name = "epic_and_capital_timeframe")
+    private String epic_and_capital_timeframe;
 
-    @Column(name = "symbol")
-    private String orders_id;
+    @Column(name = "trend")
+    private String trend;
 
-    @Column(name = "name")
-    private String note;
+    @Column(name = "trend_reversal_time")
+    private String trend_reversal_time;
 
-    @Column(name = "data_type")
-    private String dataType;
+    @Column(name = "waiting_time_in_minutes")
+    private int waiting_time_in_minutes;
 }
