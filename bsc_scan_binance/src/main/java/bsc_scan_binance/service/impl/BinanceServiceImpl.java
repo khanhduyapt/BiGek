@@ -3369,7 +3369,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_d1 = dto_d1.getTrend();
             String trend_h1 = dto_h1.getTrend();
 
-            String switch_trend = "." + Utils.appendSpace(trend_w1, 4) + " [M1.W1.D1.H1              ]     ";
+            String switch_trend = "." + Utils.appendSpace(trend_w1, 4) + " [M1.W1.D1.H1           ]     ";
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
             if (!Objects.equals(trend_month, trend_d1)) {
                 prefix = prefix.replace("M1", "  ");
