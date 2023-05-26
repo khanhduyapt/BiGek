@@ -984,7 +984,7 @@ public class Utils {
     // https://www.calculator.net/time-duration-calculator.html
     public static boolean isHuntTime() {
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-        if ((hh > 6) && (hh < 24)) {
+        if ((hh > 6) && (hh < 23)) {
             return true;
         }
 

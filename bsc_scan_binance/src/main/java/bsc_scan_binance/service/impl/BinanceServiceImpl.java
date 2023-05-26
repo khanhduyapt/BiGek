@@ -3937,6 +3937,15 @@ public class BinanceServiceImpl implements BinanceService {
 
         List<String> mt5_close_trade_list = new ArrayList<String>();
 
+        // TODO: 4. monitorProfit (Đóng lệnh dương sau 23h)
+        if (!Utils.isHuntTime()) {
+            for (Mt5DataTrade trade : tradeList) {
+                if (trade.getProfit().compareTo(BigDecimal.ZERO) > 0) {
+                    mt5_close_trade_list.add(trade.getTicket());
+                }
+            }
+        }
+
         // Dong lenh LIMIT dat nguoc xu huong
         for (Mt5DataTrade trade : tradeList) {
             String TRADE_EPIC = trade.getSymbol().toUpperCase();
@@ -3987,7 +3996,6 @@ public class BinanceServiceImpl implements BinanceService {
         } catch (Exception e) {
         }
 
-        // TODO: 4. monitorProfit
         for (Mt5DataTrade trade : tradeList) {
             String EPIC = trade.getSymbol();
             String TICKET = trade.getTicket();
@@ -4161,9 +4169,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        if (total.compareTo(BigDecimal.valueOf(2000)) > 0)
-
-        {
+        if (total.compareTo(BigDecimal.valueOf(2000)) > 0) {
             for (Mt5DataTrade trade : tradeList) {
                 if (!mt5_close_trade_list.contains(trade.getTicket())) {
                     mt5_close_trade_list.add(trade.getTicket());
