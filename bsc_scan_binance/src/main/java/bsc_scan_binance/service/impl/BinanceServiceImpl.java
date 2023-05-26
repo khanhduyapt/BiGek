@@ -3342,35 +3342,65 @@ public class BinanceServiceImpl implements BinanceService {
 
         index = 1;
         for (String EPIC : Utils.EPICS_STOCKS) {
+            List<BtcFutures> list_50d = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
-
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h1)) {
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h1)
+                    || CollectionUtils.isEmpty(list_50d)) {
                 Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
                 continue;
             }
+            List<BtcFutures> heken_list = Utils.getHekenList(list_50d);
+
+            String trend_month = Utils.getTrendByMaXx(heken_list, 50);
             String trend_w1 = dto_w1.getTrend();
             String trend_d1 = dto_d1.getTrend();
-            String trend_h2 = dto_h1.getTrend();
+            String trend_h1 = dto_h1.getTrend();
 
-            String switch_trend = "." + Utils.appendSpace(trend_w1, 4) + " [W1.D1.H2              ]     ";
-
+            String switch_trend = "." + Utils.appendSpace(trend_w1, 4) + " [M1.W1.D1.H1              ]     ";
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
+            if (!Objects.equals(trend_month, trend_d1)) {
+                prefix = prefix.replace("M1", "  ");
+            }
             if (!Objects.equals(trend_w1, trend_d1)) {
                 prefix = prefix.replace("W1", "  ");
             }
-            if (!Objects.equals(trend_h2, trend_d1)) {
-                prefix = prefix.replace("H2", "  ");
+            if (!Objects.equals(trend_h1, trend_d1)) {
+                prefix = prefix.replace("H1", "  ");
             }
 
             if (Objects.equals(trend_w1, trend_d1) && Utils.isNotBlank(dto_d1.getNote())) {
                 analysis(prefix, EPIC, Utils.CAPITAL_TIME_D1);
                 index += 1;
-            } else if (Objects.equals(trend_d1, trend_h2) && Utils.isNotBlank(dto_h1.getNote())) {
+            } else if (Objects.equals(trend_d1, trend_h1) && Utils.isNotBlank(dto_h1.getNote())) {
                 analysis(prefix, EPIC, Utils.CAPITAL_TIME_H1);
                 index += 1;
             }
+
+            if (Utils.isNewYorkSession() && Objects.equals(trend_month, trend_w1)
+                    && Objects.equals(trend_w1, trend_d1)) {
+
+                String switch_trend_05 = Utils.switchTrendByMa5_8(heken_list);
+                switch_trend_05 += Utils.switchTrendByMaXX(heken_list, 1, 20);
+                switch_trend_05 += Utils.switchTrendByMaXX(heken_list, 1, 50);
+
+                if (switch_trend_05.contains(trend_w1)) {
+                    if ((Objects.equals(trend_w1, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50))
+                            || (Objects.equals(trend_w1, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list, 50))) {
+
+                        String w1d1h4h1 = Utils.getTrendPrefix("m", trend_month, " ");
+                        w1d1h4h1 += Utils.getTrendPrefix("w", trend_w1, " ");
+                        w1d1h4h1 += Utils.getTrendPrefix("d", trend_d1, " ");
+                        w1d1h4h1 = w1d1h4h1.replace(" ", "");
+
+                        Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_w1, dto_d1, dto_w1,
+                                Utils.CAPITAL_TIME_H1, w1d1h4h1);
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                    }
+                }
+            }
+
         }
     }
 
@@ -3816,8 +3846,14 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         // Đang cắt ma50
-                        if (Utils.switchTrendByMaXX(heken_list_05, 1, 50).contains(action)) {
-                            allow_trade_now = true;
+                        if (!allow_trade_now) {
+                            String switch_trend_ma50 = Utils.switchTrendByMaXX(heken_list_05, 1, 50);
+                            switch_trend_ma50 += Utils.switchTrendByMaXX(heken_list_05, 3, 50);
+                            switch_trend_ma50 += Utils.switchTrendByMaXX(heken_list_05, 5, 50);
+                            switch_trend_ma50 += Utils.switchTrendByMaXX(heken_list_05, 8, 50);
+                            if (switch_trend_ma50.contains(action)) {
+                                allow_trade_now = true;
+                            }
                         }
                     }
 

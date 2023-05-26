@@ -177,9 +177,6 @@ public class Utils {
     public static final List<String> EPICS_CASH_CFD = Arrays.asList("AUS200", "EU50", "FRA40", "GER40", "SPN35",
             "UK100", "US100", "US30", "USOIL");
 
-    public static final List<String> EPICS_M30 = Arrays.asList("XAUUSD", "GER40", "US30", "AUDUSD", "EURUSD", "GBPJPY",
-            "GBPUSD", "NZDUSD", "USDJPY");
-
     public static final List<String> EPICS_FOREXS_ALL = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
             "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD",
             "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD",
@@ -1270,8 +1267,8 @@ public class Utils {
         return false;
     }
 
-    public static boolean isLondonAndNewYorkSession() {
-        List<Integer> times = Arrays.asList(14, 15, 16, 17, 18, 19, 20, 21, 22, 23);
+    public static boolean isNewYorkSession() {
+        List<Integer> times = Arrays.asList(20, 21, 22, 23);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
