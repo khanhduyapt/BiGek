@@ -18,9 +18,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -3622,29 +3620,9 @@ public class BinanceServiceImpl implements BinanceService {
                 order.setWaiting_time_in_minutes(Utils.capitalTimeToWaitingMimutes(CAPITAL_TIME_XX));
                 prepareOrdersRepository.save(order);
             } else {
-                // Trường hợp: 1: không đảo chiều xu hướng; 2: đảo chiều ngược trend H12
                 PrepareOrders order = prepareOrdersRepository.findById(id).orElse(null);
                 if (Objects.nonNull(order)) {
-                    if (Utils.isBlank(type) && h1h4_Condition && ma50_Condition) {
-                        //1: không đảo chiều xu hướng -> check thời gian hết hạn chờ, nếu hết hiệu lực thì xóa.
-                        int minutes = order.getWaiting_time_in_minutes();
-
-                        Date reversal_date_time = Utils.getYyyyMmDd_HHmmss(order.getTrend_reversal_time());
-                        Calendar previous = Calendar.getInstance();
-                        previous.setTime(reversal_date_time);
-
-                        Calendar now = Calendar.getInstance();
-                        long diff_minus = now.getTimeInMillis() - previous.getTimeInMillis();
-                        diff_minus = diff_minus / (60 * 1000);
-                        int diff_minus_int = Math.toIntExact(diff_minus);
-
-                        if (minutes < diff_minus_int) {
-                            prepareOrdersRepository.deleteById(id);
-                        }
-                    } else {
-                        // 2: đảo chiều ngược trend H12 -> bị xóa khỏi danh sách chờ entry 5m.
-                        prepareOrdersRepository.deleteById(id);
-                    }
+                    prepareOrdersRepository.deleteById(id);
                 }
             }
         }

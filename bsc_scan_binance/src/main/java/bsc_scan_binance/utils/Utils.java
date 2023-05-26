@@ -1449,6 +1449,19 @@ public class Utils {
         return convertStringToDate("yyyyMMdd_HHmmss", yyyyMMdd_HHmmss);
     }
 
+    public static int getMinutes(String yyyyMMdd_HHmmss) {
+        Date reversal_date_time = Utils.getYyyyMmDd_HHmmss(yyyyMMdd_HHmmss);
+        Calendar previous = Calendar.getInstance();
+        previous.setTime(reversal_date_time);
+
+        Calendar now = Calendar.getInstance();
+        long diff_minus = now.getTimeInMillis() - previous.getTimeInMillis();
+        diff_minus = diff_minus / (60 * 1000);
+        int diff_minus_int = Math.toIntExact(diff_minus);
+
+        return diff_minus_int;
+    }
+
     public static String getToday_YyyyMMdd() {
         return Utils.convertDateToString("yyyy.MM.dd", Calendar.getInstance().getTime());
     }
