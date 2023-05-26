@@ -3852,16 +3852,18 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 boolean isTrendRevered = false;
-                if (!Objects.equals(trend_05, TRADE_TREND)) {
-                    String switch_trend_05 = Utils.switchTrendByMa5_8(heken_list_05m);
-                    switch_trend_05 += Utils.switchTrendByMaXX(heken_list_05m, 1, 10);
-                    switch_trend_05 += Utils.switchTrendByMaXX(heken_list_05m, 1, 20);
-                    switch_trend_05 += Utils.switchTrendByMaXX(heken_list_05m, 1, 50);
-                    switch_trend_05 = switch_trend_05.toUpperCase();
+                if (trade.getProfit().compareTo(profit_1_3R) > 0) {
+                    if (!Objects.equals(trend_05, TRADE_TREND)) {
+                        String switch_trend_05 = Utils.switchTrendByMa5_8(heken_list_05m);
+                        switch_trend_05 += Utils.switchTrendByMaXX(heken_list_05m, 1, 10);
+                        switch_trend_05 += Utils.switchTrendByMaXX(heken_list_05m, 1, 20);
+                        switch_trend_05 += Utils.switchTrendByMaXX(heken_list_05m, 1, 50);
+                        switch_trend_05 = switch_trend_05.toUpperCase();
 
-                    if (Utils.isNotBlank(switch_trend_05) && !switch_trend_05.contains(TRADE_TREND)) {
-                        if (!Objects.equals(trend_h1, TRADE_TREND)) {
-                            isTrendRevered = true;
+                        if (Utils.isNotBlank(switch_trend_05) && !switch_trend_05.contains(TRADE_TREND)) {
+                            if (!Objects.equals(trend_h1, TRADE_TREND)) {
+                                isTrendRevered = true;
+                            }
                         }
                     }
                 }
