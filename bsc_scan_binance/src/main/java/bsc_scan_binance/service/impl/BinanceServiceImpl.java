@@ -3778,7 +3778,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.isNull(dto) && Objects.equals(find_trend_by_area, trend_h4)
                         && Objects.equals(trend_h4, trend_h1) && Utils.isNotBlank(note_h4)) {
                     action = trend_h4;
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h4, dto_d1, Utils.CAPITAL_TIME_H4, w1d1h4h1);
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h4, dto_d1, Utils.CAPITAL_TIME_H12, w1d1h4h1);
                 }
 
                 // Đánh trên timeframes là CAPITAL_TIME_H4
