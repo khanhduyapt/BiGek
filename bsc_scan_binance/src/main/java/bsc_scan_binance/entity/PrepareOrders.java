@@ -32,7 +32,7 @@ public class PrepareOrders {
     private String epic_and_capital_timeframe;
 
     @Column(name = "trend")
-    private String trend;
+    private String trade_type;
 
     @Column(name = "trend_reversal_time")
     private String trend_reversal_time;

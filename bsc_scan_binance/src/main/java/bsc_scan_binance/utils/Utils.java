@@ -133,8 +133,8 @@ public class Utils {
     public static String X_SECURITY_TOKEN = "";
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
     public static final String CAPITAL_TIME_05 = "MINUTE_5";
-    public static final String CAPITAL_TIME_H1 = "HOUR_1";
-    public static final String CAPITAL_TIME_H4 = "HOUR_4";
+    public static final String CAPITAL_TIME_H1 = "HOUR_01";
+    public static final String CAPITAL_TIME_H4 = "HOUR_04";
     public static final String CAPITAL_TIME_H12 = "HOUR_12";
     public static final String CAPITAL_TIME_D1 = "DAY";
     public static final String CAPITAL_TIME_W1 = "WEEK";
@@ -697,11 +697,48 @@ public class Utils {
         return "bong";
     }
 
+    public static String getEncrypted_trend_w1d1h4h1(String trend_w1, String trend_d1, String trend_h12,
+            String trend_h4, String trend_h1) {
+        String result = "";
+
+        if (Objects.equals(Utils.TREND_LONG, trend_w1)) {
+            result += "t_m ";
+        } else {
+            result += "t_b ";
+        }
+
+        if (Objects.equals(Utils.TREND_LONG, trend_d1)) {
+            result += "n_m ";
+        } else {
+            result += "n_b ";
+        }
+
+        if (Objects.equals(Utils.TREND_LONG, trend_h12)) {
+            result += "mhg_m ";
+        } else {
+            result += "mhg_b ";
+        }
+
+        if (Objects.equals(Utils.TREND_LONG, trend_h4)) {
+            result += "bg_m ";
+        } else {
+            result += "bg_b ";
+        }
+
+        if (Objects.equals(Utils.TREND_LONG, trend_h1)) {
+            result += "mg_m";
+        } else {
+            result += "mg_b";
+        }
+
+        return result;
+    }
+
     public static String getChartNameCapital(String TIME) {
         if (TIME.contains(CAPITAL_TIME_05)) {
             return "(05) ";
         }
-        if (TIME.contains(CAPITAL_TIME_H1)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
             return "(H1)  ";
         }
         if (TIME.contains(CAPITAL_TIME_H4)) {
@@ -949,24 +986,8 @@ public class Utils {
 
     // https://www.calculator.net/time-duration-calculator.html
     public static boolean isHuntTime() {
-        LocalTime time_tokyo = LocalTime.parse("07:00:00"); // to: 14:30
-        LocalTime time_london = LocalTime.parse("15:00:00"); // to: 19:30
-        LocalTime time_newyork = LocalTime.parse("20:00:00"); // to: 22:30
-
-        LocalTime cur_time = LocalTime.now();
-
-        long elapsedMinutes_tk = Duration.between(time_tokyo, cur_time).toMinutes();
-        if ((0 <= elapsedMinutes_tk) && (elapsedMinutes_tk <= 450)) {
-            return true;
-        }
-
-        long elapsedMinutes_ld = Duration.between(time_london, cur_time).toMinutes();
-        if ((0 <= elapsedMinutes_ld) && (elapsedMinutes_ld <= 270)) {
-            return true;
-        }
-
-        long elapsedMinutes_ny = Duration.between(time_newyork, cur_time).toMinutes();
-        if ((0 <= elapsedMinutes_ny) && (elapsedMinutes_ny <= 150)) {
+        int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
+        if ((hh > 6) && (hh < 24)) {
             return true;
         }
 
@@ -2176,7 +2197,7 @@ public class Utils {
             return false;
         }
 
-        BigDecimal ma = calcMA(list, length, 0);
+        BigDecimal ma = calcMA(list, length, 1);
         BigDecimal price = list.get(1).getPrice_close_candle();
 
         if ((price.compareTo(ma) > 0)) {
@@ -2197,7 +2218,7 @@ public class Utils {
             return false;
         }
 
-        BigDecimal ma = calcMA(list, length, 0);
+        BigDecimal ma = calcMA(list, length, 1);
         BigDecimal price = list.get(1).getPrice_close_candle();
 
         if ((price.compareTo(ma) < 0)) {
@@ -2300,7 +2321,7 @@ public class Utils {
         return result;
     }
 
-    public static BigDecimal calcFiboTP_3168(String trend, BigDecimal low_or_heigh, BigDecimal curr_price) {
+    public static BigDecimal calcFiboTP_1R(String trend, BigDecimal low_or_heigh, BigDecimal curr_price) {
         BigDecimal bread = curr_price.subtract(low_or_heigh);
         bread = bread.abs();
 
@@ -3464,10 +3485,10 @@ public class Utils {
 
         String sl = " (Entry:";
         if (Objects.equals(Utils.TREND_LONG, entity.getTrend())) {
-            sl += Utils.appendLeft(Utils.removeLastZero(entity.getStr_body_price()), 10);
+            sl += Utils.appendLeft(Utils.removeLastZero(entity.getBody_low()), 10);
             sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getLow_price()), 10);
         } else {
-            sl += Utils.appendLeft(Utils.removeLastZero(entity.getEnd_body_price()), 10);
+            sl += Utils.appendLeft(Utils.removeLastZero(entity.getBody_hig()), 10);
             sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getHigh_price()), 10);
         }
         sl += ")  ";
@@ -3482,21 +3503,21 @@ public class Utils {
     }
 
     public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_entry, Orders dto_sl,
-            String CAPITAL_TIME_XX) {
+            String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1) {
         BigDecimal entry, stop_loss_m30, stop_loss, tp;
         BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT);
         risk_x1 = risk_x1.multiply(BigDecimal.valueOf(5));
 
         if (Objects.equals(Utils.TREND_LONG, trend)) {
-            entry = Utils.getBigDecimal(dto_entry.getStr_body_price());
+            entry = Utils.getBigDecimal(dto_entry.getBody_low());
             stop_loss = Utils.getBigDecimal(dto_sl.getLow_price());
             stop_loss_m30 = Utils.getBigDecimal(dto_entry.getLow_price());
-            tp = Utils.getBigDecimal(dto_sl.getEnd_body_price());
+            tp = Utils.getBigDecimal(dto_sl.getBody_hig());
         } else {
-            entry = Utils.getBigDecimal(dto_entry.getEnd_body_price());
+            entry = Utils.getBigDecimal(dto_entry.getBody_hig());
             stop_loss = Utils.getBigDecimal(dto_sl.getHigh_price());
             stop_loss_m30 = Utils.getBigDecimal(dto_entry.getHigh_price());
-            tp = Utils.getBigDecimal(dto_sl.getStr_body_price());
+            tp = Utils.getBigDecimal(dto_sl.getBody_low());
         }
         MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, dto_entry.getCurrent_price(),
                 stop_loss, tp);
@@ -3508,7 +3529,7 @@ public class Utils {
         dto.setEntry(entry);
         dto.setStop_loss(stop_loss);
         dto.setTake_profit(tp);
-        dto.setComment(getEncryptedChartNameCapital(CAPITAL_TIME_XX));
+        dto.setComment(getEncryptedChartNameCapital(CAPITAL_TIME_XX) + "(" + encrypted_trend_w1d1h4h1 + ")");
         dto.setStop_loss_m30(stop_loss_m30);
         return dto;
     }
@@ -3526,11 +3547,11 @@ public class Utils {
         BigDecimal sl_long = Utils.getBigDecimal(dto_sl.getLow_price());
         BigDecimal sl_shot = Utils.getBigDecimal(dto_sl.getHigh_price());
 
-        BigDecimal en_long = Utils.getBigDecimal(dto_entry.getStr_body_price());
-        BigDecimal en_shot = Utils.getBigDecimal(dto_entry.getEnd_body_price());
+        BigDecimal en_long = Utils.getBigDecimal(dto_entry.getBody_low());
+        BigDecimal en_shot = Utils.getBigDecimal(dto_entry.getBody_hig());
 
-        BigDecimal tp_long = Utils.getBigDecimal(dto_entry.getEnd_body_price());
-        BigDecimal tp_shot = Utils.getBigDecimal(dto_entry.getStr_body_price());
+        BigDecimal tp_long = Utils.getBigDecimal(dto_entry.getBody_hig());
+        BigDecimal tp_shot = Utils.getBigDecimal(dto_entry.getBody_low());
 
         String str_long = calc_BUF_Long_Forex(onlyWait, risk, EPIC, dto_entry.getCurrent_price(), en_long, sl_long,
                 tp_long, getChartNameCapital(dto_entry.getId()).trim(), getChartNameCapital(dto_sl.getId()).trim());
