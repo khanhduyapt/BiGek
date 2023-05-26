@@ -3937,10 +3937,10 @@ public class BinanceServiceImpl implements BinanceService {
 
         List<String> mt5_close_trade_list = new ArrayList<String>();
 
-        // TODO: 4. monitorProfit (Đóng lệnh dương sau 23h)
+        // TODO: 4. monitorProfit (Đóng lệnh dương 50$ sau 23h)
         if (!Utils.isHuntTime()) {
             for (Mt5DataTrade trade : tradeList) {
-                if (trade.getProfit().compareTo(BigDecimal.ZERO) > 0) {
+                if (trade.getProfit().compareTo(BigDecimal.valueOf(50)) > 0) {
                     mt5_close_trade_list.add(trade.getTicket());
                 }
             }
