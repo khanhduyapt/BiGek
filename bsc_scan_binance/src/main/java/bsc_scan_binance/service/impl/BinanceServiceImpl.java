@@ -3807,23 +3807,26 @@ public class BinanceServiceImpl implements BinanceService {
                 // Cond1: H4 & H1 đều ở vùng quá mua quá bán.
                 // Cond2: H4, H1, H12 cùng xu hướng.
                 // Cond3: H4 hoặc H1 Đảo chiều.
-                if (Objects.isNull(dto)
+                if (Objects.isNull(dto) && Objects.equals(trend_h12, trend_h4)
 
-                        && Objects.equals(trend_h4, zone_h4)
+                        && Objects.equals(trend_h4, zone_h4) && Objects.equals(trend_h4, zone_h1)
 
-                        && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(trend_h4, trend_h1)
 
                         && Utils.isNotBlank(dto_h1.getNote() + dto_h4.getNote())) {
 
                     String id = "t12z4";
 
                     action = trend_h4;
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H1, w1d1h4h1 + id);
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H4, w1d1h4h1 + id);
                 }
 
                 // Vùng tìm kiếm trend của timeframes: CAPITAL_TIME_H1
-                if (Objects.isNull(dto) && Objects.equals(trend_h1, zone_h1) && Objects.equals(trend_h4, trend_h1)
-                        && Utils.isNotBlank(dto_h1.getNote())) {
+                if (Objects.isNull(dto)
+
+                        && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)
+
+                        && Objects.equals(trend_h1, zone_h1) && Utils.isNotBlank(dto_h1.getNote())) {
 
                     String id = "t14z1";
 
