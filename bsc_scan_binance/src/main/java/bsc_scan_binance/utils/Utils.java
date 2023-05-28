@@ -81,6 +81,7 @@ public class Utils {
 
     public static final String TREND_LONG = "BUY";
     public static final String TREND_SHOT = "SELL";
+    public static final String SIDEWAY = "Sway";
 
     public static final String TEXT_EQUAL_TO_D1 = "Ed1";
     public static final String TEXT_EQUAL_TO_H4 = "Eh4";
@@ -1238,7 +1239,7 @@ public class Utils {
 
         if (day == DayOfWeek.SATURDAY) {
             int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-            if (hh < 5) {
+            if (hh <= 3) {
                 isWeekday = true;
             }
         }
@@ -2554,22 +2555,6 @@ public class Utils {
     // return "";
     // }
 
-    public static String getZone(List<BtcFutures> heken_list) {
-        BigDecimal curr_price = heken_list.get(0).getCurrPrice();
-        List<BigDecimal> min_max_area = Utils.getBuySellArea(heken_list);
-
-        String zone = "Zone:";
-        if (curr_price.compareTo(min_max_area.get(0)) < 0) {
-            zone += Utils.TREND_LONG;
-        } else if (curr_price.compareTo(min_max_area.get(1)) > 0) {
-            zone += Utils.TREND_SHOT;
-        } else {
-            zone += "B+S";
-        }
-
-        return Utils.appendSpace(zone, 12);
-    }
-
     public static String textBodyArea(List<BtcFutures> heken_list) {
         List<BigDecimal> min_max_area = Utils.getBuySellArea(heken_list);
         String result = "(Body: ";
@@ -2578,6 +2563,28 @@ public class Utils {
         result += Utils.appendSpace(Utils.removeLastZero(formatPrice(min_max_area.get(1), 5)), 10);
         result += ")";
         return result;
+    }
+
+    public static String getZoneTrend(List<BtcFutures> heken_list) {
+        String zone = "";
+        BigDecimal curr_price = heken_list.get(0).getCurrPrice();
+        List<BigDecimal> buy_sel_area = Utils.getBuySellArea(heken_list);
+
+        // BUY area
+        if (curr_price.compareTo(buy_sel_area.get(0)) < 0) {
+            zone = Utils.TREND_LONG;
+        }
+
+        // SELL area
+        if (curr_price.compareTo(buy_sel_area.get(1)) > 0) {
+            zone = Utils.TREND_SHOT;
+        }
+
+        if (buy_sel_area.get(0).compareTo(buy_sel_area.get(1)) > 0) {
+            zone = "Sway";
+        }
+
+        return Utils.appendSpace(zone, 4);
     }
 
     public static List<BigDecimal> getBuySellArea(List<BtcFutures> heken_list) {

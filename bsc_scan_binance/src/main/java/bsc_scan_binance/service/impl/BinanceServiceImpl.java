@@ -2704,7 +2704,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (!CollectionUtils.isEmpty(list_h12)) {
             List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
             text_body = Utils.textBodyArea(heken_list_h12);
-            zone = Utils.getZone(heken_list_h12);
+            zone = "Zone: " + Utils.getZoneTrend(heken_list_h12);
         }
 
         String text_waiting = "";
@@ -3600,7 +3600,9 @@ public class BinanceServiceImpl implements BinanceService {
         // 1) đồng pha H1 & H4.
         // 2) trên Ma50 chờ Sell, dưới chờ Buy.
         // thỏa mãm điều kiện thì vào ngồi chờ 5m đảo chiều trên/dưới ma50.
-        if (CAPITAL_TIME_XX.contains("HOUR")) {
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H12)
+                || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4)) {
+
             String id = EPIC + "_" + CAPITAL_TIME_XX;
 
             // 1) đồng pha H1 & H4.
@@ -3739,23 +3741,24 @@ public class BinanceServiceImpl implements BinanceService {
                 // return "";
             }
 
-            String find_trend_by_area = "";
+            String zone_h12 = "";
+            String zone_h4 = "";
+            String zone_h1 = "";
             {
                 List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
-                if (CollectionUtils.isEmpty(list_h12)) {
+                List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
+                List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
+                if (CollectionUtils.isEmpty(list_h12) || CollectionUtils.isEmpty(list_h4)
+                        || CollectionUtils.isEmpty(list_h1)) {
                     continue;
                 }
-                BigDecimal curr_price = dto_05.getCurrent_price();
                 List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
-                List<BigDecimal> buy_sel_area = Utils.getBuySellArea(heken_list_h12);
-                // BUY area
-                if (curr_price.compareTo(buy_sel_area.get(0)) < 0) {
-                    find_trend_by_area = Utils.TREND_LONG;
-                }
-                // SELL area
-                if (curr_price.compareTo(buy_sel_area.get(1)) > 0) {
-                    find_trend_by_area = Utils.TREND_SHOT;
-                }
+                List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
+                List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
+
+                zone_h12 = Utils.getZoneTrend(heken_list_h12);
+                zone_h4 = Utils.getZoneTrend(heken_list_h4);
+                zone_h1 = Utils.getZoneTrend(heken_list_h1);
             }
 
             // Hệ thống đặt lệnh thì có xu hướng của w1d1h4h1 được thêm vào comment.
@@ -3767,103 +3770,93 @@ public class BinanceServiceImpl implements BinanceService {
                 Mt5OpenTrade dto = null;
                 String action = "";
 
-                // timeframes: CAPITAL_TIME_H12
-                if (Objects.equals(trend_d1, trend_h12) && Objects.equals(find_trend_by_area, trend_h12)
-                        && Utils.isNotBlank(note_h12)) {
-                    action = note_h12;
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h12, dto_d1, Utils.CAPITAL_TIME_H12, w1d1h4h1);
+                // timeframes: CAPITAL_TIME_H12:
+                // Cond1: H12, H4, H1 đều đi vào vùng giá quá mua quá bán.
+                // Cond2: H12, H4, H1 cùng xu hướng.
+                // Cond3: 1 trong 3 đảo chiều H12, H4, H1.
+                if (Objects.equals(trend_d1, trend_h12)
+
+                        && Objects.equals(trend_h12, zone_h12) && Objects.equals(trend_h12, zone_h4)
+                        && Objects.equals(trend_h12, zone_h1)
+
+                        && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h12, trend_h1)
+
+                        && Utils.isNotBlank(note_h12 + note_h4 + note_h1)) {
+
+                    action = trend_h12;
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h12, dto_d1, Utils.CAPITAL_TIME_H12,
+                            w1d1h4h1 + "z1241");
                 }
 
-                // Vùng tìm kiếm trend của timeframes: CAPITAL_TIME_H12 lai CAPITAL_TIME_H4
-                if (Objects.isNull(dto) && Objects.equals(find_trend_by_area, trend_h4)
-                        && Objects.equals(trend_h4, trend_h1) && Utils.isNotBlank(note_h4)) {
+                // Vùng tìm kiếm trend của timeframes: CAPITAL_TIME_H12 & CAPITAL_TIME_H4
+                // Cond1: H12 ở vùng Buy/Sell
+                // Cond2: H4 đảo chiều đồng pha H12
+                if (Objects.isNull(dto) && Objects.equals(trend_h12, trend_h4)
+
+                        && Objects.equals(trend_h12, zone_h12) && Objects.equals(trend_h12, zone_h4)
+
+                        && Objects.equals(trend_h4, trend_h1) && Utils.isNotBlank(note_h4 + note_h1)) {
+
                     action = trend_h4;
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h4, dto_d1, Utils.CAPITAL_TIME_H12, w1d1h4h1);
+                    String id = Utils.isNotBlank(note_h4) ? "z12w4" : Utils.isNotBlank(note_h1) ? "z12w1" : "z1241";
+
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h4, dto_d1, Utils.CAPITAL_TIME_H4, w1d1h4h1 + id);
                 }
 
-                // Đánh trên timeframes là CAPITAL_TIME_H4
-                if (Objects.isNull(dto) && Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
-                        && Objects.equals(trend_h12, trend_h4)) {
-
-                    action = trend_h4;
-
-                    if (Objects.isNull(dto) && Objects.equals(trend_h4, trend_h1)) {
-                        String id_h1 = EPIC + "_" + Utils.CAPITAL_TIME_H1;
-                        PrepareOrders order_h1 = prepareOrdersRepository.findById(id_h1).orElse(null);
-
-                        if (Objects.nonNull(order_h1) && order_h1.getTrade_type().contains(trend_h12)
-                                && order_h1.getTrade_type().contains(trend_h4)) {
-                            dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H4,
-                                    w1d1h4h1);
-                        }
-                    }
-
-                    if (Objects.isNull(dto) && Objects.equals(trend_h4, trend_h1)) {
-                        String id_h4 = EPIC + "_" + Utils.CAPITAL_TIME_H4;
-                        PrepareOrders order_h4 = prepareOrdersRepository.findById(id_h4).orElse(null);
-
-                        if (Objects.nonNull(order_h4) && order_h4.getTrade_type().contains(trend_h12)) {
-                            dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H4,
-                                    w1d1h4h1);
-                        }
-                    }
-                }
-
+                // Vùng tìm kiếm trend của timeframes: CAPITAL_TIME_H4 & CAPITAL_TIME_H1
+                // Cond1: H4 & H1 đều ở vùng quá mua quá bán.
+                // Cond2: H4, H1, H12 cùng xu hướng.
+                // Cond3: H4 hoặc H1 Đảo chiều.
                 if (Objects.isNull(dto)
-                        && (Objects.equals(trend_h12, trend_h4) || Objects.equals(find_trend_by_area, trend_h4))) {
+
+                        && Objects.equals(trend_h4, zone_h4)
+
+                        && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)
+
+                        && Utils.isNotBlank(dto_h1.getNote() + dto_h4.getNote())) {
+
+                    String id = "t12z4";
+
                     action = trend_h4;
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H1, w1d1h4h1 + id);
+                }
 
-                    if (Objects.isNull(dto) && Objects.equals(trend_h4, trend_h1)) {
-                        String id_h1 = EPIC + "_" + Utils.CAPITAL_TIME_H1;
-                        PrepareOrders order_h1 = prepareOrdersRepository.findById(id_h1).orElse(null);
+                // Vùng tìm kiếm trend của timeframes: CAPITAL_TIME_H1
+                if (Objects.isNull(dto) && Objects.equals(trend_h1, zone_h1) && Objects.equals(trend_h4, trend_h1)
+                        && Utils.isNotBlank(dto_h1.getNote())) {
 
-                        if (Objects.nonNull(order_h1) && order_h1.getTrade_type().contains(trend_h4)
-                                && order_h1.getTrade_type().contains(trend_h1)) {
+                    String id = "t14z1";
 
-                            dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H4,
-                                    w1d1h4h1);
-                        }
-                    }
-
-                    if (Objects.isNull(dto) && Objects.equals(trend_h4, trend_h1)) {
-                        String id_h4 = EPIC + "_" + Utils.CAPITAL_TIME_H4;
-                        PrepareOrders order_h4 = prepareOrdersRepository.findById(id_h4).orElse(null);
-
-                        if (Objects.nonNull(order_h4) && order_h4.getTrade_type().contains(trend_h12)) {
-
-                            action = trend_h4;
-                            dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H4,
-                                    w1d1h4h1);
-                        }
-                    }
-
-                    if (Objects.isNull(dto) && Objects.equals(trend_h4, trend_h1)
-                            && Utils.isNotBlank(dto_h1.getNote() + dto_h4.getNote())) {
-
-                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H1, w1d1h4h1);
-                    }
+                    action = trend_h4;
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H1, w1d1h4h1 + id);
                 }
 
                 // ---------------------------------------------------------------------------------------------
 
                 if (Objects.nonNull(dto)) {
+                    // Không đánh ngược xu hướng Khi chỉ số có trend_w1=trend_d1.
                     if (Utils.EPICS_INDEXS.contains(EPIC) && Objects.equals(trend_w1, trend_d1)
                             && !Objects.equals(trend_d1, action)) {
                         continue;
                     }
 
-                    // Không đánh khi giá di chuyển hết biên độ H12
-                    if (Utils.isNotBlank(find_trend_by_area) && !Objects.equals(find_trend_by_area, action)) {
-                        // Trend D1 # H12 = đảo chiều giả, không chơi.
-                        if (!Objects.equals(trend_d1, trend_h12)) {
-                            continue;
-                        }
-                        // Đánh thuận trend khung lớn, không cản tàu.
-                        if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
-                            continue;
-                        }
+                    // Không nhồi lệnh khi giá di chuyển hết biên độ H12
+                    if ((Objects.equals(Utils.TREND_LONG, zone_h12) || Objects.equals(Utils.TREND_SHOT, zone_h12))
+                            && !Objects.equals(zone_h12, action)) {
+                        continue;
                     }
 
+                    // Trend D1 # H12 = đảo chiều giả, đứng ngoài.
+                    if (!Objects.equals(trend_d1, trend_h12)) {
+                        continue;
+                    }
+
+                    // Đánh thuận trend khung lớn, không cản tàu.
+                    if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
+                        continue;
+                    }
+
+                    // Ngồi chờ 05m di chuyển cùng xu hướng.
                     boolean allow_trade_now = false;
                     List<BtcFutures> list_05 = getCapitalData(EPIC, Utils.CAPITAL_TIME_05);
                     if (!CollectionUtils.isEmpty(list_05)) {
@@ -3906,6 +3899,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         return msg;
+
     }
 
     // H1 & H4 nguoc huong -> thong bao cat lenh.
