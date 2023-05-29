@@ -4375,20 +4375,25 @@ public class BinanceServiceImpl implements BinanceService {
 
                 String EPIC = trade.getSymbol().toUpperCase();
                 Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-                if (Objects.nonNull(dto_h4) && !Objects.equals(dto_h4.getTrend(), TRADE_TREND)) {
-                    if (trade.getProfit().compareTo(profit_1R) > 0) {
-                        mt5_close_trade_list.add(trade.getTicket());
-                    } else {
-                        String prefix = "Must close the transaction:   ";
-                        prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
-                        prefix += Utils.appendSpace(trade.getSymbol(), 10);
-                        prefix += "(Trade):" + Utils.appendSpace(TRADE_TREND, 10);
-                        prefix += "(H4):" + Utils.appendSpace(dto_h4.getTrend(), 10);
-                        prefix += "(Profit):"
-                                + Utils.appendSpace(Utils.appendLeft(trade.getProfit().toString(), 10), 15);
-                        prefix += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
-                        Utils.logWritelnDraft(prefix);
-                    }
+                Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(null);
+
+                if (Objects.nonNull(dto_h4) && Objects.nonNull(dto_05)
+                        && !Objects.equals(dto_h4.getTrend(), TRADE_TREND)
+                        && !Objects.equals(dto_05.getTrend(), TRADE_TREND)
+                        && (trade.getProfit().compareTo(BigDecimal.ZERO) > 0)) {
+
+                    mt5_close_trade_list.add(trade.getTicket());
+
+                } else {
+                    String prefix = "Must close the transaction:   ";
+                    prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
+                    prefix += Utils.appendSpace(trade.getSymbol(), 10);
+                    prefix += "(Trade):" + Utils.appendSpace(TRADE_TREND, 10);
+                    prefix += "(H4):" + Utils.appendSpace(dto_h4.getTrend(), 10);
+                    prefix += "(Profit):"
+                            + Utils.appendSpace(Utils.appendLeft(trade.getProfit().toString(), 10), 15);
+                    prefix += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
+                    Utils.logWritelnDraft(prefix);
                 }
             }
 
