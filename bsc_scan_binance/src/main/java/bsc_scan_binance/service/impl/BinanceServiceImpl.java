@@ -3860,24 +3860,20 @@ public class BinanceServiceImpl implements BinanceService {
                 // Cond1: H12, H4, H1 đều đi vào vùng giá quá mua quá bán.
                 // Cond2: H12, H4, H1 cùng xu hướng.
                 // Cond3: 1 trong 3 đảo chiều H12, H4, H1.
-                if (Objects.equals(trend_d1, trend_h12)
-
-                        && Objects.equals(trend_h12, zone_h12)
-
-                        && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h12, trend_h1)
-
-                        && Utils.isNotBlank(note_h12)) {
+                if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
+                        && Objects.equals(trend_h12, trend_h1) && Utils.isNotBlank(note_h12)) {
 
                     action = trend_h12;
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h12, dto_d1, Utils.CAPITAL_TIME_H12,
                             w1d1h4h1 + "z1241");
+
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
 
                 // Vùng tìm kiếm trend của timeframes: CAPITAL_TIME_H12 & CAPITAL_TIME_H4
                 // Cond1: H12 ở vùng Buy/Sell
                 // Cond2: H4 đảo chiều đồng pha H12
-                if (Objects.isNull(dto)
-                        && Objects.equals(trend_h12, zone_h12) && Objects.equals(trend_h12, zone_h4)
+                if (Objects.isNull(dto) && Objects.equals(trend_h12, zone_h12) && Objects.equals(trend_h12, zone_h4)
                         && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)
                         && Utils.isNotBlank(note_h4 + note_h1)) {
 
@@ -3885,6 +3881,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String id = Utils.isNotBlank(note_h4) ? "z12w4" : Utils.isNotBlank(note_h1) ? "z12w1" : "z1241";
 
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h4, dto_d1, Utils.CAPITAL_TIME_H12, w1d1h4h1 + id);
+
                 }
 
                 // Vùng tìm kiếm trend của timeframes: CAPITAL_TIME_H4 & CAPITAL_TIME_H1
@@ -4393,8 +4390,7 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix += Utils.appendSpace(trade.getSymbol(), 10);
                     prefix += "(Trade):" + Utils.appendSpace(TRADE_TREND, 10);
                     prefix += "(H4):" + Utils.appendSpace(dto_h4.getTrend(), 10);
-                    prefix += "(Profit):"
-                            + Utils.appendSpace(Utils.appendLeft(trade.getProfit().toString(), 10), 15);
+                    prefix += "(Profit):" + Utils.appendSpace(Utils.appendLeft(trade.getProfit().toString(), 10), 15);
                     prefix += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
                     Utils.logWritelnDraft(prefix);
                 }
