@@ -3845,7 +3845,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                         && Objects.equals(trend_h12, zone_h12)
 
-                        && Objects.equals(trend_h12, trend_h4)
+                        && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h12, trend_h1)
 
                         && Utils.isNotBlank(note_h12)) {
 
@@ -3857,10 +3857,9 @@ public class BinanceServiceImpl implements BinanceService {
                 // Vùng tìm kiếm trend của timeframes: CAPITAL_TIME_H12 & CAPITAL_TIME_H4
                 // Cond1: H12 ở vùng Buy/Sell
                 // Cond2: H4 đảo chiều đồng pha H12
-                if (Objects.isNull(dto) && Objects.equals(trend_h12, trend_h4)
-
+                if (Objects.isNull(dto)
                         && Objects.equals(trend_h12, zone_h12) && Objects.equals(trend_h12, zone_h4)
-
+                        && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)
                         && Utils.isNotBlank(note_h4 + note_h1)) {
 
                     action = trend_h4;
@@ -3882,7 +3881,6 @@ public class BinanceServiceImpl implements BinanceService {
                         && Utils.isNotBlank(dto_h1.getNote() + dto_h4.getNote())) {
 
                     String id = "t12z4";
-
                     action = trend_h4;
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H4, w1d1h4h1 + id);
                 }
