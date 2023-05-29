@@ -2884,9 +2884,26 @@ public class BinanceServiceImpl implements BinanceService {
 
         String mt5_open_trade_file = Utils.getMt5DataFolder() + "OpenTrade.csv";
 
+        List<String> mt5_close_trade_list = new ArrayList<String>();
+
         try {
             FileWriter writer = new FileWriter(mt5_open_trade_file, true);
             for (Mt5OpenTrade dto : BscScanBinanceApplication.mt5_open_trade_List) {
+                String open_type = dto.getOrder_type();
+
+                if (!open_type.contains(Utils.TEXT_LIMIT)) {
+                    for (Mt5DataTrade trade : tradeList) {
+                        String trade_epic = trade.getSymbol();
+                        String trade_type = trade.getType();
+
+                        String open_epic = dto.getEpic();
+
+                        if (Objects.equals(trade_epic, trade_type) && !Objects.equals(open_epic, open_type)) {
+                            mt5_close_trade_list.add(trade.getTicket());
+                        }
+                    }
+                }
+
                 StringBuilder sb = new StringBuilder();
                 sb.append(dto.getEpic());
                 sb.append('\t');
@@ -2914,6 +2931,8 @@ public class BinanceServiceImpl implements BinanceService {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+
+        mt5CloseTrade(mt5_close_trade_list);
     }
 
     private void mt5CloseTrade(List<String> ticketList) {
@@ -3905,6 +3924,11 @@ public class BinanceServiceImpl implements BinanceService {
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H1, w1d1h4h1 + id);
                 }
 
+                if (Objects.isNull(dto) && Objects.equals(trend_h4, trend_h1) && Utils.isNotBlank(dto_h1.getNote())) {
+                    String id = "a50w1";
+                    action = trend_h4;
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H1, w1d1h4h1 + id);
+                }
                 // ---------------------------------------------------------------------------------------------
 
                 if (Objects.nonNull(dto)) {
@@ -4350,18 +4374,20 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 String EPIC = trade.getSymbol().toUpperCase();
-                Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
-                if (Objects.nonNull(dto_h1) && !Objects.equals(dto_h1.getTrend(), TRADE_TREND)) {
-                    String prefix = "Must close the transaction:   ";
-                    prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
-                    prefix += "(Trade):" + Utils.appendSpace(TRADE_TREND, 10);
-                    prefix += "(H1):" + Utils.appendSpace(dto_h1.getTrend(), 10);
-                    prefix += "(Profit):" + Utils.appendSpace(Utils.appendLeft(trade.getProfit().toString(), 10), 15);
-                    prefix += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
-                    Utils.logWritelnDraft(prefix);
-
-                    if (trade.getProfit().compareTo(BigDecimal.valueOf(50)) > 0) {
+                Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+                if (Objects.nonNull(dto_h4) && !Objects.equals(dto_h4.getTrend(), TRADE_TREND)) {
+                    if (trade.getProfit().compareTo(profit_1R) > 0) {
                         mt5_close_trade_list.add(trade.getTicket());
+                    } else {
+                        String prefix = "Must close the transaction:   ";
+                        prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
+                        prefix += Utils.appendSpace(trade.getSymbol(), 10);
+                        prefix += "(Trade):" + Utils.appendSpace(TRADE_TREND, 10);
+                        prefix += "(H4):" + Utils.appendSpace(dto_h4.getTrend(), 10);
+                        prefix += "(Profit):"
+                                + Utils.appendSpace(Utils.appendLeft(trade.getProfit().toString(), 10), 15);
+                        prefix += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
+                        Utils.logWritelnDraft(prefix);
                     }
                 }
             }
