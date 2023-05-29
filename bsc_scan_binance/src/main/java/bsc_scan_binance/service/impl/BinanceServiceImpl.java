@@ -3933,26 +3933,29 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (Objects.nonNull(dto)) {
                     boolean allowPutQueue = true;
-                    // Không đánh ngược xu hướng Khi chỉ số có trend_w1=trend_d1.
-                    if (Utils.EPICS_INDEXS.contains(EPIC) && Objects.equals(trend_w1, trend_d1)
-                            && !Objects.equals(trend_d1, action)) {
-                        allowPutQueue = false;
-                    }
 
-                    // Không nhồi lệnh khi giá di chuyển hết biên độ H12
-                    if ((Objects.equals(Utils.TREND_LONG, zone_h12) || Objects.equals(Utils.TREND_SHOT, zone_h12))
-                            && !Objects.equals(zone_h12, action)) {
-                        allowPutQueue = false;
-                    }
+                    if (!Objects.equals(zone_h12, action)) {
+                        // Không đánh ngược xu hướng Khi chỉ số có trend_w1=trend_d1.
+                        if (Utils.EPICS_INDEXS.contains(EPIC) && Objects.equals(trend_w1, trend_d1)
+                                && !Objects.equals(trend_d1, action)) {
+                            allowPutQueue = false;
+                        }
 
-                    // Trend D1 # H12 = đảo chiều giả, đứng ngoài.
-                    if (!Objects.equals(trend_d1, trend_h12) && !Objects.equals(zone_h12, action)) {
-                        allowPutQueue = false;
-                    }
+                        // Không nhồi lệnh khi giá di chuyển hết biên độ H12
+                        if ((Objects.equals(Utils.TREND_LONG, zone_h12) || Objects.equals(Utils.TREND_SHOT, zone_h12))
+                                && !Objects.equals(zone_h12, action)) {
+                            allowPutQueue = false;
+                        }
 
-                    // Đánh thuận trend khung lớn, không cản tàu.
-                    if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
-                        allowPutQueue = false;
+                        // Trend D1 # H12 = đảo chiều giả, đứng ngoài.
+                        if (!Objects.equals(trend_d1, trend_h12) && !Objects.equals(zone_h12, action)) {
+                            allowPutQueue = false;
+                        }
+
+                        // Đánh thuận trend khung lớn, không cản tàu.
+                        if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
+                            allowPutQueue = false;
+                        }
                     }
 
                     if (allowPutQueue) {
