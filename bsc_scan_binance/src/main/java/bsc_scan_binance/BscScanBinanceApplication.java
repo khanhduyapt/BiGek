@@ -254,7 +254,7 @@ public class BscScanBinanceApplication {
         binance_service.scapStocks();
         Utils.logWritelnDraftFooter();
 
-        binance_service.openTradeOrders();
+        binance_service.openTrade();
 
         // --------------------------------------------------------------------------
         String cur_epics = EPICS_OUTPUT_MSG;

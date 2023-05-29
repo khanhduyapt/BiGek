@@ -727,9 +727,9 @@ public class Utils {
         }
 
         if (Objects.equals(Utils.TREND_LONG, trend_h1)) {
-            result += "1";
+            result += "1 ";
         } else {
-            result += "2";
+            result += "2 ";
         }
 
         return result;
