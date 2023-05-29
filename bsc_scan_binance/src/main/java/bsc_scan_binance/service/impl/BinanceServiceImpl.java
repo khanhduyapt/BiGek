@@ -2705,7 +2705,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (!CollectionUtils.isEmpty(list_h12)) {
             List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
             text_body = Utils.textBodyArea(heken_list_h12);
-            zone = "Zone: " + Utils.getZoneTrend(heken_list_h12);
+            zone = "ZoneH12: " + Utils.getZoneTrend(heken_list_h12);
         }
 
         String text_waiting = "";
@@ -3965,6 +3965,11 @@ public class BinanceServiceImpl implements BinanceService {
                                 if (switch_trend_ma50.contains(action)) {
                                     allow_trade_now = true;
                                 }
+                            }
+
+                            if (dto.getComment().contains(Utils.getEncryptedChartNameCapital(Utils.CAPITAL_TIME_H12))
+                                    && Objects.equals(action, trend_05)) {
+                                allow_trade_now = true;
                             }
                         }
 
