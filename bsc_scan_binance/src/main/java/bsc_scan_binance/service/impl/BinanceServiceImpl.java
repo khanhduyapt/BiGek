@@ -23,6 +23,7 @@ import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -2720,7 +2721,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 11);
-        log += Utils.appendSpace(Utils.appendSpace(append.trim(), 98) + " " + zone, 102) + text_waiting;
+        log += append + " " + zone + text_waiting;
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
         log += Utils.calc_BUF_LO_HI_BUF_Forex(false, find_trend, EPIC, dto_entry, dto_sl);
         log += "   " + text_body;
@@ -2797,9 +2798,40 @@ public class BinanceServiceImpl implements BinanceService {
 
         String note = dto.getNote();
 
-        String log = Utils.appendSpace(prifix, 16) + Utils.appendSpace(note, 45);
+        int length = 40;
+        String ea = Utils.appendSpace(Utils.TEXT_EXPERT_ADVISOR_SPACE, length);
 
-        outputLog("Analysis_" + char_name, EPIC, dto_en, dto_sl, log, dto.getTrend());
+        String ea_waiting = "";
+        if (BscScanBinanceApplication.waitingM05list.containsKey(EPIC)) {
+            Mt5OpenTrade open = BscScanBinanceApplication.waitingM05list.get(EPIC);
+
+            ea_waiting += "Ea_Waiting:" + open.getOrder_type() + Utils.appendSpace(open.getComment(), 20);
+        }
+        ea_waiting = Utils.appendSpace(ea_waiting, 30);
+
+        List<Mt5DataTrade> filteredStream = tradeList.stream().filter(obj -> Objects.equals(EPIC, obj.getSymbol()))
+                .collect(Collectors.toList());
+
+        if (!CollectionUtils.isEmpty(filteredStream)) {
+            for (Mt5DataTrade trade : filteredStream) {
+                Mt5OpenTradeEntity entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
+
+                ea = Utils.appendSpace(trade.getType().toLowerCase(), 4);
+                if (Objects.nonNull(entity)) {
+                    ea += " SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getStopLossTimeFam()), 8) + "   ";
+                    ea += Utils.appendSpace(entity.getComment(), 20);
+                }
+                ea = Utils.appendSpace(ea, length);
+
+                String append = Utils.appendSpace(prifix + ea_waiting + ea, 115) + Utils.appendSpace(note, 45);
+
+                outputLog("Analysis_" + char_name, EPIC, dto_en, dto_sl, append, dto.getTrend());
+            }
+        } else {
+            ea = Utils.appendSpace(Utils.TEXT_EXPERT_ADVISOR_SPACE, length);
+            String append = Utils.appendSpace(prifix + ea_waiting + ea, 115) + Utils.appendSpace(note, 45);
+            outputLog("Analysis_" + char_name, EPIC, dto_en, dto_sl, append, dto.getTrend());
+        }
 
         if (!isReloadAfter(Utils.MINUTES_OF_1H, EPIC + trend)) {
             return "";
@@ -2939,24 +2971,6 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         return mt5_data_file;
-    }
-
-    private String getTradeAction(String EPIC) {
-        int length = 18;
-        for (Mt5DataTrade trade : tradeList) {
-            if (Objects.equals(trade.getSymbol(), EPIC)) {
-                Mt5OpenTradeEntity entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
-
-                String result = Utils.appendSpace(trade.getType().toLowerCase(), 4);
-                if (Objects.nonNull(entity)) {
-                    result += " SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getStopLossTimeFam()), 8);
-                }
-                result = Utils.appendSpace(result, length);
-                return result;
-            }
-        }
-
-        return Utils.appendSpace(Utils.TEXT_EXPERT_ADVISOR_SPACE, length);
     }
 
     @Override
@@ -3731,14 +3745,13 @@ public class BinanceServiceImpl implements BinanceService {
             String CAPITAL_TIME_XX = Utils.getTimeframe_SwitchTrend(note_d1, note_h12, note_h4);
 
             index += 1;
-            String ea = getTradeAction(EPIC);
-            analysis(prefix + ea, EPIC, CAPITAL_TIME_XX);
+
+            analysis(prefix, EPIC, CAPITAL_TIME_XX);
 
             // TODO: 3. controlMt5
             if (!Utils.isHuntTime_7h_to_22h()) {
-                // BscScanBinanceApplication.mt5_open_trade_List = new
-                // ArrayList<Mt5OpenTrade>();
-                // return "";
+                BscScanBinanceApplication.mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
+                return "";
             }
 
             String zone_h12 = "";
@@ -3807,11 +3820,11 @@ public class BinanceServiceImpl implements BinanceService {
                 // Cond1: H4 & H1 đều ở vùng quá mua quá bán.
                 // Cond2: H4, H1, H12 cùng xu hướng.
                 // Cond3: H4 hoặc H1 Đảo chiều.
-                if (Objects.isNull(dto) && Objects.equals(trend_h12, trend_h4)
+                if (Objects.isNull(dto)
 
                         && Objects.equals(trend_h4, zone_h4) && Objects.equals(trend_h4, zone_h1)
 
-                        && Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)
 
                         && Utils.isNotBlank(dto_h1.getNote() + dto_h4.getNote())) {
 
@@ -3850,13 +3863,17 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     // Trend D1 # H12 = đảo chiều giả, đứng ngoài.
-                    if (!Objects.equals(trend_d1, trend_h12)) {
+                    if (!Objects.equals(trend_d1, trend_h12) && !Objects.equals(zone_h12, action)) {
                         continue;
                     }
 
                     // Đánh thuận trend khung lớn, không cản tàu.
                     if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
                         continue;
+                    }
+
+                    if (!BscScanBinanceApplication.waitingM05list.containsKey(EPIC)) {
+                        BscScanBinanceApplication.waitingM05list.put(EPIC, dto);
                     }
 
                     // Ngồi chờ 05m di chuyển cùng xu hướng.
@@ -3953,7 +3970,6 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // ------------------ Đóng các trade đã close ------------------
-
         List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAll();
         if (!CollectionUtils.isEmpty(mt5Openlist)) {
             for (Mt5OpenTradeEntity entity : mt5Openlist) {
@@ -4082,6 +4098,7 @@ public class BinanceServiceImpl implements BinanceService {
             BigDecimal candle_tf1_close = heken_list_tf.get(1).getPrice_close_candle();
 
             String result = "";
+            String trend_05 = dto_05.getTrend();
             String trend_h1 = dto_h1.getTrend();
             BigDecimal curr_price = trade.getCurrprice();
 
@@ -4091,7 +4108,7 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean isPriceHit_SL = false;
 
                 // Check (5m) xem còn hy vọng giá hồi hay không, nếu không thì đóng.
-                if (!Objects.equals(dto_05.getTrend(), TRADE_TREND)) {
+                if (!Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
                     if (Objects.equals(Utils.TREND_LONG, TRADE_TREND) && (candle_tf1_close.compareTo(sl_H1) < 0)) {
                         result += "(StopLoss)";
                         isPriceHit_SL = true;
@@ -4144,7 +4161,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 boolean isPriceHit_SL = false;
                 // Check (H1) & (05) xem còn hy vọng giá hồi hay không, nếu không thì đóng.
-                if (!Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(dto_05.getTrend(), TRADE_TREND)) {
+                if (!Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
 
                     // SL khi Cancle_1 đóng cửa dưới LoHi+Bread của H1.
                     if (Objects.equals(Utils.TREND_LONG, TRADE_TREND) && (candle_tf1_close.compareTo(sl_H1) < 0)) {

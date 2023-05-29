@@ -40,6 +40,7 @@ public class BscScanBinanceApplication {
     public static String EPICS_OUTPUT_MSG = "INIT";
 
     public static List<Mt5OpenTrade> mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
+    public static Hashtable<String, Mt5OpenTrade> waitingM05list = new Hashtable<String, Mt5OpenTrade>();
 
     public static void main(String[] args) {
         try {
@@ -211,6 +212,7 @@ public class BscScanBinanceApplication {
 
     public static void monitorForex(BinanceService binance_service) {
         mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
+        waitingM05list = new Hashtable<String, Mt5OpenTrade>();
         try {
             String mt5_open_trade_file = Utils.getMt5DataFolder() + "OpenTrade.csv";
             File myScap = new File(mt5_open_trade_file);
