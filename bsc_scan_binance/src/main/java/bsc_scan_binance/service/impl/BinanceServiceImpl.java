@@ -3166,8 +3166,29 @@ public class BinanceServiceImpl implements BinanceService {
 
                 String CAPITAL_TIME_XX = Utils.getTimeframe_SwitchTrend(note_d1, note_h12, note_h4);
 
+                String zone_h12 = "";
+                String zone_h4 = "";
+                String zone_h1 = "";
+                {
+                    List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
+                    List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
+                    List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
+                    if (CollectionUtils.isEmpty(list_h12) || CollectionUtils.isEmpty(list_h4)
+                            || CollectionUtils.isEmpty(list_h1)) {
+                        continue;
+                    }
+                    List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
+                    List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
+                    List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
+
+                    zone_h12 = Utils.getZoneTrend(heken_list_h12);
+                    zone_h4 = Utils.getZoneTrend(heken_list_h4);
+                    zone_h1 = Utils.getZoneTrend(heken_list_h1);
+                }
+
                 String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h4,
-                        trend_h2, trend_30, note_w1, note_d1, note_h12, note_h4, note_h1, note_05, tracking_trend);
+                        trend_h2, trend_30, note_w1, note_d1, note_h12, note_h4, note_h1, note_05, tracking_trend,
+                        zone_h12, zone_h4, zone_h1);
 
                 Orders dto_xx = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(dto_w1);
 
@@ -3500,11 +3521,41 @@ public class BinanceServiceImpl implements BinanceService {
                 timeframe = Utils.CAPITAL_TIME_H12;
             }
 
+            String EPIC = trade.getSymbol().toUpperCase();
             // ----------------------------------------------------------------------------------
+            // upgrade timeframe H12
+            if (!Objects.equals(timeframe, Utils.CAPITAL_TIME_H12)) {
+                List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
+                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+                Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
+                Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+
+                if (Objects.isNull(dto_d1) || Objects.isNull(dto_h12) || Objects.isNull(dto_h4)
+                        || CollectionUtils.isEmpty(list_h12)) {
+                    continue;
+                }
+
+                String trend_d1 = dto_d1.getTrend();
+                String trend_h12 = dto_h12.getTrend();
+                List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
+                String zone_h12 = Utils.getZoneTrend(heken_list_h12);
+
+                // H12 đảo chiều cùng D1
+                if (Objects.equals(trend_d1, trend_h12) && dto_h12.getNote().contains(trend_h12)) {
+                    timeframe = Utils.CAPITAL_TIME_H12;
+                    comment += "->H12";
+                }
+
+                // H4 đảo chiều trong zone_h12
+                if (Objects.equals(trend_d1, trend_h12) && Objects.equals(zone_h12, dto_h4.getTrend())
+                        && dto_h4.getNote().contains(trend_h12)) {
+                    timeframe = Utils.CAPITAL_TIME_H12;
+                    comment += "->H12";
+                }
+            }
 
             Mt5OpenTradeEntity entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
             if (Objects.isNull(entity)) {
-                String EPIC = trade.getSymbol().toUpperCase();
 
                 // Dừng trade khi H1_1 đóng nến tại LoHi + Bread1-5 của H1.
                 Orders dto_TimeFam = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
@@ -3541,22 +3592,15 @@ public class BinanceServiceImpl implements BinanceService {
 
                 entity.setTicket(trade.getTicket());
                 entity.setSymbol(trade.getSymbol());
-                entity.setTimeframe(timeframe);
+
                 entity.setPriceOpen(trade.getPriceOpen());
                 entity.setStopLossTimeFam(sl_TimeFam);
                 entity.setStopLossCalcVol(sl_CalcVol);
                 entity.setTakeProfit(TP);
-                entity.setComment(comment);
-            } else {
-                if (Utils.isBlank(entity.getComment())) {
-                    // tự mua tự bán thì không có xu hướng của w1d1h4h1 được thêm vào comment.
-                    entity.setComment(comment);
-                }
-                if (Utils.isBlank(entity.getTimeframe())) {
-                    entity.setTimeframe(timeframe);
-                }
             }
 
+            entity.setComment(comment);
+            entity.setTimeframe(timeframe);
             entity.setTypeDescription(trade.getType());
             entity.setProfit(trade.getProfit());
             entity.setVolume(trade.getVolume());
@@ -3628,6 +3672,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean h1h4_Condition = false;
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+
             if (Objects.nonNull(dto_h1) && Objects.nonNull(dto_h4)
                     && Objects.equals(dto_h1.getTrend(), dto_h4.getTrend())) {
                 h1h4_Condition = true;
@@ -3745,16 +3790,11 @@ public class BinanceServiceImpl implements BinanceService {
             String note_h1 = dto_h1.getNote();
             String note_05 = dto_05.getNote();
 
-            index += 1;
-            String tracking_trend = trend_w1;
-            String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h4,
-                    trend_h1, "", note_w1, note_d1, note_h12, note_h4, note_h1, note_05, tracking_trend);
-            String CAPITAL_TIME_XX = Utils.getTimeframe_SwitchTrend(note_d1, note_h12, note_h4);
-
             // TODO: 3. controlMt5
             String zone_h12 = "";
             String zone_h4 = "";
             String zone_h1 = "";
+            boolean isSameSideH4H1 = false;
             {
                 List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
                 List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
@@ -3770,7 +3810,23 @@ public class BinanceServiceImpl implements BinanceService {
                 zone_h12 = Utils.getZoneTrend(heken_list_h12);
                 zone_h4 = Utils.getZoneTrend(heken_list_h4);
                 zone_h1 = Utils.getZoneTrend(heken_list_h1);
+
+                if (Objects.equals(Utils.TREND_LONG, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                        && Utils.isBelowMALine(heken_list_h4, 50) && Utils.isBelowMALine(heken_list_h1, 50)) {
+                    isSameSideH4H1 = true;
+                }
+                if (Objects.equals(Utils.TREND_SHOT, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                        && Utils.isAboveMALine(heken_list_h4, 50) && Utils.isAboveMALine(heken_list_h1, 50)) {
+                    isSameSideH4H1 = true;
+                }
             }
+
+            index += 1;
+            String tracking_trend = trend_w1;
+            String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h4,
+                    trend_h1, "", note_w1, note_d1, note_h12, note_h4, note_h1, note_05, tracking_trend, zone_h12,
+                    zone_h4, zone_h1);
+            String CAPITAL_TIME_XX = Utils.getTimeframe_SwitchTrend(note_d1, note_h12, note_h4);
 
             // Hệ thống đặt lệnh thì có xu hướng của w1d1h4h1 được thêm vào comment.
             String w1d1h4h1 = Utils.getEncrypted_trend_w1d1h4h1(trend_w1, trend_d1, trend_h12, trend_h4, trend_h1);
@@ -3787,12 +3843,11 @@ public class BinanceServiceImpl implements BinanceService {
                 // Cond3: 1 trong 3 đảo chiều H12, H4, H1.
                 if (Objects.equals(trend_d1, trend_h12)
 
-                        && Objects.equals(trend_h12, zone_h12) && Objects.equals(trend_h12, zone_h4)
-                        && Objects.equals(trend_h12, zone_h1)
+                        && Objects.equals(trend_h12, zone_h12)
 
-                        && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h12, trend_h1)
+                        && Objects.equals(trend_h12, trend_h4)
 
-                        && Utils.isNotBlank(note_h12 + note_h4 + note_h1)) {
+                        && Utils.isNotBlank(note_h12)) {
 
                     action = trend_h12;
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h12, dto_d1, Utils.CAPITAL_TIME_H12,
@@ -3806,12 +3861,12 @@ public class BinanceServiceImpl implements BinanceService {
 
                         && Objects.equals(trend_h12, zone_h12) && Objects.equals(trend_h12, zone_h4)
 
-                        && Objects.equals(trend_h4, trend_h1) && Utils.isNotBlank(note_h4 + note_h1)) {
+                        && Utils.isNotBlank(note_h4 + note_h1)) {
 
                     action = trend_h4;
                     String id = Utils.isNotBlank(note_h4) ? "z12w4" : Utils.isNotBlank(note_h1) ? "z12w1" : "z1241";
 
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h4, dto_d1, Utils.CAPITAL_TIME_H4, w1d1h4h1 + id);
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h4, dto_d1, Utils.CAPITAL_TIME_H12, w1d1h4h1 + id);
                 }
 
                 // Vùng tìm kiếm trend của timeframes: CAPITAL_TIME_H4 & CAPITAL_TIME_H1
@@ -3835,11 +3890,18 @@ public class BinanceServiceImpl implements BinanceService {
                 // Vùng tìm kiếm trend của timeframes: CAPITAL_TIME_H1
                 if (Objects.isNull(dto)
 
-                        && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(trend_h4, trend_h1)
 
                         && Objects.equals(trend_h1, zone_h1) && Utils.isNotBlank(dto_h1.getNote())) {
 
                     String id = "t14z1";
+
+                    action = trend_h4;
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H1, w1d1h4h1 + id);
+                }
+
+                if (Objects.isNull(dto) && isSameSideH4H1) {
+                    String id = "a5041";
 
                     action = trend_h4;
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H1, w1d1h4h1 + id);

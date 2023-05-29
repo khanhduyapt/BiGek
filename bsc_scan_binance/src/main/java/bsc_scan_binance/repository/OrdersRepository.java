@@ -169,11 +169,6 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
             + " order by det.gecko_id ", nativeQuery = true)
     public List<Orders> getTrend_Reversal_Today();
 
-    @Query(value = " SELECT * FROM orders det where 1=1 "
-            + " and det.gecko_id in (SELECT symbol FROM prepare_orders where (gecko_id like concat(TO_CHAR(NOW(), 'yyyyMMdd'), '%CRYPTO_%'))) "
-            + " order by det.gecko_id ", nativeQuery = true)
-    public List<Orders> getCrypto_Reversal_Today();
-
     // --------------------------------------------------------
 
 }

@@ -3652,10 +3652,12 @@ public class Utils {
             String trend_h4, String trend_h1, String trend_05,
 
             String note_w1, String note_d1, String note_h12, String note_h4, String note_h1, String note_05,
-            String tracking_trend) {
+            String tracking_trend,
+
+            String zone_h12, String zone_h4, String zone_h1) {
 
         String prefix = Utils.appendLeft(String.valueOf(index), 2) + "." + appendSpace(tracking_trend, 4);
-        prefix += " [1W=1D=12H  8H=4H=1H=05]";
+        prefix += " [1W=1D=12H  4H=1H=05]";
 
         if (!Objects.equals(trend_w1, tracking_trend)) {
             prefix = prefix.replace("1W=", "   ");
@@ -3683,22 +3685,22 @@ public class Utils {
         switch_trend += getTrendPrefix("W", note_w1, " ");
         switch_trend += getTrendPrefix("D", note_d1, " ");
 
-        if (isW1eqD1 && Objects.equals(trend_d1, trend_h12)) {
+        if (isW1eqD1 && Objects.equals(trend_d1, trend_h12) && Objects.equals(zone_h12, trend_h12)) {
             switch_trend += getTrendPrefix("H12", note_h12, " ");
         } else {
-            switch_trend += getTrendPrefix("H12", note_h12, " ").toLowerCase();
+            switch_trend += getTrendPrefix("H12", "", " ");
         }
 
-        if (isW1eqD1 && Objects.equals(trend_d1, trend_h4)) {
+        if (isW1eqD1 && Objects.equals(zone_h4, trend_h4)) {
             switch_trend += getTrendPrefix("H4", note_h4, " ");
         } else {
-            switch_trend += getTrendPrefix("H4", note_h4, " ").toLowerCase();
+            switch_trend += getTrendPrefix("H4", "", " ");
         }
 
-        if (isW1eqD1 && Objects.equals(trend_d1, trend_h1)) {
+        if (isW1eqD1 && Objects.equals(zone_h1, trend_h1) && Objects.equals(trend_h4, trend_h1)) {
             switch_trend += getTrendPrefix("H1", note_h1, " ");
         } else {
-            switch_trend += getTrendPrefix("H1", note_h1, " ").toLowerCase();
+            switch_trend += getTrendPrefix("H1", "", " ");
         }
         switch_trend += "}  ";
 
