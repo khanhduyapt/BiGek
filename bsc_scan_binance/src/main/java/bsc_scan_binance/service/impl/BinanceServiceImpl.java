@@ -3649,7 +3649,8 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO: 1. initForexTrend
 
         if ((heken_list.size() > 50) && CAPITAL_TIME_XX.contains("MINUTE")) {
-            String switch_trend_05 = Utils.switchTrendByMa5_8(heken_list);
+            String switch_trend_05 = Utils.switchTrendByHeken_12(heken_list);
+            switch_trend_05 += Utils.switchTrendByMa5_8(heken_list);
             switch_trend_05 += Utils.switchTrendByMaXX(heken_list, 1, 20);
             switch_trend_05 += Utils.switchTrendByMaXX(heken_list, 1, 50);
 
@@ -3745,6 +3746,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h12 = dto_h12.getTrend();
             String trend_h4 = dto_h4.getTrend();
             String trend_h1 = dto_h1.getTrend();
+            String trend_05 = dto_05.getTrend();
 
             String note_w1 = dto_w1.getNote();
             String note_d1 = dto_d1.getNote();
@@ -3856,6 +3858,18 @@ public class BinanceServiceImpl implements BinanceService {
                         BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                     }
                 }
+
+                // timeframes: CAPITAL_TIME_05
+                if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
+                        && Objects.equals(trend_h4, trend_h1)) {
+                    if (Objects.equals(trend_h12, trend_05) && Utils.isNotBlank(note_05)) {
+
+                        String append = w1d1h4h1 + "a5005";
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h12, dto_h1, dto_d1, Utils.CAPITAL_TIME_05, append);
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                    }
+                }
+
             }
 
             // ---------------------------------------------------------------------------------------------
@@ -4067,8 +4081,9 @@ public class BinanceServiceImpl implements BinanceService {
                         par_timeframe = Utils.CAPITAL_TIME_D1;
                     }
                     Orders dto_par_tf = ordersRepository.findById(EPIC + "_" + par_timeframe).orElse(null);
-                    if (Objects.nonNull(dto_par_tf) && !Objects.equals(trend_tf, TRADE_TREND)
+                    if (Objects.nonNull(dto_par_tf)
                             && !Objects.equals(dto_par_tf.getTrend(), TRADE_TREND)
+                            && !Objects.equals(trend_tf, TRADE_TREND)
                             && !Objects.equals(trend_05, TRADE_TREND)) {
 
                         result += "(StopLoss)";
