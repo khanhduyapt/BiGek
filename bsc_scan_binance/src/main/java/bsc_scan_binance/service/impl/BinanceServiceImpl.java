@@ -4067,13 +4067,12 @@ public class BinanceServiceImpl implements BinanceService {
                         par_timeframe = Utils.CAPITAL_TIME_D1;
                     }
                     Orders dto_par_tf = ordersRepository.findById(EPIC + "_" + par_timeframe).orElse(null);
-                    if (Objects.nonNull(dto_par_tf)) {
-                        if (!Objects.equals(trend_tf, TRADE_TREND)
-                                && !Objects.equals(dto_par_tf.getTrend(), TRADE_TREND)
-                                && !Objects.equals(trend_05, TRADE_TREND)) {
-                            result += "(StopLoss)";
-                            isPriceHit_SL = true;
-                        }
+                    if (Objects.nonNull(dto_par_tf) && !Objects.equals(trend_tf, TRADE_TREND)
+                            && !Objects.equals(dto_par_tf.getTrend(), TRADE_TREND)
+                            && !Objects.equals(trend_05, TRADE_TREND)) {
+
+                        result += "(StopLoss)";
+                        isPriceHit_SL = true;
                     }
                 }
 
