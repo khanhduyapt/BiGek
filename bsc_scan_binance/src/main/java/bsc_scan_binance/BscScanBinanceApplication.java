@@ -194,7 +194,9 @@ public class BscScanBinanceApplication {
                         round_crypto += 1;
                         index_crypto = 0;
 
-                        System.out.println(msg);
+                        if (round_crypto % 10 == 0) {
+                            System.out.println(msg);
+                        }
                     } else {
                         index_crypto += 1;
                     }
