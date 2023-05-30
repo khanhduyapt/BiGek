@@ -3798,94 +3798,55 @@ public class BinanceServiceImpl implements BinanceService {
 
                 Mt5OpenTrade dto = null;
 
-                // timeframes: CAPITAL_TIME_H12:
-                // Cond1: H12, H4, H1 đều đi vào vùng giá quá mua quá bán.
-                // Cond2: H12, H4, H1 cùng xu hướng.
-                // Cond3: 1 trong 3 đảo chiều H12, H4, H1.
-                if (Objects.equals(trend_d1, trend_h12) && Utils.isNotBlank(note_h12)) {
-                    boolean isAddH12 = false;
-                    String append = "";
-
-                    if (Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h12, trend_h1)) {
-                        isAddH12 = true;
-                        append = w1d1h4h1 + "z1241";
-                    } else if (Objects.equals(trend_h12, trend_h4) && !Objects.equals(trend_h12, trend_h1)) {
-                        List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
-                        if (!CollectionUtils.isEmpty(list_h1)) {
-                            List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
-                            if (Utils.switchTrendByHeken_12(heken_list_h1).contains(trend_h12)) {
-                                isAddH12 = true;
-                                append = w1d1h4h1 + "z12w1";
-                            }
-                        }
-                    } else {
-                        List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
-                        if (!CollectionUtils.isEmpty(list_h4)) {
-                            List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
-                            if (Utils.switchTrendByHeken_12(heken_list_h4).contains(trend_h12)) {
-                                isAddH12 = true;
-                                append = w1d1h4h1 + "z12w4";
-                            }
-                        }
-                    }
-
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h12, dto_h12, dto_d1, Utils.CAPITAL_TIME_H12, append);
-
-                    if (Objects.isNull(dto) && !BscScanBinanceApplication.waitingM05list.containsKey(EPIC)) {
-                        BscScanBinanceApplication.waitingM05list.put(EPIC, dto);
-                    }
-
-                    if (isAddH12) {
-                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-
-                        System.out.println(
-                                "Found:" + Utils.appendSpace(dto_h12.getNote(), 20) + Utils.appendSpace(EPIC, 10)
-                                        + " CAPITAL_TIME_H12 " + append);
-                    }
-                }
-
-                // timeframes: CAPITAL_TIME_H1, CAPITAL_TIME_H4
-                if (Objects.equals(trend_d1, trend_h12)) {
-                    if (Objects.isNull(dto)
-                            && Utils.isNotBlank(dto_h1.getNote()) && Objects.equals(trend_h12, trend_h1)) {
-
-                        String append = w1d1h4h1 + "a50w1";
-                        dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h12, dto_h1, dto_d1, Utils.CAPITAL_TIME_H1, append);
-                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-
-                        System.out.println(
-                                "Found:" + Utils.appendSpace(dto_h1.getNote(), 20) + Utils.appendSpace(EPIC, 10)
-                                        + " CAPITAL_TIME_H1 " + append);
-                    }
-
-                    if (Objects.isNull(dto) && Utils.isNotBlank(dto_h4.getNote())
-                            && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
-
-                        String append = w1d1h4h1 + "a50w4";
-                        dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h12, dto_h4, dto_d1, Utils.CAPITAL_TIME_H4, append);
-                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-
-                        System.out.println(
-                                "Found:" + Utils.appendSpace(dto_h4.getNote(), 20) + Utils.appendSpace(EPIC, 10)
-                                        + " CAPITAL_TIME_H4 " + append);
-                    }
-                }
-
                 // timeframes: CAPITAL_TIME_05
-                if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
-                        && Objects.equals(trend_h4, trend_h1)) {
-                    if (Objects.equals(trend_h12, trend_05) && Utils.isNotBlank(note_05)) {
+                if (zone_h12.contains(trend_h12)) {
+                    List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_05);
+                    if (!CollectionUtils.isEmpty(list)) {
 
-                        String append = w1d1h4h1 + "a5005";
-                        dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h12, dto_h1, dto_d1, Utils.CAPITAL_TIME_05, append);
-                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                        List<BtcFutures> heken_list = Utils.getHekenList(list);
+                        String trend_05_1 = Utils.getTrendByMaXx(heken_list, 5);
 
-                        System.out.println(
-                                "Found:" + Utils.appendSpace(dto_05.getNote(), 20) + Utils.appendSpace(EPIC, 10)
-                                        + " CAPITAL_TIME_05 " + append);
+                        if (Objects.equals(trend_h12, trend_05_1)) {
+                            String switch_trend_05 = Utils.switchTrendByMaXX(heken_list, 1, 50);
+                            switch_trend_05 += Utils.switchTrendByMaXX(heken_list, 3, 50);
+                            switch_trend_05 += Utils.switchTrendByMaXX(heken_list, 5, 50);
+
+                            if (Utils.isNotBlank(switch_trend_05) && switch_trend_05.contains(trend_05_1)) {
+
+                                String append = w1d1h4h1 + "w0550";
+                                dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h12, dto_05, dto_d1, Utils.CAPITAL_TIME_H12,
+                                        append);
+                                BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+
+                                System.out.println(
+                                        "Found:" + Utils.appendSpace(dto_05.getNote(), 20) + Utils.appendSpace(EPIC, 10)
+                                                + " CAPITAL_TIME_H12 " + append);
+                            }
+                        }
                     }
                 }
 
+                if (Objects.isNull(dto) && zone_h12.contains(trend_h1) && Utils.isNotBlank(dto_h1.getNote())) {
+                    String append = w1d1h4h1 + "a50w1";
+
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1, dto_h1, dto_d1, Utils.CAPITAL_TIME_H1, append);
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+
+                    System.out.println(
+                            "Found:" + Utils.appendSpace(dto_h4.getNote(), 20) + Utils.appendSpace(EPIC, 10)
+                                    + " CAPITAL_TIME_H4 " + append);
+                }
+
+                if (Objects.isNull(dto) && zone_h12.contains(trend_h4) && Utils.isNotBlank(dto_h4.getNote())) {
+                    String append = w1d1h4h1 + "a50w4";
+
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_h4, dto_d1, Utils.CAPITAL_TIME_H4, append);
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+
+                    System.out.println(
+                            "Found:" + Utils.appendSpace(dto_h4.getNote(), 20) + Utils.appendSpace(EPIC, 10)
+                                    + " CAPITAL_TIME_H4 " + append);
+                }
             }
 
             // ---------------------------------------------------------------------------------------------
@@ -4056,7 +4017,22 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1 = dto_h1.getTrend();
             String trend_05 = dto_05.getTrend();
             // ---------------------------------------------------------------------------------
-            {
+            if (Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_05)) {
+                List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_05);
+                if (!CollectionUtils.isEmpty(list)) {
+                    List<BtcFutures> heken_list = Utils.getHekenList(list);
+
+                    String trend_05_1 = Utils.getTrendByMaXx(heken_list, 5);
+
+                    String switch_trend_05 = Utils.switchTrendByHeken_12(heken_list);
+                    switch_trend_05 += Utils.switchTrendByMa5_8(heken_list);
+                    switch_trend_05 += Utils.switchTrendByMaXX(heken_list, 1, 20);
+
+                    if (Utils.isNotBlank(switch_trend_05) && Objects.equals(trend_05_1, TRADE_TREND)) {
+                        mt5_close_trade_list.add(TICKET);
+                    }
+                }
+            } else {
                 // Trailing stops khi profit > 1R
                 if (trade.getProfit().compareTo(profit_1R) > 0) {
                     SL_of_Timeframe = candle_tf_close;

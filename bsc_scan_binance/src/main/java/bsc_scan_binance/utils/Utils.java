@@ -2581,10 +2581,10 @@ public class Utils {
         }
 
         if (buy_sel_area.get(0).compareTo(buy_sel_area.get(1)) > 0) {
-            zone = "Sway";
+            zone = Utils.TREND_LONG + "_" + Utils.TREND_SHOT;
         }
 
-        return Utils.appendSpace(zone, 4);
+        return Utils.appendSpace(zone, 10);
     }
 
     public static List<BigDecimal> getBuySellArea(List<BtcFutures> heken_list) {
@@ -3685,23 +3685,24 @@ public class Utils {
         switch_trend += getTrendPrefix("W", note_w1, " ");
         switch_trend += getTrendPrefix("D", note_d1, " ");
 
-        if (isW1eqD1 && Objects.equals(trend_d1, trend_h12) && Objects.equals(zone_h12, trend_h12)) {
+        if (isW1eqD1 && Objects.equals(trend_d1, trend_h12) && zone_h12.contains(trend_h12)) {
             switch_trend += getTrendPrefix("H12", note_h12, " ");
         } else {
             switch_trend += getTrendPrefix("H12", "", " ");
         }
 
-        if (isW1eqD1 && Objects.equals(zone_h4, trend_h4)) {
+        if (isW1eqD1 && zone_h4.contains(trend_h4)) {
             switch_trend += getTrendPrefix("H4", note_h4, " ");
         } else {
             switch_trend += getTrendPrefix("H4", "", " ");
         }
 
-        if (isW1eqD1 && Objects.equals(zone_h1, trend_h1) && Objects.equals(trend_h4, trend_h1)) {
+        if (isW1eqD1 && zone_h1.contains(trend_h1) && Objects.equals(trend_h4, trend_h1)) {
             switch_trend += getTrendPrefix("H1", note_h1, " ");
         } else {
             switch_trend += getTrendPrefix("H1", "", " ");
         }
+
         switch_trend += "}  ";
 
         String result = prefix + switch_trend;
