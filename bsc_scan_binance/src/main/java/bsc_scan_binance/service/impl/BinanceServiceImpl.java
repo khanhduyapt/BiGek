@@ -3541,6 +3541,9 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String EPIC = trade.getSymbol().toUpperCase();
+            if (Utils.EPICS_STOCKS.contains(EPIC)) {
+                timeframe = Utils.CAPITAL_TIME_D1;
+            }
             // ----------------------------------------------------------------------------------
             // upgrade timeframe H12
             if (!Objects.equals(timeframe, Utils.CAPITAL_TIME_H12)) {
@@ -4026,15 +4029,13 @@ public class BinanceServiceImpl implements BinanceService {
                     && !Objects.equals(trend_05, TRADE_TREND)) {
 
                 // SL khi Cancle_1 đóng cửa dưới LoHi+Bread của H1.
-                if (Objects.equals(Utils.TREND_LONG, TRADE_TREND)
-                        && (candle_tf_close.compareTo(SL_of_Timeframe) < 0)) {
+                if (Objects.equals(Utils.TREND_LONG, TRADE_TREND) && (candle_tf_close.compareTo(SL_of_Timeframe) < 0)) {
                     result += "(StopLoss)";
                     isPriceHit_SL = true;
                 }
 
                 // SL khi Cancle_1 đóng cửa trên LoHi+Bread của H1.
-                if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND)
-                        && (candle_tf_close.compareTo(SL_of_Timeframe) > 0)) {
+                if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND) && (candle_tf_close.compareTo(SL_of_Timeframe) > 0)) {
                     result += "(StopLoss)";
                     isPriceHit_SL = true;
                 }
@@ -4054,10 +4055,8 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 Orders dto_par_tf = ordersRepository.findById(EPIC + "_" + par_timeframe).orElse(null);
-                if (Objects.nonNull(dto_par_tf)
-                        && !Objects.equals(dto_par_tf.getTrend(), TRADE_TREND)
-                        && !Objects.equals(trend_tf, TRADE_TREND)
-                        && !Objects.equals(trend_05, TRADE_TREND)) {
+                if (Objects.nonNull(dto_par_tf) && !Objects.equals(dto_par_tf.getTrend(), TRADE_TREND)
+                        && !Objects.equals(trend_tf, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
 
                     result += "(StopLoss)";
                     isPriceHit_SL = true;
