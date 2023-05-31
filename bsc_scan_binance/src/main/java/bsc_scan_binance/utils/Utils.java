@@ -3550,7 +3550,7 @@ public class Utils {
     }
 
     public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_entry, Orders dto_sl,
-            String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1) {
+            String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1, boolean isBuyNow) {
         BigDecimal entry, stop_loss_m30, stop_loss, tp;
         BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT);
         risk_x1 = risk_x1.multiply(BigDecimal.valueOf(5));
@@ -3571,13 +3571,14 @@ public class Utils {
 
         Mt5OpenTrade dto = new Mt5OpenTrade();
         dto.setEpic(EPIC);
-        dto.setOrder_type(trend.toLowerCase());
+        dto.setOrder_type(trend.toLowerCase() + (isBuyNow ? "" : TEXT_LIMIT));
         dto.setLots(money_x1_now.calcLot());
         dto.setEntry(entry);
         dto.setStop_loss(stop_loss);
         dto.setTake_profit(tp);
         dto.setComment(getEncryptedChartNameCapital(CAPITAL_TIME_XX) + "(" + encrypted_trend_w1d1h4h1 + ")");
         dto.setStop_loss_m30(stop_loss_m30);
+
         return dto;
     }
 
