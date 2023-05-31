@@ -3655,7 +3655,6 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_trend_05 = Utils.switchTrendByHeken_12(heken_list);
             switch_trend_05 += Utils.switchTrendByMa5_8(heken_list);
             switch_trend_05 += Utils.switchTrendByMaXX(heken_list, 1, 20);
-            switch_trend_05 += Utils.switchTrendByMaXX(heken_list, 1, 50);
 
             if (switch_trend_05.contains(trend)) {
                 if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
@@ -3832,6 +3831,16 @@ public class BinanceServiceImpl implements BinanceService {
                     action = Utils.TREND_SHOT;
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_D1,
                             w1d1h4h1 + "raus", true);
+                }
+
+                if (Objects.isNull(dto) && (zone_h12.contains(trend_05) || zone_h4.contains(trend_05))
+                        && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_05)
+                        && dto_05.getNote().contains(trend_h12)) {
+
+                    action = trend_h12;
+                    String append = w1d1h4h1 + "mhg05";
+
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_05, append, false);
                 }
 
                 if (Objects.isNull(dto) && (zone_h12.contains(trend_h1) || zone_h4.contains(trend_h1))
