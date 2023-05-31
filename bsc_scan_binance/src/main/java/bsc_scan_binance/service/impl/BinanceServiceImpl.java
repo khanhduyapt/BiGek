@@ -3765,6 +3765,8 @@ public class BinanceServiceImpl implements BinanceService {
             String zone_h12 = "";
             String zone_h4 = "";
             String zone_h1 = "";
+            boolean isBreadLongArea = false;
+            boolean isBreadShotArea = false;
             {
                 List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
                 List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
@@ -3782,6 +3784,21 @@ public class BinanceServiceImpl implements BinanceService {
                 zone_h12 = Utils.getZoneTrend(heken_list_h12);
                 zone_h4 = Utils.getZoneTrend(heken_list_h4);
                 zone_h1 = Utils.getZoneTrend(heken_list_h1);
+
+                BigDecimal cur_price = list_h1.get(0).getCurrPrice();
+                List<BigDecimal> lohi_h1 = Utils.getLowHighCandle(heken_list_h1);
+                List<BigDecimal> lohi_h4 = Utils.getLowHighCandle(heken_list_h4);
+                List<BigDecimal> lohi_h12 = Utils.getLowHighCandle(heken_list_h12);
+
+                if ((cur_price.compareTo(lohi_h1.get(0)) < 0) && (cur_price.compareTo(lohi_h4.get(0)) < 0)
+                        && (cur_price.compareTo(lohi_h12.get(0)) < 0)) {
+                    isBreadLongArea = true;
+                }
+
+                if ((cur_price.compareTo(lohi_h1.get(1)) > 0) && (cur_price.compareTo(lohi_h4.get(1)) > 0)
+                        && (cur_price.compareTo(lohi_h12.get(1)) > 0)) {
+                    isBreadShotArea = true;
+                }
             }
 
             index += 1;
@@ -3809,7 +3826,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     System.out.println(
                             "Found:" + Utils.appendSpace(dto_h4.getNote(), 20) + Utils.appendSpace(EPIC, 10)
-                                    + " CAPITAL_TIME_H4 " + append);
+                                    + " CAPITAL_TIME_H1 " + append);
                 }
 
                 if (Objects.isNull(dto) && zone_h12.contains(trend_h4) && Objects.equals(trend_h12, trend_h4)
@@ -3824,28 +3841,18 @@ public class BinanceServiceImpl implements BinanceService {
                                     + " CAPITAL_TIME_H4 " + append);
                 }
 
-                if ((zone_h12.contains(trend_h1) || zone_h4.contains(trend_h1) || zone_h1.contains(trend_h1))
-                        && Objects.equals(trend_h12, trend_h1)) {
-                    List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_05);
-                    if (CollectionUtils.isEmpty(list)) {
-                        continue;
-                    }
+                if (Objects.isNull(dto) && isBreadLongArea) {
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_LONG, dto_05, dto_d1, Utils.CAPITAL_TIME_D1,
+                            w1d1h4h1 + "raul", true);
 
-                    List<BtcFutures> heken_list = Utils.getHekenList(list);
-                    String trend_05_1 = Utils.getTrendByMaXx(heken_list, 5);
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                }
 
-                    String switch_trend_05 = Utils.switchTrendByHeken_12(heken_list)
-                            + Utils.switchTrendByMaXX(heken_list, 1, 20);
+                if (Objects.isNull(dto) && isBreadShotArea) {
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_SHOT, dto_05, dto_d1, Utils.CAPITAL_TIME_D1,
+                            w1d1h4h1 + "raus", true);
 
-                    if (Objects.equals(trend_h1, trend_05_1) && switch_trend_05.contains(trend_05_1)) {
-                        String append = w1d1h4h1 + "mhg05";
-
-                        dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1, dto_05, dto_d1, Utils.CAPITAL_TIME_05,
-                                append, false);
-
-                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-                    }
-
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
             }
 
@@ -4036,6 +4043,7 @@ public class BinanceServiceImpl implements BinanceService {
                     isPriceHit_SL = true;
                 }
             }
+
             if ((trade.getProfit().add(risk)).compareTo(BigDecimal.ZERO) < 0) {
                 String par_timeframe = Utils.CAPITAL_TIME_H1;
                 if (Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_H1)) {
