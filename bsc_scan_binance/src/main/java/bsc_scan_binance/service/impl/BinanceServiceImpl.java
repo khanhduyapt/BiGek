@@ -3684,11 +3684,11 @@ public class BinanceServiceImpl implements BinanceService {
 
         // Chap nhan thua rui ro, khong niu keo sai lam danh sai xu huong.
         if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_05)) {
-            int size = heken_list.size() > 10 ? 10 : heken_list.size();
+            int size = heken_list.size() - 1;
             lohi = Utils.getLowHighCandle(heken_list.subList(0, size));
             bread = Utils.calcMaxBread(heken_list.subList(0, size));
         } else {
-            int size = heken_list.size() > 5 ? 5 : heken_list.size();
+            int size = heken_list.size() > 10 ? 10 : heken_list.size();
             lohi = Utils.getLowHighCandle(heken_list.subList(0, size));
             bread = Utils.calcMaxBread(heken_list.subList(0, size));
         }
@@ -3799,59 +3799,54 @@ public class BinanceServiceImpl implements BinanceService {
 
                 Mt5OpenTrade dto = null;
 
-                // timeframes: CAPITAL_TIME_05
-                String timeframe = Utils.CAPITAL_TIME_05;
-                if (zone_h12.contains(trend_h1) && Objects.equals(trend_h12, trend_h1)) {
-                    timeframe = Utils.CAPITAL_TIME_H12;
-                } else if (zone_h4.contains(trend_h1) && Objects.equals(trend_h4, trend_h1)) {
-                    timeframe = Utils.CAPITAL_TIME_H1;
-                } else if (zone_h1.contains(trend_h1) && Objects.equals(trend_h1, trend_05)) {
-                    timeframe = Utils.CAPITAL_TIME_05;
+                if (Objects.isNull(dto) && (zone_h12.contains(trend_h1) || zone_h4.contains(trend_h1))
+                        && Objects.equals(trend_h12, trend_h1)
+                        && dto_h1.getNote().contains(trend_h1)) {
+                    String append = w1d1h4h1 + "mhgw1";
+
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1, dto_05, dto_d1, Utils.CAPITAL_TIME_H1, append, false);
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+
+                    System.out.println(
+                            "Found:" + Utils.appendSpace(dto_h4.getNote(), 20) + Utils.appendSpace(EPIC, 10)
+                                    + " CAPITAL_TIME_H4 " + append);
                 }
 
-                List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_05);
-                if (!CollectionUtils.isEmpty(list)) {
+                if (Objects.isNull(dto) && zone_h12.contains(trend_h4) && Objects.equals(trend_h12, trend_h4)
+                        && dto_h4.getNote().contains(trend_h4)) {
+                    String append = w1d1h4h1 + "mhgw4";
+
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_05, dto_d1, Utils.CAPITAL_TIME_H4, append, false);
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+
+                    System.out.println(
+                            "Found:" + Utils.appendSpace(dto_h4.getNote(), 20) + Utils.appendSpace(EPIC, 10)
+                                    + " CAPITAL_TIME_H4 " + append);
+                }
+
+                if ((zone_h12.contains(trend_h1) || zone_h4.contains(trend_h1) || zone_h1.contains(trend_h1))
+                        && Objects.equals(trend_h12, trend_h1)) {
+                    List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_05);
+                    if (CollectionUtils.isEmpty(list)) {
+                        continue;
+                    }
 
                     List<BtcFutures> heken_list = Utils.getHekenList(list);
                     String trend_05_1 = Utils.getTrendByMaXx(heken_list, 5);
 
-                    if (Objects.equals(trend_h1, trend_05_1)) {
-                        String switch_trend_05 = Utils.switchTrendByMaXX(heken_list, 1, 20);
-                        switch_trend_05 += Utils.switchTrendByMaXX(heken_list, 1, 50);
+                    String switch_trend_05 = Utils.switchTrendByHeken_12(heken_list)
+                            + Utils.switchTrendByMaXX(heken_list, 1, 20);
 
-                        if (switch_trend_05.contains(trend_05_1)) {
-                            String append = w1d1h4h1 + "w0550";
+                    if (Objects.equals(trend_h1, trend_05_1) && switch_trend_05.contains(trend_05_1)) {
+                        String append = w1d1h4h1 + "mhg05";
 
-                            dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1, dto_05, dto_d1, timeframe, append, true);
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1, dto_05, dto_d1, Utils.CAPITAL_TIME_05,
+                                append, false);
 
-                            BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-                        }
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                     }
-                }
 
-                //if (Objects.isNull(dto) && zone_h12.contains(trend_h1) && Objects.equals(trend_h12, trend_h1)
-                //        && Utils.isNotBlank(dto_h1.getNote())) {
-                //    String append = w1d1h4h1 + "a50w1";
-                //
-                //    dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1, dto_h1, dto_d1, Utils.CAPITAL_TIME_H1, append);
-                //    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-                //
-                //    System.out.println(
-                //            "Found:" + Utils.appendSpace(dto_h4.getNote(), 20) + Utils.appendSpace(EPIC, 10)
-                //                    + " CAPITAL_TIME_H4 " + append);
-                //}
-                //
-                //if (Objects.isNull(dto) && zone_h12.contains(trend_h4) && Objects.equals(trend_h12, trend_h4)
-                //        && Utils.isNotBlank(dto_h4.getNote())) {
-                //    String append = w1d1h4h1 + "a50w4";
-                //
-                //    dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_h4, dto_d1, Utils.CAPITAL_TIME_H4, append);
-                //    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-                //
-                //    System.out.println(
-                //            "Found:" + Utils.appendSpace(dto_h4.getNote(), 20) + Utils.appendSpace(EPIC, 10)
-                //                    + " CAPITAL_TIME_H4 " + append);
-                //}
+                }
             }
 
             // ---------------------------------------------------------------------------------------------
