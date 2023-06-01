@@ -2801,15 +2801,6 @@ public class BinanceServiceImpl implements BinanceService {
         int length = 40;
         String ea = Utils.appendSpace(Utils.TEXT_EXPERT_ADVISOR_SPACE, length);
 
-        String ea_waiting = "";
-        if (BscScanBinanceApplication.waitingM05list.containsKey(EPIC)) {
-            Mt5OpenTrade open = BscScanBinanceApplication.waitingM05list.get(EPIC);
-
-            ea_waiting += "Eaw: " + Utils.appendSpace(open.getOrder_type(), 5)
-                    + Utils.appendSpace(open.getComment(), 20);
-        }
-        ea_waiting = Utils.appendSpace(ea_waiting, 32);
-
         List<Mt5DataTrade> filteredStream = tradeList.stream().filter(obj -> Objects.equals(EPIC, obj.getSymbol()))
                 .collect(Collectors.toList());
 
@@ -2817,20 +2808,20 @@ public class BinanceServiceImpl implements BinanceService {
             for (Mt5DataTrade trade : filteredStream) {
                 Mt5OpenTradeEntity entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
 
-                ea = Utils.appendSpace(trade.getType().toLowerCase(), 4);
+                ea = Utils.appendSpace(trade.getType().toLowerCase(), 12);
                 if (Objects.nonNull(entity)) {
-                    ea += " SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getStopLossTimeFam()), 8) + "   ";
+                    ea += " SL:" + Utils.appendSpace(Utils.removeLastZero(entity.getStopLossTimeFam()), 12);
                     ea += Utils.appendSpace(entity.getComment(), 20);
                 }
                 ea = Utils.appendSpace(ea, length);
 
-                String append = Utils.appendSpace(prifix + ea_waiting + ea, 115) + Utils.appendSpace(note, 45);
+                String append = Utils.appendSpace(prifix + ea, 115) + Utils.appendSpace(note, 45);
 
                 outputLog("Analysis_" + char_name, EPIC, dto_en, dto_sl, append, dto.getTrend());
             }
         } else {
             ea = Utils.appendSpace(Utils.TEXT_EXPERT_ADVISOR_SPACE, length);
-            String append = Utils.appendSpace(prifix + ea_waiting + ea, 115) + Utils.appendSpace(note, 45);
+            String append = Utils.appendSpace(prifix + ea, 115) + Utils.appendSpace(note, 45);
             outputLog("Analysis_" + char_name, EPIC, dto_en, dto_sl, append, dto.getTrend());
         }
 
@@ -3851,7 +3842,7 @@ public class BinanceServiceImpl implements BinanceService {
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_05, append, false);
                 }
 
-                if (Objects.isNull(dto) && Objects.equals(trend_h12, trend_05)
+                if (Objects.isNull(dto) && Objects.equals(trend_h12, trend_05) && Objects.equals(trend_15, trend_05)
                         && dto_05.getNote().contains(trend_h12)) {
 
                     action = trend_h12;
@@ -3860,7 +3851,8 @@ public class BinanceServiceImpl implements BinanceService {
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_05, append, false);
                 }
 
-                if (Objects.isNull(dto) && Objects.equals(trend_h4, trend_h1) && dto_05.getNote().contains(trend_h1)) {
+                if (Objects.isNull(dto) && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_15, trend_05)
+                        && dto_05.getNote().contains(trend_h1)) {
                     action = trend_h1;
                     String append = w1d1h4h1 + "bon05";
 
