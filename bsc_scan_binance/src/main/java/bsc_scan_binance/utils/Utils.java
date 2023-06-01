@@ -134,6 +134,7 @@ public class Utils {
     public static String X_SECURITY_TOKEN = "";
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
     public static final String CAPITAL_TIME_05 = "MINUTE_5";
+    public static final String CAPITAL_TIME_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_H1 = "HOUR_01";
     public static final String CAPITAL_TIME_H4 = "HOUR_04";
     public static final String CAPITAL_TIME_H12 = "HOUR_12";
@@ -150,6 +151,7 @@ public class Utils {
     public static final String CRYPTO_TIME_W1 = "1w";
 
     public static final String PREFIX_5m_ = "_5m_";
+    public static final String PREFIX_15m_ = "_15m_";
     public static final String PREFIX_1h_ = "_1h_";
     public static final String PREFIX_4h_ = "_4h_";
     public static final String PREFIX_12h_ = "_12h_";
@@ -669,6 +671,9 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_05)) {
             return PREFIX_5m_;
         }
+        if (Objects.equals(TIME, CAPITAL_TIME_15)) {
+            return PREFIX_15m_;
+        }
         if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
             return PREFIX_1h_;
         }
@@ -738,6 +743,9 @@ public class Utils {
     public static String getChartNameCapital(String TIME) {
         if (TIME.contains(CAPITAL_TIME_05)) {
             return "(05) ";
+        }
+        if (TIME.contains(CAPITAL_TIME_15)) {
+            return "(15) ";
         }
         if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
             return "(H1)  ";
@@ -2322,6 +2330,8 @@ public class Utils {
         try {
             if (dto_id.contains(CAPITAL_TIME_05) || dto_id.contains(PREFIX_5m_)) {
                 result = "(05) ";
+            } else if (dto_id.contains(CAPITAL_TIME_15) || dto_id.contains(PREFIX_15m_)) {
+                result = "(15)  ";
             } else if (dto_id.contains(CAPITAL_TIME_H1) || dto_id.contains(PREFIX_1h_)) {
                 result = "(H1)  ";
             } else if (dto_id.contains(CAPITAL_TIME_H4) || dto_id.contains(PREFIX_4h_)) {
@@ -2580,7 +2590,8 @@ public class Utils {
             zone = Utils.TREND_SHOT;
         }
 
-        if (buy_sel_area.get(0).compareTo(buy_sel_area.get(1)) > 0) {
+        // BUY + SELL area
+        if ((buy_sel_area.get(0).compareTo(curr_price) < 0) && (curr_price.compareTo(buy_sel_area.get(1)) < 0)) {
             zone = Utils.TREND_LONG + "_" + Utils.TREND_SHOT;
         }
 
@@ -3285,6 +3296,7 @@ public class Utils {
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H12, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H4, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H1, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_15, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_05, "");
 
         EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_05, "");
@@ -3304,6 +3316,7 @@ public class Utils {
         switch (CAPITAL_TIME_XX) {
 
         case CAPITAL_TIME_05:
+        case CAPITAL_TIME_15:
             return MINUTES_OF_1H;
 
         case CAPITAL_TIME_H1:
