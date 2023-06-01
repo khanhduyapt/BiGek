@@ -3867,6 +3867,9 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Objects.nonNull(dto)) {
+                    if (Objects.equals(trend_w1, trend_h12) && !Objects.equals(trend_h12, action)) {
+                        continue;
+                    }
                     if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
                         continue;
                     }
