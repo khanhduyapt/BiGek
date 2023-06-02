@@ -158,6 +158,12 @@ public class Utils {
     public static final String PREFIX_1d_ = "_1d_";
     public static final String PREFIX_1w_ = "_1w_";
 
+    public static final String ENCRYPTED_05 = "namp";
+    public static final String ENCRYPTED_15 = "mnmp";
+    public static final String ENCRYPTED_H1 = "motg";
+    public static final String ENCRYPTED_H4 = "bong";
+    public static final String ENCRYPTED_H12 = "mhag";
+
     public static final Integer MINUTES_OF_D = 1440;
     public static final Integer MINUTES_OF_12H = 720;
     public static final Integer MINUTES_OF_4H = 240;
@@ -695,18 +701,34 @@ public class Utils {
 
     public static String getEncryptedChartNameCapital(String TIME) {
         if (Objects.equals(TIME, CAPITAL_TIME_05)) {
-            return "namp";
+            return ENCRYPTED_05;
         }
         if (Objects.equals(TIME, CAPITAL_TIME_15)) {
-            return "mnmp";
+            return ENCRYPTED_15;
         }
         if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
-            return "motg";
+            return ENCRYPTED_H1;
         }
         if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
-            return "mhag";
+            return ENCRYPTED_H12;
         }
-        return "bong";
+        return ENCRYPTED_H4;
+    }
+
+    public static String getDeEncryptedChartNameCapital(String encryptedChartName) {
+        if (encryptedChartName.contains(ENCRYPTED_05)) {
+            return CAPITAL_TIME_05;
+        }
+        if (encryptedChartName.contains(ENCRYPTED_15)) {
+            return CAPITAL_TIME_15;
+        }
+        if (encryptedChartName.contains(ENCRYPTED_H1)) {
+            return CAPITAL_TIME_H1;
+        }
+        if (encryptedChartName.contains(ENCRYPTED_H12)) {
+            return CAPITAL_TIME_H12;
+        }
+        return CAPITAL_TIME_H4;
     }
 
     public static String getEncrypted_trend_w1d1h4h1(String trend_w1, String trend_d1, String trend_h12,
@@ -1293,7 +1315,7 @@ public class Utils {
     }
 
     public static boolean isNewYorkSession() {
-        List<Integer> times = Arrays.asList(20, 21, 22, 23);
+        List<Integer> times = Arrays.asList(21, 22, 23, 24, 0, 1, 2, 3);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
