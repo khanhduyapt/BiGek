@@ -743,7 +743,7 @@ public class Utils {
             result += "2";
         }
 
-        return result;
+        return result + ".";
     }
 
     public static String getChartNameCapital(String TIME) {

@@ -3840,13 +3840,12 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // -----------------------------------------------------------------------------------
-
                 String action = "";
                 Mt5OpenTrade dto = null;
-                if (Objects.equals(trend_h12, trend_h4)
-                        && (Objects.equals(trend_h4, trend_h1) || Objects.equals(trend_h4, trend_15))) {
+                if (Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(trend_h4, trend_15)) {
 
-                    if (Objects.isNull(dto) && dto_05.getNote().contains(trend_h12)) {
+                    if (Objects.isNull(dto) && note_05.contains(trend_h12)) {
                         action = trend_h12;
                         String append = wdh4h1 + "124105";
                         dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_05, append,
@@ -3855,7 +3854,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
-                    if (Objects.isNull(dto) && dto_15.getNote().contains(trend_h12)) {
+                    if (Objects.isNull(dto) && note_15.contains(trend_h12)) {
                         action = trend_h12;
                         String append = wdh4h1 + "124115";
 
@@ -4070,6 +4069,9 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_05)) {
                     par_timeframe = Utils.CAPITAL_TIME_15;
+                }
+                if (Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_15)) {
+                    par_timeframe = Utils.CAPITAL_TIME_H1;
                 }
                 if (Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_H1)) {
                     par_timeframe = Utils.CAPITAL_TIME_H4;
