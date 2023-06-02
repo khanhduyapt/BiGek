@@ -3910,13 +3910,34 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
+                if (Objects.isNull(dto) && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_15, trend_05)) {
+
+                    if (Objects.isNull(dto) && note_05.contains(trend_h4)) {
+                        action = trend_h4;
+                        String append = wdh4h1 + "040105";
+
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_05, append,
+                                false);
+                    }
+
+                    if (Objects.isNull(dto) && note_15.contains(trend_h4)) {
+                        action = trend_h4;
+                        String append = wdh4h1 + "040115";
+
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_15, append,
+                                false);
+                    }
+                }
                 // -----------------------------------------------------------------------------------
 
                 if (Objects.nonNull(dto)) {
-                    if (Objects.equals(trend_w1, trend_h12) && !Objects.equals(trend_h12, action)) {
+                    if (Objects.equals(trend_w1, trend_h12)
+                            && (!Objects.equals(trend_h12, action) || !zone_h12.contains(action))) {
                         continue;
                     }
-                    if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
+                    if (Objects.equals(trend_d1, trend_h12)
+                            && (!Objects.equals(trend_h12, action) || !zone_h12.contains(action))) {
                         continue;
                     }
                     if (Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h4, action)) {
