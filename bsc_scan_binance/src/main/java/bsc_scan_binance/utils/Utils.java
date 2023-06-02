@@ -714,33 +714,33 @@ public class Utils {
         String result = "";
 
         if (Objects.equals(Utils.TREND_LONG, trend_w1)) {
-            result += "1 ";
+            result += "1";
         } else {
-            result += "2 ";
+            result += "2";
         }
 
         if (Objects.equals(Utils.TREND_LONG, trend_d1)) {
-            result += "1 ";
+            result += "1";
         } else {
-            result += "2 ";
+            result += "2";
         }
 
         if (Objects.equals(Utils.TREND_LONG, trend_h12)) {
-            result += "1 ";
+            result += "1";
         } else {
-            result += "2 ";
+            result += "2";
         }
 
         if (Objects.equals(Utils.TREND_LONG, trend_h4)) {
-            result += "1 ";
+            result += "1";
         } else {
-            result += "2 ";
+            result += "2";
         }
 
         if (Objects.equals(Utils.TREND_LONG, trend_h1)) {
-            result += "1 ";
+            result += "1";
         } else {
-            result += "2 ";
+            result += "2";
         }
 
         return result;
