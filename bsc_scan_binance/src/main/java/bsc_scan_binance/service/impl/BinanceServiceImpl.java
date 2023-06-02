@@ -3843,15 +3843,15 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (Objects.equals(trend_15, trend_05) && Utils.isNotBlank(note_05 + note_15)) {
-                    if (Objects.isNull(dto) && isBreadLongArea && note_05.contains(Utils.TREND_LONG)) {
+                if (Utils.isNotBlank(note_05 + note_15)) {
+                    if (Objects.isNull(dto) && isBreadLongArea && (note_05 + note_15).contains(Utils.TREND_LONG)) {
                         action = Utils.TREND_LONG;
                         dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_05,
                                 w1d1h4h1 + "12405b", true);
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                     }
-                    if (Objects.isNull(dto) && isBreadShotArea && note_05.contains(Utils.TREND_SHOT)) {
+                    if (Objects.isNull(dto) && isBreadShotArea && (note_05 + note_15).contains(Utils.TREND_SHOT)) {
                         action = Utils.TREND_SHOT;
                         dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_05,
                                 w1d1h4h1 + "12405s", true);
