@@ -289,9 +289,7 @@ void openTrade(string line)
       if(type== "buy")
         {
          //--- open position
-         if(trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, 0.0, comment))
-            Alert("Duydk: BUY: ", trade_symbol);
-         else
+         if(!trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, 0.0, comment))
             Alert("Duydk: BUY: ", trade_symbol, " ERROR:", trade.ResultRetcodeDescription());
         }
 
@@ -304,9 +302,7 @@ void openTrade(string line)
       if(type== "sell")
         {
          //--- open position
-         if(trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, 0.0, comment))
-            Alert("Duydk: SELL: ", trade_symbol);
-         else
+         if(!trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, 0.0, comment))
             Alert("Duydk: SELL: ", trade_symbol, " ERROR:", trade.ResultRetcodeDescription());
         }
 
