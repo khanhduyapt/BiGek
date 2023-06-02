@@ -1245,25 +1245,31 @@ public class Utils {
     }
 
     public static void sendToMyTelegram(String text) {
-        String msg = text.replaceAll("↑", "^").replaceAll("↓", "v").replaceAll(" ", "");
-        System.out.println();
-        System.out.println(msg + " 💰 ");
-        if (isAllowSendMsg()) {
-            sendToChatId(Utils.chatId_duydk, msg + " 💰 ");
+        try {
+            String msg = text.replaceAll("↑", "^").replaceAll("↓", "v").replaceAll(" ", "");
+            System.out.println();
+            System.out.println(msg + " 💰 ");
+            if (isAllowSendMsg()) {
+                sendToChatId(Utils.chatId_duydk, msg + " 💰 ");
+            }
+        } catch (Exception e) {
         }
     }
 
     public static void sendToTelegram(String text) {
-        String msg = text.replaceAll("↑", "^").replaceAll("↓", "v").replaceAll(" ", "");
-        System.out.println(msg);
+        try {
+            String msg = text.replaceAll("↑", "^").replaceAll("↓", "v").replaceAll(" ", "");
+            System.out.println(msg);
 
-        if (isAllowSendMsg()) {
-            if (!isBusinessTime_6h_to_22h()) {
-                // return;
+            if (isAllowSendMsg()) {
+                if (!isBusinessTime_6h_to_22h()) {
+                    // return;
+                }
+
+                sendToChatId(Utils.chatId_duydk, msg);
+                sendToChatId(Utils.chatId_linkdk, msg);
             }
-
-            sendToChatId(Utils.chatId_duydk, msg);
-            sendToChatId(Utils.chatId_linkdk, msg);
+        } catch (Exception e) {
         }
     }
 
@@ -1371,7 +1377,6 @@ public class Utils {
         } catch (Exception e) {
             System.out.println("____________________sendToChatId.ERROR____________________");
             e.printStackTrace();
-            System.exit(0);
         }
     }
 
@@ -3721,25 +3726,24 @@ public class Utils {
         }
 
         // Khong danh khi W&D nguoc xu huong
-        boolean isW1eqD1 = Objects.equals(trend_w1, trend_d1);
 
         String switch_trend = "  { ";
         switch_trend += getTrendPrefix("W", note_w1, " ");
         switch_trend += getTrendPrefix("D", note_d1, " ");
 
-        if (isW1eqD1 && Objects.equals(trend_d1, trend_h12) && zone_h12.contains(trend_h12)) {
+        if (Objects.equals(trend_d1, trend_h12) && zone_h12.contains(trend_h12)) {
             switch_trend += getTrendPrefix("H12", note_h12, " ");
         } else {
             switch_trend += getTrendPrefix("H12", "", " ");
         }
 
-        if (isW1eqD1 && zone_h4.contains(trend_h4)) {
+        if (Objects.equals(trend_h12, trend_h4) && zone_h4.contains(trend_h4)) {
             switch_trend += getTrendPrefix("H4", note_h4, " ");
         } else {
             switch_trend += getTrendPrefix("H4", "", " ");
         }
 
-        if (isW1eqD1 && zone_h1.contains(trend_h1) && Objects.equals(trend_h4, trend_h1)) {
+        if (Objects.equals(trend_h12, trend_h1) && zone_h4.contains(trend_h1)) {
             switch_trend += getTrendPrefix("H1", note_h1, " ");
         } else {
             switch_trend += getTrendPrefix("H1", "", " ");

@@ -91,7 +91,6 @@ public class BscScanBinanceApplication {
                 // binance_service.clearTrash();
                 // } catch (TelegramApiException e) {
                 // e.printStackTrace();
-                // System.exit(0);
                 // }
             }
 
@@ -217,7 +216,6 @@ public class BscScanBinanceApplication {
             initTelegramBotsApi();
             System.out.println("Duydk:" + e.getMessage());
             e.printStackTrace();
-            System.exit(0);
         }
     }
 
