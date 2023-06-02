@@ -3890,7 +3890,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.isNull(dto) && note_05.contains(trend_h12) && Objects.equals(trend_h12, trend_h4)
                         && Objects.equals(trend_h12, trend_05)) {
 
-                    if (Objects.equals(trend_h4, trend_h1) || zone_h1.contains(trend_05)) {
+                    if (Objects.equals(trend_h4, trend_h1) || Objects.equals(zone_h1, trend_05)) {
                         action = trend_h12;
                         String append = wdh4h1 + "124105";
                         dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_05, append,
@@ -3901,7 +3901,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.isNull(dto) && note_15.contains(trend_h12) && Objects.equals(trend_h12, trend_h4)
                         && Objects.equals(trend_h12, trend_15)) {
 
-                    if (Objects.equals(trend_h4, trend_h1) || zone_h1.contains(trend_15)) {
+                    if (Objects.equals(trend_h4, trend_h1) || Objects.equals(zone_h1, trend_15)) {
                         action = trend_h12;
                         String append = wdh4h1 + "124115";
 
