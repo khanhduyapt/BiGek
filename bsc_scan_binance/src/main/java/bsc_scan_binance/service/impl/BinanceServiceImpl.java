@@ -3413,8 +3413,7 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
 
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
-                    || Objects.isNull(dto_15)
-                    || CollectionUtils.isEmpty(list_50d)) {
+                    || Objects.isNull(dto_15) || CollectionUtils.isEmpty(list_50d)) {
                 Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
                 continue;
             }
@@ -3455,13 +3454,12 @@ public class BinanceServiceImpl implements BinanceService {
             w1d1h4h1 += Utils.getTrendPrefix("1", trend_h1, " ") + ".";
             w1d1h4h1 = w1d1h4h1.replace(" ", "");
 
-            if (Objects.equals(trend_w1, trend_d1)
-                    && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)
-                    && Objects.equals(trend_h1, trend_15)) {
+            if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)
+                    && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
 
                 if (dto_15.getNote().contains(trend_d1)) {
-                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_w1, dto_15, dto_d1,
-                            Utils.CAPITAL_TIME_D1, w1d1h4h1, true);
+                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_w1, dto_15, dto_d1, Utils.CAPITAL_TIME_D1,
+                            w1d1h4h1, true);
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
             }
@@ -3501,16 +3499,14 @@ public class BinanceServiceImpl implements BinanceService {
                 if (isBreadLongArea || isBreadShotArea) {
                     if (isBreadLongArea && Objects.equals(trend_15, Utils.TREND_LONG)) {
                         Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_LONG, dto_15, dto_d1,
-                                Utils.CAPITAL_TIME_15,
-                                w1d1h4h1 + "12405b", true);
+                                Utils.CAPITAL_TIME_15, w1d1h4h1 + "12405b", true);
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                     }
 
                     if (isBreadShotArea && Objects.equals(trend_15, Utils.TREND_SHOT)) {
                         Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_SHOT, dto_15, dto_d1,
-                                Utils.CAPITAL_TIME_15,
-                                w1d1h4h1 + "12405s", true);
+                                Utils.CAPITAL_TIME_15, w1d1h4h1 + "12405s", true);
                         BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                     }
                 }
@@ -3852,8 +3848,7 @@ public class BinanceServiceImpl implements BinanceService {
             String tracking_trend = trend_h12;
             String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h4,
                     trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, note_h1, note_15, note_05,
-                    tracking_trend, zone_h12,
-                    zone_h4, zone_h1);
+                    tracking_trend, zone_h12, zone_h4, zone_h1);
 
             // Hệ thống đặt lệnh thì có xu hướng của w1d1h4h1 được thêm vào comment.
             String wdh4h1 = Utils.getEncrypted_trend_w1d1h4h1(trend_w1, trend_d1, trend_h12, trend_h4, trend_h1);
@@ -4084,6 +4079,11 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
+            String hold = "_RACE_";
+            if (hold.contains(EPIC)) {
+                continue;
+            }
+
             // Dừng trade khi H1_1 đóng nến tại LoHi + Bread1-5 của H1.
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(null);
@@ -4123,7 +4123,8 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------
             boolean isPriceHit_SL = false;
 
-            // Check trend (H1) & (05) xem còn hy vọng giá hồi hay không, nếu không thì đóng.
+            // Check trend (H1) & (05) xem còn hy vọng giá hồi hay không, nếu không thì
+            // đóng.
             if (!Objects.equals(trend_tf, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
                     && !Objects.equals(trend_05, TRADE_TREND)) {
 
@@ -4164,7 +4165,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
             // ---------------------------------------------------------------------------------
-            if (mt5Entity.getTimeframe().contains("MINUTE")) {
+            if (mt5Entity.getTimeframe().contains("MINUTE") && (trade.getProfit().compareTo(profit_0_5R) > 0)) {
                 List<BtcFutures> list_15 = getCapitalData(EPIC, Utils.CAPITAL_TIME_15);
                 if (!CollectionUtils.isEmpty(list_15)) {
                     List<BtcFutures> heken_list_15 = Utils.getHekenList(list_15);
@@ -4196,8 +4197,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String prefix = Utils.getChartNameCapital(mt5Entity.getTimeframe()) + "Closed.   ";
                 prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
                 prefix += "(Trade):" + Utils.appendSpace(TRADE_TREND, 10);
-                prefix += Utils.getChartNameCapital(mt5Entity.getTimeframe()) + ":"
-                        + Utils.appendSpace(trend_tf, 10);
+                prefix += Utils.getChartNameCapital(mt5Entity.getTimeframe()) + ":" + Utils.appendSpace(trend_tf, 10);
                 prefix += "(Profit):" + Utils.appendSpace(Utils.appendLeft(trade.getProfit().toString(), 10), 15);
                 prefix += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
                 Utils.logWritelnDraft(prefix);
