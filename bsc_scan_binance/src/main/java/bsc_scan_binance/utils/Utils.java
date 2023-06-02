@@ -3608,8 +3608,8 @@ public class Utils {
     public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_entry, Orders dto_sl,
             String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1, boolean isBuyNow) {
         BigDecimal entry, stop_loss_m30, stop_loss, tp;
-        BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT);
-        risk_x1 = risk_x1.multiply(BigDecimal.valueOf(5));
+        BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT); // ACCOUNT=20k, risk: 0.5%
+        risk_x1 = risk_x1.multiply(BigDecimal.valueOf(5)); // 20k*5 = 100k
 
         if (Objects.equals(Utils.TREND_LONG, trend)) {
             entry = Utils.getBigDecimal(dto_entry.getBody_low());
