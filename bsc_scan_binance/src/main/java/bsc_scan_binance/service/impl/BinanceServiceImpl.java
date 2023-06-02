@@ -3162,7 +3162,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_h12 = dto_h12.getTrend();
                 String trend_h4 = dto_h4.getTrend();
                 String trend_h2 = dto_h1.getTrend();
-                String trend_30 = dto_05.getTrend();
+                String trend_05 = dto_05.getTrend();
 
                 String note_w1 = dto_w1.getNote();
                 String note_d1 = dto_d1.getNote();
@@ -3196,7 +3196,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h4,
-                        trend_h2, trend_30, note_w1, note_d1, note_h12, note_h4, note_h1, note_05, tracking_trend,
+                        trend_h2, "", "", note_w1, note_d1, note_h12, note_h4, note_h1, "", "", tracking_trend,
                         zone_h12, zone_h4, zone_h1);
 
                 Orders dto_xx = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(dto_w1);
@@ -3757,6 +3757,7 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
         if (Utils.is18_19h()) {
+            Utils.logWritelnDraft("[controlMt5] thời gian nghỉ, không vào lệnh.");
             return "";
         }
 
@@ -3848,9 +3849,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             index += 1;
-            String tracking_trend = trend_w1;
+            String tracking_trend = trend_h12;
             String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h4,
-                    trend_h1, "", note_w1, note_d1, note_h12, note_h4, note_h1, note_05, tracking_trend, zone_h12,
+                    trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, note_h1, note_15, note_05,
+                    tracking_trend, zone_h12,
                     zone_h4, zone_h1);
 
             // Hệ thống đặt lệnh thì có xu hướng của w1d1h4h1 được thêm vào comment.
