@@ -176,7 +176,7 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final String EPICS_INDEXS = "_US30_SP500_GER30_GER40_UK100_FRA40_SPN35_EU50_US100_AUS200_";
+    public static final String EPICS_INDEXS = "_US30_SP500_GER30_GER40_UK100_FRA40_SPN35_EU50_US100_AUS200_BTCUSD_";
 
     public static final List<String> EPICS_METALS = Arrays.asList("XAUUSD", "XAGUSD", "BTCUSD");
 
