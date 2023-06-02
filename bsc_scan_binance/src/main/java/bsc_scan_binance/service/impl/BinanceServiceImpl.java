@@ -3689,7 +3689,11 @@ public class BinanceServiceImpl implements BinanceService {
 
         if ((heken_list.size() > 50) && CAPITAL_TIME_XX.contains("MINUTE")) {
             String switch_trend_05 = Utils.switchTrendByHeken_12(heken_list);
-            switch_trend_05 += Utils.switchTrendByMa5_8(heken_list);
+            switch_trend_05 += Utils.switchTrendByMa13_XX(heken_list, 5);
+
+            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_05)) {
+                switch_trend_05 += Utils.switchTrendByMa5_8(heken_list);
+            }
 
             if (switch_trend_05.contains(trend)) {
                 if (Objects.equals(trend, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list, 50)) {
