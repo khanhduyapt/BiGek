@@ -2868,7 +2868,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public void openTrade() {
-        if (!Utils.isHuntTime_7h_to_22h()) {
+        if (!Utils.isHuntTime_7h_to_23h()) {
             return;
         }
 

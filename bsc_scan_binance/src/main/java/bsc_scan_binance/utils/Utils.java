@@ -1022,9 +1022,9 @@ public class Utils {
     }
 
     // https://www.calculator.net/time-duration-calculator.html
-    public static boolean isHuntTime_7h_to_22h() {
+    public static boolean isHuntTime_7h_to_23h() {
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-        if ((hh > 6) && (hh < 23)) {
+        if ((hh > 6) && (hh <= 23)) {
             return true;
         }
 
