@@ -694,6 +694,12 @@ public class Utils {
     }
 
     public static String getEncryptedChartNameCapital(String TIME) {
+        if (Objects.equals(TIME, CAPITAL_TIME_05)) {
+            return "namp";
+        }
+        if (Objects.equals(TIME, CAPITAL_TIME_15)) {
+            return "mnmp";
+        }
         if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
             return "motg";
         }
