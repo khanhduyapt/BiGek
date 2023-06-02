@@ -3756,6 +3756,9 @@ public class BinanceServiceImpl implements BinanceService {
         if (required_update_bars_csv) {
             return "";
         }
+        if (Utils.is18_19h()) {
+            return "";
+        }
 
         int index = 0;
         String msg = "";

@@ -1330,6 +1330,16 @@ public class Utils {
         return false;
     }
 
+    public static boolean is18_19h() {
+        List<Integer> times = Arrays.asList(18, 19);
+        Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
+        if (times.contains(hh)) {
+            return true;
+        }
+
+        return false;
+    }
+
     public static boolean isBusinessTime_6h_to_22h() {
         // Sang 6-8h, Trua: 1h-3h, Chieu 5h-6h, toi 8h-9h: la khung gio gia ro rang
         // nhat, sau khung gio nay gia moi chay.
