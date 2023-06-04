@@ -2618,6 +2618,88 @@ public class Utils {
         return result;
     }
 
+    public static String getAmplitudeTrend(String trend, String zone) {
+        if (Objects.equals(trend, zone.trim())) {
+            return trend;
+        }
+
+        if (zone.contains(TREND_LONG) && zone.contains(TREND_SHOT)) {
+            return trend;
+        }
+
+        if (Objects.equals(TREND_LONG, zone.trim())) {
+            return TREND_LONG;
+        }
+
+        if (Objects.equals(TREND_SHOT, zone.trim())) {
+            return TREND_SHOT;
+        }
+
+        return trend;
+    }
+
+    public static String findTrend(String trend_h12, String trend_h4, String trend_h1,
+
+            String zone_h12, String zone_h4, String zone_h1, List<BigDecimal> body_h4, BigDecimal cur_price) {
+
+        String REST = "REST";
+        // ------------------------------------------------------------------------------------
+        if (Objects.equals(TREND_LONG, zone_h12.trim()) && Objects.equals(TREND_SHOT, trend_h4)) {
+            return REST;
+        }
+        if (Objects.equals(TREND_SHOT, zone_h12.trim()) && Objects.equals(TREND_LONG, trend_h4)) {
+            return REST;
+        }
+
+        if (Objects.equals(TREND_LONG, zone_h4.trim()) && Objects.equals(TREND_SHOT, trend_h1)) {
+            return REST;
+        }
+        if (Objects.equals(TREND_SHOT, zone_h4.trim()) && Objects.equals(TREND_LONG, trend_h1)) {
+            return REST;
+        }
+        // ------------------------------------------------------------------------------------
+        if (Objects.equals(TREND_LONG, zone_h12.trim()) && Objects.equals(TREND_LONG, trend_h4)
+                && Objects.equals(TREND_LONG, trend_h1)) {
+            return trend_h4;
+        }
+        if (Objects.equals(TREND_LONG, zone_h12.trim()) && Objects.equals(TREND_LONG, zone_h4.trim())
+                && Objects.equals(TREND_LONG, trend_h1)) {
+            return trend_h1;
+        }
+
+        if (Objects.equals(TREND_SHOT, zone_h12.trim()) && Objects.equals(TREND_SHOT, trend_h4)
+                && Objects.equals(TREND_SHOT, trend_h1)) {
+            return trend_h4;
+        }
+        if (Objects.equals(TREND_SHOT, zone_h12.trim()) && Objects.equals(TREND_SHOT, zone_h4.trim())
+                && Objects.equals(TREND_SHOT, trend_h1)) {
+            return trend_h1;
+        }
+        // ------------------------------------------------------------------------------------
+        if (Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
+            return trend_h4;
+        }
+        if (Objects.equals(trend_h12, trend_h4) && zone_h1.contains(trend_h4)) {
+            return trend_h4;
+        }
+
+        if (!Objects.equals(trend_h12, trend_h4)) {
+            if (Objects.equals(trend_h4, trend_h1)) {
+                return trend_h4;
+            }
+
+            if (Objects.equals(TREND_LONG, trend_h1) && (cur_price.compareTo(body_h4.get(0)) < 0)) {
+                return TREND_LONG;
+            }
+
+            if (Objects.equals(TREND_SHOT, trend_h1) && (cur_price.compareTo(body_h4.get(1)) > 0)) {
+                return TREND_SHOT;
+            }
+        }
+
+        return "REST";
+    }
+
     public static String getZoneTrend(List<BtcFutures> heken_list) {
         String zone = "";
         BigDecimal curr_price = heken_list.get(0).getCurrPrice();
@@ -2638,7 +2720,7 @@ public class Utils {
             zone = Utils.TREND_LONG + "_" + Utils.TREND_SHOT;
         }
 
-        return Utils.appendSpace(zone, 10);
+        return zone; // Utils.appendSpace(zone, 10);
     }
 
     public static List<BigDecimal> getBuySellArea(List<BtcFutures> heken_list) {
@@ -3300,14 +3382,6 @@ public class Utils {
         return false;
     }
 
-    public static String getTrendByMaXx(List<BtcFutures> list, int maIndex) {
-        if (maIndex < 5) {
-            return isUptrendByMa(list, maIndex, 1, 2) ? TREND_LONG : TREND_SHOT;
-        } else {
-            return isUptrendByMa(list, maIndex, 0, 1) ? TREND_LONG : TREND_SHOT;
-        }
-    }
-
     public static boolean isUptrendByMa(List<BtcFutures> list, int maIndex, int str, int end) {
         BigDecimal ma_c = calcMA(list, maIndex, str);
         BigDecimal ma_p = calcMA(list, maIndex, end);
@@ -3519,6 +3593,10 @@ public class Utils {
         return "";
     }
 
+    public static String getTrendByMaXx(List<BtcFutures> list, int maIndex) {
+        return isUptrendByMa(list, maIndex, 1, 2) ? TREND_LONG : TREND_SHOT;
+    }
+
     public static String getTrendByHekenAshiList(List<BtcFutures> heken_list) {
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
@@ -3608,8 +3686,8 @@ public class Utils {
     public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_entry, Orders dto_sl,
             String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1, boolean isBuyNow) {
         BigDecimal entry, stop_loss_m30, stop_loss, tp;
-        BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT); // ACCOUNT=20k, risk: 0.5%
-        risk_x1 = risk_x1.multiply(BigDecimal.valueOf(5)); // 20k*5 = 100k
+        BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT); // ACCOUNT=20k, risk: 0.5% = 100$
+        risk_x1 = risk_x1.multiply(BigDecimal.valueOf(2)); // 20k*5 = 100k -> risk : 200$
 
         if (Objects.equals(Utils.TREND_LONG, trend)) {
             entry = Utils.getBigDecimal(dto_entry.getBody_low());
