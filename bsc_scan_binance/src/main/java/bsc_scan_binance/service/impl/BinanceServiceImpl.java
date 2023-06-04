@@ -2916,8 +2916,12 @@ public class BinanceServiceImpl implements BinanceService {
 
                 writer.write(sb.toString());
 
-                String msg = "mt5OpenTrade: " + Utils.appendSpace(dto.getOrder_type(), 15)
-                        + Utils.appendSpace(dto.getEpic(), 10) + " comment: " + Utils.appendSpace(dto.getComment(), 25);
+                String msg = "mt5OpenTrade: " + Utils.appendSpace(dto.getEpic(), 10);
+                msg += Utils.appendSpace(dto.getOrder_type(), 15);
+                msg += " Volume: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
+                msg += " SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 10);
+                msg += " comment: " + Utils.appendSpace(dto.getComment(), 25);
+
                 System.out.println(msg);
                 Utils.logWritelnDraft(msg);
             }
@@ -3582,26 +3586,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             String EPIC = trade.getSymbol().toUpperCase();
             // ----------------------------------------------------------------------------------
-            // upgrade timeframe H12
-            if (!Objects.equals(timeframe, Utils.CAPITAL_TIME_H12)) {
-                List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
-                Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-                Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-                Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
-
-                if (Objects.isNull(dto_d1) || Objects.isNull(dto_h12) || Objects.isNull(dto_h4)
-                        || CollectionUtils.isEmpty(list_h12)) {
-                } else {
-                    String trend_d1 = dto_d1.getTrend();
-                    String trend_h12 = dto_h12.getTrend();
-
-                    // H12 đảo chiều cùng D1
-                    if (Objects.equals(trend_d1, trend_h12) && dto_h12.getNote().contains(trend_h12)) {
-                        timeframe = Utils.CAPITAL_TIME_H12;
-                        comment += "->H12";
-                    }
-                }
-            }
 
             Mt5OpenTradeEntity entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
             if (Objects.isNull(entity)) {
@@ -3644,6 +3628,11 @@ public class BinanceServiceImpl implements BinanceService {
                 entity.setStopLossTimeFam(sl_LoHi_05);
                 entity.setStopLossCalcVol(sl_Body_H4);
                 entity.setTakeProfit(tp_Body_H4);
+
+                String EVENT_ID = "MSG_PER_HOUR" + trade.getTicket();
+                String msg_alert = "(FTMO)" + trade.getType() + "_" + trade.getSymbol() + "_" + trade.getVolume()
+                        + "(lot)";
+                sendMsgPerHour(EVENT_ID, msg_alert, true);
             }
 
             entity.setComment(comment);
@@ -3883,7 +3872,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String timeframe = (Objects.equals(trend_15, Utils.TREND_LONG)) ? Utils.CAPITAL_TIME_15
                                 : Utils.CAPITAL_TIME_05;
 
-                        dto = Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_LONG, dto_05, dto_05, timeframe,
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_LONG, dto_05, dto_h4, timeframe,
                                 wdh4h1 + "12405b", true);
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(dto);
@@ -3893,7 +3882,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String timeframe = (Objects.equals(trend_15, Utils.TREND_SHOT)) ? Utils.CAPITAL_TIME_15
                                 : Utils.CAPITAL_TIME_05;
 
-                        dto = Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_SHOT, dto_05, dto_05, timeframe,
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_SHOT, dto_05, dto_h4, timeframe,
                                 wdh4h1 + "12405s", true);
                         BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                     }
@@ -3906,7 +3895,7 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.equals(trend_h4, trend_h1) || zone_h1.contains(trend_05)) {
                         action = trend_h12;
                         String append = wdh4h1 + "124105";
-                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_05, Utils.CAPITAL_TIME_05, append,
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_05, append,
                                 true);
                     }
                 }
@@ -3918,7 +3907,7 @@ public class BinanceServiceImpl implements BinanceService {
                         action = trend_h12;
                         String append = wdh4h1 + "124115";
 
-                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_05, Utils.CAPITAL_TIME_15, append,
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_15, append,
                                 true);
                     }
                 }
@@ -3927,14 +3916,14 @@ public class BinanceServiceImpl implements BinanceService {
                     action = find_trend;
                     String append = wdh4h1 + "040105";
 
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_05, Utils.CAPITAL_TIME_05, append, true);
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_05, append, true);
                 }
 
                 if (Objects.isNull(dto) && note_15.contains(find_trend)) {
                     action = find_trend;
                     String append = wdh4h1 + "040115";
 
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_05, Utils.CAPITAL_TIME_15, append, true);
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_15, append, true);
                 }
                 // ---------------------------------------------------------------------
                 if (Objects.nonNull(dto)) {
