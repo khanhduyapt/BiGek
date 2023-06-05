@@ -3629,10 +3629,12 @@ public class BinanceServiceImpl implements BinanceService {
                 entity.setStopLossCalcVol(sl_Body_H4);
                 entity.setTakeProfit(tp_Body_H4);
 
-                String EVENT_ID = "MSG_PER_HOUR" + trade.getTicket();
-                String msg_alert = "(FTMO)" + trade.getType() + "_" + trade.getSymbol() + "_" + trade.getVolume()
-                        + "(lot)";
-                sendMsgPerHour(EVENT_ID, msg_alert, true);
+                if (!trade.getType().toUpperCase().contains("LIMIT")) {
+                    String EVENT_ID = "MSG_PER_HOUR" + trade.getTicket();
+                    String msg_alert = "(FTMO)" + trade.getType() + "_" + trade.getSymbol() + "_" + trade.getVolume()
+                            + "(lot)";
+                    sendMsgPerHour(EVENT_ID, msg_alert, true);
+                }
             }
 
             entity.setComment(comment);
@@ -3752,7 +3754,7 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            // EPIC = "XAGUSD";
+            // EPIC = "EURNZD";
 
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);

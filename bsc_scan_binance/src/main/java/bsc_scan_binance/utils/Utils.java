@@ -2685,8 +2685,9 @@ public class Utils {
             return trend_h4;
         }
 
-        if (!Objects.equals(trend_h12, trend_h4)) {
-            if (Objects.equals(trend_h4, trend_h1) && zone_h4.contains(trend_h4) && zone_h1.contains(trend_h4)) {
+        if (!Objects.equals(trend_h12, trend_h4) && Objects.equals(zone_h12, trend_h4)
+                && Objects.equals(zone_h4, trend_h4) && zone_h1.contains(trend_h4)) {
+            if (Objects.equals(trend_h4, trend_h1)) {
                 return trend_h4;
             }
 
