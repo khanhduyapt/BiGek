@@ -3661,9 +3661,6 @@ public class BinanceServiceImpl implements BinanceService {
         }
         List<BtcFutures> heken_list = Utils.getHekenList(list);
         String trend = Utils.getTrendByHekenAshiList(heken_list);
-        if (CAPITAL_TIME_XX.contains("HOUR") || CAPITAL_TIME_XX.contains("MINUTE")) {
-            trend = Utils.getTrendByMaXx(heken_list, 5);
-        }
 
         String type = "";
         // TODO: 1. initForexTrend
@@ -3755,7 +3752,7 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            // EPIC = "GBPAUD";
+            // EPIC = "XAGUSD";
 
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
@@ -3849,7 +3846,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String CAPITAL_TIME_XX = Utils.getTimeframe_SwitchTrend(note_d1, note_h12, note_h4);
 
-            analysis(prefix + " Amp:" + Utils.appendSpace(find_trend, 5), EPIC, CAPITAL_TIME_XX);
+            analysis(prefix + "Amp:" + Utils.appendSpace(find_trend, 5), EPIC, CAPITAL_TIME_XX);
 
             if (!Objects.equals(EPIC, "BTCUSD")) {
                 BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
@@ -3864,6 +3861,7 @@ public class BinanceServiceImpl implements BinanceService {
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
 
+                boolean isBuyNow = false;
                 String action = "";
                 Mt5OpenTrade dto = null;
 
@@ -3892,7 +3890,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.isNull(dto) && note_05.contains(trend_h12) && Objects.equals(trend_h12, trend_h4)
                         && Objects.equals(trend_h4, trend_05)) {
 
-                    if (Objects.equals(trend_h4, trend_h1) || zone_h1.contains(trend_05)) {
+                    if (Objects.equals(trend_h4, trend_h1) || Objects.equals(zone_h1, trend_05)) {
                         action = trend_h12;
                         String append = wdh4h1 + "124105";
                         dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_05, append,
@@ -3903,7 +3901,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.isNull(dto) && note_15.contains(trend_h12) && Objects.equals(trend_h12, trend_h4)
                         && Objects.equals(trend_h4, trend_15)) {
 
-                    if (Objects.equals(trend_h4, trend_h1) || zone_h1.contains(trend_15)) {
+                    if (Objects.equals(trend_h4, trend_h1) || Objects.equals(zone_h1, trend_15)) {
                         action = trend_h12;
                         String append = wdh4h1 + "124115";
 
@@ -3911,19 +3909,22 @@ public class BinanceServiceImpl implements BinanceService {
                                 true);
                     }
                 }
+
                 // ---------------------------------------------------------------------
                 if (Objects.isNull(dto) && note_05.contains(find_trend)) {
                     action = find_trend;
                     String append = wdh4h1 + "040105";
 
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_05, append, true);
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_05, append,
+                            isBuyNow);
                 }
 
                 if (Objects.isNull(dto) && note_15.contains(find_trend)) {
                     action = find_trend;
                     String append = wdh4h1 + "040115";
 
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_15, append, true);
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_15, append,
+                            isBuyNow);
                 }
                 // ---------------------------------------------------------------------
                 if (Objects.nonNull(dto)) {

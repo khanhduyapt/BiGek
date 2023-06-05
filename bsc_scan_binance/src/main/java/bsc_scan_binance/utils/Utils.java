@@ -2676,23 +2676,29 @@ public class Utils {
             return trend_h1;
         }
         // ------------------------------------------------------------------------------------
-        if (Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
+        if (Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1) && zone_h12.contains(trend_h4)
+                && zone_h4.contains(trend_h4) && zone_h1.contains(trend_h4)) {
             return trend_h4;
         }
-        if (Objects.equals(trend_h12, trend_h4) && zone_h1.contains(trend_h4)) {
+        if (Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1) && zone_h12.contains(trend_h4)
+                && zone_h4.contains(trend_h4)) {
             return trend_h4;
         }
 
         if (!Objects.equals(trend_h12, trend_h4)) {
-            if (Objects.equals(trend_h4, trend_h1)) {
+            if (Objects.equals(trend_h4, trend_h1) && zone_h4.contains(trend_h4) && zone_h1.contains(trend_h4)) {
                 return trend_h4;
             }
 
-            if (Objects.equals(TREND_LONG, trend_h1) && (cur_price.compareTo(body_h4.get(0)) < 0)) {
+            if (Objects.equals(TREND_LONG, trend_h1) && (cur_price.compareTo(body_h4.get(0)) < 0)
+                    && zone_h12.contains(trend_h1)
+                    && zone_h4.contains(trend_h1)) {
                 return TREND_LONG;
             }
 
-            if (Objects.equals(TREND_SHOT, trend_h1) && (cur_price.compareTo(body_h4.get(1)) > 0)) {
+            if (Objects.equals(TREND_SHOT, trend_h1) && (cur_price.compareTo(body_h4.get(1)) > 0)
+                    && zone_h12.contains(trend_h1)
+                    && zone_h4.contains(trend_h1)) {
                 return TREND_SHOT;
             }
         }
@@ -3594,7 +3600,7 @@ public class Utils {
     }
 
     public static String getTrendByMaXx(List<BtcFutures> list, int maIndex) {
-        return isUptrendByMa(list, maIndex, 1, 2) ? TREND_LONG : TREND_SHOT;
+        return isUptrendByMa(list, maIndex, 0, 1) ? TREND_LONG : TREND_SHOT;
     }
 
     public static String getTrendByHekenAshiList(List<BtcFutures> heken_list) {
