@@ -2639,56 +2639,6 @@ public class Utils {
         return trend;
     }
 
-    public static String findTrend(String trend_h12, String trend_h4, String trend_h1,
-
-            String zone_h12, String zone_h4, String zone_h1, List<BigDecimal> body_h4, BigDecimal cur_price) {
-
-        String REST = "REST";
-        // ------------------------------------------------------------------------------------
-        if (Objects.equals(TREND_LONG, zone_h12.trim()) && Objects.equals(TREND_SHOT, trend_h4)) {
-            return REST;
-        }
-        if (Objects.equals(TREND_SHOT, zone_h12.trim()) && Objects.equals(TREND_LONG, trend_h4)) {
-            return REST;
-        }
-
-        if (Objects.equals(TREND_LONG, zone_h4.trim()) && Objects.equals(TREND_SHOT, trend_h1)) {
-            return REST;
-        }
-        if (Objects.equals(TREND_SHOT, zone_h4.trim()) && Objects.equals(TREND_LONG, trend_h1)) {
-            return REST;
-        }
-        // ------------------------------------------------------------------------------------
-        if (Objects.equals(TREND_LONG, zone_h12.trim()) && Objects.equals(TREND_LONG, trend_h4)
-                && Objects.equals(TREND_LONG, trend_h1)) {
-            return trend_h4;
-        }
-        if (Objects.equals(TREND_LONG, zone_h12.trim()) && Objects.equals(TREND_LONG, zone_h4.trim())
-                && Objects.equals(TREND_LONG, trend_h1)) {
-            return trend_h1;
-        }
-
-        if (Objects.equals(TREND_SHOT, zone_h12.trim()) && Objects.equals(TREND_SHOT, trend_h4)
-                && Objects.equals(TREND_SHOT, trend_h1)) {
-            return trend_h4;
-        }
-        if (Objects.equals(TREND_SHOT, zone_h12.trim()) && Objects.equals(TREND_SHOT, zone_h4.trim())
-                && Objects.equals(TREND_SHOT, trend_h1)) {
-            return trend_h1;
-        }
-        // ------------------------------------------------------------------------------------
-        if (Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1) && zone_h12.contains(trend_h4)
-                && zone_h4.contains(trend_h4) && zone_h1.contains(trend_h4)) {
-            return trend_h4;
-        }
-        if (Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1) && zone_h12.contains(trend_h4)
-                && zone_h4.contains(trend_h4)) {
-            return trend_h4;
-        }
-
-        return "REST";
-    }
-
     public static String getZoneTrend(List<BtcFutures> heken_list) {
         String zone = "";
         BigDecimal curr_price = heken_list.get(0).getCurrPrice();
@@ -3672,35 +3622,44 @@ public class Utils {
         return tmp_msg + url;
     }
 
-    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_entry, Orders dto_sl,
+    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_en_05, Orders dto_sl_h1,
             String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1, boolean isBuyNow) {
-        BigDecimal entry, stop_loss_m30, stop_loss, tp;
+        BigDecimal en_05, sl_05, sl_h1, tp_h1;
         BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT); // ACCOUNT=20k, risk: 0.5% = 100$; 100k, risk: 0.5% = 500$
         //risk_x1 = risk_x1.multiply(BigDecimal.valueOf(2)); // 20k*5 = 100k -> risk : 200$
 
         if (Objects.equals(Utils.TREND_LONG, trend)) {
-            entry = Utils.getBigDecimal(dto_entry.getBody_low());
-            stop_loss = Utils.getBigDecimal(dto_sl.getLow_price());
-            stop_loss_m30 = Utils.getBigDecimal(dto_entry.getLow_price());
-            tp = Utils.getBigDecimal(dto_sl.getBody_hig());
+            en_05 = Utils.getBigDecimal(dto_en_05.getBody_low());
+            sl_05 = Utils.getBigDecimal(dto_en_05.getLow_price());
+
+            sl_h1 = Utils.getBigDecimal(dto_sl_h1.getLow_price());
+            tp_h1 = Utils.getBigDecimal(dto_sl_h1.getBody_hig());
         } else {
-            entry = Utils.getBigDecimal(dto_entry.getBody_hig());
-            stop_loss = Utils.getBigDecimal(dto_sl.getHigh_price());
-            stop_loss_m30 = Utils.getBigDecimal(dto_entry.getHigh_price());
-            tp = Utils.getBigDecimal(dto_sl.getBody_low());
+            en_05 = Utils.getBigDecimal(dto_en_05.getBody_hig());
+            sl_05 = Utils.getBigDecimal(dto_en_05.getHigh_price());
+
+            sl_h1 = Utils.getBigDecimal(dto_sl_h1.getHigh_price());
+            tp_h1 = Utils.getBigDecimal(dto_sl_h1.getBody_low());
         }
-        MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, dto_entry.getCurrent_price(),
-                stop_loss, tp);
+        MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, dto_en_05.getCurrent_price(),
+                sl_h1, tp_h1);
 
         Mt5OpenTrade dto = new Mt5OpenTrade();
         dto.setEpic(EPIC);
         dto.setOrder_type(trend.toLowerCase() + (isBuyNow ? "" : TEXT_LIMIT));
         dto.setLots(money_x1_now.calcLot());
-        dto.setEntry(entry);
-        dto.setStop_loss(stop_loss);
-        dto.setTake_profit(tp);
+        dto.setEntry(en_05);
+        dto.setStop_loss(sl_h1);
+        dto.setTake_profit(tp_h1);
         dto.setComment(getEncryptedChartNameCapital(CAPITAL_TIME_XX) + "(" + encrypted_trend_w1d1h4h1 + ")");
-        dto.setStop_loss_m30(stop_loss_m30);
+        dto.setStop_loss_m30(sl_05);
+
+        BigDecimal en_sl = dto_sl_h1.getCurrent_price().subtract(sl_h1).abs().multiply(BigDecimal.valueOf(2));
+        BigDecimal en_tp = dto_sl_h1.getCurrent_price().subtract(tp_h1).abs();
+
+        if (en_tp.compareTo(en_sl) < 0) {
+            return null;
+        }
 
         return dto;
     }
