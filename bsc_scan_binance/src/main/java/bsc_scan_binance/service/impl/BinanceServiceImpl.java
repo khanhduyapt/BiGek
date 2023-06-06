@@ -4058,8 +4058,8 @@ public class BinanceServiceImpl implements BinanceService {
                     if (!zone_h12.contains(action) || !zone_h4.contains(action) || !zone_h1.contains(action)) {
                         continue;
                     }
-                    if (Utils.EPICS_INDEXS.contains(EPIC) && (!Objects.equals(trend_d1, trend_h12)
-                            || !Objects.equals(trend_h12, action) || !Objects.equals(trend_h4, action))) {
+                    if (Utils.EPICS_INDEXS.contains(EPIC)
+                            && (!Objects.equals(trend_h4, action) || !Objects.equals(trend_h1, action))) {
                         continue;
                     }
 
