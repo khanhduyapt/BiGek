@@ -3753,7 +3753,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
         String date_time = LocalDateTime.now().toString();
-        List<BigDecimal> body = Utils.getBodyCandle(list);
+        List<BigDecimal> body = Utils.getBodyCandle(heken_list);
         BigDecimal str_body = body.get(0);
         BigDecimal end_body = body.get(1);
         BigDecimal sl_long = lohi.get(0).subtract(bread);
@@ -3906,11 +3906,9 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------------------
 
             // TODO: 3. controlMt5
-            boolean isTradeNow = Objects.equals(trend_05, trend_15);
-            if (Utils.is18_19h()) {
+            boolean isTradeNow = true;
+            if (Utils.is18_19h() || !Objects.equals(trend_05, trend_15)) {
                 isTradeNow = false;
-            } else if (!Objects.equals(trend_05, trend_15)) {
-                continue;
             }
 
             // Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_SHOT, dto_05, dto_h1, Utils.CAPITAL_TIME_15, "", isTradeNow);

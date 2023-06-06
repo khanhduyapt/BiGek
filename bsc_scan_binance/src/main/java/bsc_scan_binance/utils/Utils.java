@@ -2566,14 +2566,14 @@ public class Utils {
         BigDecimal max = BigDecimal.ZERO;
 
         for (int index = 0; index < list.size(); index++) {
-            BigDecimal ma3 = calcMA(list, 3, index);
+            BigDecimal ma10 = calcMA(list, 10, index);
 
-            if (min.compareTo(ma3) > 0) {
-                min = ma3;
+            if (min.compareTo(ma10) > 0) {
+                min = ma10;
             }
 
-            if (max.compareTo(ma3) < 0) {
-                max = ma3;
+            if (max.compareTo(ma10) < 0) {
+                max = ma10;
             }
         }
 
