@@ -3973,10 +3973,12 @@ public class BinanceServiceImpl implements BinanceService {
 
                     List<BtcFutures> list_h1 = getCapitalData(EPIC, CAPITAL_TIME_XX);
                     if (!CollectionUtils.isEmpty(list_h1)) {
-
                         List<BtcFutures> heken_list = Utils.getHekenList(list_h1);
-                        if (Utils.switchTrendByHeken_12(heken_list).contains(trend_h4)) {
+                        String trend_h1_ma8 = Utils.getTrendByMaXx(heken_list, 8);
+                        String switch_trend = Utils.switchTrendByHeken_12(heken_list);
+                        switch_trend = Utils.switchTrendByMa5_8(heken_list);
 
+                        if (switch_trend.contains(trend_h4) && Objects.equals(trend_h4, trend_h1_ma8)) {
                             action = trend_h1;
                             append += "411505";
                             dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_H1, append,
