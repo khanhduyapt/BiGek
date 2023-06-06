@@ -4205,9 +4205,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // Dừng trade khi H1_1 đóng nến tại LoHi + Bread1-5 của H1.
+            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
-            if (Objects.isNull(dto_h1) || Objects.isNull(dto_15)) {
+            if (Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)) {
                 continue;
             }
 
@@ -4218,19 +4219,19 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
-            if (CollectionUtils.isEmpty(list_h4)) {
+            List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
+            if (CollectionUtils.isEmpty(list_h1)) {
                 continue;
             }
-            List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
-            String trend_h4 = Utils.getTrendByMaXx(heken_list_h4, 5);
+            List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
+            String trend_h4 = dto_h4.getTrend();
 
             BigDecimal cur_price = dto_15.getCurrent_price();
             BigDecimal TP_order = mt5Entity.getTakeProfit();
             BigDecimal SL_order = mt5Entity.getStopLossTimeFam();
 
             // SL khi Cancle_1 đóng cửa dưới LoHi+Bread khi đặt lệnh.
-            BigDecimal h4_candle1_close = heken_list_h4.get(1).getPrice_close_candle();
+            BigDecimal h1_candle1_close = heken_list_h1.get(1).getPrice_close_candle();
 
             String result = "";
             String trend_h1 = dto_h1.getTrend();
@@ -4240,8 +4241,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             // Trailing stops khi profit > 1R
             if (trade.getProfit().compareTo(profit_1R) > 0) {
-                SL_order = h4_candle1_close;
-                mt5Entity.setStopLossTimeFam(h4_candle1_close);
+                SL_order = h1_candle1_close;
+                mt5Entity.setStopLossTimeFam(h1_candle1_close);
                 mt5OpenTradeRepository.save(mt5Entity);
             }
 
@@ -4252,13 +4253,13 @@ public class BinanceServiceImpl implements BinanceService {
                     && !Objects.equals(trend_15, TRADE_TREND)) {
 
                 // SL khi Cancle_1 đóng cửa dưới LoHi+Bread của H1.
-                if (Objects.equals(Utils.TREND_LONG, TRADE_TREND) && (h4_candle1_close.compareTo(SL_order) < 0)) {
+                if (Objects.equals(Utils.TREND_LONG, TRADE_TREND) && (h1_candle1_close.compareTo(SL_order) < 0)) {
                     result += "(StopLoss)";
                     isPriceHit_SL = true;
                 }
 
                 // SL khi Cancle_1 đóng cửa trên LoHi+Bread của H1.
-                if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND) && (h4_candle1_close.compareTo(SL_order) > 0)) {
+                if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND) && (h1_candle1_close.compareTo(SL_order) > 0)) {
                     result += "(StopLoss)";
                     isPriceHit_SL = true;
                 }
