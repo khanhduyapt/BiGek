@@ -3848,7 +3848,7 @@ public class Utils {
 
     public static String calc_BUF_Long_Forex(boolean onlyWait, BigDecimal risk_x1, String EPIC, BigDecimal cur_price,
             BigDecimal en_long, BigDecimal sl_long, BigDecimal tp_long, String chartEntry, String chartSL) {
-        BigDecimal risk_x5 = risk_x1.multiply(BigDecimal.valueOf(5));
+        BigDecimal risk_x5 = risk_x1.divide(BigDecimal.valueOf(5), 10, RoundingMode.CEILING);
 
         MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, cur_price, sl_long, tp_long);
         MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_long, tp_long);
@@ -3868,7 +3868,7 @@ public class Utils {
 
     public static String calc_BUF_Shot_Forex(boolean onlyWait, BigDecimal risk_x1, String EPIC, BigDecimal cur_price,
             BigDecimal en_shot, BigDecimal sl_shot, BigDecimal tp_shot, String chartEntry, String chartSL) {
-        BigDecimal risk_x5 = risk_x1.multiply(BigDecimal.valueOf(5));
+        BigDecimal risk_x5 = risk_x1.divide(BigDecimal.valueOf(5), 10, RoundingMode.CEILING);
 
         MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, cur_price, sl_shot, tp_shot);
         MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_shot, tp_shot);

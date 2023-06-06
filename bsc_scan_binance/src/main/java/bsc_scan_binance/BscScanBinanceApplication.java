@@ -240,6 +240,8 @@ public class BscScanBinanceApplication {
         // --------------------------------------------------------------------------
         Utils.logWritelnDraft("");
         binance_service.controlMt5(Utils.EPICS_METALS);
+        Utils.logWritelnDraft("...");
+        binance_service.controlMt5(Utils.EPICS_CASH_CFD);
         Utils.logWritelnDraft("");
         // --------------------------------------------------------------------------
         Utils.logWritelnDraftFooter();
@@ -254,8 +256,6 @@ public class BscScanBinanceApplication {
         binance_service.controlMt5(Utils.EPICS_FOREXS_AUD);
         Utils.logWritelnDraft("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_ALL);
-        Utils.logWritelnDraft("...");
-        binance_service.controlMt5(Utils.EPICS_CASH_CFD);
         Utils.logWritelnDraft("...");
         binance_service.controlMt5(Utils.EPICS_CRYPTO_CFD);
         // --------------------------------------------------------------------------
