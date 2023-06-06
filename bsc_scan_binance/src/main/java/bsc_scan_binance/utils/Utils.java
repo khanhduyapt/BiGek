@@ -61,7 +61,7 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 
 //@Slf4j
 public class Utils {
-    public static final BigDecimal ACCOUNT = BigDecimal.valueOf(20000); // 20k
+    public static final BigDecimal ACCOUNT = BigDecimal.valueOf(100000); // 20k
     public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.005);
 
     public static final String chatId_duydk = "5099224587";
@@ -102,8 +102,9 @@ public class Utils {
     public static final String TEXT_EXPERT_ADVISORING = "EA ";
     public static final String TEXT_EXPERT_ADVISOR_SPACE = "   ";
 
-    public static final String TEXT_ABOVE_MA50 = "AboveMa50";
-    public static final String TEXT_BELOW_MA50 = "BelowMa50";
+    public static final String NOCATION_ABOVE_MA50 = "AboveMa50";
+    public static final String NOCATION_BELOW_MA50 = "BelowMa50";
+    public static final String NOCATION_CUTTING_MA50 = "CuttingMa50";
 
     public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma3.5)";
     public static final String TEXT_SWITCH_TREND_Ma_1_50 = "(Ma1.50)";
@@ -2685,25 +2686,6 @@ public class Utils {
             return trend_h4;
         }
 
-        if (!Objects.equals(trend_h12, trend_h4) && Objects.equals(zone_h12, trend_h4)
-                && Objects.equals(zone_h4, trend_h4) && zone_h1.contains(trend_h4)) {
-            if (Objects.equals(trend_h4, trend_h1)) {
-                return trend_h4;
-            }
-
-            if (Objects.equals(TREND_LONG, trend_h1) && (cur_price.compareTo(body_h4.get(0)) < 0)
-                    && zone_h12.contains(trend_h1)
-                    && zone_h4.contains(trend_h1)) {
-                return TREND_LONG;
-            }
-
-            if (Objects.equals(TREND_SHOT, trend_h1) && (cur_price.compareTo(body_h4.get(1)) > 0)
-                    && zone_h12.contains(trend_h1)
-                    && zone_h4.contains(trend_h1)) {
-                return TREND_SHOT;
-            }
-        }
-
         return "REST";
     }
 
@@ -3693,8 +3675,8 @@ public class Utils {
     public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_entry, Orders dto_sl,
             String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1, boolean isBuyNow) {
         BigDecimal entry, stop_loss_m30, stop_loss, tp;
-        BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT); // ACCOUNT=20k, risk: 0.5% = 100$
-        risk_x1 = risk_x1.multiply(BigDecimal.valueOf(2)); // 20k*5 = 100k -> risk : 200$
+        BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT); // ACCOUNT=20k, risk: 0.5% = 100$; 100k, risk: 0.5% = 500$
+        //risk_x1 = risk_x1.multiply(BigDecimal.valueOf(2)); // 20k*5 = 100k -> risk : 200$
 
         if (Objects.equals(Utils.TREND_LONG, trend)) {
             entry = Utils.getBigDecimal(dto_entry.getBody_low());

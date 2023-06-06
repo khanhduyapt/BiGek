@@ -2681,8 +2681,19 @@ public class BinanceServiceImpl implements BinanceService {
             note = switch_trend_type;
         }
 
+        String nocation = "";
+        if (list.size() >= 50) {
+            if (Utils.isNotBlank(Utils.switchTrendByMa13_XX(list, 50))) {
+                nocation = Utils.NOCATION_CUTTING_MA50;
+            } else if (Utils.isBelowMALine(list, 50)) {
+                nocation = Utils.NOCATION_BELOW_MA50;
+            } else if (Utils.isAboveMALine(list, 50)) {
+                nocation = Utils.NOCATION_ABOVE_MA50;
+            }
+        }
+
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
-                low_high.get(0), low_high.get(1), Utils.appendSpace(note, 50));
+                low_high.get(0), low_high.get(1), Utils.appendSpace(note, 50), nocation);
 
         ordersRepository.save(entity);
     }
@@ -3732,8 +3743,20 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal sl_long = lohi.get(0).subtract(bread);
         BigDecimal sl_shot = lohi.get(1).add(bread);
 
+        String nocation = "";
+        if (heken_list.size() >= 50) {
+            if (Utils.isNotBlank(Utils.switchTrendByMa13_XX(heken_list, 50))) {
+                nocation = Utils.NOCATION_CUTTING_MA50;
+            } else if (Utils.isBelowMALine(heken_list, 50)) {
+                nocation = Utils.NOCATION_BELOW_MA50;
+            } else if (Utils.isAboveMALine(heken_list, 50)) {
+                nocation = Utils.NOCATION_ABOVE_MA50;
+            }
+        }
+
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), str_body, end_body, sl_long,
-                sl_shot, note);
+                sl_shot, note, nocation);
+
         ordersRepository.save(entity);
 
         return "";
@@ -3918,20 +3941,32 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // ---------------------------------------------------------------------
-                if (Objects.isNull(dto) && note_05.contains(find_trend)) {
-                    action = find_trend;
-                    String append = wdh4h1 + "040105";
+                if (Objects.isNull(dto) && Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(dto_h4.getNocation(), dto_h1.getNocation())) {
 
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_05, append,
-                            isBuyNow);
-                }
+                    if (((Objects.equals(Utils.TREND_LONG, trend_h4)
+                            && Objects.equals(Utils.NOCATION_BELOW_MA50, dto_h4.getNocation()))
 
-                if (Objects.isNull(dto) && note_15.contains(find_trend)) {
-                    action = find_trend;
-                    String append = wdh4h1 + "040115";
+                            || (Objects.equals(Utils.TREND_SHOT, trend_h4)
+                                    && Objects.equals(Utils.NOCATION_ABOVE_MA50, dto_h4.getNocation())))
 
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_15, append,
-                            isBuyNow);
+                            && (note_05.contains(trend_h4) || note_15.contains(trend_h4))) {
+
+                        action = trend_h4;
+                        String append = wdh4h1;
+
+                        if (note_05.contains(trend_h4)) {
+                            append += "504105";
+                            dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_05, append,
+                                    true);
+
+                        } else if (note_15.contains(trend_h4)) {
+                            append += "504115";
+                            dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_15, append,
+                                    true);
+                        }
+
+                    }
                 }
                 // ---------------------------------------------------------------------
                 if (Objects.nonNull(dto)) {
@@ -4052,8 +4087,8 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // ----------------------------------------PROFIT--------------------------------------
-        BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT).multiply(BigDecimal.valueOf(2.5));
-        String max_risk = "     MaxRisk:" + Utils.appendLeft(String.valueOf(risk).replace(".0000", ""), 10) + "$1Trade";
+        BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
+        String max_risk = "     MaxRisk:" + Utils.appendLeft(String.valueOf(risk).replace(".000", ""), 10) + "$1Trade";
         BigDecimal profit_0_5R = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
         BigDecimal profit_1R = risk;
 
