@@ -4173,6 +4173,7 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
         String max_risk = "     MaxRisk:" + Utils.appendLeft(String.valueOf(risk).replace(".000", ""), 10) + "$1Trade";
         BigDecimal profit_0_5R = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+        BigDecimal profit_0_3R = risk.divide(BigDecimal.valueOf(3), 10, RoundingMode.CEILING);
         BigDecimal profit_1R = risk;
 
         String msg = "";
@@ -4248,7 +4249,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // Profit < -0.5R -> Check trend (H4) & (H1) & (05) xem còn hy vọng tránh SL(-/+) không.
             boolean isPriceHit_SL = false;
-            if (((trade.getProfit().add(profit_0_5R)).compareTo(BigDecimal.ZERO) < 0) &&
+            if (((trade.getProfit().add(profit_0_3R)).compareTo(BigDecimal.ZERO) < 0) &&
                     !Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
                     && !Objects.equals(trend_15, TRADE_TREND)) {
 
