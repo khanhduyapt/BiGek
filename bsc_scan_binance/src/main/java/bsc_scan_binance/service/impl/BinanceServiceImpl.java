@@ -3968,6 +3968,23 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // ---------------------------------------------------------------------
+                if (Objects.isNull(dto) && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_15, trend_05)) {
+
+                    List<BtcFutures> list_h1 = getCapitalData(EPIC, CAPITAL_TIME_XX);
+                    if (!CollectionUtils.isEmpty(list_h1)) {
+
+                        List<BtcFutures> heken_list = Utils.getHekenList(list_h1);
+                        if (Utils.switchTrendByHeken_12(heken_list).contains(trend_h4)) {
+
+                            action = trend_h1;
+                            append += "411505";
+                            dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_H1, append,
+                                    true);
+                        }
+                    }
+                }
+
                 if (Objects.isNull(dto)
                         && (Objects.equals(trend_h4, trend_h1) || Objects.equals(trend_h4_bread, trend_h1))
                         && Objects.equals(dto_h4.getNocation(), dto_h1.getNocation())) {
@@ -4150,6 +4167,9 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             for (Mt5OpenTrade open_dto : BscScanBinanceApplication.mt5_open_trade_List) {
+                if (Objects.isNull(open_dto)) {
+                    continue;
+                }
                 String EPIC_OPEN = open_dto.getEpic().toUpperCase();
                 String OPEN_TREND = open_dto.getOrder_type().toUpperCase();
 
@@ -4223,6 +4243,7 @@ public class BinanceServiceImpl implements BinanceService {
             BigDecimal cur_price = dto_15.getCurrent_price();
             BigDecimal TP_order = mt5Entity.getTakeProfit();
             BigDecimal SL_order = mt5Entity.getStopLossTimeFam();
+            String timeframe_entry = mt5Entity.getTimeframe();
 
             // SL khi Cancle_1 đóng cửa dưới LoHi+Bread khi đặt lệnh.
             BigDecimal h1_candle1_close = heken_list_h1.get(1).getPrice_close_candle();
@@ -4276,9 +4297,17 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
+            boolean isH1Switchtrend = false;
+            if (Objects.equals(timeframe_entry, Utils.CAPITAL_TIME_H1)
+                    && (trade.getProfit().compareTo(profit_0_3R) > 0)) {
+
+                if (!Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)) {
+                    isH1Switchtrend = true;
+                }
+            }
             // ---------------------------------------------------------------------------------
 
-            if (isPriceHit_SL || isPriceHit_TP) {
+            if (isPriceHit_SL || isPriceHit_TP || isH1Switchtrend) {
                 String prefix = Utils.getChartNameCapital(mt5Entity.getTimeframe()) + "Closed.   ";
                 prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
                 prefix += "(Trade):" + Utils.appendSpace(TRADE_TREND, 10);

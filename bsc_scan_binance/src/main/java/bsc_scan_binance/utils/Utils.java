@@ -3654,7 +3654,7 @@ public class Utils {
         dto.setComment(getEncryptedChartNameCapital(CAPITAL_TIME_XX) + "(" + encrypted_trend_w1d1h4h1 + ")");
         dto.setStop_loss_m30(sl_05);
 
-        BigDecimal en_sl = dto_sl_h1.getCurrent_price().subtract(sl_h1).abs().multiply(BigDecimal.valueOf(2));
+        BigDecimal en_sl = dto_sl_h1.getCurrent_price().subtract(sl_h1).abs();
         BigDecimal en_tp = dto_sl_h1.getCurrent_price().subtract(tp_h1).abs();
         if (en_tp.compareTo(en_sl) < 0) {
             return null;
