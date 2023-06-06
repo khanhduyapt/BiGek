@@ -4052,17 +4052,15 @@ public class BinanceServiceImpl implements BinanceService {
                             && !Objects.equals(trend_h12, action) && !Objects.equals(zone_h12, action)) {
                         continue;
                     }
-                    if (Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h4, action)) {
-                        continue;
-                    }
-                    if (!zone_h12.contains(action) || !zone_h4.contains(action) || !zone_h1.contains(action)) {
+                    if (!zone_h12.contains(action) || !zone_h4.contains(action) || !zone_h1.contains(action)
+                            || !Objects.equals(trend_h1, action)) {
                         continue;
                     }
                     if (Utils.EPICS_INDEXS.contains(EPIC)
-                            && (!Objects.equals(trend_h4, action) || !Objects.equals(trend_h1, action))) {
+                            && (!Objects.equals(trend_d1, action) || !Objects.equals(trend_h12, action)
+                                    || !Objects.equals(trend_h4, action))) {
                         continue;
                     }
-
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
 
