@@ -3846,9 +3846,14 @@ public class BinanceServiceImpl implements BinanceService {
                     trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, note_h1, note_15, note_05,
                     tracking_trend, zone_h12, zone_h4, zone_h1);
 
-            String CAPITAL_TIME_XX = Utils.getTimeframe_SwitchTrend(note_d1, note_h12, note_h4);
+            if (!find_trend.contains("REST")) {
+                prefix = prefix + Utils.appendSpace("Amp:" + find_trend, 10);
+            } else {
+                prefix = prefix + Utils.appendSpace("", 10);
+            }
 
-            analysis(prefix + "Amp:" + Utils.appendSpace(find_trend, 5), EPIC, CAPITAL_TIME_XX);
+            String CAPITAL_TIME_XX = Utils.getTimeframe_SwitchTrend(note_d1, note_h12, note_h4);
+            analysis(prefix, EPIC, CAPITAL_TIME_XX);
 
             if (!Objects.equals(EPIC, "BTCUSD")) {
                 BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
