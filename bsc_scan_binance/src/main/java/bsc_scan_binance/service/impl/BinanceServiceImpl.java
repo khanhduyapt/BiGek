@@ -2794,7 +2794,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         Orders dto_en = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(dto);
-        Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(dto);
+        Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(dto);
 
         if (Objects.isNull(dto_en) || Objects.isNull(dto_sl)) {
             return "";
@@ -3906,7 +3906,7 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------------------
 
             // TODO: 3. controlMt5
-            if (Objects.equals(trend_05, trend_15)) {
+            if (!Objects.equals(trend_05, trend_15)) {
                 continue;
             }
             boolean isTradeNow = Objects.equals(trend_05, trend_15);
@@ -4251,7 +4251,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean isPriceHit_SL = false;
             if (((trade.getProfit().add(profit_0_5R)).compareTo(BigDecimal.ZERO) < 0) &&
                     !Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
-                    && !Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
+                    && !Objects.equals(trend_15, TRADE_TREND)) {
 
                 // SL khi Cancle_1 đóng cửa dưới LoHi+Bread của H1.
                 if (Objects.equals(Utils.TREND_LONG, TRADE_TREND) && (h4_candle1_close.compareTo(SL_order) < 0)) {
@@ -4278,10 +4278,8 @@ public class BinanceServiceImpl implements BinanceService {
                     isPriceHit_TP = true;
                 }
 
-                if (isPriceHit_TP) {
-                    if (Objects.equals(trend_h1, TRADE_TREND) && Objects.equals(trend_15, TRADE_TREND)) {
-                        isPriceHit_TP = false;
-                    }
+                if (isPriceHit_TP && Objects.equals(trend_h1, TRADE_TREND)) {
+                    isPriceHit_TP = false;
                 }
             }
 
