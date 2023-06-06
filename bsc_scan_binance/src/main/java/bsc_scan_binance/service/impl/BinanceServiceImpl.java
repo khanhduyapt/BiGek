@@ -2885,7 +2885,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     public void openTrade() {
         // TODO: 4. openTrade
-        if (!Utils.isHuntTime_7h_to_23h() || Utils.is18_19h()) {
+        if (!Utils.isHuntTime_7h_to_23h()) {
             if (isReloadAfter(Utils.MINUTES_OF_1H, "OpenTrade")) {
                 Utils.logWritelnDraft("[OpenTrade] thoi gian nghi, khong vao lenh.");
             }
@@ -3906,10 +3906,13 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------------------
 
             // TODO: 3. controlMt5
-            if (!Objects.equals(trend_05, trend_15)) {
+            boolean isTradeNow = Objects.equals(trend_05, trend_15);
+            if (Utils.is18_19h()) {
+                isTradeNow = false;
+            } else if (!Objects.equals(trend_05, trend_15)) {
                 continue;
             }
-            boolean isTradeNow = Objects.equals(trend_05, trend_15);
+
             // Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_SHOT, dto_05, dto_h1, Utils.CAPITAL_TIME_15, "", isTradeNow);
 
             // Hệ thống đặt lệnh thì có xu hướng của w1d1h4h1 được thêm vào comment.
@@ -4204,11 +4207,7 @@ public class BinanceServiceImpl implements BinanceService {
             // Dừng trade khi H1_1 đóng nến tại LoHi + Bread1-5 của H1.
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
-            Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(null);
-            if (Utils.EPICS_STOCKS.contains(EPIC)) {
-                dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
-            }
-            if (Objects.isNull(dto_h1) || Objects.isNull(dto_15) || Objects.isNull(dto_05)) {
+            if (Objects.isNull(dto_h1) || Objects.isNull(dto_15)) {
                 continue;
             }
 
@@ -4226,7 +4225,7 @@ public class BinanceServiceImpl implements BinanceService {
             List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
             String trend_h4 = Utils.getTrendByMaXx(heken_list_h4, 5);
 
-            BigDecimal cur_price = dto_05.getCurrent_price();
+            BigDecimal cur_price = dto_15.getCurrent_price();
             BigDecimal TP_order = mt5Entity.getTakeProfit();
             BigDecimal SL_order = mt5Entity.getStopLossTimeFam();
 
@@ -4236,7 +4235,6 @@ public class BinanceServiceImpl implements BinanceService {
             String result = "";
             String trend_h1 = dto_h1.getTrend();
             String trend_15 = dto_15.getTrend();
-            String trend_05 = dto_05.getTrend();
             // ---------------------------------------------------------------------------------
             // TODO: 5. monitorProfit
 
