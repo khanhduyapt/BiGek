@@ -3747,9 +3747,8 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal bread = BigDecimal.ZERO;
         if (Utils.EPICS_STOCKS.contains(EPIC)) {
             bread = Utils.calcMaxCandleHigh(heken_list.subList(1, 5));
-        }
-        if (CAPITAL_TIME_XX.contains("MINUTE")) {
-            bread = Utils.calcMaxBread(heken_list);
+        } else {
+            bread = Utils.calcMaxBread(heken_list.subList(1, 10));
         }
 
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
@@ -3909,7 +3908,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             if ("_US30_GER40_XAUUSD_BTCUSD_GBPUSD_USDJPY_USOIL_".contains(EPIC)) {
                 if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
-                        && Objects.equals(trend_15, trend_05)) {
+                        && (note_05 + note_15).contains(trend_h1)) {
 
                     boolean allow_trade = false;
                     if (Objects.equals(trend_h1, Utils.TREND_LONG)
@@ -3921,6 +3920,11 @@ public class BinanceServiceImpl implements BinanceService {
                             && (Objects.equals(Utils.NOCATION_ABOVE_MA50, dto_15.getNocation())
                                     || Objects.equals(Utils.NOCATION_ABOVE_MA50, dto_05.getNocation()))) {
                         allow_trade = true;
+                    }
+
+                    if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
+                            && !Objects.equals(trend_h12, trend_h1)) {
+                        allow_trade = false;
                     }
 
                     if (allow_trade) {
@@ -3977,8 +3981,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // ---------------------------------------------------------------------
-                if (Objects.isNull(dto) && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
-                        && Objects.equals(trend_15, trend_05)) {
+                if (Objects.isNull(dto) && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
 
                     List<BtcFutures> list_h1 = getCapitalData(EPIC, CAPITAL_TIME_XX);
                     if (!CollectionUtils.isEmpty(list_h1)) {
@@ -3996,7 +3999,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (Objects.isNull(dto) && Objects.equals(trend_15, trend_05)
+                if (Objects.isNull(dto)
                         && (Objects.equals(trend_h4, trend_h1) || Objects.equals(trend_h4_bread, trend_h1))
                         && Objects.equals(dto_h4.getNocation(), dto_h1.getNocation())) {
 
@@ -4040,7 +4043,7 @@ public class BinanceServiceImpl implements BinanceService {
                             append += "500405";
                             dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_05, append);
 
-                        } else if (note_15.contains(action) && Objects.equals(trend_15, trend_05)) {
+                        } else if (note_15.contains(action)) {
                             append += "500415";
                             dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
                         }
@@ -4115,8 +4118,8 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     // Không đánh ngược xu hướng Khi chỉ số có trend_w1=trend_d1.
-                    if (Utils.EPICS_INDEXS.contains(EPIC) && Objects.equals(trend_w1, trend_d1)
-                            && Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
+                    if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
+                            && !Objects.equals(trend_h12, action)) {
 
                         msg_reject += " RejectID: 4115";
                         System.out.println(msg_reject);
@@ -4345,18 +4348,17 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            boolean isH1Switchtrend = false;
+            boolean isH1SweetTrendHasProfit = false;
             if ((Objects.equals(timeframe_entry, Utils.CAPITAL_TIME_H1) || timeframe_entry.contains("MINUTE"))
                     && (trade.getProfit().compareTo(profit_0_5R) > 0)) {
 
                 if (!Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
                         && !Objects.equals(trend_05, TRADE_TREND)) {
-                    isH1Switchtrend = true;
+                    isH1SweetTrendHasProfit = true;
                 }
             }
             // ---------------------------------------------------------------------------------
-
-            if (isPriceHit_SL || isPriceHit_TP || isH1Switchtrend) {
+            if (isPriceHit_SL || isPriceHit_TP || isH1SweetTrendHasProfit) {
                 String prefix = Utils.getChartNameCapital(mt5Entity.getTimeframe()) + "Closed.   ";
                 prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
                 prefix += "(Trade):" + Utils.appendSpace(TRADE_TREND, 10);
