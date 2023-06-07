@@ -76,7 +76,37 @@ void OnTimer(void)
          //---------------------------------------------
          //if(mod5 == 1)
            {
-
+            MqlRates rates_h12[];
+            ArraySetAsSeries(rates_h12,true);
+            copied=CopyRates(symbol, PERIOD_H12, 0, 55, rates_h12);
+            if(copied>0)
+              {
+               int size=fmin(copied, 55);
+               for(int i=0; i<size; i++)
+                 {
+                  FileWrite(nfile_handle, symbol, "HOUR_12", rates_h12[i].time, rates_h12[i].open, rates_h12[i].high, rates_h12[i].low, rates_h12[i].close);
+                 }
+              }
+            else
+              {
+               FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_H12");
+              }
+            //---------------------------------------------
+            MqlRates rates_h4[];
+            ArraySetAsSeries(rates_h4,true);
+            copied=CopyRates(symbol, PERIOD_H4, 0, 55, rates_h4);
+            if(copied>0)
+              {
+               int size=fmin(copied, 55);
+               for(int i=0; i<size; i++)
+                 {
+                  FileWrite(nfile_handle, symbol, "HOUR_04", rates_h4[i].time, rates_h4[i].open, rates_h4[i].high, rates_h4[i].low, rates_h4[i].close);
+                 }
+              }
+            else
+              {
+               FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_H4");
+              }
             //---------------------------------------------
             MqlRates rates_h1[];
             ArraySetAsSeries(rates_h1,true);

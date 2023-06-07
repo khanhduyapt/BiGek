@@ -4240,6 +4240,7 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(dto_h1);
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(dto_h1);
             if (Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15) || Objects.isNull(dto_05)) {
+                Utils.logWritelnDraft("monitorProfit Orders dto is NULL " + EPIC);
                 continue;
             }
 
@@ -4252,6 +4253,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
             if (CollectionUtils.isEmpty(list_h1)) {
+                Utils.logWritelnDraft("monitorProfit list_h1 is empty " + EPIC);
+
                 continue;
             }
             List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
@@ -4316,17 +4319,18 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            boolean isH1SweetTrendHasProfit = false;
+            boolean isH1SweetTrend = false;
             if ((Objects.equals(timeframe_entry, Utils.CAPITAL_TIME_H1) || timeframe_entry.contains("MINUTE"))
-                    && (trade.getProfit().compareTo(profit_0_5R) > 0)) {
+                    && ((trade.getProfit().compareTo(profit_0_5R) > 0)
+                            || (trade.getProfit().add(profit_0_5R).compareTo(BigDecimal.ZERO) < 0))) {
 
                 if (!Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
                         && !Objects.equals(trend_05, TRADE_TREND)) {
-                    isH1SweetTrendHasProfit = true;
+                    isH1SweetTrend = true;
                 }
             }
             // ---------------------------------------------------------------------------------
-            if (isPriceHit_SL || isPriceHit_TP || isH1SweetTrendHasProfit) {
+            if (isPriceHit_SL || isPriceHit_TP || isH1SweetTrend) {
                 String prefix = Utils.getChartNameCapital(mt5Entity.getTimeframe()) + "Closed.   ";
                 prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
                 prefix += "(Trade):" + Utils.appendSpace(TRADE_TREND, 10);
@@ -4344,7 +4348,7 @@ public class BinanceServiceImpl implements BinanceService {
             result += "(Trade:" + Utils.appendSpace(TRADE_TREND, 10) + ")   ";
             result += Utils.appendSpace(EPIC, 10);
             result += multi_timeframes;
-            result += Utils.appendSpace(trade.getComment(), 30);
+            result += ", " + Utils.appendSpace(trade.getComment(), 30);
             result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(trade.getProfit()), 10);
 
             total = total.add(trade.getProfit());
