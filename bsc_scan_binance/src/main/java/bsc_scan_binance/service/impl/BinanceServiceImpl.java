@@ -3828,7 +3828,6 @@ public class BinanceServiceImpl implements BinanceService {
             String zone_h12 = "";
             String zone_h4 = "";
             String zone_h1 = "";
-            String trend_h4_bread = "";
             String trend_h12_bread = "";
             boolean isBreadLongArea = false;
             boolean isBreadShotArea = false;
@@ -3865,13 +3864,6 @@ public class BinanceServiceImpl implements BinanceService {
                 if ((cur_price.compareTo(lohi_h1.get(1)) > 0) && (cur_price.compareTo(lohi_h4.get(1)) > 0)
                         && (cur_price.compareTo(lohi_h12.get(1)) > 0)) {
                     isBreadShotArea = true;
-                }
-
-                if ((cur_price.compareTo(lohi_h4.get(0)) < 0)) {
-                    trend_h4_bread = Utils.TREND_LONG;
-                }
-                if ((cur_price.compareTo(lohi_h4.get(1)) > 0)) {
-                    trend_h4_bread = Utils.TREND_SHOT;
                 }
 
                 if ((cur_price.compareTo(lohi_h12.get(0)) < 0)) {
@@ -3999,17 +3991,15 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (Objects.isNull(dto)
-                        && (Objects.equals(trend_h4, trend_h1) || Objects.equals(trend_h4_bread, trend_h1))
+                if (Objects.isNull(dto) && (note_05 + note_15).contains(trend_h1)
+                        && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
                         && Objects.equals(dto_h4.getNocation(), dto_h1.getNocation())) {
 
                     if (((Objects.equals(Utils.TREND_LONG, trend_h1)
                             && Objects.equals(Utils.NOCATION_BELOW_MA50, dto_h1.getNocation()))
 
                             || (Objects.equals(Utils.TREND_SHOT, trend_h1)
-                                    && Objects.equals(Utils.NOCATION_ABOVE_MA50, dto_h1.getNocation())))
-
-                            && (note_05.contains(trend_h1) || note_15.contains(trend_h1))) {
+                                    && Objects.equals(Utils.NOCATION_ABOVE_MA50, dto_h1.getNocation())))) {
 
                         action = trend_h1;
 
@@ -4025,7 +4015,8 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // ---------------------------------------------------------------------
-                if (Objects.isNull(dto) && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
+                if (Objects.isNull(dto) && (note_05 + note_15).contains(trend_h1)
+                        && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
                         && Objects.equals(dto_h4.getNocation(), dto_15.getNocation())
                         && Objects.equals(dto_h4.getNocation(), dto_05.getNocation())) {
 
@@ -4033,9 +4024,7 @@ public class BinanceServiceImpl implements BinanceService {
                             && Objects.equals(Utils.NOCATION_BELOW_MA50, dto_h4.getNocation()))
 
                             || (Objects.equals(Utils.TREND_SHOT, trend_h4)
-                                    && Objects.equals(Utils.NOCATION_ABOVE_MA50, dto_h4.getNocation())))
-
-                            && (note_05.contains(trend_h4) || note_15.contains(trend_h4))) {
+                                    && Objects.equals(Utils.NOCATION_ABOVE_MA50, dto_h4.getNocation())))) {
 
                         action = trend_h4;
 
