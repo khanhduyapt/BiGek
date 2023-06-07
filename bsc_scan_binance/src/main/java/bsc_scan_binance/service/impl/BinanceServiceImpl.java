@@ -3668,7 +3668,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (!trade.getType().toUpperCase().contains("LIMIT")) {
                     String EVENT_ID = "MSG_PER_HOUR" + trade.getTicket();
                     String msg_alert = "(FTMO)" + trade.getType() + "_" + trade.getSymbol() + "_" + trade.getVolume()
-                            + "(lot)";
+                            + "(lot)" + trade.getComment();
                     sendMsgPerHour(EVENT_ID, msg_alert, true);
                 }
             }
@@ -3983,7 +3983,7 @@ public class BinanceServiceImpl implements BinanceService {
                             action = trend_h1;
                             append += "411505";
                             dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_H1, append,
-                                    true);
+                                    isTradeNow);
                         }
                     }
                 }
@@ -4007,12 +4007,11 @@ public class BinanceServiceImpl implements BinanceService {
                             dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_05, append,
                                     isTradeNow);
 
-                        } else if (note_15.contains(action)) {
+                        } else if (note_15.contains(action) && Objects.equals(trend_15, trend_05)) {
                             append += "504115";
                             dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append,
                                     isTradeNow);
                         }
-
                     }
                 }
                 // ---------------------------------------------------------------------
@@ -4035,7 +4034,7 @@ public class BinanceServiceImpl implements BinanceService {
                             dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_05, append,
                                     isTradeNow);
 
-                        } else if (note_15.contains(action)) {
+                        } else if (note_15.contains(action) && Objects.equals(trend_15, trend_05)) {
                             append += "500415";
                             dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append,
                                     isTradeNow);
@@ -4331,6 +4330,7 @@ public class BinanceServiceImpl implements BinanceService {
             result += "(Trade:" + Utils.appendSpace(TRADE_TREND, 10) + ")   ";
             result += Utils.appendSpace(EPIC, 10);
             result += multi_timeframes;
+            result += Utils.appendSpace(trade.getComment(), 30);
             result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(trade.getProfit()), 10);
 
             total = total.add(trade.getProfit());
