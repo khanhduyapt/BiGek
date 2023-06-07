@@ -3892,7 +3892,7 @@ public class BinanceServiceImpl implements BinanceService {
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
 
-                // ----------------2 truong hop nay dung, ko dc sua doi ----------------
+                // ----------------3 truong hop nay dung, ko dc sua doi ----------------
                 if (Objects.isNull(dto) && note_05.contains(trend_h12) && Objects.equals(trend_h12, trend_h4)
                         && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_05)) {
                     action = trend_h12;
@@ -3905,6 +3905,14 @@ public class BinanceServiceImpl implements BinanceService {
                     action = trend_h12;
                     append += "124115";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
+                }
+
+                if (Objects.isNull(dto) && note_h1.contains(trend_h12) && Objects.equals(trend_h12, trend_h4)
+                        && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_h1, trend_05)) {
+                    action = trend_h12;
+                    append += "120401";
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_H1, append);
                 }
 
                 // ---------------------------------------------------------------------
