@@ -3750,6 +3750,9 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.EPICS_STOCKS.contains(EPIC)) {
             bread = Utils.calcMaxCandleHigh(heken_list.subList(1, 5));
         }
+        if (CAPITAL_TIME_XX.contains("MINUTE")) {
+            bread = Utils.calcMaxBread(heken_list);
+        }
 
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
         String date_time = LocalDateTime.now().toString();
@@ -4067,17 +4070,44 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // ---------------------------------------------------------------------
                 if (Objects.nonNull(dto)) {
+                    String msg_reject = "mt5RejectTrade: " + Utils.appendSpace(dto.getEpic(), 10);
+                    msg_reject += Utils.appendSpace(dto.getOrder_type(), 15);
+                    msg_reject += " Volume: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
+                    msg_reject += " SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 10);
+                    msg_reject += " comment: " + Utils.appendSpace(dto.getComment(), 25);
+                    msg_reject += " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62);
+
                     if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
                             && !Objects.equals(trend_h12, action) && !Objects.equals(zone_h12, action)) {
+                        msg_reject += " Row: 4085";
+                        System.out.println(msg_reject);
+                        Utils.logWritelnDraft(msg_reject);
                         continue;
                     }
                     if (!zone_h12.contains(action) || !zone_h4.contains(action) || !zone_h1.contains(action)
                             || !Objects.equals(trend_h1, action)) {
+
+                        msg_reject += " Row: 4090";
+                        System.out.println(msg_reject);
+                        Utils.logWritelnDraft(msg_reject);
+
+                        continue;
+                    }
+                    if (!Objects.equals(zone_h12, action) && !Objects.equals(trend_h12, action)) {
+                        msg_reject += " Row: 4100";
+                        System.out.println(msg_reject);
+                        Utils.logWritelnDraft(msg_reject);
+
                         continue;
                     }
                     if (Utils.EPICS_INDEXS.contains(EPIC)
                             && (!Objects.equals(trend_d1, action) || !Objects.equals(trend_h12, action)
                                     || !Objects.equals(trend_h4, action))) {
+
+                        msg_reject += " Row: 4110";
+                        System.out.println(msg_reject);
+                        Utils.logWritelnDraft(msg_reject);
+
                         continue;
                     }
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto);
