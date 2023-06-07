@@ -4070,27 +4070,27 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
                             && !Objects.equals(trend_h12, action) && !Objects.equals(zone_h12, action)) {
-                        msg_reject += " RejectID: 4085";
+                        msg_reject += " RejectID: 4085   " + dto.getComment();
                         System.out.println(msg_reject);
                         Utils.logWritelnDraft(msg_reject);
                         continue;
                     }
                     if (!zone_h12.contains(action) || !zone_h4.contains(action) || !zone_h1.contains(action)) {
-                        msg_reject += " RejectID: 4090";
+                        msg_reject += " RejectID: 4090   " + dto.getComment();
                         System.out.println(msg_reject);
                         Utils.logWritelnDraft(msg_reject);
 
                         continue;
                     }
                     if (!Objects.equals(zone_h12, action) && !Objects.equals(trend_h12, action)) {
-                        msg_reject += " RejectID: 4195";
+                        msg_reject += " RejectID: 4195   " + dto.getComment();
                         System.out.println(msg_reject);
                         Utils.logWritelnDraft(msg_reject);
 
                         continue;
                     }
                     if ((!Objects.equals(trend_h12, trend_h4) && !Objects.equals(trend_h1, action))) {
-                        msg_reject += " RejectID: 4100";
+                        msg_reject += " RejectID: 4100   " + dto.getComment();
                         System.out.println(msg_reject);
                         Utils.logWritelnDraft(msg_reject);
                         continue;
@@ -4100,17 +4100,18 @@ public class BinanceServiceImpl implements BinanceService {
                             && (!Objects.equals(trend_d1, action) || !Objects.equals(trend_h12, action)
                                     || !Objects.equals(trend_h4, action))) {
 
-                        msg_reject += " RejectID: 4110";
+                        msg_reject += " RejectID: 4110   " + dto.getComment();
                         System.out.println(msg_reject);
                         Utils.logWritelnDraft(msg_reject);
                         continue;
                     }
 
                     // Không đánh ngược xu hướng Khi chỉ số có trend_w1=trend_d1.
-                    if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
+                    if (Utils.EPICS_INDEXS.contains(EPIC) && Objects.equals(trend_w1, trend_d1)
+                            && Objects.equals(trend_d1, trend_h12)
                             && !Objects.equals(trend_h12, action)) {
 
-                        msg_reject += " RejectID: 4115";
+                        msg_reject += " RejectID: 4115   " + dto.getComment();
                         System.out.println(msg_reject);
                         Utils.logWritelnDraft(msg_reject);
                         continue;
