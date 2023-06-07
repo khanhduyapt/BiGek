@@ -3800,13 +3800,14 @@ public class Utils {
             switch_trend += getTrendPrefix("H1", "", " ");
         }
 
-        if (Objects.equals(trend_h12, trend_15)) {
+        if (Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h1, trend_15)) {
             switch_trend += getTrendPrefix("15", note_15, " ");
         } else {
             switch_trend += getTrendPrefix("15", "", " ");
         }
 
-        if (Objects.equals(trend_h12, trend_05)) {
+        if (Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h1, trend_15)
+                && Objects.equals(trend_15, trend_05)) {
             switch_trend += getTrendPrefix("05", note_05, " ");
         } else {
             switch_trend += getTrendPrefix("05", "", " ");
