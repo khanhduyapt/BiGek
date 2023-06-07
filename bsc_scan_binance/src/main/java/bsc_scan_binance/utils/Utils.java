@@ -3518,7 +3518,7 @@ public class Utils {
         }
         // --------------------------------------------------------------------
         String id = heken_list.get(0).getId();
-        if (!(id.contains("_1d_") || id.contains("_1w_"))) {
+        if (!(id.contains(PREFIX_1d_) || id.contains(PREFIX_1w_))) {
             if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(1).isUptrend()
                     && heken_list.get(2).isDown()) {
                 return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
@@ -3546,9 +3546,13 @@ public class Utils {
         int end = 1;
 
         String id = heken_list.get(0).getId();
-        if (id.contains("_1w_")) {
+        if (id.contains(PREFIX_1w_)) {
             String trend = heken_list.get(0).isUptrend() ? Utils.TREND_LONG : Utils.TREND_SHOT;
             return trend;
+        }
+        if (id.contains("m_")) {
+            str = 1;
+            end = 2;
         }
 
         boolean isUptrend_1 = isUptrendByMa(heken_list, 1, str, end);
@@ -3623,7 +3627,7 @@ public class Utils {
     }
 
     public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_en_05, Orders dto_sl_h1,
-            String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1, boolean isTradeNow) {
+            String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1) {
         BigDecimal en_05, sl_05, sl_h1, tp_h1;
         BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT); // ACCOUNT=20k, risk: 0.5% = 100$; 100k, risk: 0.5% = 500$
         //risk_x1 = risk_x1.multiply(BigDecimal.valueOf(2)); // 20k*5 = 100k -> risk : 200$
@@ -3644,15 +3648,14 @@ public class Utils {
         MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, dto_en_05.getCurrent_price(),
                 sl_h1, tp_h1);
 
-        if (isTradeNow) {
-            if (Objects.equals(Utils.TREND_LONG, trend)
-                    && Objects.equals(Utils.NOCATION_ABOVE_MA50, dto_en_05.getNocation())) {
-                isTradeNow = false;
-            }
-            if (Objects.equals(Utils.TREND_SHOT, trend)
-                    && Objects.equals(Utils.NOCATION_BELOW_MA50, dto_en_05.getNocation())) {
-                isTradeNow = false;
-            }
+        boolean isTradeNow = true;
+        if (Objects.equals(Utils.TREND_LONG, trend)
+                && Objects.equals(Utils.NOCATION_ABOVE_MA50, dto_en_05.getNocation())) {
+            isTradeNow = false;
+        }
+        if (Objects.equals(Utils.TREND_SHOT, trend)
+                && Objects.equals(Utils.NOCATION_BELOW_MA50, dto_en_05.getNocation())) {
+            isTradeNow = false;
         }
 
         Mt5OpenTrade dto = new Mt5OpenTrade();
