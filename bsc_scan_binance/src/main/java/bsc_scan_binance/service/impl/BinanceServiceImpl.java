@@ -4320,6 +4320,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (trade.getProfit().compareTo(profit_1R) > 0) {
                 SL_order = h1_candle1_close;
                 mt5Entity.setStopLossTimeFam(h1_candle1_close);
+                mt5Entity.setStopLossCalcVol(h1_candle1_close);
                 mt5OpenTradeRepository.save(mt5Entity);
             }
 
