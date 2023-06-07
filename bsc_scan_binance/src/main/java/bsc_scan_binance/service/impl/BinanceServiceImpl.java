@@ -2950,7 +2950,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                String msg = "mt5OpenTrade: " + Utils.appendSpace(dto.getEpic(), 10);
+                String msg = "mt5OpenTrade  : " + Utils.appendSpace(dto.getEpic(), 10);
                 msg += Utils.appendSpace(dto.getOrder_type(), 15);
                 msg += " Volume: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
                 msg += " SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 10);
