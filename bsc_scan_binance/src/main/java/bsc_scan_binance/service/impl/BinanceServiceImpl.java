@@ -4191,8 +4191,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean isH1SweetTrend = false;
             if ((Objects.equals(timeframe_entry, Utils.CAPITAL_TIME_H1) || timeframe_entry.contains("MINUTE"))
-                    && ((trade.getProfit().compareTo(profit_1R) > 0)
-                            || (trade.getProfit().add(profit_1R).compareTo(BigDecimal.ZERO) < 0))) {
+                    && ((trade.getProfit().compareTo(profit_0_5R) > 0)
+                            || (trade.getProfit().add(profit_0_5R).compareTo(BigDecimal.ZERO) < 0))) {
 
                 if (!Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
                         && !Objects.equals(trend_05, TRADE_TREND)) {
