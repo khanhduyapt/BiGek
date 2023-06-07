@@ -3709,7 +3709,7 @@ public class BinanceServiceImpl implements BinanceService {
         String type = "";
 
         // TODO: 1. initForexTrend
-        if ((heken_list.size() > 50) && CAPITAL_TIME_XX.contains("MINUTE")) {
+        if ((heken_list.size() > 50) && Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_05)) {
             String switch_trend_05 = Utils.switchTrendByHeken_12(heken_list);
             switch_trend_05 += Utils.switchTrendByMa13_XX(heken_list, 5);
 
@@ -3897,7 +3897,9 @@ public class BinanceServiceImpl implements BinanceService {
             String action = "";
             String append = wdh4h1;
             Mt5OpenTrade dto = null;
-
+            if (!Objects.equals(trend_15, trend_05)) {
+                continue;
+            }
             if ("_US30_GER40_XAUUSD_BTCUSD_GBPUSD_USDJPY_USOIL_".contains(EPIC)) {
                 if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
                         && (note_05 + note_15).contains(trend_h1)) {
