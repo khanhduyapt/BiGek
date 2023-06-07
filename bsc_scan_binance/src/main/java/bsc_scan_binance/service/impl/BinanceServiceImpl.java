@@ -4030,11 +4030,9 @@ public class BinanceServiceImpl implements BinanceService {
                         if (note_05.contains(action)) {
                             append += "501205";
                             dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_05, append);
-                            BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                         } else if (note_15.contains(action)) {
                             append += "501215";
                             dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
-                            BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                         }
                     }
                 }
@@ -4062,14 +4060,14 @@ public class BinanceServiceImpl implements BinanceService {
 
                         continue;
                     }
-                    if (!Objects.equals(zone_h12, action) && !Objects.equals(trend_h12, action)) {
+                    if (!Objects.equals(trend_h12_bread, action) && !Objects.equals(trend_h12, action)) {
                         msg_reject += " RejectID: 4195   " + dto.getComment();
                         System.out.println(msg_reject);
                         Utils.logWritelnDraft(msg_reject);
 
                         continue;
                     }
-                    if ((!Objects.equals(trend_h12, trend_h4) && !Objects.equals(trend_h1, action))) {
+                    if ((Objects.equals(trend_h12, trend_h4) && !Objects.equals(trend_h4, action))) {
                         msg_reject += " RejectID: 4100   " + dto.getComment();
                         System.out.println(msg_reject);
                         Utils.logWritelnDraft(msg_reject);
