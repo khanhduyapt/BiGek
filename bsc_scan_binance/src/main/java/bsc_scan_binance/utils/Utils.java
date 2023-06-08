@@ -3787,9 +3787,8 @@ public class Utils {
         }
         switch_trend += "}  ";
 
-        if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
-                && Objects.equals(trend_h12, trend_h1)) {
-            switch_trend += appendSpace("D2H:" + trend_d1, 10);
+        if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)) {
+            switch_trend += appendSpace("D2H4:" + trend_d1, 10);
         } else {
             switch_trend += appendSpace("", 10);
         }
