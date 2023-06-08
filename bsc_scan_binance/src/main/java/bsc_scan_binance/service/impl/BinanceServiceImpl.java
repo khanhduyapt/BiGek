@@ -4138,7 +4138,6 @@ public class BinanceServiceImpl implements BinanceService {
             List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
             if (CollectionUtils.isEmpty(list_h1)) {
                 Utils.logWritelnDraft("monitorProfit list_h1 is empty " + EPIC);
-
                 continue;
             }
             List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
@@ -4201,7 +4200,7 @@ public class BinanceServiceImpl implements BinanceService {
                     isPriceHit_TP = true;
                 }
 
-                if (isPriceHit_TP && Objects.equals(trend_h1, TRADE_TREND)) {
+                if (isPriceHit_TP && Objects.equals(trend_h1, TRADE_TREND) && Objects.equals(trend_15, TRADE_TREND)) {
                     isPriceHit_TP = false;
                 }
             }
