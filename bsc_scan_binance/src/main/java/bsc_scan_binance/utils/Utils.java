@@ -3550,7 +3550,7 @@ public class Utils {
             String trend = heken_list.get(0).isUptrend() ? Utils.TREND_LONG : Utils.TREND_SHOT;
             return trend;
         }
-        if (id.contains("m_")) {
+        if (id.contains("m_") || id.contains(PREFIX_1h_)) {
             str = 1;
             end = 2;
         }
@@ -3812,8 +3812,14 @@ public class Utils {
         } else {
             switch_trend += getTrendPrefix("05", "", " ");
         }
-
         switch_trend += "}  ";
+
+        if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
+                && Objects.equals(trend_h12, trend_h1)) {
+            switch_trend += appendSpace(trend_d1, 6);
+        } else {
+            switch_trend += "      ";
+        }
 
         String result = prefix + switch_trend;
         return result;

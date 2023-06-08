@@ -126,6 +126,7 @@ public class BscScanBinanceApplication {
                     try {
                         if (isReloadAfter(Utils.MINUTES_OF_4H, "clearTrash")) {
                             binance_service.clearTrash();
+                            binance_service.openTrade();
                         }
                         if (isReloadAfter(1, "MsgKillZone")) {
                             alertMsgKillZone(binance_service);

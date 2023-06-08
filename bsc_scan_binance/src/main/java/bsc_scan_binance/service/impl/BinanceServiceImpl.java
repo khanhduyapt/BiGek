@@ -3544,13 +3544,13 @@ public class BinanceServiceImpl implements BinanceService {
                         Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_LONG, dto_15, dto_d1,
                                 Utils.CAPITAL_TIME_15, w1d1h4h1 + "12405b");
 
-                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                        // BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                     }
 
                     if (isBreadShotArea && Objects.equals(trend_15, Utils.TREND_SHOT)) {
                         Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_SHOT, dto_15, dto_d1,
                                 Utils.CAPITAL_TIME_15, w1d1h4h1 + "12405s");
-                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                        // BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                     }
                 }
             }
@@ -3721,12 +3721,23 @@ public class BinanceServiceImpl implements BinanceService {
                     type = Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_Ma_3_5;
                 }
             }
+
         } else if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_15)) {
             String switch_trend_05 = Utils.switchTrendByHeken_12(heken_list);
             switch_trend_05 += Utils.switchTrendByMa13_XX(heken_list, 5);
             switch_trend_05 += Utils.switchTrendByMaXX(heken_list, 5, 6);
             if (Utils.isNotBlank(switch_trend_05) && switch_trend_05.contains(trend)) {
                 type = Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_Ma_3_5;
+            }
+
+        } else if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1)) {
+            type = Utils.switchTrendByHeken_12(heken_list);
+
+            if (Utils.isBlank(type)) {
+                String switch_trend = Utils.switchTrendByMa13_XX(heken_list, 5);
+                if (Utils.isNotBlank(switch_trend) && switch_trend.contains(trend)) {
+                    type = Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_Ma_3_5;
+                }
             }
         } else {
             type = Utils.switchTrendByHeken_12(heken_list);
@@ -3847,13 +3858,30 @@ public class BinanceServiceImpl implements BinanceService {
             index += 1;
             String tracking_trend = trend_h12;
 
+            String CAPITAL_TIME_XX = Utils.getTimeframe_SwitchTrend(note_d1, note_h12, note_h4);
+
             String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h4,
                     trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, note_h1, note_15, note_05,
                     tracking_trend, zone_h12, zone_h4, zone_h1);
 
-            String CAPITAL_TIME_XX = Utils.getTimeframe_SwitchTrend(note_d1, note_h12, note_h4);
+            String temp_zone_h12 = zone_h12;
+            if (Objects.equals(trend_h1, Utils.TREND_LONG) && Utils.isNotBlank(note_h1)
+                    && Objects.equals(Utils.NOCATION_BELOW_MA50, dto_h1.getNocation())) {
+                CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H1;
+                prefix += " (H1_B) ";
+                temp_zone_h12 = "";
+                msg += "(B):" + EPIC + Utils.new_line_from_service;
+            } else if (Objects.equals(trend_h1, Utils.TREND_SHOT) && Utils.isNotBlank(note_h1)
+                    && Objects.equals(Utils.NOCATION_ABOVE_MA50, dto_h1.getNocation())) {
+                CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H1;
+                prefix += " (H1_S) ";
+                temp_zone_h12 = "";
+                msg += "(S):" + EPIC + Utils.new_line_from_service;
+            } else {
+                prefix += "        ";
+            }
 
-            analysis(prefix, EPIC, CAPITAL_TIME_XX, zone_h12);
+            analysis(prefix, EPIC, CAPITAL_TIME_XX, temp_zone_h12);
 
             if (!Objects.equals(EPIC, "BTCUSD")) {
                 BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
@@ -3874,9 +3902,18 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
                         && note_15.contains(trend_h1)) {
 
+                    action = trend_h1;
                     boolean allow_trade = true;
-                    if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
-                            && !Objects.equals(trend_h12, trend_h1)) {
+                    if (Objects.equals(trend_h1, Utils.TREND_LONG)
+                            && Objects.equals(Utils.NOCATION_ABOVE_MA50, dto_h1.getNocation())) {
+                        allow_trade = false;
+                    }
+                    if (Objects.equals(trend_h1, Utils.TREND_SHOT)
+                            && Objects.equals(Utils.NOCATION_BELOW_MA50, dto_h1.getNocation())) {
+                        allow_trade = false;
+                    }
+                    if (((Objects.equals(trend_d1, trend_h12)
+                            || Objects.equals(trend_h12, trend_h4)) && !Objects.equals(trend_h12, action))) {
                         allow_trade = false;
                     }
 
@@ -3939,7 +3976,8 @@ public class BinanceServiceImpl implements BinanceService {
                         continue;
                     }
 
-                    if ((Objects.equals(trend_h12, trend_h4) && !Objects.equals(trend_h4, action))) {
+                    if (((Objects.equals(trend_d1, trend_h12)
+                            || Objects.equals(trend_h12, trend_h4)) && !Objects.equals(trend_h12, action))) {
                         msg_reject += " RejectID: 4100   " + dto.getComment();
                         System.out.println(msg_reject);
                         Utils.logWritelnDraft(msg_reject);
@@ -3972,6 +4010,14 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ---------------------------------------------------------------------------------------------
 
+        }
+
+        if (Utils.isNotBlank(msg) && isReloadAfter(Utils.MINUTES_OF_1H, "H1_SWEET_TREND")) {
+            String EVENT_ID = "MSG_PER_HOUR_H1_SWEET_TREND" + Utils.getCurrentYyyyMmDd_HH();
+            String msg_alert = "(FTMO_H1_TREND_REVERSAL)" + Utils.new_line_from_service + msg;
+            Utils.logWritelnDraft(msg_alert);
+
+            sendMsgPerHour(EVENT_ID, msg_alert, true);
         }
 
         return msg;
