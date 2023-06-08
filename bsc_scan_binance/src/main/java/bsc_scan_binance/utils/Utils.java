@@ -3241,11 +3241,6 @@ public class Utils {
             return result;
         }
 
-        result = switchTrendByMaXX_123(list, fastIndex, slowIndex, 1, 3);
-        if (Utils.isNotBlank(result)) {
-            return result;
-        }
-
         return "";
     }
 
@@ -3628,19 +3623,17 @@ public class Utils {
 
     public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_en_05, Orders dto_sl_h1,
             String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1) {
-        BigDecimal en_05, sl_05, sl_h1, tp_h1;
+        BigDecimal en_05, sl_h1, tp_h1;
         BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT); // ACCOUNT=20k, risk: 0.5% = 100$; 100k, risk: 0.5% = 500$
         //risk_x1 = risk_x1.multiply(BigDecimal.valueOf(2)); // 20k*5 = 100k -> risk : 200$
 
         if (Objects.equals(Utils.TREND_LONG, trend)) {
             en_05 = Utils.getBigDecimal(dto_en_05.getBody_low());
-            sl_05 = Utils.getBigDecimal(dto_en_05.getLow_price());
 
             sl_h1 = Utils.getBigDecimal(dto_sl_h1.getLow_price());
             tp_h1 = Utils.getBigDecimal(dto_sl_h1.getBody_hig());
         } else {
             en_05 = Utils.getBigDecimal(dto_en_05.getBody_hig());
-            sl_05 = Utils.getBigDecimal(dto_en_05.getHigh_price());
 
             sl_h1 = Utils.getBigDecimal(dto_sl_h1.getHigh_price());
             tp_h1 = Utils.getBigDecimal(dto_sl_h1.getBody_low());
@@ -3666,7 +3659,7 @@ public class Utils {
         dto.setStop_loss(sl_h1);
         dto.setTake_profit(tp_h1);
         dto.setComment(getEncryptedChartNameCapital(CAPITAL_TIME_XX) + "(" + encrypted_trend_w1d1h4h1 + ")");
-        dto.setStop_loss_m30(sl_05);
+        dto.setStop_loss_m30(sl_h1);
 
         BigDecimal en_sl = dto_sl_h1.getCurrent_price().subtract(sl_h1).abs();
         BigDecimal en_tp = dto_sl_h1.getCurrent_price().subtract(tp_h1).abs();

@@ -2718,20 +2718,9 @@ public class BinanceServiceImpl implements BinanceService {
             zone = "ZoneH12: " + Utils.appendSpace(Utils.getZoneTrend(heken_list_h12), 10);
         }
 
-        String text_waiting = "";
-        List<PrepareOrders> prepareOrdes = prepareOrdersRepository.findAll();
-        if (!CollectionUtils.isEmpty(prepareOrdes)) {
-            for (PrepareOrders entity : prepareOrdes) {
-                if (entity.getEpic_and_capital_timeframe().contains(EPIC)) {
-                    text_waiting = Utils.TEXT_WAITING_ + entity.getTrade_type().toLowerCase();
-                }
-            }
-        }
-        text_waiting = Utils.appendSpace(text_waiting, 20);
-
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 11);
-        log += append + " " + zone + text_waiting;
+        log += append + " " + zone;
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
         log += Utils.calc_BUF_LO_HI_BUF_Forex(false, find_trend, EPIC, dto_entry, dto_sl);
         log += "   " + text_body;
@@ -2830,13 +2819,13 @@ public class BinanceServiceImpl implements BinanceService {
                 }
                 ea = Utils.appendSpace(ea, length);
 
-                String append = Utils.appendSpace(prifix + ea, 115) + Utils.appendSpace(note, 45);
+                String append = Utils.appendSpace(prifix + ea, 115) + Utils.appendSpace(note, 25);
 
                 outputLog("Analysis_" + char_name, EPIC, dto_en, dto_sl, append, find_trend);
             }
         } else {
             ea = Utils.appendSpace(Utils.TEXT_EXPERT_ADVISOR_SPACE, length);
-            String append = Utils.appendSpace(prifix + ea, 115) + Utils.appendSpace(note, 45);
+            String append = Utils.appendSpace(prifix + ea, 115) + Utils.appendSpace(note, 25);
             outputLog("Analysis_" + char_name, EPIC, dto_en, dto_sl, append, find_trend);
         }
 
@@ -3639,22 +3628,18 @@ public class BinanceServiceImpl implements BinanceService {
             Mt5OpenTradeEntity entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
             if (Objects.isNull(entity)) {
 
-                // SL khi H4_1 đóng nến tại LoHi của 50 cây nến M05.
-                Orders dto_sl_lohi_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(null);
-                if (Objects.isNull(dto_sl_lohi_05)) {
-                    continue;
-                }
+                // SL khi H1_1 đóng nến tại LoHi của 50 cây nến H1 + Bread.
                 entity = new Mt5OpenTradeEntity();
 
-                BigDecimal sl_LoHi_05 = BigDecimal.ZERO;
+                BigDecimal sl_LoHi_H1 = BigDecimal.ZERO;
                 BigDecimal sl_Body_H1 = BigDecimal.ZERO;
 
                 if (trade.getType().toUpperCase().contains(Utils.TREND_LONG)) {
-                    sl_LoHi_05 = dto_sl_lohi_05.getLow_price();
+                    sl_LoHi_H1 = dto_tp_body_h1.getLow_price();
                     sl_Body_H1 = dto_tp_body_h1.getBody_low();
                 }
                 if (trade.getType().toUpperCase().contains(Utils.TREND_SHOT)) {
-                    sl_LoHi_05 = dto_sl_lohi_05.getHigh_price();
+                    sl_LoHi_H1 = dto_tp_body_h1.getHigh_price();
                     sl_Body_H1 = dto_tp_body_h1.getBody_hig();
                 }
 
@@ -3662,7 +3647,7 @@ public class BinanceServiceImpl implements BinanceService {
                 entity.setSymbol(trade.getSymbol());
 
                 entity.setPriceOpen(trade.getPriceOpen());
-                entity.setStopLossTimeFam(sl_LoHi_05);
+                entity.setStopLossTimeFam(sl_LoHi_H1);
                 entity.setStopLossCalcVol(sl_Body_H1);
 
                 if (!trade.getType().toUpperCase().contains("LIMIT")) {
@@ -3671,7 +3656,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String msg_alert = "(FTMO)";
                     msg_alert += trade.getType() + ":" + trade.getSymbol();
                     msg_alert += "," + trade.getVolume() + "(lot)";
-                    msg_alert += ",SL:" + Utils.removeLastZero(sl_LoHi_05);
+                    msg_alert += ",SL:" + Utils.removeLastZero(sl_LoHi_H1);
                     msg_alert += "," + trade.getComment();
 
                     sendMsgPerHour(EVENT_ID, msg_alert, true);
@@ -3734,7 +3719,7 @@ public class BinanceServiceImpl implements BinanceService {
             type = Utils.switchTrendByHeken_12(heken_list);
 
             if (Utils.isBlank(type)) {
-                String switch_trend = Utils.switchTrendByMa13_XX(heken_list, 5);
+                String switch_trend = Utils.switchTrendByMaXX(heken_list, 3, 5);
                 if (Utils.isNotBlank(switch_trend) && switch_trend.contains(trend)) {
                     type = Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_Ma_3_5;
                 }
