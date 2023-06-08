@@ -3709,14 +3709,8 @@ public class Utils {
         if (isNotBlank(note_h4)) {
             return Utils.CAPITAL_TIME_H4;
         }
-        if (isNotBlank(note_h12)) {
-            return Utils.CAPITAL_TIME_H12;
-        }
-        if (isNotBlank(note_d1)) {
-            return Utils.CAPITAL_TIME_D1;
-        }
 
-        return Utils.CAPITAL_TIME_W1;
+        return Utils.CAPITAL_TIME_H1;
     }
 
     public static String getTrendPrefix(String chart_name, String note, String append) {
