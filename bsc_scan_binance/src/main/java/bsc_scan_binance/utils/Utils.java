@@ -776,7 +776,7 @@ public class Utils {
         if (TIME.contains(CAPITAL_TIME_15) || TIME.contains(PREFIX_15m_)) {
             return "(15) ";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_H1) || TIME.contains(PREFIX_1h_)) {
+        if (TIME.contains(CAPITAL_TIME_H1) || TIME.contains(PREFIX_1h_)) {
             return "(H1)  ";
         }
         if (TIME.contains(CAPITAL_TIME_H4) || TIME.contains(PREFIX_4h_)) {
