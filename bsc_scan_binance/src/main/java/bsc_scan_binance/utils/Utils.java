@@ -770,25 +770,25 @@ public class Utils {
     }
 
     public static String getChartNameCapital(String TIME) {
-        if (TIME.contains(CAPITAL_TIME_05)) {
+        if (TIME.contains(CAPITAL_TIME_05) || TIME.contains(PREFIX_5m_)) {
             return "(05) ";
         }
-        if (TIME.contains(CAPITAL_TIME_15)) {
+        if (TIME.contains(CAPITAL_TIME_15) || TIME.contains(PREFIX_15m_)) {
             return "(15) ";
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_H1) || TIME.contains(PREFIX_1h_)) {
             return "(H1)  ";
         }
-        if (TIME.contains(CAPITAL_TIME_H4)) {
+        if (TIME.contains(CAPITAL_TIME_H4) || TIME.contains(PREFIX_4h_)) {
             return "(H4)  ";
         }
-        if (TIME.contains(CAPITAL_TIME_H12)) {
+        if (TIME.contains(CAPITAL_TIME_H12) || TIME.contains(PREFIX_12h_)) {
             return "(H12) ";
         }
-        if (TIME.contains(CAPITAL_TIME_D1)) {
+        if (TIME.contains(CAPITAL_TIME_D1) || TIME.contains(PREFIX_1d_)) {
             return "(D1)  ";
         }
-        if (TIME.contains(CAPITAL_TIME_W1)) {
+        if (TIME.contains(CAPITAL_TIME_W1) || TIME.contains(PREFIX_1w_)) {
             return "(W1)  ";
         }
 
@@ -3674,10 +3674,6 @@ public class Utils {
             Orders dto_sl) {
         String result = "";
         BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
-
-        if (dto_entry.getId().contains(CAPITAL_TIME_D1) || dto_entry.getId().contains(CAPITAL_TIME_W1)) {
-            // risk = risk.multiply(BigDecimal.valueOf(2));
-        }
         risk = formatPrice(risk, 0);
 
         BigDecimal sl_long = Utils.getBigDecimal(dto_sl.getLow_price());
@@ -3772,9 +3768,6 @@ public class Utils {
         // Khong danh khi W&D nguoc xu huong
 
         String switch_trend = "  { ";
-        switch_trend += getTrendPrefix("W", note_w1, " ");
-        switch_trend += getTrendPrefix("D", note_d1, " ");
-
         if (Objects.equals(trend_d1, trend_h12) && zone_h12.contains(trend_h12)) {
             switch_trend += getTrendPrefix("H12", note_h12, " ");
         } else {
@@ -3792,26 +3785,13 @@ public class Utils {
         } else {
             switch_trend += getTrendPrefix("H1", "", " ");
         }
-
-        if (Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h1, trend_15)) {
-            switch_trend += getTrendPrefix("15", note_15, " ");
-        } else {
-            switch_trend += getTrendPrefix("15", "", " ");
-        }
-
-        if (Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h1, trend_15)
-                && Objects.equals(trend_15, trend_05)) {
-            switch_trend += getTrendPrefix("05", note_05, " ");
-        } else {
-            switch_trend += getTrendPrefix("05", "", " ");
-        }
         switch_trend += "}  ";
 
         if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
                 && Objects.equals(trend_h12, trend_h1)) {
-            switch_trend += appendSpace(trend_d1, 6);
+            switch_trend += appendSpace("D2H:" + trend_d1, 10);
         } else {
-            switch_trend += "      ";
+            switch_trend += appendSpace("", 10);
         }
 
         String result = prefix + switch_trend;
@@ -3826,7 +3806,7 @@ public class Utils {
         MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_long, tp_long);
 
         String temp = "";
-        temp += "(Buy )SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 10);
+        temp += chartSL + "(Buy )SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 10);
 
         temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$"; // 500$
@@ -3846,7 +3826,7 @@ public class Utils {
         MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_shot, tp_shot);
 
         String temp = "";
-        temp += "(Sell)SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10);
+        temp += chartSL + "(Sell)SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10);
 
         temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";

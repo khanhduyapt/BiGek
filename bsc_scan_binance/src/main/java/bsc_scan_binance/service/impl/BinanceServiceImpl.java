@@ -2773,7 +2773,7 @@ public class BinanceServiceImpl implements BinanceService {
         return result;
     }
 
-    private String analysis(String prifix, String EPIC, String CAPITAL_TIME_XX, String zone_h12) {
+    private String analysis(String prifix, String EPIC, String CAPITAL_TIME_XX, String trend_h1) {
         if (Utils.isBlank(CAPITAL_TIME_XX)) {
             return "";
         }
@@ -2791,8 +2791,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         // ----------------------------TREND------------------------
         String find_trend = dto.getTrend();
-        if (Objects.equals(Utils.TREND_LONG, zone_h12) || Objects.equals(Utils.TREND_SHOT, zone_h12)) {
-            find_trend = zone_h12;
+        if (Objects.equals(Utils.TREND_LONG, trend_h1) || Objects.equals(Utils.TREND_SHOT, trend_h1)) {
+            find_trend = trend_h1;
         }
 
         String char_name = Utils.getChartName(dto.getId());
@@ -2819,13 +2819,13 @@ public class BinanceServiceImpl implements BinanceService {
                 }
                 ea = Utils.appendSpace(ea, length);
 
-                String append = Utils.appendSpace(prifix + ea, 115) + Utils.appendSpace(note, 25);
+                String append = Utils.appendSpace(prifix + ea, 100) + Utils.appendSpace(note, 25);
 
                 outputLog("Analysis_" + char_name, EPIC, dto_en, dto_sl, append, find_trend);
             }
         } else {
             ea = Utils.appendSpace(Utils.TEXT_EXPERT_ADVISOR_SPACE, length);
-            String append = Utils.appendSpace(prifix + ea, 115) + Utils.appendSpace(note, 25);
+            String append = Utils.appendSpace(prifix + ea, 100) + Utils.appendSpace(note, 25);
             outputLog("Analysis_" + char_name, EPIC, dto_en, dto_sl, append, find_trend);
         }
 
@@ -3849,24 +3849,26 @@ public class BinanceServiceImpl implements BinanceService {
                     trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, note_h1, note_15, note_05,
                     tracking_trend, zone_h12, zone_h4, zone_h1);
 
-            String temp_zone_h12 = zone_h12;
-            if (Objects.equals(trend_h1, Utils.TREND_LONG) && Utils.isNotBlank(note_h1)
+            boolean allow_display_h1 = true;
+            if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
+                    && !Objects.equals(trend_h4, trend_h1)) {
+                allow_display_h1 = false;
+            }
+            if (allow_display_h1 && Objects.equals(trend_h1, Utils.TREND_LONG) && Utils.isNotBlank(note_h1)
                     && Objects.equals(Utils.NOCATION_BELOW_MA50, dto_h1.getNocation())) {
                 CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H1;
                 prefix += " (H1_B) ";
-                temp_zone_h12 = "";
                 msg += "(B):" + EPIC + Utils.new_line_from_service;
-            } else if (Objects.equals(trend_h1, Utils.TREND_SHOT) && Utils.isNotBlank(note_h1)
+            } else if (allow_display_h1 && Objects.equals(trend_h1, Utils.TREND_SHOT) && Utils.isNotBlank(note_h1)
                     && Objects.equals(Utils.NOCATION_ABOVE_MA50, dto_h1.getNocation())) {
                 CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H1;
                 prefix += " (H1_S) ";
-                temp_zone_h12 = "";
                 msg += "(S):" + EPIC + Utils.new_line_from_service;
             } else {
                 prefix += "        ";
             }
 
-            analysis(prefix, EPIC, CAPITAL_TIME_XX, temp_zone_h12);
+            analysis(prefix, EPIC, CAPITAL_TIME_XX, trend_h1);
 
             if (!Objects.equals(EPIC, "BTCUSD")) {
                 BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
