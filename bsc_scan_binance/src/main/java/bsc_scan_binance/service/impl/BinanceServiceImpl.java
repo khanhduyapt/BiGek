@@ -3849,8 +3849,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String sub_prefix = "        ";
                 String msg = "";
                 boolean allow_display_h1 = true;
-                if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
-                        && Objects.equals(trend_h4, trend_h1)) {
+                if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, trend_h1)) {
                     allow_display_h1 = false;
                 }
                 if (!Objects.equals(trend_h1, trend_15)) {
@@ -3887,6 +3886,18 @@ public class BinanceServiceImpl implements BinanceService {
                         sub_prefix = " (15_" + type + ") ";
                         msg = "(" + type + "):" + EPIC + "(Vol):" + dto.getLots();
                     }
+                } else if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h1)
+                        && Objects.equals(dto_h1.getNocation(), dto_15.getNocation())
+                        && Objects.equals(trend_h1, trend_15) && Utils.isNotBlank(note_15)) {
+
+                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_15, dto_05, dto_h1, "", "");
+                    if (Objects.nonNull(dto)) {
+                        String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "B"
+                                : Objects.equals(Utils.TREND_SHOT, trend_15) ? "S" : " ";
+                        CAPITAL_TIME_XX = Utils.CAPITAL_TIME_15;
+                        sub_prefix = " (15_" + type + ") ";
+                        msg = "(" + type + "):" + EPIC + "(Vol):" + dto.getLots();
+                    }
                 }
 
                 prefix += sub_prefix;
@@ -3894,7 +3905,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Utils.isNotBlank(msg) && isReloadAfter(Utils.MINUTES_OF_1H, "H1_SWEET_TREND_" + EPIC)) {
                     String EVENT_ID = "MSG_PER_HOUR_H1_SWEET_TREND_" + EPIC + Utils.getCurrentYyyyMmDd_HH();
                     msg = "(FTMO_H1)" + msg;
-                    Utils.logWritelnDraft(msg);
+                    // Utils.logWritelnDraft(Utils.appendSpace("", 98) + msg);
                     sendMsgPerHour(EVENT_ID, msg, true);
                 }
             }
@@ -3933,6 +3944,20 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h1, trend_15)) {
                     action = trend_h12;
                     append += "124115";
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
+                }
+
+                if (Objects.isNull(dto) && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
+                        && Objects.equals(trend_h4, trend_15) && Utils.isNotBlank(note_15)) {
+                    action = trend_h12;
+                    append += "120415";
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
+                }
+                if (Objects.isNull(dto) && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h1)
+                        && Objects.equals(dto_h1.getNocation(), dto_15.getNocation())
+                        && Objects.equals(trend_h1, trend_15) && Utils.isNotBlank(note_15)) {
+                    action = trend_h12;
+                    append += "241215";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
                 }
 
