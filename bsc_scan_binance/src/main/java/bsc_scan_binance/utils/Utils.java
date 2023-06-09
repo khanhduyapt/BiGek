@@ -2566,14 +2566,14 @@ public class Utils {
         BigDecimal max = BigDecimal.ZERO;
 
         for (int index = 0; index < list.size(); index++) {
-            BigDecimal ma10 = calcMA(list, 10, index);
+            BigDecimal ma3 = calcMA(list, 3, index);
 
-            if (min.compareTo(ma10) > 0) {
-                min = ma10;
+            if (min.compareTo(ma3) > 0) {
+                min = ma3;
             }
 
-            if (max.compareTo(ma10) < 0) {
-                max = ma10;
+            if (max.compareTo(ma3) < 0) {
+                max = ma3;
             }
         }
 
@@ -2608,6 +2608,11 @@ public class Utils {
     //
     // return "";
     // }
+    public static String getBreadTrend(List<BtcFutures> heken_list) {
+        List<BigDecimal> body = getBodyCandle(heken_list);
+
+        return "";
+    }
 
     public static String textBodyArea(List<BtcFutures> heken_list) {
         List<BigDecimal> min_max_area = Utils.getBuySellArea(heken_list);
@@ -3546,8 +3551,8 @@ public class Utils {
             return trend;
         }
         if (id.contains("m_") || id.contains(PREFIX_1h_)) {
-            str = 1;
-            end = 2;
+            // str = 1;
+            // end = 2;
         }
 
         boolean isUptrend_1 = isUptrendByMa(heken_list, 1, str, end);
@@ -3705,8 +3710,8 @@ public class Utils {
         return result;
     }
 
-    public static String getTimeframe_SwitchTrend(String note_d1, String note_h12, String note_h4) {
-        if (isNotBlank(note_h4)) {
+    public static String getTimeframe_SwitchTrend(String trend_h4, String trend_h1, String note_h4) {
+        if (Objects.equals(trend_h4, trend_h1) && isNotBlank(note_h4)) {
             return Utils.CAPITAL_TIME_H4;
         }
 
