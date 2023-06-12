@@ -3710,12 +3710,16 @@ public class Utils {
         return result;
     }
 
-    public static String getTimeframe_SwitchTrend(String trend_h4, String trend_h1, String note_h4) {
+    public static String getTimeframe_SwitchTrend(String trend_h12, String trend_h4, String trend_h1, String note_h4,
+            String note_h1) {
         if (Objects.equals(trend_h4, trend_h1) && isNotBlank(note_h4)) {
             return Utils.CAPITAL_TIME_H4;
         }
+        if (Objects.equals(trend_h12, trend_h1) && isNotBlank(note_h1)) {
+            return Utils.CAPITAL_TIME_H1;
+        }
 
-        return Utils.CAPITAL_TIME_H1;
+        return Utils.CAPITAL_TIME_H12;
     }
 
     public static String getTrendPrefix(String chart_name, String note, String append) {
