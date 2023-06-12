@@ -3865,7 +3865,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (!Objects.equals(trend_h1, trend_15)) {
                     allow_display_h1 = false;
                 }
-                if (allow_display_h1 && Objects.equals(trend_h1, Utils.TREND_LONG) && Utils.isNotBlank(note_h1)
+                if (Objects.equals(trend_h1, Utils.TREND_LONG) && Utils.isNotBlank(note_h1)
                         && Objects.equals(Utils.NOCATION_BELOW_MA50, dto_h1.getNocation())) {
                     find_trend = trend_h1;
                     action = trend_h1;
@@ -3873,13 +3873,15 @@ public class BinanceServiceImpl implements BinanceService {
 
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_H1, append);
                     if (Objects.nonNull(dto)) {
-
                         CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H1;
                         sub_prefix = " (H1_B) ";
-                        msg = "(B):" + EPIC + "(Vol):" + dto.getLots();
+
+                        if (allow_display_h1) {
+                            msg = "(B):" + EPIC + "(Vol):" + dto.getLots();
+                        }
                     }
 
-                } else if (allow_display_h1 && Objects.equals(trend_h1, Utils.TREND_SHOT) && Utils.isNotBlank(note_h1)
+                } else if (Objects.equals(trend_h1, Utils.TREND_SHOT) && Utils.isNotBlank(note_h1)
                         && Objects.equals(Utils.NOCATION_ABOVE_MA50, dto_h1.getNocation())) {
                     find_trend = trend_h1;
                     action = trend_h1;
@@ -3888,7 +3890,10 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.nonNull(dto)) {
                         CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H1;
                         sub_prefix = " (H1_S) ";
-                        msg = "(S):" + EPIC + "(Vol):" + dto.getLots();
+
+                        if (allow_display_h1) {
+                            msg = "(S):" + EPIC + "(Vol):" + dto.getLots();
+                        }
                     }
 
                 } else if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
@@ -3902,6 +3907,7 @@ public class BinanceServiceImpl implements BinanceService {
                                 : Objects.equals(Utils.TREND_SHOT, trend_15) ? "S" : " ";
                         CAPITAL_TIME_XX = Utils.CAPITAL_TIME_15;
                         sub_prefix = " (15_" + type + ") ";
+
                         msg = "(" + type + "):" + EPIC + "(Vol):" + dto.getLots();
                     }
                 } else if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h1)
