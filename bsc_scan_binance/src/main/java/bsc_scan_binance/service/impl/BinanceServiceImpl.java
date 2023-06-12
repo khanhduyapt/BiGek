@@ -3805,6 +3805,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1 = dto_h1.getTrend();
             String trend_15 = dto_05.getTrend();
             String trend_05 = dto_05.getTrend();
+            String find_trend = "";
 
             String note_w1 = dto_w1.getNote();
             String note_d1 = dto_d1.getNote();
@@ -3866,6 +3867,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
                 if (allow_display_h1 && Objects.equals(trend_h1, Utils.TREND_LONG) && Utils.isNotBlank(note_h1)
                         && Objects.equals(Utils.NOCATION_BELOW_MA50, dto_h1.getNocation())) {
+                    find_trend = trend_h1;
                     action = trend_h1;
                     append += "241201";
 
@@ -3879,7 +3881,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 } else if (allow_display_h1 && Objects.equals(trend_h1, Utils.TREND_SHOT) && Utils.isNotBlank(note_h1)
                         && Objects.equals(Utils.NOCATION_ABOVE_MA50, dto_h1.getNocation())) {
-
+                    find_trend = trend_h1;
                     action = trend_h1;
                     append += "241201";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_H1, append);
@@ -3929,12 +3931,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
             // -------------------------------------------------------------------------------
-
-            if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)) {
-                analysis(prefix, EPIC, CAPITAL_TIME_XX, trend_h4);
-            } else {
-                analysis(prefix, EPIC, CAPITAL_TIME_XX, trend_h1);
-            }
+            analysis(prefix, EPIC, CAPITAL_TIME_XX, find_trend);
 
             if (!Objects.equals(EPIC, "BTCUSD")) {
                 BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
@@ -3987,6 +3984,19 @@ public class BinanceServiceImpl implements BinanceService {
                     action = trend_h12;
                     append += "120401";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_H1, append);
+                }
+
+                // ---------------------------------------------------------------------
+                if (Objects.isNull(dto) && note_05.contains(trend_d1) && Objects.equals(trend_w1, trend_d1)) {
+                    action = trend_d1;
+                    append += "482405";
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_05, append);
+                }
+                if (Objects.isNull(dto) && note_15.contains(trend_d1) && Objects.equals(trend_w1, trend_d1)
+                        && Objects.equals(trend_15, trend_05)) {
+                    action = trend_d1;
+                    append += "482415";
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
                 }
 
                 // ---------------------------------------------------------------------
