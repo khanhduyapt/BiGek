@@ -3947,19 +3947,56 @@ public class BinanceServiceImpl implements BinanceService {
 
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
+                // --------------------------------------------------------------------------
+                if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_15)
+                        && Utils.isNotBlank(note_15)) {
+                    action = trend_d1;
+                    append += "960115";
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
 
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                }
+                if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_15)
+                        && Objects.equals(trend_15, trend_05) && Utils.isNotBlank(note_05)) {
+                    action = trend_d1;
+                    append += "961505";
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
+
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                }
                 // ----------------2 truong hop nay dung, ko dc sua doi ----------------
-                if (Objects.isNull(dto) && note_05.contains(trend_h12) && Objects.equals(trend_h12, trend_h4)
+                if (note_05.contains(trend_h12) && Objects.equals(trend_h12, trend_h4)
                         && Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h1, trend_05)) {
                     action = trend_h12;
                     append += "124105";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_05, append);
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
-                if (Objects.isNull(dto) && note_15.contains(trend_h12) && Objects.equals(trend_h12, trend_h4)
+                if (note_15.contains(trend_h12) && Objects.equals(trend_h12, trend_h4)
                         && Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h1, trend_15)) {
                     action = trend_h12;
                     append += "124115";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                }
+                // --------------------------------------------------------------------------
+
+                if (Objects.isNull(dto) && Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h1)) {
+                    if (Objects.equals(trend_d1, trend_15) && Utils.isNotBlank(note_15)) {
+                        action = trend_d1;
+                        append += "962415";
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
+
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                    }
+
+                    if (Objects.equals(trend_d1, trend_05) && Utils.isNotBlank(note_05)) {
+                        action = trend_d1;
+                        append += "962405";
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
+
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                    }
                 }
 
                 if (Objects.isNull(dto) && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
@@ -4018,14 +4055,14 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
                             && !Objects.equals(trend_h12, action) && !Objects.equals(zone_h12, action)) {
                         msg_reject += " RejectID: 4085   " + dto.getComment();
-                        System.out.println(msg_reject);
+                        // System.out.println(msg_reject);
                         Utils.logWritelnDraft(msg_reject);
                         continue;
                     }
 
                     if (!zone_h12.contains(action) || !zone_h4.contains(action) || !zone_h1.contains(action)) {
                         msg_reject += " RejectID: 4090   " + dto.getComment();
-                        System.out.println(msg_reject);
+                        // System.out.println(msg_reject);
                         Utils.logWritelnDraft(msg_reject);
                         continue;
                     }
@@ -4033,7 +4070,7 @@ public class BinanceServiceImpl implements BinanceService {
                     if (((Objects.equals(trend_d1, trend_h12) || Objects.equals(trend_h12, trend_h4))
                             && !Objects.equals(trend_h12, action))) {
                         msg_reject += " RejectID: 4100   " + dto.getComment();
-                        System.out.println(msg_reject);
+                        // System.out.println(msg_reject);
                         Utils.logWritelnDraft(msg_reject);
                         continue;
                     }
@@ -4041,7 +4078,7 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Utils.EPICS_INDEXS.contains(EPIC) && (!Objects.equals(trend_d1, action)
                             || !Objects.equals(trend_h12, action) || !Objects.equals(trend_h4, action))) {
                         msg_reject += " RejectID: 4110   " + dto.getComment();
-                        System.out.println(msg_reject);
+                        // System.out.println(msg_reject);
                         Utils.logWritelnDraft(msg_reject);
                         continue;
                     }
@@ -4051,7 +4088,7 @@ public class BinanceServiceImpl implements BinanceService {
                             && Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
 
                         msg_reject += " RejectID: 4115   " + dto.getComment();
-                        System.out.println(msg_reject);
+                        // System.out.println(msg_reject);
                         Utils.logWritelnDraft(msg_reject);
                         continue;
                     }
