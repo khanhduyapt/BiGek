@@ -3947,11 +3947,12 @@ public class BinanceServiceImpl implements BinanceService {
 
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
+                dto = null;
                 // --------------------------------------------------------------------------
                 if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h1)
                         && Objects.equals(trend_d1, trend_15) && Utils.isNotBlank(note_15)) {
                     action = trend_d1;
-                    append += "960115";
+                    append += ".960115";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
 
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto);
@@ -3960,87 +3961,25 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_d1, trend_15) && Objects.equals(trend_15, trend_05)
                         && Utils.isNotBlank(note_05)) {
                     action = trend_d1;
-                    append += "961505";
+                    append += ".961505";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
 
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
-                // ----------------2 truong hop nay dung, ko dc sua doi ----------------
+                // ----------------2 truong hop nay dung, ko dc sua doi ---------------------
                 if (note_05.contains(trend_h12) && Objects.equals(trend_h12, trend_h4)
                         && Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h1, trend_05)) {
                     action = trend_h12;
-                    append += "124105";
+                    append += ".124105";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_05, append);
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
                 if (note_15.contains(trend_h12) && Objects.equals(trend_h12, trend_h4)
                         && Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h1, trend_15)) {
                     action = trend_h12;
-                    append += "124115";
+                    append += ".124115";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-                }
-                // --------------------------------------------------------------------------
-
-                if (Objects.isNull(dto) && Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h1)) {
-                    if (Objects.equals(trend_d1, trend_15) && Utils.isNotBlank(note_15)) {
-                        action = trend_d1;
-                        append += "962415";
-                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
-
-                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-                    }
-
-                    if (Objects.equals(trend_d1, trend_05) && Utils.isNotBlank(note_05)) {
-                        action = trend_d1;
-                        append += "962405";
-                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
-
-                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-                    }
-                }
-
-                if (Objects.isNull(dto) && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
-                        && Objects.equals(trend_h4, trend_15) && Utils.isNotBlank(note_15)) {
-                    action = trend_h12;
-                    append += "120415";
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
-                }
-                if (Objects.isNull(dto) && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h1)
-                        && Objects.equals(dto_h1.getNocation(), dto_15.getNocation())
-                        && Objects.equals(trend_h1, trend_15) && Utils.isNotBlank(note_15)) {
-                    action = trend_h12;
-                    append += "241215";
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
-                }
-
-                if (Objects.isNull(dto) && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
-                        && (!Objects.equals(trend_h4, trend_h1) || !Objects.equals(trend_h4, trend_15)
-                                || !Objects.equals(trend_h4, trend_05))) {
-                    action = trend_h12;
-                    append += "241241";
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
-                }
-
-                if (Objects.isNull(dto) && note_h1.contains(trend_h12) && Objects.equals(trend_h12, trend_h4)
-                        && Objects.equals(trend_h4, trend_h1)
-                        && (!Objects.equals(trend_h1, trend_15) || Objects.equals(trend_h1, trend_05))) {
-                    action = trend_h12;
-                    append += "120401";
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_H1, append);
-                }
-
-                // ---------------------------------------------------------------------
-                if (Objects.isNull(dto) && note_05.contains(trend_d1) && Objects.equals(trend_w1, trend_d1)) {
-                    action = trend_d1;
-                    append += "482405";
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_05, append);
-                }
-                if (Objects.isNull(dto) && note_15.contains(trend_d1) && Objects.equals(trend_w1, trend_d1)
-                        && Objects.equals(trend_15, trend_05)) {
-                    action = trend_d1;
-                    append += "482415";
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
                 }
 
                 // ---------------------------------------------------------------------

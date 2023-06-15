@@ -24,5 +24,4 @@ public class BitcoinBalancesOnExchangesKey implements Serializable {
 
     @Column(name = "symbol")
     private String symbol;
-
 }

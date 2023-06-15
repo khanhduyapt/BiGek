@@ -3646,13 +3646,15 @@ public class Utils {
         MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, dto_en_05.getCurrent_price(),
                 sl_h1, tp_h1);
 
-        boolean isTradeNow = false;
+        boolean isTradeNow = true;
         if (Objects.equals(Utils.TREND_LONG, trend)
-                && Objects.equals(Utils.NOCATION_ABOVE_MA50, dto_en_05.getNocation())) {
+                && Objects.equals(Utils.NOCATION_ABOVE_MA50, dto_en_05.getNocation())
+                && Objects.equals(Utils.NOCATION_ABOVE_MA50, dto_sl_h1.getNocation())) {
             isTradeNow = false;
         }
         if (Objects.equals(Utils.TREND_SHOT, trend)
-                && Objects.equals(Utils.NOCATION_BELOW_MA50, dto_en_05.getNocation())) {
+                && Objects.equals(Utils.NOCATION_BELOW_MA50, dto_en_05.getNocation())
+                && Objects.equals(Utils.NOCATION_BELOW_MA50, dto_sl_h1.getNocation())) {
             isTradeNow = false;
         }
 
