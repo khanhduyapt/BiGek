@@ -3533,15 +3533,13 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (isBreadLongArea || isBreadShotArea) {
                     if (isBreadLongArea && Objects.equals(trend_15, Utils.TREND_LONG)) {
-                        Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_LONG, dto_15, dto_d1,
-                                Utils.CAPITAL_TIME_15, w1d1h4h1 + "12405b");
-
+                        // Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_LONG, dto_15, dto_d1,
+                        //        Utils.CAPITAL_TIME_15, w1d1h4h1 + "12405b");
                         // BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                     }
-
                     if (isBreadShotArea && Objects.equals(trend_15, Utils.TREND_SHOT)) {
-                        Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_SHOT, dto_15, dto_d1,
-                                Utils.CAPITAL_TIME_15, w1d1h4h1 + "12405s");
+                        // Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_SHOT, dto_15, dto_d1,
+                        //        Utils.CAPITAL_TIME_15, w1d1h4h1 + "12405s");
                         // BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                     }
                 }
