@@ -3946,20 +3946,34 @@ public class BinanceServiceImpl implements BinanceService {
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
                 dto = null;
+
+                List<BtcFutures> list_05 = getCapitalData(EPIC, Utils.CAPITAL_TIME_05);
+                if (CollectionUtils.isEmpty(list_05)) {
+                    continue;
+                }
+                List<BtcFutures> heken_list_05 = Utils.getHekenList(list_05);
+                boolean m05_allow_trade = false;
+                if (Objects.equals(trend_05, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list_05, 50)) {
+                    m05_allow_trade = true;
+                }
+                if (Objects.equals(trend_05, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list_05, 50)) {
+                    m05_allow_trade = true;
+                }
+
                 // --------------------------------------------------------------------------
-                if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h1)
-                        && Objects.equals(trend_d1, trend_15) && Utils.isNotBlank(note_15)) {
-                    action = trend_d1;
+                if (m05_allow_trade && Objects.equals(trend_h12, trend_h1) && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_15, trend_05)) {
+                    action = trend_h12;
+
                     append += ".960115";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
 
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
-                if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h1)
-                        && Objects.equals(trend_d1, trend_15) && Objects.equals(trend_15, trend_05)
+                if (m05_allow_trade && Objects.equals(trend_h12, trend_h1) && Objects.equals(trend_h1, trend_05)
                         && Utils.isNotBlank(note_05)) {
-                    action = trend_d1;
-                    append += ".961505";
+                    action = trend_h12;
+                    append += ".960105";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h1, Utils.CAPITAL_TIME_15, append);
 
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto);
