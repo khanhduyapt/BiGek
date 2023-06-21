@@ -766,7 +766,7 @@ public class Utils {
             result += "2";
         }
 
-        return result + ".";
+        return result;
     }
 
     public static String getChartNameCapital(String TIME) {
@@ -2608,11 +2608,6 @@ public class Utils {
     //
     // return "";
     // }
-    public static String getBreadTrend(List<BtcFutures> heken_list) {
-        List<BigDecimal> body = getBodyCandle(heken_list);
-
-        return "";
-    }
 
     public static String textBodyArea(List<BtcFutures> heken_list) {
         List<BigDecimal> min_max_area = Utils.getBuySellArea(heken_list);
@@ -2639,6 +2634,24 @@ public class Utils {
 
         if (Objects.equals(TREND_SHOT, zone.trim())) {
             return TREND_SHOT;
+        }
+
+        return trend;
+    }
+
+    public static String getBreadTrend(List<BtcFutures> heken_list) {
+        String trend = "";
+        BigDecimal curr_price = heken_list.get(0).getCurrPrice();
+        List<BigDecimal> body = Utils.getBodyCandle(heken_list);
+
+        // BUY area
+        if (curr_price.compareTo(body.get(0)) < 0) {
+            trend = Utils.TREND_LONG;
+        }
+
+        // SELL area
+        if (curr_price.compareTo(body.get(1)) > 0) {
+            trend = Utils.TREND_SHOT;
         }
 
         return trend;
