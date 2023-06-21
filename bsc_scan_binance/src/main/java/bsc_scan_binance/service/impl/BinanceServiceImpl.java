@@ -3735,6 +3735,9 @@ public class BinanceServiceImpl implements BinanceService {
         } else {
             bread = Utils.calcMaxBread(heken_list.subList(1, 10));
         }
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_15)) {
+            bread = bread.add(bread);
+        }
 
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
         String date_time = LocalDateTime.now().toString();
