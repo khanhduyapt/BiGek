@@ -3892,7 +3892,6 @@ public class BinanceServiceImpl implements BinanceService {
                     action = trend_15;
                     append += ".001505";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_15, Utils.CAPITAL_TIME_15, append);
-                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
 
                 // ----------------2 truong hop nay dung, ko dc sua doi ---------------------
