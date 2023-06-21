@@ -3955,7 +3955,7 @@ public class BinanceServiceImpl implements BinanceService {
                         reject_id = " RejectID: w=d=h12 and h12!=action";
                     }
                     if (!zone_h12.contains(action) || !zone_h4.contains(action) || !zone_h1.contains(action)) {
-                        reject_id = " RejectID: z12 z4 z1";
+                        reject_id = " RejectID: end zone_h12 zone_h4 zone_h1";
                     }
                     if ((Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h4, action))) {
                         reject_id = " RejectID: h4=h1 and h4!=action";
@@ -3979,11 +3979,11 @@ public class BinanceServiceImpl implements BinanceService {
                         msg_reject += " E: " + Utils.appendLeft(dto.getEntry().toString(), 10);
                         msg_reject += "     " + Utils.appendSpace(dto.getComment(), 30);
                         msg_reject += Utils.appendSpace(reject_id, 60);
-                        msg_reject += " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62);
 
                         if (isReloadAfter(Utils.MINUTES_OF_1H, dto.getEpic() + dto.getOrder_type())) {
                             System.out.println(msg_reject);
                         }
+
                         Utils.logWritelnDraft(msg_reject);
                         continue;
                     }
