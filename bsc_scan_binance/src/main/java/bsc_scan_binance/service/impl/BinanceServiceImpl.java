@@ -3839,6 +3839,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String CAPITAL_TIME_XX = Utils.getTimeframe_SwitchTrend(trend_h12, trend_h4, trend_h1, note_h4, note_h1);
 
+            String sub_prefix = "        ";
             String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h4,
                     trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, note_h1, note_15, note_05,
                     tracking_trend, zone_h12, zone_h4, zone_h1);
@@ -3880,25 +3881,6 @@ public class BinanceServiceImpl implements BinanceService {
                     || Utils.EPICS_METALS.contains(EPIC))) {
                 Mt5OpenTrade dto = null;
 
-                // --------------------------------------------------------------------------
-                if (m05_allow_trade && Objects.equals(trend_h12, trend_h1) && Objects.equals(trend_h1, trend_15)
-                        && Objects.equals(trend_15, trend_05)) {
-                    action = trend_h12;
-
-                    append += ".960115";
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_15, Utils.CAPITAL_TIME_15, append);
-
-                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-                }
-                if (m05_allow_trade && Objects.equals(trend_h12, trend_h1) && Objects.equals(trend_h1, trend_05)
-                        && Utils.isNotBlank(note_05)) {
-                    action = trend_h12;
-                    append += ".960105";
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_15, Utils.CAPITAL_TIME_15, append);
-
-                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-                }
-
                 // ----------------2 truong hop nay dung, ko dc sua doi ---------------------
                 if (note_05.contains(trend_h12) && Objects.equals(trend_h12, trend_h4)
                         && Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h1, trend_05)) {
@@ -3915,12 +3897,25 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
 
-                // ---------------------------------------------------------------------
-                String sub_prefix = "        ";
-
-                if (m15_allow_trade && Objects.equals(trend_h12, trend_h1) && Objects.equals(trend_h1, trend_15)) {
+                // --------------------------------------------------------------------------
+                if (m05_allow_trade && Objects.equals(trend_h12, trend_h1) && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_15, trend_05)) {
                     action = trend_h12;
+
                     append += ".120115";
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_15, Utils.CAPITAL_TIME_15, append);
+                }
+                if (m05_allow_trade && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_15, trend_05)) {
+                    action = trend_h12;
+                    append += ".411505";
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_15, Utils.CAPITAL_TIME_15, append);
+                }
+
+                // ---------------------------------------------------------------------
+                if (m15_allow_trade && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
+                    action = trend_h12;
+                    append += ".040115";
                     find_trend = trend_h12;
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_15, Utils.CAPITAL_TIME_15, append);
 
@@ -3946,7 +3941,6 @@ public class BinanceServiceImpl implements BinanceService {
                         sub_prefix = " (05_" + type + ") ";
                     }
                 }
-
                 prefix += sub_prefix;
 
                 // ---------------------------------------------------------------------
@@ -3956,50 +3950,41 @@ public class BinanceServiceImpl implements BinanceService {
                 }
                 // ---------------------------------------------------------------------
                 if (Objects.nonNull(dto)) {
-                    String msg_reject = "mt5RejectTrade: " + Utils.appendSpace(dto.getEpic(), 10);
-                    msg_reject += Utils.appendSpace(dto.getOrder_type(), 15);
-                    msg_reject += " Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
-                    msg_reject += " E: " + Utils.appendLeft(dto.getEntry().toString(), 10);
-                    msg_reject += " SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 10);
-                    msg_reject += " comment: " + Utils.appendSpace(dto.getComment(), 25);
-                    msg_reject += " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62);
+
+                    String reject_id = "";
 
                     if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
                             && !Objects.equals(trend_h12, action) && !Objects.equals(zone_h12, action)) {
-                        msg_reject += " RejectID: w=d=h12 and h12!=action  " + dto.getComment();
-                        // System.out.println(msg_reject);
-                        Utils.logWritelnDraft(msg_reject);
-                        continue;
+                        reject_id = " RejectID: w=d=h12 and h12!=action  " + dto.getComment();
                     }
-
                     if (!zone_h12.contains(action) || !zone_h4.contains(action) || !zone_h1.contains(action)) {
-                        msg_reject += " RejectID: z12 z4 z1 " + dto.getComment();
-                        // System.out.println(msg_reject);
-                        Utils.logWritelnDraft(msg_reject);
-                        continue;
+                        reject_id = " RejectID: z12 z4 z1 " + dto.getComment();
                     }
-
                     if ((Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h4, action))) {
-                        msg_reject += " RejectID: h4=h1 and h4!=action  " + dto.getComment();
-                        // System.out.println(msg_reject);
-                        Utils.logWritelnDraft(msg_reject);
-                        continue;
+                        reject_id = " RejectID: h4=h1 and h4!=action  " + dto.getComment();
                     }
-
                     if ((Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
                             && !Objects.equals(trend_h4, action))) {
-                        msg_reject += " RejectID: d=h12=h4 and h4!=action  " + dto.getComment();
-                        // System.out.println(msg_reject);
-                        Utils.logWritelnDraft(msg_reject);
-                        continue;
+                        reject_id = " RejectID: d=h12=h4 and h4!=action  " + dto.getComment();
                     }
 
                     // Không đánh ngược xu hướng Khi chỉ số có trend_w1=trend_d1.
                     if (Utils.EPICS_INDEXS.contains(EPIC) && Objects.equals(trend_w1, trend_d1)
                             && Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
 
-                        msg_reject += " RejectID: w=d=h12 and h12!=action  " + dto.getComment();
-                        // System.out.println(msg_reject);
+                        reject_id = " RejectID: w=d=h12 and h12!=action  ";
+                    }
+
+                    if (Utils.isNotBlank(reject_id)) {
+                        String msg_reject = "mt5RejectTrade: " + Utils.appendSpace(dto.getEpic(), 10);
+                        msg_reject += Utils.appendSpace(dto.getOrder_type(), 15);
+                        msg_reject += " Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
+                        msg_reject += " E: " + Utils.appendLeft(dto.getEntry().toString(), 10);
+                        msg_reject += " SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 10);
+                        msg_reject += "     " + Utils.appendSpace(dto.getComment(), 30);
+                        msg_reject += Utils.appendSpace(reject_id, 60);
+                        msg_reject += " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62);
+
                         Utils.logWritelnDraft(msg_reject);
                         continue;
                     }
