@@ -3815,6 +3815,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             String bread_trend_h12 = "";
             String bread_trend_h4 = "";
+            String bread_trend_h1 = "";
+            String bread_trend_15 = "";
 
             String zone_h12 = "";
             String zone_h4 = "";
@@ -3841,6 +3843,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 bread_trend_h12 = Utils.getBreadTrend(heken_list_h12);
                 bread_trend_h4 = Utils.getBreadTrend(heken_list_h4);
+                bread_trend_h1 = Utils.getBreadTrend(heken_list_h1);
             }
 
             index += 1;
@@ -3869,6 +3872,8 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.equals(trend_15, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list_15, 50)) {
                     m15_allow_trade = true;
                 }
+
+                bread_trend_15 = Utils.getBreadTrend(heken_list_15);
             }
 
             boolean m05_allow_trade = false;
@@ -3882,6 +3887,7 @@ public class BinanceServiceImpl implements BinanceService {
                     m05_allow_trade = true;
                 }
             }
+
             // -------------------------------------------------------------------------------
             // -------------------------------------------------------------------------------
             // ---------------------------------------------------------------------------------------------
@@ -3889,6 +3895,14 @@ public class BinanceServiceImpl implements BinanceService {
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
                 Mt5OpenTrade dto = null;
+
+                if (Objects.equals(bread_trend_h12, bread_trend_h4) && Objects.equals(bread_trend_h4, bread_trend_h1)
+                        && Objects.equals(bread_trend_h1, bread_trend_15) && Objects.equals(bread_trend_15, trend_05)) {
+                    action = trend_05;
+                    append += ".000005";
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_15, Utils.CAPITAL_TIME_H12, append);
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                }
 
                 if (m05_allow_trade && Objects.equals(bread_trend_h12, bread_trend_h4)
                         && Objects.equals(bread_trend_h4, trend_15) && Objects.equals(trend_15, trend_05)) {
@@ -4086,11 +4100,7 @@ public class BinanceServiceImpl implements BinanceService {
         for (Mt5DataTrade trade : tradeList) {
             String TRADE_EPIC = trade.getSymbol().toUpperCase();
             String TRADE_TREND = trade.getType().toUpperCase();
-
-            // Cấm xóa, nếu không tất cả lệnh sẽ bị delete hết.
-            if (!TRADE_TREND.contains("LIMIT")) {
-                continue;
-            }
+            String CUR_TRADE = TRADE_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
             for (Mt5OpenTrade open_dto : BscScanBinanceApplication.mt5_open_trade_List) {
                 if (Objects.isNull(open_dto)) {
@@ -4098,10 +4108,10 @@ public class BinanceServiceImpl implements BinanceService {
                 }
                 String EPIC_OPEN = open_dto.getEpic().toUpperCase();
                 String OPEN_TREND = open_dto.getOrder_type().toUpperCase();
+                String CUR_OPEN = OPEN_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
                 if (Objects.equals(TRADE_EPIC, EPIC_OPEN)) {
-                    // Đang đặt lệnh LIMIT, Hệ thống check 05m là mua ngay thì xóa lệnh chờ.
-                    if (TRADE_TREND.contains("LIMIT") && !OPEN_TREND.contains("LIMIT")) {
+                    if (!Objects.equals(CUR_TRADE, CUR_OPEN)) {
                         mt5_close_trade_list.add(trade.getTicket());
                     }
                 }
