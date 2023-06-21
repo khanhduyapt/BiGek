@@ -2271,9 +2271,9 @@ public class Utils {
         }
 
         BigDecimal ma = calcMA(list, length, 1);
-        BigDecimal price = list.get(1).getPrice_close_candle();
+        BigDecimal ma5 = calcMA(list, 5, 0);
 
-        if ((price.compareTo(ma) > 0)) {
+        if ((ma5.compareTo(ma) > 0)) {
             return true;
         }
 
@@ -2292,9 +2292,9 @@ public class Utils {
         }
 
         BigDecimal ma = calcMA(list, length, 1);
-        BigDecimal price = list.get(1).getPrice_close_candle();
+        BigDecimal ma5 = calcMA(list, 5, 0);
 
-        if ((price.compareTo(ma) < 0)) {
+        if ((ma5.compareTo(ma) < 0)) {
             return true;
         }
 
@@ -3793,7 +3793,7 @@ public class Utils {
         switch_trend += "}  ";
 
         if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)) {
-            switch_trend += appendSpace("D2H4:" + trend_d1, 10);
+            switch_trend += appendSpace("D-H4:" + trend_d1, 10);
         } else {
             switch_trend += appendSpace("", 10);
         }
