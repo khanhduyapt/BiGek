@@ -4097,28 +4097,22 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> mt5_close_trade_list = new ArrayList<String>();
 
         // Dong lenh LIMIT dat nguoc xu huong
-        for (Mt5DataTrade trade : tradeList) {
-            String TRADE_EPIC = trade.getSymbol().toUpperCase();
-            String TRADE_TREND = trade.getType().toUpperCase();
-            String CUR_TRADE = TRADE_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_LONG : Utils.TREND_SHOT;
-
-            for (Mt5OpenTrade open_dto : BscScanBinanceApplication.mt5_open_trade_List) {
-                if (Objects.isNull(open_dto)) {
-                    continue;
-                }
-                String EPIC_OPEN = open_dto.getEpic().toUpperCase();
-                String OPEN_TREND = open_dto.getOrder_type().toUpperCase();
-                String CUR_OPEN = OPEN_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_LONG : Utils.TREND_SHOT;
-
-                if (Objects.equals(TRADE_EPIC, EPIC_OPEN)) {
-                    if (!Objects.equals(CUR_TRADE, CUR_OPEN)) {
-                        mt5_close_trade_list.add(trade.getTicket());
-                    }
-                }
+        for (Mt5OpenTrade open_dto : BscScanBinanceApplication.mt5_open_trade_List) {
+            if (Objects.isNull(open_dto)) {
+                continue;
             }
+            String EPIC_OPEN = open_dto.getEpic().toUpperCase();
+            String OPEN_TREND = open_dto.getOrder_type().toUpperCase();
+            String CUR_OPEN = OPEN_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
-            if (!Utils.isHuntTime_7h_to_23h() && TRADE_TREND.contains("LIMIT")) {
-                mt5_close_trade_list.add(trade.getTicket());
+            for (Mt5DataTrade trade : tradeList) {
+                String TRADE_EPIC = trade.getSymbol().toUpperCase();
+                String TRADE_TREND = trade.getType().toUpperCase();
+                String CUR_TRADE = TRADE_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_LONG : Utils.TREND_SHOT;
+
+                if (Objects.equals(TRADE_EPIC, EPIC_OPEN) && !Objects.equals(CUR_TRADE, CUR_OPEN)) {
+                    mt5_close_trade_list.add(trade.getTicket());
+                }
             }
         }
 
@@ -4147,6 +4141,11 @@ public class BinanceServiceImpl implements BinanceService {
             String TICKET = trade.getTicket();
             String TRADE_TREND = trade.getType().toUpperCase();
             BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
+
+            if (!Utils.isHuntTime_7h_to_23h() && TRADE_TREND.contains("LIMIT")) {
+                mt5_close_trade_list.add(trade.getTicket());
+            }
+
             if (TRADE_TREND.contains("LIMIT")) {
                 continue;
             }
