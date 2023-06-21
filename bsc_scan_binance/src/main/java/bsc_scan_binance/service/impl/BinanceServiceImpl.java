@@ -3883,14 +3883,14 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // ----------------2 truong hop nay dung, ko dc sua doi ---------------------
                 if (note_05.contains(trend_h12) && Objects.equals(trend_h12, trend_h4)
-                        && Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h1, trend_05)) {
+                        && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_05)) {
                     action = trend_h12;
                     append += ".124105";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_15, Utils.CAPITAL_TIME_05, append);
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
                 if (note_15.contains(trend_h12) && Objects.equals(trend_h12, trend_h4)
-                        && Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h1, trend_15)) {
+                        && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
                     action = trend_h12;
                     append += ".124115";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_15, Utils.CAPITAL_TIME_15, append);
@@ -3955,24 +3955,23 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
                             && !Objects.equals(trend_h12, action) && !Objects.equals(zone_h12, action)) {
-                        reject_id = " RejectID: w=d=h12 and h12!=action  " + dto.getComment();
+                        reject_id = " RejectID: w=d=h12 and h12!=action";
                     }
                     if (!zone_h12.contains(action) || !zone_h4.contains(action) || !zone_h1.contains(action)) {
-                        reject_id = " RejectID: z12 z4 z1 " + dto.getComment();
+                        reject_id = " RejectID: z12 z4 z1";
                     }
                     if ((Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h4, action))) {
-                        reject_id = " RejectID: h4=h1 and h4!=action  " + dto.getComment();
+                        reject_id = " RejectID: h4=h1 and h4!=action";
                     }
                     if ((Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
                             && !Objects.equals(trend_h4, action))) {
-                        reject_id = " RejectID: d=h12=h4 and h4!=action  " + dto.getComment();
+                        reject_id = " RejectID: d=h12=h4 and h4!=action";
                     }
 
                     // Không đánh ngược xu hướng Khi chỉ số có trend_w1=trend_d1.
                     if (Utils.EPICS_INDEXS.contains(EPIC) && Objects.equals(trend_w1, trend_d1)
                             && Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
-
-                        reject_id = " RejectID: w=d=h12 and h12!=action  ";
+                        reject_id = " RejectID: w=d=h12 and h12!=action";
                     }
 
                     if (Utils.isNotBlank(reject_id)) {
@@ -3985,6 +3984,7 @@ public class BinanceServiceImpl implements BinanceService {
                         msg_reject += Utils.appendSpace(reject_id, 60);
                         msg_reject += " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62);
 
+                        System.out.println(msg_reject);
                         Utils.logWritelnDraft(msg_reject);
                         continue;
                     }
