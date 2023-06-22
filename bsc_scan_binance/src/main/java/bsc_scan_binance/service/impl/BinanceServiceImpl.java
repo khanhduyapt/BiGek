@@ -2947,201 +2947,141 @@ public class BinanceServiceImpl implements BinanceService {
         }
     }
 
+    // H1 & H4 nguoc huong -> thong bao cat lenh.
+    // Xu huong H4 cung xu huong nhung yeu di? Msg thong bao take profit.
+    // Xu huong H1 cung xu huong nhung yeu di? Log thong bao.
     @Override
-    public void closeTrade_by_SL_TP() {
-        List<String> mt5_close_trade_list = new ArrayList<String>();
+    @Transactional
+    public void monitorProfit() {
+        initTradeList();
+        closeTrade_by_SL_TP();
+        openTrade();
 
-        if (!CollectionUtils.isEmpty(BscScanBinanceApplication.mt5_open_trade_List)) {
-            for (Mt5OpenTrade open_dto : BscScanBinanceApplication.mt5_open_trade_List) {
-                if (Objects.isNull(open_dto)) {
+        // -------------------------------------------------------------------------------------
+        // "BTCUSD", GER40", "US30", "US100", "UK100", "USOIL", "XAGUSD", "XAUUSD"
+        // "AUDJPY", "AUDUSD", "CADJPY", "CHFJPY",
+        // "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
+        // "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD",
+        // "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD",
+        // "USDCAD", "USDCHF", "USDJPY"
+        // ---------------------------------------CRYPTO----------------------------------------
+        CRYPTO_LIST_BUYING = Arrays.asList("");
+        if (isReloadAfter(Utils.MINUTES_OF_1H, "MONITOR_CRYPTO_BUY")) {
+            for (String SYMBOL : CRYPTO_LIST_BUYING) {
+                if (Utils.isBlank(SYMBOL)) {
                     continue;
                 }
-                String OPEN_EPIC = open_dto.getEpic().toUpperCase();
-                String OPEN_TREND = open_dto.getOrder_type().toUpperCase();
-                String CUR_OPEN = OPEN_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
-                for (Mt5DataTrade trade : tradeList) {
-                    String TRADE_EPIC = trade.getSymbol().toUpperCase();
-                    String TRADE_TREND = trade.getType().toUpperCase();
-                    String CUR_TRADE = TRADE_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_LONG : Utils.TREND_SHOT;
-
-                    if (Objects.equals(TRADE_EPIC, OPEN_EPIC) && !Objects.equals(CUR_TRADE, CUR_OPEN)) {
-                        mt5_close_trade_list.add(trade.getTicket());
-                    }
-                }
+                initCryptoTrend(SYMBOL);
+                BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS);
             }
         }
 
-        // ----------------------------------------PROFIT--------------------------------------
-        BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
-        BigDecimal profit_1R = risk;
-
-        for (Mt5DataTrade trade : tradeList) {
-            String EPIC = trade.getSymbol();
-            String TICKET = trade.getTicket();
-            String TRADE_TREND = trade.getType().toUpperCase();
-            BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
-
-            if (!Utils.isHuntTime_7h_to_23h() && TRADE_TREND.contains("LIMIT")) {
-                mt5_close_trade_list.add(trade.getTicket());
-            }
-
-            if (TRADE_TREND.contains("LIMIT")) {
-                continue;
-            }
-            if (Utils.EPICS_STOCKS.contains(EPIC) && !Utils.isNewYorkSession()) {
-                continue;
-            }
-
-            String hold = "_RACE_";
-            if (hold.contains(EPIC)) {
-                continue;
-            }
-
-            // Dừng trade khi H1_1 đóng nến tại LoHi + Bread1-5 của H1.
-            Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
-            if (Objects.isNull(dto_h12)) {
-                dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-            }
-
-            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
-            Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(dto_h1);
-            Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(dto_h1);
-            if (Objects.isNull(dto_h12) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)
-                    || Objects.isNull(dto_05)) {
-                Utils.logWritelnDraft("monitorProfit Orders dto is NULL " + EPIC);
-                continue;
-            }
-
-            Mt5OpenTradeEntity mt5Entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
-            if (Objects.isNull(mt5Entity)) {
-                Utils.logWritelnDraft("closeTrade_by_SL_TP Mt5OpenTradeEntity not found Ticket: " + trade.getTicket()
-                        + "   " + trade.getSymbol());
-                continue;
-            }
-
-            // TODO: 5. closeTrade_by_SL_TP
-            // SL khi giá đóng cửa candle1_h1 vượt qua LoHi_05
-            List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
-            if (CollectionUtils.isEmpty(list_h1)) {
-                Utils.logWritelnDraft("closeTrade_by_SL_TP list_h1 is empty " + EPIC);
-                continue;
-            }
-            List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
-            BigDecimal candle1_close = heken_list_h1.get(1).getPrice_close_candle();
-
-            String trend_h4 = dto_h4.getTrend();
-            BigDecimal cur_price = dto_15.getCurrent_price();
-            BigDecimal TP_order = mt5Entity.getTakeProfit();
-            BigDecimal SL_tf = mt5Entity.getStopLossTimeFam();
-
-            String trend_h12 = dto_h12.getTrend();
-            String trend_h1 = dto_h1.getTrend();
-            String trend_15 = dto_15.getTrend();
-            String trend_05 = dto_05.getTrend();
-            // ---------------------------------------------------------------------------------
-
-            // Trailing stops khi profit > 1R
-            if (PROFIT.compareTo(profit_1R) > 0) {
-                SL_tf = candle1_close;
-                mt5Entity.setStopLossTimeFam(candle1_close);
-                mt5Entity.setStopLossCalcVol(candle1_close);
-                mt5OpenTradeRepository.save(mt5Entity);
-            }
-
-            // -1R -> Check trend (H4) & (H1) & (05) xem còn hy vọng tránh SL.
-            boolean isPriceHit_SL = false;
-            if (((PROFIT.add(profit_1R)).compareTo(BigDecimal.ZERO) < 0) && !Objects.equals(trend_h12, TRADE_TREND)
-                    && !Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
-                    && !Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
-
-                // SL khi Cancle_1 đóng cửa dưới LoHi+Bread.
-                if (Objects.equals(Utils.TREND_LONG, TRADE_TREND) && (candle1_close.compareTo(SL_tf) < 0)) {
-                    isPriceHit_SL = true;
+        CRYPTO_LIST_SELING = Arrays.asList("");
+        if (isReloadAfter(Utils.MINUTES_OF_1H, "MONITOR_CRYPTO_SEL")) {
+            for (String SYMBOL : CRYPTO_LIST_SELING) {
+                if (Utils.isBlank(SYMBOL)) {
+                    continue;
                 }
 
-                // SL khi Cancle_1 đóng cửa trên LoHi+Bread.
-                if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND) && (candle1_close.compareTo(SL_tf) > 0)) {
-                    isPriceHit_SL = true;
-                }
+                initCryptoTrend(SYMBOL);
+                BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS);
             }
+        }
+        // ------------------ FOREX ------------------
+        if (!(Utils.isWeekday() && Utils.isAllowSendMsg())) {
+            return;
+        }
+        if (required_update_bars_csv) {
+            return;
+        }
 
-            boolean isPriceHit_TP = false;
-            if (PROFIT.compareTo(profit_1R) > 0) {
-                if (Objects.equals(Utils.TREND_LONG, TRADE_TREND) && (cur_price.compareTo(TP_order) > 0)) {
-                    isPriceHit_TP = true;
+        // ------------------ Đóng các trade đã close ------------------
+        List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAll();
+        if (!CollectionUtils.isEmpty(mt5Openlist)) {
+            for (Mt5OpenTradeEntity entity : mt5Openlist) {
+                boolean not_found = true;
+                for (Mt5DataTrade trade : tradeList) {
+                    if (Objects.equals(entity.getTicket(), trade.getTicket())) {
+                        not_found = false;
+                    }
                 }
-
-                if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND) && (cur_price.compareTo(TP_order) < 0)) {
-                    isPriceHit_TP = true;
+                if (not_found) {
+                    mt5OpenTradeRepository.deleteById(entity.getTicket());
                 }
-
-                if (isPriceHit_TP && Objects.equals(trend_h1, TRADE_TREND) && Objects.equals(trend_15, TRADE_TREND)) {
-                    isPriceHit_TP = false;
-                }
-            }
-
-            boolean isInverseTrend = false;
-            if (PROFIT.add(profit_1R).compareTo(BigDecimal.ZERO) < 0) {
-                if (!Objects.equals(trend_h12, TRADE_TREND) && !Objects.equals(trend_h4, TRADE_TREND)
-                        && !Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
-                        && !Objects.equals(trend_05, TRADE_TREND)) {
-                    isInverseTrend = true;
-                }
-            }
-
-            // ---------------------------------------------------------------------------------
-            if (isPriceHit_SL || isPriceHit_TP || isInverseTrend) {
-                String prefix = Utils.getChartNameCapital(mt5Entity.getTimeframe()) + "Closed.   ";
-                prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
-                prefix += "(Trade):" + Utils.appendSpace(TRADE_TREND, 10);
-                prefix += Utils.getChartNameCapital(mt5Entity.getTimeframe()) + ":" + Utils.appendSpace(trend_h4, 10);
-                prefix += "(Profit):" + Utils.appendSpace(Utils.appendLeft(PROFIT.toString(), 10), 15);
-                prefix += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
-                Utils.logWritelnDraft(prefix);
-
-                mt5_close_trade_list.add(TICKET);
             }
         }
 
         String msg = "";
-        String mt5_data_file = Utils.getMt5DataFolder() + "CloseSymbols.csv";
+        String msgStopLoss = "";
+        String msgStopScalping = "";
+        BigDecimal total = BigDecimal.ZERO;
+        List<String> scalpingList = new ArrayList<String>();
+
         try {
-            FileWriter writer = new FileWriter(mt5_data_file, true);
-
-            for (String TICKET : mt5_close_trade_list) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(TICKET);
-                sb.append('\n');
-                writer.write(sb.toString());
-
-                for (Mt5DataTrade trade : tradeList) {
-                    if (Objects.equals(TICKET, trade.getTicket())) {
-
-                        String text = Utils.appendSpace(TICKET, 15) + Utils.appendSpace(trade.getType(), 15)
-                                + Utils.appendSpace(trade.getSymbol(), 10)
-                                + Utils.appendLeft(trade.getProfit().toString(), 10);
-
-                        msg += "Close:" + trade.getType() + ":" + trade.getSymbol() + "_Vol:" + trade.getVolume()
-                                + "_P:" + trade.getProfit().toString() + Utils.new_line_from_service;
-
-                        System.out.println("mt5CloseSymbol: " + text);
-                        break;
-                    }
-                }
-            }
-
-            writer.close();
+            String mt5_close_trade_file = Utils.getMt5DataFolder() + "CloseSymbols.csv";
+            File myScap = new File(mt5_close_trade_file);
+            myScap.delete();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+        }
+
+        int count = 0;
+        BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
+        String max_risk = "     MaxRisk:" + Utils.appendLeft(Utils.removeLastZero(risk), 10) + "$_1Trade";
+
+        for (Mt5DataTrade trade : tradeList) {
+            String EPIC = trade.getSymbol();
+            String TRADE_TREND = trade.getType().toUpperCase();
+            BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
+
+            // ---------------------------------------------------------------------------------
+            count += 1;
+            String multi_timeframes = getTrendTimeframes(EPIC);
+            String result = "";
+            result = Utils.appendLeft(String.valueOf(count), 15);
+            result += ". (Trade:" + Utils.appendSpace(TRADE_TREND, 10) + ")   ";
+            result += Utils.appendSpace(EPIC, 10);
+            result += Utils.appendSpace(trade.getTicket(), 10);
+            result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(PROFIT), 10);
+            result += "    " + multi_timeframes;
+            result += "    " + Utils.appendSpace(trade.getComment(), 30);
+
+            total = total.add(PROFIT);
+            msg += result + Utils.new_line_from_service;
+
+            if (result.contains("StopLoss")) {
+                msgStopLoss += result.replace(multi_timeframes, "") + Utils.new_line_from_service;
+            }
         }
 
         if (Utils.isNotBlank(msg)) {
-            msg = "(CLOSE)" + Utils.new_line_from_service + msg;
-            String EVENT_ID = "CloseTrade" + Utils.getCurrentYyyyMmDd_HH() + msg.length();
-            sendMsgPerHour(EVENT_ID, msg, true);
+            msg = Utils.appendLeft(String.valueOf(total), 10) + max_risk + Utils.new_line_from_service + msg;
+            Utils.logWritelnDraft(msg);
         }
+        if (Utils.isNotBlank(msgStopLoss)) {
+            msgStopLoss = "[STOP_LOSS]" + max_risk + Utils.new_line_from_service + msgStopLoss;
+
+            String EVENT_ID = "StopLoss" + Utils.getCurrentYyyyMmDd_HH();
+            sendMsgPerHour(EVENT_ID, msgStopLoss, true);
+        }
+        if (Utils.isNotBlank(msgStopScalping)) {
+            msgStopScalping = "[STOP_SCALPING]" + Utils.new_line_from_service + msgStopScalping;
+
+            String EVENT_ID = "StopScalping" + Utils.getCurrentYyyyMmDd_HH();
+            sendMsgPerHour(EVENT_ID, msgStopScalping, true);
+        }
+
+        if (scalpingList.size() > 0) {
+            Utils.logWritelnDraft("");
+            for (String scalping : scalpingList) {
+                Utils.logWritelnDraft(scalping);
+            }
+            Utils.logWritelnDraft("");
+        }
+
+        Utils.logWritelnDraft("");
+        Utils.logWritelnDraft("");
+        Utils.logWritelnDraft("");
     }
 
     private String mt5_data_file(String filename, Integer MINUTES_OF_XX) {
@@ -4235,141 +4175,201 @@ public class BinanceServiceImpl implements BinanceService {
         return "";
     }
 
-    // H1 & H4 nguoc huong -> thong bao cat lenh.
-    // Xu huong H4 cung xu huong nhung yeu di? Msg thong bao take profit.
-    // Xu huong H1 cung xu huong nhung yeu di? Log thong bao.
     @Override
-    @Transactional
-    public void monitorProfit() {
-        initTradeList();
-        closeTrade_by_SL_TP();
-        openTrade();
+    public void closeTrade_by_SL_TP() {
+        List<String> mt5_close_trade_list = new ArrayList<String>();
 
-        // -------------------------------------------------------------------------------------
-        // "BTCUSD", GER40", "US30", "US100", "UK100", "USOIL", "XAGUSD", "XAUUSD"
-        // "AUDJPY", "AUDUSD", "CADJPY", "CHFJPY",
-        // "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
-        // "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD",
-        // "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD",
-        // "USDCAD", "USDCHF", "USDJPY"
-        // ---------------------------------------CRYPTO----------------------------------------
-        CRYPTO_LIST_BUYING = Arrays.asList("");
-        if (isReloadAfter(Utils.MINUTES_OF_1H, "MONITOR_CRYPTO_BUY")) {
-            for (String SYMBOL : CRYPTO_LIST_BUYING) {
-                if (Utils.isBlank(SYMBOL)) {
+        if (!CollectionUtils.isEmpty(BscScanBinanceApplication.mt5_open_trade_List)) {
+            for (Mt5OpenTrade open_dto : BscScanBinanceApplication.mt5_open_trade_List) {
+                if (Objects.isNull(open_dto)) {
                     continue;
                 }
+                String OPEN_EPIC = open_dto.getEpic().toUpperCase();
+                String OPEN_TREND = open_dto.getOrder_type().toUpperCase();
+                String CUR_OPEN = OPEN_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
-                initCryptoTrend(SYMBOL);
-                BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS);
-            }
-        }
-
-        CRYPTO_LIST_SELING = Arrays.asList("");
-        if (isReloadAfter(Utils.MINUTES_OF_1H, "MONITOR_CRYPTO_SEL")) {
-            for (String SYMBOL : CRYPTO_LIST_SELING) {
-                if (Utils.isBlank(SYMBOL)) {
-                    continue;
-                }
-
-                initCryptoTrend(SYMBOL);
-                BscScanBinanceApplication.wait(BscScanBinanceApplication.SLEEP_MINISECONDS);
-            }
-        }
-        // ------------------ FOREX ------------------
-        if (!(Utils.isWeekday() && Utils.isAllowSendMsg())) {
-            return;
-        }
-        if (required_update_bars_csv) {
-            return;
-        }
-
-        // ------------------ Đóng các trade đã close ------------------
-        List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAll();
-        if (!CollectionUtils.isEmpty(mt5Openlist)) {
-            for (Mt5OpenTradeEntity entity : mt5Openlist) {
-                boolean not_found = true;
                 for (Mt5DataTrade trade : tradeList) {
-                    if (Objects.equals(entity.getTicket(), trade.getTicket())) {
-                        not_found = false;
+                    String TRADE_EPIC = trade.getSymbol().toUpperCase();
+                    String TRADE_TREND = trade.getType().toUpperCase();
+                    String CUR_TRADE = TRADE_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_LONG : Utils.TREND_SHOT;
+
+                    if (Objects.equals(TRADE_EPIC, OPEN_EPIC) && !Objects.equals(CUR_TRADE, CUR_OPEN)) {
+                        mt5_close_trade_list.add(trade.getTicket());
                     }
                 }
-                if (not_found) {
-                    mt5OpenTradeRepository.deleteById(entity.getTicket());
+            }
+        }
+
+        // ----------------------------------------PROFIT--------------------------------------
+        BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
+        BigDecimal profit_1R = risk;
+
+        for (Mt5DataTrade trade : tradeList) {
+            String EPIC = trade.getSymbol();
+            String TICKET = trade.getTicket();
+            String TRADE_TREND = trade.getType().toUpperCase();
+            BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
+
+            if (!Utils.isHuntTime_7h_to_23h() && TRADE_TREND.contains("LIMIT")) {
+                mt5_close_trade_list.add(trade.getTicket());
+            }
+
+            if (TRADE_TREND.contains("LIMIT")) {
+                continue;
+            }
+            if (Utils.EPICS_STOCKS.contains(EPIC) && !Utils.isNewYorkSession()) {
+                continue;
+            }
+
+            String hold = "_RACE_";
+            if (hold.contains(EPIC)) {
+                continue;
+            }
+
+            // Dừng trade khi H1_1 đóng nến tại LoHi + Bread1-5 của H1.
+            Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
+            if (Objects.isNull(dto_h12)) {
+                dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+            }
+
+            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
+            Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(dto_h1);
+            Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(dto_h1);
+            if (Objects.isNull(dto_h12) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)
+                    || Objects.isNull(dto_05)) {
+                Utils.logWritelnDraft("monitorProfit Orders dto is NULL " + EPIC);
+                continue;
+            }
+
+            Mt5OpenTradeEntity mt5Entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
+            if (Objects.isNull(mt5Entity)) {
+                Utils.logWritelnDraft("closeTrade_by_SL_TP Mt5OpenTradeEntity not found Ticket: " + trade.getTicket()
+                        + "   " + trade.getSymbol());
+                continue;
+            }
+
+            // TODO: 5. closeTrade_by_SL_TP
+            // SL khi giá đóng cửa candle1_h1 vượt qua LoHi_05
+            List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
+            if (CollectionUtils.isEmpty(list_h1)) {
+                Utils.logWritelnDraft("closeTrade_by_SL_TP list_h1 is empty " + EPIC);
+                continue;
+            }
+            List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
+            BigDecimal candle1_close = heken_list_h1.get(1).getPrice_close_candle();
+
+            String trend_h4 = dto_h4.getTrend();
+            BigDecimal cur_price = dto_15.getCurrent_price();
+            BigDecimal TP_order = mt5Entity.getTakeProfit();
+            BigDecimal SL_tf = mt5Entity.getStopLossTimeFam();
+
+            String trend_h12 = dto_h12.getTrend();
+            String trend_h1 = dto_h1.getTrend();
+            String trend_15 = dto_15.getTrend();
+            String trend_05 = dto_05.getTrend();
+            // ---------------------------------------------------------------------------------
+
+            // Trailing stops khi profit > 1R
+            if (PROFIT.compareTo(profit_1R) > 0) {
+                SL_tf = candle1_close;
+                mt5Entity.setStopLossTimeFam(candle1_close);
+                mt5Entity.setStopLossCalcVol(candle1_close);
+                mt5OpenTradeRepository.save(mt5Entity);
+            }
+
+            // -1R -> Check trend (H4) & (H1) & (05) xem còn hy vọng tránh SL.
+            boolean isPriceHit_SL = false;
+            if (((PROFIT.add(profit_1R)).compareTo(BigDecimal.ZERO) < 0) && !Objects.equals(trend_h12, TRADE_TREND)
+                    && !Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
+                    && !Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
+
+                // SL khi Cancle_1 đóng cửa dưới LoHi+Bread.
+                if (Objects.equals(Utils.TREND_LONG, TRADE_TREND) && (candle1_close.compareTo(SL_tf) < 0)) {
+                    isPriceHit_SL = true;
                 }
+
+                // SL khi Cancle_1 đóng cửa trên LoHi+Bread.
+                if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND) && (candle1_close.compareTo(SL_tf) > 0)) {
+                    isPriceHit_SL = true;
+                }
+            }
+
+            boolean isPriceHit_TP = false;
+            if (PROFIT.compareTo(profit_1R) > 0) {
+                if (Objects.equals(Utils.TREND_LONG, TRADE_TREND) && (cur_price.compareTo(TP_order) > 0)) {
+                    isPriceHit_TP = true;
+                }
+
+                if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND) && (cur_price.compareTo(TP_order) < 0)) {
+                    isPriceHit_TP = true;
+                }
+
+                if (isPriceHit_TP && Objects.equals(trend_h1, TRADE_TREND) && Objects.equals(trend_15, TRADE_TREND)) {
+                    isPriceHit_TP = false;
+                }
+            }
+
+            boolean isInverseTrend = false;
+            if (PROFIT.add(profit_1R).compareTo(BigDecimal.ZERO) < 0) {
+                if (!Objects.equals(trend_h12, TRADE_TREND) && !Objects.equals(trend_h4, TRADE_TREND)
+                        && !Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
+                        && !Objects.equals(trend_05, TRADE_TREND)) {
+                    isInverseTrend = true;
+                }
+            }
+
+            // ---------------------------------------------------------------------------------
+            if (isPriceHit_SL || isPriceHit_TP || isInverseTrend) {
+                String prefix = Utils.getChartNameCapital(mt5Entity.getTimeframe()) + "Closed.   ";
+                prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
+                prefix += "(Trade):" + Utils.appendSpace(TRADE_TREND, 10);
+                prefix += Utils.getChartNameCapital(mt5Entity.getTimeframe()) + ":" + Utils.appendSpace(trend_h4, 10);
+                prefix += "(Profit):" + Utils.appendSpace(Utils.appendLeft(PROFIT.toString(), 10), 15);
+                prefix += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
+                Utils.logWritelnDraft(prefix);
+
+                mt5_close_trade_list.add(TICKET);
             }
         }
 
         String msg = "";
-        String msgStopLoss = "";
-        String msgStopScalping = "";
-        BigDecimal total = BigDecimal.ZERO;
-        List<String> scalpingList = new ArrayList<String>();
-
+        String mt5_data_file = Utils.getMt5DataFolder() + "CloseSymbols.csv";
         try {
-            String mt5_close_trade_file = Utils.getMt5DataFolder() + "CloseSymbols.csv";
-            File myScap = new File(mt5_close_trade_file);
-            myScap.delete();
-        } catch (Exception e) {
-        }
+            FileWriter writer = new FileWriter(mt5_data_file, true);
 
-        int count = 0;
-        BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
-        String max_risk = "     MaxRisk:" + Utils.appendLeft(Utils.removeLastZero(risk), 10) + "$_1Trade";
+            for (String TICKET : mt5_close_trade_list) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(TICKET);
+                sb.append('\n');
+                writer.write(sb.toString());
 
-        for (Mt5DataTrade trade : tradeList) {
-            String EPIC = trade.getSymbol();
-            String TRADE_TREND = trade.getType().toUpperCase();
-            BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
+                for (Mt5DataTrade trade : tradeList) {
+                    if (Objects.equals(TICKET, trade.getTicket())) {
 
-            // ---------------------------------------------------------------------------------
-            count += 1;
-            String multi_timeframes = getTrendTimeframes(EPIC);
-            String result = "";
-            result = Utils.appendLeft(String.valueOf(count), 15);
-            result += ". (Trade:" + Utils.appendSpace(TRADE_TREND, 10) + ")   ";
-            result += Utils.appendSpace(EPIC, 10);
-            result += Utils.appendSpace(trade.getTicket(), 10);
-            result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(PROFIT), 10);
-            result += "    " + multi_timeframes;
-            result += "    " + Utils.appendSpace(trade.getComment(), 30);
+                        String text = Utils.appendSpace(TICKET, 15) + Utils.appendSpace(trade.getType(), 15)
+                                + Utils.appendSpace(trade.getSymbol(), 10)
+                                + Utils.appendLeft(trade.getProfit().toString(), 10);
 
-            total = total.add(PROFIT);
-            msg += result + Utils.new_line_from_service;
+                        msg += "Close:" + trade.getType() + ":" + trade.getSymbol() + "_Vol:" + trade.getVolume()
+                                + "_P:" + trade.getProfit().toString() + Utils.new_line_from_service;
 
-            if (result.contains("StopLoss")) {
-                msgStopLoss += result.replace(multi_timeframes, "") + Utils.new_line_from_service;
+                        System.out.println("mt5CloseSymbol: " + text);
+                        break;
+                    }
+                }
             }
+
+            writer.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
 
         if (Utils.isNotBlank(msg)) {
-            msg = Utils.appendLeft(String.valueOf(total), 10) + max_risk + Utils.new_line_from_service + msg;
-            Utils.logWritelnDraft(msg);
+            msg = "(CLOSE)" + Utils.new_line_from_service + msg;
+            String EVENT_ID = "CloseTrade" + Utils.getCurrentYyyyMmDd_HH() + msg.length();
+            sendMsgPerHour(EVENT_ID, msg, true);
         }
-        if (Utils.isNotBlank(msgStopLoss)) {
-            msgStopLoss = "[STOP_LOSS]" + max_risk + Utils.new_line_from_service + msgStopLoss;
-
-            String EVENT_ID = "StopLoss" + Utils.getCurrentYyyyMmDd_HH();
-            sendMsgPerHour(EVENT_ID, msgStopLoss, true);
-        }
-        if (Utils.isNotBlank(msgStopScalping)) {
-            msgStopScalping = "[STOP_SCALPING]" + Utils.new_line_from_service + msgStopScalping;
-
-            String EVENT_ID = "StopScalping" + Utils.getCurrentYyyyMmDd_HH();
-            sendMsgPerHour(EVENT_ID, msgStopScalping, true);
-        }
-
-        if (scalpingList.size() > 0) {
-            Utils.logWritelnDraft("");
-            for (String scalping : scalpingList) {
-                Utils.logWritelnDraft(scalping);
-            }
-            Utils.logWritelnDraft("");
-        }
-
-        Utils.logWritelnDraft("");
-        Utils.logWritelnDraft("");
-        Utils.logWritelnDraft("");
     }
 
 }
