@@ -4016,9 +4016,9 @@ public class BinanceServiceImpl implements BinanceService {
                     trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, note_h1, note_15, note_05,
                     tracking_trend, zone_h12, zone_h4, zone_h1);
 
-            String wdh4h1 = Utils.getEncrypted_trend_w1d1h4h1(trend_w1, trend_d1, trend_h12, trend_h4, trend_h1);
+            // String wdh4h1 = Utils.getEncrypted_trend_w1d1h4h1(trend_w1, trend_d1, trend_h12, trend_h4, trend_h1);
             String action = "";
-            String append = wdh4h1;
+            String append = "";
 
             boolean m15_allow_trade = false;
             List<BtcFutures> list_15 = getCapitalData(EPIC, Utils.CAPITAL_TIME_15);

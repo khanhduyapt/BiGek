@@ -3707,7 +3707,7 @@ public class Utils {
         dto.setEntry(en_05);
         dto.setStop_loss(sl_h1);
         dto.setTake_profit(tp_h1);
-        dto.setComment(getEncryptedChartNameCapital(CAPITAL_TIME_XX) + "(" + encrypted_trend_w1d1h4h1 + ")");
+        dto.setComment(getEncryptedChartNameCapital(CAPITAL_TIME_XX) + "" + encrypted_trend_w1d1h4h1 + "");
         dto.setStop_loss_m30(sl_h1);
 
         BigDecimal en_sl = dto_sl_h1.getCurrent_price().subtract(sl_h1).abs();
