@@ -64,13 +64,15 @@ public class Utils {
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(100000);
 
     // Step1: Giữ vốn
-    // public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.001); // 100$
+    // public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.001); //
+    // 100$
 
     // Step2: Khi tài khoản tăng trưởng 2%
-    // public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0015); // 150$
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0015); // 150$
 
     // Step3: Khi tài khoản tăng trưởng 5%
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.002); // 200$
+    // public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.002); //
+    // 200$
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -725,15 +727,15 @@ public class Utils {
     }
 
     public static String getDeEncryptedChartNameCapital(String encryptedChartName) {
-        //if (encryptedChartName.contains(ENCRYPTED_05)) {
-        //    return CAPITAL_TIME_05;
-        //}
-        //if (encryptedChartName.contains(ENCRYPTED_15)) {
-        //    return CAPITAL_TIME_15;
-        //}
-        //if (encryptedChartName.contains(ENCRYPTED_H1)) {
-        //    return CAPITAL_TIME_H1;
-        //}
+        // if (encryptedChartName.contains(ENCRYPTED_05)) {
+        // return CAPITAL_TIME_05;
+        // }
+        // if (encryptedChartName.contains(ENCRYPTED_15)) {
+        // return CAPITAL_TIME_15;
+        // }
+        // if (encryptedChartName.contains(ENCRYPTED_H1)) {
+        // return CAPITAL_TIME_H1;
+        // }
 
         if (encryptedChartName.contains(ENCRYPTED_H4)) {
             return CAPITAL_TIME_H4;
@@ -1051,10 +1053,7 @@ public class Utils {
 
     // https://www.calculator.net/time-duration-calculator.html
     public static boolean isHuntTime_7h_to_23h() {
-        List<Integer> times = Arrays.asList(
-                7, 8, 9, 10, 11,
-                14, 15, 16, 17, 18,
-                21, 22, 23, 24);
+        List<Integer> times = Arrays.asList(7, 8, 9, 10, 11, 14, 15, 16, 17, 18, 21, 22, 23, 24);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -3674,7 +3673,8 @@ public class Utils {
             String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1) {
         BigDecimal en_05, sl_h1, tp_h1;
         BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT); // ACCOUNT=20k, risk: 0.5% = 100$; 100k, risk: 0.5% = 500$
-        //risk_x1 = risk_x1.multiply(BigDecimal.valueOf(2)); // 20k*5 = 100k -> risk : 200$
+        // risk_x1 = risk_x1.multiply(BigDecimal.valueOf(2)); // 20k*5 = 100k -> risk :
+        // 200$
 
         if (Objects.equals(Utils.TREND_LONG, trend)) {
             en_05 = Utils.getBigDecimal(dto_en_05.getLow_price());
@@ -3687,8 +3687,8 @@ public class Utils {
             sl_h1 = Utils.getBigDecimal(dto_sl_h1.getHigh_price());
             tp_h1 = Utils.getBigDecimal(dto_sl_h1.getBody_low());
         }
-        MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, dto_en_05.getCurrent_price(),
-                sl_h1, tp_h1);
+        MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, dto_en_05.getCurrent_price(), sl_h1,
+                tp_h1);
 
         boolean isTradeNow = false;
         if (Objects.equals(Utils.TREND_LONG, trend)

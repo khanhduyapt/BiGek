@@ -3014,9 +3014,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             Mt5OpenTradeEntity mt5Entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
             if (Objects.isNull(mt5Entity)) {
-                Utils.logWritelnDraft(
-                        "closeTrade_by_SL_TP Mt5OpenTradeEntity not found Ticket: " + trade.getTicket() + "   "
-                                + trade.getSymbol());
+                Utils.logWritelnDraft("closeTrade_by_SL_TP Mt5OpenTradeEntity not found Ticket: " + trade.getTicket()
+                        + "   " + trade.getSymbol());
                 continue;
             }
 
@@ -3052,10 +3051,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             // -1R -> Check trend (H4) & (H1) & (05) xem còn hy vọng tránh SL.
             boolean isPriceHit_SL = false;
-            if (((PROFIT.add(profit_1R)).compareTo(BigDecimal.ZERO) < 0)
-                    && !Objects.equals(trend_h4, TRADE_TREND)
-                    && !Objects.equals(trend_h1, TRADE_TREND)
-                    && !Objects.equals(trend_15, TRADE_TREND)
+            if (((PROFIT.add(profit_1R)).compareTo(BigDecimal.ZERO) < 0) && !Objects.equals(trend_h4, TRADE_TREND)
+                    && !Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
                     && !Objects.equals(trend_05, TRADE_TREND)) {
 
                 // SL khi Cancle_1 đóng cửa dưới LoHi+Bread.
@@ -3086,18 +3083,15 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean isInverseTrend = false;
             if (PROFIT.add(profit_1R).compareTo(BigDecimal.ZERO) < 0) {
-                if (!Objects.equals(trend_h4, TRADE_TREND)
-                        && !Objects.equals(trend_h1, TRADE_TREND)
-                        && !Objects.equals(trend_15, TRADE_TREND)
-                        && !Objects.equals(trend_05, TRADE_TREND)) {
+                if (!Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
+                        && !Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
                     isInverseTrend = true;
                 }
             }
 
             if (Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_H1)) {
                 if ((PROFIT.compareTo(profit_1R) > 0) || (PROFIT.add(profit_1R).compareTo(BigDecimal.ZERO) < 0)) {
-                    if (!Objects.equals(trend_h1, TRADE_TREND)
-                            && !Objects.equals(trend_15, TRADE_TREND)
+                    if (!Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
                             && !Objects.equals(trend_05, TRADE_TREND)) {
                         isInverseTrend = true;
                     }
@@ -3108,7 +3102,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if ((Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
                         && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
                         && Objects.equals(trend_15, trend_05) && !Objects.equals(trend_d1, TRADE_TREND))) {
-                    isInverseTrend = true;
+                    // isInverseTrend = true;
                 }
             }
             // ---------------------------------------------------------------------------------
@@ -3139,13 +3133,12 @@ public class BinanceServiceImpl implements BinanceService {
                 for (Mt5DataTrade trade : tradeList) {
                     if (Objects.equals(TICKET, trade.getTicket())) {
 
-                        String text = Utils.appendSpace(TICKET, 15)
-                                + Utils.appendSpace(trade.getType(), 15) + Utils.appendSpace(trade.getSymbol(), 10)
+                        String text = Utils.appendSpace(TICKET, 15) + Utils.appendSpace(trade.getType(), 15)
+                                + Utils.appendSpace(trade.getSymbol(), 10)
                                 + Utils.appendLeft(trade.getProfit().toString(), 10);
 
                         msg += "Close:" + trade.getType() + ":" + trade.getSymbol() + "_Vol:" + trade.getVolume()
-                                + "_P:" + trade.getProfit().toString()
-                                + Utils.new_line_from_service;
+                                + "_P:" + trade.getProfit().toString() + Utils.new_line_from_service;
 
                         System.out.println("mt5CloseSymbol: " + text);
                         break;
@@ -3708,13 +3701,15 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (isBreadLongArea || isBreadShotArea) {
                     if (isBreadLongArea && Objects.equals(trend_15, Utils.TREND_LONG)) {
-                        // Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_LONG, dto_15, dto_d1,
-                        //        Utils.CAPITAL_TIME_15, w1d1h4h1 + "12405b");
+                        // Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_LONG, dto_15,
+                        // dto_d1,
+                        // Utils.CAPITAL_TIME_15, w1d1h4h1 + "12405b");
                         // BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                     }
                     if (isBreadShotArea && Objects.equals(trend_15, Utils.TREND_SHOT)) {
-                        // Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_SHOT, dto_15, dto_d1,
-                        //        Utils.CAPITAL_TIME_15, w1d1h4h1 + "12405s");
+                        // Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, Utils.TREND_SHOT, dto_15,
+                        // dto_d1,
+                        // Utils.CAPITAL_TIME_15, w1d1h4h1 + "12405s");
                         // BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                     }
                 }
@@ -4028,7 +4023,8 @@ public class BinanceServiceImpl implements BinanceService {
                     trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, note_h1, note_15, note_05,
                     tracking_trend, zone_h12, zone_h4, zone_h1);
 
-            // String wdh4h1 = Utils.getEncrypted_trend_w1d1h4h1(trend_w1, trend_d1, trend_h12, trend_h4, trend_h1);
+            // String wdh4h1 = Utils.getEncrypted_trend_w1d1h4h1(trend_w1, trend_d1,
+            // trend_h12, trend_h4, trend_h1);
             String action = "";
             String append = "";
 
@@ -4066,10 +4062,8 @@ public class BinanceServiceImpl implements BinanceService {
                     || Utils.EPICS_METALS.contains(EPIC))) {
                 Mt5OpenTrade dto = null;
 
-                if ((Objects.isNull(dto) || !Objects.equals(action, trend_05))
-                        && m05_allow_trade && m15_allow_trade
-                        && Objects.equals(bread_trend_h12, bread_trend_h4)
-                        && Objects.equals(bread_trend_h4, trend_h1)
+                if ((Objects.isNull(dto) || !Objects.equals(action, trend_05)) && m05_allow_trade && m15_allow_trade
+                        && Objects.equals(bread_trend_h12, bread_trend_h4) && Objects.equals(bread_trend_h4, trend_h1)
                         && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
                     action = trend_15;
                     append += ".000105";
@@ -4077,12 +4071,10 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
 
-                if ((Objects.isNull(dto) || !Objects.equals(action, trend_05))
-                        && m05_allow_trade && m15_allow_trade
+                if ((Objects.isNull(dto) || !Objects.equals(action, trend_05)) && m05_allow_trade && m15_allow_trade
                         && Objects.equals(bread_trend_h12, bread_trend_h4)
                         && Objects.equals(bread_trend_h4, bread_trend_h1)
-                        && Objects.equals(bread_trend_h1, bread_trend_15)
-                        && Objects.equals(bread_trend_15, trend_15)
+                        && Objects.equals(bread_trend_h1, bread_trend_15) && Objects.equals(bread_trend_15, trend_15)
                         && Objects.equals(trend_15, trend_05)) {
                     action = trend_05;
                     append += ".001505";
@@ -4090,51 +4082,47 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // ----------------2 truong hop nay dung, ko dc sua doi ---------------------
-                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h12))
-                        && m05_allow_trade && Objects.equals(trend_h12, trend_h4)
-                        && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_05)) {
+                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h12)) && m05_allow_trade
+                        && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(trend_h1, trend_05)) {
                     action = trend_h12;
                     append += ".124105";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append);
                 }
 
-                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h12))
-                        && m15_allow_trade && Objects.equals(trend_h12, trend_h4)
-                        && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
+                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h12)) && m15_allow_trade
+                        && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(trend_h1, trend_15)) {
                     action = trend_h12;
                     append += ".124115";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append);
                 }
                 // --------------------------------------------------------------------------
-                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h12))
-                        && m05_allow_trade && Objects.equals(trend_h12, trend_h1)
-                        && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
+                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h12)) && m05_allow_trade
+                        && Objects.equals(trend_h12, trend_h1) && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_15, trend_05)) {
                     action = trend_h12;
                     append += ".120105";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append);
                 }
 
-                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h4))
-                        && m05_allow_trade && Objects.equals(trend_h4, trend_h1)
-                        && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
+                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h4)) && m05_allow_trade
+                        && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_15, trend_05)) {
                     action = trend_h4;
                     append += ".411505";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append);
                 }
                 // ---------------------------------------------------------------------
-                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h1))
-                        && m05_allow_trade && m15_allow_trade
-                        && Objects.equals(trend_h1, trend_15)
-                        && Objects.equals(trend_15, trend_05)) {
+                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h1)) && m05_allow_trade && m15_allow_trade
+                        && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
                     action = trend_h1;
                     append += ".011505";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H1, append);
                 }
                 // ---------------------------------------------------------------------
-                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h12))
-                        && m05_allow_trade
-                        && Objects.equals(trend_h12, trend_h1)
-                        && Objects.equals(trend_h1, trend_15)
+                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h12)) && m05_allow_trade
+                        && Objects.equals(trend_h12, trend_h1) && Objects.equals(trend_h1, trend_15)
                         && Objects.equals(trend_15, trend_05)) {
                     action = trend_h12;
                     append += ".121505";
@@ -4157,8 +4145,8 @@ public class BinanceServiceImpl implements BinanceService {
                         append += ".241205";
                         dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h12, Utils.CAPITAL_TIME_H12, append);
                     }
-                    if (Objects.isNull(dto) && m05_allow_trade && m15_allow_trade
-                            && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)) {
+                    if (Objects.isNull(dto) && m05_allow_trade && m15_allow_trade && Objects.equals(trend_d1, trend_h12)
+                            && Objects.equals(trend_h12, trend_h4)) {
                         action = trend_h12;
                         append += ".241205";
                         dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h12, Utils.CAPITAL_TIME_H12, append);
@@ -4176,8 +4164,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String reject_id = "";
 
                     if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
-                            && Objects.equals(trend_h12, trend_h4)
-                            && !Objects.equals(trend_h4, action)) {
+                            && Objects.equals(trend_h12, trend_h4) && !Objects.equals(trend_h4, action)) {
                         reject_id = " RejectID: w=d=h12=h4 and h4!=action";
                     }
 
