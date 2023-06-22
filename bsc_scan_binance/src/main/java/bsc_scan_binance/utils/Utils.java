@@ -63,16 +63,14 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 public class Utils {
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(100000);
 
-    // Step1: Giữ vốn
-    // public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.001); //
-    // 100$
+    // Step1: Khi mới nhận tài khoản (100$ / 1trade)
+    // public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.001);
 
-    // Step2: Khi tài khoản tăng trưởng 2%
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0015); // 150$
+    // Step2: Khi tài khoản tăng trưởng 2% (150$ / 1trade)
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0015);
 
-    // Step3: Khi tài khoản tăng trưởng 5%
-    // public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.002); //
-    // 200$
+    // Step3: Khi tài khoản tăng trưởng 5% (250$ / 1trade)
+    // public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0025);
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
