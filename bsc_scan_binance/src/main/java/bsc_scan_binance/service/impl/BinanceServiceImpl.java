@@ -3863,6 +3863,14 @@ public class BinanceServiceImpl implements BinanceService {
                     type = Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_Ma_3_5;
                 }
             }
+
+            if (Utils.isBlank(type) && Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_05)) {
+                String switch_trend = Utils.switchTrendByMaXX(heken_list, 1, 50);
+                switch_trend += Utils.switchTrendByMaXX(heken_list, 3, 50);
+                if (Utils.isNotBlank(switch_trend) && switch_trend.contains(trend)) {
+                    type = Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_Ma_1_50;
+                }
+            }
         } else if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1)) {
             type = Utils.switchTrendByHeken_12(heken_list);
 
@@ -4111,6 +4119,13 @@ public class BinanceServiceImpl implements BinanceService {
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append, true);
                 }
 
+                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h12)) && Utils.isNotBlank(note_05)
+                        && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_05)) {
+                    action = trend_h12;
+                    append += ".120405";
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append, true);
+                }
+
                 // ---------------------------------------------------------------------
                 if ((Objects.isNull(dto) || !Objects.equals(action, trend_h12)) && m05_allow_trade
                         && Objects.equals(trend_h12, trend_h1) && Objects.equals(trend_h1, trend_15)
@@ -4313,9 +4328,10 @@ public class BinanceServiceImpl implements BinanceService {
             result = Utils.appendLeft(String.valueOf(count), 15);
             result += ". (Trade:" + Utils.appendSpace(TRADE_TREND, 10) + ")   ";
             result += Utils.appendSpace(EPIC, 10);
-            result += multi_timeframes;
-            result += ", " + Utils.appendSpace(trade.getComment(), 30);
+            result += Utils.appendSpace(trade.getTicket(), 10);
             result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(PROFIT), 10);
+            result += "    " + multi_timeframes;
+            result += "    " + Utils.appendSpace(trade.getComment(), 30);
 
             total = total.add(PROFIT);
             msg += result + Utils.new_line_from_service;
