@@ -2875,7 +2875,7 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private void openTrade() {
-        // TODO: 4. openTrade
+
         if (!Utils.isHuntTime_7h_to_23h()) {
             if (isReloadAfter(Utils.MINUTES_OF_1H, "OpenTrade")) {
                 Utils.logWritelnDraft("[OpenTrade] thoi gian nghi, khong vao lenh.");
@@ -2895,46 +2895,52 @@ public class BinanceServiceImpl implements BinanceService {
 
         try {
             FileWriter writer = new FileWriter(mt5_open_trade_file, true);
-            for (Mt5OpenTrade dto : BscScanBinanceApplication.mt5_open_trade_List) {
-                if (Objects.isNull(dto)) {
-                    continue;
-                }
 
-                StringBuilder sb = new StringBuilder();
-                sb.append(dto.getEpic());
-                sb.append('\t');
-                sb.append(dto.getOrder_type());
-                sb.append('\t');
-                sb.append(dto.getLots());
-                sb.append('\t');
-                sb.append(dto.getEntry());
-                sb.append('\t');
-                sb.append(dto.getStop_loss());
-                sb.append('\t');
-                sb.append(dto.getTake_profit());
-                sb.append('\t');
-                sb.append(dto.getComment());
-                sb.append('\n');
+            // TODO: 4. openTrade PC.CongTy.Only
+            if (Utils.isPcCongTy()) {
 
-                if (trade_count < MAX_TRADE) {
-                    writer.write(sb.toString());
-
-                    if (!dto.getOrder_type().toUpperCase().contains("LIMIT")) {
-                        trade_count += 1;
+                for (Mt5OpenTrade dto : BscScanBinanceApplication.mt5_open_trade_List) {
+                    if (Objects.isNull(dto)) {
+                        continue;
                     }
 
-                    if (isReloadAfter(Utils.MINUTES_OF_1H, "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type())) {
-                        String msg = "openTrade  : " + Utils.appendSpace(dto.getEpic(), 10);
-                        msg += Utils.appendSpace(dto.getOrder_type(), 15);
-                        msg += " Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
-                        msg += " E: " + Utils.appendLeft(dto.getEntry().toString(), 10);
-                        msg += " SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 10);
-                        msg += "    " + Utils.appendSpace(dto.getComment(), 25);
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(dto.getEpic());
+                    sb.append('\t');
+                    sb.append(dto.getOrder_type());
+                    sb.append('\t');
+                    sb.append(dto.getLots());
+                    sb.append('\t');
+                    sb.append(dto.getEntry());
+                    sb.append('\t');
+                    sb.append(dto.getStop_loss());
+                    sb.append('\t');
+                    sb.append(dto.getTake_profit());
+                    sb.append('\t');
+                    sb.append(dto.getComment());
+                    sb.append('\n');
 
-                        System.out.println(msg);
+                    if (trade_count < MAX_TRADE) {
+                        writer.write(sb.toString());
+
+                        if (!dto.getOrder_type().toUpperCase().contains("LIMIT")) {
+                            trade_count += 1;
+                        }
+
+                        if (isReloadAfter(Utils.MINUTES_OF_1H, "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type())) {
+                            String msg = "openTrade  : " + Utils.appendSpace(dto.getEpic(), 10);
+                            msg += Utils.appendSpace(dto.getOrder_type(), 15);
+                            msg += " Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
+                            msg += " E: " + Utils.appendLeft(dto.getEntry().toString(), 10);
+                            msg += " SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 10);
+                            msg += "    " + Utils.appendSpace(dto.getComment(), 25);
+
+                            System.out.println(msg);
+                        }
                     }
                 }
             }
+
             writer.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -2968,7 +2974,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // ----------------------------------------PROFIT--------------------------------------
         BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
-        BigDecimal profit_0_5R = risk.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+        // BigDecimal profit_2R = risk.multiply(BigDecimal.valueOf(2));
         BigDecimal profit_1R = risk;
 
         for (Mt5DataTrade trade : tradeList) {
@@ -3039,13 +3045,9 @@ public class BinanceServiceImpl implements BinanceService {
                 mt5OpenTradeRepository.save(mt5Entity);
             }
 
+            // -1R -> Check trend (H4) & (H1) & (05) xem còn hy vọng tránh SL.
             boolean isPriceHit_SL = false;
-            if (((PROFIT.add(profit_1R)).compareTo(BigDecimal.ZERO) < 0)) {
-                isPriceHit_SL = true;
-            }
-
-            // -0.5R -> Check trend (H4) & (H1) & (05) xem còn hy vọng tránh SL.
-            if (((PROFIT.add(profit_0_5R)).compareTo(BigDecimal.ZERO) < 0)
+            if (((PROFIT.add(profit_1R)).compareTo(BigDecimal.ZERO) < 0)
                     && !Objects.equals(trend_h4, TRADE_TREND)
                     && !Objects.equals(trend_h1, TRADE_TREND)
                     && !Objects.equals(trend_15, TRADE_TREND)
@@ -3063,7 +3065,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean isPriceHit_TP = false;
-            if (PROFIT.compareTo(profit_0_5R) > 0) {
+            if (PROFIT.compareTo(profit_1R) > 0) {
                 if (Objects.equals(Utils.TREND_LONG, TRADE_TREND) && (cur_price.compareTo(TP_order) > 0)) {
                     isPriceHit_TP = true;
                 }
@@ -3078,7 +3080,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean isInverseTrend = false;
-            if ((PROFIT.compareTo(profit_1R) > 0) || (PROFIT.add(profit_0_5R).compareTo(BigDecimal.ZERO) < 0)) {
+            if (PROFIT.add(profit_1R).compareTo(BigDecimal.ZERO) < 0) {
                 if (!Objects.equals(trend_h4, TRADE_TREND)
                         && !Objects.equals(trend_h1, TRADE_TREND)
                         && !Objects.equals(trend_15, TRADE_TREND)
@@ -4147,8 +4149,9 @@ public class BinanceServiceImpl implements BinanceService {
                     String reject_id = "";
 
                     if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
-                            && !Objects.equals(trend_h12, action) && !Objects.equals(zone_h12, action)) {
-                        reject_id = " RejectID: w=d=h12 and h12!=action";
+                            && Objects.equals(trend_h12, trend_h4)
+                            && !Objects.equals(trend_h4, action)) {
+                        reject_id = " RejectID: w=d=h12=h4 and h4!=action";
                     }
                     if (!zone_h12.contains(action) || !zone_h4.contains(action) || !zone_h1.contains(action)) {
                         reject_id = " RejectID: end zone_h12 zone_h4 zone_h1";
@@ -4157,8 +4160,8 @@ public class BinanceServiceImpl implements BinanceService {
                         reject_id = " RejectID: h4=h1 and h4!=action";
                     }
                     if ((Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
-                            && !Objects.equals(trend_h4, action))) {
-                        reject_id = " RejectID: d=h12=h4 and h4!=action";
+                            && Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h1, action))) {
+                        reject_id = " RejectID: d=h12=h4=h1 and h1!=action";
                     }
 
                     // Không đánh ngược xu hướng Khi chỉ số có trend_w1=trend_d1.

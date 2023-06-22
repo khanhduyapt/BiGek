@@ -62,7 +62,15 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 //@Slf4j
 public class Utils {
     public static final BigDecimal ACCOUNT = BigDecimal.valueOf(100000);
-    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0025);
+
+    // Step1: Giữ vốn
+    // public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.001); // 100$
+
+    // Step2: Khi tài khoản tăng trưởng 2%
+    // public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.0015); // 150$
+
+    // Step3: Khi tài khoản tăng trưởng 5%
+    public static final BigDecimal RISK_PERCENT = BigDecimal.valueOf(0.002); // 200$
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -974,6 +982,20 @@ public class Utils {
             return true;
         }
 
+        return false;
+    }
+
+    public static boolean isPcCongTy() {
+        String cty = "PC";
+        String hostname;
+        try {
+            hostname = InetAddress.getLocalHost().getHostName();
+            if (Objects.equals(cty, hostname)) {
+                return true;
+            }
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 
