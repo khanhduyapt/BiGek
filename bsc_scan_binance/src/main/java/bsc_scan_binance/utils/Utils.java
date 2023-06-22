@@ -3563,9 +3563,9 @@ public class Utils {
             String trend = heken_list.get(0).isUptrend() ? Utils.TREND_LONG : Utils.TREND_SHOT;
             return trend;
         }
-        if (id.contains("m_") || id.contains(PREFIX_1h_)) {
-            // str = 1;
-            // end = 2;
+        if (id.contains(PREFIX_5m_) || id.contains(PREFIX_15m_)) {
+            str = 1;
+            end = 2;
         }
 
         boolean isUptrend_1 = isUptrendByMa(heken_list, 1, str, end);
