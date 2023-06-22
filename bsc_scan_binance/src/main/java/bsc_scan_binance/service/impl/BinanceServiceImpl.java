@@ -2974,7 +2974,6 @@ public class BinanceServiceImpl implements BinanceService {
 
         // ----------------------------------------PROFIT--------------------------------------
         BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
-        BigDecimal profit_05R = risk.divide(BigDecimal.valueOf(2), 1, RoundingMode.CEILING);
         BigDecimal profit_1R = risk;
 
         for (Mt5DataTrade trade : tradeList) {
@@ -3000,14 +2999,11 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // Dừng trade khi H1_1 đóng nến tại LoHi + Bread1-5 của H1.
-            Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-            Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(dto_d1);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(dto_h1);
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(dto_h1);
-            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)
-                    || Objects.isNull(dto_05)) {
+            if (Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15) || Objects.isNull(dto_05)) {
                 Utils.logWritelnDraft("monitorProfit Orders dto is NULL " + EPIC);
                 continue;
             }
@@ -3034,8 +3030,6 @@ public class BinanceServiceImpl implements BinanceService {
             BigDecimal TP_order = mt5Entity.getTakeProfit();
             BigDecimal SL_tf = mt5Entity.getStopLossTimeFam();
 
-            String trend_d1 = dto_d1.getTrend();
-            String trend_h12 = dto_h12.getTrend();
             String trend_h1 = dto_h1.getTrend();
             String trend_15 = dto_15.getTrend();
             String trend_05 = dto_05.getTrend();
@@ -3098,13 +3092,6 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            if (PROFIT.add(profit_05R).compareTo(BigDecimal.ZERO) < 0) {
-                if ((Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
-                        && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
-                        && Objects.equals(trend_15, trend_05) && !Objects.equals(trend_d1, TRADE_TREND))) {
-                    // isInverseTrend = true;
-                }
-            }
             // ---------------------------------------------------------------------------------
             if (isPriceHit_SL || isPriceHit_TP || isInverseTrend) {
                 String prefix = Utils.getChartNameCapital(mt5Entity.getTimeframe()) + "Closed.   ";
@@ -4067,7 +4054,7 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
                     action = trend_15;
                     append += ".000105";
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H12, append);
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append);
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
 
@@ -4126,7 +4113,7 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_15, trend_05)) {
                     action = trend_h12;
                     append += ".121505";
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H12, append);
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append);
 
                     if (Objects.nonNull(dto)) {
                         String type = Objects.equals(Utils.TREND_LONG, trend_05) ? "B"
@@ -4143,13 +4130,13 @@ public class BinanceServiceImpl implements BinanceService {
                             && Objects.equals(trend_d1, trend_h12)) {
                         action = trend_h12;
                         append += ".241205";
-                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h12, Utils.CAPITAL_TIME_H12, append);
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append);
                     }
                     if (Objects.isNull(dto) && m05_allow_trade && m15_allow_trade && Objects.equals(trend_d1, trend_h12)
                             && Objects.equals(trend_h12, trend_h4)) {
                         action = trend_h12;
                         append += ".241205";
-                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h12, Utils.CAPITAL_TIME_H12, append);
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append);
                     }
                 }
                 // ---------------------------------------------------------------------
