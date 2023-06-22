@@ -2999,11 +2999,17 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // Dừng trade khi H1_1 đóng nến tại LoHi + Bread1-5 của H1.
+            Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
+            if (Objects.isNull(dto_h12)) {
+                dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+            }
+
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(dto_h1);
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(dto_h1);
-            if (Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15) || Objects.isNull(dto_05)) {
+            if (Objects.isNull(dto_h12) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)
+                    || Objects.isNull(dto_05)) {
                 Utils.logWritelnDraft("monitorProfit Orders dto is NULL " + EPIC);
                 continue;
             }
@@ -3030,6 +3036,7 @@ public class BinanceServiceImpl implements BinanceService {
             BigDecimal TP_order = mt5Entity.getTakeProfit();
             BigDecimal SL_tf = mt5Entity.getStopLossTimeFam();
 
+            String trend_h12 = dto_h12.getTrend();
             String trend_h1 = dto_h1.getTrend();
             String trend_15 = dto_15.getTrend();
             String trend_05 = dto_05.getTrend();
@@ -3045,9 +3052,9 @@ public class BinanceServiceImpl implements BinanceService {
 
             // -1R -> Check trend (H4) & (H1) & (05) xem còn hy vọng tránh SL.
             boolean isPriceHit_SL = false;
-            if (((PROFIT.add(profit_1R)).compareTo(BigDecimal.ZERO) < 0) && !Objects.equals(trend_h4, TRADE_TREND)
-                    && !Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
-                    && !Objects.equals(trend_05, TRADE_TREND)) {
+            if (((PROFIT.add(profit_1R)).compareTo(BigDecimal.ZERO) < 0) && !Objects.equals(trend_h12, TRADE_TREND)
+                    && !Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
+                    && !Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
 
                 // SL khi Cancle_1 đóng cửa dưới LoHi+Bread.
                 if (Objects.equals(Utils.TREND_LONG, TRADE_TREND) && (candle1_close.compareTo(SL_tf) < 0)) {
@@ -3077,18 +3084,10 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean isInverseTrend = false;
             if (PROFIT.add(profit_1R).compareTo(BigDecimal.ZERO) < 0) {
-                if (!Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
-                        && !Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
+                if (!Objects.equals(trend_h12, TRADE_TREND) && !Objects.equals(trend_h4, TRADE_TREND)
+                        && !Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
+                        && !Objects.equals(trend_05, TRADE_TREND)) {
                     isInverseTrend = true;
-                }
-            }
-
-            if (Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_H1)) {
-                if ((PROFIT.compareTo(profit_1R) > 0) || (PROFIT.add(profit_1R).compareTo(BigDecimal.ZERO) < 0)) {
-                    if (!Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
-                            && !Objects.equals(trend_05, TRADE_TREND)) {
-                        isInverseTrend = true;
-                    }
                 }
             }
 
