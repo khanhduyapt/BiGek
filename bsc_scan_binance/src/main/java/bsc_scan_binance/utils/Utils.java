@@ -3669,40 +3669,38 @@ public class Utils {
         return tmp_msg + url;
     }
 
-    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_en_05, Orders dto_sl_h1,
+    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_en_05, Orders dto_vol,
             String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1, boolean isTradeNow) {
-        BigDecimal en_05, sl_h1, tp_h1;
-        BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT); // ACCOUNT=20k, risk: 0.5% = 100$; 100k, risk: 0.5% = 500$
-        // risk_x1 = risk_x1.multiply(BigDecimal.valueOf(2)); // 20k*5 = 100k -> risk :
-        // 200$
+        BigDecimal en_05, sl_h4, tp_h4;
+        BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT);
 
         if (Objects.equals(Utils.TREND_LONG, trend)) {
             en_05 = Utils.getBigDecimal(dto_en_05.getLow_price());
 
-            sl_h1 = Utils.getBigDecimal(dto_sl_h1.getLow_price());
-            tp_h1 = Utils.getBigDecimal(dto_sl_h1.getBody_hig());
+            sl_h4 = Utils.getBigDecimal(dto_vol.getLow_price());
+            tp_h4 = Utils.getBigDecimal(dto_vol.getBody_hig());
         } else {
             en_05 = Utils.getBigDecimal(dto_en_05.getHigh_price());
 
-            sl_h1 = Utils.getBigDecimal(dto_sl_h1.getHigh_price());
-            tp_h1 = Utils.getBigDecimal(dto_sl_h1.getBody_low());
+            sl_h4 = Utils.getBigDecimal(dto_vol.getHigh_price());
+            tp_h4 = Utils.getBigDecimal(dto_vol.getBody_low());
         }
-        MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, dto_en_05.getCurrent_price(), sl_h1,
-                tp_h1);
+        MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, dto_en_05.getCurrent_price(), sl_h4,
+                tp_h4);
 
         Mt5OpenTrade dto = new Mt5OpenTrade();
         dto.setEpic(EPIC);
         dto.setOrder_type(trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
         dto.setLots(money_x1_now.calcLot());
         dto.setEntry(en_05);
-        dto.setStop_loss(sl_h1);
-        dto.setTake_profit(tp_h1);
+        dto.setStop_loss(sl_h4);
+        dto.setTake_profit(tp_h4);
         dto.setComment(BscScanBinanceApplication.hostname + getEncryptedChartNameCapital(CAPITAL_TIME_XX) + ""
                 + encrypted_trend_w1d1h4h1 + "");
-        dto.setStop_loss_m30(sl_h1);
+        dto.setStop_loss_m30(sl_h4);
 
-        BigDecimal en_sl = dto_sl_h1.getCurrent_price().subtract(sl_h1).abs();
-        BigDecimal en_tp = dto_sl_h1.getCurrent_price().subtract(tp_h1).abs();
+        BigDecimal en_sl = dto_vol.getCurrent_price().subtract(sl_h4).abs();
+        BigDecimal en_tp = dto_vol.getCurrent_price().subtract(tp_h4).abs();
         if (en_tp.compareTo(en_sl) < 0) {
             return null;
         }
