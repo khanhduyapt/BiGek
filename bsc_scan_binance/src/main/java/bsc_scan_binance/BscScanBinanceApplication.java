@@ -132,8 +132,7 @@ public class BscScanBinanceApplication {
                             alertMsgKillZone(binance_service);
                         }
 
-                        // if (Utils.isWeekday() && Utils.isAllowSendMsg())
-                        {
+                        if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
                             if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
                                 binance_service.saveMt5Data("ForexH.csv", Utils.MINUTES_OF_1H);
                                 binance_service.saveMt5Data("ForexM.csv", Utils.MINUTES_OF_5M);
@@ -264,9 +263,9 @@ public class BscScanBinanceApplication {
         Utils.logWritelnDraftFooter();
         binance_service.scapStocks();
         Utils.logWritelnDraftFooter();
-
         binance_service.openTrade();
-
+        // --------------------------------------------------------------------------
+        binance_service.monitorProfit();
         // --------------------------------------------------------------------------
         String cur_epics = EPICS_OUTPUT_MSG;
         String[] arr = cur_epics.split("_");
