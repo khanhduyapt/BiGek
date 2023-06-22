@@ -3089,6 +3089,16 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
+            if (Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_H1)) {
+                if ((PROFIT.compareTo(profit_1R) > 0) || (PROFIT.add(profit_1R).compareTo(BigDecimal.ZERO) < 0)) {
+                    if (!Objects.equals(trend_h1, TRADE_TREND)
+                            && !Objects.equals(trend_15, TRADE_TREND)
+                            && !Objects.equals(trend_05, TRADE_TREND)) {
+                        isInverseTrend = true;
+                    }
+                }
+            }
+
             // ---------------------------------------------------------------------------------
             if (isPriceHit_SL || isPriceHit_TP || isInverseTrend) {
                 String prefix = Utils.getChartNameCapital(mt5Entity.getTimeframe()) + "Closed.   ";

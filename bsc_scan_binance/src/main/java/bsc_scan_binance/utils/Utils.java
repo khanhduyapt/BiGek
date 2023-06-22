@@ -725,19 +725,24 @@ public class Utils {
     }
 
     public static String getDeEncryptedChartNameCapital(String encryptedChartName) {
-        if (encryptedChartName.contains(ENCRYPTED_05)) {
-            return CAPITAL_TIME_05;
-        }
-        if (encryptedChartName.contains(ENCRYPTED_15)) {
-            return CAPITAL_TIME_15;
-        }
-        if (encryptedChartName.contains(ENCRYPTED_H1)) {
-            return CAPITAL_TIME_H1;
+        //if (encryptedChartName.contains(ENCRYPTED_05)) {
+        //    return CAPITAL_TIME_05;
+        //}
+        //if (encryptedChartName.contains(ENCRYPTED_15)) {
+        //    return CAPITAL_TIME_15;
+        //}
+        //if (encryptedChartName.contains(ENCRYPTED_H1)) {
+        //    return CAPITAL_TIME_H1;
+        //}
+
+        if (encryptedChartName.contains(ENCRYPTED_H4)) {
+            return CAPITAL_TIME_H4;
         }
         if (encryptedChartName.contains(ENCRYPTED_H12)) {
             return CAPITAL_TIME_H12;
         }
-        return CAPITAL_TIME_H4;
+
+        return CAPITAL_TIME_H1;
     }
 
     public static String getEncrypted_trend_w1d1h4h1(String trend_w1, String trend_d1, String trend_h12,
