@@ -4154,6 +4154,22 @@ public class BinanceServiceImpl implements BinanceService {
                 }
                 prefix += sub_prefix;
 
+                if (Objects.equals(EPIC, "BTCUSD")) {
+                    dto = null;
+                    if (m05_allow_trade && m15_allow_trade && Utils.isNotBlank(note_h12)
+                            && Objects.equals(trend_d1, trend_h12)) {
+                        action = trend_h12;
+                        append += ".241205";
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h12, Utils.CAPITAL_TIME_H12, append);
+                    }
+                    if (Objects.isNull(dto) && m05_allow_trade && m15_allow_trade
+                            && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)) {
+                        action = trend_h12;
+                        append += ".241205";
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h12, Utils.CAPITAL_TIME_H12, append);
+                    }
+                }
+
                 // ---------------------------------------------------------------------
                 if (Objects.nonNull(dto)) {
                     String reject_id = "";
@@ -4176,8 +4192,9 @@ public class BinanceServiceImpl implements BinanceService {
 
                     // Không đánh ngược xu hướng Khi chỉ số có trend_w1=trend_d1.
                     if (Utils.EPICS_INDEXS.contains(EPIC) && Objects.equals(trend_w1, trend_d1)
-                            && Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
-                        reject_id = " RejectID: w=d=h12 and h12!=action";
+                            && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
+                            && !Objects.equals(trend_h12, action)) {
+                        reject_id = " RejectID: w=d=h12=h4 and h4!=action";
                     }
 
                     if (Utils.isNotBlank(reject_id)) {
