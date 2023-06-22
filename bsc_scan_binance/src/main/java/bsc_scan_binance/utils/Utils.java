@@ -1024,8 +1024,12 @@ public class Utils {
 
     // https://www.calculator.net/time-duration-calculator.html
     public static boolean isHuntTime_7h_to_23h() {
-        int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-        if ((hh > 6) && (hh <= 23)) {
+        List<Integer> times = Arrays.asList(
+                7, 8, 9, 10, 11,
+                14, 15, 16, 17, 18,
+                21, 22, 23, 24);
+        Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
+        if (times.contains(hh)) {
             return true;
         }
 
@@ -2566,14 +2570,14 @@ public class Utils {
         BigDecimal max = BigDecimal.ZERO;
 
         for (int index = 0; index < list.size(); index++) {
-            BigDecimal ma3 = calcMA(list, 3, index);
+            BigDecimal ma10 = calcMA(list, 10, index);
 
-            if (min.compareTo(ma3) > 0) {
-                min = ma3;
+            if (min.compareTo(ma10) > 0) {
+                min = ma10;
             }
 
-            if (max.compareTo(ma3) < 0) {
-                max = ma3;
+            if (max.compareTo(ma10) < 0) {
+                max = ma10;
             }
         }
 

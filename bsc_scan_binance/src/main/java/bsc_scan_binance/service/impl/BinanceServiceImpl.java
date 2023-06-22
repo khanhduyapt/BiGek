@@ -4042,7 +4042,8 @@ public class BinanceServiceImpl implements BinanceService {
                     || Utils.EPICS_METALS.contains(EPIC))) {
                 Mt5OpenTrade dto = null;
 
-                if (Objects.isNull(dto) && m05_allow_trade
+                if ((Objects.isNull(dto) || !Objects.equals(action, trend_05))
+                        && m05_allow_trade && m15_allow_trade
                         && Objects.equals(bread_trend_h12, bread_trend_h4)
                         && Objects.equals(bread_trend_h4, trend_h1)
                         && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
@@ -4052,58 +4053,67 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
 
-                if (Objects.isNull(dto)
+                if ((Objects.isNull(dto) || !Objects.equals(action, trend_05))
+                        && m05_allow_trade && m15_allow_trade
                         && Objects.equals(bread_trend_h12, bread_trend_h4)
                         && Objects.equals(bread_trend_h4, bread_trend_h1)
-                        && Objects.equals(bread_trend_h1, trend_h1)
-                        && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
+                        && Objects.equals(bread_trend_h1, bread_trend_15)
+                        && Objects.equals(bread_trend_15, trend_15)
+                        && Objects.equals(trend_15, trend_05)) {
                     action = trend_05;
                     append += ".001505";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H12, append);
-                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
 
                 // ----------------2 truong hop nay dung, ko dc sua doi ---------------------
-                if (Objects.isNull(dto) && m05_allow_trade && Objects.equals(trend_h12, trend_h4)
+                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h12))
+                        && m05_allow_trade && Objects.equals(trend_h12, trend_h4)
                         && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_05)) {
                     action = trend_h12;
                     append += ".124105";
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H12, append);
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append);
                 }
-                if (Objects.isNull(dto) && m15_allow_trade && Objects.equals(trend_h12, trend_h4)
+
+                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h12))
+                        && m15_allow_trade && Objects.equals(trend_h12, trend_h4)
                         && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
                     action = trend_h12;
                     append += ".124115";
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H12, append);
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append);
                 }
 
                 // --------------------------------------------------------------------------
-                if (Objects.isNull(dto) && m05_allow_trade && Objects.equals(trend_h12, trend_h1)
+                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h12))
+                        && m05_allow_trade && Objects.equals(trend_h12, trend_h1)
                         && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
                     action = trend_h12;
                     append += ".120105";
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H12, append);
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append);
                 }
 
-                if (Objects.isNull(dto) && m05_allow_trade && Objects.equals(trend_h4, trend_h1)
+                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h4))
+                        && m05_allow_trade && Objects.equals(trend_h4, trend_h1)
                         && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
                     action = trend_h4;
                     append += ".411505";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append);
                 }
 
-                if (Objects.isNull(dto) && m05_allow_trade && m15_allow_trade && Objects.equals(trend_h1, trend_15)
+                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h1))
+                        && m05_allow_trade && m15_allow_trade
+                        && Objects.equals(trend_h1, trend_15)
                         && Objects.equals(trend_15, trend_05)) {
-                    action = trend_h4;
+                    action = trend_h1;
                     append += ".011505";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H1, append);
                 }
 
                 // ---------------------------------------------------------------------
-                if (Objects.isNull(dto) && m05_allow_trade && Objects.equals(trend_h4, trend_h1)
-                        && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
+                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h4))
+                        && m05_allow_trade && m15_allow_trade
+                        && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_15, trend_05)) {
                     action = trend_h4;
-                    append += ".040115";
+                    append += ".041505";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append);
 
                     if (Objects.nonNull(dto)) {
@@ -4114,7 +4124,9 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (Objects.isNull(dto) && m05_allow_trade && Objects.equals(trend_h12, trend_h1)
+                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h12))
+                        && m05_allow_trade
+                        && Objects.equals(trend_h12, trend_h1)
                         && Objects.equals(trend_h1, trend_15)
                         && Objects.equals(trend_15, trend_05)) {
                     action = trend_h12;
@@ -4130,16 +4142,6 @@ public class BinanceServiceImpl implements BinanceService {
                 }
                 prefix += sub_prefix;
 
-                // ---------------------------------------------------------------------
-                if (Objects.nonNull(dto)) {
-                    analysis(prefix, EPIC, CAPITAL_TIME_XX, action);
-                } else {
-                    analysis(prefix, EPIC, CAPITAL_TIME_XX, trend_h4);
-                }
-
-                if (!Objects.equals(EPIC, "BTCUSD")) {
-                    BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
-                }
                 // ---------------------------------------------------------------------
                 if (Objects.nonNull(dto)) {
                     String reject_id = "";
@@ -4182,6 +4184,17 @@ public class BinanceServiceImpl implements BinanceService {
                     } else {
                         BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                     }
+                }
+
+                // ---------------------------------------------------------------------
+                if (Objects.nonNull(dto)) {
+                    analysis(prefix, EPIC, CAPITAL_TIME_XX, action);
+                } else {
+                    analysis(prefix, EPIC, CAPITAL_TIME_XX, trend_h4);
+                }
+
+                if (!Objects.equals(EPIC, "BTCUSD")) {
+                    BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
                 }
             }
 
