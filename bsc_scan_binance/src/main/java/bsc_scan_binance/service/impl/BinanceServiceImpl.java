@@ -4078,7 +4078,7 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_15, trend_05)) {
                     action = trend_05;
                     append += ".001505";
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H12, append);
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_15, append);
                 }
 
                 // ----------------2 truong hop nay dung, ko dc sua doi ---------------------
@@ -4190,6 +4190,11 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (!(zone_h12.contains(action) && zone_h4.contains(action))) {
                         reject_id = " RejectID: end zone_h12 zone_h4";
+                    }
+
+                    if (Objects.equals(bread_trend_h12, action) && Objects.equals(bread_trend_h4, action)
+                            && Objects.equals(bread_trend_h1, action)) {
+                        reject_id = "";
                     }
 
                     if (Utils.isNotBlank(reject_id)) {
