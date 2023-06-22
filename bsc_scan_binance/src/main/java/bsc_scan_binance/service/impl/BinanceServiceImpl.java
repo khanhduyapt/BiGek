@@ -4118,7 +4118,7 @@ public class BinanceServiceImpl implements BinanceService {
                         reject_id = " RejectID: w=d=h12=h4 and h4!=action";
                     }
 
-                    if (!Objects.equals(bread_trend_h12, action) && Objects.equals(trend_h4, trend_h1)
+                    if (Utils.isBlank(note_h12 + note_h4) && Objects.equals(trend_h4, trend_h1)
                             && !Objects.equals(trend_h4, action)) {
                         reject_id = " RejectID: h4=h1 and h4!=action";
                     }
@@ -4140,7 +4140,7 @@ public class BinanceServiceImpl implements BinanceService {
                         reject_id = " RejectID: w=d=h12=h4 and h4!=action";
                     }
 
-                    if (Utils.isBlank(note_h12) && !Objects.equals(trend_h12, action)) {
+                    if (Utils.isBlank(note_h12 + note_h4) && !Objects.equals(trend_h12, action)) {
                         reject_id = " RejectID: h12!=action";
                     }
 
