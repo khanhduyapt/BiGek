@@ -4107,12 +4107,20 @@ public class BinanceServiceImpl implements BinanceService {
                     append += ".011505";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H1, append);
                 }
+
+                if (Objects.isNull(dto) && (m05_allow_trade || m15_allow_trade) && Objects.equals(trend_h12, trend_15)
+                        && Objects.equals(trend_15, trend_05)) {
+                    action = trend_h12;
+                    append += ".121505";
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append);
+                }
+
                 // ---------------------------------------------------------------------
                 if ((Objects.isNull(dto) || !Objects.equals(action, trend_h12)) && m05_allow_trade
                         && Objects.equals(trend_h12, trend_h1) && Objects.equals(trend_h1, trend_15)
                         && Objects.equals(trend_15, trend_05)) {
                     action = trend_h12;
-                    append += ".121505";
+                    append += ".121155";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append);
 
                     if (Objects.nonNull(dto)) {
@@ -4155,11 +4163,13 @@ public class BinanceServiceImpl implements BinanceService {
                         reject_id = " RejectID: w=d=h12=h4 and h4!=action";
                     }
 
-                    if ((Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h4, action))) {
+                    if (!Objects.equals(bread_trend_h12, action) && Objects.equals(trend_h4, trend_h1)
+                            && !Objects.equals(trend_h4, action)) {
                         reject_id = " RejectID: h4=h1 and h4!=action";
                     }
 
-                    if ((Objects.equals(trend_h12, trend_h4) && !Objects.equals(trend_h4, action))) {
+                    if (!Objects.equals(bread_trend_h12, action) && Objects.equals(trend_h12, trend_h4)
+                            && !Objects.equals(trend_h4, action)) {
                         reject_id = " RejectID: h12=h4 and h4!=action";
                     }
 
@@ -4173,15 +4183,6 @@ public class BinanceServiceImpl implements BinanceService {
                             && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
                             && !Objects.equals(trend_h12, action)) {
                         reject_id = " RejectID: w=d=h12=h4 and h4!=action";
-                    }
-
-                    if (!(zone_h12.contains(action) && zone_h4.contains(action))) {
-                        reject_id = " RejectID: end zone_h12 zone_h4";
-                    }
-
-                    if (Objects.equals(bread_trend_h12, action) && Objects.equals(bread_trend_h4, action)
-                            && Objects.equals(bread_trend_h1, action)) {
-                        reject_id = "";
                     }
 
                     if (Utils.isNotBlank(reject_id)) {
