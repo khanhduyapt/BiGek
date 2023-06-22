@@ -4185,6 +4185,10 @@ public class BinanceServiceImpl implements BinanceService {
                         reject_id = " RejectID: w=d=h12=h4 and h4!=action";
                     }
 
+                    if (Utils.isBlank(note_h12 + note_h4) && !Objects.equals(trend_h12, action)) {
+                        reject_id = " RejectID: h12!=action";
+                    }
+
                     if (Utils.isNotBlank(reject_id)) {
                         String msg_reject = Utils.appendLeft("", 25);
                         msg_reject += "Reject: " + Utils.appendSpace(action, 10);
