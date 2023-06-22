@@ -3670,7 +3670,7 @@ public class Utils {
     }
 
     public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_en_05, Orders dto_sl_h1,
-            String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1) {
+            String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1, boolean isTradeNow) {
         BigDecimal en_05, sl_h1, tp_h1;
         BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT); // ACCOUNT=20k, risk: 0.5% = 100$; 100k, risk: 0.5% = 500$
         // risk_x1 = risk_x1.multiply(BigDecimal.valueOf(2)); // 20k*5 = 100k -> risk :
@@ -3690,16 +3690,6 @@ public class Utils {
         MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, dto_en_05.getCurrent_price(), sl_h1,
                 tp_h1);
 
-        boolean isTradeNow = false;
-        if (Objects.equals(Utils.TREND_LONG, trend)
-                && Objects.equals(Utils.NOCATION_ABOVE_MA50, dto_en_05.getNocation())) {
-            isTradeNow = false;
-        }
-        if (Objects.equals(Utils.TREND_SHOT, trend)
-                && Objects.equals(Utils.NOCATION_BELOW_MA50, dto_en_05.getNocation())) {
-            isTradeNow = false;
-        }
-
         Mt5OpenTrade dto = new Mt5OpenTrade();
         dto.setEpic(EPIC);
         dto.setOrder_type(trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
@@ -3707,7 +3697,8 @@ public class Utils {
         dto.setEntry(en_05);
         dto.setStop_loss(sl_h1);
         dto.setTake_profit(tp_h1);
-        dto.setComment(getEncryptedChartNameCapital(CAPITAL_TIME_XX) + "" + encrypted_trend_w1d1h4h1 + "");
+        dto.setComment(BscScanBinanceApplication.hostname + getEncryptedChartNameCapital(CAPITAL_TIME_XX) + ""
+                + encrypted_trend_w1d1h4h1 + "");
         dto.setStop_loss_m30(sl_h1);
 
         BigDecimal en_sl = dto_sl_h1.getCurrent_price().subtract(sl_h1).abs();
