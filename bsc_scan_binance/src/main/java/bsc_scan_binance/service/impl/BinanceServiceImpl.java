@@ -4016,8 +4016,6 @@ public class BinanceServiceImpl implements BinanceService {
                     trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, note_h1, note_15, note_05,
                     tracking_trend, zone_h12, zone_h4, zone_h1);
 
-            // TODO: 3. controlMt5
-            // Hệ thống đặt lệnh thì có xu hướng của w1d1h4h1 được thêm vào comment.
             String wdh4h1 = Utils.getEncrypted_trend_w1d1h4h1(trend_w1, trend_d1, trend_h12, trend_h4, trend_h1);
             String action = "";
             String append = wdh4h1;
@@ -4051,7 +4049,7 @@ public class BinanceServiceImpl implements BinanceService {
             // -------------------------------------------------------------------------------
             // -------------------------------------------------------------------------------
             // ---------------------------------------------------------------------------------------------
-
+            // TODO: 3. controlMt5
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
                 Mt5OpenTrade dto = null;
@@ -4171,6 +4169,12 @@ public class BinanceServiceImpl implements BinanceService {
                         dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h12, Utils.CAPITAL_TIME_H12, append);
                     }
                 }
+                // ---------------------------------------------------------------------
+                if (Objects.nonNull(dto)) {
+                    analysis(prefix, EPIC, CAPITAL_TIME_XX, action);
+                } else {
+                    analysis(prefix, EPIC, CAPITAL_TIME_XX, trend_h4);
+                }
 
                 // ---------------------------------------------------------------------
                 if (Objects.nonNull(dto)) {
@@ -4181,9 +4185,7 @@ public class BinanceServiceImpl implements BinanceService {
                             && !Objects.equals(trend_h4, action)) {
                         reject_id = " RejectID: w=d=h12=h4 and h4!=action";
                     }
-                    if (!zone_h12.contains(action) || !zone_h4.contains(action) || !zone_h1.contains(action)) {
-                        reject_id = " RejectID: end zone_h12 zone_h4 zone_h1";
-                    }
+
                     if ((Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h4, action))) {
                         reject_id = " RejectID: h4=h1 and h4!=action";
                     }
@@ -4197,6 +4199,10 @@ public class BinanceServiceImpl implements BinanceService {
                             && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
                             && !Objects.equals(trend_h12, action)) {
                         reject_id = " RejectID: w=d=h12=h4 and h4!=action";
+                    }
+
+                    if (!(zone_h12.contains(action) && zone_h4.contains(action))) {
+                        reject_id = " RejectID: end zone_h12 zone_h4";
                     }
 
                     if (Utils.isNotBlank(reject_id)) {
@@ -4219,11 +4225,6 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // ---------------------------------------------------------------------
-                if (Objects.nonNull(dto)) {
-                    analysis(prefix, EPIC, CAPITAL_TIME_XX, action);
-                } else {
-                    analysis(prefix, EPIC, CAPITAL_TIME_XX, trend_h4);
-                }
 
                 if (!Objects.equals(EPIC, "BTCUSD")) {
                     BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
