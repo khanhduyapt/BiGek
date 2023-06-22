@@ -3677,12 +3677,12 @@ public class Utils {
         //risk_x1 = risk_x1.multiply(BigDecimal.valueOf(2)); // 20k*5 = 100k -> risk : 200$
 
         if (Objects.equals(Utils.TREND_LONG, trend)) {
-            en_05 = Utils.getBigDecimal(dto_en_05.getBody_low());
+            en_05 = Utils.getBigDecimal(dto_en_05.getLow_price());
 
             sl_h1 = Utils.getBigDecimal(dto_sl_h1.getLow_price());
             tp_h1 = Utils.getBigDecimal(dto_sl_h1.getBody_hig());
         } else {
-            en_05 = Utils.getBigDecimal(dto_en_05.getBody_hig());
+            en_05 = Utils.getBigDecimal(dto_en_05.getHigh_price());
 
             sl_h1 = Utils.getBigDecimal(dto_sl_h1.getHigh_price());
             tp_h1 = Utils.getBigDecimal(dto_sl_h1.getBody_low());

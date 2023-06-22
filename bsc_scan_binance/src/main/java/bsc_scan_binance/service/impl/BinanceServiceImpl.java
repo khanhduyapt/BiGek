@@ -4122,21 +4122,6 @@ public class BinanceServiceImpl implements BinanceService {
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append);
                 }
                 // ---------------------------------------------------------------------
-                if ((Objects.isNull(dto) || !Objects.equals(action, trend_h4))
-                        && m05_allow_trade && m15_allow_trade
-                        && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_15, trend_05)) {
-                    action = trend_h4;
-                    append += ".041505";
-                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append);
-
-                    if (Objects.nonNull(dto)) {
-                        String type = Objects.equals(Utils.TREND_LONG, trend_15) ? "B"
-                                : Objects.equals(Utils.TREND_SHOT, trend_15) ? "S" : " ";
-                        CAPITAL_TIME_XX = Utils.CAPITAL_TIME_15;
-                        sub_prefix = " (15_" + type + ") ";
-                    }
-                }
-                // ---------------------------------------------------------------------
                 if ((Objects.isNull(dto) || !Objects.equals(action, trend_h1))
                         && m05_allow_trade && m15_allow_trade
                         && Objects.equals(trend_h1, trend_15)
@@ -4145,7 +4130,7 @@ public class BinanceServiceImpl implements BinanceService {
                     append += ".011505";
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H1, append);
                 }
-
+                // ---------------------------------------------------------------------
                 if ((Objects.isNull(dto) || !Objects.equals(action, trend_h12))
                         && m05_allow_trade
                         && Objects.equals(trend_h12, trend_h1)
@@ -4199,6 +4184,11 @@ public class BinanceServiceImpl implements BinanceService {
                     if ((Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h4, action))) {
                         reject_id = " RejectID: h4=h1 and h4!=action";
                     }
+
+                    if ((Objects.equals(trend_h12, trend_h4) && !Objects.equals(trend_h4, action))) {
+                        reject_id = " RejectID: h12=h4 and h4!=action";
+                    }
+
                     if ((Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
                             && Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h1, action))) {
                         reject_id = " RejectID: d=h12=h4=h1 and h1!=action";
