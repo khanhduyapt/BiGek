@@ -2956,7 +2956,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.isNull(open_dto)) {
                     continue;
                 }
-                String EPIC_OPEN = open_dto.getEpic().toUpperCase();
+                String OPEN_EPIC = open_dto.getEpic().toUpperCase();
                 String OPEN_TREND = open_dto.getOrder_type().toUpperCase();
                 String CUR_OPEN = OPEN_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
@@ -2965,7 +2965,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String TRADE_TREND = trade.getType().toUpperCase();
                     String CUR_TRADE = TRADE_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
-                    if (Objects.equals(TRADE_EPIC, EPIC_OPEN) && !Objects.equals(CUR_TRADE, CUR_OPEN)) {
+                    if (Objects.equals(TRADE_EPIC, OPEN_EPIC) && !Objects.equals(CUR_TRADE, CUR_OPEN)) {
                         mt5_close_trade_list.add(trade.getTicket());
                     }
                 }
@@ -3814,16 +3814,18 @@ public class BinanceServiceImpl implements BinanceService {
                 entity.setStopLossCalcVol(sl_LoHi_05);
                 entity.setTakeProfit(tp_Body_h4);
 
-                if (!trade.getType().toUpperCase().contains("LIMIT") && Utils.isNotBlank(trade.getComment())) {
-                    String EVENT_ID = "MSG_PER_HOUR" + trade.getTicket();
+                if (Utils.isPcCongTy()) {
+                    if (!trade.getType().toUpperCase().contains("LIMIT") && Utils.isNotBlank(trade.getComment())) {
+                        String EVENT_ID = "MSG_PER_HOUR" + trade.getTicket();
 
-                    String msg_alert = "(FTMO)";
-                    msg_alert += trade.getType() + ":" + trade.getSymbol();
-                    msg_alert += "," + trade.getVolume() + "(lot)";
-                    msg_alert += ",SL:" + Utils.removeLastZero(sl_LoHi_05);
-                    msg_alert += "," + trade.getComment();
+                        String msg_alert = "(FTMO)";
+                        msg_alert += trade.getType() + ":" + trade.getSymbol();
+                        msg_alert += "," + trade.getVolume() + "(lot)";
+                        msg_alert += ",SL:" + Utils.removeLastZero(sl_LoHi_05);
+                        msg_alert += "," + trade.getComment();
 
-                    sendMsgPerHour(EVENT_ID, msg_alert, true);
+                        sendMsgPerHour(EVENT_ID, msg_alert, true);
+                    }
                 }
             }
 
