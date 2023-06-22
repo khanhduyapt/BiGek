@@ -63,6 +63,4 @@ public interface BinanceService {
 
     public void logMsgPerHour(String epic_id, String log, Integer MINUTES_OF_Xx);
 
-    public void openTrade();
-
 }

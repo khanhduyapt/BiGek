@@ -126,7 +126,6 @@ public class BscScanBinanceApplication {
                     try {
                         if (isReloadAfter(Utils.MINUTES_OF_4H, "clearTrash")) {
                             binance_service.clearTrash();
-                            binance_service.openTrade();
                         }
                         if (isReloadAfter(1, "MsgKillZone")) {
                             alertMsgKillZone(binance_service);
@@ -181,11 +180,6 @@ public class BscScanBinanceApplication {
                         // ---------------------------------------------------------
                         if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "CREATE_REPORT")) {
                             binance_service.createReport();
-                        }
-
-                        if (isReloadAfter(3, "MONITOR_PROFIT")) {
-                            Utils.logWritelnDraft("");
-                            binance_service.monitorProfit();
                         }
 
                         wait(SLEEP_MINISECONDS);
@@ -263,7 +257,6 @@ public class BscScanBinanceApplication {
         Utils.logWritelnDraftFooter();
         binance_service.scapStocks();
         Utils.logWritelnDraftFooter();
-        binance_service.openTrade();
         // --------------------------------------------------------------------------
         binance_service.monitorProfit();
         // --------------------------------------------------------------------------
