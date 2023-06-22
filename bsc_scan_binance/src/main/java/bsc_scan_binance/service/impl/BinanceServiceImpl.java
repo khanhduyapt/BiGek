@@ -3765,19 +3765,16 @@ public class BinanceServiceImpl implements BinanceService {
             String timeframe = Utils.getDeEncryptedChartNameCapital(comment);
 
             // ----------------------------------------------------------------------------------
-            // SL khi giá đóng cửa candle1_h1 vượt qua LoHi_05
-            Orders dto_sl_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(null);
-            if (Objects.isNull(dto_sl_05)) {
-                dto_sl_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
-            }
-
-            // TP khi giá vượt qua Body của 50 cây nến H4
-            Orders dto_tp_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-            if (Objects.isNull(dto_sl_05) || Objects.isNull(dto_tp_h4)) {
-                continue;
-            }
+            Orders dto = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
 
             // ----------------------------------------------------------------------------------
+            BigDecimal tp_Body_h4 = BigDecimal.ZERO;
+            if (trade.getType().toUpperCase().contains(Utils.TREND_LONG)) {
+                tp_Body_h4 = dto.getBody_hig();
+            }
+            if (trade.getType().toUpperCase().contains(Utils.TREND_SHOT)) {
+                tp_Body_h4 = dto.getBody_low();
+            }
 
             Mt5OpenTradeEntity entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
             if (Objects.isNull(entity)) {
@@ -3785,24 +3782,19 @@ public class BinanceServiceImpl implements BinanceService {
                 // SL khi H1_1 đóng nến tại LoHi của 50 cây nến H1 + Bread.
                 entity = new Mt5OpenTradeEntity();
 
-                BigDecimal sl_LoHi_05 = BigDecimal.ZERO;
-                BigDecimal tp_Body_h4 = BigDecimal.ZERO;
-
+                BigDecimal sl_LoHi = BigDecimal.ZERO;
                 if (trade.getType().toUpperCase().contains(Utils.TREND_LONG)) {
-                    sl_LoHi_05 = dto_sl_05.getLow_price();
-                    tp_Body_h4 = dto_tp_h4.getBody_hig();
+                    sl_LoHi = dto.getLow_price();
                 }
                 if (trade.getType().toUpperCase().contains(Utils.TREND_SHOT)) {
-                    sl_LoHi_05 = dto_sl_05.getHigh_price();
-                    tp_Body_h4 = dto_tp_h4.getBody_low();
+                    sl_LoHi = dto.getHigh_price();
                 }
 
                 entity.setTicket(trade.getTicket());
                 entity.setSymbol(trade.getSymbol());
                 entity.setPriceOpen(trade.getPriceOpen());
-                entity.setStopLossTimeFam(sl_LoHi_05);
-                entity.setStopLossCalcVol(sl_LoHi_05);
-                entity.setTakeProfit(tp_Body_h4);
+                entity.setStopLossTimeFam(sl_LoHi);
+                entity.setStopLossCalcVol(sl_LoHi);
 
                 if (Utils.isPcCongTy()) {
                     if (!trade.getType().toUpperCase().contains("LIMIT") && Utils.isNotBlank(trade.getComment())) {
@@ -3811,7 +3803,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String msg_alert = "(FTMO)";
                         msg_alert += trade.getType() + ":" + trade.getSymbol();
                         msg_alert += "," + trade.getVolume() + "(lot)";
-                        msg_alert += ",SL:" + Utils.removeLastZero(sl_LoHi_05);
+                        msg_alert += ",SL:" + Utils.removeLastZero(sl_LoHi);
                         msg_alert += "," + trade.getComment();
 
                         sendMsgPerHour(EVENT_ID, msg_alert, true);
@@ -3825,6 +3817,7 @@ public class BinanceServiceImpl implements BinanceService {
             entity.setProfit(trade.getProfit());
             entity.setVolume(trade.getVolume());
             entity.setCurrprice(trade.getCurrprice());
+            entity.setTakeProfit(tp_Body_h4);
 
             mt5OpenTradeRepository.save(entity);
         }
