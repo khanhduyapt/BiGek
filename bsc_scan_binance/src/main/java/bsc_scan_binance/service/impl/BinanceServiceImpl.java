@@ -2407,7 +2407,7 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        String msg = Utils.getTimeHHmm();
+        String msg = BscScanBinanceApplication.hostname + Utils.getTimeHHmm();
         msg += msg_content;
         msg = msg.replace(" ", "").replace(",", ", ");
 
