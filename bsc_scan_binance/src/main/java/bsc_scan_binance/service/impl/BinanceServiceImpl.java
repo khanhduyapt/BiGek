@@ -4204,8 +4204,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean isTrendInverse = false;
-            if (!Objects.equals(trend_d1, TRADE_TREND) && !Objects.equals(trend_h12, TRADE_TREND)
-                    && !Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
+            if (!Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
                     && !Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
                 isTrendInverse = true;
             }
