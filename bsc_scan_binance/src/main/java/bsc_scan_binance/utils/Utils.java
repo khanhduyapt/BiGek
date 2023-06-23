@@ -2784,6 +2784,30 @@ public class Utils {
         return max_bread;
     }
 
+    public static BigDecimal calcAvgBread(List<BtcFutures> list) {
+        int count = 0;
+        BigDecimal total_bread = BigDecimal.ZERO;
+        for (BtcFutures dto : list) {
+            List<BtcFutures> sub_list = new ArrayList<BtcFutures>();
+            sub_list.add(dto);
+
+            List<BigDecimal> body = Utils.getBodyCandle(sub_list);
+            List<BigDecimal> low_high = Utils.getLowHighCandle(sub_list);
+
+            BigDecimal beard_buy = (body.get(0).subtract(low_high.get(0))).abs();
+            BigDecimal bread_sell = (low_high.get(1).subtract(body.get(1))).abs();
+            BigDecimal bread = (beard_buy.compareTo(bread_sell) > 0 ? beard_buy : bread_sell);
+            count += 1;
+            total_bread = total_bread.add(bread);
+        }
+
+        BigDecimal avg_bread = BigDecimal.ZERO;
+        if (count > 0) {
+            avg_bread = total_bread.divide(BigDecimal.valueOf(count), 10, RoundingMode.CEILING);
+        }
+        return avg_bread;
+    }
+
     public static String getTypeLongOrShort(List<BtcFutures> list) {
         String result = "0:Sideway";
 
@@ -3591,7 +3615,7 @@ public class Utils {
             String trend = heken_list.get(0).isUptrend() ? Utils.TREND_LONG : Utils.TREND_SHOT;
             return trend;
         }
-        if (id.contains(PREFIX_5m_) || id.contains(PREFIX_15m_)) {
+        if (id.contains(PREFIX_5m_) || id.contains(PREFIX_15m_) || id.contains(PREFIX_1d_)) {
             str = 1;
             end = 2;
         }
@@ -3686,6 +3710,13 @@ public class Utils {
         MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, dto_en_05.getCurrent_price(), sl_h4,
                 tp_h4);
 
+        String range = "...";
+        BigDecimal en_sl = dto_vol.getCurrent_price().subtract(sl_h4).abs();
+        BigDecimal en_tp = dto_vol.getCurrent_price().subtract(tp_h4).abs();
+        if (en_tp.compareTo(en_sl) < 0) {
+            range = ".dg";
+        }
+
         Mt5OpenTrade dto = new Mt5OpenTrade();
         dto.setEpic(EPIC);
         dto.setOrder_type(trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
@@ -3694,14 +3725,8 @@ public class Utils {
         dto.setStop_loss(sl_h4);
         dto.setTake_profit(tp_h4);
         dto.setComment(BscScanBinanceApplication.hostname + getEncryptedChartNameCapital(CAPITAL_TIME_XX) + ""
-                + encrypted_trend_w1d1h4h1 + "");
+                + encrypted_trend_w1d1h4h1 + "" + range);
         dto.setStop_loss_m30(sl_h4);
-
-        BigDecimal en_sl = dto_vol.getCurrent_price().subtract(sl_h4).abs();
-        BigDecimal en_tp = dto_vol.getCurrent_price().subtract(tp_h4).abs();
-        if (en_tp.compareTo(en_sl) < 0) {
-            return null;
-        }
 
         return dto;
     }
