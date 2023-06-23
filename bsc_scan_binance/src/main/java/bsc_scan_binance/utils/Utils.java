@@ -3612,15 +3612,12 @@ public class Utils {
         }
 
         // Cần xác nhận trend khi đóng nến, nhưng lấy Candle1,2 thì trend chạy lộn xộn.
-        int str = 0;
-        int end = 1;
+        int str = 1;
+        int end = 2;
 
         String id = heken_list.get(0).getId();
-        if (id.contains(PREFIX_1w_)) {
-            String trend = heken_list.get(0).isUptrend() ? Utils.TREND_LONG : Utils.TREND_SHOT;
-            return trend;
-        }
-        if (id.contains(PREFIX_5m_) || id.contains(PREFIX_15m_) || id.contains(PREFIX_1d_)) {
+        if (id.contains(PREFIX_5m_) || id.contains(PREFIX_15m_) || id.contains(PREFIX_1h_) || id.contains(PREFIX_1d_)
+                || id.contains(PREFIX_1w_)) {
             str = 1;
             end = 2;
         }

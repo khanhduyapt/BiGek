@@ -2855,6 +2855,10 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String sendMsgKillLongShort(String SYMBOL) {
+        if (!BTC_ETH_BNB.contains(SYMBOL)) {
+            return Utils.CRYPTO_TIME_H1;
+        }
+
         List<BtcFutures> list = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_D1, 15);
         if (CollectionUtils.isEmpty(list)) {
             return Utils.CRYPTO_TIME_H1;
@@ -2867,10 +2871,6 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.isNotBlank(switch_trend)) {
             // TODO: sendMsgKillLongShort
             String msg = "";
-            boolean isOnlyMe = true;
-            if (BTC_ETH_BNB.contains(SYMBOL)) {
-                isOnlyMe = false;
-            }
 
             if (Objects.equals(Utils.TREND_LONG, trend)) {
                 msg = " 💹 (D1)" + SYMBOL + "_kill_Short 💔 ";
@@ -2885,6 +2885,26 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         return Utils.CRYPTO_TIME_H1;
+    }
+
+    private boolean allow_close_trade_after(String TICKET, Integer MINUTES_OF_XX) {
+        Mt5OpenTradeEntity mt5Entity = mt5OpenTradeRepository.findById(TICKET).orElse(null);
+        if (Objects.nonNull(mt5Entity)) {
+
+            String insert_time = Utils.getStringValue(mt5Entity.getOpenTime());
+            if (Utils.isNotBlank(insert_time)) {
+                LocalDateTime pre_time = LocalDateTime.parse(insert_time);
+                Duration duration = Duration.between(pre_time, LocalDateTime.now());
+                long elapsedMinutes = duration.toMinutes();
+
+                if (elapsedMinutes > MINUTES_OF_XX) {
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
     }
 
     private void openTrade() {
@@ -4061,11 +4081,11 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     if (Utils.isBlank(note_d1 + note_h12 + note_h4) && !Objects.equals(trend_d1, action)) {
-                        reject_id = " RejectID: d1!=action";
+                        reject_id = " RejectID: d1!=action " + note_d1 + note_h12 + note_h4;
                     }
 
                     if (Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h4, action)) {
-                        reject_id = " RejectID: h4=h1 and h4!=action";
+                        reject_id = " RejectID: h4=h1 and h4!=action " + note_d1 + note_h12 + note_h4;
                     }
 
                     if (Utils.isNotBlank(reject_id)) {
@@ -4098,26 +4118,6 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         return "";
-    }
-
-    private boolean allow_close_trade_after(String TICKET, Integer MINUTES_OF_XX) {
-        Mt5OpenTradeEntity mt5Entity = mt5OpenTradeRepository.findById(TICKET).orElse(null);
-        if (Objects.nonNull(mt5Entity)) {
-
-            String insert_time = Utils.getStringValue(mt5Entity.getOpenTime());
-            if (Utils.isNotBlank(insert_time)) {
-                LocalDateTime pre_time = LocalDateTime.parse(insert_time);
-                Duration duration = Duration.between(pre_time, LocalDateTime.now());
-                long elapsedMinutes = duration.toMinutes();
-
-                if (elapsedMinutes > MINUTES_OF_XX) {
-                    return true;
-                }
-            }
-
-        }
-
-        return false;
     }
 
     @Override
@@ -4213,6 +4213,13 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND) && (cur_price.compareTo(TP_order) < 0)) {
+                    isPriceHit_TP = true;
+                }
+
+                if (!Objects.equals(trend_h4, TRADE_TREND)
+                        && !Objects.equals(trend_h1, TRADE_TREND)
+                        && !Objects.equals(trend_15, TRADE_TREND)
+                        && !Objects.equals(trend_05, TRADE_TREND)) {
                     isPriceHit_TP = true;
                 }
 
