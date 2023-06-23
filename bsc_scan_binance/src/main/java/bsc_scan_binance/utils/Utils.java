@@ -1364,10 +1364,16 @@ public class Utils {
         return false;
     }
 
-    public static boolean is18_19_20h() {
-        List<Integer> times = Arrays.asList(18, 19, 20);
+    public static boolean isNewsAt_19_20_21h() {
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-        if (times.contains(hh)) {
+        Integer mm = Utils.getIntValue(Utils.convertDateToString("mm", Calendar.getInstance().getTime()));
+        if ((hh == 19) && (15 <= mm) && (mm <= 45)) {
+            return true;
+        }
+        if ((hh == 20) && (30 <= mm) && (mm <= 59)) {
+            return true;
+        }
+        if ((hh == 21) && (0 <= mm) && (mm <= 15)) {
             return true;
         }
 

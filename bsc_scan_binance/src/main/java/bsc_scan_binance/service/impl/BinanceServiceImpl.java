@@ -2867,7 +2867,7 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private void openTrade() {
-        if (!Utils.isHuntTime_7h_to_23h() || Utils.is18_19_20h()) {
+        if (!Utils.isHuntTime_7h_to_23h() || Utils.isNewsAt_19_20_21h()) {
             if (isReloadAfter(Utils.MINUTES_OF_1H, "OpenTrade")) {
                 Utils.logWritelnDraft("[OpenTrade] thoi gian nghi, khong vao lenh.");
             }
@@ -4082,7 +4082,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public void closeTrade_by_SL_TP() {
-        if (Utils.is18_19_20h()) {
+        if (Utils.isNewsAt_19_20_21h()) {
             if (isReloadAfter(Utils.MINUTES_OF_1H, "18_19_20h")) {
                 Utils.logWritelnDraft("[closeTrade_by_SL_TP] thoi gian nghi, khong dong/mo lenh.");
             }
