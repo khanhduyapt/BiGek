@@ -4037,8 +4037,12 @@ public class BinanceServiceImpl implements BinanceService {
                             reject_id = " RejectID: d#h12=h4 and h4!=action";
                         }
 
-                        if (!Objects.equals(trend_d1, action)) {
-                            reject_id = " RejectID: d1!=action ";
+                        if (Objects.equals(trend_d1, trend_h4) && !Objects.equals(trend_h4, action)) {
+                            reject_id = " RejectID: d=h4 and h4!=action";
+                        }
+
+                        if (!Objects.equals(trend_d1, trend_h4)) {
+                            reject_id = " RejectID: d1!=h4";
                         }
                     }
 
@@ -4174,10 +4178,8 @@ public class BinanceServiceImpl implements BinanceService {
                     isPriceHit_TP = true;
                 }
 
-                if (!Objects.equals(trend_h4, TRADE_TREND)
-                        && !Objects.equals(trend_h1, TRADE_TREND)
-                        && !Objects.equals(trend_15, TRADE_TREND)
-                        && !Objects.equals(trend_05, TRADE_TREND)) {
+                if (!Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
+                        && !Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
                     isPriceHit_TP = true;
                 }
 
@@ -4188,10 +4190,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean isTrendInverse = false;
             if (!Objects.equals(trend_d1, TRADE_TREND) && !Objects.equals(trend_h12, TRADE_TREND)
-                    && !Objects.equals(trend_h4, TRADE_TREND)
-                    && !Objects.equals(trend_h1, TRADE_TREND)
-                    && !Objects.equals(trend_15, TRADE_TREND)
-                    && !Objects.equals(trend_05, TRADE_TREND)) {
+                    && !Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
+                    && !Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
                 isTrendInverse = true;
             }
 
