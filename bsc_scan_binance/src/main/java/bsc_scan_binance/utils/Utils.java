@@ -3615,12 +3615,12 @@ public class Utils {
         int str = 1;
         int end = 2;
 
-        String id = heken_list.get(0).getId();
-        if (id.contains(PREFIX_5m_) || id.contains(PREFIX_15m_) || id.contains(PREFIX_1h_) || id.contains(PREFIX_1d_)
-                || id.contains(PREFIX_1w_)) {
-            str = 1;
-            end = 2;
-        }
+        //String id = heken_list.get(0).getId();
+        //if (id.contains(PREFIX_5m_) || id.contains(PREFIX_15m_) || id.contains(PREFIX_1h_) || id.contains(PREFIX_1d_)
+        //        || id.contains(PREFIX_1w_)) {
+        //    str = 1;
+        //    end = 2;
+        //}
 
         boolean isUptrend_1 = isUptrendByMa(heken_list, 1, str, end);
         boolean isUptrend_2 = isUptrendByMa(heken_list, 2, str, end);
