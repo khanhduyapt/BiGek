@@ -3568,6 +3568,27 @@ public class Utils {
         return false;
     }
 
+    public static boolean is_long_legged_doji_candle(BtcFutures candle) {
+        BigDecimal bread_hig = candle.getHight_price();
+        BigDecimal bread_low = candle.getLow_price();
+        BigDecimal body = candle.getPrice_open_candle().subtract(candle.getPrice_close_candle()).abs();
+        BigDecimal body_x2 = body.multiply(BigDecimal.valueOf(2));
+
+        if (candle.isUptrend()) {
+            bread_hig = bread_hig.subtract(candle.getPrice_close_candle());
+            bread_low = candle.getPrice_open_candle().subtract(bread_low);
+        } else {
+            bread_hig = bread_hig.subtract(candle.getPrice_open_candle());
+            bread_low = candle.getPrice_close_candle().subtract(bread_low);
+        }
+
+        if ((bread_hig.compareTo(body_x2) > 0) && (bread_low.compareTo(body_x2) > 0)) {
+            return true;
+        }
+
+        return false;
+    }
+
     public static String switchTrendByHeken_12(List<BtcFutures> heken_list) {
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
@@ -3579,25 +3600,17 @@ public class Utils {
         }
 
         String trend = Utils.getTrendByHekenAshiList(heken_list);
-        // --------------------------------------------------------------------
-        if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(0).isUptrend() && heken_list.get(1).isDown()) {
+
+        if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(1).isUptrend()
+                && (heken_list.get(2).isDown() || is_long_legged_doji_candle(heken_list.get(2)))) {
             return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
         }
-        if (Objects.equals(trend, Utils.TREND_SHOT) && heken_list.get(0).isDown() && heken_list.get(1).isUptrend()) {
+
+        if (Objects.equals(trend, Utils.TREND_SHOT) && heken_list.get(1).isDown()
+                && (heken_list.get(2).isUptrend() || is_long_legged_doji_candle(heken_list.get(2)))) {
             return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
         }
-        // --------------------------------------------------------------------
-        String id = heken_list.get(0).getId();
-        if (!(id.contains(PREFIX_1d_) || id.contains(PREFIX_1w_))) {
-            if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(1).isUptrend()
-                    && heken_list.get(2).isDown()) {
-                return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
-            }
-            if (Objects.equals(trend, Utils.TREND_SHOT) && heken_list.get(1).isDown()
-                    && heken_list.get(2).isUptrend()) {
-                return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
-            }
-        }
+
         // --------------------------------------------------------------------
         return "";
     }
@@ -3623,8 +3636,8 @@ public class Utils {
         //}
 
         boolean isUptrend_1 = isUptrendByMa(heken_list, 1, str, end);
-        boolean isUptrend_2 = isUptrendByMa(heken_list, 2, str, end);
-        boolean isUptrend_3 = isUptrendByMa(heken_list, 3, str, end);
+        boolean isUptrend_2 = isUptrendByMa(heken_list, 3, str, end);
+        boolean isUptrend_3 = isUptrendByMa(heken_list, 5, str, end);
 
         if ((isUptrend_1 == isUptrend_2) && (isUptrend_1 == isUptrend_3)) {
             return isUptrend_1 ? Utils.TREND_LONG : Utils.TREND_SHOT;
@@ -3829,6 +3842,8 @@ public class Utils {
         // Khong danh khi W&D nguoc xu huong
 
         String switch_trend = "  { ";
+        switch_trend += getTrendPrefix("D1", note_d1, " ");
+
         if (Objects.equals(trend_d1, trend_h12) && zone_h12.contains(trend_h12)) {
             switch_trend += getTrendPrefix("H12", note_h12, " ");
         } else {

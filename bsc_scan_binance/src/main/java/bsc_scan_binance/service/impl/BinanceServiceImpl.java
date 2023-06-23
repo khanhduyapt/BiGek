@@ -82,7 +82,6 @@ import bsc_scan_binance.response.CandidateTokenResponse;
 import bsc_scan_binance.response.DepthResponse;
 import bsc_scan_binance.response.EntryCssResponse;
 import bsc_scan_binance.response.ForexHistoryResponse;
-import bsc_scan_binance.response.FundingResponse;
 import bsc_scan_binance.service.BinanceService;
 import bsc_scan_binance.utils.Utils;
 import lombok.RequiredArgsConstructor;
@@ -2229,60 +2228,6 @@ public class BinanceServiceImpl implements BinanceService {
     // https://www.binance.com/en-GB/futures/funding-history/3
     @SuppressWarnings("unused")
     private void monitorBtcFundingRate(Boolean isUpCandle) {
-        try {
-            FundingResponse rate = Utils.loadFundingRate("BTC");
-            BigDecimal high = rate.getHigh();
-            BigDecimal low = rate.getLow();
-
-            String msg = "";
-            if (isUpCandle) {
-                if (high.compareTo(BigDecimal.valueOf(0.5)) > 0) {
-
-                    msg = " 💔💔 (DANGER DANGER) CZ kill SHORT!!!";
-
-                } else if (high.compareTo(BigDecimal.valueOf(0.2)) > 0) {
-
-                    msg = " 💔 (DANGER) CZ kill SHORT !!! Wait 10~15 minutes.";
-
-                }
-            } else {
-                if (low.compareTo(BigDecimal.valueOf(-1)) < 0) {
-
-                    msg = " 💔💔💔 (DANGER DANGER DANGER) CZ kill LONG !!!";
-
-                } else if (low.compareTo(BigDecimal.valueOf(-0.5)) < 0) {
-
-                    msg = " 💔💔 (DANGER DANGER) CZ kill LONG !!!";
-
-                } else if (low.compareTo(BigDecimal.valueOf(-0.2)) < 0) {
-
-                    msg = " 💔 (DANGER) CZ kill LONG !!!";
-                }
-            }
-
-            // -----------------------------------------------------------------------------------------//
-
-            if (Utils.isNotBlank(msg)) {
-                String EVENT_ID = EVENT_DANGER_CZ_KILL_LONG + "_" + Utils.getCurrentYyyyMmDd_Blog2h();
-
-                if (!fundingHistoryRepository.existsPumDump("bitcoin", EVENT_ID)) {
-
-                    fundingHistoryRepository.save(createPumpDumpEntity(EVENT_ID, "bitcoin", "BTC",
-                            Utils.getToday_YyyyMMdd() + " Long/Short", true));
-
-                    if (Utils.isNotBlank(msg)) {
-                        Utils.sendToTelegram(msg + Utils.new_line_from_service + Utils.new_line_from_service
-                                + wallToday() + Utils.new_line_from_service + Utils.new_line_from_service
-                                + getBitfinexLongShortBtc());
-                    }
-                }
-            }
-
-        } catch (
-
-        Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -2829,7 +2774,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 ea = Utils.appendSpace(trade.getType().toLowerCase(), 12);
                 if (Objects.nonNull(entity)) {
-                    ea += " SL:" + Utils.appendSpace(Utils.removeLastZero(entity.getStopLossTimeFam()), 10);
+                    ea += " SL:" + Utils.appendSpace(Utils.removeLastZero(entity.getStopLossCalcVol()), 10);
                     ea += " TP:" + Utils.appendSpace(Utils.removeLastZero(entity.getTakeProfit()), 10);
                     ea += Utils.appendSpace(entity.getComment(), 20);
                 }
@@ -3738,15 +3683,18 @@ public class BinanceServiceImpl implements BinanceService {
             String timeframe = Utils.getDeEncryptedChartNameCapital(comment);
             String date_time = LocalDateTime.now().toString();
             // ----------------------------------------------------------------------------------
-            Orders dto = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
+            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
+            Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+            if (Objects.isNull(dto_h1) || Objects.isNull(dto_d1)) {
 
+            }
             // ----------------------------------------------------------------------------------
             BigDecimal tp_Body = BigDecimal.ZERO;
             if (trade.getType().toUpperCase().contains(Utils.TREND_LONG)) {
-                tp_Body = dto.getBody_hig();
+                tp_Body = dto_h1.getBody_hig();
             }
             if (trade.getType().toUpperCase().contains(Utils.TREND_SHOT)) {
-                tp_Body = dto.getBody_low();
+                tp_Body = dto_h1.getBody_low();
             }
 
             Mt5OpenTradeEntity entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
@@ -3755,19 +3703,22 @@ public class BinanceServiceImpl implements BinanceService {
                 // SL khi H1_1 đóng nến tại LoHi của 50 cây nến H1 + Bread.
                 entity = new Mt5OpenTradeEntity();
 
-                BigDecimal sl_LoHi = BigDecimal.ZERO;
+                BigDecimal sl_LoHi_h1 = BigDecimal.ZERO;
+                BigDecimal sl_LoHi_vol = BigDecimal.ZERO;
                 if (trade.getType().toUpperCase().contains(Utils.TREND_LONG)) {
-                    sl_LoHi = dto.getLow_price();
+                    sl_LoHi_h1 = dto_h1.getLow_price();
+                    sl_LoHi_vol = dto_d1.getLow_price();
                 }
                 if (trade.getType().toUpperCase().contains(Utils.TREND_SHOT)) {
-                    sl_LoHi = dto.getHigh_price();
+                    sl_LoHi_h1 = dto_h1.getHigh_price();
+                    sl_LoHi_vol = dto_d1.getHigh_price();
                 }
 
                 entity.setTicket(trade.getTicket());
                 entity.setSymbol(trade.getSymbol());
                 entity.setPriceOpen(trade.getPriceOpen());
-                entity.setStopLossTimeFam(sl_LoHi);
-                entity.setStopLossCalcVol(sl_LoHi);
+                entity.setStopLossTimeFam(sl_LoHi_h1);
+                entity.setStopLossCalcVol(sl_LoHi_vol);
 
                 if (Utils.isPcCongTy()) {
                     if (!trade.getType().toUpperCase().contains("LIMIT") && Utils.isNotBlank(trade.getComment())) {
@@ -3776,7 +3727,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String msg_alert = "(FTMO)";
                         msg_alert += trade.getType() + ":" + trade.getSymbol();
                         msg_alert += "," + trade.getVolume() + "(lot)";
-                        msg_alert += ",SL:" + Utils.removeLastZero(sl_LoHi);
+                        msg_alert += ",SL(vol):" + Utils.removeLastZero(sl_LoHi_vol);
                         msg_alert += "," + trade.getComment();
 
                         sendMsgPerHour_OnlyMe(EVENT_ID, msg_alert);
@@ -4145,7 +4096,7 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.equals(TRADE_EPIC, OPEN_EPIC) && !Objects.equals(CUR_TRADE, CUR_OPEN)) {
                         if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
                             mt5_close_trade_list.add(TICKET);
-                            mt5_close_trade_reason.add("Co lenh nguoc xu huong duoc open");
+                            mt5_close_trade_reason.add("open_" + OPEN_TREND);
                         }
                     }
                 }
@@ -4257,7 +4208,7 @@ public class BinanceServiceImpl implements BinanceService {
                         mt5_close_trade_reason.add("PriceHit_TP");
                     }
                     if (isTrendInverse) {
-                        mt5_close_trade_reason.add("TrendInverse_h12, h4, h1, m15, m5 #" + TRADE_TREND);
+                        mt5_close_trade_reason.add("TrendInverse:" + TRADE_TREND);
                     }
                 }
             }
