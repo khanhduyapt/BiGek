@@ -172,6 +172,7 @@ public class Utils {
     public static final String ENCRYPTED_H1 = "motg";
     public static final String ENCRYPTED_H4 = "bong";
     public static final String ENCRYPTED_H12 = "mhag";
+    public static final String ENCRYPTED_D1 = "mngy";
 
     public static final Integer MINUTES_OF_D = 1440;
     public static final Integer MINUTES_OF_12H = 720;
@@ -721,7 +722,11 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
             return ENCRYPTED_H12;
         }
-        return ENCRYPTED_H4;
+        if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
+            return ENCRYPTED_D1;
+        }
+
+        return ENCRYPTED_H1;
     }
 
     public static String getDeEncryptedChartNameCapital(String encryptedChartName) {
@@ -1277,9 +1282,9 @@ public class Utils {
         try {
             String msg = text.replaceAll("↑", "^").replaceAll("↓", "v").replaceAll(" ", "");
             System.out.println();
-            System.out.println(msg + " 💰 ");
+            System.out.println(msg + ". 💰 ");
             if (isAllowSendMsg()) {
-                sendToChatId(Utils.chatId_duydk, msg + " 💰 ");
+                sendToChatId(Utils.chatId_duydk, msg + ". 💰 ");
             }
         } catch (Exception e) {
         }
