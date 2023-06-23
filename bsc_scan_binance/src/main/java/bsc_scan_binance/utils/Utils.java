@@ -3747,7 +3747,8 @@ public class Utils {
 
         String start = "";
         if (note_d1.contains(trend)) {
-            start = "*d*";
+            String type = Objects.equals(trend, TREND_LONG) ? "b" : "s";
+            start = "*" + type + "*";
         }
 
         Mt5OpenTrade dto = new Mt5OpenTrade();
