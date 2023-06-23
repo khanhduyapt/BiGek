@@ -3687,17 +3687,26 @@ public class BinanceServiceImpl implements BinanceService {
             String date_time = LocalDateTime.now().toString();
             // ----------------------------------------------------------------------------------
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
+            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-            if (Objects.isNull(dto_h1) || Objects.isNull(dto_d1)) {
+            if (Objects.isNull(dto_h1) || Objects.isNull(dto_h4) || Objects.isNull(dto_d1)) {
                 continue;
             }
             // ----------------------------------------------------------------------------------
             BigDecimal tp_Body = BigDecimal.ZERO;
             if (trade.getType().toUpperCase().contains(Utils.TREND_LONG)) {
-                tp_Body = dto_h1.getBody_hig();
+                if (dto_h1.getBody_hig().compareTo(dto_h4.getBody_hig()) > 0) {
+                    tp_Body = dto_h1.getBody_hig();
+                } else {
+                    tp_Body = dto_h4.getBody_hig();
+                }
             }
             if (trade.getType().toUpperCase().contains(Utils.TREND_SHOT)) {
-                tp_Body = dto_h1.getBody_low();
+                if (dto_h1.getBody_low().compareTo(dto_h4.getBody_low()) < 0) {
+                    tp_Body = dto_h1.getBody_low();
+                } else {
+                    tp_Body = dto_h4.getBody_low();
+                }
             }
 
             Mt5OpenTradeEntity entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
