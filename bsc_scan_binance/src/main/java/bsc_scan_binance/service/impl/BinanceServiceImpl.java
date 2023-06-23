@@ -4210,6 +4210,13 @@ public class BinanceServiceImpl implements BinanceService {
                 isTrendInverse = true;
             }
 
+            if (Utils.allowFinishTradeThisWeek()) {
+                if (!Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
+                        && !Objects.equals(trend_05, TRADE_TREND)) {
+                    isTrendInverse = true;
+                }
+            }
+
             // ---------------------------------------------------------------------------------
             if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
                 if (isPriceHit_TP || isTrendInverse) {
