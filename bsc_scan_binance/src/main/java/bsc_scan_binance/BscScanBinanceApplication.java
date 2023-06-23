@@ -45,7 +45,7 @@ public class BscScanBinanceApplication {
     public static void main(String[] args) {
         try {
             initForex_naming_dict();
-            hostname = InetAddress.getLocalHost().getHostName().toLowerCase();
+            hostname = InetAddress.getLocalHost().getHostName().toUpperCase();
             if (hostname.length() > 2) {
                 hostname = hostname.substring(0, 2);
             }

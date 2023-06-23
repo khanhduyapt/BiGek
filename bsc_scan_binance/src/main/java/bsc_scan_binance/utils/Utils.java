@@ -1364,8 +1364,8 @@ public class Utils {
         return false;
     }
 
-    public static boolean is18_19h() {
-        List<Integer> times = Arrays.asList(18, 19);
+    public static boolean is18_19_20h() {
+        List<Integer> times = Arrays.asList(18, 19, 20);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
