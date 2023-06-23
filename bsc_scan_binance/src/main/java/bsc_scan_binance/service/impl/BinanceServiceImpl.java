@@ -514,7 +514,7 @@ public class BinanceServiceImpl implements BinanceService {
                     // _PositionBTC4h
 
                     css.setToken_btc_link(
-                            "https://vn.tradingview.com/chart/?symbol=BINANCE%3A" + dto.getSymbol() + "BTC");
+                            "https://tradingview.com/chart/?symbol=BINANCE%3A" + dto.getSymbol() + "BTC");
                     if (dto.getFutures().contains("_PositionBTC")) {
                         css.setBtc_warning_css(CSS_PRICE_WARNING);
                     }
@@ -1155,7 +1155,7 @@ public class BinanceServiceImpl implements BinanceService {
                     name = BscScanBinanceApplication.forex_naming_dict.get(dto.getSymbol_or_epic());
                 }
 
-                String trading_view = "https://vn.tradingview.com/chart/?symbol=CAPITALCOM%3A"
+                String trading_view = "https://tradingview.com/chart/?symbol=CAPITALCOM%3A"
                         + dto.getSymbol_or_epic();
                 css.setSymbol(dto.getSymbol_or_epic());
                 css.setBinance_trade(trading_view);
@@ -2209,7 +2209,7 @@ public class BinanceServiceImpl implements BinanceService {
                         EntryCssResponse dto = new EntryCssResponse();
                         dto.setSymbol(".........");
                         dto.setFutures_msg("http://localhost:8090/BTC");
-                        dto.setTradingview("https://vn.tradingview.com/chart/?symbol=BINANCE%3ABTCUSDTPERP");
+                        dto.setTradingview("https://tradingview.com/chart/?symbol=BINANCE%3ABTCUSDTPERP");
                         results.add(dto);
                     } else {
                         for (int j = list.size(); j <= MAX_LENGTH; j++) {
@@ -4007,8 +4007,10 @@ public class BinanceServiceImpl implements BinanceService {
                         }
                     }
 
-                    if (Objects.isNull(dto) || !Objects.equals(action, trend_d1)) {
-                        if (Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_h1, trend_15)) {
+                    if ((Objects.isNull(dto) || !Objects.equals(action, trend_d1))
+                            && Objects.equals(trend_d1, trend_15)) {
+                        if (Objects.equals(trend_d1, trend_h1) || Objects.equals(trend_d1, trend_h4)
+                                || (Objects.equals(trend_d1, trend_h12))) {
                             action = trend_d1;
                             append = ".240115";
                             dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_D1, append,
@@ -4174,13 +4176,13 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_05 = dto_05.getTrend();
             // ---------------------------------------------------------------------------------
             boolean isPriceHit_TP = false;
-            if (Objects.equals(Utils.TREND_LONG, TRADE_TREND) && (cur_price.compareTo(TP_order) > 0)) {
-                isPriceHit_TP = true;
-            }
-            if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND) && (cur_price.compareTo(TP_order) < 0)) {
-                isPriceHit_TP = true;
-            }
             if (PROFIT.compareTo(profit_1R) > 0) {
+                if (Objects.equals(Utils.TREND_LONG, TRADE_TREND) && (cur_price.compareTo(TP_order) > 0)) {
+                    isPriceHit_TP = true;
+                }
+                if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND) && (cur_price.compareTo(TP_order) < 0)) {
+                    isPriceHit_TP = true;
+                }
                 if (!Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
                         && !Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
                     isPriceHit_TP = true;
@@ -4240,8 +4242,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                         String text = Utils.appendSpace(TICKET, 15) + Utils.appendSpace(trade.getType(), 15)
                                 + Utils.appendSpace(trade.getSymbol(), 10)
-                                + Utils.appendSpace(trade.getProfit().toString(), 10)
-                                + Utils.appendLeft(REASON, 30);
+                                + Utils.appendSpace(trade.getProfit().toString(), 10) + Utils.appendLeft(REASON, 30);
 
                         msg += "Close:" + trade.getType() + ":" + trade.getSymbol() + "_Vol:" + trade.getVolume()
                                 + "_P:" + trade.getProfit().toString() + "_Reason:" + REASON

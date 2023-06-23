@@ -1071,11 +1071,11 @@ public class Utils {
             currency = "BUSD";
         }
 
-        return " https://vn.tradingview.com/chart/?symbol=BINANCE%3A" + symbol + currency + " ";
+        return " https://tradingview.com/chart/?symbol=BINANCE%3A" + symbol + currency + " ";
     }
 
     public static String getCryptoLink_Future(String symbol) {
-        return " https://vn.tradingview.com/chart/?symbol=BINANCE%3A" + symbol + "USDTPERP" + " ";
+        return " https://tradingview.com/chart/?symbol=BINANCE%3A" + symbol + "USDTPERP" + " ";
     }
 
     public static String getCapitalLink(String epic) {
@@ -1120,7 +1120,7 @@ public class Utils {
             EXCHANGE = "FOREXCOM";
         }
 
-        return "https://vn.tradingview.com/chart/?symbol=" + EXCHANGE + "%3A" + epic + " ";
+        return "https://tradingview.com/chart/?symbol=" + EXCHANGE + "%3A" + epic + " ";
     }
 
     public static String getDraftLogFile() {
