@@ -3639,15 +3639,14 @@ public class Utils {
         }
 
         // Cần xác nhận trend khi đóng nến, nhưng lấy Candle1,2 thì trend chạy lộn xộn.
-        int str = 1;
-        int end = 2;
+        int str = 0;
+        int end = 1;
 
-        //String id = heken_list.get(0).getId();
-        //if (id.contains(PREFIX_5m_) || id.contains(PREFIX_15m_) || id.contains(PREFIX_1h_) || id.contains(PREFIX_1d_)
-        //        || id.contains(PREFIX_1w_)) {
-        //    str = 1;
-        //    end = 2;
-        //}
+        String id = heken_list.get(0).getId();
+        if (id.contains(PREFIX_5m_) || id.contains(PREFIX_15m_) || id.contains(PREFIX_1h_)) {
+            str = 1;
+            end = 2;
+        }
 
         boolean isUptrend_1 = isUptrendByMa(heken_list, 1, str, end);
         boolean isUptrend_2 = isUptrendByMa(heken_list, 3, str, end);
@@ -3721,7 +3720,7 @@ public class Utils {
     }
 
     public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_en_05, Orders dto_vol,
-            String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1, boolean isTradeNow) {
+            String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1, boolean isTradeNow, String note_d1) {
         BigDecimal en_05, sl_h4, tp_h4;
         BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT);
 
@@ -3746,6 +3745,11 @@ public class Utils {
             range = ".dg";
         }
 
+        String start = "";
+        if (note_d1.contains(trend)) {
+            start = "*d*";
+        }
+
         Mt5OpenTrade dto = new Mt5OpenTrade();
         dto.setEpic(EPIC);
         dto.setOrder_type(trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
@@ -3753,7 +3757,7 @@ public class Utils {
         dto.setEntry(en_05);
         dto.setStop_loss(sl_h4);
         dto.setTake_profit(tp_h4);
-        dto.setComment(BscScanBinanceApplication.hostname + getEncryptedChartNameCapital(CAPITAL_TIME_XX) + ""
+        dto.setComment(start + BscScanBinanceApplication.hostname + getEncryptedChartNameCapital(CAPITAL_TIME_XX) + ""
                 + encrypted_trend_w1d1h4h1 + "" + range);
         dto.setStop_loss_m30(sl_h4);
 
