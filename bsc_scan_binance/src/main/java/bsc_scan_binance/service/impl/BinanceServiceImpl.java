@@ -2852,8 +2852,21 @@ public class BinanceServiceImpl implements BinanceService {
         return false;
     }
 
-    private void openTrade() {
+    private boolean is_opening_trade(String EPIC, String ORDER_TYPE) {
+        for (Mt5DataTrade trade : tradeList) {
+            String TRADE_EPIC = trade.getSymbol().toUpperCase();
+            String CUR_TRADE = trade.getType().toUpperCase().contains(Utils.TREND_LONG) ? Utils.TREND_LONG
+                    : Utils.TREND_SHOT;
 
+            if (Objects.equals(TRADE_EPIC, EPIC) && ORDER_TYPE.toUpperCase().contains(CUR_TRADE)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void openTrade() {
         if (!Utils.isHuntTime_7h_to_23h()) {
             if (isReloadAfter(Utils.MINUTES_OF_1H, "OpenTrade")) {
                 Utils.logWritelnDraft("[OpenTrade] thoi gian nghi, khong vao lenh.");
@@ -2879,6 +2892,9 @@ public class BinanceServiceImpl implements BinanceService {
 
                 for (Mt5OpenTrade dto : BscScanBinanceApplication.mt5_open_trade_List) {
                     if (Objects.isNull(dto)) {
+                        continue;
+                    }
+                    if (is_opening_trade(dto.getEpic(), dto.getOrder_type())) {
                         continue;
                     }
 
@@ -3686,7 +3702,7 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             if (Objects.isNull(dto_h1) || Objects.isNull(dto_d1)) {
-
+                continue;
             }
             // ----------------------------------------------------------------------------------
             BigDecimal tp_Body = BigDecimal.ZERO;
