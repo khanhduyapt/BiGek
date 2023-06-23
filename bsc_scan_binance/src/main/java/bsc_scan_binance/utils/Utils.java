@@ -3650,8 +3650,8 @@ public class Utils {
 
         String id = heken_list.get(0).getId();
         if (id.contains(PREFIX_5m_) || id.contains(PREFIX_15m_) || id.contains(PREFIX_1h_)) {
-            str = 1;
-            end = 2;
+            // str = 1;
+            // end = 2;
         }
 
         boolean isUptrend_1 = isUptrendByMa(heken_list, 1, str, end);
