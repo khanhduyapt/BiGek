@@ -513,8 +513,7 @@ public class BinanceServiceImpl implements BinanceService {
                     // _PositionBTC15m
                     // _PositionBTC4h
 
-                    css.setToken_btc_link(
-                            "https://tradingview.com/chart/?symbol=BINANCE%3A" + dto.getSymbol() + "BTC");
+                    css.setToken_btc_link("https://tradingview.com/chart/?symbol=BINANCE%3A" + dto.getSymbol() + "BTC");
                     if (dto.getFutures().contains("_PositionBTC")) {
                         css.setBtc_warning_css(CSS_PRICE_WARNING);
                     }
@@ -1155,8 +1154,7 @@ public class BinanceServiceImpl implements BinanceService {
                     name = BscScanBinanceApplication.forex_naming_dict.get(dto.getSymbol_or_epic());
                 }
 
-                String trading_view = "https://tradingview.com/chart/?symbol=CAPITALCOM%3A"
-                        + dto.getSymbol_or_epic();
+                String trading_view = "https://tradingview.com/chart/?symbol=CAPITALCOM%3A" + dto.getSymbol_or_epic();
                 css.setSymbol(dto.getSymbol_or_epic());
                 css.setBinance_trade(trading_view);
                 css.setTrading_view(trading_view);
@@ -4048,6 +4046,10 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h4, action)) {
                         reject_id = " RejectID: h4=h1 and h4!=action " + note_d1 + note_h12 + note_h4;
+                    }
+
+                    if (!(zone_h12 + zone_h4 + zone_h12).contains(action)) {
+                        reject_id = " RejectID: end of " + action + " zone.";
                     }
 
                     if (Utils.isNotBlank(reject_id)) {
