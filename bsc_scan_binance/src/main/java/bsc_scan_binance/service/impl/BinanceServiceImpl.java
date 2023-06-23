@@ -3703,7 +3703,7 @@ public class BinanceServiceImpl implements BinanceService {
             comment = comment.toLowerCase();
 
             String timeframe = Utils.getDeEncryptedChartNameCapital(comment);
-
+            String date_time = LocalDateTime.now().toString();
             // ----------------------------------------------------------------------------------
             Orders dto = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
 
@@ -3758,6 +3758,10 @@ public class BinanceServiceImpl implements BinanceService {
             entity.setVolume(trade.getVolume());
             entity.setCurrprice(trade.getCurrprice());
             entity.setTakeProfit(tp_Body);
+
+            if (Utils.isBlank(entity.getOpenTime())) {
+                entity.setOpenTime(date_time);
+            }
 
             mt5OpenTradeRepository.save(entity);
         }
@@ -4181,6 +4185,9 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> mt5_close_trade_list = new ArrayList<String>();
 
         if (!CollectionUtils.isEmpty(BscScanBinanceApplication.mt5_open_trade_List)) {
+
+            LocalDateTime date_time = LocalDateTime.now();
+
             for (Mt5OpenTrade open_dto : BscScanBinanceApplication.mt5_open_trade_List) {
                 if (Objects.isNull(open_dto)) {
                     continue;
@@ -4195,7 +4202,20 @@ public class BinanceServiceImpl implements BinanceService {
                     String CUR_TRADE = TRADE_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
                     if (Objects.equals(TRADE_EPIC, OPEN_EPIC) && !Objects.equals(CUR_TRADE, CUR_OPEN)) {
-                        mt5_close_trade_list.add(trade.getTicket());
+                        Mt5OpenTradeEntity mt5Entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
+                        if (Objects.nonNull(mt5Entity)) {
+
+                            String insert_time = Utils.getStringValue(mt5Entity.getOpenTime());
+                            if (Utils.isNotBlank(insert_time)) {
+                                LocalDateTime pre_time = LocalDateTime.parse(insert_time);
+                                long elapsedMinutes = Duration.between(pre_time, date_time).toMinutes();
+                                if (elapsedMinutes > 120) {
+                                    mt5_close_trade_list.add(trade.getTicket());
+                                }
+                            }
+
+                        }
+
                     }
                 }
             }
