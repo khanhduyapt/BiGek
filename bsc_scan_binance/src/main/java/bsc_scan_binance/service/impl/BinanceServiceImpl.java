@@ -4174,23 +4174,20 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_05 = dto_05.getTrend();
             // ---------------------------------------------------------------------------------
             boolean isPriceHit_TP = false;
+            if (Objects.equals(Utils.TREND_LONG, TRADE_TREND) && (cur_price.compareTo(TP_order) > 0)) {
+                isPriceHit_TP = true;
+            }
+            if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND) && (cur_price.compareTo(TP_order) < 0)) {
+                isPriceHit_TP = true;
+            }
             if (PROFIT.compareTo(profit_1R) > 0) {
-                if (Objects.equals(Utils.TREND_LONG, TRADE_TREND) && (cur_price.compareTo(TP_order) > 0)) {
-                    isPriceHit_TP = true;
-                }
-
-                if (Objects.equals(Utils.TREND_SHOT, TRADE_TREND) && (cur_price.compareTo(TP_order) < 0)) {
-                    isPriceHit_TP = true;
-                }
-
                 if (!Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
                         && !Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
                     isPriceHit_TP = true;
                 }
-
-                if (isPriceHit_TP && Objects.equals(trend_h1, TRADE_TREND)) {
-                    isPriceHit_TP = false;
-                }
+            }
+            if (isPriceHit_TP && Objects.equals(trend_h1, TRADE_TREND)) {
+                isPriceHit_TP = false;
             }
 
             boolean isTrendInverse = false;
