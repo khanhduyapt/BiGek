@@ -3987,8 +3987,6 @@ public class BinanceServiceImpl implements BinanceService {
                     || Utils.EPICS_METALS.contains(EPIC))) {
                 Mt5OpenTrade dto = null;
 
-                String TIME_FRAME = Utils.getTimeframeTrading(trend_d1, trend_h4, trend_h1, note_d1, note_h4, note_h1);
-
                 if (Objects.equals(trend_15, trend_05) && (m05_allow_trade || m15_allow_trade
                         || Utils.isNotBlank(note_05) || Utils.isNotBlank(note_15))) {
 
@@ -3996,7 +3994,8 @@ public class BinanceServiceImpl implements BinanceService {
                             && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_15)) {
                         action = trend_d1;
                         append = ".240415";
-                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, TIME_FRAME, append, true, note_d1);
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, Utils.CAPITAL_TIME_H4, append, true,
+                                note_d1);
                     }
 
                     if (Objects.isNull(dto) && Objects.equals(trend_h4, trend_h1)
@@ -4013,7 +4012,7 @@ public class BinanceServiceImpl implements BinanceService {
                                 && Objects.equals(bread_trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
                             action = trend_15;
                             append = ".000000";
-                            dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_D1, append,
+                            dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H1, append,
                                     true, note_d1);
                         }
                     }
