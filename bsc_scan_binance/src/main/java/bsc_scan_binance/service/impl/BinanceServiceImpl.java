@@ -3999,13 +3999,6 @@ public class BinanceServiceImpl implements BinanceService {
                         dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, TIME_FRAME, append, true, note_d1);
                     }
 
-                    if (Objects.isNull(dto) && Objects.equals(trend_h12, trend_h4)
-                            && Objects.equals(trend_h4, trend_15)) {
-                        action = trend_h12;
-                        append = ".120415";
-                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, TIME_FRAME, append, true, note_d1);
-                    }
-
                     if (Objects.isNull(dto) && Objects.equals(trend_h4, trend_h1)
                             && Objects.equals(trend_h1, trend_15)) {
                         action = trend_h4;
