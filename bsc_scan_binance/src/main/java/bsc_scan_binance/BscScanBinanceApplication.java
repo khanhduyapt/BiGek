@@ -39,6 +39,7 @@ public class BscScanBinanceApplication {
     public static String EPICS_OUTPUTED_LOG = "INIT";
     public static String EPICS_OUTPUT_MSG = "INIT";
 
+    public static List<String> mt5_close_inversing_List = new ArrayList<String>();
     public static List<Mt5OpenTrade> mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
     public static Hashtable<String, Mt5OpenTrade> waitingM05list = new Hashtable<String, Mt5OpenTrade>();
 

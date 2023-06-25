@@ -3823,16 +3823,19 @@ public class Utils {
         return result;
     }
 
-    public static String getTimeframe_SwitchTrend(String trend_h12, String trend_h4, String trend_h1, String note_h4,
-            String note_h1) {
-        if (Objects.equals(trend_h4, trend_h1) && isNotBlank(note_h4)) {
+    public static String getTimeframeTrading(String trend_d1, String trend_h4, String trend_h1, String note_d1,
+            String note_h4, String note_h1) {
+
+        if (note_h4.contains(trend_d1)) {
             return Utils.CAPITAL_TIME_H4;
         }
-        if (Objects.equals(trend_h12, trend_h1) && isNotBlank(note_h1)) {
+        if (note_h1.contains(trend_d1)) {
             return Utils.CAPITAL_TIME_H1;
         }
-
-        return Utils.CAPITAL_TIME_H12;
+        if (note_d1.contains(trend_d1)) {
+            return Utils.CAPITAL_TIME_D1;
+        }
+        return Utils.CAPITAL_TIME_H1;
     }
 
     public static String getTrendPrefix(String chart_name, String note, String append) {
@@ -3860,7 +3863,7 @@ public class Utils {
             String zone_h12, String zone_h4, String zone_h1) {
 
         String prefix = Utils.appendLeft(String.valueOf(index), 2) + "." + appendSpace(tracking_trend, 4);
-        prefix += " [1W=1D=12H  4H=1H=05]";
+        prefix += " [1W=1D=12H  4H=1H]";
 
         if (!Objects.equals(trend_w1, tracking_trend)) {
             prefix = prefix.replace("1W=", "   ");
@@ -3876,9 +3879,6 @@ public class Utils {
         }
         if (!Objects.equals(trend_h1, tracking_trend)) {
             prefix = prefix.replace("=1H=", "    ").replace("1H=", "   ");
-        }
-        if (!Objects.equals(trend_05, tracking_trend)) {
-            prefix = prefix.replace("=05", "   ").replace("05", "  ");
         }
 
         // Khong danh khi W&D nguoc xu huong
