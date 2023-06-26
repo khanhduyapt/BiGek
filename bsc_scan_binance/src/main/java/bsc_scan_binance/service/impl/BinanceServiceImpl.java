@@ -4227,6 +4227,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
+        String key = "";
         String msg = "";
         String mt5_data_file = Utils.getMt5DataFolder() + "CloseSymbols.csv";
         try {
@@ -4249,9 +4250,10 @@ public class BinanceServiceImpl implements BinanceService {
                                 + Utils.appendSpace("_Vol:" + trade.getVolume(), 15)
                                 + Utils.appendSpace("_Profit:" + trade.getProfit().toString(), 10)
                                 + Utils.appendLeft(REASON, 30);
+                        key += trade.getSymbol() + "_" + trade.getType() + ".";
 
                         msg += "Close:" + trade.getType() + ":" + trade.getSymbol() + "_Vol:" + trade.getVolume()
-                                + "_P:" + trade.getProfit().toString() + "_" + REASON
+                                + "_Profit:" + trade.getProfit().toString() + "_" + REASON
                                 + Utils.new_line_from_service;
 
                         System.out.println(BscScanBinanceApplication.hostname + "mt5CloseSymbol: " + text);
@@ -4267,7 +4269,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (Utils.isNotBlank(msg)) {
             msg = "(CLOSE)" + Utils.new_line_from_service + msg;
-            String EVENT_ID = "CloseTrade" + Utils.getCurrentYyyyMmDd_HH() + msg.length();
+            String EVENT_ID = "CloseTrade" + Utils.getCurrentYyyyMmDd_HH() + key;
             sendMsgPerHour_OnlyMe(EVENT_ID, msg);
         }
     }
