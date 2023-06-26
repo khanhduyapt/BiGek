@@ -3992,7 +3992,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (Objects.isNull(dto) && Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_h1, trend_15)
                             && (Objects.equals(trend_d1, trend_w1) || Objects.equals(trend_d1, trend_h12)
-                                    || Objects.equals(trend_d1, trend_h4) || Objects.equals(trend_d1, trend_h1))) {
+                                    || Objects.equals(trend_d1, trend_h4))) {
                         action = trend_d1;
                         append = ".240415";
 
@@ -4000,17 +4000,6 @@ public class BinanceServiceImpl implements BinanceService {
                                 note_d1, note_h4, note_h1);
 
                         dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, timeframe, append, true, note_d1);
-                    }
-
-                    if (Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
-                        if (Objects.equals(bread_trend_d1, bread_trend_h12)
-                                && Objects.equals(bread_trend_h12, bread_trend_h4)
-                                && Objects.equals(bread_trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
-                            action = trend_15;
-                            append = ".000000";
-                            dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H1, append,
-                                    true, note_d1);
-                        }
                     }
                 }
 
@@ -4180,11 +4169,10 @@ public class BinanceServiceImpl implements BinanceService {
                         && !Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
 
                     if (Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_D1)) {
-                        if (!Objects.equals(dto_h12.getTrend(), TRADE_TREND)
-                                && !Objects.equals(trend_h4, TRADE_TREND)) {
+                        if (!Objects.equals(dto_h12.getTrend(), TRADE_TREND)) {
                             isTrendInverse = true;
                         }
-                    } else if (!Objects.equals(trend_h4, TRADE_TREND)) {
+                    } else {
                         isTrendInverse = true;
                     }
                 }
