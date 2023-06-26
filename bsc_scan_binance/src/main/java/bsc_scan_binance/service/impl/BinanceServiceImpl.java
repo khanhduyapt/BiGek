@@ -4177,21 +4177,17 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean isTrendInverse = false;
             if (PROFIT.add(profit_1R).compareTo(BigDecimal.ZERO) < 0) {
-                if (!Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
+                if (!Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
+                        && !Objects.equals(trend_15, TRADE_TREND)
                         && !Objects.equals(trend_05, TRADE_TREND)) {
 
-                    if (Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_H1)) {
-                        isTrendInverse = true;
-
-                    } else if (Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_D1)) {
+                    if (Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_D1)) {
                         if (!Objects.equals(dto_h12.getTrend(), TRADE_TREND)
                                 && !Objects.equals(trend_h4, TRADE_TREND)) {
                             isTrendInverse = true;
                         }
                     } else {
-                        if (!Objects.equals(trend_h4, TRADE_TREND)) {
-                            isTrendInverse = true;
-                        }
+                        isTrendInverse = true;
                     }
                 }
 
