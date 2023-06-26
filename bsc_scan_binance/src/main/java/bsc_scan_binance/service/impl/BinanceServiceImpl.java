@@ -4079,7 +4079,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
             return;
         }
-
+        BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
+        BigDecimal profit_1R = risk;
         List<String> mt5_close_trade_list = new ArrayList<String>();
         List<String> mt5_close_trade_reason = new ArrayList<String>();
 
@@ -4096,8 +4097,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (EPIC_ACTION.contains(TRADE_EPIC) && !Objects.equals(TRADE_TREND, OPEN_TREND)) {
                         if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
-                            mt5_close_trade_list.add(TICKET);
-                            mt5_close_trade_reason.add("inversing:" + OPEN_TREND);
+                            // mt5_close_trade_list.add(TICKET);
+                            // mt5_close_trade_reason.add("inversing:" + OPEN_TREND);
                         }
                     }
                 }
@@ -4105,8 +4106,6 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // ----------------------------------------PROFIT--------------------------------------
-        BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
-        BigDecimal profit_1R = risk;
 
         for (Mt5DataTrade trade : tradeList) {
             String EPIC = trade.getSymbol();
