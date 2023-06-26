@@ -4097,6 +4097,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (EPIC_ACTION.contains(TRADE_EPIC) && !Objects.equals(TRADE_TREND, OPEN_TREND)) {
                         if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
+                            // Chưa chạm SL chưa khuất phục
                             // mt5_close_trade_list.add(TICKET);
                             // mt5_close_trade_reason.add("inversing:" + OPEN_TREND);
                         }
