@@ -4015,6 +4015,14 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
+                if (Objects.isNull(dto) && (m05_allow_trade || m15_allow_trade) && note_h4.contains(trend_h12)
+                        && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_05)) {
+                    action = trend_h12;
+                    append = ".1205";
+
+                    dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, timeframe, append, true, note_d1);
+                }
+
                 // ---------------------------------------------------------------------
                 if (Objects.nonNull(dto)) {
                     analysis(prefix, EPIC, Utils.CAPITAL_TIME_D1, action);
