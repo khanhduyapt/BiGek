@@ -3984,6 +3984,8 @@ public class BinanceServiceImpl implements BinanceService {
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
                 Mt5OpenTrade dto = null;
+                String timeframe = Utils.getTimeframeTrading(trend_d1, trend_h4, trend_h12,
+                        note_d1, note_h4, note_h1);
 
                 if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
                         && Objects.equals(trend_15, trend_05) && (m05_allow_trade || m15_allow_trade)) {
@@ -3993,9 +3995,6 @@ public class BinanceServiceImpl implements BinanceService {
                         action = trend_d1;
                         append = ".4115";
 
-                        String timeframe = Utils.getTimeframeTrading(bread_trend_d1, bread_trend_h4, bread_trend_h12,
-                                note_d1, note_h4, note_h1);
-
                         dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, timeframe, append, true, note_d1);
                     }
 
@@ -4004,8 +4003,13 @@ public class BinanceServiceImpl implements BinanceService {
                         action = trend_d1;
                         append = ".0115";
 
-                        String timeframe = Utils.getTimeframeTrading(bread_trend_d1, bread_trend_h4, bread_trend_h12,
-                                note_d1, note_h4, note_h1);
+                        dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, timeframe, append, true, note_d1);
+                    }
+
+                    if (Objects.isNull(dto) && Objects.equals(trend_d1, trend_h4)
+                            && Objects.equals(trend_h4, trend_15)) {
+                        action = trend_d1;
+                        append = ".0415";
 
                         dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, timeframe, append, true, note_d1);
                     }
