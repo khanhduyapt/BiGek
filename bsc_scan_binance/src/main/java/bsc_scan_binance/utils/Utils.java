@@ -1384,13 +1384,13 @@ public class Utils {
     public static boolean isNewsAt_19_20_21h() {
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         Integer mm = Utils.getIntValue(Utils.convertDateToString("mm", Calendar.getInstance().getTime()));
-        if ((hh == 19) && (15 <= mm) && (mm <= 45)) {
+        if ((hh == 19) && (25 <= mm) && (mm <= 35)) {
             return true;
         }
-        if ((hh == 20) && (30 <= mm) && (mm <= 59)) {
+        if ((hh == 20) && (25 <= mm) && (mm <= 35)) {
             return true;
         }
-        if ((hh == 21) && (0 <= mm) && (mm <= 15)) {
+        if (((hh == 20) && (55 <= mm)) || ((hh == 21) && (mm <= 05))) {
             return true;
         }
 
