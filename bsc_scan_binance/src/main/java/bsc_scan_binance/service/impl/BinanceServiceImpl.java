@@ -3908,10 +3908,6 @@ public class BinanceServiceImpl implements BinanceService {
             String note_15 = dto_15.getNote();
             String note_05 = dto_05.getNote();
 
-            String bread_trend_h4 = "";
-            String bread_trend_h1 = "";
-            String bread_trend_15 = "";
-
             String zone_h12 = "";
             String zone_h4 = "";
             String zone_h1 = "";
@@ -3919,10 +3915,9 @@ public class BinanceServiceImpl implements BinanceService {
                 List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
                 List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
                 List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
-                List<BtcFutures> list_15 = getCapitalData(EPIC, Utils.CAPITAL_TIME_15);
 
-                if (CollectionUtils.isEmpty(list_15) || CollectionUtils.isEmpty(list_h12)
-                        || CollectionUtils.isEmpty(list_h4) || CollectionUtils.isEmpty(list_h1)) {
+                if (CollectionUtils.isEmpty(list_h12) || CollectionUtils.isEmpty(list_h4)
+                        || CollectionUtils.isEmpty(list_h1)) {
 
                     Utils.logWritelnDraft("[controlMt5] (" + EPIC + ") CollectionUtils.isEmpty");
                     continue;
@@ -3931,15 +3926,10 @@ public class BinanceServiceImpl implements BinanceService {
                 List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
                 List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
                 List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
-                List<BtcFutures> heken_list_15 = Utils.getHekenList(list_15);
 
                 zone_h12 = Utils.getZoneTrend(heken_list_h12);
                 zone_h4 = Utils.getZoneTrend(heken_list_h4);
                 zone_h1 = Utils.getZoneTrend(heken_list_h1);
-
-                bread_trend_h4 = Utils.getBreadTrend(heken_list_h4);
-                bread_trend_h1 = Utils.getBreadTrend(heken_list_h1);
-                bread_trend_15 = Utils.getBreadTrend(heken_list_15);
             }
 
             index += 1;
@@ -3993,17 +3983,18 @@ public class BinanceServiceImpl implements BinanceService {
                 Mt5OpenTrade dto = null;
                 String timeframe = Utils.getTimeframeTrading(trend_d1, trend_h4, trend_h1, note_d1, note_h4, note_h1);
 
-                if (Objects.isNull(dto) && (m05_allow_trade && m15_allow_trade) && note_h12.contains(trend_d1)
+                if (Objects.isNull(dto) && (m05_allow_trade || m15_allow_trade) && note_h12.contains(trend_d1)
                         && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h1)
-                        && Objects.equals(trend_h1, trend_15)) {
+                        && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
                     action = trend_d1;
                     append = ".2412";
 
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, timeframe, append, true, note_d1);
                 }
 
-                if (Objects.isNull(dto) && h1_allow_trade && Objects.equals(trend_h12, trend_h4)
-                        && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
+                if (Objects.isNull(dto) && (m05_allow_trade || m15_allow_trade) && Objects.equals(trend_h12, trend_h4)
+                        && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_15, trend_05)) {
                     action = trend_h12;
                     append = ".4115";
 
@@ -4011,7 +4002,8 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Objects.isNull(dto) && h1_allow_trade && (m05_allow_trade || m15_allow_trade)
-                        && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
+                        && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
+                        && Objects.equals(trend_15, trend_05)) {
                     action = trend_h4;
                     append = ".0401";
 
