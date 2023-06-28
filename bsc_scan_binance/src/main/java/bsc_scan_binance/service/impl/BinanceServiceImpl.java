@@ -3966,21 +3966,21 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean m15_allow_trade = false;
             if (Objects.equals(trend_15, Utils.TREND_LONG)
-                    && Objects.equals(dto_h1.getNocation(), Utils.NOCATION_BELOW_MA50)) {
+                    && Objects.equals(dto_15.getNocation(), Utils.NOCATION_BELOW_MA50)) {
                 m15_allow_trade = true;
             }
             if (Objects.equals(trend_15, Utils.TREND_SHOT)
-                    && Objects.equals(dto_h1.getNocation(), Utils.NOCATION_ABOVE_MA50)) {
+                    && Objects.equals(dto_15.getNocation(), Utils.NOCATION_ABOVE_MA50)) {
                 m15_allow_trade = true;
             }
 
             boolean m05_allow_trade = false;
             if (Objects.equals(trend_05, Utils.TREND_LONG)
-                    && Objects.equals(dto_h1.getNocation(), Utils.NOCATION_BELOW_MA50)) {
+                    && Objects.equals(dto_05.getNocation(), Utils.NOCATION_BELOW_MA50)) {
                 m05_allow_trade = true;
             }
             if (Objects.equals(trend_05, Utils.TREND_SHOT)
-                    && Objects.equals(dto_h1.getNocation(), Utils.NOCATION_ABOVE_MA50)) {
+                    && Objects.equals(dto_05.getNocation(), Utils.NOCATION_ABOVE_MA50)) {
                 m05_allow_trade = true;
             }
 
