@@ -1307,6 +1307,16 @@ public class Utils {
         }
     }
 
+    public static boolean allowFinishTradeThisDay() {
+        int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
+
+        if (isWeekday() && ((hh <= 3) || (22 <= hh))) {
+            return true;
+        }
+
+        return false;
+    }
+
     public static boolean allowFinishTradeThisWeek() {
         LocalDate today = LocalDate.now();
         DayOfWeek day = DayOfWeek.of(today.get(ChronoField.DAY_OF_WEEK));

@@ -4147,7 +4147,8 @@ public class BinanceServiceImpl implements BinanceService {
                 isTrendInverse = true;
             }
 
-            if (Utils.allowFinishTradeThisWeek() || Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_H1)) {
+            if (Utils.allowFinishTradeThisDay() || Utils.allowFinishTradeThisWeek()
+                    || Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_H1)) {
                 if (!Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
                         && !Objects.equals(trend_05, TRADE_TREND)) {
                     isTrendInverse = true;
@@ -4169,6 +4170,7 @@ public class BinanceServiceImpl implements BinanceService {
                 isTimeout = true;
             }
             // ---------------------------------------------------------------------------------
+            // Giữ lệnh tối thiểu 4h
             if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
                 if (isTimeout || isPriceHit_TP || isPriceHit_SL) {
                     String prefix = Utils.getChartNameCapital(mt5Entity.getTimeframe()) + "Closed.   ";
