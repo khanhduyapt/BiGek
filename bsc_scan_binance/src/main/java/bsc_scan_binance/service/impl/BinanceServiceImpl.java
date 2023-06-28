@@ -3614,7 +3614,8 @@ public class BinanceServiceImpl implements BinanceService {
                     && (Objects.equals(trend_d1, trend_h4) || Objects.equals(trend_d1, trend_h1))
                     && Objects.equals(trend_d1, trend_15)) {
 
-                // Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1, dto_15, dto_d1, Utils.CAPITAL_TIME_D1, ".962400", true, dto_d1.getNote());
+                // Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1, dto_15, dto_d1,
+                // Utils.CAPITAL_TIME_D1, ".962400", true, dto_d1.getNote());
                 // BscScanBinanceApplication.mt5_open_trade_List.add(dto);
             }
 
@@ -3990,8 +3991,7 @@ public class BinanceServiceImpl implements BinanceService {
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
                 Mt5OpenTrade dto = null;
-                String timeframe = Utils.getTimeframeTrading(trend_d1, trend_h4, trend_h1,
-                        note_d1, note_h4, note_h1);
+                String timeframe = Utils.getTimeframeTrading(trend_d1, trend_h4, trend_h1, note_d1, note_h4, note_h1);
 
                 if (Objects.isNull(dto) && (m05_allow_trade && m15_allow_trade) && note_h12.contains(trend_d1)
                         && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h1)
@@ -4002,10 +4002,9 @@ public class BinanceServiceImpl implements BinanceService {
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, timeframe, append, true, note_d1);
                 }
 
-                if (Objects.isNull(dto) && h1_allow_trade && Objects.equals(trend_d1, trend_h4)
-                        && Objects.equals(trend_h4, trend_h1)
-                        && Objects.equals(trend_h1, trend_15)) {
-                    action = trend_d1;
+                if (Objects.isNull(dto) && h1_allow_trade && Objects.equals(trend_h12, trend_h4)
+                        && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
+                    action = trend_h12;
                     append = ".4115";
 
                     dto = Utils.calc_Lot_En_SL_TP(EPIC, action, dto_05, dto_h4, timeframe, append, true, note_d1);
@@ -4144,8 +4143,7 @@ public class BinanceServiceImpl implements BinanceService {
                 isTrendInverse = true;
             }
 
-            if (Utils
-                    .isTradingAgainstTrend(EPIC, TRADE_TREND, BscScanBinanceApplication.mt5_open_trade_List)) {
+            if (Utils.isTradingAgainstTrend(EPIC, TRADE_TREND, BscScanBinanceApplication.mt5_open_trade_List)) {
                 isTrendInverse = true;
             }
 
