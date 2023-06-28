@@ -4032,8 +4032,18 @@ public class BinanceServiceImpl implements BinanceService {
                         reject_id = " RejectID: h4=h1 and h4!=action " + note_d1 + note_h12 + note_h4;
                     }
 
-                    if (!(zone_h12 + zone_h4 + zone_h1).contains(action)) {
-                        reject_id = " RejectID: end of " + action + " zone.h12.h4.h1";
+                    if (!(zone_h12).contains(action) || !(zone_h4).contains(action) || !(zone_h1).contains(action)) {
+                        reject_id = " RejectID: end of " + Utils.appendSpace(action, 4) + " zone";
+
+                        if (!(zone_h1).contains(action)) {
+                            reject_id += ".h1";
+                        }
+                        if (!(zone_h4).contains(action)) {
+                            reject_id += ".h4";
+                        }
+                        if (!(zone_h12).contains(action)) {
+                            reject_id += ".h12";
+                        }
                     }
 
                     if (Utils.isNotBlank(reject_id)) {
