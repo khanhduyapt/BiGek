@@ -3612,6 +3612,22 @@ public class Utils {
         return false;
     }
 
+    public static boolean isTradingAgainstTrend(String EPIC, String trend, List<Mt5OpenTrade> open_trade_list) {
+        String EPIC_ACTION = (EPIC + "_" + trend).toUpperCase();
+
+        for (Mt5OpenTrade trade : open_trade_list) {
+            String TRADE_EPIC = trade.getEpic().toUpperCase();
+            String TRADE_TREND = trade.getOrder_type().toUpperCase().contains(Utils.TREND_LONG) ? Utils.TREND_LONG
+                    : Utils.TREND_SHOT;
+
+            if (EPIC_ACTION.contains(TRADE_EPIC) && !EPIC_ACTION.contains(TRADE_TREND)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static String switchTrendByHeken_12(List<BtcFutures> heken_list) {
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
@@ -3672,14 +3688,14 @@ public class Utils {
         }
 
         boolean isUptrend_1 = isUptrendByMa(heken_list, 1, str, end);
-        boolean isUptrend_2 = isUptrendByMa(heken_list, 3, str, end);
-        boolean isUptrend_3 = isUptrendByMa(heken_list, 5, str, end);
+        boolean isUptrend_2 = isUptrendByMa(heken_list, 2, str, end);
+        boolean isUptrend_3 = isUptrendByMa(heken_list, 3, str, end);
 
         if ((isUptrend_1 == isUptrend_2) && (isUptrend_1 == isUptrend_3)) {
             return isUptrend_1 ? Utils.TREND_LONG : Utils.TREND_SHOT;
         }
 
-        return isUptrend_3 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        return isUptrend_2 ? Utils.TREND_LONG : Utils.TREND_SHOT;
     }
 
     public static String getTypeOfEpic(String EPIC) {
