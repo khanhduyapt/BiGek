@@ -1417,6 +1417,10 @@ public class Utils {
     }
 
     public static void sendToChatId(String chat_id, String text) {
+        if (BscScanBinanceApplication.hostname.contains("PC")) {
+            return;
+        }
+
         try {
             // Telegram token
             String apiToken = "5349894943:AAE_0-ZnbikN9m1aRoyCI2nkT2vgLnFBA-8";

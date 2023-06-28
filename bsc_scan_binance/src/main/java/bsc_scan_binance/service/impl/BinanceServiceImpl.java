@@ -4029,9 +4029,8 @@ public class BinanceServiceImpl implements BinanceService {
                 // ---------------------------------------------------------------------
                 if (Objects.nonNull(dto)) {
                     String reject_id = "";
-                    if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h1)
-                            && !Objects.equals(trend_d1, action)) {
-                        reject_id = " RejectID: w1=d1=h1 d1!=action";
+                    if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
+                        reject_id = " RejectID: d1=h12 h12!=action";
                     }
 
                     if (Objects.equals(trend_h12, trend_h4) && !Objects.equals(trend_h4, action)) {
@@ -4042,8 +4041,8 @@ public class BinanceServiceImpl implements BinanceService {
                         reject_id = " RejectID: h4=h1 and h4!=action " + note_d1 + note_h12 + note_h4;
                     }
 
-                    if (!(zone_h12 + zone_h4).contains(action)) {
-                        reject_id = " RejectID: end of " + action + " zone.h12.h4.";
+                    if (!(zone_h12 + zone_h4 + zone_h1).contains(action)) {
+                        reject_id = " RejectID: end of " + action + " zone.h12.h4.h1";
                     }
 
                     if (Utils.isNotBlank(reject_id)) {
