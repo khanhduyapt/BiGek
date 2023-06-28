@@ -4034,9 +4034,8 @@ public class BinanceServiceImpl implements BinanceService {
                         reject_id = " RejectID: w1=d1=h1 d1!=action";
                     }
 
-                    if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
-                            && !Objects.equals(trend_h4, action)) {
-                        reject_id = " RejectID: d1=h12=h4 h4!=action";
+                    if (Objects.equals(trend_h12, trend_h4) && !Objects.equals(trend_h4, action)) {
+                        reject_id = " RejectID: h12=h4 h4!=action";
                     }
 
                     if (Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h4, action)) {
