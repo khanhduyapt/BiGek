@@ -4012,7 +4012,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Objects.isNull(dto) && h1_allow_trade && (m05_allow_trade || m15_allow_trade)
-                        && Objects.equals(trend_h4, trend_h1)) {
+                        && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
                     action = trend_h4;
                     append = ".0401";
 

@@ -3842,7 +3842,7 @@ public class Utils {
     public static String getTimeframeTrading(String trend_d1, String trend_h4, String trend_h1, String note_d1,
             String note_h4, String note_h1) {
 
-        if (note_h4.contains(trend_d1) || Objects.equals(trend_d1, trend_h4)) {
+        if (note_h4.contains(trend_d1) || Objects.equals(trend_d1, trend_h4) || Objects.equals(trend_h4, trend_h1)) {
             return Utils.CAPITAL_TIME_H4;
         }
         if (note_h1.contains(trend_d1) || Objects.equals(trend_d1, trend_h1)) {
