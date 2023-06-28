@@ -3696,7 +3696,7 @@ public class Utils {
         int end = 1;
 
         String id = heken_list.get(0).getId();
-        if (id.contains(PREFIX_5m_) || id.contains(PREFIX_15m_) || id.contains(PREFIX_1h_)) {
+        if (id.contains(PREFIX_5m_) || id.contains(PREFIX_15m_)) {
             str = 1;
             end = 2;
         }
