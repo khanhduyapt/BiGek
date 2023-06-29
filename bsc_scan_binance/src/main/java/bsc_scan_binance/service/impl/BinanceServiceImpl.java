@@ -2682,13 +2682,11 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
         String trend_h12 = Utils.getTrendByHekenAshiList(heken_list_h12);
 
-        String grand_trend = trend_h12;
+        String grand_trend = "";
         if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)) {
             grand_trend = trend_d1;
         } else if (Objects.equals(trend_h12, trend_h4)) {
             grand_trend = trend_h12;
-        } else {
-            grand_trend = trend_h4;
         }
 
         BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
@@ -2702,9 +2700,11 @@ public class BinanceServiceImpl implements BinanceService {
         log += append.replace("}", "} " + zone);
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
         log += Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, find_trend, EPIC, dto_entry, dto_sl);
-        // log += " " + Utils.textBodyArea(heken_list_h12);
-        log += "         ";
-        log += Utils.calc_BUF_LO_HI_BUF_Forex(risk_x5, false, grand_trend, EPIC, dto_d1, dto_d1);
+
+        if (Utils.isNotBlank(grand_trend)) {
+            log += "         ";
+            log += Utils.calc_BUF_LO_HI_BUF_Forex(risk_x5, false, grand_trend, EPIC, dto_d1, dto_d1);
+        }
 
         Utils.logWritelnDraft(log);
     }
@@ -4009,7 +4009,7 @@ public class BinanceServiceImpl implements BinanceService {
             // -------------------------------------------------------------------------------
             // -------------------------------------------------------------------------------
             // ---------------------------------------------------------------------------------------------
-            // TODO: 3. controlMt5
+
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
                 Mt5OpenTrade dto = null;
@@ -4053,6 +4053,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // ---------------------------------------------------------------------
+                // TODO: 3. controlMt5
                 if (Objects.nonNull(dto)) {
                     analysis(prefix, EPIC, Utils.CAPITAL_TIME_D1, action);
                 } else {
@@ -4154,16 +4155,18 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            String hold = "_EURCAD_";
+            // TODO: 5. closeTrade_by_SL_TP
+            String hold = "__";
             if (hold.contains(EPIC)) {
                 continue;
             }
 
+            Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(dto_h1);
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(dto_h1);
-            if (Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
+            if (Objects.isNull(dto_h12) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
                 Utils.logWritelnDraft("monitorProfit Orders dto is NULL " + EPIC);
                 continue;
             }
@@ -4174,8 +4177,7 @@ public class BinanceServiceImpl implements BinanceService {
                         + "   " + trade.getSymbol());
                 continue;
             }
-
-            // TODO: 5. closeTrade_by_SL_TP
+            String trend_h12 = dto_h12.getTrend();
             String trend_h4 = dto_h4.getTrend();
             String trend_h1 = dto_h1.getTrend();
             String trend_15 = dto_15.getTrend();
@@ -4199,6 +4201,18 @@ public class BinanceServiceImpl implements BinanceService {
                     isTrendInverse = true;
                 }
             }
+
+            // Đánh trên D1 sẽ cài đặt SL và TP đầy đủ, 1000$ / 1 trade
+            if ((trade.getStopLoss().compareTo(BigDecimal.ZERO) > 0)
+                    && (trade.getTakeProfit().compareTo(BigDecimal.ZERO) > 0)) {
+                isTrendInverse = false;
+                if (!Objects.equals(trend_h12, TRADE_TREND) && !Objects.equals(trend_h4, TRADE_TREND)
+                        && !Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
+                        && !Objects.equals(trend_05, TRADE_TREND)) {
+                    isTrendInverse = true;
+                }
+            }
+
             // ---------------------------------------------------------------------------------
             boolean isPriceHit_TP = false;
             if (isTrendInverse && (PROFIT.compareTo(profit_1R) > 0)) {
