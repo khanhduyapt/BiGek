@@ -3945,7 +3945,7 @@ public class Utils {
 
         // Khong danh khi W&D nguoc xu huong
 
-        String switch_trend = "  { ";
+        String switch_trend = "  {";
         switch_trend += getTrendPrefix("D1", note_d1, " ");
 
         if (Objects.equals(trend_d1, trend_h12) && zone_h12.contains(trend_h12)) {
@@ -3954,16 +3954,10 @@ public class Utils {
             switch_trend += getTrendPrefix("H12", "", " ");
         }
 
-        if (Objects.equals(trend_h12, trend_h4) && zone_h4.contains(trend_h4)) {
-            switch_trend += getTrendPrefix("H4", note_h4, " ");
+        if (Objects.equals(trend_h4, trend_h1) && zone_h4.contains(trend_h4)) {
+            switch_trend += getTrendPrefix("H4", note_h4, "");
         } else {
-            switch_trend += getTrendPrefix("H4", "", " ");
-        }
-
-        if (Objects.equals(trend_h12, trend_h1) && zone_h4.contains(trend_h1)) {
-            switch_trend += getTrendPrefix("H1", note_h1, " ");
-        } else {
-            switch_trend += getTrendPrefix("H1", "", " ");
+            switch_trend += getTrendPrefix("H4", "", "");
         }
         switch_trend += "}  ";
 
