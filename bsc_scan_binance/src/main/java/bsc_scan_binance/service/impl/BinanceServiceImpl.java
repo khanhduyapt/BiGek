@@ -2732,7 +2732,7 @@ public class BinanceServiceImpl implements BinanceService {
         return result;
     }
 
-    private String analysis(String prifix, String EPIC, String CAPITAL_TIME_XX, String trend_h1) {
+    private String analysis(String prifix, String EPIC, String CAPITAL_TIME_XX, String trend) {
         if (Utils.isBlank(CAPITAL_TIME_XX)) {
             return "";
         }
@@ -2742,7 +2742,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         Orders dto_en = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(dto);
-        Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(dto);
+        Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(dto);
 
         if (Objects.isNull(dto_en) || Objects.isNull(dto_sl)) {
             return "";
@@ -2750,8 +2750,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         // ----------------------------TREND------------------------
         String find_trend = dto.getTrend();
-        if (Objects.equals(Utils.TREND_LONG, trend_h1) || Objects.equals(Utils.TREND_SHOT, trend_h1)) {
-            find_trend = trend_h1;
+        if (Objects.equals(Utils.TREND_LONG, trend) || Objects.equals(Utils.TREND_SHOT, trend)) {
+            find_trend = trend;
         }
 
         String char_name = Utils.getChartName(dto.getId());
@@ -4014,7 +4014,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.nonNull(dto)) {
                     analysis(prefix, EPIC, Utils.CAPITAL_TIME_D1, action);
                 } else {
-                    analysis(prefix, EPIC, Utils.CAPITAL_TIME_D1, trend_d1);
+                    analysis(prefix, EPIC, Utils.CAPITAL_TIME_D1, trend_h12);
                 }
 
                 // ---------------------------------------------------------------------
@@ -4221,9 +4221,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                         String text = Utils.appendSpace(TICKET, 15) + Utils.appendSpace(trade.getType(), 15)
                                 + Utils.appendSpace(trade.getSymbol(), 10)
-                                + Utils.appendSpace("_Vol:" + trade.getVolume(), 15)
-                                + "_Profit:" + Utils.appendSpace(trade.getProfit().toString(), 10)
-                                + Utils.appendLeft(REASON, 30);
+                                + Utils.appendSpace("_Vol:" + trade.getVolume(), 15) + "_Profit:"
+                                + Utils.appendSpace(trade.getProfit().toString(), 10) + Utils.appendLeft(REASON, 30);
                         key += trade.getSymbol() + "_" + trade.getType() + ".";
 
                         msg += "Close:" + trade.getType() + ":" + trade.getSymbol() + "_Vol:" + trade.getVolume()
