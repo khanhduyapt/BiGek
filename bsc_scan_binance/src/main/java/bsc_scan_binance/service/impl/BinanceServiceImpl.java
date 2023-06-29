@@ -4104,11 +4104,11 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     if (Utils.isNotBlank(reject_id)) {
-                        String msg_reject = Utils.appendLeft("", 25);
-                        msg_reject += "Reject:     " + Utils.appendSpace(action, 10);
+                        String msg_reject = Utils.appendLeft("", 60);
+                        msg_reject += "Reject: " + Utils.appendSpace(action, 10);
                         msg_reject += Utils.appendSpace(dto.getEpic(), 10);
                         msg_reject += " Vol: " + Utils.appendSpace(dto.getLots().toString(), 10);
-                        msg_reject += "E: " + Utils.appendLeft(dto.getEntry().toString(), 20);
+                        msg_reject += "E: " + Utils.appendLeft(dto.getEntry().toString(), 10);
                         msg_reject += Utils.appendSpace("     " + reject_id, 60);
                         msg_reject += Utils.appendSpace(dto.getComment(), 30);
 
