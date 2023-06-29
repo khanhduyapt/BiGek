@@ -4194,7 +4194,7 @@ public class BinanceServiceImpl implements BinanceService {
                         mt5_close_trade_reason.add("PriceHit_SL.");
                     }
                     if (isTimeout) {
-                        mt5_close_trade_reason.add("Timeout 12H.");
+                        mt5_close_trade_reason.add("Timeout_Inverse.");
                     }
                 }
             }
@@ -4222,7 +4222,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String text = Utils.appendSpace(TICKET, 15) + Utils.appendSpace(trade.getType(), 15)
                                 + Utils.appendSpace(trade.getSymbol(), 10)
                                 + Utils.appendSpace("_Vol:" + trade.getVolume(), 15)
-                                + Utils.appendSpace("_Profit:" + trade.getProfit().toString(), 10)
+                                + "_Profit:" + Utils.appendSpace(trade.getProfit().toString(), 10)
                                 + Utils.appendLeft(REASON, 30);
                         key += trade.getSymbol() + "_" + trade.getType() + ".";
 
