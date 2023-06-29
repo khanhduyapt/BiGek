@@ -4020,17 +4020,6 @@ public class BinanceServiceImpl implements BinanceService {
                 // ---------------------------------------------------------------------
                 if (Objects.nonNull(dto)) {
                     String reject_id = "";
-                    if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
-                        reject_id = " RejectID: d1=h12 h12!=action";
-                    }
-
-                    if (Objects.equals(trend_h12, trend_h4) && !Objects.equals(trend_h4, action)) {
-                        reject_id = " RejectID: h12=h4 h4!=action";
-                    }
-
-                    if (Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h4, action)) {
-                        reject_id = " RejectID: h4=h1 and h4!=action " + note_d1 + note_h12 + note_h4;
-                    }
 
                     if (!(zone_h12).contains(action) || !(zone_h4).contains(action) || !(zone_h1).contains(action)) {
                         reject_id = " RejectID: end of " + Utils.appendSpace(action, 4) + " zone";
@@ -4044,6 +4033,18 @@ public class BinanceServiceImpl implements BinanceService {
                         if (!(zone_h12).contains(action)) {
                             reject_id += ".h12";
                         }
+                    }
+
+                    if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
+                        reject_id = " RejectID: d1=h12 h12!=action";
+                    }
+
+                    if (Objects.equals(trend_h12, trend_h4) && !Objects.equals(trend_h4, action)) {
+                        reject_id = " RejectID: h12=h4 h4!=action";
+                    }
+
+                    if (Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h4, action)) {
+                        reject_id = " RejectID: h4=h1 and h4!=action " + note_d1 + note_h12 + note_h4;
                     }
 
                     if (Utils.isNotBlank(reject_id)) {
