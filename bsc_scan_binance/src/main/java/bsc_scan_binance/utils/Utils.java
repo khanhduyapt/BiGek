@@ -201,6 +201,9 @@ public class Utils {
             "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD",
             "USDCHF", "USDCZK", "USDSEK", "USDJPY");
 
+    public static final List<String> EPICS_FOREXS_USD = Arrays.asList("USDCAD", "USDCHF", "USDCZK", "USDSEK", "USDJPY",
+            "AUDUSD", "EURUSD", "GBPUSD", "NZDUSD");
+
     public static final List<String> EPICS_FOREXS_JPY = Arrays.asList("AUDJPY", "CADJPY", "CHFJPY", "EURJPY", "GBPJPY",
             "NZDJPY", "USDJPY");
 
@@ -1181,7 +1184,7 @@ public class Utils {
             String msg = text.trim();
             if (Utils.isNotBlank(msg)) {
                 if (Objects.equals(text, "...")) {
-                    msg = Utils.appendSpace("", 363, ".");
+                    msg = Utils.appendSpace("", 363, "_");
                 } else {
                     msg = BscScanBinanceApplication.hostname + Utils.getMmDD_TimeHHmm() + " "
                             + text.replace(Utils.new_line_from_service, "\n");
@@ -1199,7 +1202,7 @@ public class Utils {
     public static void logWritelnDraftFooter() {
         try {
             FileWriter fw = new FileWriter(getDraftLogFile(), true);
-            fw.write(Utils.appendSpace("", 363, "-") + "\n");
+            fw.write(Utils.appendSpace("", 363, "_") + "\n");
             fw.close();
         } catch (IOException ioe) {
             System.err.println("IOException: " + ioe.getMessage());

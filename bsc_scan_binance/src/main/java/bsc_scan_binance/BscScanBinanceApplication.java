@@ -133,7 +133,7 @@ public class BscScanBinanceApplication {
 
                         if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
                             if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
-                                binance_service.saveMt5Data("ForexH.csv", Utils.MINUTES_OF_4H);
+                                binance_service.saveMt5Data("ForexH.csv", Utils.MINUTES_OF_1H);
                                 binance_service.saveMt5Data("ForexM.csv", Utils.MINUTES_OF_5M);
                                 wait(SLEEP_MINISECONDS);
                                 binance_service.saveMt5Data("Stocks.csv", Utils.MINUTES_OF_1H);
@@ -240,10 +240,11 @@ public class BscScanBinanceApplication {
         binance_service.controlMt5(Utils.EPICS_METALS);
         Utils.logWritelnDraft("...");
         binance_service.controlMt5(Utils.EPICS_CASH_CFD);
-        Utils.logWritelnDraft("");
         // --------------------------------------------------------------------------
         Utils.logWritelnDraftFooter();
         binance_service.controlMt5(Utils.EPICS_FOREXS_JPY);
+        Utils.logWritelnDraft("...");
+        binance_service.controlMt5(Utils.EPICS_FOREXS_USD);
         Utils.logWritelnDraft("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_GBP);
         Utils.logWritelnDraft("...");
