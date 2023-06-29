@@ -3868,6 +3868,13 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal sl_long = lohi.get(0).subtract(bread);
         BigDecimal sl_shot = lohi.get(1).add(bread);
 
+        BigDecimal sl_at_switch_trend = Utils.getSL(heken_list, trend);
+        if (Objects.equals(trend, Utils.TREND_LONG)) {
+            sl_long = sl_at_switch_trend;
+        } else {
+            sl_shot = sl_at_switch_trend;
+        }
+
         String nocation = "";
         if (heken_list.size() >= 50) {
             if (Utils.isNotBlank(Utils.switchTrendByMa13_XX(heken_list, 50))) {
