@@ -3496,13 +3496,14 @@ public class Utils {
         }
     }
 
-    public static String createLineForex_Body(Orders dto_entry, Orders dto_sl, String find_trend, boolean onlyWait) {
+    public static String createLineForex_Body(BigDecimal risk, Orders dto_entry, Orders dto_sl, String find_trend,
+            boolean onlyWait) {
         String log = "";
         if (Objects.nonNull(dto_entry) && Objects.nonNull(dto_sl)) {
             String EPIC = getEpicFromId(dto_entry.getId());
 
             String buffer = Utils.appendSpace("", 14);
-            buffer += Utils.calc_BUF_LO_HI_BUF_Forex(onlyWait, find_trend, EPIC, dto_entry, dto_sl);
+            buffer += Utils.calc_BUF_LO_HI_BUF_Forex(risk, onlyWait, find_trend, EPIC, dto_entry, dto_sl);
             log = buffer;
         }
 
@@ -3555,6 +3556,34 @@ public class Utils {
         Collections.reverse(heken_list);
 
         return heken_list;
+    }
+
+    public static BigDecimal getSL(List<BtcFutures> heken_list, String find_trend) {
+        BigDecimal SL = BigDecimal.ZERO;
+
+        int index = 1;
+        for (index = 1; index < heken_list.size(); index++) {
+            BtcFutures dto = heken_list.get(index);
+            String trend = dto.isUptrend() ? TREND_LONG : TREND_SHOT;
+            if (!Objects.equals(trend, find_trend)) {
+                break;
+            }
+        }
+
+        int length = heken_list.size() - 1;
+        if (index < (heken_list.size() / 2)) {
+            length = index + 3;
+        }
+
+        BigDecimal bread = Utils.calcAvgBread(heken_list.subList(1, length));
+        List<BigDecimal> lohi = Utils.getLowHighCandle(heken_list.subList(1, length));
+        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
+            SL = lohi.get(0).subtract(bread);
+        } else {
+            SL = lohi.get(1).add(bread);
+        }
+
+        return SL;
     }
 
     public static List<BtcFutures> getHekenList(List<BtcFutures> list) {
@@ -3821,17 +3850,17 @@ public class Utils {
         return dto;
     }
 
-    public static String calc_BUF_LO_HI_BUF_Forex(boolean onlyWait, String trend, String EPIC, Orders dto_entry,
-            Orders dto_sl) {
+    public static String calc_BUF_LO_HI_BUF_Forex(BigDecimal risk, boolean onlyWait, String trend, String EPIC,
+            Orders dto_entry, Orders dto_sl) {
         String result = "";
-        BigDecimal risk = ACCOUNT.multiply(RISK_PERCENT);
-        risk = formatPrice(risk, 0);
 
         BigDecimal sl_long = Utils.getBigDecimal(dto_sl.getLow_price());
         BigDecimal sl_shot = Utils.getBigDecimal(dto_sl.getHigh_price());
 
         BigDecimal en_long = Utils.getBigDecimal(dto_entry.getBody_low());
         BigDecimal en_shot = Utils.getBigDecimal(dto_entry.getBody_hig());
+        en_long = dto_entry.getCurrent_price();
+        en_shot = dto_entry.getCurrent_price();
 
         BigDecimal tp_long = Utils.getBigDecimal(dto_entry.getBody_hig());
         BigDecimal tp_shot = Utils.getBigDecimal(dto_entry.getBody_low());
@@ -3950,16 +3979,20 @@ public class Utils {
 
     public static String calc_BUF_Long_Forex(boolean onlyWait, BigDecimal risk_x1, String EPIC, BigDecimal cur_price,
             BigDecimal en_long, BigDecimal sl_long, BigDecimal tp_long, String chartEntry, String chartSL) {
-        BigDecimal risk_x5 = risk_x1.divide(BigDecimal.valueOf(5), 10, RoundingMode.CEILING);
+        // BigDecimal risk_x5 = risk_x1.divide(BigDecimal.valueOf(5), 10,
+        // RoundingMode.CEILING);
 
         MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, cur_price, sl_long, tp_long);
-        MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_long, tp_long);
+        // MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5,
+        // cur_price, sl_long, tp_long);
 
         String temp = "";
         temp += chartSL + "(Buy )SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 10);
 
-        temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) + "(lot)";
-        temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$"; // 500$
+        // temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) +
+        // "(lot)";
+        // temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
+        // // 500$
 
         temp += Utils.appendLeft(removeLastZero(money_x1_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x1).replace(".0", ""), 4) + "$";
@@ -3970,16 +4003,19 @@ public class Utils {
 
     public static String calc_BUF_Shot_Forex(boolean onlyWait, BigDecimal risk_x1, String EPIC, BigDecimal cur_price,
             BigDecimal en_shot, BigDecimal sl_shot, BigDecimal tp_shot, String chartEntry, String chartSL) {
-        BigDecimal risk_x5 = risk_x1.divide(BigDecimal.valueOf(5), 10, RoundingMode.CEILING);
+        // BigDecimal risk_x5 = risk_x1.divide(BigDecimal.valueOf(5), 10,
+        // RoundingMode.CEILING);
 
         MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, cur_price, sl_shot, tp_shot);
-        MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5, cur_price, sl_shot, tp_shot);
+        // MoneyAtRiskResponse money_x5_now = new MoneyAtRiskResponse(EPIC, risk_x5,
+        // cur_price, sl_shot, tp_shot);
 
         String temp = "";
         temp += chartSL + "(Sell)SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10);
 
-        temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) + "(lot)";
-        temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
+        // temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) +
+        // "(lot)";
+        // temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
 
         temp += Utils.appendLeft(removeLastZero(money_x1_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x1).replace(".0", ""), 4) + "$";

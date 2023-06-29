@@ -2660,29 +2660,51 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        String zone = "";
-        String text_body = "";
-
+        Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
         List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
+        List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
         if (CollectionUtils.isEmpty(list_h12)) {
             list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
         }
-
-        if (!CollectionUtils.isEmpty(list_h12)) {
-            List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
-            text_body = Utils.textBodyArea(heken_list_h12);
-            zone = Utils.appendSpace("Z12:" + Utils.getZoneTrend(heken_list_h12), 10);
+        if (CollectionUtils.isEmpty(list_h12) || CollectionUtils.isEmpty(list_h4) || Objects.isNull(dto_d1)) {
+            return;
         }
+
+        List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
+        List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
+
+        String zone = Utils.appendSpace("Z12:" + Utils.getZoneTrend(heken_list_h12), 10);
         if (zone.contains("BUY_SELL")) {
             zone = Utils.appendSpace("", 10);
         }
+
+        String trend_d1 = dto_d1.getTrend();
+        String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
+        String trend_h12 = Utils.getTrendByHekenAshiList(heken_list_h12);
+
+        String grand_trend = trend_h12;
+        if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)) {
+            grand_trend = trend_d1;
+        } else if (Objects.equals(trend_h12, trend_h4)) {
+            grand_trend = trend_h12;
+        } else {
+            grand_trend = trend_h4;
+        }
+
+        BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
+        risk = Utils.formatPrice(risk, 0);
+
+        BigDecimal multi = BigDecimal.valueOf(0.01).divide(Utils.RISK_PERCENT, 10, RoundingMode.CEILING);
+        BigDecimal risk_x5 = risk.multiply(multi);
 
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 11);
         log += append.replace("}", "} " + zone);
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
-        log += Utils.calc_BUF_LO_HI_BUF_Forex(false, find_trend, EPIC, dto_entry, dto_sl);
-        log += "   " + text_body;
+        log += Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, find_trend, EPIC, dto_entry, dto_sl);
+        // log += " " + Utils.textBodyArea(heken_list_h12);
+        log += "         ";
+        log += Utils.calc_BUF_LO_HI_BUF_Forex(risk_x5, false, grand_trend, EPIC, dto_d1, dto_d1);
 
         Utils.logWritelnDraft(log);
     }
@@ -3257,6 +3279,9 @@ public class BinanceServiceImpl implements BinanceService {
         String msg_forx = "";
         String msg_futu = "";
 
+        BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
+        risk = Utils.formatPrice(risk, 0);
+
         List<String> list_d1_log = new ArrayList<String>();
         List<Orders> list_all = ordersRepository.getTrend_DayList();
         if (!CollectionUtils.isEmpty(list_all)) {
@@ -3327,7 +3352,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 String log = Utils.createLineForex_Header(dto_d1, dto_d1, append);
                 log += Utils.appendSpace(Utils.removeLastZero(dto_d1.getCurrent_price()), 15);
-                log += Utils.createLineForex_Body(dto_d1, dto_d1, trend_w1, true).trim();
+                log += Utils.createLineForex_Body(risk, dto_d1, dto_d1, trend_w1, true).trim();
 
                 list_d1_log.add(log);
                 index += 1;
@@ -4031,6 +4056,18 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.nonNull(dto)) {
                     String reject_id = "";
 
+                    if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
+                        reject_id = " RejectID: d1=h12 h12!=action";
+                    }
+
+                    if (Objects.equals(trend_h12, trend_h4) && !Objects.equals(trend_h4, action)) {
+                        reject_id = " RejectID: h12=h4 h4!=action";
+                    }
+
+                    if (Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h4, action)) {
+                        reject_id = " RejectID: h4=h1 and h4!=action " + note_d1 + note_h12 + note_h4;
+                    }
+
                     if (!(zone_h12).contains(action) || !(zone_h4).contains(action) || !(zone_h1).contains(action)) {
                         reject_id = " RejectID: end of " + Utils.appendSpace(action, 4) + " zone";
 
@@ -4043,18 +4080,6 @@ public class BinanceServiceImpl implements BinanceService {
                         if (!(zone_h12).contains(action)) {
                             reject_id += ".h12";
                         }
-                    }
-
-                    if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
-                        reject_id = " RejectID: d1=h12 h12!=action";
-                    }
-
-                    if (Objects.equals(trend_h12, trend_h4) && !Objects.equals(trend_h4, action)) {
-                        reject_id = " RejectID: h12=h4 h4!=action";
-                    }
-
-                    if (Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h4, action)) {
-                        reject_id = " RejectID: h4=h1 and h4!=action " + note_d1 + note_h12 + note_h4;
                     }
 
                     if (Utils.isNotBlank(reject_id)) {
@@ -4105,7 +4130,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // ----------------------------------------PROFIT--------------------------------------
         for (Mt5DataTrade trade : tradeList) {
-            String EPIC = trade.getSymbol();
+            String EPIC = trade.getSymbol().toUpperCase();
             String TICKET = trade.getTicket();
             String TRADE_TREND = trade.getType().toUpperCase();
             BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
@@ -4122,7 +4147,7 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            String hold = "__";
+            String hold = "_EURCAD_";
             if (hold.contains(EPIC)) {
                 continue;
             }
