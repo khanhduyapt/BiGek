@@ -2699,12 +2699,15 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 11);
         log += append.replace("}", "} " + zone);
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
-        log += Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, find_trend, EPIC, dto_entry, dto_sl);
 
         if (Utils.isNotBlank(grand_trend)) {
-            log += "         ";
-            log += Utils.calc_BUF_LO_HI_BUF_Forex(risk_x5, false, grand_trend, EPIC, dto_d1, dto_d1);
+            log += Utils.appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk_x5, false, grand_trend, EPIC, dto_d1, dto_d1),
+                    63);
+        } else {
+            log += Utils.appendSpace("", 63);
         }
+
+        log += Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, find_trend, EPIC, dto_entry, dto_sl);
 
         Utils.logWritelnDraft(log);
     }
@@ -3971,6 +3974,26 @@ public class BinanceServiceImpl implements BinanceService {
                     trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, note_h1, note_15, note_05,
                     tracking_trend, zone_h12, zone_h4, zone_h1);
 
+            String log_trend = trend_h4;
+            String NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
+            if (Objects.equals(trend_d1, trend_h12) && note_d1.contains(trend_h12)) {
+                log_trend = trend_d1;
+                NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_D1;
+            } else if (Objects.equals(trend_d1, trend_h12) && note_h12.contains(trend_h12)) {
+                log_trend = trend_h12;
+                NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
+            } else if (Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                    && note_h4.contains(trend_h4)) {
+                log_trend = trend_h4;
+                NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
+            } else if (Objects.equals(trend_h4, trend_h1) && note_h1.contains(trend_h1)) {
+                log_trend = trend_h4;
+                NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
+            }
+            analysis(prefix, EPIC, NOTE_OF_CAPITAL_TIME_XX, log_trend);
+
+            // ---------------------------------------------------------------------
+
             // String wdh4h1 = Utils.getEncrypted_trend_w1d1h4h1(trend_w1, trend_d1,
             // trend_h12, trend_h4, trend_h1);
             String action = "";
@@ -4009,7 +4032,7 @@ public class BinanceServiceImpl implements BinanceService {
             // -------------------------------------------------------------------------------
             // -------------------------------------------------------------------------------
             // ---------------------------------------------------------------------------------------------
-
+            // TODO: 3. controlMt5
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
                 Mt5OpenTrade dto = null;
@@ -4053,14 +4076,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // ---------------------------------------------------------------------
-                // TODO: 3. controlMt5
-                if (Objects.nonNull(dto)) {
-                    analysis(prefix, EPIC, Utils.CAPITAL_TIME_D1, action);
-                } else {
-                    analysis(prefix, EPIC, Utils.CAPITAL_TIME_D1, trend_h12);
-                }
 
-                // ---------------------------------------------------------------------
                 if (Objects.nonNull(dto)) {
                     String reject_id = "";
 
