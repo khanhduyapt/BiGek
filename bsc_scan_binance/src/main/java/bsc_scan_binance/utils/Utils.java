@@ -3917,12 +3917,9 @@ public class Utils {
     public static String getPrefix_FollowTrackingTrend(int index, String trend_w1, String trend_d1, String trend_h12,
             String trend_h4, String trend_h1, String trend_15, String trend_05,
 
-            String note_w1, String note_d1, String note_h12, String note_h4, String note_h1, String note_15,
-            String note_05,
+            String note_w1, String note_d1, String note_h12, String note_h4,
 
-            String tracking_trend,
-
-            String zone_h12, String zone_h4, String zone_h1) {
+            String tracking_trend) {
 
         String No = Utils.appendLeft(String.valueOf(index), 2) + ". ";
         String prefix = appendSpace(tracking_trend, 4);
@@ -3957,7 +3954,7 @@ public class Utils {
             switch_trend += getTrendPrefix("H12", "", " ");
         }
 
-        if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4) && note_h4.contains(trend_h4)) {
+        if (Objects.equals(trend_h12, trend_h4) && note_h4.contains(trend_h4)) {
             switch_trend += getTrendPrefix("H4", note_h4, "");
         } else {
             switch_trend += getTrendPrefix("H4", "", "");

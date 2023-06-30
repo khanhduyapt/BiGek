@@ -3345,8 +3345,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h4,
-                        trend_h1, "", "", note_w1, note_d1, note_h12, note_h4, note_h1, "", "", tracking_trend,
-                        zone_h12, zone_h4, zone_h1);
+                        trend_h1, "", "", note_w1, note_d1, note_h12, note_h4, tracking_trend);
 
                 Orders dto_xx = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(dto_w1);
 
@@ -3971,8 +3970,8 @@ public class BinanceServiceImpl implements BinanceService {
             String tracking_trend = trend_d1;
 
             String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h4,
-                    trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, note_h1, note_15, note_05,
-                    tracking_trend, zone_h12, zone_h4, zone_h1);
+                    trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4,
+                    tracking_trend);
 
             String log_trend = trend_h12;
             String NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
@@ -3982,13 +3981,13 @@ public class BinanceServiceImpl implements BinanceService {
             } else if (Objects.equals(trend_d1, trend_h12) && note_h12.contains(trend_h12)) {
                 log_trend = trend_h12;
                 NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
-            } else if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
+            } else if (Objects.equals(trend_h12, trend_h4)
                     && note_h4.contains(trend_h4)) {
                 log_trend = trend_h4;
                 NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
             }
-            analysis(prefix, EPIC, NOTE_OF_CAPITAL_TIME_XX, log_trend);
 
+            analysis(prefix, EPIC, NOTE_OF_CAPITAL_TIME_XX, log_trend);
             // ---------------------------------------------------------------------
 
             // String wdh4h1 = Utils.getEncrypted_trend_w1d1h4h1(trend_w1, trend_d1,
