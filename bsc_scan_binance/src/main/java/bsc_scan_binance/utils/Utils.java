@@ -3804,10 +3804,10 @@ public class Utils {
         return tmp_msg + url;
     }
 
-    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_en_05, Orders dto_vol,
+    public static Mt5OpenTrade calc_Lot_En_SL_TP(BigDecimal risk, String EPIC, String trend, Orders dto_en_05,
+            Orders dto_vol,
             String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1, boolean isTradeNow, String note_d1) {
         BigDecimal en_05, sl_h4, tp_h4;
-        BigDecimal risk_x1 = ACCOUNT.multiply(RISK_PERCENT);
 
         if (Objects.equals(Utils.TREND_LONG, trend)) {
             en_05 = Utils.getBigDecimal(dto_en_05.getLow_price());
@@ -3820,7 +3820,7 @@ public class Utils {
             sl_h4 = Utils.getBigDecimal(dto_vol.getHigh_price());
             tp_h4 = Utils.getBigDecimal(dto_vol.getBody_low());
         }
-        MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk_x1, dto_en_05.getCurrent_price(), sl_h4,
+        MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk, dto_en_05.getCurrent_price(), sl_h4,
                 tp_h4);
 
         String range = "...";
@@ -3941,6 +3941,19 @@ public class Utils {
             prefix = prefix.replace("=1H=", "    ").replace("1H=", "   ");
         }
 
+        String trend_prefix = " [        ]";
+        if (Objects.equals(trend_d1, trend_h12)) {
+            if (Objects.equals(trend_h12, trend_h4)) {
+                trend_prefix = " [D=H12=H4]";
+            } else {
+                trend_prefix = " [D=H12   ]";
+            }
+        } else {
+            if (Objects.equals(trend_h12, trend_h4)) {
+                trend_prefix = " [  H12=H4]";
+            }
+        }
+
         String switch_trend = "{";
         if (Objects.equals(trend_d1, trend_h12) && note_d1.contains(trend_h12)) {
             switch_trend += getTrendPrefix("D1", note_d1, " ");
@@ -3967,7 +3980,7 @@ public class Utils {
             switch_trend += appendSpace("", 10);
         }
 
-        String result = No + switch_trend;
+        String result = No + trend_prefix + switch_trend;
         return result;
     }
 
