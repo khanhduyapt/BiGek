@@ -4042,13 +4042,10 @@ public class BinanceServiceImpl implements BinanceService {
                     || Utils.EPICS_METALS.contains(EPIC))) {
                 Mt5OpenTrade dto = null;
 
-                if (Objects.equals(trend_d1, trend_h12) && Utils.isNotBlank(note_d1 + note_h12 + note_h4)) {
-
-                    String timeframe = Utils.getTimeframeTrading(trend_d1, trend_h4, trend_h1, note_d1, note_h4,
-                            note_h1);
-
+                if (Objects.equals(trend_d1, trend_h12) && Utils.isNotBlank(note_d1 + note_h12 + note_h4 + note_h1)) {
                     BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
                     risk = Utils.formatPrice(risk, 0);
+
                     BigDecimal multi = BigDecimal.valueOf(0.01).divide(Utils.RISK_PERCENT, 10, RoundingMode.CEILING);
                     BigDecimal risk_x5 = risk.multiply(multi);
 
@@ -4059,7 +4056,8 @@ public class BinanceServiceImpl implements BinanceService {
                         action = trend_d1;
                         append = ".2412";
 
-                        dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_05, dto_d1, timeframe, append, true,
+                        dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_D1,
+                                append, true,
                                 note_d1);
                     }
 
@@ -4071,7 +4069,8 @@ public class BinanceServiceImpl implements BinanceService {
                         action = trend_h12;
                         append = ".4115";
 
-                        dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_05, dto_d1, timeframe, append, true,
+                        dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_D1,
+                                append, true,
                                 note_d1);
                     }
 
