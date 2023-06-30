@@ -4004,6 +4004,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_h12.getNocation(), Utils.NOCATION_ABOVE_MA50)) {
                 h12_allow_trade = true;
             }
+
             boolean h4_allow_trade = false;
             if (Objects.equals(trend_h4, Utils.TREND_LONG)
                     && Objects.equals(dto_h4.getNocation(), Utils.NOCATION_BELOW_MA50)) {
@@ -4014,6 +4015,16 @@ public class BinanceServiceImpl implements BinanceService {
                 h4_allow_trade = true;
             }
 
+            boolean h1_allow_trade = false;
+            if (Objects.equals(trend_h1, Utils.TREND_LONG)
+                    && Objects.equals(dto_h1.getNocation(), Utils.NOCATION_BELOW_MA50)) {
+                h1_allow_trade = true;
+            }
+            if (Objects.equals(trend_h1, Utils.TREND_SHOT)
+                    && Objects.equals(dto_h1.getNocation(), Utils.NOCATION_ABOVE_MA50)) {
+                h1_allow_trade = true;
+            }
+
             boolean m15_allow_trade = false;
             if (Objects.equals(trend_15, Utils.TREND_LONG)
                     && Objects.equals(dto_15.getNocation(), Utils.NOCATION_BELOW_MA50)) {
@@ -4022,16 +4033,6 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(trend_15, Utils.TREND_SHOT)
                     && Objects.equals(dto_15.getNocation(), Utils.NOCATION_ABOVE_MA50)) {
                 m15_allow_trade = true;
-            }
-
-            boolean m05_allow_trade = false;
-            if (Objects.equals(trend_05, Utils.TREND_LONG)
-                    && Objects.equals(dto_05.getNocation(), Utils.NOCATION_BELOW_MA50)) {
-                m05_allow_trade = true;
-            }
-            if (Objects.equals(trend_05, Utils.TREND_SHOT)
-                    && Objects.equals(dto_05.getNocation(), Utils.NOCATION_ABOVE_MA50)) {
-                m05_allow_trade = true;
             }
 
             // -------------------------------------------------------------------------------
@@ -4049,7 +4050,7 @@ public class BinanceServiceImpl implements BinanceService {
                     BigDecimal multi = BigDecimal.valueOf(0.01).divide(Utils.RISK_PERCENT, 10, RoundingMode.CEILING);
                     BigDecimal risk_x5 = risk.multiply(multi);
 
-                    if (Objects.isNull(dto) && (m05_allow_trade || m15_allow_trade)
+                    if (Objects.isNull(dto) && (h1_allow_trade || m15_allow_trade)
                             && (note_h12.contains(trend_d1) || note_d1.contains(trend_d1))
                             && Objects.equals(trend_h12, trend_h1)
                             && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
@@ -4061,7 +4062,7 @@ public class BinanceServiceImpl implements BinanceService {
                                 note_d1);
                     }
 
-                    if (Objects.isNull(dto) && (m05_allow_trade || m15_allow_trade)
+                    if (Objects.isNull(dto) && (h1_allow_trade || m15_allow_trade)
                             && (h12_allow_trade || h4_allow_trade)
                             && Objects.equals(trend_h12, trend_h4)
                             && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
@@ -4074,7 +4075,7 @@ public class BinanceServiceImpl implements BinanceService {
                                 note_d1);
                     }
 
-                    if (Objects.isNull(dto) && (m05_allow_trade || m15_allow_trade)
+                    if (Objects.isNull(dto) && (h1_allow_trade || m15_allow_trade)
                             && (h12_allow_trade || h4_allow_trade)
                             && Objects.equals(trend_h12, trend_h4)
                             && Objects.equals(trend_h4, trend_15)
