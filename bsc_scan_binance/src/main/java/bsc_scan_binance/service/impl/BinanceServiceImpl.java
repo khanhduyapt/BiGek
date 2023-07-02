@@ -3631,10 +3631,11 @@ public class BinanceServiceImpl implements BinanceService {
                     && (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1))
                     && Objects.equals(trend_h1, trend_15)) {
 
-                //                Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1, dto_15, dto_d1, Utils.CAPITAL_TIME_D1,
-                //                        ".962415", true, dto_d1.getNote());
+                // Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1, dto_15, dto_d1,
+                // Utils.CAPITAL_TIME_D1,
+                // ".962415", true, dto_d1.getNote());
                 //
-                //                BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                // BscScanBinanceApplication.mt5_open_trade_List.add(dto);
             }
 
             if (m15_allow_trade && Objects.equals(trend_w1, trend_d1)
@@ -3940,38 +3941,30 @@ public class BinanceServiceImpl implements BinanceService {
             String note_h4 = dto_h4.getNote();
             String note_h1 = dto_h1.getNote();
             String note_15 = dto_15.getNote();
-            String note_05 = dto_05.getNote();
 
             String zone_h12 = "";
             String zone_h4 = "";
-            String zone_h1 = "";
             {
-                List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
                 List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
                 List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
 
-                if (CollectionUtils.isEmpty(list_h12) || CollectionUtils.isEmpty(list_h4)
-                        || CollectionUtils.isEmpty(list_h1)) {
-
+                if (CollectionUtils.isEmpty(list_h12) || CollectionUtils.isEmpty(list_h4)) {
                     Utils.logWritelnDraft("[controlMt5] (" + EPIC + ") CollectionUtils.isEmpty");
                     continue;
                 }
 
                 List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
                 List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
-                List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
 
                 zone_h12 = Utils.getZoneTrend(heken_list_h12);
                 zone_h4 = Utils.getZoneTrend(heken_list_h4);
-                zone_h1 = Utils.getZoneTrend(heken_list_h1);
             }
 
             index += 1;
             String tracking_trend = trend_d1;
 
             String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h4,
-                    trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4,
-                    tracking_trend);
+                    trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, tracking_trend);
 
             String log_trend = trend_h12;
             String NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
@@ -3981,8 +3974,7 @@ public class BinanceServiceImpl implements BinanceService {
             } else if (Objects.equals(trend_d1, trend_h12) && note_h12.contains(trend_h12)) {
                 log_trend = trend_h12;
                 NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
-            } else if (Objects.equals(trend_h12, trend_h4)
-                    && note_h4.contains(trend_h4)) {
+            } else if (Objects.equals(trend_h12, trend_h4) && note_h4.contains(trend_h4)) {
                 log_trend = trend_h4;
                 NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
             }
@@ -4043,7 +4035,8 @@ public class BinanceServiceImpl implements BinanceService {
                     || Utils.EPICS_METALS.contains(EPIC))) {
                 Mt5OpenTrade dto = null;
 
-                if (Objects.equals(trend_d1, trend_h12) && Utils.isNotBlank(note_d1 + note_h12 + note_h4 + note_h1)) {
+                if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
+                        && Utils.isNotBlank(note_d1 + note_h12 + note_h4 + note_h1 + note_15)) {
                     BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
                     risk = Utils.formatPrice(risk, 0);
 
@@ -4052,40 +4045,34 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (Objects.isNull(dto) && (h1_allow_trade || m15_allow_trade)
                             && (note_h12.contains(trend_d1) || note_d1.contains(trend_d1))
-                            && Objects.equals(trend_h12, trend_h1)
-                            && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
+                            && Objects.equals(trend_h12, trend_h1) && Objects.equals(trend_h1, trend_15)
+                            && Objects.equals(trend_15, trend_05)) {
                         action = trend_d1;
                         append = ".2412";
 
                         dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_D1,
-                                append, true,
-                                note_d1);
+                                append, true, note_d1);
                     }
 
                     if (Objects.isNull(dto) && (h1_allow_trade || m15_allow_trade)
-                            && (h12_allow_trade || h4_allow_trade)
-                            && Objects.equals(trend_h12, trend_h4)
+                            && (h12_allow_trade || h4_allow_trade) && Objects.equals(trend_h12, trend_h4)
                             && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
                             && Objects.equals(trend_15, trend_05)) {
                         action = trend_h12;
                         append = ".4115";
 
                         dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_D1,
-                                append, true,
-                                note_d1);
+                                append, true, note_d1);
                     }
 
                     if (Objects.isNull(dto) && (h1_allow_trade || m15_allow_trade)
-                            && (h12_allow_trade || h4_allow_trade)
-                            && Objects.equals(trend_h12, trend_h4)
-                            && Objects.equals(trend_h4, trend_15)
-                            && Objects.equals(trend_15, trend_05)) {
+                            && (h12_allow_trade || h4_allow_trade) && Objects.equals(trend_h12, trend_h4)
+                            && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_15, trend_05)) {
                         action = trend_d1;
                         append = ".2415";
 
                         dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_D1,
-                                append,
-                                true, note_d1);
+                                append, true, note_d1);
                     }
                 }
                 // ---------------------------------------------------------------------

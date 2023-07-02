@@ -3741,6 +3741,13 @@ public class Utils {
             return isUptrend_1 ? Utils.TREND_LONG : Utils.TREND_SHOT;
         }
 
+        if (id.contains(PREFIX_1w_)) {
+            if ((isUptrend_1 == heken_list.get(0).isUptrend()) || (isUptrend_1 == isUptrend_2)) {
+                return isUptrend_1 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+            }
+            return isUptrend_1 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        }
+
         return isUptrend_2 ? Utils.TREND_LONG : Utils.TREND_SHOT;
     }
 
@@ -3805,8 +3812,8 @@ public class Utils {
     }
 
     public static Mt5OpenTrade calc_Lot_En_SL_TP(BigDecimal risk, String EPIC, String trend, Orders dto_en_05,
-            Orders dto_vol,
-            String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1, boolean isTradeNow, String note_d1) {
+            Orders dto_vol, String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1, boolean isTradeNow,
+            String note_d1) {
         BigDecimal en_05, sl_h4, tp_h4;
 
         if (Objects.equals(Utils.TREND_LONG, trend)) {
