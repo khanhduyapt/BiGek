@@ -3904,8 +3904,12 @@ public class BinanceServiceImpl implements BinanceService {
             return "";
         }
 
-        int index = 0;
+        BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
+        risk = Utils.formatPrice(risk, 0);
+        BigDecimal multi = BigDecimal.valueOf(0.01).divide(Utils.RISK_PERCENT, 10, RoundingMode.CEILING);
+        BigDecimal risk_x5 = risk.multiply(multi);
 
+        int index = 0;
         for (String EPIC : CAPITAL_LIST) {
             if (BscScanBinanceApplication.EPICS_OUTPUTED_LOG.contains(EPIC)) {
                 continue;
@@ -4037,11 +4041,6 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
                         && Utils.isNotBlank(note_d1 + note_h12 + note_h4 + note_h1 + note_15)) {
-                    BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
-                    risk = Utils.formatPrice(risk, 0);
-
-                    BigDecimal multi = BigDecimal.valueOf(0.01).divide(Utils.RISK_PERCENT, 10, RoundingMode.CEILING);
-                    BigDecimal risk_x5 = risk.multiply(multi);
 
                     if (Objects.isNull(dto) && (h1_allow_trade || m15_allow_trade)
                             && (note_h12.contains(trend_d1) || note_d1.contains(trend_d1))
@@ -4107,7 +4106,7 @@ public class BinanceServiceImpl implements BinanceService {
                         msg_reject += "Reject: " + Utils.appendSpace(action, 10);
                         msg_reject += Utils.appendSpace(dto.getEpic(), 10);
                         msg_reject += " Vol: " + Utils.appendSpace(dto.getLots().toString(), 10);
-                        msg_reject += "E: " + Utils.appendLeft(dto.getEntry().toString(), 10);
+                        msg_reject += "E: " + Utils.appendLeft(dto.getEntry().toString(), 12);
                         msg_reject += Utils.appendSpace("     " + reject_id, 60);
                         msg_reject += Utils.appendSpace(dto.getComment(), 30);
 

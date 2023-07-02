@@ -3929,23 +3929,11 @@ public class Utils {
             String tracking_trend) {
 
         String No = Utils.appendLeft(String.valueOf(index), 2) + ". ";
-        String prefix = appendSpace(tracking_trend, 4);
-        prefix += " [1W=1D=12H  4H=1H]";
 
-        if (!Objects.equals(trend_w1, tracking_trend)) {
-            prefix = prefix.replace("1W=", "   ");
-        }
-        if (!Objects.equals(trend_d1, tracking_trend)) {
-            prefix = prefix.replace("=1D=", "    ").replace("1D=", "   ");
-        }
-        if (!Objects.equals(trend_h12, tracking_trend)) {
-            prefix = prefix.replace("=12H", "    ").replace("12H", "   ");
-        }
-        if (!Objects.equals(trend_h4, tracking_trend)) {
-            prefix = prefix.replace("=4H=", "    ").replace("4H=", "   ");
-        }
-        if (!Objects.equals(trend_h1, tracking_trend)) {
-            prefix = prefix.replace("=1H=", "    ").replace("1H=", "   ");
+        String prefix_wd = appendSpace("", 10);
+
+        if (Objects.equals(trend_w1, trend_d1)) {
+            prefix_wd = appendSpace(" W=D=" + trend_d1, 10);
         }
 
         String trend_prefix = " [        ]";
@@ -3981,13 +3969,7 @@ public class Utils {
         }
         switch_trend += "}  ";
 
-        if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)) {
-            switch_trend += appendSpace("D-H4:" + trend_d1, 10);
-        } else {
-            switch_trend += appendSpace("", 10);
-        }
-
-        String result = No + trend_prefix + switch_trend;
+        String result = No + prefix_wd + trend_prefix + switch_trend;
         return result;
     }
 
