@@ -3964,7 +3964,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             index += 1;
-            String tracking_trend = trend_d1;
+            String tracking_trend = trend_w1;
 
             String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h4,
                     trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, tracking_trend);
