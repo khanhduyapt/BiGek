@@ -4205,7 +4205,8 @@ public class BinanceServiceImpl implements BinanceService {
                 isTrendInverse = true;
             }
 
-            if (Utils.allowFinishTradeThisDay() || Utils.allowFinishTradeThisWeek()
+            if ((Utils.allowFinishTradeThisDay() && (trade.getStopLoss().compareTo(BigDecimal.ZERO) > 0))
+                    || Utils.allowFinishTradeThisWeek()
                     || Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_H1)) {
                 if (!Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
                         && !Objects.equals(trend_05, TRADE_TREND)) {
