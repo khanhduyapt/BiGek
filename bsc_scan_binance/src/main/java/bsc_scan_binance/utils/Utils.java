@@ -3722,12 +3722,17 @@ public class Utils {
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
         }
+        String id = heken_list.get(0).getId();
+
+        if (id.contains(PREFIX_1w_)) {
+            return (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend()) ? Utils.TREND_LONG
+                    : Utils.TREND_SHOT;
+        }
 
         // Cần xác nhận trend khi đóng nến, nhưng lấy Candle1,2 thì trend chạy lộn xộn.
         int str = 0;
         int end = 1;
 
-        String id = heken_list.get(0).getId();
         if (id.contains(PREFIX_5m_) || id.contains(PREFIX_15m_)) {
             str = 1;
             end = 2;
@@ -3738,13 +3743,6 @@ public class Utils {
         boolean isUptrend_3 = isUptrendByMa(heken_list, 3, str, end);
 
         if ((isUptrend_1 == isUptrend_2) && (isUptrend_1 == isUptrend_3)) {
-            return isUptrend_1 ? Utils.TREND_LONG : Utils.TREND_SHOT;
-        }
-
-        if (id.contains(PREFIX_1w_)) {
-            if ((isUptrend_1 == heken_list.get(0).isUptrend()) || (isUptrend_1 == isUptrend_2)) {
-                return isUptrend_1 ? Utils.TREND_LONG : Utils.TREND_SHOT;
-            }
             return isUptrend_1 ? Utils.TREND_LONG : Utils.TREND_SHOT;
         }
 

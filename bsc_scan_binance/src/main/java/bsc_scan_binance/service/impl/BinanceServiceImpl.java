@@ -3944,7 +3944,6 @@ public class BinanceServiceImpl implements BinanceService {
             String note_h12 = dto_h12.getNote();
             String note_h4 = dto_h4.getNote();
             String note_h1 = dto_h1.getNote();
-            String note_15 = dto_15.getNote();
 
             String zone_h12 = "";
             String zone_h4 = "";
