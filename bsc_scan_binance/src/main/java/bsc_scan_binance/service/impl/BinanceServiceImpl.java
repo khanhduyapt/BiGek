@@ -3944,6 +3944,7 @@ public class BinanceServiceImpl implements BinanceService {
             String note_h12 = dto_h12.getNote();
             String note_h4 = dto_h4.getNote();
             String note_h1 = dto_h1.getNote();
+            String note_15 = dto_15.getNote();
 
             String zone_h12 = "";
             String zone_h4 = "";
@@ -4047,12 +4048,13 @@ public class BinanceServiceImpl implements BinanceService {
                     || Utils.EPICS_METALS.contains(EPIC))) {
                 Mt5OpenTrade dto = null;
 
-                if (m05_allow_trade && (Objects.equals(trend_w1, trend_d1) || Objects.equals(trend_w1, trend_h12))
-                        && Utils.isNotBlank(note_d1 + note_h12 + note_h4 + note_h1)) {
+                if (m05_allow_trade && Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_h12)
+                        && Utils.isNotBlank(note_d1 + note_h12 + note_h4 + note_h1 + note_15)
+                        && (h12_allow_trade || h4_allow_trade || h1_allow_trade || m15_allow_trade)
+                        && Objects.equals(trend_w1, trend_15) && Objects.equals(trend_w1, trend_05)) {
 
-                    if (Objects.isNull(dto) && (h12_allow_trade || h4_allow_trade || h1_allow_trade || m15_allow_trade)
-                            && Objects.equals(trend_w1, trend_h4) && Objects.equals(trend_h4, trend_h1)
-                            && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
+                    if (Objects.isNull(dto) && Objects.equals(trend_w1, trend_h4)
+                            && Objects.equals(trend_w1, trend_h1)) {
                         action = trend_w1;
                         append = ".4115";
 
@@ -4060,9 +4062,7 @@ public class BinanceServiceImpl implements BinanceService {
                                 append, true, note_d1);
                     }
 
-                    if (Objects.isNull(dto) && (h12_allow_trade || h4_allow_trade || h1_allow_trade || m15_allow_trade)
-                            && Objects.equals(trend_w1, trend_h4) && Objects.equals(trend_h4, trend_15)
-                            && Objects.equals(trend_15, trend_05)) {
+                    if (Objects.isNull(dto) && Objects.equals(trend_w1, trend_h1)) {
                         action = trend_w1;
                         append = ".4015";
 
