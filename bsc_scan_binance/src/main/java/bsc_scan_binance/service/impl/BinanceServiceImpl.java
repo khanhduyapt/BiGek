@@ -4038,8 +4038,8 @@ public class BinanceServiceImpl implements BinanceService {
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
                 Mt5OpenTrade dto = null;
-
-                if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
+                // Objects.equals(trend_w1, trend_d1) &&
+                if (Objects.equals(trend_d1, trend_h12)
                         && Utils.isNotBlank(note_d1 + note_h12 + note_h4 + note_h1 + note_15)) {
 
                     if (Objects.isNull(dto) && (h1_allow_trade || m15_allow_trade)
@@ -4256,13 +4256,13 @@ public class BinanceServiceImpl implements BinanceService {
                     mt5_close_trade_list.add(TICKET);
 
                     if (isPriceHit_TP) {
-                        mt5_close_trade_reason.add("PriceHit_TP");
+                        mt5_close_trade_reason.add("PriceHitTp");
                     }
                     if (isPriceHit_SL) {
-                        mt5_close_trade_reason.add("PriceHit_SL.");
+                        mt5_close_trade_reason.add("PriceHitSL.");
                     }
                     if (isTimeout) {
-                        mt5_close_trade_reason.add("Timeout_Inverse.");
+                        mt5_close_trade_reason.add("TimeoutInverse.");
                     }
                 }
             }
