@@ -203,6 +203,7 @@ public class BscScanBinanceApplication {
 
                         if (round_crypto % 10 == 0) {
                             System.out.println(msg);
+                            binance_service.clearTrash();
                         }
                     } else {
                         index_crypto += 1;
