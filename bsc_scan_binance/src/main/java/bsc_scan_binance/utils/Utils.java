@@ -3931,7 +3931,9 @@ public class Utils {
         String prefix_wd = appendSpace("", 10);
 
         if (Objects.equals(trend_w1, trend_d1)) {
-            prefix_wd = appendSpace(" W=D=" + trend_d1, 10);
+            prefix_wd = appendSpace(" W=D=" + trend_w1, 10);
+        } else if (Objects.equals(trend_w1, trend_h12)) {
+            prefix_wd = appendSpace(" W=H12=" + trend_w1, 10);
         }
 
         String trend_prefix = " [        ]";

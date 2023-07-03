@@ -2683,7 +2683,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_h12 = Utils.getTrendByHekenAshiList(heken_list_h12);
 
         String grand_trend = "";
-        if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)) {
+        if (Objects.equals(trend_d1, trend_h12)) {
             grand_trend = trend_d1;
         } else if (Objects.equals(trend_h12, trend_h4)) {
             grand_trend = trend_h12;
