@@ -4030,6 +4030,15 @@ public class BinanceServiceImpl implements BinanceService {
                 m15_allow_trade = true;
             }
 
+            boolean m05_allow_trade = false;
+            if (Objects.equals(trend_05, Utils.TREND_LONG)
+                    && Objects.equals(dto_05.getNocation(), Utils.NOCATION_BELOW_MA50)) {
+                m05_allow_trade = true;
+            }
+            if (Objects.equals(trend_05, Utils.TREND_SHOT)
+                    && Objects.equals(dto_05.getNocation(), Utils.NOCATION_ABOVE_MA50)) {
+                m05_allow_trade = true;
+            }
             // -------------------------------------------------------------------------------
             // -------------------------------------------------------------------------------
             // ---------------------------------------------------------------------------------------------
@@ -4038,7 +4047,7 @@ public class BinanceServiceImpl implements BinanceService {
                     || Utils.EPICS_METALS.contains(EPIC))) {
                 Mt5OpenTrade dto = null;
 
-                if ((Objects.equals(trend_w1, trend_d1) || Objects.equals(trend_w1, trend_h12))
+                if (m05_allow_trade && (Objects.equals(trend_w1, trend_d1) || Objects.equals(trend_w1, trend_h12))
                         && Utils.isNotBlank(note_d1 + note_h12 + note_h4 + note_h1)) {
 
                     if (Objects.isNull(dto) && (h12_allow_trade || h4_allow_trade || h1_allow_trade || m15_allow_trade)
