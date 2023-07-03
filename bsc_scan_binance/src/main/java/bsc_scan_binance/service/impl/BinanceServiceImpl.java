@@ -4038,9 +4038,10 @@ public class BinanceServiceImpl implements BinanceService {
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
                 Mt5OpenTrade dto = null;
-                // Objects.equals(trend_w1, trend_d1) &&
-                if (Objects.equals(trend_d1, trend_h12)
-                        && Utils.isNotBlank(note_d1 + note_h12 + note_h4 + note_h1 + note_15)) {
+
+                if (Objects.equals(trend_w1, trend_d1)
+                        && Objects.equals(trend_d1, trend_h12)
+                        && Utils.isNotBlank(note_d1 + note_h12 + note_h4 + note_h1)) {
 
                     if (Objects.isNull(dto) && (h1_allow_trade || m15_allow_trade)
                             && (note_h12.contains(trend_d1) || note_d1.contains(trend_d1))
