@@ -3879,20 +3879,25 @@ public class BinanceServiceImpl implements BinanceService {
 
             String zone_h12 = "";
             String zone_h4 = "";
+            String zone_h1 = "";
             {
+                List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
                 List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
                 List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
 
-                if (CollectionUtils.isEmpty(list_h12) || CollectionUtils.isEmpty(list_h4)) {
+                if (CollectionUtils.isEmpty(list_h12) || CollectionUtils.isEmpty(list_h4)
+                        || CollectionUtils.isEmpty(list_h1)) {
                     Utils.logWritelnDraft("[controlMt5] (" + EPIC + ") CollectionUtils.isEmpty");
                     continue;
                 }
 
-                List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
+                List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
                 List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
+                List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
 
-                zone_h12 = Utils.getZoneTrend(heken_list_h12);
+                zone_h1 = Utils.getZoneTrend(heken_list_h1);
                 zone_h4 = Utils.getZoneTrend(heken_list_h4);
+                zone_h12 = Utils.getZoneTrend(heken_list_h12);
             }
 
             index += 1;
@@ -3980,8 +3985,8 @@ public class BinanceServiceImpl implements BinanceService {
                     dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H4, append,
                             true, note_d1);
                 }
-                if (Objects.isNull(dto) && Objects.equals(action, trend_h4) && note_h1.contains(action)
-                        && Objects.equals(action, trend_15)) {
+                if (Objects.isNull(dto) && h1_allow_trade && Objects.equals(action, trend_h4)
+                        && note_h1.contains(action) && Objects.equals(action, trend_15)) {
                     append = ".0401";
                     dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H4, append,
                             true, note_d1);
@@ -4002,8 +4007,11 @@ public class BinanceServiceImpl implements BinanceService {
                         reject_id = " RejectID: h4=h1 and h4!=action " + note_d1 + note_h12 + note_h4;
                     }
 
-                    if (!(zone_h12).contains(action) || !(zone_h4).contains(action)) {
+                    if (!(zone_h12).contains(action) || !(zone_h4).contains(action) || !(zone_h1).contains(action)) {
                         reject_id = " RejectID: end of " + Utils.appendSpace(action, 4) + " zone";
+                        if (!(zone_h1).contains(action)) {
+                            reject_id += ".h1";
+                        }
                         if (!(zone_h4).contains(action)) {
                             reject_id += ".h4";
                         }
