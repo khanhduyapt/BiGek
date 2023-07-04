@@ -2695,7 +2695,9 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())
                 || (Objects.equals(dto_w1.getTrend(), trend_h12) && Objects.equals(trend_h12, trend_h4))) {
-            Utils.logWritelnReport(log);
+            if (log.contains("Heiken")) {
+                Utils.logWritelnReport(log);
+            }
         }
     }
 
