@@ -3918,6 +3918,10 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(trend_d1, trend_h1) && note_h4.contains(trend_d1)) {
                 NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
             }
+            if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
+                    && Objects.equals(trend_d1, trend_h1) && note_h1.contains(trend_d1)) {
+                NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H1;
+            }
 
             analysis(prefix, EPIC, NOTE_OF_CAPITAL_TIME_XX, log_trend);
             // ---------------------------------------------------------------------
