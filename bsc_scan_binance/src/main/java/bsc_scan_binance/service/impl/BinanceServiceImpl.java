@@ -2682,7 +2682,6 @@ public class BinanceServiceImpl implements BinanceService {
 
         BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
         risk = Utils.formatPrice(risk, 0);
-
         BigDecimal multi = BigDecimal.valueOf(0.01).divide(Utils.RISK_PERCENT, 10, RoundingMode.CEILING);
         BigDecimal risk_x5 = risk.multiply(multi);
 
@@ -2690,10 +2689,8 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 11);
         log += append.replace("}", "} " + zone);
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
-
         log += Utils.appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk_x5, false, trend_d1, EPIC, dto_d1, dto_d1), 65);
         log += Utils.appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, find_trend, EPIC, dto_entry, dto_sl), 60);
-
         Utils.logWritelnDraft(log);
 
         if (Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())
@@ -2748,19 +2745,23 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private String analysis(String prifix, String EPIC, String CAPITAL_TIME_XX, String find_trend) {
-        Orders dto_en = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
-        Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-        Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(dto_sl);
-        if (Objects.isNull(dto_en) || Objects.isNull(dto_sl)) {
+        Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
+        Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+        Orders dto_wt = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(dto_d1);
+        if (Objects.isNull(dto_h1) || Objects.isNull(dto_d1)) {
             return "";
         }
 
         // ----------------------------TREND------------------------
 
-        String char_name = Utils.getChartName(dto.getId());
+        String char_name = Utils.getChartName(dto_wt.getId());
         String type = Objects.equals(Utils.TREND_LONG, find_trend) ? "(B)"
                 : Objects.equals(Utils.TREND_SHOT, find_trend) ? "(S)" : "(x)";
-        String note = dto.getNote();
+
+        String note = "";
+        if (Objects.equals(dto_wt.getTrend(), dto_d1.getTrend())) {
+            note = dto_wt.getNote();
+        }
 
         int length = 60;
         String ea = Utils.appendSpace(Utils.TEXT_EXPERT_ADVISOR_SPACE, length);
@@ -2780,12 +2781,12 @@ public class BinanceServiceImpl implements BinanceService {
 
                 String append = Utils.appendSpace(prifix + ea, 100) + Utils.appendSpace(note, 25);
 
-                outputLog("Analysis_" + char_name, EPIC, dto_en, dto_sl, append, find_trend);
+                outputLog("Analysis_" + char_name, EPIC, dto_h1, dto_d1, append, find_trend);
             }
         } else {
             ea = Utils.appendSpace(Utils.TEXT_EXPERT_ADVISOR_SPACE, length);
             String append = Utils.appendSpace(prifix + ea, 100) + Utils.appendSpace(note, 25);
-            outputLog("Analysis_" + char_name, EPIC, dto_en, dto_sl, append, find_trend);
+            outputLog("Analysis_" + char_name, EPIC, dto_h1, dto_d1, append, find_trend);
         }
 
         if (!isReloadAfter(Utils.MINUTES_OF_1H, EPIC + find_trend)) {
