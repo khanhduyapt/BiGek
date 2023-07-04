@@ -3906,24 +3906,6 @@ public class BinanceServiceImpl implements BinanceService {
             String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h4,
                     trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, tracking_trend);
 
-            String log_trend = trend_d1;
-            String NOTE_OF_CAPITAL_TIME_XX = "";
-            if (note_d1.contains(trend_d1)) {
-                NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_D1;
-            }
-            if (Objects.equals(trend_d1, trend_h12) && note_h12.contains(trend_d1)) {
-                NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
-            }
-            if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
-                    && Objects.equals(trend_d1, trend_h1) && note_h4.contains(trend_d1)) {
-                NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
-            }
-            if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
-                    && Objects.equals(trend_d1, trend_h1) && note_h1.contains(trend_d1)) {
-                NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H1;
-            }
-
-            analysis(prefix, EPIC, NOTE_OF_CAPITAL_TIME_XX, log_trend);
             // ---------------------------------------------------------------------
 
             // String wdh4h1 = Utils.getEncrypted_trend_w1d1h4h1(trend_w1, trend_d1,
@@ -3961,7 +3943,29 @@ public class BinanceServiceImpl implements BinanceService {
                 m05_allow_trade = true;
             }
             // -------------------------------------------------------------------------------
-            // -------------------------------------------------------------------------------
+            String log_trend = trend_d1;
+            String NOTE_OF_CAPITAL_TIME_XX = "";
+            if (note_d1.contains(trend_d1)) {
+                NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_D1;
+            }
+            if (Objects.equals(trend_d1, trend_h12) && note_h12.contains(trend_d1)) {
+                NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
+            }
+            if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
+                    && Objects.equals(trend_d1, trend_h1) && note_h4.contains(trend_d1)) {
+                NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
+            }
+            if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
+                    && Objects.equals(trend_d1, trend_h1) && note_h1.contains(trend_d1)) {
+                NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H1;
+            }
+            if (m15_allow_trade && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
+                    && Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_d1, trend_15)
+                    && note_15.contains(trend_d1)) {
+                NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_15;
+            }
+
+            analysis(prefix, EPIC, NOTE_OF_CAPITAL_TIME_XX, log_trend);
             // ---------------------------------------------------------------------------------------------
             // TODO: 3. controlMt5
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
