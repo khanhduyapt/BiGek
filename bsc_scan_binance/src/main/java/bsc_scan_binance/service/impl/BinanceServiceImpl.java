@@ -3967,9 +3967,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (m05_allow_trade
-                        && (note_d1.contains(action) || note_h12.contains(action) || note_h4.contains(action)
-                                || (h1_allow_trade && note_h1.contains(action))
-                                || (m15_allow_trade && note_15.contains(action)))
+                        && (note_d1.contains(action) || note_h12.contains(action) || note_h4.contains(action))
                         && Objects.equals(action, trend_h4) && Objects.equals(action, trend_h1)
                         && Objects.equals(action, trend_15) && Objects.equals(action, trend_05)) {
                     append = ".4115";
