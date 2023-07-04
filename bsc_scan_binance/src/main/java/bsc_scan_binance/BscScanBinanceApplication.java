@@ -249,25 +249,19 @@ public class BscScanBinanceApplication {
         Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_JPY);
         Utils.logWritelnDraft("...");
-        Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_USD);
         Utils.logWritelnDraft("...");
-        Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_GBP);
         Utils.logWritelnDraft("...");
         Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_NZD);
         Utils.logWritelnDraft("...");
-        Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_EUR);
         Utils.logWritelnDraft("...");
-        Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_AUD);
         Utils.logWritelnDraft("...");
-        Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_ALL);
         Utils.logWritelnDraft("...");
-        Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_CRYPTO_CFD);
         // --------------------------------------------------------------------------
 
