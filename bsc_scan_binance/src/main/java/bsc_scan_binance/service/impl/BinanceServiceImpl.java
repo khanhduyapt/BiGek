@@ -2972,7 +2972,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // ------------------ Đóng các trade đã close ------------------
-        List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByOrderByCompanyAsc();
+        List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByOrderByCompanyAscSymbolAsc();
 
         String msg = "";
         String msgStopLoss = "";
@@ -4024,7 +4024,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> mt5_close_trade_reason = new ArrayList<String>();
 
         // ----------------------------------------PROFIT--------------------------------------
-        List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByOrderByCompanyAsc();
+        List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAll();
         for (Mt5OpenTradeEntity trade : mt5Openlist) {
             String EPIC = trade.getSymbol().toUpperCase();
             String TICKET = trade.getTicket();
