@@ -3768,7 +3768,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String msg_alert = "(FTMO)";
                         msg_alert += trade.getType() + ":" + trade.getSymbol();
                         msg_alert += "," + trade.getVolume() + "(lot)";
-                        msg_alert += ",SL(vol):" + Utils.removeLastZero(sl_LoHi_vol);
+                        msg_alert += ",SL:" + Utils.removeLastZero(trade.getStopLoss());
                         msg_alert += "," + trade.getComment();
 
                         sendMsgPerHour_OnlyMe(EVENT_ID, msg_alert);
@@ -3945,6 +3945,7 @@ public class BinanceServiceImpl implements BinanceService {
             String note_h4 = dto_h4.getNote();
             String note_h1 = dto_h1.getNote();
             String note_15 = dto_15.getNote();
+            String note_05 = dto_05.getNote();
 
             String zone_h12 = "";
             String zone_h4 = "";
@@ -4048,8 +4049,8 @@ public class BinanceServiceImpl implements BinanceService {
                     || Utils.EPICS_METALS.contains(EPIC))) {
                 Mt5OpenTrade dto = null;
 
-                if (m05_allow_trade && Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_h12)
-                        && Utils.isNotBlank(note_d1 + note_h12 + note_h4 + note_h1 + note_15)
+                if (m05_allow_trade && (Objects.equals(trend_w1, trend_d1) || Objects.equals(trend_w1, trend_h12))
+                        && Utils.isNotBlank(note_d1 + note_h12 + note_h4 + note_h1 + note_15 + note_05)
                         && (h12_allow_trade || h4_allow_trade || h1_allow_trade || m15_allow_trade)
                         && Objects.equals(trend_w1, trend_15) && Objects.equals(trend_w1, trend_05)) {
 

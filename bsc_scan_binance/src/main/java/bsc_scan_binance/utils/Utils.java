@@ -1430,7 +1430,7 @@ public class Utils {
     }
 
     public static void sendToChatId(String chat_id, String text) {
-        if (BscScanBinanceApplication.hostname.contains("PC")) {
+        if (BscScanBinanceApplication.hostname.contains("PC") && !text.contains("FTMO")) {
             return;
         }
 
@@ -3927,14 +3927,13 @@ public class Utils {
             String tracking_trend) {
 
         String No = Utils.appendLeft(String.valueOf(index), 2) + ". ";
-
-        String prefix_wd = appendSpace("", 10);
-
+        String prefix_wd = "";
         if (Objects.equals(trend_w1, trend_d1)) {
-            prefix_wd = appendSpace(" W=D=" + trend_w1, 10);
+            prefix_wd = " W=D=" + trend_w1;
         } else if (Objects.equals(trend_w1, trend_h12)) {
-            prefix_wd = appendSpace(" W=H12=" + trend_w1, 10);
+            prefix_wd = " W=H12=" + trend_w1;
         }
+        prefix_wd = appendSpace(prefix_wd, 12);
 
         String trend_prefix = " [        ]";
         if (Objects.equals(trend_d1, trend_h12)) {
