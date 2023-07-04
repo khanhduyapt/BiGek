@@ -139,6 +139,11 @@ public class Utils {
     public static final int MA_INDEX_D1_START_LONG = 8;
     public static final int MA_INDEX_CURRENCY = 10;
 
+    public static String MT5_COMPANY_8CAP = "608AB61EFF9C7B3585EC08B8CF6800E3";
+    public static String MT5_COMPANY_FTMO = "49CDDEAA95A409ED22BD2287BB67CB9C";
+    public static String MT5_COMPANY_5ERS = "THE5ERS";
+    public static String MT5_COMPANY_MFF = "MFF";
+
     public static String CST = "";
     public static String X_SECURITY_TOKEN = "";
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
@@ -182,6 +187,9 @@ public class Utils {
     public static final Integer MINUTES_OF_5M = 5;
 
     public static final Integer MINUTES_RELOAD_CSV_DATA = 5;
+
+    public static final String LINKED_NAME_2_USOIL = "_USOIL_USOUSD_";
+    public static final String LINKED_NAME_2_US100 = "_NDX100_US100_";
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
@@ -1158,18 +1166,19 @@ public class Utils {
         logWriteln("_______________________________________________________________", true);
     }
 
-    public static String getMt5DataFolder() {
+    public static String getMt5DataFolder(String MT5_COMPANY_ID) {
         String mt5_data_file = "";
         try {
             String pcname = InetAddress.getLocalHost().getHostName().toLowerCase();
             if (Objects.equals(pcname, "pc")) {
-                // MFF Pc cong ty:
-                mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\";
+                // PC cong ty:
+                mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + MT5_COMPANY_ID
+                        + "\\MQL5\\Files\\Data\\";
 
             } else if (Objects.equals(pcname, "desktop-l4m1ju2")) {
-
-                // MFF Laptop
-                mt5_data_file = "C:\\Users\\DellE5270\\AppData\\Roaming\\MetaQuotes\\Terminal\\49CDDEAA95A409ED22BD2287BB67CB9C\\MQL5\\Files\\Data\\";
+                // Laptop
+                mt5_data_file = "C:\\Users\\DellE5270\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + MT5_COMPANY_ID
+                        + "\\MQL5\\Files\\Data\\";
 
             }
         } catch (UnknownHostException e) {

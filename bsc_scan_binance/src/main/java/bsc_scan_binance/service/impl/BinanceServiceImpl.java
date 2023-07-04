@@ -23,7 +23,6 @@ import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -96,8 +95,6 @@ public class BinanceServiceImpl implements BinanceService {
 
     private static List<String> GLOBAL_LONG_LIST = new ArrayList<String>();
     private static List<String> GLOBAL_SHOT_LIST = new ArrayList<String>();
-
-    List<Mt5DataTrade> tradeList = new ArrayList<Mt5DataTrade>();
 
     private String str_long_suggest = "";
     private String str_shot_suggest = "";
@@ -2757,17 +2754,15 @@ public class BinanceServiceImpl implements BinanceService {
 
         int length = 60;
         String ea = Utils.appendSpace(Utils.TEXT_EXPERT_ADVISOR_SPACE, length);
+        List<Mt5OpenTradeEntity> tradeList = mt5OpenTradeRepository.findAllBySymbol(EPIC);
 
-        List<Mt5DataTrade> filteredStream = tradeList.stream().filter(obj -> Objects.equals(EPIC, obj.getSymbol()))
-                .collect(Collectors.toList());
-
-        if (!CollectionUtils.isEmpty(filteredStream)) {
-            for (Mt5DataTrade trade : filteredStream) {
+        if (!CollectionUtils.isEmpty(tradeList)) {
+            for (Mt5OpenTradeEntity trade : tradeList) {
                 Mt5OpenTradeEntity entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
 
-                ea = Utils.appendSpace(trade.getType().toLowerCase(), 12);
+                ea = Utils.appendSpace(trade.getTypeDescription().toLowerCase(), 12);
                 if (Objects.nonNull(entity)) {
-                    ea += " SL:" + Utils.appendSpace(Utils.removeLastZero(entity.getStopLossCalcVol()), 10);
+                    ea += " SL:" + Utils.appendSpace(Utils.removeLastZero(entity.getStopLoss()), 10);
                     ea += " TP:" + Utils.appendSpace(Utils.removeLastZero(entity.getTakeProfit()), 10);
                     ea += Utils.appendSpace(entity.getComment(), 20);
                 }
@@ -2846,9 +2841,10 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private boolean is_opening_trade(String EPIC, String ORDER_TYPE) {
-        for (Mt5DataTrade trade : tradeList) {
+        List<Mt5OpenTradeEntity> tradeList = mt5OpenTradeRepository.findAllBySymbol(EPIC);
+        for (Mt5OpenTradeEntity trade : tradeList) {
             String TRADE_EPIC = trade.getSymbol().toUpperCase();
-            String CUR_TRADE = trade.getType().toUpperCase().contains(Utils.TREND_LONG) ? Utils.TREND_LONG
+            String CUR_TRADE = trade.getTypeDescription().toUpperCase().contains(Utils.TREND_LONG) ? Utils.TREND_LONG
                     : Utils.TREND_SHOT;
 
             if (Objects.equals(TRADE_EPIC, EPIC) && ORDER_TYPE.toUpperCase().contains(CUR_TRADE)) {
@@ -2868,11 +2864,12 @@ public class BinanceServiceImpl implements BinanceService {
             BscScanBinanceApplication.mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
         }
 
-        String mt5_open_trade_file = Utils.getMt5DataFolder() + "OpenTrade.csv";
+        String mt5_open_trade_file = Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + "OpenTrade.csv";
         int MAX_TRADE = 100;
         int trade_count = 0;
-        for (Mt5DataTrade trade : tradeList) {
-            if (!trade.getType().toUpperCase().contains("LIMIT")) {
+        List<Mt5OpenTradeEntity> tradeList = mt5OpenTradeRepository.findAll();
+        for (Mt5OpenTradeEntity trade : tradeList) {
+            if (!trade.getTypeDescription().toUpperCase().contains("LIMIT")) {
                 trade_count += 1;
             }
         }
@@ -2985,19 +2982,6 @@ public class BinanceServiceImpl implements BinanceService {
 
         // ------------------ Đóng các trade đã close ------------------
         List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAll();
-        if (!CollectionUtils.isEmpty(mt5Openlist)) {
-            for (Mt5OpenTradeEntity entity : mt5Openlist) {
-                boolean not_found = true;
-                for (Mt5DataTrade trade : tradeList) {
-                    if (Objects.equals(entity.getTicket(), trade.getTicket())) {
-                        not_found = false;
-                    }
-                }
-                if (not_found) {
-                    mt5OpenTradeRepository.deleteById(entity.getTicket());
-                }
-            }
-        }
 
         String msg = "";
         String msgStopLoss = "";
@@ -3006,7 +2990,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> scalpingList = new ArrayList<String>();
 
         try {
-            String mt5_close_trade_file = Utils.getMt5DataFolder() + "CloseSymbols.csv";
+            String mt5_close_trade_file = Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + "CloseSymbols.csv";
             File myScap = new File(mt5_close_trade_file);
             myScap.delete();
         } catch (Exception e) {
@@ -3016,9 +3000,9 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
         String max_risk = "     MaxRisk:" + Utils.appendLeft(Utils.removeLastZero(risk), 10) + "$_1Trade";
 
-        for (Mt5DataTrade trade : tradeList) {
+        for (Mt5OpenTradeEntity trade : mt5Openlist) {
             String EPIC = trade.getSymbol();
-            String TRADE_TREND = trade.getType().toUpperCase();
+            String TRADE_TREND = trade.getTypeDescription().toUpperCase();
             BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
 
             // ---------------------------------------------------------------------------------
@@ -3071,15 +3055,16 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.logWritelnDraft("");
     }
 
-    private String mt5_data_file(String filename, Integer MINUTES_OF_XX) {
-        String mt5_data_file = "";
+    private String check_mt5_data_file(String mt5_data_file_path, Integer MINUTES_OF_XX) {
         try {
-            mt5_data_file = Utils.getMt5DataFolder() + filename;
-
-            File file = new File(mt5_data_file);
+            File file = new File(mt5_data_file_path);
             if (!file.exists()) {
-                Utils.logWritelnDraft("[mt5_data_file FileNotFound]: " + mt5_data_file);
+                Utils.logWritelnDraft("[mt5_data_file FileNotFound]: " + mt5_data_file_path);
                 return "";
+            }
+
+            if (mt5_data_file_path.contains("Trade.csv")) {
+                return mt5_data_file_path;
             }
 
             BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
@@ -3088,25 +3073,29 @@ public class BinanceServiceImpl implements BinanceService {
             long elapsedMinutes = Duration.between(created_time, LocalDateTime.now()).toMinutes();
             required_update_bars_csv = false;
             if (elapsedMinutes > (MINUTES_OF_XX * 3)) {
+                String filename = file.getName();
                 required_update_bars_csv = true;
-                Utils.logWritelnDraft(filename + " khong duoc update! " + filename + " khong duoc update! " + filename
-                        + " khong duoc update! " + filename + " khong duoc update! \n");
 
+                Utils.logWritelnDraft(
+                        filename + " khong duoc update! " + filename + " khong duoc update! " + filename
+                                + " khong duoc update! " + filename + " khong duoc update! \n");
                 String EVENT_ID = EVENT_PUMP + "_UPDATE_BARS_CSV_" + Utils.getCurrentYyyyMmDd_HH();
-                sendMsgPerHour_OnlyMe(EVENT_ID, "Update:" + filename);
+                sendMsgPerHour_OnlyMe(EVENT_ID, "(FTMO) Update:" + filename);
+
                 return "";
             }
         } catch (Exception e) {
         }
 
-        return mt5_data_file;
+        return mt5_data_file_path;
     }
 
     @Override
     @Transactional
     public void saveMt5Data(String filename, Integer MINUTES_OF_XX) {
         try {
-            String mt5_data_file = mt5_data_file(filename, MINUTES_OF_XX);
+            String mt5_data_file_path = Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + filename;
+            String mt5_data_file = check_mt5_data_file(mt5_data_file_path, MINUTES_OF_XX);
             if (Utils.isBlank(mt5_data_file)) {
                 return;
             }
@@ -3185,7 +3174,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnDraft("\n\n\n");
             }
 
-            if (tradeList.isEmpty() || Objects.equals("Forex.csv", filename)) {
+            if (Objects.equals("Forex.csv", filename)) {
                 initTradeList();
             }
         } catch (Exception e) {
@@ -3628,52 +3617,83 @@ public class BinanceServiceImpl implements BinanceService {
      */
     @Transactional
     public void initTradeList() {
-        tradeList = new ArrayList<Mt5DataTrade>();
-        String mt5_data_file = mt5_data_file("Trade.csv", 3);
-        if (Utils.isBlank(mt5_data_file)) {
-            return;
-        }
+        List<Mt5DataTrade> tradeList = new ArrayList<Mt5DataTrade>();
 
-        try {
-            String line;
-            int count = 0;
-            Reader reader = new InputStreamReader(new FileInputStream(mt5_data_file), "UTF-8");
-            BufferedReader fin = new BufferedReader(reader);
-            while ((line = fin.readLine()) != null) {
-                count += 1;
-
-                if (count == 1) {
-                    continue;
-                }
-                String[] tempArr = line.replace(".cash", "").split("\\t");
-                if (tempArr.length == 10) {
-                    Mt5DataTrade dto = new Mt5DataTrade();
-
-                    dto.setSymbol(tempArr[0].toUpperCase());
-                    dto.setTicket(tempArr[1].toUpperCase());
-                    dto.setType(tempArr[2].toUpperCase());
-
-                    dto.setPriceOpen(Utils.getBigDecimal(tempArr[3]));
-                    dto.setStopLoss(Utils.getBigDecimal(tempArr[4]));
-                    dto.setTakeProfit(Utils.getBigDecimal(tempArr[5]));
-
-                    dto.setProfit(Utils.roundDefault(Utils.getBigDecimal(tempArr[6])));
-                    dto.setComment(Utils.getStringValue(tempArr[7]).trim().toUpperCase());
-                    dto.setVolume(Utils.roundDefault(Utils.getBigDecimal(tempArr[8])));
-                    dto.setCurrprice(Utils.roundDefault(Utils.getBigDecimal(tempArr[9])));
-                    tradeList.add(dto);
-                }
+        List<String> COMPANIES = Arrays.asList("FTMO", "8CAP");
+        for (String company : COMPANIES) {
+            String company_id = Utils.MT5_COMPANY_FTMO;
+            if (Objects.equals(company, "8CAP")) {
+                company_id = Utils.MT5_COMPANY_8CAP;
             }
 
-            fin.close();
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            String mt5_ftmo_trading_file_path = Utils.getMt5DataFolder(company_id) + "Trade.csv";
+            String mt5_data_file = check_mt5_data_file(mt5_ftmo_trading_file_path, 3);
+            if (Utils.isBlank(mt5_data_file)) {
+                return;
+            }
+
+            try {
+                String line;
+                int count = 0;
+                Reader reader = new InputStreamReader(new FileInputStream(mt5_data_file), "UTF-8");
+                BufferedReader fin = new BufferedReader(reader);
+                while ((line = fin.readLine()) != null) {
+                    count += 1;
+                    if (count == 1) {
+                        continue;
+                    }
+                    String[] tempArr = line.replace(".cash", "").split("\\t");
+                    if (tempArr.length == 10) {
+                        Mt5DataTrade dto = new Mt5DataTrade();
+
+                        dto.setSymbol(tempArr[0].toUpperCase());
+                        dto.setTicket(tempArr[1].toUpperCase());
+                        dto.setType(tempArr[2].toUpperCase());
+
+                        dto.setPriceOpen(Utils.getBigDecimal(tempArr[3]));
+                        dto.setStopLoss(Utils.getBigDecimal(tempArr[4]));
+                        dto.setTakeProfit(Utils.getBigDecimal(tempArr[5]));
+
+                        dto.setProfit(Utils.roundDefault(Utils.getBigDecimal(tempArr[6])));
+                        dto.setComment(Utils.getStringValue(tempArr[7]).trim().toUpperCase());
+                        dto.setVolume(Utils.roundDefault(Utils.getBigDecimal(tempArr[8])));
+                        dto.setCurrPrice(Utils.roundDefault(Utils.getBigDecimal(tempArr[9])));
+                        dto.setCompany(company);
+                        tradeList.add(dto);
+                    }
+                }
+
+                fin.close();
+                reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Đóng các lệnh đã close
+        List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAll();
+        for (Mt5OpenTradeEntity entity : mt5Openlist) {
+            boolean not_found = true;
+            for (Mt5DataTrade trade : tradeList) {
+                if (Objects.equals(entity.getTicket(), trade.getTicket())) {
+                    not_found = false;
+                    break;
+                }
+            }
+            if (not_found) {
+                mt5OpenTradeRepository.deleteById(entity.getTicket());
+            }
         }
 
         // TODO: 2. initTradeList
         for (Mt5DataTrade trade : tradeList) {
             String EPIC = trade.getSymbol().toUpperCase();
+            for (String key : BscScanBinanceApplication.linked_2_ftmo.keySet()) {
+                if (key.contains(EPIC)) {
+                    EPIC = BscScanBinanceApplication.linked_2_ftmo.get(key);
+                    break;
+                }
+            }
 
             String comment = Utils.getStringValue(trade.getComment());
             if (Utils.isBlank(comment)) {
@@ -3713,30 +3733,26 @@ public class BinanceServiceImpl implements BinanceService {
                 // SL khi H1_1 đóng nến tại LoHi của 50 cây nến H1 + Bread.
                 entity = new Mt5OpenTradeEntity();
 
-                BigDecimal sl_LoHi_h1 = BigDecimal.ZERO;
                 BigDecimal sl_LoHi_vol = BigDecimal.ZERO;
                 if (trade.getType().toUpperCase().contains(Utils.TREND_LONG)) {
-                    sl_LoHi_h1 = dto_h1.getLow_price();
                     sl_LoHi_vol = dto_d1.getLow_price();
                 }
                 if (trade.getType().toUpperCase().contains(Utils.TREND_SHOT)) {
-                    sl_LoHi_h1 = dto_h1.getHigh_price();
                     sl_LoHi_vol = dto_d1.getHigh_price();
                 }
 
                 entity.setTicket(trade.getTicket());
-                entity.setSymbol(trade.getSymbol());
+                entity.setSymbol(EPIC);
                 entity.setPriceOpen(trade.getPriceOpen());
-                entity.setStopLossTimeFam(sl_LoHi_h1);
-                entity.setStopLossCalcVol(sl_LoHi_vol);
+                entity.setStopLoss(sl_LoHi_vol);
                 entity.setTakeProfit(tp_Body);
 
-                if (Utils.isPcCongTy()) {
+                if (Utils.isPcCongTy() && trade.getCompany().contains("FTMO")) {
                     if (!trade.getType().toUpperCase().contains("LIMIT") && Utils.isNotBlank(trade.getComment())) {
                         String EVENT_ID = "MSG_PER_HOUR" + trade.getTicket();
 
                         String msg_alert = "(FTMO)";
-                        msg_alert += trade.getType() + ":" + trade.getSymbol();
+                        msg_alert += trade.getType() + ":" + EPIC;
                         msg_alert += "," + trade.getVolume() + "(lot)";
                         msg_alert += ",SL:" + Utils.removeLastZero(trade.getStopLoss());
                         msg_alert += "," + trade.getComment();
@@ -3751,8 +3767,8 @@ public class BinanceServiceImpl implements BinanceService {
             entity.setTypeDescription(trade.getType());
             entity.setProfit(trade.getProfit());
             entity.setVolume(trade.getVolume());
-            entity.setCurrprice(trade.getCurrprice());
-
+            entity.setCurrprice(trade.getCurrPrice());
+            entity.setCompany(trade.getCompany());
             if (Utils.isBlank(entity.getOpenTime())) {
                 entity.setOpenTime(date_time);
             }
@@ -4063,10 +4079,11 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> mt5_close_trade_reason = new ArrayList<String>();
 
         // ----------------------------------------PROFIT--------------------------------------
-        for (Mt5DataTrade trade : tradeList) {
+        List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAll();
+        for (Mt5OpenTradeEntity trade : mt5Openlist) {
             String EPIC = trade.getSymbol().toUpperCase();
             String TICKET = trade.getTicket();
-            String TRADE_TREND = trade.getType().toUpperCase();
+            String TRADE_TREND = trade.getTypeDescription().toUpperCase();
             BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
 
             if (!Utils.isHuntTime_7h_to_23h() && TRADE_TREND.contains("LIMIT")) {
@@ -4186,7 +4203,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String key = "";
         String msg = "";
-        String mt5_data_file = Utils.getMt5DataFolder() + "CloseSymbols.csv";
+        String mt5_data_file = Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + "CloseSymbols.csv";
         BigDecimal total_profit = BigDecimal.ZERO;
         try {
             FileWriter writer = new FileWriter(mt5_data_file, true);
@@ -4200,17 +4217,18 @@ public class BinanceServiceImpl implements BinanceService {
                 sb.append('\n');
                 writer.write(sb.toString());
 
-                for (Mt5DataTrade trade : tradeList) {
+                for (Mt5OpenTradeEntity trade : mt5Openlist) {
                     if (Objects.equals(TICKET, trade.getTicket())) {
 
-                        String text = Utils.appendSpace(TICKET, 15) + Utils.appendSpace(trade.getType(), 15)
+                        String text = Utils.appendSpace(TICKET, 15) + Utils.appendSpace(trade.getTypeDescription(), 15)
                                 + Utils.appendSpace(trade.getSymbol(), 10)
                                 + Utils.appendSpace("_Vol:" + trade.getVolume(), 15) + "_Profit:"
                                 + Utils.appendSpace(trade.getProfit().toString(), 10) + Utils.appendLeft(REASON, 30);
-                        key += trade.getSymbol() + "_" + trade.getType() + ".";
+                        key += trade.getSymbol() + "_" + trade.getTypeDescription() + ".";
 
-                        msg += "Close:" + trade.getType() + ":" + trade.getSymbol() + "_Vol:" + trade.getVolume()
-                                + "_Profit:" + trade.getProfit().toString() + "_" + REASON
+                        msg += trade.getCompany() + "." + trade.getTicket() + ".Close:" + trade.getTypeDescription()
+                                + ":" + trade.getSymbol() + ".Vol:" + trade.getVolume()
+                                + ".Profit:" + trade.getProfit().toString() + "..." + REASON
                                 + Utils.new_line_from_service;
 
                         total_profit = total_profit.add(trade.getProfit());

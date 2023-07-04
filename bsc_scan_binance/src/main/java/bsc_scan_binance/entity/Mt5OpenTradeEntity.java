@@ -34,6 +34,7 @@ import lombok.NoArgsConstructor;
 //takeprofit numeric(30,5) DEFAULT 0,
 //profit numeric(30,5) DEFAULT 0,
 //open_time character varying(255) COLLATE pg_catalog."default",
+//company character varying(255) COLLATE pg_catalog."default",
 //CONSTRAINT mt5_open_trade_id PRIMARY KEY (ticket_id)
 //)
 
@@ -64,10 +65,7 @@ public class Mt5OpenTradeEntity {
     private BigDecimal currprice;
 
     @Column(name = "stoplosscalc")
-    private BigDecimal stopLossCalcVol;
-
-    @Column(name = "stoplossm30")
-    private BigDecimal stopLossTimeFam;
+    private BigDecimal stopLoss;
 
     @Column(name = "takeprofit")
     private BigDecimal takeProfit;
@@ -78,4 +76,6 @@ public class Mt5OpenTradeEntity {
     @Column(name = "open_time")
     private String openTime;
 
+    @Column(name = "company")
+    private String company;
 }

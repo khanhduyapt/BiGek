@@ -10,25 +10,25 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Mt5DataTrade {
-    private String Symbol;
+    private String company;
 
-    private String Ticket;
+    private String symbol;
 
-    private String Type;
+    private String ticket;
 
-    private BigDecimal PriceOpen = BigDecimal.ZERO;
+    private String type;
 
-    private BigDecimal StopLoss = BigDecimal.ZERO;
+    private BigDecimal priceOpen = BigDecimal.ZERO;
 
-    private BigDecimal TakeProfit = BigDecimal.ZERO;
+    private BigDecimal stopLoss = BigDecimal.ZERO;
 
-    private BigDecimal Profit = BigDecimal.ZERO;
+    private BigDecimal takeProfit = BigDecimal.ZERO;
+
+    private BigDecimal profit = BigDecimal.ZERO;
 
     private String comment;
 
-    private BigDecimal stop_loss_m30 = BigDecimal.ZERO;
-
     private BigDecimal volume = BigDecimal.ZERO;
 
-    private BigDecimal currprice = BigDecimal.ZERO;
+    private BigDecimal currPrice = BigDecimal.ZERO;
 }

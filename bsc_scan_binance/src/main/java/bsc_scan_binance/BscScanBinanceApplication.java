@@ -31,6 +31,7 @@ public class BscScanBinanceApplication {
     public static int SLEEP_MINISECONDS = 1800; // Gecko=wait(6000);
     private static Hashtable<String, LocalTime> keys_dict = new Hashtable<String, LocalTime>();
     public static Hashtable<String, String> forex_naming_dict = new Hashtable<String, String>();
+    public static Hashtable<String, String> linked_2_ftmo = new Hashtable<String, String>();
     public static Hashtable<String, Integer> watting_dict = new Hashtable<String, Integer>();
     public static String hostname = " ";
     public static ApplicationContext applicationContext;
@@ -117,7 +118,7 @@ public class BscScanBinanceApplication {
                 log = new File(Utils.getDraftLogFile());
                 System.out.println(log.getAbsolutePath());
 
-                System.out.println(Utils.getMt5DataFolder() + "OpenTrade.csv");
+                System.out.println(Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + "OpenTrade.csv");
                 System.out.println();
 
                 Utils.writelnLogFooter();
@@ -223,7 +224,7 @@ public class BscScanBinanceApplication {
         mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
         waitingM05list = new Hashtable<String, Mt5OpenTrade>();
         try {
-            String mt5_open_trade_file = Utils.getMt5DataFolder() + "OpenTrade.csv";
+            String mt5_open_trade_file = Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + "OpenTrade.csv";
             File myScap = new File(mt5_open_trade_file);
             myScap.delete();
         } catch (Exception e) {
@@ -407,6 +408,9 @@ public class BscScanBinanceApplication {
     }
 
     private static void initForex_naming_dict() {
+        linked_2_ftmo.put(Utils.LINKED_NAME_2_USOIL, "USOIL");
+        linked_2_ftmo.put(Utils.LINKED_NAME_2_US100, "US100");
+
         forex_naming_dict.put("DXY", "US Dollar Index");
         forex_naming_dict.put("OIL_CRUDE", "US Crude Oil");
         forex_naming_dict.put("US100", "US Tech 100 (Nasdaq)");
