@@ -3943,6 +3943,8 @@ public class BinanceServiceImpl implements BinanceService {
                 action = "";
                 if (Objects.equals(trend_w1, trend_d1)) {
                     action = trend_w1;
+                } else if (Objects.equals(trend_d1, trend_h12)) {
+                    action = trend_d1;
                 }
 
                 if (m05_allow_trade && Objects.equals(action, trend_h4) && Objects.equals(action, trend_h1)
@@ -4123,7 +4125,8 @@ public class BinanceServiceImpl implements BinanceService {
             // Giữ lệnh tối thiểu 4h
             if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
                 if (isTimeout || isPriceHit_TP || isPriceHit_SL) {
-                    String prefix = Utils.getChartNameCapital(mt5Entity.getTimeframe()) + "Closed.   ";
+                    String prefix = Utils.getChartNameCapital(mt5Entity.getTimeframe()) + "Close:   ";
+                    prefix += Utils.appendSpace(trade.getCompany(), 8);
                     prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
                     prefix += "(Trade):" + Utils.appendSpace(TRADE_TREND, 10);
                     prefix += Utils.getChartNameCapital(mt5Entity.getTimeframe()) + ":"
@@ -4166,7 +4169,8 @@ public class BinanceServiceImpl implements BinanceService {
                 for (Mt5OpenTradeEntity trade : mt5Openlist) {
                     if (Objects.equals(TICKET, trade.getTicket())) {
 
-                        String text = Utils.appendSpace(TICKET, 15) + Utils.appendSpace(trade.getTypeDescription(), 15)
+                        String text = Utils.appendSpace(trade.getCompany(), 8) + Utils.appendSpace(TICKET, 15)
+                                + Utils.appendSpace(trade.getTypeDescription(), 15)
                                 + Utils.appendSpace(trade.getSymbol(), 10)
                                 + Utils.appendSpace("_Vol:" + trade.getVolume(), 15) + "_Profit:"
                                 + Utils.appendSpace(trade.getProfit().toString(), 10) + Utils.appendLeft(REASON, 30);
