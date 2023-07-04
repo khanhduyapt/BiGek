@@ -3067,9 +3067,8 @@ public class BinanceServiceImpl implements BinanceService {
                 String filename = file.getName();
                 required_update_bars_csv = true;
 
-                Utils.logWritelnDraft(
-                        filename + " khong duoc update! " + filename + " khong duoc update! " + filename
-                                + " khong duoc update! " + filename + " khong duoc update! \n");
+                Utils.logWritelnDraft(filename + " khong duoc update! " + filename + " khong duoc update! " + filename
+                        + " khong duoc update! " + filename + " khong duoc update! \n");
                 String EVENT_ID = EVENT_PUMP + "_UPDATE_BARS_CSV_" + Utils.getCurrentYyyyMmDd_HH();
                 sendMsgPerHour_OnlyMe(EVENT_ID, "(FTMO) Update:" + filename);
 
@@ -3574,7 +3573,7 @@ public class BinanceServiceImpl implements BinanceService {
             String mt5_ftmo_trading_file_path = Utils.getMt5DataFolder(company_id) + "Trade.csv";
             String mt5_data_file = check_mt5_data_file(mt5_ftmo_trading_file_path, 3);
             if (Utils.isBlank(mt5_data_file)) {
-                return;
+                continue;
             }
 
             try {
@@ -3910,8 +3909,7 @@ public class BinanceServiceImpl implements BinanceService {
                 NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
             }
             if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
-                    && Objects.equals(trend_d1, trend_h1)
-                    && note_h4.contains(trend_d1)) {
+                    && Objects.equals(trend_d1, trend_h1) && note_h4.contains(trend_d1)) {
                 NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
             }
 
@@ -3949,8 +3947,8 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(action, trend_15) && Objects.equals(action, trend_05)) {
                     append = ".4115";
 
-                    dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4,
-                            append, true, note_d1);
+                    dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4, append,
+                            true, note_d1);
                 }
                 // ---------------------------------------------------------------------
                 if (Objects.nonNull(dto)) {
@@ -4173,9 +4171,8 @@ public class BinanceServiceImpl implements BinanceService {
                         key += trade.getSymbol() + "_" + trade.getTypeDescription() + ".";
 
                         msg += trade.getCompany() + "." + trade.getTicket() + ".Close:" + trade.getTypeDescription()
-                                + ":" + trade.getSymbol() + ".Vol:" + trade.getVolume()
-                                + ".Profit:" + trade.getProfit().toString() + "..." + REASON
-                                + Utils.new_line_from_service;
+                                + ":" + trade.getSymbol() + ".Vol:" + trade.getVolume() + ".Profit:"
+                                + trade.getProfit().toString() + "..." + REASON + Utils.new_line_from_service;
 
                         total_profit = total_profit.add(trade.getProfit());
                         System.out.println(BscScanBinanceApplication.hostname + "mt5CloseSymbol: " + text);
