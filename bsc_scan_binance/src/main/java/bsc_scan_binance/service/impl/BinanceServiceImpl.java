@@ -2695,7 +2695,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())
                 || (Objects.equals(dto_w1.getTrend(), trend_h12) && Objects.equals(trend_h12, trend_h4))) {
-            if (log.contains("Heiken")) {
+            if (log.contains("Heiken") || log.contains("Ma")) {
                 Utils.logWritelnReport(log);
             }
         }
@@ -2720,28 +2720,6 @@ public class BinanceServiceImpl implements BinanceService {
             result += Objects.equals(dto.getTrend(), Utils.TREND_LONG) ? "Buy " : "Sell";
         }
         result = Utils.appendSpace("(" + result + ")", 30);
-
-        return result;
-    }
-
-    private String getSideMa50(String EPIC, boolean isCompact) {
-        String result = "";// "H12:b H8:b H4:a H2:a 30:a"
-        List<String> times = Arrays.asList(Utils.CAPITAL_TIME_H12, Utils.CAPITAL_TIME_H4, Utils.CAPITAL_TIME_H1,
-                Utils.CAPITAL_TIME_05);
-
-        for (String CAPITAL_TIME_XX : times) {
-            String chart_name = Utils.getChartNameCapital(CAPITAL_TIME_XX).replace("(", "").replace(")", "").trim();
-            List<BtcFutures> list = getCapitalData(EPIC, CAPITAL_TIME_XX);
-            List<BtcFutures> heken_list = Utils.getHekenList(list);
-
-            if (Utils.isNotBlank(result))
-                result += " ";
-
-            result += chart_name + ":";
-            result += Utils.isAboveMALine(heken_list, 50) ? "a" : Utils.isBelowMALine(heken_list, 50) ? "b" : " ";
-        }
-
-        result = Utils.appendSpace(result, 30);
 
         return result;
     }
@@ -3896,6 +3874,8 @@ public class BinanceServiceImpl implements BinanceService {
             String note_d1 = dto_d1.getNote();
             String note_h12 = dto_h12.getNote();
             String note_h4 = dto_h4.getNote();
+            String note_h1 = dto_h1.getNote();
+            String note_15 = dto_15.getNote();
 
             String zone_h12 = "";
             String zone_h4 = "";
@@ -3921,16 +3901,17 @@ public class BinanceServiceImpl implements BinanceService {
             String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h4,
                     trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, tracking_trend);
 
-            String log_trend = trend_h12;
+            String log_trend = trend_d1;
             String NOTE_OF_CAPITAL_TIME_XX = "";
-            if (Objects.equals(trend_d1, trend_h12) && note_d1.contains(trend_h12)) {
-                log_trend = trend_d1;
+            if (note_d1.contains(trend_d1)) {
                 NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_D1;
-            } else if (Objects.equals(trend_d1, trend_h12) && note_h12.contains(trend_h12)) {
-                log_trend = trend_h12;
+            }
+            if (Objects.equals(trend_d1, trend_h12) && note_h12.contains(trend_d1)) {
                 NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
-            } else if (Objects.equals(trend_h12, trend_h4) && note_h4.contains(trend_h4)) {
-                log_trend = trend_h4;
+            }
+            if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
+                    && Objects.equals(trend_d1, trend_h1)
+                    && note_h4.contains(trend_d1)) {
                 NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
             }
 

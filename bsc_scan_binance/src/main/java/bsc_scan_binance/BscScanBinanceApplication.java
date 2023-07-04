@@ -241,19 +241,18 @@ public class BscScanBinanceApplication {
         EPICS_OUTPUT_MSG = "";
         // --------------------------------------------------------------------------
         Utils.logWritelnDraft("");
+        Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_METALS);
         Utils.logWritelnDraft("...");
         binance_service.controlMt5(Utils.EPICS_CASH_CFD);
         // --------------------------------------------------------------------------
         Utils.logWritelnDraftFooter();
-        Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_JPY);
         Utils.logWritelnDraft("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_USD);
         Utils.logWritelnDraft("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_GBP);
         Utils.logWritelnDraft("...");
-        Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_NZD);
         Utils.logWritelnDraft("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_EUR);
@@ -263,6 +262,7 @@ public class BscScanBinanceApplication {
         binance_service.controlMt5(Utils.EPICS_FOREXS_ALL);
         Utils.logWritelnDraft("...");
         binance_service.controlMt5(Utils.EPICS_CRYPTO_CFD);
+        Utils.logWritelnReport("...");
         // --------------------------------------------------------------------------
 
         Utils.logWritelnDraftFooter();
