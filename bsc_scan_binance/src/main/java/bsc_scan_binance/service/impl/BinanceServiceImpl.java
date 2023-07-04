@@ -3674,21 +3674,20 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                // SL khi H1_1 đóng nến tại LoHi của 50 cây nến H1 + Bread.
                 entity = new Mt5OpenTradeEntity();
 
-                BigDecimal sl_LoHi_vol = BigDecimal.ZERO;
+                BigDecimal sl_d1 = BigDecimal.ZERO;
                 if (trade.getType().toUpperCase().contains(Utils.TREND_LONG)) {
-                    sl_LoHi_vol = dto_d1.getLow_price();
+                    sl_d1 = dto_d1.getLow_price();
                 }
                 if (trade.getType().toUpperCase().contains(Utils.TREND_SHOT)) {
-                    sl_LoHi_vol = dto_d1.getHigh_price();
+                    sl_d1 = dto_d1.getHigh_price();
                 }
 
                 entity.setTicket(trade.getTicket());
                 entity.setSymbol(EPIC);
                 entity.setPriceOpen(trade.getPriceOpen());
-                entity.setStopLoss(sl_LoHi_vol);
+                entity.setStopLoss(sl_d1);
                 entity.setTakeProfit(tp_Body);
 
                 if (Utils.isPcCongTy() && trade.getCompany().contains("FTMO")) {
@@ -3698,7 +3697,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String msg_alert = "(FTMO)";
                         msg_alert += trade.getType() + ":" + EPIC;
                         msg_alert += "," + trade.getVolume() + "(lot)";
-                        msg_alert += ",SL:" + Utils.removeLastZero(trade.getStopLoss());
+                        msg_alert += ",SL:" + Utils.removeLastZero(sl_d1);
                         msg_alert += "," + trade.getComment();
 
                         sendMsgPerHour_OnlyMe(EVENT_ID, msg_alert);
