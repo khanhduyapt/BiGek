@@ -3684,11 +3684,22 @@ public class Utils {
             return "";
         }
 
-        if (heken_list.get(0).getId().contains("GBPUSD")) {
-            boolean debug = true;
+        String id = heken_list.get(0).getId();
+        String trend = Utils.getTrendByHekenAshiList(heken_list);
+
+        if (id.contains(PREFIX_1d_) || id.contains(PREFIX_12h_)) {
+            if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(0).isUptrend()
+                    && heken_list.get(1).isDown()) {
+                return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
+            }
+            if (Objects.equals(trend, Utils.TREND_SHOT) && heken_list.get(0).isDown()
+                    && heken_list.get(1).isUptrend()) {
+                return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
+            }
+            return "";
         }
 
-        String trend = Utils.getTrendByHekenAshiList(heken_list);
+        // -------------------------------------------------------------------------
 
         if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(0).isUptrend()
                 && is_long_legged_doji_candle(heken_list.get(1))) {
@@ -3723,12 +3734,6 @@ public class Utils {
             return "";
         }
         String id = heken_list.get(0).getId();
-
-        if (id.contains(PREFIX_1w_)) {
-            return (heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend()) ? Utils.TREND_LONG
-                    : Utils.TREND_SHOT;
-        }
-
         // Cần xác nhận trend khi đóng nến, nhưng lấy Candle1,2 thì trend chạy lộn xộn.
         int str = 0;
         int end = 1;
@@ -3739,6 +3744,15 @@ public class Utils {
         }
 
         boolean isUptrend_1 = isUptrendByMa(heken_list, 1, str, end);
+        if (id.contains(PREFIX_1w_)) {
+            if (isUptrend_1 && heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend()) {
+                return isUptrend_1 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+            }
+            if (isUptrend_1 && heken_list.get(0).isUptrend()) {
+                return isUptrend_1 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+            }
+        }
+
         boolean isUptrend_2 = isUptrendByMa(heken_list, 2, str, end);
         boolean isUptrend_3 = isUptrendByMa(heken_list, 3, str, end);
 
