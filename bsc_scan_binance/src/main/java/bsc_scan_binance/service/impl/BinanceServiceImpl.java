@@ -3009,8 +3009,8 @@ public class BinanceServiceImpl implements BinanceService {
             count += 1;
             String multi_timeframes = getTrendTimeframes(EPIC);
             String result = "";
-            result = Utils.appendLeft(String.valueOf(count), 15);
-            result += ". (Trade:" + Utils.appendSpace(TRADE_TREND, 10) + ")   ";
+            result = Utils.appendLeft(String.valueOf(count), 15) + ". " + Utils.appendSpace(trade.getCompany(), 10);
+            result += "(Trade:" + Utils.appendSpace(TRADE_TREND, 8) + ")   ";
             result += Utils.appendSpace(EPIC, 10);
             result += Utils.appendSpace(trade.getTicket(), 10);
             result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(PROFIT), 10);
