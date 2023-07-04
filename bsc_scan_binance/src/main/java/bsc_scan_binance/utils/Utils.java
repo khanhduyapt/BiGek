@@ -3696,7 +3696,7 @@ public class Utils {
         String id = heken_list.get(0).getId();
         String trend = Utils.getTrendByHekenAshiList(heken_list);
 
-        if (id.contains(PREFIX_1d_) || id.contains(PREFIX_12h_)) {
+        if (id.contains(PREFIX_1d_) || id.contains(PREFIX_12h_) || id.contains(PREFIX_4h_)) {
             if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(0).isUptrend()
                     && heken_list.get(1).isDown()) {
                 return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;

@@ -4001,7 +4001,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (m05_allow_trade && Objects.equals(action, trend_h4) && Objects.equals(action, trend_h1)
                         && Objects.equals(action, trend_05)) {
-                    append = ".0415";
+                    append = ".4115";
 
                     dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4,
                             append, true, note_d1);
