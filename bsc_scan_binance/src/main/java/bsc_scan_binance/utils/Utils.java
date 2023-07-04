@@ -139,11 +139,6 @@ public class Utils {
     public static final int MA_INDEX_D1_START_LONG = 8;
     public static final int MA_INDEX_CURRENCY = 10;
 
-    public static String MT5_COMPANY_8CAP = "608AB61EFF9C7B3585EC08B8CF6800E3";
-    public static String MT5_COMPANY_FTMO = "49CDDEAA95A409ED22BD2287BB67CB9C";
-    public static String MT5_COMPANY_5ERS = "THE5ERS";
-    public static String MT5_COMPANY_MFF = "MFF";
-
     public static String CST = "";
     public static String X_SECURITY_TOKEN = "";
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
@@ -188,8 +183,14 @@ public class Utils {
 
     public static final Integer MINUTES_RELOAD_CSV_DATA = 5;
 
+    public static String MT5_COMPANY_8CAP = "608AB61EFF9C7B3585EC08B8CF6800E3";
+    public static String MT5_COMPANY_FTMO = "49CDDEAA95A409ED22BD2287BB67CB9C";
+    public static String MT5_COMPANY_5ERS = "THE5ERS";
+    public static String MT5_COMPANY_MFF = "MFF";
+    public static String MT5_COMPANY_ALPHA = "DA9FDBAE775DAE029270F1379F6A9F03";
+
     public static final String LINKED_NAME_2_USOIL = "_USOIL_USOUSD_";
-    public static final String LINKED_NAME_2_US100 = "_NDX100_US100_";
+    public static final String LINKED_NAME_2_US100 = "_NDX100_US100_NAS100_";
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
