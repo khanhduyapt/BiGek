@@ -4196,11 +4196,17 @@ public class BinanceServiceImpl implements BinanceService {
                                 + Utils.appendSpace(trade.getSymbol(), 10)
                                 + Utils.appendSpace("_Vol:" + trade.getVolume(), 15) + "_Profit:"
                                 + Utils.appendSpace(trade.getProfit().toString(), 10) + Utils.appendLeft(REASON, 30);
-                        key += trade.getSymbol() + "_" + trade.getTypeDescription() + ".";
 
-                        msg += trade.getCompany() + "." + trade.getTicket() + ".Close:" + trade.getTypeDescription()
+                        key = trade.getSymbol() + "_" + trade.getTypeDescription() + ".";
+                        msg = trade.getCompany() + "." + trade.getTicket() + ".Close:" + trade.getTypeDescription()
                                 + ":" + trade.getSymbol() + ".Vol:" + trade.getVolume() + ".Profit:"
                                 + trade.getProfit().toString() + "..." + REASON + Utils.new_line_from_service;
+
+                        if (Utils.isNotBlank(msg)) {
+                            msg = "(CLOSE) profit:" + total_profit + Utils.new_line_from_service + msg;
+                            String EVENT_ID = "CloseTrade" + Utils.getCurrentYyyyMmDd_HH() + key;
+                            sendMsgPerHour_OnlyMe(EVENT_ID, msg);
+                        }
 
                         total_profit = total_profit.add(trade.getProfit());
                         System.out.println(BscScanBinanceApplication.hostname + "mt5CloseSymbol: " + text);
@@ -4214,11 +4220,6 @@ public class BinanceServiceImpl implements BinanceService {
             System.out.println(e.getMessage());
         }
 
-        if (Utils.isNotBlank(msg)) {
-            msg = "(CLOSE) profit:" + total_profit + Utils.new_line_from_service + msg;
-            String EVENT_ID = "CloseTrade" + Utils.getCurrentYyyyMmDd_HH() + key;
-            sendMsgPerHour_OnlyMe(EVENT_ID, msg);
-        }
     }
 
 }
