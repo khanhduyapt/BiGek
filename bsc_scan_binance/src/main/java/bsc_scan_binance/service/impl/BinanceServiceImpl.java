@@ -4207,7 +4207,10 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         total_profit = total_profit.add(trade.getProfit());
-                        System.out.println(BscScanBinanceApplication.hostname + "mt5CloseSymbol: " + text);
+                        if (isReloadAfter(Utils.MINUTES_OF_15M,
+                                trade.getCompany() + trade.getTypeDescription() + "_PRINTLN")) {
+                            System.out.println(BscScanBinanceApplication.hostname + "mt5CloseSymbol: " + text);
+                        }
                         break;
                     }
                 }
