@@ -234,6 +234,8 @@ public class BscScanBinanceApplication {
         // --------------------------------------------------------------------------
         File myScap = new File(Utils.getDraftLogFile());
         myScap.delete();
+        File myObj = new File(Utils.getForexLogFile());
+        myObj.delete();
         EPICS_OUTPUTED_LOG = "";
         // --------------------------------------------------------------------------
         EPICS_OUTPUT_MSG = "";
@@ -244,20 +246,28 @@ public class BscScanBinanceApplication {
         binance_service.controlMt5(Utils.EPICS_CASH_CFD);
         // --------------------------------------------------------------------------
         Utils.logWritelnDraftFooter();
+        Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_JPY);
         Utils.logWritelnDraft("...");
+        Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_USD);
         Utils.logWritelnDraft("...");
+        Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_GBP);
         Utils.logWritelnDraft("...");
+        Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_NZD);
         Utils.logWritelnDraft("...");
+        Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_EUR);
         Utils.logWritelnDraft("...");
+        Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_AUD);
         Utils.logWritelnDraft("...");
+        Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_ALL);
         Utils.logWritelnDraft("...");
+        Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_CRYPTO_CFD);
         // --------------------------------------------------------------------------
 

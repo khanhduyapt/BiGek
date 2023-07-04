@@ -2657,16 +2657,19 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
+        Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
         Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
         List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
         List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
         if (CollectionUtils.isEmpty(list_h12)) {
             list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
         }
-        if (CollectionUtils.isEmpty(list_h12) || CollectionUtils.isEmpty(list_h4) || Objects.isNull(dto_d1)) {
+        if (CollectionUtils.isEmpty(list_h12) || CollectionUtils.isEmpty(list_h4) || Objects.isNull(dto_w1)
+                || Objects.isNull(dto_d1)) {
             return;
         }
 
+        List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
         List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
         String zone = Utils.appendSpace("Z12:" + Utils.getZoneTrend(heken_list_h12), 10);
         if (zone.contains("BUY_SELL")) {
@@ -2674,6 +2677,8 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String trend_d1 = dto_d1.getTrend();
+        String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
+        String trend_h12 = Utils.getTrendByHekenAshiList(heken_list_h12);
 
         BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
         risk = Utils.formatPrice(risk, 0);
@@ -2690,6 +2695,11 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, find_trend, EPIC, dto_entry, dto_sl), 60);
 
         Utils.logWritelnDraft(log);
+
+        if (Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())
+                || (Objects.equals(dto_w1.getTrend(), trend_h12) && Objects.equals(trend_h12, trend_h4))) {
+            Utils.logWritelnReport(log);
+        }
     }
 
     private String getTrendTimeframes(String EPIC) {
@@ -2981,7 +2991,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // ------------------ Đóng các trade đã close ------------------
-        List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAll();
+        List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByOrderByCompanyAsc();
 
         String msg = "";
         String msgStopLoss = "";
@@ -3213,7 +3223,7 @@ public class BinanceServiceImpl implements BinanceService {
     @SuppressWarnings("unused")
     @Override
     public void createReport() {
-        if (required_update_bars_csv) {
+        if (required_update_bars_csv || true) {
             return;
         }
 
@@ -3243,6 +3253,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
         risk = Utils.formatPrice(risk, 0);
+        BigDecimal multi = BigDecimal.valueOf(0.01).divide(Utils.RISK_PERCENT, 10, RoundingMode.CEILING);
+        BigDecimal risk_x5 = risk.multiply(multi);
 
         List<String> list_d1_log = new ArrayList<String>();
         List<Orders> list_all = ordersRepository.getTrend_DayList();
@@ -3252,71 +3264,23 @@ public class BinanceServiceImpl implements BinanceService {
             int index = 1;
             for (Orders dto_d1 : list_all) {
                 String EPIC = Utils.getEpicFromId(dto_d1.getId());
-
                 Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
-                Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
-                Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-                Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
-                Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(null);
-
-                if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h12)
-                        || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_05)) {
+                if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1)) {
                     continue;
                 }
 
                 String trend_w1 = dto_w1.getTrend();
                 String trend_d1 = dto_d1.getTrend();
-                String trend_h12 = dto_h12.getTrend();
-                String trend_h4 = dto_h4.getTrend();
-                String trend_h1 = dto_h1.getTrend();
-                String trend_05 = dto_05.getTrend();
 
-                String note_w1 = dto_w1.getNote();
-                String note_d1 = dto_d1.getNote();
-                String note_h12 = dto_h12.getNote();
-                String note_h4 = dto_h4.getNote();
-                String note_h1 = dto_h1.getNote();
-                String note_05 = dto_05.getNote();
+                if (Objects.equals(trend_w1, trend_d1)) {
+                    String append = Utils.appendSpace(dto_d1.getNote(), 35);
+                    String log = Utils.createLineForex_Header(dto_d1, dto_d1, append);
+                    log += Utils.appendSpace(Utils.removeLastZero(dto_d1.getCurrent_price()), 15);
+                    log += Utils.createLineForex_Body(risk_x5, dto_d1, dto_d1, trend_w1, true).trim();
 
-                String tracking_trend = trend_w1;
-
-                String CAPITAL_TIME_XX = Utils.getTimeframeTrading(trend_d1, trend_h4, trend_h1, note_d1, note_h4,
-                        note_h1);
-
-                String zone_h12 = "";
-                String zone_h4 = "";
-                String zone_h1 = "";
-                {
-                    List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
-                    List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
-                    List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
-                    if (CollectionUtils.isEmpty(list_h12) || CollectionUtils.isEmpty(list_h4)
-                            || CollectionUtils.isEmpty(list_h1)) {
-                        continue;
-                    }
-                    List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
-                    List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
-                    List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
-
-                    zone_h12 = Utils.getZoneTrend(heken_list_h12);
-                    zone_h4 = Utils.getZoneTrend(heken_list_h4);
-                    zone_h1 = Utils.getZoneTrend(heken_list_h1);
+                    list_d1_log.add(log);
+                    index += 1;
                 }
-
-                String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h4,
-                        trend_h1, "", "", note_w1, note_d1, note_h12, note_h4, tracking_trend);
-
-                Orders dto_xx = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(dto_w1);
-
-                String append = Utils
-                        .appendSpace(prefix + Utils.appendSpace(dto_xx.getNote(), 45) + getSideMa50(EPIC, true), 150);
-
-                String log = Utils.createLineForex_Header(dto_d1, dto_d1, append);
-                log += Utils.appendSpace(Utils.removeLastZero(dto_d1.getCurrent_price()), 15);
-                log += Utils.createLineForex_Body(risk, dto_d1, dto_d1, trend_w1, true).trim();
-
-                list_d1_log.add(log);
-                index += 1;
             }
         }
 
@@ -3998,7 +3962,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (m05_allow_trade && Objects.equals(action, trend_h4) && Objects.equals(action, trend_h1)
-                        && Objects.equals(action, trend_05)) {
+                        && Objects.equals(action, trend_15) && Objects.equals(action, trend_05)) {
                     append = ".4115";
 
                     dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4,
@@ -4077,7 +4041,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> mt5_close_trade_reason = new ArrayList<String>();
 
         // ----------------------------------------PROFIT--------------------------------------
-        List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAll();
+        List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByOrderByCompanyAsc();
         for (Mt5OpenTradeEntity trade : mt5Openlist) {
             String EPIC = trade.getSymbol().toUpperCase();
             String TICKET = trade.getTicket();

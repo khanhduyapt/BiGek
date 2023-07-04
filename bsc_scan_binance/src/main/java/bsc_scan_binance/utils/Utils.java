@@ -1222,7 +1222,10 @@ public class Utils {
         try {
             String logFilePath = getForexLogFile();
             String msg = text.trim();
-            if (Utils.isNotBlank(msg)) {
+
+            if (Objects.equals(text, "...")) {
+                msg = Utils.appendSpace("", 363, "_");
+            } else {
                 msg = BscScanBinanceApplication.hostname + Utils.getTimeHHmm() + " "
                         + text.replace(Utils.new_line_from_service, " ");
             }
