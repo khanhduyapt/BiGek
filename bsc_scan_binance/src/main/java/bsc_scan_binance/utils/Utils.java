@@ -185,8 +185,8 @@ public class Utils {
 
     public static String MT5_COMPANY_8CAP = "608AB61EFF9C7B3585EC08B8CF6800E3";
     public static String MT5_COMPANY_FTMO = "49CDDEAA95A409ED22BD2287BB67CB9C";
-    public static String MT5_COMPANY_5ERS = "THE5ERS";
-    public static String MT5_COMPANY_MFF = "MFF";
+    public static String MT5_COMPANY_5ERS = "10CE948A1DFC9A8C27E56E827008EBD4";
+    public static String MT5_COMPANY_MFF = "D0E8209F77C8CF37AD8BF550E51FF075";
     public static String MT5_COMPANY_ALPHA = "DA9FDBAE775DAE029270F1379F6A9F03";
 
     public static final String LINKED_NAME_2_USOIL = "_USOIL_USOUSD_";

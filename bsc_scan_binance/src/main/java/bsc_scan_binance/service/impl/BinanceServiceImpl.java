@@ -3563,13 +3563,17 @@ public class BinanceServiceImpl implements BinanceService {
     public void initTradeList() {
         List<Mt5DataTrade> tradeList = new ArrayList<Mt5DataTrade>();
 
-        List<String> COMPANIES = Arrays.asList("FTMO", "8CAP", "ALPHA");
+        List<String> COMPANIES = Arrays.asList("FTMO", "8CAP", "ALPHA", "THE5ERS", "MFF");
         for (String company : COMPANIES) {
             String company_id = Utils.MT5_COMPANY_FTMO;
             if (Objects.equals(company, "8CAP")) {
                 company_id = Utils.MT5_COMPANY_8CAP;
             } else if (Objects.equals(company, "ALPHA")) {
                 company_id = Utils.MT5_COMPANY_ALPHA;
+            } else if (Objects.equals(company, "THE5ERS")) {
+                company_id = Utils.MT5_COMPANY_5ERS;
+            } else if (Objects.equals(company, "MFF")) {
+                company_id = Utils.MT5_COMPANY_MFF;
             }
 
             String mt5_ftmo_trading_file_path = Utils.getMt5DataFolder(company_id) + "Trade.csv";
