@@ -3995,8 +3995,6 @@ public class BinanceServiceImpl implements BinanceService {
                 action = "";
                 if (Objects.equals(trend_w1, trend_d1)) {
                     action = trend_w1;
-                } else if (!Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)) {
-                    action = trend_d1;
                 }
 
                 if (m05_allow_trade && Objects.equals(action, trend_h4) && Objects.equals(action, trend_h1)
