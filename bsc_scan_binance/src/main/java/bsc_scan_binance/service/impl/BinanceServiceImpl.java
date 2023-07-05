@@ -4178,6 +4178,11 @@ public class BinanceServiceImpl implements BinanceService {
             if (isTrendInverse && (PROFIT.compareTo(profit_1R) > 0)) {
                 isPriceHit_TP = true;
             }
+            boolean isSwitchTrend = false;
+            if (isTrendInverse && ((PROFIT.add(profit_1R)).compareTo(BigDecimal.ZERO) < 0)
+                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
+                isSwitchTrend = true;
+            }
             // ---------------------------------------------------------------------------------
             boolean isTimeout = false;
             if (isTrendInverse && allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H)) {
@@ -4186,7 +4191,7 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------
             // Giữ lệnh tối thiểu 4h
             if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
-                if (isTimeout || isPriceHit_TP) {
+                if (isTimeout || isSwitchTrend || isPriceHit_TP) {
                     String prefix = Utils.getChartNameCapital(mt5Entity.getTimeframe()) + "Close:   ";
                     prefix += Utils.appendSpace(trade.getCompany(), 8);
                     prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
@@ -4201,6 +4206,9 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (isPriceHit_TP) {
                         mt5_close_trade_reason.add("HitTp");
+                    }
+                    if (isSwitchTrend) {
+                        mt5_close_trade_reason.add("-1R");
                     }
                     if (isTimeout) {
                         mt5_close_trade_reason.add("Timeout.");
