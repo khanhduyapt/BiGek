@@ -2880,6 +2880,9 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.isNull(dto)) {
                         continue;
                     }
+                    if ("_DX.f_".toUpperCase().contains(dto.getEpic().toUpperCase())) {
+                        continue;
+                    }
                     if (is_opening_trade(dto.getEpic(), dto.getOrder_type())) {
                         continue;
                     }
@@ -2908,7 +2911,7 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         if (isReloadAfter(Utils.MINUTES_OF_1H, "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type())) {
-                            String msg = "openTrade  : " + Utils.appendSpace(dto.getEpic(), 10);
+                            String msg = "openTrade: " + Utils.appendSpace(dto.getEpic(), 10);
                             msg += Utils.appendSpace(dto.getOrder_type(), 10);
                             msg += "Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
                             msg += "E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
