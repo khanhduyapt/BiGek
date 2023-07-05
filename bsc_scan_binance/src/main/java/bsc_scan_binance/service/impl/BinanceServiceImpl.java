@@ -2704,7 +2704,7 @@ public class BinanceServiceImpl implements BinanceService {
     private String getTrendTimeframes(String EPIC) {
         String result = "";// "(W1:Buy ,D1:Buy ,H12:Buy ,H8:Buy ,H4:Buy ,H2:Sell,30:Buy )";
         List<String> times = Arrays.asList(Utils.CAPITAL_TIME_W1, Utils.CAPITAL_TIME_D1, Utils.CAPITAL_TIME_H12,
-                Utils.CAPITAL_TIME_H4, Utils.CAPITAL_TIME_H1, Utils.CAPITAL_TIME_05);
+                Utils.CAPITAL_TIME_H4, Utils.CAPITAL_TIME_H1, Utils.CAPITAL_TIME_15);
 
         for (String CAPITAL_TIME_XX : times) {
             String chart_name = Utils.getChartNameCapital(CAPITAL_TIME_XX).replace("(", "").replace(")", "").trim();
@@ -3000,8 +3000,9 @@ public class BinanceServiceImpl implements BinanceService {
             count += 1;
             String multi_timeframes = getTrendTimeframes(EPIC);
             String result = "";
-            result = Utils.appendLeft(String.valueOf(count), 15) + ". " + Utils.appendSpace(trade.getCompany(), 10);
-            result += "(Trade:" + Utils.appendSpace(TRADE_TREND, 8) + ")   ";
+            result = Utils.appendLeft("Trade:" + Utils.appendLeft(String.valueOf(count), 2), 15) + ". "
+                    + Utils.appendSpace(trade.getCompany(), 10);
+            result += Utils.appendSpace(TRADE_TREND, 10) + "    ";
             result += Utils.appendSpace(EPIC, 10);
             result += Utils.appendSpace(trade.getTicket(), 10);
             result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(PROFIT), 10);
@@ -3988,19 +3989,19 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(action, trend_h4) && Objects.equals(action, trend_h1)
                         && Objects.equals(action, trend_15) && Objects.equals(action, trend_05)) {
                     append = ".4115";
-                    dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H4, append,
+                    dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_15, dto_d1, Utils.CAPITAL_TIME_H4, append,
                             true, note_d1);
                 }
                 if (Objects.isNull(dto) && m15_allow_trade && Objects.equals(action, trend_h4)
                         && Objects.equals(action, trend_h1) && Objects.equals(action, trend_15)) {
                     append = ".4215";
-                    dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H4, append,
+                    dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_15, dto_d1, Utils.CAPITAL_TIME_H4, append,
                             true, note_d1);
                 }
                 if (Objects.isNull(dto) && h1_allow_trade && Objects.equals(action, trend_h4)
                         && note_h1.contains(action) && Objects.equals(action, trend_15)) {
                     append = ".0401";
-                    dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_h1, dto_d1, Utils.CAPITAL_TIME_H4, append,
+                    dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_15, dto_d1, Utils.CAPITAL_TIME_H4, append,
                             true, note_d1);
                 }
                 // ---------------------------------------------------------------------

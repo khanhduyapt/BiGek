@@ -3955,25 +3955,30 @@ public class Utils {
 
         String No = Utils.appendLeft(String.valueOf(index), 2) + ". ";
         String prefix_wd = "";
+        String find_trend = trend_d1;
         if (Objects.equals(trend_w1, trend_d1)) {
-            prefix_wd = " W=D=" + trend_w1;
+            find_trend = trend_d1;
+            prefix_wd = appendSpace(trend_w1, 4) + ": W=D  ";
         } else if (Objects.equals(trend_w1, trend_h12)) {
-            prefix_wd = " W=H12=" + trend_w1;
+            find_trend = trend_h12;
+            prefix_wd = appendSpace(trend_w1, 4) + ": W=H12";
+        } else if (Objects.equals(trend_d1, trend_h12)) {
+            find_trend = trend_d1;
+            prefix_wd = appendSpace(trend_d1, 4) + ": D=H12";
         }
-        prefix_wd = appendSpace(prefix_wd, 12);
 
-        String trend_prefix = " [        ]";
-        if (Objects.equals(trend_d1, trend_h12)) {
-            if (Objects.equals(trend_h12, trend_h4)) {
-                trend_prefix = " [D=H12=H4]";
-            } else {
-                trend_prefix = " [D=H12   ]";
+        if (Utils.isNotBlank(prefix_wd)) {
+            if (Objects.equals(find_trend, trend_h4)) {
+                prefix_wd += "=H4";
             }
-        } else {
-            if (Objects.equals(trend_h12, trend_h4)) {
-                trend_prefix = " [  H12=H4]";
+            if (Objects.equals(find_trend, trend_h1)) {
+                prefix_wd += "=H1";
+            }
+            if (Objects.equals(find_trend, trend_15)) {
+                prefix_wd += "=15";
             }
         }
+        prefix_wd = appendSpace(prefix_wd, 25);
 
         String switch_trend = "{";
         if (Objects.equals(trend_d1, trend_h12) && note_d1.contains(trend_h12)) {
@@ -3995,7 +4000,7 @@ public class Utils {
         }
         switch_trend += "}  ";
 
-        String result = No + prefix_wd + trend_prefix + switch_trend;
+        String result = No + prefix_wd + switch_trend;
         return result;
     }
 
