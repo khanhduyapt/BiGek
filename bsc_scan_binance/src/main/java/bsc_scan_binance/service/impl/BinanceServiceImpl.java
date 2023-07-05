@@ -4003,14 +4003,14 @@ public class BinanceServiceImpl implements BinanceService {
                             true, note_d1);
                 }
 
-                if (Objects.isNull(dto) && h1_allow_trade && Objects.equals(action, trend_h4)
+                if (Objects.isNull(dto) && m15_allow_trade && m05_allow_trade && Objects.equals(action, trend_h4)
                         && Objects.equals(action, trend_h1) && Objects.equals(action, trend_15)) {
                     append = ".1514";
                     dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4, append,
                             true, note_d1);
                 }
 
-                if (Objects.isNull(dto) && m05_allow_trade && Objects.equals(trend_h4, trend_h1)
+                if (Objects.isNull(dto) && h1_allow_trade && Objects.equals(trend_h4, trend_h1)
                         && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
                     append = ".5151";
                     dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4, append,
