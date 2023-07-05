@@ -3955,16 +3955,21 @@ public class Utils {
 
         String No = Utils.appendLeft(String.valueOf(index), 2) + ". ";
         String prefix_wd = "";
-        String find_trend = trend_d1;
+        String find_trend = "";
         if (Objects.equals(trend_w1, trend_d1)) {
             find_trend = trend_d1;
-            prefix_wd = appendSpace(trend_w1, 4) + ": W=D  ";
+            prefix_wd = appendSpace(trend_w1, 4) + ": W=D";
+            if (Objects.equals(find_trend, trend_h4)) {
+                prefix_wd += "=H12";
+            } else {
+                prefix_wd += "    ";
+            }
         } else if (Objects.equals(trend_w1, trend_h12)) {
             find_trend = trend_h12;
-            prefix_wd = appendSpace(trend_w1, 4) + ": W=H12";
+            prefix_wd = appendSpace(trend_w1, 4) + ": W  =H12";
         } else if (Objects.equals(trend_d1, trend_h12)) {
             find_trend = trend_d1;
-            prefix_wd = appendSpace(trend_d1, 4) + ": D=H12";
+            prefix_wd = appendSpace(trend_d1, 4) + ":   D=H12";
         }
 
         if (Utils.isNotBlank(prefix_wd)) {
