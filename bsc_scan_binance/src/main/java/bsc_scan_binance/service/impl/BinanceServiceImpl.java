@@ -2850,12 +2850,14 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private void openTrade() {
-        if (!Utils.isHuntTime_7h_to_23h() || Utils.isNewsAt_19_20_21h()) {
-            if (isReloadAfter(Utils.MINUTES_OF_1H, "OpenTrade")) {
-                Utils.logWritelnDraft("[OpenTrade] thoi gian nghi, khong vao lenh.");
-            }
+        if (!CollectionUtils.isEmpty(BscScanBinanceApplication.mt5_open_trade_List)) {
+            if (!Utils.isHuntTime_7h_to_23h() || Utils.isNewsAt_19_20_21h()) {
+                if (isReloadAfter(Utils.MINUTES_OF_1H, "OpenTrade")) {
+                    Utils.logWritelnDraft("[OpenTrade] thoi gian nghi, khong vao lenh.");
+                }
 
-            BscScanBinanceApplication.mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
+                BscScanBinanceApplication.mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
+            }
         }
 
         String mt5_open_trade_file = Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + "OpenTrade.csv";
