@@ -52,7 +52,7 @@ void OnTimer(void)
      {
       FileWrite(nfile_handle, "");
 
-      string arr_symbol[] = {"XAUUSD", "XAGUSD", "BTCUSD", "US30.cash", "US100.cash", "EU50.cash", "GER40.cash", "UK100.cash", "USOIL.cash", "AUS200.cash",
+      string arr_symbol[] = {"DX.f", "XAUUSD", "XAGUSD", "BTCUSD", "US30.cash", "US100.cash", "EU50.cash", "GER40.cash", "UK100.cash", "USOIL.cash", "AUS200.cash",
                              "ETHUSD", "DOGEUSD", "FRA40.cash", "SPN35.cash",
                              "DOTUSD", "ADAUSD", "XRPUSD", "DASHUSD", "LTCUSD",
                              "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
