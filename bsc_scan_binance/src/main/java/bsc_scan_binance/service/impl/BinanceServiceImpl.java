@@ -3581,15 +3581,16 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
+            int row_count = 0;
             boolean has_open_trade = false;
             try {
                 String line;
-                int count = 0;
+
                 Reader reader = new InputStreamReader(new FileInputStream(mt5_data_file), "UTF-8");
                 BufferedReader fin = new BufferedReader(reader);
                 while ((line = fin.readLine()) != null) {
-                    count += 1;
-                    if (count == 1) {
+                    row_count += 1;
+                    if (row_count == 1) {
                         continue;
                     }
                     String[] tempArr = line.replace(".cash", "").replace(".pro", "").split("\\t");
@@ -3621,7 +3622,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // Đóng các lệnh đã close
-            if (has_open_trade) {
+            if (has_open_trade || (row_count == 1)) {
                 List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByCompanyOrderBySymbolAsc(company);
                 for (Mt5OpenTradeEntity entity : mt5Openlist) {
                     boolean not_found = true;
