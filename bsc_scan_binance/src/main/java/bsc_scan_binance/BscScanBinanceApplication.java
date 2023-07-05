@@ -247,6 +247,7 @@ public class BscScanBinanceApplication {
         binance_service.controlMt5(Utils.EPICS_CASH_CFD);
         // --------------------------------------------------------------------------
         Utils.logWritelnDraftFooter();
+        Utils.logWritelnReport("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_JPY);
         Utils.logWritelnDraft("...");
         binance_service.controlMt5(Utils.EPICS_FOREXS_USD);
