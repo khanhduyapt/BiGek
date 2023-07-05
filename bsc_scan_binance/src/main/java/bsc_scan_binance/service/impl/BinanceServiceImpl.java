@@ -145,7 +145,6 @@ public class BinanceServiceImpl implements BinanceService {
     private PrepareOrdersRepository prepareOrdersRepository;
 
     private String BTC_ETH_BNB = "_BTC_ETH_BNB_";
-    private static final String EVENT_DANGER_CZ_KILL_LONG = "CZ_KILL_LONG";
     private static final String EVENT_BTC_RANGE = "BTC_RANGE";
 
     private static final String EVENT_PUMP = "Pump_";
@@ -3988,27 +3987,27 @@ public class BinanceServiceImpl implements BinanceService {
                         && (note_d1.contains(action) || note_h12.contains(action) || note_h4.contains(action))
                         && Objects.equals(action, trend_h4) && Objects.equals(action, trend_h1)
                         && Objects.equals(action, trend_15) && Objects.equals(action, trend_05)) {
-                    append = ".4115";
+                    append = ".515w";
                     dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4, append,
                             true, note_d1);
                 }
                 if (Objects.isNull(dto) && m15_allow_trade && m05_allow_trade && Objects.equals(action, trend_h4)
                         && Objects.equals(action, trend_h1) && Objects.equals(action, trend_15)
                         && Objects.equals(action, trend_05)) {
-                    append = ".4215";
+                    append = ".515a";
                     dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4, append,
                             true, note_d1);
                 }
                 if (Objects.isNull(dto) && h1_allow_trade && Objects.equals(action, trend_h4)
                         && note_h1.contains(action) && Objects.equals(action, trend_15)) {
-                    append = ".0401";
+                    append = ".15w1";
                     dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4, append,
                             true, note_d1);
                 }
                 if (Objects.isNull(dto) && h1_allow_trade && m15_allow_trade && m05_allow_trade
                         && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
                         && Objects.equals(trend_15, trend_05)) {
-                    append = ".0015";
+                    append = ".5151";
                     dto = Utils.calc_Lot_En_SL_TP(risk_x5, EPIC, action, dto_05, dto_d1, Utils.CAPITAL_TIME_H4, append,
                             true, note_d1);
                 }
