@@ -194,6 +194,8 @@ public class Utils {
     public static final String LINKED_NAME_2_GER40 = "_GER40_GER30_";
     public static final String LINKED_NAME_2_EU50 = "_EU50_EUSTX50_";
 
+    public static final List<String> COMPANIES = Arrays.asList("FTMO", "8CAP", "ALPHA", "THE5ERS", "MFF");
+
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 

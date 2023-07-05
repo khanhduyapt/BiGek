@@ -2974,79 +2974,72 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        // ------------------ Đóng các trade đã close ------------------
-        List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByOrderByCompanyAscSymbolAsc();
+        // -----------------------------------
+        // TODO: 6. monitorProfit
+        Utils.logWritelnDraft("");
+        for (String company : Utils.COMPANIES) {
+            List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByCompanyOrderBySymbolAsc(company);
 
-        String msg = "";
-        String msgStopLoss = "";
-        String msgStopScalping = "";
-        BigDecimal total = BigDecimal.ZERO;
-        List<String> scalpingList = new ArrayList<String>();
+            String msg = "";
+            String msgStopLoss = "";
+            String msgStopScalping = "";
+            BigDecimal total = BigDecimal.ZERO;
 
-        try {
-            String mt5_close_trade_file = Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + "CloseSymbols.csv";
-            File myScap = new File(mt5_close_trade_file);
-            myScap.delete();
-        } catch (Exception e) {
-        }
+            try {
+                String mt5_close_trade_file = Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + "CloseSymbols.csv";
+                File myScap = new File(mt5_close_trade_file);
+                myScap.delete();
+            } catch (Exception e) {
+            }
 
-        int count = 0;
-        BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
-        String max_risk = "     MaxRisk:" + Utils.appendLeft(Utils.removeLastZero(risk), 10) + "$_1Trade";
+            int count = 0;
+            BigDecimal risk = Utils.ACCOUNT.multiply(Utils.RISK_PERCENT);
+            String max_risk = "     MaxRisk:" + Utils.appendLeft(Utils.removeLastZero(risk), 10) + "$_1Trade";
 
-        for (Mt5OpenTradeEntity trade : mt5Openlist) {
-            String EPIC = trade.getSymbol();
-            String TRADE_TREND = trade.getTypeDescription().toUpperCase();
-            BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
+            for (Mt5OpenTradeEntity trade : mt5Openlist) {
+                String EPIC = trade.getSymbol();
+                String TRADE_TREND = trade.getTypeDescription().toUpperCase();
+                BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
 
-            // ---------------------------------------------------------------------------------
-            count += 1;
-            String multi_timeframes = getTrendTimeframes(EPIC);
-            String result = "";
-            result = Utils.appendLeft("Trade:" + Utils.appendLeft(String.valueOf(count), 2), 15) + ". "
-                    + Utils.appendSpace(trade.getCompany(), 10);
-            result += Utils.appendSpace(TRADE_TREND, 10) + "    ";
-            result += Utils.appendSpace(EPIC, 10);
-            result += Utils.appendSpace(trade.getTicket(), 10);
-            result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(PROFIT), 10);
-            result += "    " + multi_timeframes;
-            result += "    " + Utils.appendSpace(trade.getComment(), 30);
+                // ---------------------------------------------------------------------------------
+                count += 1;
+                String multi_timeframes = getTrendTimeframes(EPIC);
+                String result = "";
+                result = Utils.appendLeft("Trade:" + Utils.appendLeft(String.valueOf(count), 2), 15) + ". "
+                        + Utils.appendSpace(trade.getCompany(), 10);
+                result += Utils.appendSpace(TRADE_TREND, 10) + "    ";
+                result += Utils.appendSpace(EPIC, 10);
+                result += Utils.appendSpace(trade.getTicket(), 10);
+                result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(PROFIT), 10);
+                result += "    " + multi_timeframes;
+                result += "    " + Utils.appendSpace(trade.getComment(), 30);
 
-            total = total.add(PROFIT);
-            msg += result + Utils.new_line_from_service;
+                total = total.add(PROFIT);
+                msg += result + Utils.new_line_from_service;
 
-            if (result.contains("StopLoss")) {
-                msgStopLoss += result.replace(multi_timeframes, "") + Utils.new_line_from_service;
+                if (result.contains("StopLoss")) {
+                    msgStopLoss += result.replace(multi_timeframes, "") + Utils.new_line_from_service;
+                }
+            }
+
+            if (Utils.isNotBlank(msg)) {
+                msg = Utils.appendSpace(company, 15) + Utils.appendLeft(String.valueOf(total), 10) + max_risk
+                        + Utils.new_line_from_service + msg;
+                Utils.logWritelnDraft(msg);
+            }
+            if (Utils.isNotBlank(msgStopLoss)) {
+                msgStopLoss = "[STOP_LOSS]" + max_risk + Utils.new_line_from_service + msgStopLoss;
+
+                String EVENT_ID = "StopLoss" + Utils.getCurrentYyyyMmDd_HH();
+                sendMsgPerHour_OnlyMe(EVENT_ID, msgStopLoss);
+            }
+            if (Utils.isNotBlank(msgStopScalping)) {
+                msgStopScalping = "[STOP_SCALPING]" + Utils.new_line_from_service + msgStopScalping;
+
+                String EVENT_ID = "StopScalping" + Utils.getCurrentYyyyMmDd_HH();
+                sendMsgPerHour_OnlyMe(EVENT_ID, msgStopScalping);
             }
         }
-
-        if (Utils.isNotBlank(msg)) {
-            msg = Utils.appendLeft(String.valueOf(total), 10) + max_risk + Utils.new_line_from_service + msg;
-            Utils.logWritelnDraft(msg);
-        }
-        if (Utils.isNotBlank(msgStopLoss)) {
-            msgStopLoss = "[STOP_LOSS]" + max_risk + Utils.new_line_from_service + msgStopLoss;
-
-            String EVENT_ID = "StopLoss" + Utils.getCurrentYyyyMmDd_HH();
-            sendMsgPerHour_OnlyMe(EVENT_ID, msgStopLoss);
-        }
-        if (Utils.isNotBlank(msgStopScalping)) {
-            msgStopScalping = "[STOP_SCALPING]" + Utils.new_line_from_service + msgStopScalping;
-
-            String EVENT_ID = "StopScalping" + Utils.getCurrentYyyyMmDd_HH();
-            sendMsgPerHour_OnlyMe(EVENT_ID, msgStopScalping);
-        }
-
-        if (scalpingList.size() > 0) {
-            Utils.logWritelnDraft("");
-            for (String scalping : scalpingList) {
-                Utils.logWritelnDraft(scalping);
-            }
-            Utils.logWritelnDraft("");
-        }
-
-        Utils.logWritelnDraft("");
-        Utils.logWritelnDraft("");
         Utils.logWritelnDraft("");
     }
 
@@ -3567,8 +3560,7 @@ public class BinanceServiceImpl implements BinanceService {
     public void initTradeList() {
         List<Mt5DataTrade> tradeList = new ArrayList<Mt5DataTrade>();
 
-        List<String> COMPANIES = Arrays.asList("FTMO", "8CAP", "ALPHA", "THE5ERS", "MFF");
-        for (String company : COMPANIES) {
+        for (String company : Utils.COMPANIES) {
             String company_id = Utils.MT5_COMPANY_FTMO;
             if (Objects.equals(company, "8CAP")) {
                 company_id = Utils.MT5_COMPANY_8CAP;
@@ -3586,6 +3578,7 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
+            boolean has_open_trade = false;
             try {
                 String line;
                 int count = 0;
@@ -3614,6 +3607,7 @@ public class BinanceServiceImpl implements BinanceService {
                         dto.setCurrPrice(Utils.roundDefault(Utils.getBigDecimal(tempArr[9])));
                         dto.setCompany(company);
                         tradeList.add(dto);
+                        has_open_trade = true;
                     }
                 }
 
@@ -3622,20 +3616,22 @@ public class BinanceServiceImpl implements BinanceService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
 
-        // Đóng các lệnh đã close
-        List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAll();
-        for (Mt5OpenTradeEntity entity : mt5Openlist) {
-            boolean not_found = true;
-            for (Mt5DataTrade trade : tradeList) {
-                if (Objects.equals(entity.getTicket(), trade.getTicket())) {
-                    not_found = false;
-                    break;
+            // Đóng các lệnh đã close
+            if (has_open_trade) {
+                List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByCompanyOrderBySymbolAsc(company);
+                for (Mt5OpenTradeEntity entity : mt5Openlist) {
+                    boolean not_found = true;
+                    for (Mt5DataTrade trade : tradeList) {
+                        if (Objects.equals(entity.getTicket(), trade.getTicket())) {
+                            not_found = false;
+                            break;
+                        }
+                    }
+                    if (not_found) {
+                        mt5OpenTradeRepository.deleteById(entity.getTicket());
+                    }
                 }
-            }
-            if (not_found) {
-                mt5OpenTradeRepository.deleteById(entity.getTicket());
             }
         }
 
