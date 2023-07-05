@@ -192,6 +192,7 @@ public class Utils {
     public static final String LINKED_NAME_2_USOIL = "_USOIL_USOUSD_";
     public static final String LINKED_NAME_2_US100 = "_NDX100_US100_NAS100_";
     public static final String LINKED_NAME_2_GER40 = "_GER40_GER30_";
+    public static final String LINKED_NAME_2_EU50 = "_EU50_EUSTX50_";
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");

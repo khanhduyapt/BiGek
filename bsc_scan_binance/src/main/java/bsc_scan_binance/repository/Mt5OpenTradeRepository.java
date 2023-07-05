@@ -9,7 +9,7 @@ import bsc_scan_binance.entity.Mt5OpenTradeEntity;
 
 @Repository
 public interface Mt5OpenTradeRepository extends JpaRepository<Mt5OpenTradeEntity, String> {
-    List<Mt5OpenTradeEntity> findAllBySymbol(String symbol);
+    List<Mt5OpenTradeEntity> findAllBySymbolOrderByCompanyAsc(String symbol);
 
     List<Mt5OpenTradeEntity> findAllByOrderByCompanyAscSymbolAsc();
 }

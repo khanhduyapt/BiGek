@@ -415,6 +415,7 @@ public class BscScanBinanceApplication {
         linked_2_ftmo.put(Utils.LINKED_NAME_2_USOIL, "USOIL");
         linked_2_ftmo.put(Utils.LINKED_NAME_2_US100, "US100");
         linked_2_ftmo.put(Utils.LINKED_NAME_2_GER40, "GER40");
+        linked_2_ftmo.put(Utils.LINKED_NAME_2_EU50, "EU50");
 
         forex_naming_dict.put("DXY", "US Dollar Index");
         forex_naming_dict.put("OIL_CRUDE", "US Crude Oil");
