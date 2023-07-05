@@ -2927,9 +2927,6 @@ public class BinanceServiceImpl implements BinanceService {
         }
     }
 
-    // H1 & H4 nguoc huong -> thong bao cat lenh.
-    // Xu huong H4 cung xu huong nhung yeu di? Msg thong bao take profit.
-    // Xu huong H1 cung xu huong nhung yeu di? Log thong bao.
     @Override
     @Transactional
     public void monitorProfit() {
@@ -4208,20 +4205,18 @@ public class BinanceServiceImpl implements BinanceService {
                     mt5_close_trade_list.add(TICKET);
 
                     if (isPriceHit_TP) {
-                        mt5_close_trade_reason.add("PriceHitTp");
+                        mt5_close_trade_reason.add("HitTp");
                     }
                     if (isPriceHit_SL) {
-                        mt5_close_trade_reason.add("PriceHitSL.");
+                        mt5_close_trade_reason.add("HitSL.");
                     }
                     if (isTimeout) {
-                        mt5_close_trade_reason.add("TimeoutInverse.");
+                        mt5_close_trade_reason.add("Timeout.");
                     }
                 }
             }
         }
 
-        String key = "";
-        String msg = "";
         String mt5_data_file = Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + "CloseSymbols.csv";
         BigDecimal total_profit = BigDecimal.ZERO;
         try {
@@ -4245,16 +4240,15 @@ public class BinanceServiceImpl implements BinanceService {
                                 + Utils.appendSpace("_Vol:" + trade.getVolume(), 15) + "_Profit:"
                                 + Utils.appendSpace(trade.getProfit().toString(), 10) + Utils.appendLeft(REASON, 30);
 
-                        key = trade.getSymbol() + "_" + trade.getTypeDescription() + ".";
-                        msg = trade.getCompany() + "." + trade.getTicket() + ".Close:" + trade.getTypeDescription()
-                                + ":" + trade.getSymbol() + ".Vol:" + trade.getVolume() + ".Profit:"
-                                + trade.getProfit().toString() + "..." + REASON + Utils.new_line_from_service;
+                        String key = trade.getSymbol() + "_" + trade.getTypeDescription() + ".";
+                        String EVENT_ID = "CLOSE_TRADE" + Utils.getCurrentYyyyMmDd_HH() + key;
 
-                        if (Utils.isNotBlank(msg)) {
-                            msg = "(CLOSE) profit:" + total_profit + Utils.new_line_from_service + msg;
-                            String EVENT_ID = "CloseTrade" + Utils.getCurrentYyyyMmDd_HH() + key;
-                            sendMsgPerHour_OnlyMe(EVENT_ID, msg);
-                        }
+                        String msg = "(FTMO)";
+                        msg += Utils.new_line_from_service;
+                        msg += trade.getCompany() + ".Close:" + trade.getTypeDescription() + ":" + trade.getSymbol();
+                        msg += Utils.new_line_from_service;
+                        msg += ".Profit:" + trade.getProfit().toString() + "..." + trade.getTicket() + "." + REASON;
+                        sendMsgPerHour_OnlyMe(EVENT_ID, msg);
 
                         total_profit = total_profit.add(trade.getProfit());
                         if (isReloadAfter(Utils.MINUTES_OF_15M,
