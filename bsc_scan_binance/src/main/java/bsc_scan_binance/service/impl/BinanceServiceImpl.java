@@ -4243,11 +4243,10 @@ public class BinanceServiceImpl implements BinanceService {
                         String key = trade.getSymbol() + "_" + trade.getTypeDescription() + ".";
                         String EVENT_ID = "CLOSE_TRADE" + Utils.getCurrentYyyyMmDd_HH() + key;
 
-                        String msg = "(FTMO)";
+                        String msg = "(FTMO)" + trade.getTicket() + "." + REASON;
                         msg += Utils.new_line_from_service;
                         msg += trade.getCompany() + ".Close:" + trade.getTypeDescription() + ":" + trade.getSymbol();
-                        msg += Utils.new_line_from_service;
-                        msg += ".Profit:" + trade.getProfit().toString() + "..." + trade.getTicket() + "." + REASON;
+                        msg += ".Profit:" + trade.getProfit().toString();
                         sendMsgPerHour_OnlyMe(EVENT_ID, msg);
 
                         total_profit = total_profit.add(trade.getProfit());
