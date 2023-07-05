@@ -3003,6 +3003,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // ---------------------------------------------------------------------------------
                 count += 1;
+
                 String multi_timeframes = getTrendTimeframes(EPIC);
                 String result = "";
                 result = Utils.appendLeft("Trade:" + Utils.appendLeft(String.valueOf(count), 2), 15) + ". "
@@ -4018,6 +4019,11 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.nonNull(dto)) {
                     String reject_id = "";
 
+                    if ((Utils.EPICS_INDEXS.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC))
+                            && Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, action)) {
+                        reject_id = " RejectID: w1=d1 d1!=action";
+                    }
+
                     if (Objects.equals(trend_d1, trend_h12) && !Objects.equals(trend_h12, action)) {
                         reject_id = " RejectID: d1=h12 h12!=action";
                     }
@@ -4148,8 +4154,7 @@ public class BinanceServiceImpl implements BinanceService {
                 isTrendInverse = true;
             }
 
-            if ((Utils.allowFinishTradeThisDay() && (trade.getStopLoss().compareTo(BigDecimal.ZERO) > 0))
-                    || Utils.allowFinishTradeThisWeek()
+            if (Utils.allowFinishTradeThisDay() || Utils.allowFinishTradeThisWeek()
                     || Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_H1)) {
                 if (!Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
                         && !Objects.equals(trend_05, TRADE_TREND)) {
