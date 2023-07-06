@@ -2386,10 +2386,10 @@ public class Utils {
         }
 
         BigDecimal ma = calcMA(list, length, 1);
-        BigDecimal ma3_0 = calcMA(list, 3, 0);
-        BigDecimal ma3_1 = calcMA(list, 3, 1);
+        BigDecimal ma1_0 = calcMA(list, 1, 0);
+        BigDecimal ma1_1 = calcMA(list, 1, 1);
 
-        if ((ma3_0.compareTo(ma) > 0) && (ma3_1.compareTo(ma) > 0)) {
+        if ((ma1_0.compareTo(ma) > 0) && (ma1_1.compareTo(ma) > 0)) {
             return true;
         }
 
@@ -2408,10 +2408,10 @@ public class Utils {
         }
 
         BigDecimal ma = calcMA(list, length, 1);
-        BigDecimal ma3_0 = calcMA(list, 3, 0);
-        BigDecimal ma3_1 = calcMA(list, 3, 1);
+        BigDecimal ma1_0 = calcMA(list, 1, 0);
+        BigDecimal ma1_1 = calcMA(list, 1, 1);
 
-        if ((ma3_0.compareTo(ma) < 0) && (ma3_1.compareTo(ma) < 0)) {
+        if ((ma1_0.compareTo(ma) < 0) && (ma1_1.compareTo(ma) < 0)) {
             return true;
         }
 
