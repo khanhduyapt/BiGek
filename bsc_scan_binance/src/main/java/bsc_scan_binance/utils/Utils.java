@@ -4172,7 +4172,7 @@ public class Utils {
             return isUptrend_1 ? Utils.TREND_LONG : Utils.TREND_SHOT;
         }
 
-        return isUptrend_2 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        return isUptrend_1 ? Utils.TREND_LONG : Utils.TREND_SHOT;
     }
 
     public static String getTrendByHekenAshiList(List<BtcFutures> heken_list) {

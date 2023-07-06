@@ -2737,31 +2737,30 @@ public class BinanceServiceImpl implements BinanceService {
 
         Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
         Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+        Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
         Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
 
         List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
-        List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
         if (CollectionUtils.isEmpty(list_h12)) {
             list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_D1);
         }
-        if (CollectionUtils.isEmpty(list_h12) || CollectionUtils.isEmpty(list_h4) || Objects.isNull(dto_w1)
-                || Objects.isNull(dto_d1)) {
+        if (CollectionUtils.isEmpty(list_h12) || Objects.isNull(dto_w1)
+                || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
             return;
         }
 
-        List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
         List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
         String zone = Utils.appendSpace("Z12:" + Utils.getZoneTrend(heken_list_h12), 10);
         if (zone.contains("BUY_SELL")) {
             zone = Utils.appendSpace("", 10);
         }
 
-        String trend_h1 = dto_d1.getTrend();
         String trend_d1 = dto_d1.getTrend();
-        String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
+        String trend_h4 = dto_h4.getTrend();
+        String trend_h1 = dto_h1.getTrend();
 
         if (dto_h1.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_h1)) {
-            append += " H1A ";
+            append += " A   ";
         } else {
             append += "     ";
         }
@@ -3750,7 +3749,6 @@ public class BinanceServiceImpl implements BinanceService {
 
         String type = "";
 
-        // TODO: 1. initForexTrend
         if ((heken_list.size() > 50) && Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_05)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_15)) {
 
@@ -3819,7 +3817,12 @@ public class BinanceServiceImpl implements BinanceService {
             sl_shot = sl_at_switch_trend;
         }
 
+        // TODO: 1. initForexTrend
         String nocation = "";
+        if (orderId.contains("US30_HOUR_01")) {
+            nocation = "";
+        }
+
         if (heken_list.size() >= 50) {
             if (Utils.isBelowMALine(heken_list, 50)) {
                 nocation = Utils.NOCATION_BELOW_MA50;
@@ -3827,7 +3830,8 @@ public class BinanceServiceImpl implements BinanceService {
                 nocation = Utils.NOCATION_ABOVE_MA50;
             }
 
-            if (Utils.isBlank(nocation) && Utils.switchTrendByMa13_XX(heken_list, 50).contains(trend)) {
+            if (CAPITAL_TIME_XX.contains("MINUTE_") && Utils.isBlank(nocation)
+                    && Utils.switchTrendByMa13_XX(heken_list, 50).contains(trend)) {
                 nocation = Utils.NOCATION_CUTTING_MA50;
             }
         }
@@ -3869,7 +3873,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // EPIC = "BTCUSD";
-
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
