@@ -3822,14 +3822,17 @@ public class BinanceServiceImpl implements BinanceService {
 
         String nocation = "";
         if (heken_list.size() >= 50) {
-            if (Utils.isNotBlank(Utils.switchTrendByMa13_XX(heken_list, 50))) {
-                nocation = Utils.NOCATION_CUTTING_MA50;
-            } else if (Utils.isBelowMALine(heken_list, 50)) {
+            if (Utils.isBelowMALine(heken_list, 50)) {
                 nocation = Utils.NOCATION_BELOW_MA50;
             } else if (Utils.isAboveMALine(heken_list, 50)) {
                 nocation = Utils.NOCATION_ABOVE_MA50;
             }
+
+            if (Utils.isBlank(nocation) && Utils.switchTrendByMa13_XX(heken_list, 50).contains(trend)) {
+                nocation = Utils.NOCATION_CUTTING_MA50;
+            }
         }
+
         boolean allow_trade_by_ma50 = false;
         if (Objects.equals(trend, Utils.TREND_LONG)
                 && Objects.equals(nocation, Utils.NOCATION_BELOW_MA50)) {
@@ -3837,6 +3840,9 @@ public class BinanceServiceImpl implements BinanceService {
         }
         if (Objects.equals(trend, Utils.TREND_SHOT)
                 && Objects.equals(nocation, Utils.NOCATION_ABOVE_MA50)) {
+            allow_trade_by_ma50 = true;
+        }
+        if (CAPITAL_TIME_XX.contains("MINUTE_") && Objects.equals(nocation, Utils.NOCATION_CUTTING_MA50)) {
             allow_trade_by_ma50 = true;
         }
 
