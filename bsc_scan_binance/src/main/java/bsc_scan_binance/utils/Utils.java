@@ -4180,7 +4180,6 @@ public class Utils {
         }
         String id = heken_list.get(0).getId();
         int candle_no = 0;
-
         if (id.contains(PREFIX_5m_) || id.contains(PREFIX_15m_)) {
             candle_no = 1;
         }
