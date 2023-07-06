@@ -4002,8 +4002,8 @@ public class BinanceServiceImpl implements BinanceService {
                                 Utils.CAPITAL_TIME_H4, append, true, note_d1);
                     }
                 } else {
-                    if (Objects.isNull(dto) && dto_h1.isAllow_trade_by_ma50() && dto_05.isAllow_trade_by_ma50()
-                            && (dto_h4.isAllow_trade_by_ma50() || dto_15.isAllow_trade_by_ma50())
+                    if (Objects.isNull(dto) && dto_05.isAllow_trade_by_ma50()
+                            && Objects.equals(trend_h4, trend_d1) && Objects.equals(trend_h4, dto_d1.getTrend_c1())
                             && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, dto_h1.getTrend_c1())
                             && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, dto_15.getTrend_c1())
                             && Objects.equals(trend_h4, trend_05) && Objects.equals(trend_h4, dto_05.getTrend_c1())) {
