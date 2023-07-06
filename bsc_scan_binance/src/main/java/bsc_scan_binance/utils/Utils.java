@@ -2386,10 +2386,9 @@ public class Utils {
         }
 
         BigDecimal ma = calcMA(list, length, 1);
-        BigDecimal ma1_0 = calcMA(list, 1, 0);
-        BigDecimal ma1_1 = calcMA(list, 1, 1);
+        BigDecimal price = list.get(0).getCurrPrice();
 
-        if ((ma1_0.compareTo(ma) > 0) && (ma1_1.compareTo(ma) > 0)) {
+        if ((price.compareTo(ma) > 0)) {
             return true;
         }
 
@@ -2408,10 +2407,9 @@ public class Utils {
         }
 
         BigDecimal ma = calcMA(list, length, 1);
-        BigDecimal ma1_0 = calcMA(list, 1, 0);
-        BigDecimal ma1_1 = calcMA(list, 1, 1);
+        BigDecimal price = list.get(0).getCurrPrice();
 
-        if ((ma1_0.compareTo(ma) < 0) && (ma1_1.compareTo(ma) < 0)) {
+        if ((price.compareTo(ma) < 0)) {
             return true;
         }
 

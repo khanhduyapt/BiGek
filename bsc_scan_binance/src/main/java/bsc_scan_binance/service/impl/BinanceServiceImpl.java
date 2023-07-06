@@ -2760,7 +2760,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_d1 = dto_d1.getTrend();
         String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
 
-        if (dto_h1.isAllow_trade_by_ma50()) {
+        if (dto_h1.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_h1)) {
             append += " H1A ";
         } else {
             append += "     ";
@@ -3964,46 +3964,12 @@ public class BinanceServiceImpl implements BinanceService {
             // TODO: 3. controlMt5 : Không bao giờ được đánh ngược trend_d1
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
+
                 Mt5OpenTrade dto = null;
 
-                action = "";
-                if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)) {
-                    action = trend_d1;
-                } else if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)) {
-                    action = trend_d1;
-                }
-
-                if (Utils.isNotBlank(action)) {
-                    if (dto_05.isAllow_trade_by_ma50()
-                            && (note_d1.contains(action) || note_h12.contains(action) || note_h4.contains(action))
-                            && Objects.equals(action, trend_h4) && Objects.equals(action, trend_h1)
-                            && Objects.equals(action, trend_15) && Objects.equals(action, trend_05)) {
-                        append = ".41155w";
-                        dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_05, dto_h4,
-                                Utils.CAPITAL_TIME_H4, append, true, note_d1);
-                    }
-
-                    if (Objects.isNull(dto) && dto_15.isAllow_trade_by_ma50() && dto_05.isAllow_trade_by_ma50()
-                            && Objects.equals(action, trend_h4) && Objects.equals(action, trend_h1)
-                            && Objects.equals(action, trend_15) && Objects.equals(action, trend_05)) {
-                        append = ".41155a";
-                        dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_05, dto_h4,
-                                Utils.CAPITAL_TIME_H4, append, true, note_d1);
-                    }
-
-                    if (Objects.isNull(dto)
-                            && (dto_h1.isAllow_trade_by_ma50()
-                                    || (dto_15.isAllow_trade_by_ma50() && dto_05.isAllow_trade_by_ma50()))
-                            && Objects.equals(action, trend_h4) && Objects.equals(action, trend_h1)
-                            && Objects.equals(action, trend_15)) {
-                        append = ".40115a";
-                        dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_05, dto_h4,
-                                Utils.CAPITAL_TIME_H4, append, true, note_d1);
-                    }
-                }
-
                 if (Objects.isNull(dto) && dto_05.isAllow_trade_by_ma50()
-                        && (Objects.equals(trend_h4, dto_d1.getTrend_c1()) || note_d1.contains(trend_d1))
+                        && (Objects.equals(
+                                trend_h4, dto_d1.getTrend_c1()) || note_d1.contains(trend_d1))
                         && Objects.equals(trend_h4, trend_d1) && Objects.equals(trend_h4, trend_h1)
                         && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, trend_05)) {
                     action = trend_h4;
