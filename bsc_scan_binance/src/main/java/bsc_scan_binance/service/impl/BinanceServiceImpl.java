@@ -4088,7 +4088,6 @@ public class BinanceServiceImpl implements BinanceService {
                     && !Objects.equals(trend_05, TRADE_TREND)) {
                 isTrendInverse = true;
             }
-
             // ---------------------------------------------------------------------------------
             boolean isPriceHit_TP = false;
             if (PROFIT.compareTo(Utils.RISK_0_15_PERCENT) > 0) {
