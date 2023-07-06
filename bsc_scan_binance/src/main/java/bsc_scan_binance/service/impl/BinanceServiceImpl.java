@@ -3500,24 +3500,13 @@ public class BinanceServiceImpl implements BinanceService {
             w1d1h4h1 = w1d1h4h1.replace(" ", "");
 
             // TODO: scapStocks
-            if (dto_h1.isAllow_trade_by_ma50() && Objects.equals(trend_w1, trend_d1)
-                    && (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1))
-                    && Objects.equals(trend_h1, trend_15)) {
+            if ((dto_15.isAllow_trade_by_ma50() || dto_h1.isAllow_trade_by_ma50())
+                    && Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)
+                    && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
 
-                // Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1, dto_15, dto_d1,
-                // Utils.CAPITAL_TIME_D1,
-                // ".962415", true, dto_d1.getNote());
-                //
-                // BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-            }
-
-            if (dto_15.isAllow_trade_by_ma50() && Objects.equals(trend_w1, trend_d1)
-                    && (Objects.equals(trend_d1, trend_h4) || Objects.equals(trend_d1, trend_h1))
-                    && Objects.equals(trend_d1, trend_15)) {
-
-                // Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1, dto_15, dto_d1,
-                // Utils.CAPITAL_TIME_D1, ".962400", true, dto_d1.getNote());
-                // BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
+                        Utils.CAPITAL_TIME_D1, ".962415", true, dto_d1.getNote());
+                BscScanBinanceApplication.mt5_open_trade_List.add(dto);
             }
 
         }

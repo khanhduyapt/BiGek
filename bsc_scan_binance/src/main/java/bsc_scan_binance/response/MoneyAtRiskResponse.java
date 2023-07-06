@@ -85,6 +85,10 @@ public class MoneyAtRiskResponse {
             volume = Utils.formatPrice(volume, 2);
         }
 
+        if (Utils.EPICS_STOCKS.contains(EPIC)) {
+            volume = BigDecimal.valueOf(volume.intValue());
+        }
+
         return volume;
     }
 
