@@ -2901,21 +2901,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (trade_count < MAX_TRADE) {
                         writer.write(sb.toString());
-
-                        if (!dto.getOrder_type().toUpperCase().contains("LIMIT")) {
-                            trade_count += 1;
-                        }
-
-                        if (isReloadAfter(Utils.MINUTES_OF_1H, "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type())) {
-                            String msg = "openTrade: " + Utils.appendSpace(dto.getEpic(), 10);
-                            msg += Utils.appendSpace(dto.getOrder_type(), 10);
-                            msg += "Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
-                            msg += "E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
-                            msg += "SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 15);
-                            msg += "   " + Utils.appendSpace(dto.getComment(), 25);
-
-                            System.out.println(msg);
-                        }
+                        trade_count += 1;
                     }
                 }
             }
@@ -3998,6 +3984,17 @@ public class BinanceServiceImpl implements BinanceService {
                         Utils.logWritelnDraft(msg_reject);
                     } else {
                         BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+
+                        if (isReloadAfter(Utils.MINUTES_OF_1H, "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type())) {
+                            String msg = "openTrade: " + Utils.appendSpace(dto.getEpic(), 10);
+                            msg += Utils.appendSpace(dto.getOrder_type(), 10);
+                            msg += "Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
+                            msg += "E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
+                            msg += "SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 15);
+                            msg += "   " + Utils.appendSpace(dto.getComment(), 25);
+
+                            System.out.println(msg);
+                        }
                     }
                 }
 
