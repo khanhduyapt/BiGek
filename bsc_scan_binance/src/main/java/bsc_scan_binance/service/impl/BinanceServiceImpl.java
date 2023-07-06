@@ -3942,29 +3942,27 @@ public class BinanceServiceImpl implements BinanceService {
             // -------------------------------------------------------------------------------
             String log_trend = trend_d1;
             String NOTE_OF_CAPITAL_TIME_XX = "";
-            if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
-                if (note_d1.contains(trend_d1)) {
-                    NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_D1;
-                }
-                if (dto_h12.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
-                        && note_h12.contains(trend_d1)) {
-                    NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
-                }
-                if (dto_h4.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
-                        && note_h4.contains(trend_d1)) {
-                    NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
-                }
-                if (dto_h1.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
-                        && note_h1.contains(trend_d1)) {
-                    NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H1;
-                }
+            if (Objects.equals(trend_d1, trend_h4)) {
                 if (dto_15.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
                         && Objects.equals(trend_d1, trend_15) && note_15.contains(trend_d1)) {
                     NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_15;
+                } else if (dto_h1.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
+                        && note_h1.contains(trend_d1)) {
+                    NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H1;
+                } else if (dto_h4.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
+                        && note_h4.contains(trend_d1)) {
+                    NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
+                } else if (dto_h12.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
+                        && note_h12.contains(trend_d1)) {
+                    NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
+                } else {
+                    NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_D1;
                 }
             }
 
-            analysis(prefix, EPIC, NOTE_OF_CAPITAL_TIME_XX, log_trend);
+            if (Utils.isNotBlank(NOTE_OF_CAPITAL_TIME_XX)) {
+                analysis(prefix, EPIC, NOTE_OF_CAPITAL_TIME_XX, log_trend);
+            }
             // ---------------------------------------------------------------------------------------------
             // TODO: 3. controlMt5 : Không bao giờ được đánh ngược trend_d1
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
