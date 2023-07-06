@@ -70,6 +70,6 @@ public class Orders {
     @Column(name = "note")
     private String note;
 
-    @Column(name = "nocation")
-    private String nocation;
+    @Column(name = "allow_trade_by_ma50")
+    private boolean allow_trade_by_ma50;
 }

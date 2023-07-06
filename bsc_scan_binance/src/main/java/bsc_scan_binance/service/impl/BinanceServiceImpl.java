@@ -60,7 +60,6 @@ import bsc_scan_binance.entity.Mt5DataTrade;
 import bsc_scan_binance.entity.Mt5OpenTrade;
 import bsc_scan_binance.entity.Mt5OpenTradeEntity;
 import bsc_scan_binance.entity.Orders;
-import bsc_scan_binance.entity.PrepareOrders;
 import bsc_scan_binance.repository.BinanceFuturesRepository;
 import bsc_scan_binance.repository.BinanceVolumeDateTimeRepository;
 import bsc_scan_binance.repository.BinanceVolumnDayRepository;
@@ -2452,21 +2451,11 @@ public class BinanceServiceImpl implements BinanceService {
             fundingHistoryRepository.deleteAll(list);
         }
 
-        List<Orders> orders = ordersRepository.clearTrash();
-        if (!CollectionUtils.isEmpty(orders)) {
-            ordersRepository.deleteAll(orders);
-        }
+        ordersRepository.deleteAll();
 
-        List<Mt5DataCandle> candleList = mt5DataCandleRepository.findAll();
-        if (!CollectionUtils.isEmpty(candleList)) {
-            mt5DataCandleRepository.deleteAll(candleList);
-        }
+        mt5DataCandleRepository.deleteAll();
 
-        List<PrepareOrders> prepareOrderList = prepareOrdersRepository.findAll();
-        if (!CollectionUtils.isEmpty(prepareOrderList)) {
-            prepareOrdersRepository.deleteAll(prepareOrderList);
-        }
-
+        prepareOrdersRepository.deleteAll();
     }
 
     @Override
@@ -2644,8 +2633,18 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
+        boolean allow_trade_by_ma50 = false;
+        if (Objects.equals(trend, Utils.TREND_LONG)
+                && Objects.equals(nocation, Utils.NOCATION_BELOW_MA50)) {
+            allow_trade_by_ma50 = true;
+        }
+        if (Objects.equals(trend, Utils.TREND_SHOT)
+                && Objects.equals(nocation, Utils.NOCATION_ABOVE_MA50)) {
+            allow_trade_by_ma50 = true;
+        }
+
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
-                low_high.get(0), low_high.get(1), Utils.appendSpace(note, 50), nocation);
+                low_high.get(0), low_high.get(1), Utils.appendSpace(note, 50), allow_trade_by_ma50);
 
         ordersRepository.save(entity);
     }
@@ -2758,23 +2757,10 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String trend_d1 = dto_d1.getTrend();
-        String trend_h1 = dto_h1.getTrend();
         String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
         String trend_h12 = Utils.getTrendByHekenAshiList(heken_list_h12);
 
-        boolean h1_allow_trade = false;
-        if (Objects.equals(trend_d1, trend_h1)) {
-            if (Objects.equals(trend_h1, Utils.TREND_LONG)
-                    && Objects.equals(dto_h1.getNocation(), Utils.NOCATION_BELOW_MA50)) {
-                h1_allow_trade = true;
-            }
-            if (Objects.equals(trend_h1, Utils.TREND_SHOT)
-                    && Objects.equals(dto_h1.getNocation(), Utils.NOCATION_ABOVE_MA50)) {
-                h1_allow_trade = true;
-            }
-        }
-
-        if (h1_allow_trade) {
+        if (dto_h1.isAllow_trade_by_ma50()) {
             append += " H1A ";
         } else {
             append += "     ";
@@ -3843,9 +3829,18 @@ public class BinanceServiceImpl implements BinanceService {
                 nocation = Utils.NOCATION_ABOVE_MA50;
             }
         }
+        boolean allow_trade_by_ma50 = false;
+        if (Objects.equals(trend, Utils.TREND_LONG)
+                && Objects.equals(nocation, Utils.NOCATION_BELOW_MA50)) {
+            allow_trade_by_ma50 = true;
+        }
+        if (Objects.equals(trend, Utils.TREND_SHOT)
+                && Objects.equals(nocation, Utils.NOCATION_ABOVE_MA50)) {
+            allow_trade_by_ma50 = true;
+        }
 
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), str_body, end_body, sl_long,
-                sl_shot, note, nocation);
+                sl_shot, note, allow_trade_by_ma50);
 
         ordersRepository.save(entity);
 
@@ -3932,35 +3927,6 @@ public class BinanceServiceImpl implements BinanceService {
             String action = "";
             String append = "";
 
-            boolean h1_allow_trade = false;
-            if (Objects.equals(trend_h1, Utils.TREND_LONG)
-                    && Objects.equals(dto_h1.getNocation(), Utils.NOCATION_BELOW_MA50)) {
-                h1_allow_trade = true;
-            }
-            if (Objects.equals(trend_h1, Utils.TREND_SHOT)
-                    && Objects.equals(dto_h1.getNocation(), Utils.NOCATION_ABOVE_MA50)) {
-                h1_allow_trade = true;
-            }
-
-            boolean m15_allow_trade = false;
-            if (Objects.equals(trend_15, Utils.TREND_LONG)
-                    && Objects.equals(dto_15.getNocation(), Utils.NOCATION_BELOW_MA50)) {
-                m15_allow_trade = true;
-            }
-            if (Objects.equals(trend_15, Utils.TREND_SHOT)
-                    && Objects.equals(dto_15.getNocation(), Utils.NOCATION_ABOVE_MA50)) {
-                m15_allow_trade = true;
-            }
-
-            boolean m05_allow_trade = false;
-            if (Objects.equals(trend_05, Utils.TREND_LONG)
-                    && Objects.equals(dto_05.getNocation(), Utils.NOCATION_BELOW_MA50)) {
-                m05_allow_trade = true;
-            }
-            if (Objects.equals(trend_05, Utils.TREND_SHOT)
-                    && Objects.equals(dto_05.getNocation(), Utils.NOCATION_ABOVE_MA50)) {
-                m05_allow_trade = true;
-            }
             // -------------------------------------------------------------------------------
             String log_trend = trend_d1;
             String NOTE_OF_CAPITAL_TIME_XX = "";
@@ -3978,7 +3944,8 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(trend_d1, trend_h1) && note_h1.contains(trend_d1)) {
                 NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H1;
             }
-            if (m15_allow_trade && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
+            if (dto_15.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
+                    && Objects.equals(trend_d1, trend_h4)
                     && Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_d1, trend_15)
                     && note_15.contains(trend_d1)) {
                 NOTE_OF_CAPITAL_TIME_XX = Utils.CAPITAL_TIME_15;
@@ -3999,7 +3966,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Utils.isNotBlank(action)) {
-                    if (m05_allow_trade
+                    if (dto_05.isAllow_trade_by_ma50()
                             && (note_d1.contains(action) || note_h12.contains(action) || note_h4.contains(action))
                             && Objects.equals(action, trend_h4) && Objects.equals(action, trend_h1)
                             && Objects.equals(action, trend_15) && Objects.equals(action, trend_05)) {
@@ -4007,21 +3974,28 @@ public class BinanceServiceImpl implements BinanceService {
                         dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_05, dto_h4,
                                 Utils.CAPITAL_TIME_H4, append, true, note_d1);
                     }
-                    if (Objects.isNull(dto) && m15_allow_trade && m05_allow_trade && Objects.equals(action, trend_h4)
-                            && Objects.equals(action, trend_h1) && Objects.equals(action, trend_15)
-                            && Objects.equals(action, trend_05)) {
+
+                    if (Objects.isNull(dto) && dto_15.isAllow_trade_by_ma50() && dto_05.isAllow_trade_by_ma50()
+                            && Objects.equals(action, trend_h4) && Objects.equals(action, trend_h1)
+                            && Objects.equals(action, trend_15) && Objects.equals(action, trend_05)) {
                         append = ".515a";
                         dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_05, dto_h4,
                                 Utils.CAPITAL_TIME_H4, append, true, note_d1);
                     }
-                    if (Objects.isNull(dto) && m15_allow_trade && m05_allow_trade && Objects.equals(action, trend_h4)
-                            && Objects.equals(action, trend_h1) && Objects.equals(action, trend_15)) {
+
+                    if (Objects.isNull(dto)
+                            && (dto_h1.isAllow_trade_by_ma50()
+                                    || (dto_15.isAllow_trade_by_ma50() && dto_05.isAllow_trade_by_ma50()))
+                            && Objects.equals(action, trend_h4) && Objects.equals(action, trend_h1)
+                            && Objects.equals(action, trend_15)) {
                         append = ".1514";
                         dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_05, dto_h4,
                                 Utils.CAPITAL_TIME_H4, append, true, note_d1);
                     }
                 } else {
-                    if (Objects.isNull(dto) && (h1_allow_trade || (m15_allow_trade && m05_allow_trade))
+                    if (Objects.isNull(dto)
+                            && (dto_h1.isAllow_trade_by_ma50()
+                                    || (dto_15.isAllow_trade_by_ma50() && dto_05.isAllow_trade_by_ma50()))
                             && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
                             && Objects.equals(trend_15, trend_05)) {
                         action = trend_h4;
