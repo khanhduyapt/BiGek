@@ -279,10 +279,10 @@ void openTrade(string line)
       double point=SymbolInfoDouble(trade_symbol,SYMBOL_POINT);            // point
 
       price=NormalizeDouble(price,digits);                                 // normalizing open price
-      stop_loss=NormalizeDouble(stop_loss,digits);                         // normalizing Stop Loss
+      stop_loss=NormalizeDouble(stop_loss, digits);                        // normalizing Stop Loss
       tp=NormalizeDouble(tp,digits);                                       // normalizing TP
       // tp=0.0;
-      stop_loss=0.0;
+      // stop_loss=0.0;
       datetime expiration=TimeTradeServer()+PeriodSeconds(PERIOD_D1);
 
 
@@ -290,26 +290,26 @@ void openTrade(string line)
       if(type== "buy")
         {
          //--- open position
-         if(!trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp, comment))
+         if(!trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, 0.0, comment))
             Alert("Duydk: BUY: ", trade_symbol, " ERROR:", trade.ResultRetcodeDescription());
         }
 
       if(type== "buy_limit")
         {
-         if(!trade.BuyLimit(volume, price, trade_symbol, stop_loss, tp, ORDER_TIME_GTC, expiration, comment))
+         if(!trade.BuyLimit(volume, price, trade_symbol, 0.0, 0.0, ORDER_TIME_GTC, expiration, comment))
             Alert("Duydk: BUY LIMIT: ", trade_symbol, " ERROR:", trade.ResultRetcodeDescription());
         }
 
       if(type== "sell")
         {
          //--- open position
-         if(!trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, tp, comment))
+         if(!trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, 0.0, comment))
             Alert("Duydk: SELL: ", trade_symbol, " ERROR:", trade.ResultRetcodeDescription());
         }
 
       if(type== "sell_limit")
         {
-         if(!trade.SellLimit(volume, price, trade_symbol, stop_loss, tp, ORDER_TIME_GTC, expiration, comment))
+         if(!trade.SellLimit(volume, price, trade_symbol, 0.0, 0.0, ORDER_TIME_GTC, expiration, comment))
             Alert("Duydk: SELL LIMIT: ", trade_symbol, " ERROR:", trade.ResultRetcodeDescription());
         }
 
@@ -331,7 +331,7 @@ void OnTimer()
          if(FileIsEnding(n_close_trade_file_handle))
             break;
 
-         ulong ticket = FileReadString(n_close_trade_file_handle,0);
+         ulong ticket = (ulong)FileReadString(n_close_trade_file_handle,0);
          closeSymbol(ticket);
         }
 

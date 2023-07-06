@@ -3940,7 +3940,8 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            if (Utils.isNotBlank(note_xx) || is_opening_trade(EPIC, "")) {
+            if (Utils.isNotBlank(note_xx) || is_opening_trade(EPIC, "") || (Objects.equals(trend_d1, trend_h4)
+                    && (Objects.equals(trend_h4, dto_d1.getTrend_c1()) || dto_d1.getNote().contains(trend_d1)))) {
                 count += 1;
                 String tracking_trend = trend_w1;
 
