@@ -2862,10 +2862,11 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.isNull(dto)) {
                         continue;
                     }
-                    if ("_DX.f_".toUpperCase().contains(dto.getEpic().toUpperCase())) {
+                    String EPIC = dto.getEpic().toUpperCase();
+
+                    if ("_DX.f_".toUpperCase().contains(EPIC)) {
                         continue;
                     }
-                    String EPIC = dto.getEpic().toUpperCase();
                     if (is_opening_trade(EPIC)) {
                         continue;
                     }
