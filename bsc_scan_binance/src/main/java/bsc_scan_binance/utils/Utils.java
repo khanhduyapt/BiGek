@@ -4155,7 +4155,8 @@ public class Utils {
         int str = candle_no;
         int end = candle_no + 1;
         String id = heken_list.get(0).getId();
-        boolean isUptrend_1 = isUptrendByMa(heken_list, 1, str, end);
+
+        boolean isUptrend_1 = heken_list.get(0).isUptrend();
         if (id.contains(PREFIX_1w_)) {
             if (isUptrend_1 && heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend()) {
                 return isUptrend_1 ? Utils.TREND_LONG : Utils.TREND_SHOT;
@@ -4172,7 +4173,11 @@ public class Utils {
             return isUptrend_1 ? Utils.TREND_LONG : Utils.TREND_SHOT;
         }
 
-        return isUptrend_1 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        if ((isUptrend_1 == isUptrend_3)) {
+            return isUptrend_1 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        }
+
+        return isUptrend_3 ? Utils.TREND_LONG : Utils.TREND_SHOT;
     }
 
     public static String getTrendByHekenAshiList(List<BtcFutures> heken_list) {
