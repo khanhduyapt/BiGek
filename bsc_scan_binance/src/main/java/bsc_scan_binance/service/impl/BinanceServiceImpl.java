@@ -4002,17 +4002,19 @@ public class BinanceServiceImpl implements BinanceService {
                         dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_05, dto_h4,
                                 Utils.CAPITAL_TIME_H4, append, true, note_d1);
                     }
-                } else {
-                    if (Objects.isNull(dto) && dto_05.isAllow_trade_by_ma50()
-                            && Objects.equals(trend_h4, trend_d1) && Objects.equals(trend_h4, dto_d1.getTrend_c1())
-                            && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_15)
-                            && Objects.equals(trend_h4, trend_05)) {
-                        action = trend_h4;
-                        append = ".244115";
-                        dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_05, dto_h4,
-                                Utils.CAPITAL_TIME_H4, append, true, note_d1);
-                    }
                 }
+
+                if (Objects.isNull(dto) && dto_05.isAllow_trade_by_ma50()
+                        && Objects.equals(trend_h4, trend_d1)
+                        && (Objects.equals(trend_h4, dto_d1.getTrend_c1()) || note_d1.contains(trend_d1))
+                        && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_15)
+                        && Objects.equals(trend_h4, trend_05)) {
+                    action = trend_h4;
+                    append = ".244115";
+                    dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_05, dto_h4,
+                            Utils.CAPITAL_TIME_H4, append, true, note_d1);
+                }
+
                 // ---------------------------------------------------------------------
                 if (Objects.nonNull(dto)) {
                     String reject_id = "";
@@ -4167,7 +4169,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (isTrendInverse && allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
                     isPriceHit_SL = true;
                 }
-                if (PROFIT.add(Utils.RISK_0_25_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
+                if (PROFIT.add(Utils.RISK_0_50_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
                     isPriceHit_SL = true;
                 }
             }
@@ -4182,8 +4184,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ---------------------------------------------------------------------------------
             if (isPriceHit_TP || isPriceHit_SL || isTimeout || isOpenOtherTrend) {
-                // Giữ lệnh tối thiểu 4h
-                if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
+                if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H) || isPriceHit_SL) {
                     String prefix = Utils.getChartNameCapital(mt5Entity.getTimeframe()) + "Close:   ";
                     prefix += Utils.appendSpace(trade.getCompany(), 8);
                     prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
