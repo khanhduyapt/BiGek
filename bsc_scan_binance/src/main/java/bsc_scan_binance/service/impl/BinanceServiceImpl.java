@@ -2819,19 +2819,11 @@ public class BinanceServiceImpl implements BinanceService {
         return false;
     }
 
-    private boolean is_opening_trade(String EPIC, String ORDER_TYPE) {
+    private boolean is_opening_trade(String EPIC) {
         List<Mt5OpenTradeEntity> tradeList = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
 
         for (Mt5OpenTradeEntity trade : tradeList) {
-            String TRADE_EPIC = trade.getSymbol().toUpperCase();
-            String CUR_TRADE = trade.getTypeDescription().toUpperCase().contains(Utils.TREND_LONG) ? Utils.TREND_LONG
-                    : Utils.TREND_SHOT;
-
-            if (Objects.equals(TRADE_EPIC, EPIC) && ORDER_TYPE.toUpperCase().contains(CUR_TRADE)) {
-                return true;
-            }
-
-            if (Objects.equals(TRADE_EPIC, EPIC) && Utils.isBlank(ORDER_TYPE)) {
+            if (Objects.equals(trade.getSymbol().toUpperCase(), EPIC.toUpperCase())) {
                 return true;
             }
         }
@@ -2841,7 +2833,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     private void openTrade() {
         if (!CollectionUtils.isEmpty(BscScanBinanceApplication.mt5_open_trade_List)) {
-            if (!Utils.isHuntTime_7h_to_23h() || Utils.isNewsAt_19_20_21h()) {
+            if (Utils.isNewsAt_19_20_21h()) {
                 if (isReloadAfter(Utils.MINUTES_OF_1H, "OpenTrade")) {
                     Utils.logWritelnDraft("[OpenTrade] thoi gian nghi, khong vao lenh.");
                 }
@@ -2873,7 +2865,20 @@ public class BinanceServiceImpl implements BinanceService {
                     if ("_DX.f_".toUpperCase().contains(dto.getEpic().toUpperCase())) {
                         continue;
                     }
-                    if (is_opening_trade(dto.getEpic(), dto.getOrder_type())) {
+                    String EPIC = dto.getEpic().toUpperCase();
+                    if (is_opening_trade(EPIC)) {
+                        continue;
+                    }
+
+                    boolean allow_trade = false;
+                    if (Utils.isTokyoSession()) {
+                        if (EPIC.contains("JPY") || EPIC.contains("AUD")) {
+                            allow_trade = true;
+                        }
+                    } else if (Utils.isLondon_and_NewYork_Session()) {
+                        allow_trade = true;
+                    }
+                    if (!allow_trade) {
                         continue;
                     }
 
@@ -3405,7 +3410,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (required_update_bars_csv) {
             return;
         }
-        if (!Utils.isNewYorkSession()) {
+        if (!Utils.isLondon_and_NewYork_Session()) {
             return;
         }
         int index = 1;
@@ -3940,7 +3945,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            if (Utils.isNotBlank(note_xx) || is_opening_trade(EPIC, "") || (Objects.equals(trend_d1, trend_h4)
+            if (Utils.isNotBlank(note_xx) || is_opening_trade(EPIC) || (Objects.equals(trend_d1, trend_h4)
                     && (Objects.equals(trend_h4, dto_d1.getTrend_c1()) || dto_d1.getNote().contains(trend_d1)))) {
                 count += 1;
                 String tracking_trend = trend_w1;
@@ -4062,11 +4067,6 @@ public class BinanceServiceImpl implements BinanceService {
             String TICKET = trade.getTicket();
             String TRADE_TREND = trade.getTypeDescription().toUpperCase();
             BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
-
-            if (!Utils.isHuntTime_7h_to_23h() && TRADE_TREND.contains("LIMIT")) {
-                mt5_close_trade_list.add(trade.getTicket());
-                mt5_close_trade_reason.add("Thoi gian nghi trade #7h_to_23h");
-            }
 
             if (TRADE_TREND.contains("LIMIT")) {
                 continue;

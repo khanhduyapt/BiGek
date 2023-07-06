@@ -1073,17 +1073,6 @@ public class Utils {
         return false;
     }
 
-    // https://www.calculator.net/time-duration-calculator.html
-    public static boolean isHuntTime_7h_to_23h() {
-        List<Integer> times = Arrays.asList(7, 8, 9, 10, 11, 14, 15, 16, 17, 18, 21, 22, 23, 24);
-        Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-        if (times.contains(hh)) {
-            return true;
-        }
-
-        return false;
-    }
-
     public static String getCryptoLink_Spot(String symbol) {
         String currency = "USDT";
         if (BINANCE_PRICE_BUSD_LIST.contains(symbol)) {
@@ -1416,8 +1405,19 @@ public class Utils {
         return false;
     }
 
+    // JPY AUD
     public static boolean isTokyoSession() {
-        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14);
+        List<Integer> times = Arrays.asList(7, 8, 9, 10, 11, 12);
+        Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
+        if (times.contains(hh)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isLondon_and_NewYork_Session() {
+        List<Integer> times = Arrays.asList(15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 0, 1, 2, 3);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -1427,7 +1427,7 @@ public class Utils {
     }
 
     public static boolean isNewYorkSession() {
-        List<Integer> times = Arrays.asList(21, 22, 23, 24, 0, 1, 2, 3);
+        List<Integer> times = Arrays.asList(20, 21, 22, 23, 24, 0, 1, 2, 3);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -1436,17 +1436,35 @@ public class Utils {
         return false;
     }
 
+    // https://www.calculator.net/time-duration-calculator.html
     public static boolean isNewsAt_19_20_21h() {
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         Integer mm = Utils.getIntValue(Utils.convertDateToString("mm", Calendar.getInstance().getTime()));
-        if ((hh == 19) && (25 <= mm) && (mm <= 35)) {
-            return true;
+
+        if (Arrays.asList(19).contains(hh)) {
+            // 19:15
+            if ((10 < mm) || (mm < 20)) {
+                return true;
+            }
+
+            // 19:30
+            if ((25 < mm) || (mm < 35)) {
+                return true;
+            }
         }
-        if ((hh == 20) && (25 <= mm) && (mm <= 35)) {
-            return true;
+
+        if (Arrays.asList(20).contains(hh)) {
+            // 20:45
+            if ((40 < mm) || (mm < 50)) {
+                return true;
+            }
         }
-        if (((hh == 20) && (55 <= mm)) || ((hh == 21) && (mm <= 05))) {
-            return true;
+
+        if (Arrays.asList(20, 21).contains(hh)) {
+            // 21:00 22:00
+            if ((55 < mm) || (mm < 05)) {
+                return true;
+            }
         }
 
         return false;
