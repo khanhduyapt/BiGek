@@ -2760,7 +2760,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
         String trend_h12 = Utils.getTrendByHekenAshiList(heken_list_h12);
 
-        if (dto_h1.isAllow_trade_by_ma50()) {
+        if (dto_h1.isAllow_trade_by_ma50() && Objects.equals(find_trend, dto_h1.getTrend())) {
             append += " H1A ";
         } else {
             append += "     ";
