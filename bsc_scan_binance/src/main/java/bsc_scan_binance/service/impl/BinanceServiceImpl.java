@@ -3968,6 +3968,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Mt5OpenTrade dto = null;
 
                 action = "";
+                // Không bao giờ được đánh ngược trend_d1
                 if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)) {
                     action = trend_d1;
                 } else if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)) {
@@ -4009,7 +4010,7 @@ public class BinanceServiceImpl implements BinanceService {
                         action = trend_h4;
                         append = ".244115";
                         dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_05, dto_h4,
-                                Utils.CAPITAL_TIME_H1, append, true, note_d1);
+                                Utils.CAPITAL_TIME_H4, append, true, note_d1);
                     }
                 }
                 // ---------------------------------------------------------------------

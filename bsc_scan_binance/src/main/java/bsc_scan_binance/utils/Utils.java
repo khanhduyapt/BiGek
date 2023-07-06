@@ -735,6 +735,9 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
             return ENCRYPTED_H1;
         }
+        if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
+            return ENCRYPTED_H4;
+        }
         if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
             return ENCRYPTED_H12;
         }
