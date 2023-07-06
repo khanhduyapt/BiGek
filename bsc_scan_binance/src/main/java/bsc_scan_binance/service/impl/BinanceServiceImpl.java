@@ -3415,7 +3415,6 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
         int index = 1;
-        // TODO: scapStocks
 
         for (String EPIC : Utils.EPICS_STOCKS) {
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
@@ -3500,31 +3499,8 @@ public class BinanceServiceImpl implements BinanceService {
             w1d1h4h1 += Utils.getTrendPrefix("1", trend_h1, " ") + ".";
             w1d1h4h1 = w1d1h4h1.replace(" ", "");
 
-            boolean m15_allow_trade = false;
-            List<BtcFutures> list_15 = getCapitalData(EPIC, Utils.CAPITAL_TIME_15);
-            if (!CollectionUtils.isEmpty(list_15)) {
-                List<BtcFutures> heken_list_15 = Utils.getHekenList(list_15);
-                if (Objects.equals(trend_15, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list_15, 50)) {
-                    m15_allow_trade = true;
-                }
-                if (Objects.equals(trend_15, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list_15, 50)) {
-                    m15_allow_trade = true;
-                }
-            }
-
-            boolean h1_allow_trade = false;
-            List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
-            if (!CollectionUtils.isEmpty(list_h1)) {
-                List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
-                if (Objects.equals(trend_15, Utils.TREND_LONG) && Utils.isBelowMALine(heken_list_h1, 50)) {
-                    h1_allow_trade = true;
-                }
-                if (Objects.equals(trend_15, Utils.TREND_SHOT) && Utils.isAboveMALine(heken_list_h1, 50)) {
-                    h1_allow_trade = true;
-                }
-            }
-
-            if (h1_allow_trade && Objects.equals(trend_w1, trend_d1)
+            // TODO: scapStocks
+            if (dto_h1.isAllow_trade_by_ma50() && Objects.equals(trend_w1, trend_d1)
                     && (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1))
                     && Objects.equals(trend_h1, trend_15)) {
 
@@ -3535,7 +3511,7 @@ public class BinanceServiceImpl implements BinanceService {
                 // BscScanBinanceApplication.mt5_open_trade_List.add(dto);
             }
 
-            if (m15_allow_trade && Objects.equals(trend_w1, trend_d1)
+            if (dto_15.isAllow_trade_by_ma50() && Objects.equals(trend_w1, trend_d1)
                     && (Objects.equals(trend_d1, trend_h4) || Objects.equals(trend_d1, trend_h1))
                     && Objects.equals(trend_d1, trend_15)) {
 
