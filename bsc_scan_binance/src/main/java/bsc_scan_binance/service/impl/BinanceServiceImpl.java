@@ -3946,7 +3946,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // ---------------------------------------------------------------------------------------------
-            // TODO: 3. controlMt5 : Không bao giờ được đánh ngược trend_d1
+            // TODO: 3. controlMt5 : Không đánh ngược trend_d1
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
 
