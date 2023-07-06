@@ -1173,21 +1173,23 @@ public class Utils {
 
     public static String getCompanyByFoder(String path) {
         //Arrays.asList("FTMO", "8CAP", "ALPHA", "THE5ERS", "MFF");
+        String result = "";
         if (path.contains(MT5_COMPANY_FTMO)) {
-            return COMPANIES.get(0);
+            result = COMPANIES.get(0);
         }
         if (path.contains(MT5_COMPANY_8CAP)) {
-            return COMPANIES.get(1);
+            result = COMPANIES.get(1);
         }
         if (path.contains(MT5_COMPANY_ALPHA)) {
-            return COMPANIES.get(2);
+            result = COMPANIES.get(2);
         }
         if (path.contains(MT5_COMPANY_5ERS)) {
-            return COMPANIES.get(3);
+            result = COMPANIES.get(3);
         }
         if (path.contains(MT5_COMPANY_MFF)) {
-            return COMPANIES.get(4);
+            result = COMPANIES.get(4);
         }
+        result = Utils.appendSpace(result, 10);
         return "";
     }
 
