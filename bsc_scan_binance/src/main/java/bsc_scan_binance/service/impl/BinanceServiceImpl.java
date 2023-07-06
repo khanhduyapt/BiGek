@@ -4139,19 +4139,18 @@ public class BinanceServiceImpl implements BinanceService {
                 isTrendInverse = true;
             }
 
-            if (!Objects.equals(dto_h4.getTrend_candle_1(), TRADE_TREND) && !Objects.equals(trend_h4, TRADE_TREND)
-                    && !Objects.equals(dto_h1.getTrend_candle_1(), TRADE_TREND)
-                    && !Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
-                    && !Objects.equals(trend_05, TRADE_TREND)) {
+            if (!Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)
+                    && !Objects.equals(dto_h4.getTrend_c1(), TRADE_TREND) && !Objects.equals(trend_h4, TRADE_TREND)
+                    && !Objects.equals(dto_h1.getTrend_c1(), TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)) {
                 isTrendInverse = true;
             }
 
             if (Utils.allowFinishTradeThisDay() || Utils.allowFinishTradeThisWeek()
                     || Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_H1)) {
 
-                if (!Objects.equals(dto_h1.getTrend_candle_1(), TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
-                        && !Objects.equals(dto_15.getTrend_candle_1(), TRADE_TREND)
-                        && !Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
+                if (!Objects.equals(trend_05, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
+                        && !Objects.equals(dto_h1.getTrend_c1(), TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
+                        && !Objects.equals(dto_15.getTrend_c1(), TRADE_TREND)) {
                     isTrendInverse = true;
                 }
             }
