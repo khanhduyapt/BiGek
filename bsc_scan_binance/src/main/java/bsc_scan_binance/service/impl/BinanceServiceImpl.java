@@ -4004,9 +4004,8 @@ public class BinanceServiceImpl implements BinanceService {
                 } else {
                     if (Objects.isNull(dto) && dto_05.isAllow_trade_by_ma50()
                             && Objects.equals(trend_h4, trend_d1) && Objects.equals(trend_h4, dto_d1.getTrend_c1())
-                            && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, dto_h1.getTrend_c1())
-                            && Objects.equals(trend_h4, trend_15) && Objects.equals(trend_h4, dto_15.getTrend_c1())
-                            && Objects.equals(trend_h4, trend_05) && Objects.equals(trend_h4, dto_05.getTrend_c1())) {
+                            && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_15)
+                            && Objects.equals(trend_h4, trend_05)) {
                         action = trend_h4;
                         append = ".o401";
                         dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_05, dto_h4,
@@ -4161,11 +4160,17 @@ public class BinanceServiceImpl implements BinanceService {
             if (isTrendInverse && (PROFIT.compareTo(Utils.RISK_0_15_PERCENT) > 0)) {
                 isPriceHit_TP = true;
             }
+
             boolean isPriceHit_SL = false;
-            if (isTrendInverse && ((PROFIT.add(Utils.RISK_0_15_PERCENT)).compareTo(BigDecimal.ZERO) < 0)
-                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
-                isPriceHit_SL = true;
+            if (PROFIT.add(Utils.RISK_0_15_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
+                if (isTrendInverse && allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
+                    isPriceHit_SL = true;
+                }
+                if (PROFIT.add(Utils.RISK_0_25_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
+                    isPriceHit_SL = true;
+                }
             }
+
             boolean isTimeout = false;
             if (isTrendInverse && allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H)) {
                 isTimeout = true;
@@ -4175,9 +4180,9 @@ public class BinanceServiceImpl implements BinanceService {
                 isOpenOtherTrend = true;
             }
             // ---------------------------------------------------------------------------------
-            // Giữ lệnh tối thiểu 4h
-            if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
-                if (isPriceHit_TP || isPriceHit_SL || isTimeout || isOpenOtherTrend) {
+            if (isPriceHit_TP || isPriceHit_SL || isTimeout || isOpenOtherTrend) {
+                // Giữ lệnh tối thiểu 4h
+                if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
                     String prefix = Utils.getChartNameCapital(mt5Entity.getTimeframe()) + "Close:   ";
                     prefix += Utils.appendSpace(trade.getCompany(), 8);
                     prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
