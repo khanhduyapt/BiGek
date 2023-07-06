@@ -1171,6 +1171,26 @@ public class Utils {
         logWriteln("_______________________________________________________________", true);
     }
 
+    public static String getCompanyByFoder(String path) {
+        //Arrays.asList("FTMO", "8CAP", "ALPHA", "THE5ERS", "MFF");
+        if (path.contains(MT5_COMPANY_FTMO)) {
+            return COMPANIES.get(0);
+        }
+        if (path.contains(MT5_COMPANY_8CAP)) {
+            return COMPANIES.get(1);
+        }
+        if (path.contains(MT5_COMPANY_ALPHA)) {
+            return COMPANIES.get(2);
+        }
+        if (path.contains(MT5_COMPANY_5ERS)) {
+            return COMPANIES.get(3);
+        }
+        if (path.contains(MT5_COMPANY_MFF)) {
+            return COMPANIES.get(4);
+        }
+        return "";
+    }
+
     public static String getMt5DataFolder(String MT5_COMPANY_ID) {
         String mt5_data_file = "";
         try {

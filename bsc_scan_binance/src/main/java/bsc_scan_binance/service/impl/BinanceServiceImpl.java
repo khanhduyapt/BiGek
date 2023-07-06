@@ -3069,7 +3069,8 @@ public class BinanceServiceImpl implements BinanceService {
         try {
             File file = new File(mt5_data_file_path);
             if (!file.exists()) {
-                Utils.logWritelnDraft("[mt5_data_file FileNotFound]: " + mt5_data_file_path);
+                Utils.logWritelnDraft(Utils.getCompanyByFoder(mt5_data_file_path) + " [mt5_data_file FileNotFound]: "
+                        + mt5_data_file_path);
                 return "";
             }
 
@@ -4174,7 +4175,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            // Đánh trên D1 sẽ cài đặt SL và TP đầy đủ, 1000$ / 1 trade
+            // Cài đặt SL và TP đầy đủ, thì đóng trade khi H4 trở xuống đều đảo chiều.
             if (((trade.getStopLoss().compareTo(BigDecimal.ZERO) > 0)
                     && (trade.getTakeProfit().compareTo(BigDecimal.ZERO) > 0))
                     || Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_D1)) {
