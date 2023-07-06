@@ -2675,9 +2675,9 @@ public class BinanceServiceImpl implements BinanceService {
 
     private String analysis(String prifix, String EPIC, String CAPITAL_TIME_XX, String find_trend) {
         Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
-        Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-        Orders dto_wt = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(dto_d1);
-        if (Objects.isNull(dto_h1) || Objects.isNull(dto_d1)) {
+        Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+        Orders dto_wt = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(dto_sl);
+        if (Objects.isNull(dto_h1) || Objects.isNull(dto_sl)) {
             return "";
         }
 
@@ -2688,7 +2688,7 @@ public class BinanceServiceImpl implements BinanceService {
                 : Objects.equals(Utils.TREND_SHOT, find_trend) ? "(S)" : "(x)";
 
         String note = "";
-        if (Objects.equals(dto_wt.getTrend(), dto_d1.getTrend())) {
+        if (Objects.equals(dto_wt.getTrend(), dto_sl.getTrend())) {
             note = dto_wt.getNote();
         }
         note = Utils.appendSpace(note, 20);
@@ -2715,12 +2715,12 @@ public class BinanceServiceImpl implements BinanceService {
 
                 String append = Utils.appendSpace(prifix + ea, 100) + note;
 
-                outputLog("Analysis_" + char_name, EPIC, dto_h1, dto_d1, append, find_trend);
+                outputLog("Analysis_" + char_name, EPIC, dto_h1, dto_sl, append, find_trend);
             }
         } else {
             ea = Utils.appendSpace(Utils.TEXT_EXPERT_ADVISOR_SPACE, length);
             String append = Utils.appendSpace(prifix + ea, 100) + note;
-            outputLog("Analysis_" + char_name, EPIC, dto_h1, dto_d1, append, find_trend);
+            outputLog("Analysis_" + char_name, EPIC, dto_h1, dto_sl, append, find_trend);
         }
 
         if (!isReloadAfter(Utils.MINUTES_OF_1H, EPIC + find_trend)) {
@@ -2730,9 +2730,9 @@ public class BinanceServiceImpl implements BinanceService {
         return type + EPIC;
     }
 
-    private void outputLog(String prefix_id, String EPIC, Orders dto_entry, Orders dto_sl, String append,
+    private void outputLog(String prefix_id, String EPIC, Orders dto_en, Orders dto_sl, String append,
             String find_trend) {
-        if (Objects.isNull(dto_entry) || Objects.isNull(dto_sl)) {
+        if (Objects.isNull(dto_en) || Objects.isNull(dto_sl)) {
             return;
         }
 
@@ -2781,14 +2781,13 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
-        log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_entry.getCurrent_price(), 5)), 11);
+        log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_en.getCurrent_price(), 5)), 11);
         log += append.replace("}", "} " + zone);
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
-        log += Utils.appendSpace(
+        log += "0.5%" + Utils.appendSpace(
                 Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_50_PERCENT, false, trend_d1, EPIC, dto_d1, dto_d1), 66);
-        log += Utils.appendSpace(
-                Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_15_PERCENT, false, find_trend, EPIC, dto_entry, dto_sl),
-                56);
+        log += "0.25%" + Utils.appendSpace(
+                Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_25_PERCENT, false, find_trend, EPIC, dto_en, dto_sl), 56);
         Utils.logWritelnDraft(log);
 
         if (Objects.equals(dto_w1.getTrend(), dto_d1.getTrend())
@@ -4021,7 +4020,7 @@ public class BinanceServiceImpl implements BinanceService {
                                 Utils.CAPITAL_TIME_H4, append, true, note_d1);
                     }
                 } else {
-                    if (Objects.isNull(dto) && m05_allow_trade && Objects.equals(trend_h4, trend_h1)
+                    if (Objects.isNull(dto) && h1_allow_trade && Objects.equals(trend_h4, trend_h1)
                             && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
                         action = trend_h4;
                         append = ".5151";
