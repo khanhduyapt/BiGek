@@ -3979,7 +3979,7 @@ public class BinanceServiceImpl implements BinanceService {
                     action = trend_h4;
                     append = ".244115";
                     dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_05, dto_h4,
-                            Utils.CAPITAL_TIME_H4, append, true, note_d1);
+                            Utils.CAPITAL_TIME_D1, append, true, note_d1);
                 }
 
                 // ---------------------------------------------------------------------
