@@ -2821,12 +2821,17 @@ public class BinanceServiceImpl implements BinanceService {
 
     private boolean is_opening_trade(String EPIC, String ORDER_TYPE) {
         List<Mt5OpenTradeEntity> tradeList = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
+
         for (Mt5OpenTradeEntity trade : tradeList) {
             String TRADE_EPIC = trade.getSymbol().toUpperCase();
             String CUR_TRADE = trade.getTypeDescription().toUpperCase().contains(Utils.TREND_LONG) ? Utils.TREND_LONG
                     : Utils.TREND_SHOT;
 
             if (Objects.equals(TRADE_EPIC, EPIC) && ORDER_TYPE.toUpperCase().contains(CUR_TRADE)) {
+                return true;
+            }
+
+            if (Objects.equals(TRADE_EPIC, EPIC) && Utils.isBlank(ORDER_TYPE)) {
                 return true;
             }
         }
@@ -3843,12 +3848,12 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     @Transactional
-    public String controlMt5(List<String> CAPITAL_LIST) {
+    public int controlMt5(List<String> CAPITAL_LIST) {
         if (required_update_bars_csv) {
-            return "";
+            return 0;
         }
 
-        int index = 0;
+        int count = 0;
         for (String EPIC : CAPITAL_LIST) {
             if (BscScanBinanceApplication.EPICS_OUTPUTED_LOG.contains(EPIC)) {
                 continue;
@@ -3907,12 +3912,6 @@ public class BinanceServiceImpl implements BinanceService {
                 zone_h12 = Utils.getZoneTrend(heken_list_h12);
             }
 
-            index += 1;
-            String tracking_trend = trend_w1;
-
-            String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_w1, trend_d1, trend_h12, trend_h4,
-                    trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, tracking_trend);
-
             // ---------------------------------------------------------------------
 
             // String wdh4h1 = Utils.getEncrypted_trend_w1d1h4h1(trend_w1, trend_d1,
@@ -3941,7 +3940,12 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            if (Utils.isNotBlank(note_xx)) {
+            if (Utils.isNotBlank(note_xx) || is_opening_trade(EPIC, "")) {
+                count += 1;
+                String tracking_trend = trend_w1;
+
+                String prefix = Utils.getPrefix_FollowTrackingTrend(count, trend_w1, trend_d1, trend_h12, trend_h4,
+                        trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, tracking_trend);
                 analysis(prefix, EPIC, note_xx, log_trend);
             }
 
@@ -4035,7 +4039,7 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------------------
         }
 
-        return "";
+        return count;
 
     }
 

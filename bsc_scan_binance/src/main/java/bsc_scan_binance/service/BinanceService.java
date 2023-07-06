@@ -51,7 +51,7 @@ public interface BinanceService {
 
     public void createReport();
 
-    public String controlMt5(List<String> CAPITAL_LIST);
+    public int controlMt5(List<String> CAPITAL_LIST);
 
     public void scapStocks();
 

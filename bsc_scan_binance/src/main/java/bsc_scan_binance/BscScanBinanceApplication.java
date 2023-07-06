@@ -239,30 +239,50 @@ public class BscScanBinanceApplication {
         // --------------------------------------------------------------------------
         EPICS_OUTPUT_MSG = "";
         // --------------------------------------------------------------------------
+        int result = 0;
         Utils.logWritelnDraft("");
         Utils.logWritelnReport("...");
-        binance_service.controlMt5(Utils.EPICS_METALS);
-        Utils.logWritelnDraft("...");
-        binance_service.controlMt5(Utils.EPICS_CASH_CFD);
+        result = binance_service.controlMt5(Utils.EPICS_METALS);
+        if (result > 0)
+            Utils.logWritelnDraft("...");
+
+        result = binance_service.controlMt5(Utils.EPICS_CASH_CFD);
         // --------------------------------------------------------------------------
         Utils.logWritelnDraftFooter();
-        Utils.logWritelnReport("...");
-        binance_service.controlMt5(Utils.EPICS_FOREXS_JPY);
-        Utils.logWritelnDraft("...");
-        binance_service.controlMt5(Utils.EPICS_FOREXS_USD);
-        Utils.logWritelnDraft("...");
-        binance_service.controlMt5(Utils.EPICS_FOREXS_GBP);
-        Utils.logWritelnDraft("...");
-        binance_service.controlMt5(Utils.EPICS_FOREXS_NZD);
-        Utils.logWritelnDraft("...");
-        binance_service.controlMt5(Utils.EPICS_FOREXS_EUR);
-        Utils.logWritelnDraft("...");
-        binance_service.controlMt5(Utils.EPICS_FOREXS_AUD);
-        Utils.logWritelnDraft("...");
-        binance_service.controlMt5(Utils.EPICS_FOREXS_ALL);
-        Utils.logWritelnDraft("...");
-        binance_service.controlMt5(Utils.EPICS_CRYPTO_CFD);
-        Utils.logWritelnReport("...");
+        if (result > 0)
+            Utils.logWritelnReport("...");
+
+        result = binance_service.controlMt5(Utils.EPICS_FOREXS_JPY);
+        if (result > 0)
+            Utils.logWritelnDraft("...");
+
+        result = binance_service.controlMt5(Utils.EPICS_FOREXS_USD);
+        if (result > 0)
+            Utils.logWritelnDraft("...");
+
+        result = binance_service.controlMt5(Utils.EPICS_FOREXS_GBP);
+        if (result > 0)
+            Utils.logWritelnDraft("...");
+
+        result = binance_service.controlMt5(Utils.EPICS_FOREXS_NZD);
+        if (result > 0)
+            Utils.logWritelnDraft("...");
+
+        result = binance_service.controlMt5(Utils.EPICS_FOREXS_EUR);
+        if (result > 0)
+            Utils.logWritelnDraft("...");
+
+        result = binance_service.controlMt5(Utils.EPICS_FOREXS_AUD);
+        if (result > 0)
+            Utils.logWritelnDraft("...");
+
+        result = binance_service.controlMt5(Utils.EPICS_FOREXS_ALL);
+        if (result > 0)
+            Utils.logWritelnDraft("...");
+
+        result = binance_service.controlMt5(Utils.EPICS_CRYPTO_CFD);
+        if (result > 0)
+            Utils.logWritelnReport("...");
         // --------------------------------------------------------------------------
 
         Utils.logWritelnDraftFooter();
