@@ -1343,7 +1343,6 @@ public class Utils {
 
     public static boolean allowFinishTradeThisDay() {
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-
         if (isWeekday() && ((hh <= 3) || (22 <= hh))) {
             return true;
         }
@@ -1352,8 +1351,7 @@ public class Utils {
     }
 
     public static boolean allowFinishTradeThisWeek() {
-        LocalDate today = LocalDate.now();
-        DayOfWeek day = DayOfWeek.of(today.get(ChronoField.DAY_OF_WEEK));
+        DayOfWeek day = DayOfWeek.of(LocalDate.now().get(ChronoField.DAY_OF_WEEK));
 
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
 
@@ -1363,6 +1361,23 @@ public class Utils {
 
         if ((day == DayOfWeek.SATURDAY) && (hh <= 3)) {
             return true;
+        }
+
+        return false;
+    }
+
+    public static boolean closeTradeThisWeek() {
+        DayOfWeek day = DayOfWeek.of(LocalDate.now().get(ChronoField.DAY_OF_WEEK));
+        int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
+        if (hh <= 3) {
+            // đêm thứ 4 phí qua đêm sẽ được X3 để bù cho 2 ngày cuối tuần.
+            if ((day == DayOfWeek.THURSDAY)) {
+                return true;
+            }
+
+            if ((day == DayOfWeek.SATURDAY)) {
+                return true;
+            }
         }
 
         return false;
@@ -1406,7 +1421,7 @@ public class Utils {
     }
 
     // JPY AUD
-    public static boolean isTokyoSession() {
+    public static boolean allow_open_trade_at_tokyo_session() {
         List<Integer> times = Arrays.asList(7, 8, 9, 10, 11, 12);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
@@ -1416,8 +1431,8 @@ public class Utils {
         return false;
     }
 
-    public static boolean isLondon_and_NewYork_Session() {
-        List<Integer> times = Arrays.asList(15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 0, 1, 2, 3);
+    public static boolean allow_open_trade_at_london_and_newyork_session() {
+        List<Integer> times = Arrays.asList(15, 16, 17, 18, 19, 20, 21, 22, 23);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;

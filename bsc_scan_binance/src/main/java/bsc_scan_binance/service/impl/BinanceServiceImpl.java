@@ -2872,11 +2872,11 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     boolean allow_trade = false;
-                    if (Utils.isTokyoSession()) {
+                    if (Utils.allow_open_trade_at_tokyo_session()) {
                         if (EPIC.contains("JPY") || EPIC.contains("AUD")) {
                             allow_trade = true;
                         }
-                    } else if (Utils.isLondon_and_NewYork_Session()) {
+                    } else if (Utils.allow_open_trade_at_london_and_newyork_session()) {
                         allow_trade = true;
                     }
                     if (!allow_trade) {
@@ -3411,7 +3411,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (required_update_bars_csv) {
             return;
         }
-        if (!Utils.isLondon_and_NewYork_Session()) {
+        if (!Utils.allow_open_trade_at_London_and_NewYork_Session()) {
             return;
         }
         int index = 1;
@@ -4119,6 +4119,11 @@ public class BinanceServiceImpl implements BinanceService {
                     isTrendInverse = true;
                 }
             }
+            if (Utils.closeTradeThisWeek() && !Objects.equals(trend_15, TRADE_TREND)
+                    && !Objects.equals(trend_05, TRADE_TREND)) {
+                isTrendInverse = true;
+            }
+
             // ---------------------------------------------------------------------------------
             boolean isPriceHit_TP = false;
             if (PROFIT.compareTo(Utils.RISK_0_15_PERCENT) > 0) {
