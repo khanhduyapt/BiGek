@@ -14,7 +14,7 @@ CPositionInfo  m_position;
 COrderInfo     m_order;
 
 //+------------------------------------------------------------------+
-//| Custom indicator initialization function TradeList               |
+//| TradeList
 //+------------------------------------------------------------------+
 int OnInit()
   {
