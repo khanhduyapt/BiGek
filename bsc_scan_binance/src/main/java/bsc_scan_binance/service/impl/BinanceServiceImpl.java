@@ -4110,18 +4110,16 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ---------------------------------------------------------------------------------
             boolean isTrendInverse = false;
-            if (!Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)
-                    && !Objects.equals(dto_h4.getTrend_c1(), TRADE_TREND) && !Objects.equals(trend_h4, TRADE_TREND)
-                    && !Objects.equals(dto_h1.getTrend_c1(), TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)) {
+            if (!Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
+                    && !Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
                 isTrendInverse = true;
             }
 
             if (Utils.allowFinishTradeThisDay() || Utils.allowFinishTradeThisWeek()
                     || Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_H1)) {
 
-                if (!Objects.equals(trend_05, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
-                        && !Objects.equals(dto_h1.getTrend_c1(), TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
-                        && !Objects.equals(dto_15.getTrend_c1(), TRADE_TREND)) {
+                if (!Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
+                        && !Objects.equals(trend_05, TRADE_TREND)) {
                     isTrendInverse = true;
                 }
             }
@@ -4134,6 +4132,10 @@ public class BinanceServiceImpl implements BinanceService {
             boolean isPriceHit_SL = false;
             if (PROFIT.add(Utils.RISK_0_15_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
                 if (isTrendInverse && allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
+                    isPriceHit_SL = true;
+                }
+                if (Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_H1)
+                        && PROFIT.add(Utils.RISK_0_25_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
                     isPriceHit_SL = true;
                 }
                 if (PROFIT.add(Utils.RISK_0_50_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
