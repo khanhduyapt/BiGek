@@ -4135,10 +4135,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ---------------------------------------------------------------------------------
             boolean isTrendInverse = false;
-            if (Utils.isTradingAgainstTrend(EPIC, TRADE_TREND, BscScanBinanceApplication.mt5_open_trade_List)) {
-                isTrendInverse = true;
-            }
-
             if (!Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)
                     && !Objects.equals(dto_h4.getTrend_c1(), TRADE_TREND) && !Objects.equals(trend_h4, TRADE_TREND)
                     && !Objects.equals(dto_h1.getTrend_c1(), TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)) {
@@ -4159,20 +4155,23 @@ public class BinanceServiceImpl implements BinanceService {
             if (isTrendInverse && (PROFIT.compareTo(Utils.RISK_0_15_PERCENT) > 0)) {
                 isPriceHit_TP = true;
             }
-            boolean isSwitchTrend = false;
+            boolean isPriceHit_SL = false;
             if (isTrendInverse && ((PROFIT.add(Utils.RISK_0_15_PERCENT)).compareTo(BigDecimal.ZERO) < 0)
                     && allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
-                isSwitchTrend = true;
+                isPriceHit_SL = true;
             }
-            // ---------------------------------------------------------------------------------
             boolean isTimeout = false;
             if (isTrendInverse && allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H)) {
                 isTimeout = true;
             }
+            boolean isOpenOtherTrend = false;
+            if (Utils.isTradingAgainstTrend(EPIC, TRADE_TREND, BscScanBinanceApplication.mt5_open_trade_List)) {
+                isOpenOtherTrend = true;
+            }
             // ---------------------------------------------------------------------------------
             // Giữ lệnh tối thiểu 4h
             if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
-                if (isTimeout || isSwitchTrend || isPriceHit_TP) {
+                if (isPriceHit_TP || isPriceHit_SL || isTimeout || isOpenOtherTrend) {
                     String prefix = Utils.getChartNameCapital(mt5Entity.getTimeframe()) + "Close:   ";
                     prefix += Utils.appendSpace(trade.getCompany(), 8);
                     prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
@@ -4186,13 +4185,13 @@ public class BinanceServiceImpl implements BinanceService {
                     mt5_close_trade_list.add(TICKET);
 
                     if (isPriceHit_TP) {
-                        mt5_close_trade_reason.add("HitTp");
-                    }
-                    if (isSwitchTrend) {
+                        mt5_close_trade_reason.add("+1R");
+                    } else if (isPriceHit_SL) {
                         mt5_close_trade_reason.add("-1R");
-                    }
-                    if (isTimeout) {
+                    } else if (isTimeout) {
                         mt5_close_trade_reason.add("Timeout.");
+                    } else if (isOpenOtherTrend) {
+                        mt5_close_trade_reason.add("OtherTrend.");
                     }
                 }
             }
