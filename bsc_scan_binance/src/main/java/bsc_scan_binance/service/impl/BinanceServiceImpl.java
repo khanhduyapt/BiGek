@@ -2784,9 +2784,9 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_en.getCurrent_price(), 5)), 11);
         log += append.replace("}", "} " + zone);
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
-        log += "0.5%" + Utils.appendSpace(
+        log += "0.5% " + Utils.appendSpace(
                 Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_50_PERCENT, false, trend_d1, EPIC, dto_d1, dto_d1), 66);
-        log += "0.25%" + Utils.appendSpace(
+        log += "0.25% " + Utils.appendSpace(
                 Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_25_PERCENT, false, find_trend, EPIC, dto_en, dto_sl), 56);
         Utils.logWritelnDraft(log);
 
@@ -4020,8 +4020,9 @@ public class BinanceServiceImpl implements BinanceService {
                                 Utils.CAPITAL_TIME_H4, append, true, note_d1);
                     }
                 } else {
-                    if (Objects.isNull(dto) && h1_allow_trade && Objects.equals(trend_h4, trend_h1)
-                            && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
+                    if (Objects.isNull(dto) && (h1_allow_trade || (m15_allow_trade && m05_allow_trade))
+                            && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)
+                            && Objects.equals(trend_15, trend_05)) {
                         action = trend_h4;
                         append = ".5151";
                         dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_05, dto_h4,
