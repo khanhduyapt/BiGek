@@ -4249,4 +4249,5 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
 }
-//8-10-13-17-21-26-34
+// 8-10-13-17-21-26-34
+// râu quét 2 đầu -> đánh khá khó chịu -> tốt nhất là biến
