@@ -4145,20 +4145,13 @@ public class Utils {
         return isUptrendByMa(list, maIndex, 0, 1) ? TREND_LONG : TREND_SHOT;
     }
 
-    public static String getTrendByHekenAshiList(List<BtcFutures> heken_list) {
+    public static String getTrendByHekenAshiList(List<BtcFutures> heken_list, int candle_no) {
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
         }
+        int str = candle_no;
+        int end = candle_no + 1;
         String id = heken_list.get(0).getId();
-        // Cần xác nhận trend khi đóng nến, nhưng lấy Candle1,2 thì trend chạy lộn xộn.
-        int str = 0;
-        int end = 1;
-
-        if (id.contains(PREFIX_5m_) || id.contains(PREFIX_15m_)) {
-            str = 1;
-            end = 2;
-        }
-
         boolean isUptrend_1 = isUptrendByMa(heken_list, 1, str, end);
         if (id.contains(PREFIX_1w_)) {
             if (isUptrend_1 && heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend()) {
@@ -4177,6 +4170,20 @@ public class Utils {
         }
 
         return isUptrend_2 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+    }
+
+    public static String getTrendByHekenAshiList(List<BtcFutures> heken_list) {
+        if (CollectionUtils.isEmpty(heken_list)) {
+            return "";
+        }
+        String id = heken_list.get(0).getId();
+        int candle_no = 0;
+
+        if (id.contains(PREFIX_5m_) || id.contains(PREFIX_15m_)) {
+            candle_no = 1;
+        }
+
+        return getTrendByHekenAshiList(heken_list, candle_no);
     }
 
     public static String getTypeOfEpic(String EPIC) {

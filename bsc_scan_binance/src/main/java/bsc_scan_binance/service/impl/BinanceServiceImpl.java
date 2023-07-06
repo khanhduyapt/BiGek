@@ -2602,7 +2602,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Transactional
     private void createOrders(String SYMBOL, String orderId, String switch_trend_type, String trend,
-            List<BtcFutures> list) {
+            List<BtcFutures> list, String trend_candle_1) {
         String date_time = LocalDateTime.now().toString();
 
         List<BigDecimal> body = Utils.getBodyCandle(list);
@@ -2644,7 +2644,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
-                low_high.get(0), low_high.get(1), Utils.appendSpace(note, 50), allow_trade_by_ma50);
+                low_high.get(0), low_high.get(1), Utils.appendSpace(note, 50), allow_trade_by_ma50, trend_candle_1);
 
         ordersRepository.save(entity);
     }
@@ -3374,9 +3374,10 @@ public class BinanceServiceImpl implements BinanceService {
 
         String trend = Utils.getTrendByHekenAshiList(heken_list);
         String switch_trend = Utils.switchTrendByHeken_12(heken_list);
-
         if (Utils.isNotBlank(switch_trend)) {
-            createOrders(SYMBOL, orderId_d1, switch_trend, switch_trend, heken_list);
+            String trend_candle_1 = Utils.getTrendByHekenAshiList(heken_list, 1);
+
+            createOrders(SYMBOL, orderId_d1, switch_trend, switch_trend, heken_list, trend_candle_1);
 
             if (Objects.equals(Utils.TREND_LONG, SYMBOL)) {
                 String temp = Utils.getTimeHHmm() + "   " + switch_trend + "   " + Utils.appendSpace(SYMBOL, 10);
@@ -3839,8 +3840,10 @@ public class BinanceServiceImpl implements BinanceService {
             allow_trade_by_ma50 = true;
         }
 
+        String trend_candle_1 = Utils.getTrendByHekenAshiList(heken_list, 1);
+
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), str_body, end_body, sl_long,
-                sl_shot, note, allow_trade_by_ma50);
+                sl_shot, note, allow_trade_by_ma50, trend_candle_1);
 
         ordersRepository.save(entity);
 
@@ -4132,29 +4135,22 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ---------------------------------------------------------------------------------
             boolean isTrendInverse = false;
-            if (!Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
-                    && !Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
+            if (Utils.isTradingAgainstTrend(EPIC, TRADE_TREND, BscScanBinanceApplication.mt5_open_trade_List)) {
                 isTrendInverse = true;
             }
 
-            if (Utils.isTradingAgainstTrend(EPIC, TRADE_TREND, BscScanBinanceApplication.mt5_open_trade_List)) {
+            if (!Objects.equals(dto_h4.getTrend_candle_1(), TRADE_TREND) && !Objects.equals(trend_h4, TRADE_TREND)
+                    && !Objects.equals(dto_h1.getTrend_candle_1(), TRADE_TREND)
+                    && !Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
+                    && !Objects.equals(trend_05, TRADE_TREND)) {
                 isTrendInverse = true;
             }
 
             if (Utils.allowFinishTradeThisDay() || Utils.allowFinishTradeThisWeek()
                     || Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_H1)) {
-                if (!Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
-                        && !Objects.equals(trend_05, TRADE_TREND)) {
-                    isTrendInverse = true;
-                }
-            }
 
-            // Cài đặt SL và TP đầy đủ, thì đóng trade khi H4 trở xuống đều đảo chiều.
-            if (((trade.getStopLoss().compareTo(BigDecimal.ZERO) > 0)
-                    && (trade.getTakeProfit().compareTo(BigDecimal.ZERO) > 0))
-                    || Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_D1)) {
-                isTrendInverse = false;
-                if (!Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
+                if (!Objects.equals(dto_h1.getTrend_candle_1(), TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
+                        && !Objects.equals(dto_15.getTrend_candle_1(), TRADE_TREND)
                         && !Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
                     isTrendInverse = true;
                 }

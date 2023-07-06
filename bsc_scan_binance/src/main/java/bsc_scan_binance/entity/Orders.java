@@ -18,7 +18,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "orders")
 
-// DROP TABLE IF EXISTS public.orders;
+//-- DROP TABLE IF EXISTS public.orders;
+//
 //CREATE TABLE IF NOT EXISTS public.orders
 //(
 //    gecko_id character varying(255) COLLATE pg_catalog."default" NOT NULL,
@@ -30,8 +31,9 @@ import lombok.NoArgsConstructor;
 //    low_price numeric(30,5) DEFAULT 0,
 //    high_price numeric(30,5) DEFAULT 0,
 //    note character varying(500) COLLATE pg_catalog."default",
-//    nocation character varying(255) COLLATE pg_catalog."default",
 //    created_at timestamp without time zone DEFAULT now(),
+//    allow_trade_by_ma50 boolean DEFAULT false,
+//    trend_candle_1 character varying(255) COLLATE pg_catalog."default",
 //    CONSTRAINT orders_pkey PRIMARY KEY (gecko_id)
 //)
 
@@ -72,4 +74,7 @@ public class Orders {
 
     @Column(name = "allow_trade_by_ma50")
     private boolean allow_trade_by_ma50;
+
+    @Column(name = "trend_candle_1")
+    private String trend_candle_1;
 }
