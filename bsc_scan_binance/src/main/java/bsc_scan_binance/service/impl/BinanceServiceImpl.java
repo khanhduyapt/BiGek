@@ -4105,7 +4105,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (isTrendInverse && allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
                     isPriceHit_SL = true;
                 }
-                if (Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_H1)
+                if (isTrendInverse && Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_H1)
                         && PROFIT.add(Utils.RISK_0_25_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
                     isPriceHit_SL = true;
                 }
