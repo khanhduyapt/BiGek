@@ -3979,7 +3979,7 @@ public class BinanceServiceImpl implements BinanceService {
                             && (note_d1.contains(action) || note_h12.contains(action) || note_h4.contains(action))
                             && Objects.equals(action, trend_h4) && Objects.equals(action, trend_h1)
                             && Objects.equals(action, trend_15) && Objects.equals(action, trend_05)) {
-                        append = ".515w";
+                        append = ".41155w";
                         dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_05, dto_h4,
                                 Utils.CAPITAL_TIME_H4, append, true, note_d1);
                     }
@@ -3987,7 +3987,7 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.isNull(dto) && dto_15.isAllow_trade_by_ma50() && dto_05.isAllow_trade_by_ma50()
                             && Objects.equals(action, trend_h4) && Objects.equals(action, trend_h1)
                             && Objects.equals(action, trend_15) && Objects.equals(action, trend_05)) {
-                        append = ".515a";
+                        append = ".41155a";
                         dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_05, dto_h4,
                                 Utils.CAPITAL_TIME_H4, append, true, note_d1);
                     }
@@ -3997,7 +3997,7 @@ public class BinanceServiceImpl implements BinanceService {
                                     || (dto_15.isAllow_trade_by_ma50() && dto_05.isAllow_trade_by_ma50()))
                             && Objects.equals(action, trend_h4) && Objects.equals(action, trend_h1)
                             && Objects.equals(action, trend_15)) {
-                        append = ".1514";
+                        append = ".40115a";
                         dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_05, dto_h4,
                                 Utils.CAPITAL_TIME_H4, append, true, note_d1);
                     }
@@ -4007,7 +4007,7 @@ public class BinanceServiceImpl implements BinanceService {
                             && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_15)
                             && Objects.equals(trend_h4, trend_05)) {
                         action = trend_h4;
-                        append = ".o401";
+                        append = ".244115";
                         dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_05, dto_h4,
                                 Utils.CAPITAL_TIME_H1, append, true, note_d1);
                     }
