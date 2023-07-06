@@ -2759,7 +2759,8 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_h4 = dto_h4.getTrend();
         String trend_h1 = dto_h1.getTrend();
 
-        if (dto_h1.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_h1)) {
+        if (dto_h1.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h4)
+                && Objects.equals(trend_h4, trend_h1)) {
             append += " A   ";
         } else {
             append += "     ";
