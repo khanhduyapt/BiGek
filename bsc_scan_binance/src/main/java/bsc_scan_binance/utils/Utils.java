@@ -1441,10 +1441,10 @@ public class Utils {
         return false;
     }
 
-    public static boolean isNewYorkSession() {
-        List<Integer> times = Arrays.asList(20, 21, 22, 23, 24, 0, 1, 2, 3);
+    public static boolean allow_open_trade_at_newyork_session() {
+        List<Integer> times = Arrays.asList(20, 21, 22, 23);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-        if (times.contains(hh)) {
+        if (isWeekday() && times.contains(hh)) {
             return true;
         }
 

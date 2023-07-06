@@ -3411,7 +3411,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (required_update_bars_csv) {
             return;
         }
-        if (!Utils.allow_open_trade_at_London_and_NewYork_Session()) {
+        if (!Utils.allow_open_trade_at_newyork_session()) {
             return;
         }
         int index = 1;
@@ -4072,7 +4072,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (TRADE_TREND.contains("LIMIT")) {
                 continue;
             }
-            if (Utils.EPICS_STOCKS.contains(EPIC) && !Utils.isNewYorkSession()) {
+            if (Utils.EPICS_STOCKS.contains(EPIC) && !Utils.allow_open_trade_at_newyork_session()) {
                 continue;
             }
 
