@@ -1213,6 +1213,10 @@ public class Utils {
             if (Utils.isNotBlank(msg)) {
                 if (Objects.equals(text, "...")) {
                     msg = Utils.appendSpace("", 363, "_");
+                } else if (text.length() > 50 && isBlank(text.substring(0, 50))) {
+                    msg = Utils.appendLeft("",
+                            (BscScanBinanceApplication.hostname + Utils.getMmDD_TimeHHmm() + " ").length())
+                            + text.replace(Utils.new_line_from_service, "\n");
                 } else {
                     msg = BscScanBinanceApplication.hostname + Utils.getMmDD_TimeHHmm() + " "
                             + text.replace(Utils.new_line_from_service, "\n");
