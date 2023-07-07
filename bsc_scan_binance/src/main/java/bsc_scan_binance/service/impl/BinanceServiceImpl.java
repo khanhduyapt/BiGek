@@ -3900,8 +3900,7 @@ public class BinanceServiceImpl implements BinanceService {
                     || Utils.EPICS_METALS.contains(EPIC))) {
 
                 Mt5OpenTrade dto = null;
-                if ((dto_05.isAllow_trade_by_ma50() || dto_h1.getNote().contains(trend_h4))
-                        && Objects.equals(trend_d1, trend_h12)
+                if (dto_05.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
                         && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)
                         && Objects.equals(trend_d1, trend_15) && Objects.equals(trend_d1, trend_05)) {
 
