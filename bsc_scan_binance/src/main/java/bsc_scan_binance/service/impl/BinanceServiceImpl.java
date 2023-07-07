@@ -2910,6 +2910,7 @@ public class BinanceServiceImpl implements BinanceService {
                             msg += "Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
                             msg += "E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
                             msg += "SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 15);
+                            msg += "TP: " + Utils.appendLeft(dto.getTake_profit().toString(), 15);
                             msg += "   " + Utils.appendSpace(dto.getComment(), 25);
 
                             System.out.println(msg);
@@ -3502,7 +3503,7 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_h1, trend_15)) {
 
                     Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
-                            Utils.CAPITAL_TIME_D1, ".962415", true, dto_d1.getNote());
+                            ".962415", true, dto_d1.getNote());
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
             }
@@ -3605,12 +3606,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            String comment = Utils.getStringValue(trade.getComment());
-            if (Utils.isBlank(comment)) {
-                comment = Utils.getEncryptedChartNameCapital(Utils.CAPITAL_TIME_H1);
-            }
-            comment = comment.toLowerCase();
-
+            String comment = Utils.getStringValue(trade.getComment()).toLowerCase();
             String timeframe = Utils.getDeEncryptedChartNameCapital(comment);
             String date_time = LocalDateTime.now().toString();
             // ----------------------------------------------------------------------------------
@@ -3922,8 +3918,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (Utils.isNotBlank(append)) {
                         action = trend_d1;
-                        dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_h1, dto_d1,
-                                Utils.CAPITAL_TIME_D1, append, true, note_d1);
+                        dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_h1, dto_d1, append,
+                                true, note_d1);
                     }
                 }
 
@@ -3951,16 +3947,21 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     if (!(zone_h12).contains(action) || !(zone_h4).contains(action) || !(zone_h1).contains(action)) {
-                        reject_id = " RejectID: end of " + Utils.appendSpace(action, 4) + " zone";
+                        String end_zone = "z";
+                        reject_id = " RejectID: end of " + Utils.appendSpace(action, 4) + " ";
                         if (!(zone_h1).contains(action)) {
-                            reject_id += ".h1";
+                            end_zone += ".h1";
                         }
                         if (!(zone_h4).contains(action)) {
-                            reject_id += ".h4";
+                            end_zone += ".h4";
                         }
                         if (!(zone_h12).contains(action)) {
-                            reject_id += ".h12";
+                            end_zone += ".h12";
                         }
+                        reject_id += end_zone;
+                        //reject_id = "";
+                        //dto.setComment(dto.getComment() + end_zone);
+                        //dto.setLots(BigDecimal.valueOf(0.01));
                     }
 
                     if (Utils.isNotBlank(reject_id)) {

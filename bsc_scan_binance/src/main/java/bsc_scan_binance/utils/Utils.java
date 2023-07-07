@@ -725,28 +725,28 @@ public class Utils {
         return TIME;
     }
 
-    public static String getEncryptedChartNameCapital(String TIME) {
-        if (Objects.equals(TIME, CAPITAL_TIME_05)) {
-            return ENCRYPTED_05;
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_15)) {
-            return ENCRYPTED_15;
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
-            return ENCRYPTED_H1;
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
-            return ENCRYPTED_H4;
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
-            return ENCRYPTED_H12;
-        }
-        if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
-            return ENCRYPTED_D1;
-        }
-
-        return ENCRYPTED_H1;
-    }
+    //    public static String getEncryptedChartNameCapital(String TIME) {
+    //        if (Objects.equals(TIME, CAPITAL_TIME_05)) {
+    //            return ENCRYPTED_05;
+    //        }
+    //        if (Objects.equals(TIME, CAPITAL_TIME_15)) {
+    //            return ENCRYPTED_15;
+    //        }
+    //        if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
+    //            return ENCRYPTED_H1;
+    //        }
+    //        if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
+    //            return ENCRYPTED_H4;
+    //        }
+    //        if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
+    //            return ENCRYPTED_H12;
+    //        }
+    //        if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
+    //            return ENCRYPTED_D1;
+    //        }
+    //
+    //        return ENCRYPTED_H1;
+    //    }
 
     public static String getDeEncryptedChartNameCapital(String encryptedChartName) {
         // if (encryptedChartName.contains(ENCRYPTED_05)) {
@@ -2861,9 +2861,10 @@ public class Utils {
     }
 
     public static List<BigDecimal> getBuySellArea(List<BtcFutures> heken_list) {
+        int section = 4;
         List<BigDecimal> LoHi = Utils.getLowHighCandle(heken_list);
         BigDecimal high = LoHi.get(1).subtract(LoHi.get(0));
-        BigDecimal quarter = high.divide(BigDecimal.valueOf(4), 10, RoundingMode.CEILING);
+        BigDecimal quarter = high.divide(BigDecimal.valueOf(section), 10, RoundingMode.CEILING);
         BigDecimal bread = Utils.calcMaxBread(heken_list);
         if (bread.compareTo(quarter) > 0) {
             quarter = bread;
@@ -4185,15 +4186,15 @@ public class Utils {
 
         // -------------------------------------------------------------------------
 
-        if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(0).isUptrend()
-                && is_long_legged_doji_candle(heken_list.get(1))) {
-            return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
-        }
-
-        if (Objects.equals(trend, Utils.TREND_SHOT) && heken_list.get(0).isDown()
-                && is_long_legged_doji_candle(heken_list.get(1))) {
-            return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
-        }
+        //if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(0).isUptrend()
+        //        && is_long_legged_doji_candle(heken_list.get(1))) {
+        //    return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
+        //}
+        //
+        //if (Objects.equals(trend, Utils.TREND_SHOT) && heken_list.get(0).isDown()
+        //        && is_long_legged_doji_candle(heken_list.get(1))) {
+        //    return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
+        //}
 
         if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend()
                 && heken_list.get(2).isDown()) {
@@ -4296,7 +4297,7 @@ public class Utils {
     }
 
     public static Mt5OpenTrade calc_Lot_En_SL_TP(BigDecimal risk, String EPIC, String trend, Orders dto_en_05,
-            Orders dto_vol, String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1, boolean isTradeNow,
+            Orders dto_vol, String encrypted_trend_w1d1h4h1, boolean isTradeNow,
             String note_d1) {
         BigDecimal en_05 = BigDecimal.ZERO;
         if (Objects.equals(Utils.TREND_LONG, trend)) {
@@ -4331,7 +4332,7 @@ public class Utils {
         dto.setEntry(en_05);
         dto.setStop_loss(sl_d1);
         dto.setTake_profit(tp_d1);
-        dto.setComment(start + BscScanBinanceApplication.hostname + getEncryptedChartNameCapital(CAPITAL_TIME_XX) + ""
+        dto.setComment(start + BscScanBinanceApplication.hostname + ""
                 + encrypted_trend_w1d1h4h1 + "" + range);
 
         return dto;

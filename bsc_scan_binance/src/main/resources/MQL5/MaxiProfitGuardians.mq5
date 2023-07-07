@@ -280,7 +280,7 @@ void openTrade(string line)
 
       price=NormalizeDouble(price,digits);                                 // normalizing open price
       stop_loss=NormalizeDouble(stop_loss, digits);                        // normalizing Stop Loss
-      tp=NormalizeDouble(tp,digits);                                       // normalizing TP
+      tp=NormalizeDouble(tp, digits);                                      // normalizing TP
       // tp=0.0;
       // stop_loss=0.0;
       datetime expiration=TimeTradeServer()+PeriodSeconds(PERIOD_D1);
@@ -290,9 +290,9 @@ void openTrade(string line)
       if(type== "buy")
         {
          //--- open position
-         if(!trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, 0.0, comment))
+         if(!trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp, comment))
             Alert("Duydk: BUY: ", trade_symbol, " ERROR:", trade.ResultRetcodeDescription());
-            trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, 0.0, 0.0, comment);
+            // trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, 0.0, 0.0, comment);
         }
 
       if(type== "buy_limit")
@@ -304,9 +304,9 @@ void openTrade(string line)
       if(type== "sell")
         {
          //--- open position
-         if(!trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, 0.0, comment))
+         if(!trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, tp, comment))
             Alert("Duydk: SELL: ", trade_symbol, " ERROR:", trade.ResultRetcodeDescription());
-            trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, 0.0, 0.0, comment);
+            // trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, 0.0, 0.0, comment);
         }
 
       if(type== "sell_limit")
