@@ -2548,6 +2548,34 @@ public class Utils {
         return result;
     }
 
+    public static List<BigDecimal> calc_SL1_TP2(Orders dto_d1, String find_trend) {
+        List<BigDecimal> result = new ArrayList<BigDecimal>();
+        if (Objects.isNull(dto_d1)) {
+            result.add(BigDecimal.ZERO);
+            result.add(BigDecimal.ZERO);
+            return result;
+        }
+
+        BigDecimal sl_d1 = BigDecimal.ZERO;
+        BigDecimal tp_d1 = BigDecimal.ZERO;
+        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
+            sl_d1 = dto_d1.getLow_price();
+            BigDecimal high = dto_d1.getCurrent_price().subtract(dto_d1.getLow_price());
+            high = high.multiply(BigDecimal.valueOf(2));
+            tp_d1 = dto_d1.getCurrent_price().add(high);
+        }
+        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
+            sl_d1 = dto_d1.getHigh_price();
+            BigDecimal high = dto_d1.getHigh_price().subtract(dto_d1.getCurrent_price());
+            high = high.multiply(BigDecimal.valueOf(2));
+            tp_d1 = dto_d1.getCurrent_price().subtract(high);
+        }
+
+        result.add(sl_d1);
+        result.add(tp_d1);
+        return result;
+    }
+
     public static BigDecimal calcFiboTP_1R(String trend, BigDecimal low_or_heigh, BigDecimal curr_price) {
         BigDecimal bread = curr_price.subtract(low_or_heigh);
         bread = bread.abs();
@@ -4270,25 +4298,21 @@ public class Utils {
     public static Mt5OpenTrade calc_Lot_En_SL_TP(BigDecimal risk, String EPIC, String trend, Orders dto_en_05,
             Orders dto_vol, String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1, boolean isTradeNow,
             String note_d1) {
-        BigDecimal en_05, sl_h4, tp_h4;
+        BigDecimal en_05 = BigDecimal.ZERO;
+        List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_vol, trend);
+        BigDecimal sl_d1 = sl1_tp2.get(0);
+        BigDecimal tp_d1 = sl1_tp2.get(1);
 
         if (Objects.equals(Utils.TREND_LONG, trend)) {
             en_05 = Utils.getBigDecimal(dto_en_05.getLow_price());
-
-            sl_h4 = Utils.getBigDecimal(dto_vol.getLow_price());
-            tp_h4 = Utils.getBigDecimal(dto_vol.getBody_hig());
         } else {
             en_05 = Utils.getBigDecimal(dto_en_05.getHigh_price());
-
-            sl_h4 = Utils.getBigDecimal(dto_vol.getHigh_price());
-            tp_h4 = Utils.getBigDecimal(dto_vol.getBody_low());
         }
-        MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, risk, dto_en_05.getCurrent_price(), sl_h4,
-                tp_h4);
+        MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, risk, dto_en_05.getCurrent_price(), sl_d1, tp_d1);
 
         String range = "...";
-        BigDecimal en_sl = dto_vol.getCurrent_price().subtract(sl_h4).abs();
-        BigDecimal en_tp = dto_vol.getCurrent_price().subtract(tp_h4).abs();
+        BigDecimal en_sl = dto_vol.getCurrent_price().subtract(sl_d1).abs();
+        BigDecimal en_tp = dto_vol.getCurrent_price().subtract(tp_d1).abs();
         if (en_tp.compareTo(en_sl) < 0) {
             range = ".dg";
         }
@@ -4302,13 +4326,12 @@ public class Utils {
         Mt5OpenTrade dto = new Mt5OpenTrade();
         dto.setEpic(EPIC);
         dto.setOrder_type(trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
-        dto.setLots(money_x1_now.calcLot());
+        dto.setLots(money.calcLot());
         dto.setEntry(en_05);
-        dto.setStop_loss(sl_h4);
-        dto.setTake_profit(tp_h4);
+        dto.setStop_loss(sl_d1);
+        dto.setTake_profit(tp_d1);
         dto.setComment(start + BscScanBinanceApplication.hostname + getEncryptedChartNameCapital(CAPITAL_TIME_XX) + ""
                 + encrypted_trend_w1d1h4h1 + "" + range);
-        dto.setStop_loss_m30(sl_h4);
 
         return dto;
     }
