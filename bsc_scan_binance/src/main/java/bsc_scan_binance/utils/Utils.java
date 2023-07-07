@@ -4299,15 +4299,16 @@ public class Utils {
             Orders dto_vol, String CAPITAL_TIME_XX, String encrypted_trend_w1d1h4h1, boolean isTradeNow,
             String note_d1) {
         BigDecimal en_05 = BigDecimal.ZERO;
-        List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_vol, trend);
-        BigDecimal sl_d1 = sl1_tp2.get(0);
-        BigDecimal tp_d1 = sl1_tp2.get(1);
-
         if (Objects.equals(Utils.TREND_LONG, trend)) {
             en_05 = Utils.getBigDecimal(dto_en_05.getLow_price());
         } else {
             en_05 = Utils.getBigDecimal(dto_en_05.getHigh_price());
         }
+
+        List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_vol, trend);
+        BigDecimal sl_d1 = sl1_tp2.get(0);
+        BigDecimal tp_d1 = sl1_tp2.get(1);
+
         MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, risk, dto_en_05.getCurrent_price(), sl_d1, tp_d1);
 
         String range = "...";
