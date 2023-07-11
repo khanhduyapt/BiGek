@@ -3502,9 +3502,9 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)
                         && Objects.equals(trend_h1, trend_15)) {
 
-                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
-                            ".962415", true, dto_d1.getNote());
-                    BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+                    // Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
+                    //        ".962415", true, dto_d1.getNote());
+                    // BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
             }
         }
