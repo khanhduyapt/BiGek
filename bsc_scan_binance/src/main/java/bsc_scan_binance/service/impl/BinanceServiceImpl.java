@@ -3417,7 +3417,7 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
 
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1)) {
-                Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
+                // Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
                 continue;
             }
 
@@ -3454,7 +3454,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
                     || Objects.isNull(dto_15) || CollectionUtils.isEmpty(list_50d)) {
-                Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
+                // Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
                 continue;
             }
 
@@ -3882,17 +3882,13 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            if (Utils.isNotBlank(note_xx) || is_opening_trade(EPIC) || dto_h4.getNote().contains(trend_d1)
-                    || (dto_h1.isAllow_trade_by_ma50() && dto_h1.getNote().contains(trend_h4))) {
+            count += 1;
+            String tracking_trend = trend_w1;
 
-                count += 1;
-                String tracking_trend = trend_w1;
+            String prefix = Utils.getPrefix_FollowTrackingTrend(count, trend_w1, trend_d1, trend_h12, trend_h4,
+                    trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, tracking_trend);
 
-                String prefix = Utils.getPrefix_FollowTrackingTrend(count, trend_w1, trend_d1, trend_h12, trend_h4,
-                        trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, tracking_trend);
-
-                analysis_profit(prefix, EPIC, note_xx, log_trend);
-            }
+            analysis_profit(prefix, EPIC, note_xx, log_trend);
 
             // ---------------------------------------------------------------------------------------------
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
