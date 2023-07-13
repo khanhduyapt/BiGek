@@ -1510,7 +1510,7 @@ public class Utils {
 
     public static void sendToChatId(String chat_id, String text) {
         if (BscScanBinanceApplication.hostname.contains("PC") && !text.contains("FTMO")) {
-            return;
+            // return;
         }
 
         try {
