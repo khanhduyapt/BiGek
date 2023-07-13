@@ -183,18 +183,22 @@ public class Utils {
 
     public static final Integer MINUTES_RELOAD_CSV_DATA = 5;
 
-    public static String MT5_COMPANY_8CAP = "608AB61EFF9C7B3585EC08B8CF6800E3";
-    public static String MT5_COMPANY_FTMO = "49CDDEAA95A409ED22BD2287BB67CB9C";
-    public static String MT5_COMPANY_5ERS = "10CE948A1DFC9A8C27E56E827008EBD4";
-    public static String MT5_COMPANY_MFF = "D0E8209F77C8CF37AD8BF550E51FF075";
-    public static String MT5_COMPANY_ALPHA = "DA9FDBAE775DAE029270F1379F6A9F03";
+    public static final List<String> COMPANIES = Arrays.asList("FTMO", "8CAP", "ALPHA", "THE5ERS", "MFF", "TFF", "CTI",
+            "TOPTIER", "FTP");
+    public static String MT5_COMPANY_8CAP = "608AB61EFF9C7B3585EC08B8CF6800E3"; // FundedNext
+    public static String MT5_COMPANY_FTMO = "49CDDEAA95A409ED22BD2287BB67CB9C"; // FTMO (FTMO)
+    public static String MT5_COMPANY_5ERS = "10CE948A1DFC9A8C27E56E827008EBD4"; // The5ers (FivePercentOnline)
+    public static String MT5_COMPANY_MFF = "D0E8209F77C8CF37AD8BF550E51FF075"; // My Forex Funds (Traders Global Group)
+    public static String MT5_COMPANY_ALPHA = "DA9FDBAE775DAE029270F1379F6A9F03"; // Alpha Capital Group Trustpilot: 4.6
+    public static String MT5_COMPANY_TFF = "TFF"; // True Forex Funds      Trustpilot: 4.7
+    public static String MT5_COMPANY_CTI = "CTI"; // City Traders Imperium Trustpilot: 4.8
+    public static String MT5_COMPANY_TOPTIER = "TOPTIER"; // TopTier Trader    Trustpilot: 4.8
+    public static String MT5_COMPANY_FTP = "FTP"; // Funded Trading Plus   Trustpilot: 4.9
 
     public static final String LINKED_NAME_2_USOIL = "_USOIL_USOUSD_";
     public static final String LINKED_NAME_2_US100 = "_NDX100_US100_NAS100_";
     public static final String LINKED_NAME_2_GER40 = "_GER40_GER30_";
     public static final String LINKED_NAME_2_EU50 = "_EU50_EUSTX50_";
-
-    public static final List<String> COMPANIES = Arrays.asList("FTMO", "8CAP", "ALPHA", "THE5ERS", "MFF");
 
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
