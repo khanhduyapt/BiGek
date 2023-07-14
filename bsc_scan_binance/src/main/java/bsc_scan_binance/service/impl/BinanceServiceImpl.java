@@ -2917,7 +2917,7 @@ public class BinanceServiceImpl implements BinanceService {
                             msg += Utils.new_line_from_service;
                             msg += Utils.appendSpace(dto.getComment(), 25);
 
-                            System.out.println(msg.replace(Utils.new_line_from_service, " "));
+                            // System.out.println(msg.replace(Utils.new_line_from_service, " "));
                             sendMsgPerHour_OnlyMe(EVENT_ID, msg);
                         }
                     }
