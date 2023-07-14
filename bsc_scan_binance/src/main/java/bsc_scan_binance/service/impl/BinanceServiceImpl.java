@@ -2870,7 +2870,7 @@ public class BinanceServiceImpl implements BinanceService {
                         allow_trade = true;
                     }
                     if (!allow_trade) {
-                        dto.setLots(BigDecimal.valueOf(0.01));
+                        // dto.setLots(BigDecimal.valueOf(0.01));
                     }
 
                     StringBuilder sb = new StringBuilder();
@@ -2897,13 +2897,18 @@ public class BinanceServiceImpl implements BinanceService {
                         if (isReloadAfter(Utils.MINUTES_OF_15M, EVENT_ID)) {
                             String msg = "openTrade: " + Utils.appendSpace(dto.getEpic(), 10);
                             msg += Utils.appendSpace(dto.getOrder_type(), 10);
+                            msg += Utils.new_line_from_service;
                             msg += "Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
+                            msg += Utils.new_line_from_service;
                             msg += "E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
-                            msg += "_SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 15);
+                            msg += Utils.new_line_from_service;
+                            msg += "SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 15);
+                            msg += Utils.new_line_from_service;
                             msg += "TP: " + Utils.appendLeft(dto.getTake_profit().toString(), 15);
-                            msg += "   " + Utils.appendSpace(dto.getComment(), 25);
+                            msg += Utils.new_line_from_service;
+                            msg += Utils.appendSpace(dto.getComment(), 25);
 
-                            System.out.println(msg);
+                            System.out.println(msg.replace(Utils.new_line_from_service, " "));
                             sendMsgPerHour_OnlyMe(EVENT_ID, msg.replaceAll(" +", ".").replaceAll("\\.+", "."));
                         }
                     }
