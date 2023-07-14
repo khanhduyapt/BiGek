@@ -2695,7 +2695,7 @@ public class BinanceServiceImpl implements BinanceService {
             ea += Utils.appendLeft(trade.getCompany(), 9) + ":";
             ea += Utils.appendSpace(trade.getTypeDescription(), 12) + " ";
             ea += " SL:" + Utils.appendSpace(Utils.removeLastZero(trade.getStopLoss()), 11);
-            ea += " TP:" + Utils.appendSpace(Utils.removeLastZero(trade.getTakeProfit()), 16);
+            ea += " TP:" + Utils.appendSpace(Utils.removeLastZero(trade.getTakeProfit()), 15);
             ea += " Profit:" + trade.getProfit().intValue();
             ea = Utils.appendLeft("", 65) + Utils.appendSpace(ea, length);
 
@@ -2740,7 +2740,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_h1.getCurrent_price(), 5)), 11);
-        log += Utils.appendSpace(append, 126);
+        log += Utils.appendSpace(append.trim(), 126);
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
         log += "0.15% " + Utils.appendSpace(
                 Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_15_PERCENT, false, trend_fi, EPIC, dto_h1, dto_d1), 56);
