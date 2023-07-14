@@ -2908,13 +2908,9 @@ public class BinanceServiceImpl implements BinanceService {
                             msg += Utils.appendSpace(dto.getEpic(), 10);
                             msg += Utils.new_line_from_service;
                             msg += "Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
-                            msg += Utils.new_line_from_service;
                             msg += "E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
-                            msg += Utils.new_line_from_service;
                             msg += "SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 15);
-                            msg += Utils.new_line_from_service;
                             msg += "TP: " + Utils.appendLeft(dto.getTake_profit().toString(), 15);
-                            msg += Utils.new_line_from_service;
                             msg += Utils.appendSpace(dto.getComment(), 25);
 
                             // System.out.println(msg.replace(Utils.new_line_from_service, " "));
