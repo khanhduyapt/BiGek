@@ -2674,9 +2674,6 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private String analysis_profit(String prifix, String EPIC, String dto_sweet_trend_note, String find_trend) {
-        String note = "";
-        note = Utils.appendSpace(dto_sweet_trend_note, 20);
-
         if (Objects.equals(EPIC, "EU50")) {
             // boolean debug = true;
         }
@@ -2688,7 +2685,7 @@ public class BinanceServiceImpl implements BinanceService {
             profit = profit.add(trade.getProfit());
         }
 
-        String append = prifix + note
+        String append = prifix + dto_sweet_trend_note
                 + Utils.appendSpace(tradeList.size() > 0 ? "Profit:" + String.valueOf(profit.intValue()) : "", 15);
 
         outputLog(EPIC, append, find_trend);
@@ -2697,7 +2694,7 @@ public class BinanceServiceImpl implements BinanceService {
             String ea = "";
             ea += Utils.appendLeft(trade.getCompany(), 9) + ":";
             ea += Utils.appendSpace(trade.getTypeDescription(), 12) + " ";
-            ea += " SL:" + Utils.appendSpace(Utils.removeLastZero(trade.getStopLoss()), 10);
+            ea += " SL:" + Utils.appendSpace(Utils.removeLastZero(trade.getStopLoss()), 11);
             ea += " TP:" + Utils.appendSpace(Utils.removeLastZero(trade.getTakeProfit()), 16);
             ea += " Profit:" + trade.getProfit().intValue();
             ea = Utils.appendLeft("", 65) + Utils.appendSpace(ea, length);
@@ -2743,8 +2740,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_h1.getCurrent_price(), 5)), 11);
+        log += Utils.appendSpace(append, 126);
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
-
         log += "0.15% " + Utils.appendSpace(
                 Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_15_PERCENT, false, trend_fi, EPIC, dto_h1, dto_d1), 56);
 
@@ -3830,7 +3827,7 @@ public class BinanceServiceImpl implements BinanceService {
             String end_zone = "";
             if (!(zone_d1).contains(trend_d1) || !(zone_h12).contains(trend_d1) || !(zone_h4).contains(trend_d1)
                     || !(zone_h1).contains(trend_d1)) {
-                end_zone = " End of " + Utils.appendSpace(trend_d1, 4) + " z";
+                end_zone += "End of " + Utils.appendSpace(trend_d1, 4) + " zone";
                 if (!zone_h1.contains(trend_d1)) {
                     end_zone += ".h1";
                 }
@@ -3872,7 +3869,8 @@ public class BinanceServiceImpl implements BinanceService {
                     trend_h1, trend_15, trend_05, switch_trend_w1, switch_trend_d1, switch_trend_h12, switch_trend_h4,
                     tracking_trend);
 
-            analysis_profit(prefix, EPIC, Utils.appendSpace(end_zone, 15) + note_xx, log_trend);
+            analysis_profit(prefix, EPIC, Utils.appendSpace(end_zone, 30) + "  " + Utils.appendSpace(note_xx, 20),
+                    log_trend);
 
             // ---------------------------------------------------------------------------------------------
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
@@ -3943,15 +3941,15 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     if (Utils.isNotBlank(reject_id)) {
-                        String msg_reject = Utils.appendLeft("", 20);
+                        String msg_reject = Utils.appendLeft("", 150);
                         msg_reject += "Reject: " + Utils.appendSpace(action, 10);
                         msg_reject += Utils.appendSpace(dto.getEpic(), 10);
-                        msg_reject += " Vol: " + Utils.appendSpace(dto.getLots().toString(), 10);
+                        msg_reject += "Vol: " + Utils.appendSpace(dto.getLots().toString(), 10);
                         msg_reject += "E: " + Utils.appendSpace(dto.getEntry().toString(), 12);
                         msg_reject += "SL: " + Utils.appendSpace(dto.getStop_loss().toString(), 12);
                         msg_reject += "TP: " + Utils.appendSpace(dto.getTake_profit().toString(), 12);
                         msg_reject += Utils.appendSpace("     " + reject_id, 60);
-                        msg_reject += Utils.appendSpace(dto.getComment(), 30);
+                        msg_reject += Utils.appendSpace(dto.getComment(), 15);
 
                         if (isReloadAfter(Utils.MINUTES_OF_1H, dto.getEpic() + dto.getOrder_type())) {
                             // System.out.println(msg_reject.trim());
