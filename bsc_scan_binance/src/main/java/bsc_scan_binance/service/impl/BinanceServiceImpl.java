@@ -2750,11 +2750,8 @@ public class BinanceServiceImpl implements BinanceService {
         log += append.replace("}", "} " + zone);
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
 
-        log += "0.5% " + Utils.appendSpace(
-                Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_50_PERCENT, false, trend_d1, EPIC, dto_h1, dto_d1), 66);
-
-        log += "0.25% " + Utils.appendSpace(
-                Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_25_PERCENT, false, trend_fi, EPIC, dto_h1, dto_d1), 56);
+        log += "0.15% " + Utils.appendSpace(
+                Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_15_PERCENT, false, trend_fi, EPIC, dto_h1, dto_d1), 56);
 
         Utils.logWritelnDraft(log);
 
@@ -2904,16 +2901,18 @@ public class BinanceServiceImpl implements BinanceService {
                         writer.write(sb.toString());
                         trade_count += 1;
 
-                        if (isReloadAfter(Utils.MINUTES_OF_1H, "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type())) {
+                        String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type();
+                        if (isReloadAfter(Utils.MINUTES_OF_15M, EVENT_ID)) {
                             String msg = "openTrade: " + Utils.appendSpace(dto.getEpic(), 10);
                             msg += Utils.appendSpace(dto.getOrder_type(), 10);
                             msg += "Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
                             msg += "E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
-                            msg += "SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 15);
+                            msg += "_SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 15);
                             msg += "TP: " + Utils.appendLeft(dto.getTake_profit().toString(), 15);
                             msg += "   " + Utils.appendSpace(dto.getComment(), 25);
 
                             System.out.println(msg);
+                            sendMsgPerHour_OnlyMe(EVENT_ID, msg.replaceAll(" +", ".").replaceAll("\\.+", "."));
                         }
                     }
                 }
@@ -3247,8 +3246,6 @@ public class BinanceServiceImpl implements BinanceService {
                     String append = Utils.appendSpace(dto_d1.getNote(), 35);
                     String log = Utils.createLineForex_Header(dto_d1, dto_d1, append);
                     log += Utils.appendSpace(Utils.removeLastZero(dto_d1.getCurrent_price()), 15);
-                    log += Utils.createLineForex_Body(Utils.RISK_0_50_PERCENT, dto_d1, dto_d1, trend_w1, true).trim();
-                    log += "     ";
                     log += Utils.createLineForex_Body(Utils.RISK_0_15_PERCENT, dto_d1, dto_d1, trend_w1, true).trim();
                     list_d1_log.add(log);
                     index += 1;
@@ -3522,15 +3519,15 @@ public class BinanceServiceImpl implements BinanceService {
 
         for (String company : Utils.COMPANIES) {
             String company_id = Utils.MT5_COMPANY_FTMO;
-            if (Objects.equals(company, "8CAP")) {
-                company_id = Utils.MT5_COMPANY_8CAP;
-            } else if (Objects.equals(company, "ALPHA")) {
-                company_id = Utils.MT5_COMPANY_ALPHA;
-            } else if (Objects.equals(company, "THE5ERS")) {
-                company_id = Utils.MT5_COMPANY_5ERS;
-            } else if (Objects.equals(company, "MFF")) {
-                company_id = Utils.MT5_COMPANY_MFF;
-            }
+            //if (Objects.equals(company, "8CAP")) {
+            //    company_id = Utils.MT5_COMPANY_NEXT;
+            //} else if (Objects.equals(company, "ALPHA")) {
+            //    company_id = Utils.MT5_COMPANY_ALPHA;
+            //} else if (Objects.equals(company, "THE5ERS")) {
+            //    company_id = Utils.MT5_COMPANY_5ERS;
+            //} else if (Objects.equals(company, "MFF")) {
+            //    company_id = Utils.MT5_COMPANY_MFF;
+            //}
 
             String mt5_ftmo_trading_file_path = Utils.getMt5DataFolder(company_id) + "Trade.csv";
             String mt5_data_file = check_mt5_data_file(mt5_ftmo_trading_file_path, 3);
@@ -3881,6 +3878,10 @@ public class BinanceServiceImpl implements BinanceService {
                     note_xx = dto_d1.getNote();
                 }
             }
+            if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
+                    && Objects.equals(trend_h4, trend_h1) && note_h4.contains(trend_d1)) {
+                note_xx = dto_h4.getNote().trim() + " D=H12=H4=H1";
+            }
 
             count += 1;
             String tracking_trend = trend_w1;
@@ -3913,9 +3914,17 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (Utils.isNotBlank(append)) {
                         action = trend_d1;
-                        dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, action, dto_h1, dto_d1, append,
+                        dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, action, dto_h1, dto_d1, append,
                                 true, note_d1);
                     }
+                }
+
+                if (Objects.isNull(dto) && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
+                        && Objects.equals(trend_h4, trend_h1) && note_h4.contains(trend_d1)) {
+                    action = trend_d1;
+                    String append = ".24124w_";
+                    dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, action, dto_h1, dto_d1, append,
+                            true, note_d1);
                 }
 
                 // ---------------------------------------------------------------------
@@ -3959,6 +3968,10 @@ public class BinanceServiceImpl implements BinanceService {
                         //dto.setLots(BigDecimal.valueOf(0.01));
                     }
 
+                    if (Utils.EPICS_INDEXS.contains(EPIC) && !Objects.equals(trend_w1, trend_d1)) {
+                        reject_id = " RejectID: w1!=d1";
+                    }
+
                     if (Utils.isNotBlank(reject_id)) {
                         String msg_reject = Utils.appendLeft("", 20);
                         msg_reject += "Reject: " + Utils.appendSpace(action, 10);
@@ -3971,7 +3984,7 @@ public class BinanceServiceImpl implements BinanceService {
                         msg_reject += Utils.appendSpace(dto.getComment(), 30);
 
                         if (isReloadAfter(Utils.MINUTES_OF_1H, dto.getEpic() + dto.getOrder_type())) {
-                            System.out.println(msg_reject.trim());
+                            // System.out.println(msg_reject.trim());
                         }
 
                         Utils.logWritelnDraft(msg_reject);
@@ -4072,21 +4085,11 @@ public class BinanceServiceImpl implements BinanceService {
                 if (isTrendInverse) {
                     isPriceHit_TP = true;
                 }
-                if (PROFIT.compareTo(Utils.RISK_0_50_PERCENT) > 0) {
-                    isPriceHit_TP = true;
-                }
             }
 
             boolean isPriceHit_SL = false;
             if (PROFIT.add(Utils.RISK_0_15_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
                 if (isTrendInverse && allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
-                    isPriceHit_SL = true;
-                }
-                if (isTrendInverse && Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_H1)
-                        && PROFIT.add(Utils.RISK_0_25_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
-                    isPriceHit_SL = true;
-                }
-                if (PROFIT.add(Utils.RISK_0_50_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
                     isPriceHit_SL = true;
                 }
             }

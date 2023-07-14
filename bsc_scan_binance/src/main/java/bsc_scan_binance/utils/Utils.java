@@ -61,16 +61,13 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 
 //@Slf4j
 public class Utils {
-    private static final BigDecimal ACCOUNT = BigDecimal.valueOf(100000);
+    private static final BigDecimal ACCOUNT = BigDecimal.valueOf(200000);
 
-    // Step1: Khi mới nhận tài khoản (150$ / 1trade)
+    // Step1: Khi mới nhận tài khoản (300$ / 1trade)
     public static final BigDecimal RISK_0_15_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
 
-    // Step2: Khi tài khoản tăng trưởng 2% (250$ / 1trade)
-    public static final BigDecimal RISK_0_25_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0025));
-
-    // Step3: Khi tài khoản tăng trưởng 5% (500$ / 1trade)
-    public static final BigDecimal RISK_0_50_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.005));
+    //// Step2: Khi tài khoản tăng trưởng 2% (500$ / 1trade)
+    //public static final BigDecimal RISK_0_25_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0025));
 
     public static final String chatId_duydk = "5099224587";
     public static final String chatUser_duydk = "tg25251325";
@@ -183,24 +180,24 @@ public class Utils {
 
     public static final Integer MINUTES_RELOAD_CSV_DATA = 5;
 
-    public static final List<String> COMPANIES = Arrays.asList("FTMO", "NEXT", "ALPHA", "THE5ERS", "MFF", "TFF", "CTI",
-            "TOPTIER", "FTP", "SPT", "ENG", "BFP", "E8F", "AUDA", "FTUK");
+    public static final List<String> COMPANIES = Arrays.asList("FTMO");
 
-    public static String MT5_COMPANY_NEXT = "608AB61EFF9C7B3585EC08B8CF6800E3"; // FundedNext
+    //, "NEXT", "ALPHA", "THE5ERS", "MFF", "TFF", "CTI", "TOPTIER", "FTP", "SPT", "ENG", "BFP", "E8F", "AUDA", "FTUK"
+    //public static String MT5_COMPANY_NEXT = "608AB61EFF9C7B3585EC08B8CF6800E3"; // FundedNext
     public static String MT5_COMPANY_FTMO = "49CDDEAA95A409ED22BD2287BB67CB9C"; // FTMO (FTMO)
-    public static String MT5_COMPANY_5ERS = "10CE948A1DFC9A8C27E56E827008EBD4"; // The5ers (FivePercentOnline)
-    public static String MT5_COMPANY_MFF = "D0E8209F77C8CF37AD8BF550E51FF075"; // My Forex Funds (Traders Global Group)
-    public static String MT5_COMPANY_ALPHA = "DA9FDBAE775DAE029270F1379F6A9F03"; // Alpha Capital Group Trustpilot: 4.6
-    public static String MT5_COMPANY_TFF = "TFF"; // True Forex Funds      Trustpilot: 4.7
-    public static String MT5_COMPANY_CTI = "CTI"; // City Traders Imperium Trustpilot: 4.8
-    public static String MT5_COMPANY_TOPTIER = "TOPTIER"; // TopTier Trader    Trustpilot: 4.8
-    public static String MT5_COMPANY_FTP = "FTP"; // Funded Trading Plus   Trustpilot: 4.9
-    public static String MT5_COMPANY_SPT = "SPT"; //Smart Prop Trader Trustpilot: 4.7
-    public static String MT5_COMPANY_ENG = "Engineer"; // Funded Engineer Trustpilot: 4.8
-    public static String MT5_COMPANY_BFP = "BFP"; // Bespoke Funding Program Trustpilot: 4.8
-    public static String MT5_COMPANY_E8F = "E8F"; // E8 Funding    Trustpilot: 4.7
-    public static String MT5_COMPANY_AUDA = "AUDA"; //AudaCity Capital Management  Trustpilot: 4.7
-    public static String MT5_COMPANY_FTUK = "FTUK"; // FTUK Trustpilot: 4.7
+    //public static String MT5_COMPANY_5ERS = "10CE948A1DFC9A8C27E56E827008EBD4"; // The5ers (FivePercentOnline)
+    //public static String MT5_COMPANY_MFF = "D0E8209F77C8CF37AD8BF550E51FF075"; // My Forex Funds (Traders Global Group)
+    //public static String MT5_COMPANY_ALPHA = "DA9FDBAE775DAE029270F1379F6A9F03"; // Alpha Capital Group Trustpilot: 4.6
+    //public static String MT5_COMPANY_TFF = "TFF"; // True Forex Funds      Trustpilot: 4.7
+    //public static String MT5_COMPANY_CTI = "CTI"; // City Traders Imperium Trustpilot: 4.8
+    //public static String MT5_COMPANY_TOPTIER = "TOPTIER"; // TopTier Trader    Trustpilot: 4.8
+    //public static String MT5_COMPANY_FTP = "FTP"; // Funded Trading Plus   Trustpilot: 4.9
+    //public static String MT5_COMPANY_SPT = "SPT"; //Smart Prop Trader Trustpilot: 4.7
+    //public static String MT5_COMPANY_ENG = "Engineer"; // Funded Engineer Trustpilot: 4.8
+    //public static String MT5_COMPANY_BFP = "BFP"; // Bespoke Funding Program Trustpilot: 4.8
+    //public static String MT5_COMPANY_E8F = "E8F"; // E8 Funding    Trustpilot: 4.7
+    //public static String MT5_COMPANY_AUDA = "AUDA"; //AudaCity Capital Management  Trustpilot: 4.7
+    //public static String MT5_COMPANY_FTUK = "FTUK"; // FTUK Trustpilot: 4.7
 
     public static final String LINKED_NAME_2_USOIL = "_USOIL_USOUSD_";
     public static final String LINKED_NAME_2_US100 = "_NDX100_US100_NAS100_";
@@ -223,10 +220,10 @@ public class Utils {
     public static final List<String> EPICS_FOREXS_ALL = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
             "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD",
             "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD",
-            "USDCHF", "USDCZK", "USDSEK", "USDJPY");
+            "USDCHF", "USDCZK", "USDJPY");
 
-    public static final List<String> EPICS_FOREXS_USD = Arrays.asList("USDCAD", "USDCHF", "USDCZK", "USDSEK", "USDJPY",
-            "AUDUSD", "EURUSD", "GBPUSD", "NZDUSD");
+    public static final List<String> EPICS_FOREXS_USD = Arrays.asList("USDCAD", "USDCHF", "USDCZK", "USDJPY", "AUDUSD",
+            "EURUSD", "GBPUSD", "NZDUSD");
 
     public static final List<String> EPICS_FOREXS_JPY = Arrays.asList("AUDJPY", "CADJPY", "CHFJPY", "EURJPY", "GBPJPY",
             "NZDJPY", "USDJPY");
@@ -1176,24 +1173,24 @@ public class Utils {
 
     public static String getCompanyByFoder(String path) {
         //Arrays.asList("FTMO", "8CAP", "ALPHA", "THE5ERS", "MFF");
-        String result = "";
-        if (path.contains(MT5_COMPANY_FTMO)) {
-            result = COMPANIES.get(0);
-        }
-        if (path.contains(MT5_COMPANY_8CAP)) {
-            result = COMPANIES.get(1);
-        }
-        if (path.contains(MT5_COMPANY_ALPHA)) {
-            result = COMPANIES.get(2);
-        }
-        if (path.contains(MT5_COMPANY_5ERS)) {
-            result = COMPANIES.get(3);
-        }
-        if (path.contains(MT5_COMPANY_MFF)) {
-            result = COMPANIES.get(4);
-        }
+        String result = "FTMO";
+        //if (path.contains(MT5_COMPANY_FTMO)) {
+        //    result = COMPANIES.get(0);
+        //}
+        //if (path.contains(MT5_COMPANY_NEXT)) {
+        //    result = COMPANIES.get(1);
+        //}
+        //if (path.contains(MT5_COMPANY_ALPHA)) {
+        //    result = COMPANIES.get(2);
+        //}
+        //if (path.contains(MT5_COMPANY_5ERS)) {
+        //    result = COMPANIES.get(3);
+        //}
+        //if (path.contains(MT5_COMPANY_MFF)) {
+        //    result = COMPANIES.get(4);
+        //}
         result = Utils.appendSpace(result, 10);
-        return "";
+        return result;
     }
 
     public static String getMt5DataFolder(String MT5_COMPANY_ID) {
