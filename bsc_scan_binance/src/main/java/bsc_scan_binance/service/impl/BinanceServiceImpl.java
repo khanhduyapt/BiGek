@@ -2641,8 +2641,11 @@ public class BinanceServiceImpl implements BinanceService {
             allow_trade_by_ma50 = true;
         }
 
+        String trend_zone = Utils.getZoneTrend(list);
+
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
-                low_high.get(0), low_high.get(1), Utils.appendSpace(note, 50), allow_trade_by_ma50, trend_candle_1);
+                low_high.get(0), low_high.get(1), Utils.appendSpace(note, 50), allow_trade_by_ma50, trend_candle_1,
+                trend_zone);
 
         ordersRepository.save(entity);
     }
@@ -3777,9 +3780,10 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String trend_candle_1 = Utils.getTrendByHekenAshiList(heken_list, 1);
+        String trend_zone = Utils.getZoneTrend(heken_list);
 
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), str_body, end_body, sl_long,
-                sl_shot, note, allow_trade_by_ma50, trend_candle_1);
+                sl_shot, note, allow_trade_by_ma50, trend_candle_1, trend_zone);
 
         ordersRepository.save(entity);
 
@@ -3829,28 +3833,10 @@ public class BinanceServiceImpl implements BinanceService {
             String note_h1 = dto_h1.getNote();
             String note_15 = dto_15.getNote();
 
-            String zone_h12 = "";
-            String zone_h4 = "";
-            String zone_h1 = "";
-            {
-                List<BtcFutures> list_h1 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
-                List<BtcFutures> list_h4 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
-                List<BtcFutures> list_h12 = getCapitalData(EPIC, Utils.CAPITAL_TIME_H12);
-
-                if (CollectionUtils.isEmpty(list_h12) || CollectionUtils.isEmpty(list_h4)
-                        || CollectionUtils.isEmpty(list_h1)) {
-                    Utils.logWritelnDraft("[controlMt5] (" + EPIC + ") CollectionUtils.isEmpty");
-                    continue;
-                }
-
-                List<BtcFutures> heken_list_h1 = Utils.getHekenList(list_h1);
-                List<BtcFutures> heken_list_h4 = Utils.getHekenList(list_h4);
-                List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
-
-                zone_h1 = Utils.getZoneTrend(heken_list_h1);
-                zone_h4 = Utils.getZoneTrend(heken_list_h4);
-                zone_h12 = Utils.getZoneTrend(heken_list_h12);
-            }
+            String zone_d1 = dto_d1.getTrend();
+            String zone_h12 = dto_h12.getTrend();
+            String zone_h4 = dto_h4.getTrend();
+            String zone_h1 = dto_h1.getTrend();
 
             // ---------------------------------------------------------------------
 
@@ -3919,8 +3905,9 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (Objects.isNull(dto) && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
-                        && Objects.equals(trend_h4, trend_h1) && note_h4.contains(trend_d1)) {
+                if (dto_h4.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
+                        && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                        && note_h4.contains(trend_d1)) {
                     action = trend_d1;
                     String append = ".24124w_";
                     dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, action, dto_h1, dto_d1, append,
@@ -3950,18 +3937,23 @@ public class BinanceServiceImpl implements BinanceService {
                         reject_id = " RejectID: h4=h1 and h4!=action " + note_d1 + note_h12 + note_h4;
                     }
 
-                    if (!(zone_h12).contains(action) || !(zone_h4).contains(action) || !(zone_h1).contains(action)) {
+                    if (!(zone_d1).contains(action) || !(zone_h12).contains(action) || !(zone_h4).contains(action)
+                            || !(zone_h1).contains(action)) {
                         String end_zone = "z";
                         reject_id = " RejectID: end of " + Utils.appendSpace(action, 4) + " ";
-                        if (!(zone_h1).contains(action)) {
+                        if (!zone_h1.contains(action)) {
                             end_zone += ".h1";
                         }
-                        if (!(zone_h4).contains(action)) {
+                        if (!zone_h4.contains(action)) {
                             end_zone += ".h4";
                         }
-                        if (!(zone_h12).contains(action)) {
+                        if (!zone_h12.contains(action)) {
                             end_zone += ".h12";
                         }
+                        if (!zone_d1.contains(action)) {
+                            end_zone += ".d1";
+                        }
+
                         reject_id += end_zone;
                         //reject_id = "";
                         //dto.setComment(dto.getComment() + end_zone);

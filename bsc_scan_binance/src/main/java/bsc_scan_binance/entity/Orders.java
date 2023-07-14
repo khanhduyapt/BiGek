@@ -34,6 +34,7 @@ import lombok.NoArgsConstructor;
 //    created_at timestamp without time zone DEFAULT now(),
 //    allow_trade_by_ma50 boolean DEFAULT false,
 //    trend_candle_1 character varying(255) COLLATE pg_catalog."default",
+//    trend_zone character varying(255) COLLATE pg_catalog."default",
 //    CONSTRAINT orders_pkey PRIMARY KEY (gecko_id)
 //)
 
@@ -77,4 +78,8 @@ public class Orders {
 
     @Column(name = "trend_candle_1")
     private String trend_c1;
+
+    @Column(name = "trend_zone")
+    private String trend_zone;
+
 }
