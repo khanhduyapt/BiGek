@@ -1328,7 +1328,7 @@ public class Utils {
         try {
             String msg = text.replaceAll("↑", "^").replaceAll("↓", "v").replaceAll(" ", "");
             System.out.println();
-            System.out.println(msg + ". 💰 ");
+            System.out.println(msg.replace(Utils.new_line_from_service, " ") + ". 💰 ");
             if (isAllowSendMsg()) {
                 sendToChatId(Utils.chatId_duydk, msg + ". 💰 ");
             }

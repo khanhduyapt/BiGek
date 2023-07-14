@@ -2714,6 +2714,7 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private void outputLog(String EPIC, String append, String trend_fi) {
+        Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
         Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
         Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
         Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
@@ -2744,6 +2745,13 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
         log += "0.15% " + Utils.appendSpace(
                 Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_15_PERCENT, false, trend_fi, EPIC, dto_h1, dto_d1), 56);
+
+        if (dto_w1.getSwitch_trend().contains(dto_w1.getTrend())
+                && dto_w1.getTrend_zone().contains(dto_w1.getTrend())) {
+            log += "     ";
+            log += "0.15% " + Utils.appendSpace(
+                    Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_15_PERCENT, false, trend_fi, EPIC, dto_h1, dto_w1), 56);
+        }
 
         Utils.logWritelnDraft(log);
 
@@ -2895,8 +2903,9 @@ public class BinanceServiceImpl implements BinanceService {
 
                         String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type();
                         if (isReloadAfter(Utils.MINUTES_OF_15M, EVENT_ID)) {
-                            String msg = "openTrade: " + Utils.appendSpace(dto.getEpic(), 10);
-                            msg += Utils.appendSpace(dto.getOrder_type(), 10);
+                            String msg = "openTrade: ";
+                            msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4) + ")", 10);
+                            msg += Utils.appendSpace(dto.getEpic(), 10);
                             msg += Utils.new_line_from_service;
                             msg += "Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
                             msg += Utils.new_line_from_service;
@@ -2909,7 +2918,7 @@ public class BinanceServiceImpl implements BinanceService {
                             msg += Utils.appendSpace(dto.getComment(), 25);
 
                             System.out.println(msg.replace(Utils.new_line_from_service, " "));
-                            sendMsgPerHour_OnlyMe(EVENT_ID, msg.replaceAll(" +", ".").replaceAll("\\.+", "."));
+                            sendMsgPerHour_OnlyMe(EVENT_ID, msg);
                         }
                     }
                 }
@@ -3828,14 +3837,9 @@ public class BinanceServiceImpl implements BinanceService {
             String zone_d1 = dto_d1.getTrend_zone();
             String zone_h12 = dto_h12.getTrend_zone();
             String zone_h4 = dto_h4.getTrend_zone();
-            String zone_h1 = dto_h1.getTrend_zone();
             String end_zone = "";
-            if (!(zone_d1).contains(trend_d1) || !(zone_h12).contains(trend_d1) || !(zone_h4).contains(trend_d1)
-                    || !(zone_h1).contains(trend_d1)) {
+            if (!(zone_d1).contains(trend_d1) || !(zone_h12).contains(trend_d1) || !(zone_h4).contains(trend_d1)) {
                 end_zone += "End of " + Utils.appendSpace(trend_d1, 4) + " zone";
-                if (!zone_h1.contains(trend_d1)) {
-                    end_zone += ".h1";
-                }
                 if (!zone_h4.contains(trend_d1)) {
                     end_zone += ".h4";
                 }
@@ -3923,8 +3927,8 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Utils.EPICS_INDEXS.contains(EPIC) && !Objects.equals(trend_w1, trend_d1)) {
                         reject_id = " RejectID: w1!=d1";
                     }
-                    if ((Utils.EPICS_INDEXS.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC))
-                            && Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, action)) {
+                    // (Utils.EPICS_INDEXS.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)) &&
+                    if (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, action)) {
                         reject_id = " RejectID: w1=d1 d1!=action";
                     }
 
