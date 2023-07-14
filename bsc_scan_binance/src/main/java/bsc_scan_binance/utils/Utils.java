@@ -4180,7 +4180,7 @@ public class Utils {
         String id = heken_list.get(0).getId();
         String trend = Utils.getTrendByHekenAshiList(heken_list);
 
-        if (id.contains(PREFIX_1d_) || id.contains(PREFIX_12h_) || id.contains(PREFIX_4h_)) {
+        if (id.contains(PREFIX_1w_) || id.contains(PREFIX_1d_) || id.contains(PREFIX_12h_) || id.contains(PREFIX_4h_)) {
             if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(0).isUptrend()
                     && heken_list.get(1).isDown()) {
                 return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
@@ -4193,17 +4193,6 @@ public class Utils {
         }
 
         // -------------------------------------------------------------------------
-
-        //if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(0).isUptrend()
-        //        && is_long_legged_doji_candle(heken_list.get(1))) {
-        //    return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
-        //}
-        //
-        //if (Objects.equals(trend, Utils.TREND_SHOT) && heken_list.get(0).isDown()
-        //        && is_long_legged_doji_candle(heken_list.get(1))) {
-        //    return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
-        //}
-
         if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend()
                 && heken_list.get(2).isDown()) {
             return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
