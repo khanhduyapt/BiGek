@@ -39,9 +39,9 @@ import lombok.NoArgsConstructor;
 //)
 
 public class Orders {
-    public Orders(String _id, String _note) {
+    public Orders(String _id, String _switch_trend) {
         this.id = _id;
-        this.note = _note;
+        this.switch_trend = _switch_trend;
         this.insertTime = LocalDateTime.now().toString();
     }
 
@@ -71,7 +71,7 @@ public class Orders {
     private BigDecimal high_price = BigDecimal.ZERO;
 
     @Column(name = "note")
-    private String note;
+    private String switch_trend;
 
     @Column(name = "allow_trade_by_ma50")
     private boolean allow_trade_by_ma50;

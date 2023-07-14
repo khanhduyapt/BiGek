@@ -4299,7 +4299,7 @@ public class Utils {
                 + Utils.appendSpace(symbol, 10);
 
         String price = Utils.appendSpace(Utils.removeLastZero(entity.getCurrent_price()), 10);
-        String url = Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70) + price + sl + entity.getNote();
+        String url = Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70) + price + sl + entity.getSwitch_trend();
 
         return tmp_msg + url;
     }

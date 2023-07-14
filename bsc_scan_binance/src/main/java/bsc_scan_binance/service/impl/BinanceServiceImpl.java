@@ -2730,13 +2730,6 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        List<BtcFutures> heken_list_h12 = Utils.getHekenList(list_h12);
-        String zone_trend_h12 = Utils.getZoneTrend(heken_list_h12);
-        String zone = Utils.appendSpace("Z12:" + zone_trend_h12, 10);
-        if (zone_trend_h12.contains("BUY_SELL")) {
-            zone = Utils.appendSpace("", 10);
-        }
-
         String trend_d1 = dto_d1.getTrend();
         String trend_h4 = dto_h4.getTrend();
         String trend_h1 = dto_h1.getTrend();
@@ -2750,7 +2743,6 @@ public class BinanceServiceImpl implements BinanceService {
 
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_h1.getCurrent_price(), 5)), 11);
-        log += append.replace("}", "} " + zone);
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
 
         log += "0.15% " + Utils.appendSpace(
@@ -2758,7 +2750,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         Utils.logWritelnDraft(log);
 
-        if (zone_trend_h12.contains(trend_d1) && Objects.equals(trend_d1, trend_h4)) {
+        if (Objects.equals(trend_d1, trend_h4)) {
             if (log.contains("Heiken") || log.contains("Ma")) {
                 Utils.logWritelnReport(log);
             }
@@ -3246,7 +3238,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String trend_d1 = dto_d1.getTrend();
 
                 if (Objects.equals(trend_w1, trend_d1)) {
-                    String append = Utils.appendSpace(dto_d1.getNote(), 35);
+                    String append = Utils.appendSpace(dto_d1.getSwitch_trend(), 35);
                     String log = Utils.createLineForex_Header(dto_d1, dto_d1, append);
                     log += Utils.appendSpace(Utils.removeLastZero(dto_d1.getCurrent_price()), 15);
                     log += Utils.createLineForex_Body(Utils.RISK_0_15_PERCENT, dto_d1, dto_d1, trend_w1, true).trim();
@@ -3298,7 +3290,7 @@ public class BinanceServiceImpl implements BinanceService {
                     list_crypto_log.add("");
                 }
 
-                if (Objects.nonNull(dto) && Utils.isNotBlank(dto.getNote())) {
+                if (Objects.nonNull(dto) && Utils.isNotBlank(dto.getSwitch_trend())) {
                     String log = Utils.createLineCrypto(dto, symbol, type);
                     list_crypto_log.add(log);
                 }
@@ -3427,7 +3419,7 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_trend = "." + Utils.appendSpace(trend_w1, 4) + " [W1.D1                 ]     ";
 
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
-            if (Utils.isNotBlank(dto_w1.getNote())) {
+            if (Utils.isNotBlank(dto_w1.getSwitch_trend())) {
                 if (!Objects.equals(trend_w1, trend_w1)) {
                     prefix = prefix.replace("W1", "  ");
                 }
@@ -3435,7 +3427,7 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix = prefix.replace("D1", "  ");
                 }
 
-                analysis_profit(prefix, EPIC, dto_w1.getNote(), "");
+                analysis_profit(prefix, EPIC, dto_w1.getSwitch_trend(), "");
                 index += 1;
             }
         }
@@ -3480,11 +3472,11 @@ public class BinanceServiceImpl implements BinanceService {
                 prefix = prefix.replace("H1", "  ");
             }
 
-            if (Objects.equals(trend_w1, trend_d1) && Utils.isNotBlank(dto_d1.getNote())) {
-                analysis_profit(prefix, EPIC, dto_d1.getNote(), zone_d1);
+            if (Objects.equals(trend_w1, trend_d1) && Utils.isNotBlank(dto_d1.getSwitch_trend())) {
+                analysis_profit(prefix, EPIC, dto_d1.getSwitch_trend(), zone_d1);
                 index += 1;
-            } else if (Objects.equals(trend_d1, trend_h1) && Utils.isNotBlank(dto_h1.getNote())) {
-                analysis_profit(prefix, EPIC, dto_h1.getNote(), zone_d1);
+            } else if (Objects.equals(trend_d1, trend_h1) && Utils.isNotBlank(dto_h1.getSwitch_trend())) {
+                analysis_profit(prefix, EPIC, dto_h1.getSwitch_trend(), zone_d1);
                 index += 1;
             }
 
@@ -3503,7 +3495,7 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_h1, trend_15)) {
 
                     // Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
-                    //        ".962415", true, dto_d1.getNote());
+                    //        ".962415", true, dto_d1.getSwitch_trend());
                     // BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                 }
             }
@@ -3826,18 +3818,32 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_15 = dto_05.getTrend();
             String trend_05 = dto_05.getTrend();
 
-            String note_w1 = dto_w1.getNote();
-            String note_d1 = dto_d1.getNote();
-            String note_h12 = dto_h12.getNote();
-            String note_h4 = dto_h4.getNote();
-            String note_h1 = dto_h1.getNote();
-            String note_15 = dto_15.getNote();
+            String switch_trend_w1 = dto_w1.getSwitch_trend();
+            String switch_trend_d1 = dto_d1.getSwitch_trend();
+            String switch_trend_h12 = dto_h12.getSwitch_trend();
+            String switch_trend_h4 = dto_h4.getSwitch_trend();
 
             String zone_d1 = dto_d1.getTrend_zone();
             String zone_h12 = dto_h12.getTrend_zone();
             String zone_h4 = dto_h4.getTrend_zone();
             String zone_h1 = dto_h1.getTrend_zone();
-
+            String end_zone = "";
+            if (!(zone_d1).contains(trend_d1) || !(zone_h12).contains(trend_d1) || !(zone_h4).contains(trend_d1)
+                    || !(zone_h1).contains(trend_d1)) {
+                end_zone = " End of " + Utils.appendSpace(trend_d1, 4) + " z";
+                if (!zone_h1.contains(trend_d1)) {
+                    end_zone += ".h1";
+                }
+                if (!zone_h4.contains(trend_d1)) {
+                    end_zone += ".h4";
+                }
+                if (!zone_h12.contains(trend_d1)) {
+                    end_zone += ".h12";
+                }
+                if (!zone_d1.contains(trend_d1)) {
+                    end_zone += ".d1";
+                }
+            }
             // ---------------------------------------------------------------------
 
             // String wdh4h1 = Utils.getEncrypted_trend_w1d1h4h1(trend_w1, trend_d1,
@@ -3847,35 +3853,26 @@ public class BinanceServiceImpl implements BinanceService {
             // -------------------------------------------------------------------------------
             String log_trend = trend_d1;
             String note_xx = "";
-            if (Objects.equals(trend_d1, trend_h4)) {
-                if (dto_15.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
-                        && Objects.equals(trend_d1, trend_15) && note_15.contains(trend_d1)) {
-                    note_xx = dto_15.getNote();
-                } else if (dto_h1.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
-                        && note_h1.contains(trend_d1)) {
-                    note_xx = dto_h1.getNote();
-                } else if (dto_h4.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
-                        && note_h4.contains(trend_d1)) {
-                    note_xx = dto_h4.getNote();
-                } else if (dto_h12.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
-                        && note_h12.contains(trend_d1)) {
-                    note_xx = dto_h12.getNote();
-                } else {
-                    note_xx = dto_d1.getNote();
+            if (dto_h12.isAllow_trade_by_ma50() && switch_trend_h12.contains(trend_d1)) {
+                if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)) {
+                    note_xx = switch_trend_h12 + " D=H12=H4";
+                } else if (Objects.equals(trend_d1, trend_h12)) {
+                    note_xx = switch_trend_h12 + " D=H12";
                 }
             }
-            if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
-                    && Objects.equals(trend_h4, trend_h1) && note_h4.contains(trend_d1)) {
-                note_xx = dto_h4.getNote().trim() + " D=H12=H4=H1";
+            if (dto_h4.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
+                    && Objects.equals(trend_h12, trend_h4) && switch_trend_h4.contains(trend_d1)) {
+                note_xx = dto_h4.getSwitch_trend().trim() + " D=H12=H4";
             }
 
             count += 1;
             String tracking_trend = trend_w1;
 
             String prefix = Utils.getPrefix_FollowTrackingTrend(count, trend_w1, trend_d1, trend_h12, trend_h4,
-                    trend_h1, trend_15, trend_05, note_w1, note_d1, note_h12, note_h4, tracking_trend);
+                    trend_h1, trend_15, trend_05, switch_trend_w1, switch_trend_d1, switch_trend_h12, switch_trend_h4,
+                    tracking_trend);
 
-            analysis_profit(prefix, EPIC, note_xx, log_trend);
+            analysis_profit(prefix, EPIC, Utils.appendSpace(end_zone, 15) + note_xx, log_trend);
 
             // ---------------------------------------------------------------------------------------------
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
@@ -3891,27 +3888,27 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Utils.isBlank(append) && Objects.equals(trend_h4, dto_d1.getTrend_c1())) {
                         append = ".244115_";
                     }
-                    if (Utils.isBlank(append) && dto_h12.getNote().contains(trend_d1)) {
+                    if (Utils.isBlank(append) && dto_h12.getSwitch_trend().contains(trend_d1)) {
                         append = ".244115" + (Objects.equals(trend_d1, Utils.TREND_LONG) ? "w" : "m");
                     }
-                    if (Utils.isBlank(append) && dto_d1.getNote().contains(trend_d1)) {
+                    if (Utils.isBlank(append) && dto_d1.getSwitch_trend().contains(trend_d1)) {
                         append = ".241241" + (Objects.equals(trend_d1, Utils.TREND_LONG) ? "w" : "m");
                     }
 
                     if (Utils.isNotBlank(append)) {
                         action = trend_d1;
                         dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, action, dto_h1, dto_d1, append,
-                                true, note_d1);
+                                true, switch_trend_d1);
                     }
                 }
 
                 if (dto_h4.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
                         && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)
-                        && note_h4.contains(trend_d1)) {
+                        && switch_trend_h4.contains(trend_d1)) {
                     action = trend_d1;
                     String append = ".24124w_";
                     dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, action, dto_h1, dto_d1, append,
-                            true, note_d1);
+                            true, switch_trend_d1);
                 }
 
                 // ---------------------------------------------------------------------
@@ -3919,6 +3916,9 @@ public class BinanceServiceImpl implements BinanceService {
                     String reject_id = "";
                     if (!Objects.equals(trend_h4, trend_h1)) {
                         reject_id = " RejectID: h4!=h1 -> wait";
+                    }
+                    if (Utils.EPICS_INDEXS.contains(EPIC) && !Objects.equals(trend_w1, trend_d1)) {
+                        reject_id = " RejectID: w1!=d1";
                     }
                     if ((Utils.EPICS_INDEXS.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC))
                             && Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, action)) {
@@ -3934,34 +3934,12 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     if (Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h4, action)) {
-                        reject_id = " RejectID: h4=h1 and h4!=action " + note_d1 + note_h12 + note_h4;
+                        reject_id = " RejectID: h4=h1 and h4!=action " + switch_trend_d1 + switch_trend_h12
+                                + switch_trend_h4;
                     }
 
-                    if (!(zone_d1).contains(action) || !(zone_h12).contains(action) || !(zone_h4).contains(action)
-                            || !(zone_h1).contains(action)) {
-                        String end_zone = "z";
-                        reject_id = " RejectID: end of " + Utils.appendSpace(action, 4) + " ";
-                        if (!zone_h1.contains(action)) {
-                            end_zone += ".h1";
-                        }
-                        if (!zone_h4.contains(action)) {
-                            end_zone += ".h4";
-                        }
-                        if (!zone_h12.contains(action)) {
-                            end_zone += ".h12";
-                        }
-                        if (!zone_d1.contains(action)) {
-                            end_zone += ".d1";
-                        }
-
+                    if (Utils.isNotBlank(end_zone)) {
                         reject_id += end_zone;
-                        //reject_id = "";
-                        //dto.setComment(dto.getComment() + end_zone);
-                        //dto.setLots(BigDecimal.valueOf(0.01));
-                    }
-
-                    if (Utils.EPICS_INDEXS.contains(EPIC) && !Objects.equals(trend_w1, trend_d1)) {
-                        reject_id = " RejectID: w1!=d1";
                     }
 
                     if (Utils.isNotBlank(reject_id)) {
