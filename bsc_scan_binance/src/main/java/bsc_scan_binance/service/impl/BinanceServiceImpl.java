@@ -3833,10 +3833,10 @@ public class BinanceServiceImpl implements BinanceService {
             String note_h1 = dto_h1.getNote();
             String note_15 = dto_15.getNote();
 
-            String zone_d1 = dto_d1.getTrend();
-            String zone_h12 = dto_h12.getTrend();
-            String zone_h4 = dto_h4.getTrend();
-            String zone_h1 = dto_h1.getTrend();
+            String zone_d1 = dto_d1.getTrend_zone();
+            String zone_h12 = dto_h12.getTrend_zone();
+            String zone_h4 = dto_h4.getTrend_zone();
+            String zone_h1 = dto_h1.getTrend_zone();
 
             // ---------------------------------------------------------------------
 
