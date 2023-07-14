@@ -3410,101 +3410,33 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
         int index = 1;
-
         for (String EPIC : Utils.EPICS_STOCKS) {
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1)) {
-                // Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
-                continue;
-            }
-
-            String trend_w1 = dto_w1.getTrend();
-            String trend_d1 = dto_d1.getTrend();
-
-            String switch_trend = "." + Utils.appendSpace(trend_w1, 4) + " [W1.D1                 ]     ";
-
-            String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
-            if (Utils.isNotBlank(dto_w1.getSwitch_trend())) {
-                if (!Objects.equals(trend_w1, trend_w1)) {
-                    prefix = prefix.replace("W1", "  ");
-                }
-                if (!Objects.equals(trend_d1, trend_w1)) {
-                    prefix = prefix.replace("D1", "  ");
-                }
-
-                analysis_profit(prefix, EPIC, dto_w1.getSwitch_trend(), "");
-                index += 1;
-            }
-        }
-
-        Utils.logWritelnDraft("");
-
-        index = 1;
-        for (String EPIC : Utils.EPICS_STOCKS) {
-            List<BtcFutures> list_50d = getCapitalData(EPIC, Utils.CAPITAL_TIME_H1);
-            Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
-            Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
-            Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
 
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
-                    || Objects.isNull(dto_15) || CollectionUtils.isEmpty(list_50d)) {
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4)) {
                 // Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
                 continue;
             }
-
-            List<BtcFutures> heken_list = Utils.getHekenList(list_50d);
-            String zone_d1 = Utils.getZoneTrend(heken_list);
-            String trend_month = Utils.getTrendByMaXx(heken_list, 50);
 
             String trend_w1 = dto_w1.getTrend();
             String trend_d1 = dto_d1.getTrend();
             String trend_h4 = dto_h4.getTrend();
-            String trend_h1 = dto_h1.getTrend();
-            String trend_15 = dto_15.getTrend();
 
-            String switch_trend = "." + Utils.appendSpace(trend_w1, 4) + " [M1.W1.D1.H1           ]     ";
+            String switch_trend = "." + Utils.appendSpace(trend_w1, 4) + " [W1.D1.H4           ]     ";
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
-            if (!Objects.equals(trend_month, trend_d1)) {
-                prefix = prefix.replace("M1", "  ");
-            }
             if (!Objects.equals(trend_w1, trend_d1)) {
                 prefix = prefix.replace("W1", "  ");
             }
-            if (!Objects.equals(trend_h1, trend_d1)) {
-                prefix = prefix.replace("H1", "  ");
+            if (!Objects.equals(trend_h4, trend_d1)) {
+                prefix = prefix.replace("H4", "  ");
             }
 
-            if (Objects.equals(trend_w1, trend_d1) && Utils.isNotBlank(dto_d1.getSwitch_trend())) {
-                analysis_profit(prefix, EPIC, dto_d1.getSwitch_trend(), zone_d1);
+            if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_h4)
+                    && Utils.isNotBlank(dto_d1.getSwitch_trend())) {
+                analysis_profit(prefix, EPIC, dto_d1.getSwitch_trend(), trend_w1);
                 index += 1;
-            } else if (Objects.equals(trend_d1, trend_h1) && Utils.isNotBlank(dto_h1.getSwitch_trend())) {
-                analysis_profit(prefix, EPIC, dto_h1.getSwitch_trend(), zone_d1);
-                index += 1;
-            }
-
-            if (!Utils.allow_open_trade_at_newyork_session()) {
-                String w1d1h4h1 = Utils.getTrendPrefix("m", trend_month, " ");
-                w1d1h4h1 += Utils.getTrendPrefix("w", trend_w1, " ");
-                w1d1h4h1 += Utils.getTrendPrefix("d", trend_d1, " ");
-                w1d1h4h1 += Utils.getTrendPrefix("4", trend_h4, " ");
-                w1d1h4h1 += Utils.getTrendPrefix("1", trend_h1, " ") + ".";
-                w1d1h4h1 = w1d1h4h1.replace(" ", "");
-
-                // TODO: scapStocks
-                if ((dto_15.isAllow_trade_by_ma50() || dto_h1.isAllow_trade_by_ma50())
-                        && Objects.equals(trend_w1, trend_d1)
-                        && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)
-                        && Objects.equals(trend_h1, trend_15)) {
-
-                    // Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_50_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
-                    //        ".962415", true, dto_d1.getSwitch_trend());
-                    // BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-                }
             }
         }
 
