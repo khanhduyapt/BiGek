@@ -4420,7 +4420,7 @@ public class Utils {
 
     // [1W=1D=12H 8H=4H=2H=30] {D1~H12~H8~H4~H2~30}
     public static String getPrefix_FollowTrackingTrend(int index, String trend_w1, String trend_d1, String trend_h12,
-            String trend_h4, String trend_h1, String trend_15, String trend_05,
+            String trend_h4, String trend_h1,
 
             String note_w1, String note_d1, String note_h12, String note_h4,
 
@@ -4451,9 +4451,6 @@ public class Utils {
             }
             if (Objects.equals(find_trend, trend_h1)) {
                 prefix_wd += "=H1";
-            }
-            if (Objects.equals(find_trend, trend_15)) {
-                prefix_wd += "=15";
             }
         }
         prefix_wd = appendSpace(prefix_wd, 25);

@@ -3747,11 +3747,9 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
-            Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
-            Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(null);
 
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h12) || Objects.isNull(dto_h4)
-                    || Objects.isNull(dto_h1) || Objects.isNull(dto_15) || Objects.isNull(dto_05)) {
+                    || Objects.isNull(dto_h1)) {
                 Utils.logWritelnDraft("[controlMt5] (" + EPIC + ") dto is null");
                 continue;
             }
@@ -3761,8 +3759,6 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h12 = dto_h12.getTrend();
             String trend_h4 = dto_h4.getTrend();
             String trend_h1 = dto_h1.getTrend();
-            String trend_15 = dto_05.getTrend();
-            String trend_05 = dto_05.getTrend();
 
             String switch_trend_w1 = dto_w1.getSwitch_trend();
             String switch_trend_d1 = dto_d1.getSwitch_trend();
@@ -3810,8 +3806,7 @@ public class BinanceServiceImpl implements BinanceService {
             String tracking_trend = trend_w1;
 
             String prefix = Utils.getPrefix_FollowTrackingTrend(count, trend_w1, trend_d1, trend_h12, trend_h4,
-                    trend_h1, trend_15, trend_05, switch_trend_w1, switch_trend_d1, switch_trend_h12, switch_trend_h4,
-                    tracking_trend);
+                    trend_h1, switch_trend_w1, switch_trend_d1, switch_trend_h12, switch_trend_h4, tracking_trend);
 
             analysis_profit(prefix, EPIC, Utils.appendSpace(end_zone, 30) + "  " + Utils.appendSpace(note_xx, 20),
                     log_trend);
@@ -3822,26 +3817,18 @@ public class BinanceServiceImpl implements BinanceService {
                     || Utils.EPICS_METALS.contains(EPIC))) {
 
                 Mt5OpenTrade dto = null;
-                if (Objects.equals(trend_w1, trend_d1)) {
-                    if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
-                            && Objects.equals(trend_d1, trend_h1)) {
-                        String append = ".241241_";
-                        if (dto_h12.getSwitch_trend().contains(trend_d1)) {
-                            append = ".2412w41";
-                        } else if (dto_h4.getSwitch_trend().contains(trend_d1)) {
-                            append = ".24124w1";
-                        } else if (dto_h1.getSwitch_trend().contains(trend_d1)) {
-                            append = ".241241w";
-                        }
-                        action = trend_d1;
-                        dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, action, dto_h1, dto_d1, append,
-                                true, switch_trend_d1);
+                // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau
+                if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
+                        && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
+                    String append = ".96241241_";
+                    if (dto_h12.getSwitch_trend().contains(trend_d1)) {
+                        append = ".962412w41";
+                    } else if (dto_h4.getSwitch_trend().contains(trend_d1)) {
+                        append = ".9624124w1";
+                    } else if (dto_h1.getSwitch_trend().contains(trend_d1)) {
+                        append = ".96241241w";
                     }
-                } else if (dto_h12.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
-                        && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)
-                        && switch_trend_h12.contains(trend_d1)) {
                     action = trend_d1;
-                    String append = ".0012w41_";
                     dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, action, dto_h1, dto_d1, append, true,
                             switch_trend_d1);
                 }
