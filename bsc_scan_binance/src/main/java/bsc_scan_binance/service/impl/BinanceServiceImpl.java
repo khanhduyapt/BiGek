@@ -2830,15 +2830,16 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private void openTrade() {
-        if (!CollectionUtils.isEmpty(BscScanBinanceApplication.mt5_open_trade_List)) {
-            if (Utils.isNewsAt_19_20_21h()) {
-                if (isReloadAfter(Utils.MINUTES_OF_1H, "OpenTrade")) {
-                    Utils.logWritelnDraft("[OpenTrade] thoi gian nghi, khong vao lenh.");
-                }
-
-                BscScanBinanceApplication.mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
-            }
-        }
+        // if (!CollectionUtils.isEmpty(BscScanBinanceApplication.mt5_open_trade_List))
+        // {
+        // if (Utils.isNewsAt_19_20_21h()) {
+        // if (isReloadAfter(Utils.MINUTES_OF_1H, "OpenTrade")) {
+        // Utils.logWritelnDraft("[OpenTrade] thoi gian nghi, khong vao lenh.");
+        // }
+        // BscScanBinanceApplication.mt5_open_trade_List = new
+        // ArrayList<Mt5OpenTrade>();
+        // }
+        // }
 
         String mt5_open_trade_file = Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + "OpenTrade.csv";
         int MAX_TRADE = 100;
@@ -2853,72 +2854,72 @@ public class BinanceServiceImpl implements BinanceService {
         try {
             FileWriter writer = new FileWriter(mt5_open_trade_file, true);
 
-            // TODO: 4. openTrade PC.CongTy.Only
-            if (Utils.isPcCongTy()) {
+            // TODO: 4. openTrade
+            // if (Utils.isPcCongTy()) {
 
-                for (Mt5OpenTrade dto : BscScanBinanceApplication.mt5_open_trade_List) {
-                    if (Objects.isNull(dto)) {
-                        continue;
-                    }
-                    String EPIC = dto.getEpic().toUpperCase();
+            for (Mt5OpenTrade dto : BscScanBinanceApplication.mt5_open_trade_List) {
+                if (Objects.isNull(dto)) {
+                    continue;
+                }
+                String EPIC = dto.getEpic().toUpperCase();
 
-                    if ("_DX.f_".toUpperCase().contains(EPIC)) {
-                        continue;
-                    }
-                    if (is_opening_trade(EPIC)) {
-                        continue;
-                    }
+                if ("_DX.f_".toUpperCase().contains(EPIC)) {
+                    continue;
+                }
+                if (is_opening_trade(EPIC)) {
+                    continue;
+                }
 
-                    boolean allow_trade = false;
-                    if (Utils.allow_open_trade_at_tokyo_session()) {
-                        if (EPIC.contains("JPY") || EPIC.contains("AUD")) {
-                            allow_trade = true;
-                        }
-                    } else if (Utils.allow_open_trade_at_london_and_newyork_session()) {
+                boolean allow_trade = false;
+                if (Utils.allow_open_trade_at_tokyo_session()) {
+                    if (EPIC.contains("JPY") || EPIC.contains("AUD")) {
                         allow_trade = true;
                     }
-                    if (!allow_trade) {
-                        // dto.setLots(BigDecimal.valueOf(0.01));
-                    }
+                } else if (Utils.allow_open_trade_at_london_and_newyork_session()) {
+                    allow_trade = true;
+                }
+                if (!allow_trade) {
+                    // dto.setLots(BigDecimal.valueOf(0.01));
+                }
 
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(dto.getEpic());
-                    sb.append('\t');
-                    sb.append(dto.getOrder_type());
-                    sb.append('\t');
-                    sb.append(dto.getLots());
-                    sb.append('\t');
-                    sb.append(dto.getEntry());
-                    sb.append('\t');
-                    sb.append(dto.getStop_loss());
-                    sb.append('\t');
-                    sb.append(dto.getTake_profit());
-                    sb.append('\t');
-                    sb.append(dto.getComment());
-                    sb.append('\n');
+                StringBuilder sb = new StringBuilder();
+                sb.append(dto.getEpic());
+                sb.append('\t');
+                sb.append(dto.getOrder_type());
+                sb.append('\t');
+                sb.append(dto.getLots());
+                sb.append('\t');
+                sb.append(dto.getEntry());
+                sb.append('\t');
+                sb.append(dto.getStop_loss());
+                sb.append('\t');
+                sb.append(dto.getTake_profit());
+                sb.append('\t');
+                sb.append(dto.getComment());
+                sb.append('\n');
 
-                    if (trade_count < MAX_TRADE) {
-                        writer.write(sb.toString());
-                        trade_count += 1;
+                if (trade_count < MAX_TRADE) {
+                    writer.write(sb.toString());
+                    trade_count += 1;
 
-                        String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type();
-                        if (isReloadAfter(Utils.MINUTES_OF_15M, EVENT_ID)) {
-                            String msg = "openTrade: ";
-                            msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4) + ")", 10);
-                            msg += Utils.appendSpace(dto.getEpic(), 10);
-                            msg += Utils.new_line_from_service;
-                            msg += "Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
-                            msg += "E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
-                            msg += "SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 15);
-                            msg += "TP: " + Utils.appendLeft(dto.getTake_profit().toString(), 15);
-                            msg += Utils.appendSpace(dto.getComment(), 25);
+                    String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type();
+                    if (isReloadAfter(Utils.MINUTES_OF_15M, EVENT_ID)) {
+                        String msg = "openTrade: ";
+                        msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4) + ")", 10);
+                        msg += Utils.appendSpace(dto.getEpic(), 10);
+                        msg += Utils.new_line_from_service;
+                        msg += "Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
+                        msg += "E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
+                        msg += "SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 15);
+                        msg += "TP: " + Utils.appendLeft(dto.getTake_profit().toString(), 15);
+                        msg += Utils.appendSpace(dto.getComment(), 25);
 
-                            // System.out.println(msg.replace(Utils.new_line_from_service, " "));
-                            sendMsgPerHour_OnlyMe(EVENT_ID, msg);
-                        }
+                        // System.out.println(msg.replace(Utils.new_line_from_service, " "));
+                        sendMsgPerHour_OnlyMe(EVENT_ID, msg);
                     }
                 }
             }
+            // }
 
             writer.close();
         } catch (Exception e) {
@@ -3912,12 +3913,13 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public void closeTrade_by_SL_TP() {
-        if (Utils.isNewsAt_19_20_21h()) {
-            if (isReloadAfter(Utils.MINUTES_OF_1H, "18_19_20h")) {
-                Utils.logWritelnDraft("[closeTrade_by_SL_TP] thoi gian nghi, khong dong/mo lenh.");
-            }
-            return;
-        }
+        // if (Utils.isNewsAt_19_20_21h()) {
+        // if (isReloadAfter(Utils.MINUTES_OF_1H, "18_19_20h")) {
+        // Utils.logWritelnDraft("[closeTrade_by_SL_TP] thoi gian nghi, khong dong/mo
+        // lenh.");
+        // }
+        // return;
+        // }
         List<String> mt5_close_trade_list = new ArrayList<String>();
         List<String> mt5_close_trade_reason = new ArrayList<String>();
 

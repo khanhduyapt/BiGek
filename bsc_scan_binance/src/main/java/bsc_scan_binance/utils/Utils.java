@@ -1478,7 +1478,7 @@ public class Utils {
     }
 
     // https://www.calculator.net/time-duration-calculator.html
-    public static boolean isNewsAt_19_20_21h() {
+    private static boolean isNewsAt_19_20_21h() {
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         Integer mm = Utils.getIntValue(Utils.convertDateToString("mm", Calendar.getInstance().getTime()));
 
