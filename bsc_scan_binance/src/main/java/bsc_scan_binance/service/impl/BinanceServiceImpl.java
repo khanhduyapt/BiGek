@@ -3637,19 +3637,20 @@ public class BinanceServiceImpl implements BinanceService {
             type = Utils.switchTrendByHeken_12(heiken_list);
         }
 
-        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1)
-                || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4)) {
+        String switch_trend_3_5 = Utils.switchTrendByMaXX(heiken_list, 3, 5);
+        if (Utils.isNotBlank(switch_trend_3_5) && switch_trend_3_5.contains(trend)) {
             if (Utils.isBlank(type)) {
-                String switch_trend = Utils.switchTrendByMaXX(heiken_list, 3, 5);
-                if (Utils.isNotBlank(switch_trend) && switch_trend.contains(trend)) {
-                    type = Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_Ma_3_5;
-                }
+                type = Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_Ma_3_5;
+            } else {
+                type += Utils.TEXT_SWITCH_TREND_Ma_3_5;
             }
+        }
+        String switch_trend_1_10 = Utils.switchTrendByMaXX(heiken_list, 1, 10);
+        if (Utils.isNotBlank(switch_trend_1_10) && switch_trend_1_10.contains(trend)) {
             if (Utils.isBlank(type)) {
-                String switch_trend = Utils.switchTrendByMaXX(heiken_list, 1, 10);
-                if (Utils.isNotBlank(switch_trend) && switch_trend.contains(trend)) {
-                    type = Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_Ma_1_10;
-                }
+                type = Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_Ma_1_10;
+            } else {
+                type += Utils.TEXT_SWITCH_TREND_Ma_1_10;
             }
         }
 
