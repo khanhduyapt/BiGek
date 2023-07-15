@@ -3415,15 +3415,17 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
 
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4)) {
-                // Utils.logWritelnDraft("[scapStocks] (" + EPIC + ") is empty or null.");
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
+                Utils.logWritelnDraft("[scapStocks] dto(" + EPIC + ") is null.");
                 continue;
             }
 
             String trend_w1 = dto_w1.getTrend();
             String trend_d1 = dto_d1.getTrend();
             String trend_h4 = dto_h4.getTrend();
+            String trend_h1 = dto_h1.getTrend();
 
             String switch_trend = "." + Utils.appendSpace(trend_w1, 4) + " [W1.D1.H4           ]     ";
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
@@ -3433,9 +3435,14 @@ public class BinanceServiceImpl implements BinanceService {
             if (!Objects.equals(trend_h4, trend_d1)) {
                 prefix = prefix.replace("H4", "  ");
             }
+            if (!Objects.equals(trend_h1, trend_d1)) {
+                prefix = prefix.replace("H1", "  ");
+            }
 
-            if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_h4)
-                    && Utils.isNotBlank(dto_d1.getSwitch_trend())) {
+            // TODO: scapStocks
+            // Cổ phiếu W xuống thì đứng ngoài (Đinh Tùng Lâm)
+            if (Objects.equals(trend_w1, Utils.TREND_LONG) && Objects.equals(trend_w1, trend_d1)
+                    && Objects.equals(trend_w1, trend_h4) && Objects.equals(trend_w1, trend_h1)) {
                 analysis_profit(prefix, EPIC, dto_d1.getSwitch_trend(), trend_w1);
                 index += 1;
             }
@@ -3817,7 +3824,7 @@ public class BinanceServiceImpl implements BinanceService {
                     || Utils.EPICS_METALS.contains(EPIC))) {
 
                 Mt5OpenTrade dto = null;
-                // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau
+                // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau (Đinh Tùng Lâm)
                 if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
                         && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
                     String append = ".96241241_";
@@ -3842,7 +3849,6 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Utils.EPICS_INDEXS.contains(EPIC) && !Objects.equals(trend_w1, trend_d1)) {
                         reject_id = " RejectID: w1!=d1";
                     }
-                    // (Utils.EPICS_INDEXS.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)) &&
                     if (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, action)) {
                         reject_id = " RejectID: w1=d1 d1!=action";
                     }
