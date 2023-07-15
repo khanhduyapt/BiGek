@@ -113,6 +113,7 @@ public class Utils {
     public static final String NOCATION_CUTTING_MA50 = "CuttingMa50";
 
     public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma3.5)";
+    public static final String TEXT_SWITCH_TREND_Ma_1_10 = "(Ma1.10)";
     public static final String TEXT_SWITCH_TREND_Ma_1_50 = "(Ma1.50)";
     public static final String TEXT_SWITCH_TREND_50 = "(~50~)";
     public static final String TEXT_SWITCH_TREND_HEIKEN = "(Heiken)";
@@ -4211,13 +4212,11 @@ public class Utils {
         }
 
         // -------------------------------------------------------------------------
-        if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(0).isUptrend() && heken_list.get(1).isUptrend()
-                && heken_list.get(2).isDown()) {
+        if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(1).isUptrend() && heken_list.get(2).isDown()) {
             return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
         }
 
-        if (Objects.equals(trend, Utils.TREND_SHOT) && heken_list.get(0).isDown() && heken_list.get(1).isDown()
-                && heken_list.get(2).isUptrend()) {
+        if (Objects.equals(trend, Utils.TREND_SHOT) && heken_list.get(1).isDown() && heken_list.get(2).isUptrend()) {
             return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
         }
 
