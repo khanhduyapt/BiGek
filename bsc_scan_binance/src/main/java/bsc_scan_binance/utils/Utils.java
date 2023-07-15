@@ -2881,7 +2881,7 @@ public class Utils {
     }
 
     public static List<BigDecimal> getBuySellArea(List<BtcFutures> heken_list) {
-        int section = 2;
+        int section = 4;
         List<BigDecimal> LoHi = Utils.getLowHighCandle(heken_list);
         BigDecimal high = LoHi.get(1).subtract(LoHi.get(0));
         BigDecimal quarter = high.divide(BigDecimal.valueOf(section), 10, RoundingMode.CEILING);
