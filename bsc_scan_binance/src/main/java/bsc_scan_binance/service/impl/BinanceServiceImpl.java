@@ -3764,7 +3764,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_d1 = dto_d1.getTrend();
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
             // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau (Đinh Tùng Lâm)
-            if (!Objects.equals(trend_w1, trend_d1)) {
+            if (!Objects.equals(trend_w1, trend_d1) && !dto_d1.getSwitch_trend().contains(trend_d1)) {
                 continue;
             }
 
