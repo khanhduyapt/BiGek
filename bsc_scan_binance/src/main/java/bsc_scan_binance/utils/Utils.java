@@ -4228,6 +4228,10 @@ public class Utils {
         return isUptrendByMa(list, maIndex, 0, 1) ? TREND_LONG : TREND_SHOT;
     }
 
+    public static String getTrendByHekenAshiList(List<BtcFutures> heken_list) {
+        return getTrendByHekenAshiList(heken_list, 0);
+    }
+
     public static String getTrendByHekenAshiList(List<BtcFutures> heken_list, int candle_no) {
         if (CollectionUtils.isEmpty(heken_list)) {
             return "";
@@ -4235,19 +4239,20 @@ public class Utils {
         int str = candle_no;
         int end = candle_no + 1;
 
-        boolean isUptrend_1 = heken_list.get(str).isUptrend();
+        boolean isUptrend_0 = heken_list.get(str).isUptrend();
+        boolean isUptrend_1 = heken_list.get(end).isUptrend();
         boolean isUptrend_2 = isUptrendByMa(heken_list, 2, str, end);
         boolean isUptrend_3 = isUptrendByMa(heken_list, 3, str, end);
 
-        if ((isUptrend_1 == isUptrend_2) || (isUptrend_1 == isUptrend_3)) {
+        if ((isUptrend_0 == isUptrend_1) && (isUptrend_0 == isUptrend_2) && (isUptrend_0 == isUptrend_3)) {
+            return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        }
+
+        if ((isUptrend_1 == isUptrend_2) && (isUptrend_1 == isUptrend_3)) {
             return isUptrend_1 ? Utils.TREND_LONG : Utils.TREND_SHOT;
         }
 
         return isUptrend_3 ? Utils.TREND_LONG : Utils.TREND_SHOT;
-    }
-
-    public static String getTrendByHekenAshiList(List<BtcFutures> heken_list) {
-        return getTrendByHekenAshiList(heken_list, 0);
     }
 
     public static String getTypeOfEpic(String EPIC) {
