@@ -3453,15 +3453,15 @@ public class BinanceServiceImpl implements BinanceService {
 
         for (String company : Utils.COMPANIES) {
             String company_id = Utils.MT5_COMPANY_FTMO;
-            //if (Objects.equals(company, "8CAP")) {
-            //    company_id = Utils.MT5_COMPANY_NEXT;
-            //} else if (Objects.equals(company, "ALPHA")) {
-            //    company_id = Utils.MT5_COMPANY_ALPHA;
-            //} else if (Objects.equals(company, "THE5ERS")) {
-            //    company_id = Utils.MT5_COMPANY_5ERS;
-            //} else if (Objects.equals(company, "MFF")) {
-            //    company_id = Utils.MT5_COMPANY_MFF;
-            //}
+            // if (Objects.equals(company, "8CAP")) {
+            // company_id = Utils.MT5_COMPANY_NEXT;
+            // } else if (Objects.equals(company, "ALPHA")) {
+            // company_id = Utils.MT5_COMPANY_ALPHA;
+            // } else if (Objects.equals(company, "THE5ERS")) {
+            // company_id = Utils.MT5_COMPANY_5ERS;
+            // } else if (Objects.equals(company, "MFF")) {
+            // company_id = Utils.MT5_COMPANY_MFF;
+            // }
 
             String mt5_ftmo_trading_file_path = Utils.getMt5DataFolder(company_id) + "Trade.csv";
             String mt5_data_file = check_mt5_data_file(mt5_ftmo_trading_file_path, 3);
@@ -3815,35 +3815,37 @@ public class BinanceServiceImpl implements BinanceService {
                     || Utils.EPICS_METALS.contains(EPIC))) {
 
                 Mt5OpenTrade dto = null;
-                if (dto_05.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
-                        && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)
-                        && Objects.equals(trend_d1, trend_15) && Objects.equals(trend_d1, trend_05)) {
+                if (Objects.equals(trend_w1, trend_d1)) {
+                    if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
+                            && Objects.equals(trend_d1, trend_h1)
+                            && (dto_h1.getSwitch_trend().contains(trend_d1)
+                                    || dto_h4.getSwitch_trend().contains(trend_d1)
+                                    || dto_h12.getSwitch_trend().contains(trend_d1) || (dto_h1.isAllow_trade_by_ma50()
+                                            && dto_15.isAllow_trade_by_ma50() && dto_05.isAllow_trade_by_ma50())
+                                    || dto_h4.isAllow_trade_by_ma50())
 
-                    String append = "";
-                    if (Utils.isBlank(append) && Objects.equals(trend_h4, dto_d1.getTrend_c1())) {
-                        append = ".244115_";
-                    }
-                    if (Utils.isBlank(append) && dto_h12.getSwitch_trend().contains(trend_d1)) {
-                        append = ".244115" + (Objects.equals(trend_d1, Utils.TREND_LONG) ? "w" : "m");
-                    }
-                    if (Utils.isBlank(append) && dto_d1.getSwitch_trend().contains(trend_d1)) {
-                        append = ".241241" + (Objects.equals(trend_d1, Utils.TREND_LONG) ? "w" : "m");
-                    }
-
-                    if (Utils.isNotBlank(append)) {
+                    ) {
+                        String append = ".241241_";
+                        if (dto_h12.getSwitch_trend().contains(trend_d1)) {
+                            append = ".2412w41";
+                        } else if (dto_h4.getSwitch_trend().contains(trend_d1)) {
+                            append = ".24124w1";
+                        } else if (dto_h1.getSwitch_trend().contains(trend_d1)) {
+                            append = ".241241w";
+                        }
                         action = trend_d1;
                         dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, action, dto_h1, dto_d1, append,
                                 true, switch_trend_d1);
                     }
                 }
 
-                if (dto_h4.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
+                if (Objects.isNull(dto) && dto_h12.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
                         && Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h4, trend_h1)
-                        && switch_trend_h4.contains(trend_d1)) {
+                        && switch_trend_h12.contains(trend_d1)) {
                     action = trend_d1;
-                    String append = ".24124w_";
-                    dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, action, dto_h1, dto_d1, append,
-                            true, switch_trend_d1);
+                    String append = ".0012w41_";
+                    dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, action, dto_h1, dto_d1, append, true,
+                            switch_trend_d1);
                 }
 
                 // ---------------------------------------------------------------------
