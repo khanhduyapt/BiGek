@@ -3824,14 +3824,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Mt5OpenTrade dto = null;
                 if (Objects.equals(trend_w1, trend_d1)) {
                     if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
-                            && Objects.equals(trend_d1, trend_h1)
-                            && (dto_h1.getSwitch_trend().contains(trend_d1)
-                                    || dto_h4.getSwitch_trend().contains(trend_d1)
-                                    || dto_h12.getSwitch_trend().contains(trend_d1) || (dto_h1.isAllow_trade_by_ma50()
-                                            && dto_15.isAllow_trade_by_ma50() && dto_05.isAllow_trade_by_ma50())
-                                    || dto_h4.isAllow_trade_by_ma50())
-
-                    ) {
+                            && Objects.equals(trend_d1, trend_h1)) {
                         String append = ".241241_";
                         if (dto_h12.getSwitch_trend().contains(trend_d1)) {
                             append = ".2412w41";
