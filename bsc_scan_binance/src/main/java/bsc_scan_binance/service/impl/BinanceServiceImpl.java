@@ -3427,7 +3427,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h4 = dto_h4.getTrend();
             String trend_h1 = dto_h1.getTrend();
 
-            String switch_trend = "." + Utils.appendSpace(trend_w1, 4) + " [W1.D1.H4           ]     ";
+            String switch_trend = ". " + Utils.appendSpace(trend_w1, 4) + "  W1.D1.H4                 ";
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
             if (!Objects.equals(trend_w1, trend_d1)) {
                 prefix = prefix.replace("W1", "  ");
@@ -3760,17 +3760,23 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnDraft("[controlMt5] (" + EPIC + ") dto is null");
                 continue;
             }
-
             String trend_w1 = dto_w1.getTrend();
             String trend_d1 = dto_d1.getTrend();
+            // TODO: 3. controlMt5 : Không đánh ngược trend_d1
+            // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau (Đinh Tùng Lâm)
+            if (!Objects.equals(trend_w1, trend_d1)) {
+                continue;
+            }
+
             String trend_h12 = dto_h12.getTrend();
             String trend_h4 = dto_h4.getTrend();
             String trend_h1 = dto_h1.getTrend();
 
-            String switch_trend_w1 = dto_w1.getSwitch_trend();
-            String switch_trend_d1 = dto_d1.getSwitch_trend();
-            String switch_trend_h12 = dto_h12.getSwitch_trend();
-            String switch_trend_h4 = dto_h4.getSwitch_trend();
+            String switch_trend_w1 = dto_w1.getSwitch_trend().trim();
+            String switch_trend_d1 = dto_d1.getSwitch_trend().trim();
+            String switch_trend_h12 = dto_h12.getSwitch_trend().trim();
+            String switch_trend_h4 = dto_h4.getSwitch_trend().trim();
+            String switch_trend_h1 = dto_h1.getSwitch_trend().trim();
 
             String zone_d1 = dto_d1.getTrend_zone();
             String zone_h12 = dto_h12.getTrend_zone();
@@ -3797,16 +3803,17 @@ public class BinanceServiceImpl implements BinanceService {
             // -------------------------------------------------------------------------------
             String log_trend = trend_d1;
             String note_xx = "";
-            if (dto_h12.isAllow_trade_by_ma50() && switch_trend_h12.contains(trend_d1)) {
-                if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)) {
-                    note_xx = switch_trend_h12 + " D=H12=H4";
-                } else if (Objects.equals(trend_d1, trend_h12)) {
-                    note_xx = switch_trend_h12 + " D=H12";
-                }
+            if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
+                    && switch_trend_h12.contains(trend_d1)) {
+                note_xx = switch_trend_h12 + " D=H12w=H4";
             }
-            if (dto_h4.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h12)
-                    && Objects.equals(trend_h12, trend_h4) && switch_trend_h4.contains(trend_d1)) {
-                note_xx = dto_h4.getSwitch_trend().trim() + " D=H12=H4";
+            if (Utils.isBlank(note_xx) && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
+                    && switch_trend_h4.contains(trend_d1)) {
+                note_xx = switch_trend_h4 + " D=H12=H4w";
+            }
+            if (Utils.isBlank(note_xx) && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
+                    && Objects.equals(trend_h4, trend_h1) && switch_trend_h1.contains(trend_d1)) {
+                note_xx = switch_trend_h4 + " D=H12=H4=H1w";
             }
 
             count += 1;
@@ -3819,12 +3826,12 @@ public class BinanceServiceImpl implements BinanceService {
                     log_trend);
 
             // ---------------------------------------------------------------------------------------------
-            // TODO: 3. controlMt5 : Không đánh ngược trend_d1
+
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
 
                 Mt5OpenTrade dto = null;
-                // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau (Đinh Tùng Lâm)
+
                 if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
                         && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
                     String append = ".96241241_";

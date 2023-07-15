@@ -2861,16 +2861,13 @@ public class Utils {
     }
 
     public static String getZoneTrend(List<BtcFutures> heken_list) {
-        String zone = "";
-        BigDecimal curr_price = heken_list.get(0).getCurrPrice();
         List<BigDecimal> buy_sel_area = Utils.getBuySellArea(heken_list);
 
-        // BUY area
+        String zone = "";
+        BigDecimal curr_price = heken_list.get(0).getCurrPrice();
         if (curr_price.compareTo(buy_sel_area.get(0)) < 0) {
             zone = Utils.TREND_LONG;
         }
-
-        // SELL area
         if (curr_price.compareTo(buy_sel_area.get(1)) > 0) {
             zone = Utils.TREND_SHOT;
         }
@@ -2884,7 +2881,7 @@ public class Utils {
     }
 
     public static List<BigDecimal> getBuySellArea(List<BtcFutures> heken_list) {
-        int section = 3;
+        int section = 2;
         List<BigDecimal> LoHi = Utils.getLowHighCandle(heken_list);
         BigDecimal high = LoHi.get(1).subtract(LoHi.get(0));
         BigDecimal quarter = high.divide(BigDecimal.valueOf(section), 10, RoundingMode.CEILING);
