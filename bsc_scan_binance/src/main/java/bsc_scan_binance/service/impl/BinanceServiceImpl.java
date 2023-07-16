@@ -3948,11 +3948,10 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
+            Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
-            Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(dto_h1);
-            Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(dto_h1);
-            if (Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
+            if (Objects.isNull(dto_h12) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
                 Utils.logWritelnDraft("monitorProfit Orders dto is NULL " + EPIC);
                 continue;
             }
@@ -3963,29 +3962,17 @@ public class BinanceServiceImpl implements BinanceService {
                         + "   " + trade.getSymbol());
                 continue;
             }
+            String trend_h12 = dto_h12.getTrend();
             String trend_h4 = dto_h4.getTrend();
             String trend_h1 = dto_h1.getTrend();
-            String trend_15 = dto_15.getTrend();
-            String trend_05 = dto_05.getTrend();
 
             // ---------------------------------------------------------------------------------
             boolean isTrendInverse = false;
-            if (!Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
-                    && !Objects.equals(trend_15, TRADE_TREND) && !Objects.equals(trend_05, TRADE_TREND)) {
+            if (!Objects.equals(trend_h12, TRADE_TREND) && !Objects.equals(trend_h4, TRADE_TREND)
+                    && !Objects.equals(trend_h1, TRADE_TREND)) {
                 isTrendInverse = true;
             }
-
-            if (Utils.allowFinishTradeThisDay() || Utils.allowFinishTradeThisWeek()
-                    || Objects.equals(mt5Entity.getTimeframe(), Utils.CAPITAL_TIME_H1)) {
-
-                if (!Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)
-                        && !Objects.equals(trend_05, TRADE_TREND) && !Objects.equals(dto_15.getTrend_c1(), TRADE_TREND)
-                        && !Objects.equals(dto_05.getTrend_c1(), TRADE_TREND)) {
-                    isTrendInverse = true;
-                }
-            }
-            if (Utils.closeTradeThisWeek() && !Objects.equals(trend_15, TRADE_TREND)
-                    && !Objects.equals(trend_05, TRADE_TREND)) {
+            if (Utils.isCloseTradeThisWeek() && !Objects.equals(trend_h1, TRADE_TREND)) {
                 isTrendInverse = true;
             }
             // ---------------------------------------------------------------------------------

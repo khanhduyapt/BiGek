@@ -1377,34 +1377,24 @@ public class Utils {
         return false;
     }
 
-    public static boolean allowFinishTradeThisWeek() {
+    public static boolean isCloseTradeThisWeek() {
         DayOfWeek day = DayOfWeek.of(LocalDate.now().get(ChronoField.DAY_OF_WEEK));
 
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
+
+        // đêm thứ 4 phí qua đêm sẽ được X3 để bù cho 2 ngày cuối tuần.
+        if ((day == DayOfWeek.WEDNESDAY) && (hh > 22)) {
+            return true;
+        }
+        if ((day == DayOfWeek.THURSDAY) && (hh < 3)) {
+            return true;
+        }
 
         if ((day == DayOfWeek.FRIDAY) && (hh >= 22)) {
             return true;
         }
-
-        if ((day == DayOfWeek.SATURDAY) && (hh <= 3)) {
+        if (day == DayOfWeek.SATURDAY) {
             return true;
-        }
-
-        return false;
-    }
-
-    public static boolean closeTradeThisWeek() {
-        DayOfWeek day = DayOfWeek.of(LocalDate.now().get(ChronoField.DAY_OF_WEEK));
-        int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-        if (hh <= 3) {
-            // đêm thứ 4 phí qua đêm sẽ được X3 để bù cho 2 ngày cuối tuần.
-            if ((day == DayOfWeek.THURSDAY)) {
-                return true;
-            }
-
-            if ((day == DayOfWeek.SATURDAY)) {
-                return true;
-            }
         }
 
         return false;
