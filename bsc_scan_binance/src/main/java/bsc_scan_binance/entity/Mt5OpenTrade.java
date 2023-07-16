@@ -14,6 +14,8 @@ public class Mt5OpenTrade {
 
     private String order_type;
 
+    private BigDecimal cur_price = BigDecimal.ZERO;
+
     private BigDecimal lots = BigDecimal.ZERO;
 
     private BigDecimal entry = BigDecimal.ZERO;

@@ -4312,24 +4312,24 @@ public class Utils {
         return tmp_msg + url;
     }
 
-    public static Mt5OpenTrade calc_Lot_En_SL_TP(BigDecimal risk, String EPIC, String trend, Orders dto_en_05,
-            Orders dto_vol, String encrypted_trend_w1d1h4h1, boolean isTradeNow, String note_d1) {
+    public static Mt5OpenTrade calc_Lot_En_SL_TP(BigDecimal risk, String EPIC, String trend, Orders dto_en,
+            Orders dto_d1, String encrypted_trend_w1d1h4h1, boolean isTradeNow, String note_d1) {
         BigDecimal en_05 = BigDecimal.ZERO;
         if (Objects.equals(Utils.TREND_LONG, trend)) {
-            en_05 = Utils.getBigDecimal(dto_en_05.getLow_price());
+            en_05 = Utils.getBigDecimal(dto_en.getLow_price());
         } else {
-            en_05 = Utils.getBigDecimal(dto_en_05.getHigh_price());
+            en_05 = Utils.getBigDecimal(dto_en.getHigh_price());
         }
 
-        List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_vol, trend);
+        List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_d1, trend);
         BigDecimal sl_d1 = sl1_tp2.get(0);
         BigDecimal tp_d1 = sl1_tp2.get(1);
 
-        MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, risk, dto_en_05.getCurrent_price(), sl_d1, tp_d1);
+        MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, risk, dto_en.getCurrent_price(), sl_d1, tp_d1);
 
         String range = "...";
-        BigDecimal en_sl = dto_vol.getCurrent_price().subtract(sl_d1).abs();
-        BigDecimal en_tp = dto_vol.getCurrent_price().subtract(tp_d1).abs();
+        BigDecimal en_sl = dto_d1.getCurrent_price().subtract(sl_d1).abs();
+        BigDecimal en_tp = dto_d1.getCurrent_price().subtract(tp_d1).abs();
         if (en_tp.compareTo(en_sl) < 0) {
             range = ".dg";
         }
@@ -4343,6 +4343,7 @@ public class Utils {
         Mt5OpenTrade dto = new Mt5OpenTrade();
         dto.setEpic(EPIC);
         dto.setOrder_type(trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
+        dto.setCur_price(dto_en.getCurrent_price());
         dto.setLots(money.calcLot());
         dto.setEntry(en_05);
         dto.setStop_loss(sl_d1);

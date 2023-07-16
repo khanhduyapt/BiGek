@@ -2906,7 +2906,8 @@ public class BinanceServiceImpl implements BinanceService {
                     if (isReloadAfter(Utils.MINUTES_OF_15M, EVENT_ID)) {
                         String msg = "openTrade: ";
                         msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4) + ")", 10);
-                        msg += Utils.appendSpace(dto.getEpic(), 10);
+                        msg += Utils.appendSpace(dto.getEpic(), 10)
+                                + Utils.appendLeft(dto.getCur_price().toString(), 15);
                         msg += Utils.new_line_from_service;
                         msg += "Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
                         msg += "E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
