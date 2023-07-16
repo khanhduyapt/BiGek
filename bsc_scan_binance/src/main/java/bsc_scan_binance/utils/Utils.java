@@ -157,6 +157,7 @@ public class Utils {
     public static final String CRYPTO_TIME_D1 = "1d";
     public static final String CRYPTO_TIME_D3 = "3d";
     public static final String CRYPTO_TIME_W1 = "1w";
+    public static final String CRYPTO_TIME_M1 = "1M";
 
     public static final String PREFIX_5m_ = "_5m_";
     public static final String PREFIX_15m_ = "_15m_";
@@ -2784,11 +2785,11 @@ public class Utils {
     // BigDecimal end = BigDecimal.ZERO;
     // BigDecimal price = BigDecimal.ZERO;
     // // ----------------------------------------------------------------------
-    // List<BtcFutures> heken_list = Utils.getHekenList(list);
-    // List<BigDecimal> area = Utils.getBuySellArea(heken_list);
+    // List<BtcFutures> heiken_list = Utils.getHekenList(list);
+    // List<BigDecimal> area = Utils.getBuySellArea(heiken_list);
     // str = area.get(0);
     // end = area.get(1);
-    // price = heken_list.get(0).getCurrPrice();
+    // price = heiken_list.get(0).getCurrPrice();
     //
     // if ((price.compareTo(str) <= 0)) {
     // return Utils.TREND_LONG;
@@ -2802,8 +2803,8 @@ public class Utils {
     // return "";
     // }
 
-    public static String textBodyArea(List<BtcFutures> heken_list) {
-        List<BigDecimal> min_max_area = Utils.getBuySellArea(heken_list);
+    public static String textBodyArea(List<BtcFutures> heiken_list) {
+        List<BigDecimal> min_max_area = Utils.getBuySellArea(heiken_list);
         String result = "(Body: ";
         result += Utils.appendSpace(Utils.removeLastZero(formatPrice(min_max_area.get(0), 5)), 10);
         result += " ~ ";
@@ -2832,10 +2833,10 @@ public class Utils {
         return trend;
     }
 
-    public static String getBreadTrend(List<BtcFutures> heken_list) {
+    public static String getBreadTrend(List<BtcFutures> heiken_list) {
         String trend = "";
-        BigDecimal curr_price = heken_list.get(0).getCurrPrice();
-        List<BigDecimal> body = Utils.getBodyCandle(heken_list);
+        BigDecimal curr_price = heiken_list.get(0).getCurrPrice();
+        List<BigDecimal> body = Utils.getBodyCandle(heiken_list);
 
         // BUY area
         if (curr_price.compareTo(body.get(0)) < 0) {
@@ -2850,11 +2851,11 @@ public class Utils {
         return trend;
     }
 
-    public static String getZoneTrend(List<BtcFutures> heken_list) {
-        List<BigDecimal> buy_sel_area = Utils.getBuySellArea(heken_list);
+    public static String getZoneTrend(List<BtcFutures> heiken_list) {
+        List<BigDecimal> buy_sel_area = Utils.getBuySellArea(heiken_list);
 
         String zone = "";
-        BigDecimal curr_price = heken_list.get(0).getCurrPrice();
+        BigDecimal curr_price = heiken_list.get(0).getCurrPrice();
         if (curr_price.compareTo(buy_sel_area.get(0)) < 0) {
             zone = Utils.TREND_LONG;
         }
@@ -2870,12 +2871,12 @@ public class Utils {
         return zone; // Utils.appendSpace(zone, 10);
     }
 
-    public static List<BigDecimal> getBuySellArea(List<BtcFutures> heken_list) {
+    public static List<BigDecimal> getBuySellArea(List<BtcFutures> heiken_list) {
         int section = 3;
-        List<BigDecimal> LoHi = Utils.getLowHighCandle(heken_list);
+        List<BigDecimal> LoHi = Utils.getLowHighCandle(heiken_list);
         BigDecimal high = LoHi.get(1).subtract(LoHi.get(0));
         BigDecimal quarter = high.divide(BigDecimal.valueOf(section), 10, RoundingMode.CEILING);
-        BigDecimal bread = Utils.calcMaxBread(heken_list);
+        BigDecimal bread = Utils.calcMaxBread(heiken_list);
         if (bread.compareTo(quarter) > 0) {
             quarter = bread;
         }
@@ -3854,25 +3855,25 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrendByMa13_XX(List<BtcFutures> heken_list, int slowIndexXx) {
-        if (CollectionUtils.isEmpty(heken_list) || (heken_list.size() < 50)) {
+    public static String switchTrendByMa13_XX(List<BtcFutures> heiken_list, int slowIndexXx) {
+        if (CollectionUtils.isEmpty(heiken_list) || (heiken_list.size() < 50)) {
             return "";
         }
-        if (Utils.getStringValue(heken_list.get(0).getCurrPrice()).contains("E")) {
+        if (Utils.getStringValue(heiken_list.get(0).getCurrPrice()).contains("E")) {
             return "";
         }
 
         String temp_long = "";
         String temp_shot = "";
 
-        BigDecimal ma1_0 = calcMA(heken_list, 1, 0);
-        BigDecimal ma1_3 = calcMA(heken_list, 1, 3);
+        BigDecimal ma1_0 = calcMA(heiken_list, 1, 0);
+        BigDecimal ma1_3 = calcMA(heiken_list, 1, 3);
 
-        BigDecimal ma3_0 = calcMA(heken_list, 3, 0);
-        BigDecimal ma3_3 = calcMA(heken_list, 3, 3);
+        BigDecimal ma3_0 = calcMA(heiken_list, 3, 0);
+        BigDecimal ma3_3 = calcMA(heiken_list, 3, 3);
 
-        BigDecimal ma50_0 = calcMA(heken_list, slowIndexXx, 0);
-        BigDecimal ma50_3 = calcMA(heken_list, slowIndexXx, 3);
+        BigDecimal ma50_0 = calcMA(heiken_list, slowIndexXx, 0);
+        BigDecimal ma50_3 = calcMA(heiken_list, slowIndexXx, 3);
 
         temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma50_0, ma50_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma50_0, ma50_3) + "_";
@@ -4006,9 +4007,9 @@ public class Utils {
     }
 
     private static List<BtcFutures> calcHeikenLine(List<BtcFutures> list) {
-        List<BtcFutures> heken_list = new ArrayList<BtcFutures>();
+        List<BtcFutures> heiken_list = new ArrayList<BtcFutures>();
         if (list.size() < 2) {
-            return heken_list;
+            return heiken_list;
         }
 
         int heken_index = 0;
@@ -4022,7 +4023,7 @@ public class Utils {
                         .add(list.get(list.size() - 1).getPrice_close_candle());
                 ope = ope.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
             } else {
-                BtcFutures dto_pre = heken_list.get(heken_index - 1);
+                BtcFutures dto_pre = heiken_list.get(heken_index - 1);
                 ope = dto_pre.getPrice_open_candle().add(dto_pre.getPrice_close_candle());
                 ope = ope.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
             }
@@ -4045,33 +4046,33 @@ public class Utils {
             BtcFutures heiken = new BtcFutures(dto.getId(), dto.getCurrPrice(), low, hig, ope, clo, BigDecimal.ZERO,
                     BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, uptrend);
 
-            heken_list.add(heiken);
+            heiken_list.add(heiken);
             heken_index += 1;
         }
-        Collections.reverse(heken_list);
+        Collections.reverse(heiken_list);
 
-        return heken_list;
+        return heiken_list;
     }
 
-    public static BigDecimal getSL(List<BtcFutures> heken_list, String find_trend) {
+    public static BigDecimal getSL(List<BtcFutures> heiken_list, String find_trend) {
         BigDecimal SL = BigDecimal.ZERO;
 
         int index = 1;
-        for (index = 1; index < heken_list.size(); index++) {
-            BtcFutures dto = heken_list.get(index);
+        for (index = 1; index < heiken_list.size(); index++) {
+            BtcFutures dto = heiken_list.get(index);
             String trend = dto.isUptrend() ? TREND_LONG : TREND_SHOT;
             if (!Objects.equals(trend, find_trend)) {
                 break;
             }
         }
 
-        int length = heken_list.size() - 1;
-        if (index < (heken_list.size() / 2)) {
+        int length = heiken_list.size() - 1;
+        if (index < (heiken_list.size() / 2)) {
             length = index + 3;
         }
 
-        BigDecimal bread = Utils.calcAvgBread(heken_list.subList(1, length));
-        List<BigDecimal> lohi = Utils.getLowHighCandle(heken_list.subList(1, length));
+        BigDecimal bread = Utils.calcAvgBread(heiken_list.subList(1, length));
+        List<BigDecimal> lohi = Utils.getLowHighCandle(heiken_list.subList(1, length));
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
             SL = lohi.get(0).subtract(bread);
         } else {
@@ -4091,8 +4092,8 @@ public class Utils {
     }
 
     public static boolean isSameTrendByHekenAshi_Ma1_6(List<BtcFutures> list) {
-        List<BtcFutures> heken_list = getHeikenList(list);
-        if (CollectionUtils.isEmpty(heken_list)) {
+        List<BtcFutures> heiken_list = getHeikenList(list);
+        if (CollectionUtils.isEmpty(heiken_list)) {
             return false;
         }
 
@@ -4173,38 +4174,64 @@ public class Utils {
         return false;
     }
 
-    public static String switchTrendByHeken_12(List<BtcFutures> heken_list) {
-        if (CollectionUtils.isEmpty(heken_list)) {
+    public static String has_switch_trend_by_heiken_ma35_ma10(List<BtcFutures> heiken_list) {
+        String trend_d = Utils.getTrendByHekenAshiList(heiken_list);
+        String switch_trend = Utils.switchTrendByHeken_12(heiken_list);
+        String switch_trend_3_5 = Utils.switchTrendByMaXX(heiken_list, 3, 5);
+        if (Utils.isNotBlank(switch_trend_3_5) && switch_trend_3_5.contains(trend_d)) {
+            if (Utils.isBlank(switch_trend)) {
+                switch_trend = Utils.appendSpace(trend_d, 4) + Utils.TEXT_SWITCH_TREND_Ma_3_5;
+            } else {
+                switch_trend += Utils.TEXT_SWITCH_TREND_Ma_3_5;
+            }
+        }
+        String switch_trend_1_10 = Utils.switchTrendByMaXX(heiken_list, 1, 10);
+        if (Utils.isNotBlank(switch_trend_1_10) && switch_trend_1_10.contains(trend_d)) {
+            if (Utils.isBlank(switch_trend)) {
+                switch_trend = Utils.appendSpace(trend_d, 4) + Utils.TEXT_SWITCH_TREND_Ma_1_10;
+            } else {
+                switch_trend += Utils.TEXT_SWITCH_TREND_Ma_1_10;
+            }
+        }
+        if (Utils.isNotBlank(switch_trend)) {
+            switch_trend = appendSpace(getChartName(heiken_list) + switch_trend, 30);
+        }
+        return switch_trend;
+    }
+
+    public static String switchTrendByHeken_12(List<BtcFutures> heiken_list) {
+        if (CollectionUtils.isEmpty(heiken_list)) {
             return "";
         }
-        if (CollectionUtils.isEmpty(heken_list) || heken_list.size() < 5) {
-            Utils.logWritelnDraft("(switchTrendByHeken_12)list Size < 5: " + heken_list.get(0).getId() + "  "
-                    + heken_list.size() + "   " + Utils.getCryptoLink_Spot(getEpicFromId(heken_list.get(0).getId())));
+        if (CollectionUtils.isEmpty(heiken_list) || heiken_list.size() < 5) {
+            Utils.logWritelnDraft("(switchTrendByHeken_12)list Size < 5: " + heiken_list.get(0).getId() + "  "
+                    + heiken_list.size() + "   " + Utils.getCryptoLink_Spot(getEpicFromId(heiken_list.get(0).getId())));
             return "";
         }
 
-        String id = heken_list.get(0).getId();
-        String trend = Utils.getTrendByHekenAshiList(heken_list);
+        String id = heiken_list.get(0).getId();
+        String trend = Utils.getTrendByHekenAshiList(heiken_list);
+        String chart_name = getChartName(heiken_list);
 
         if (id.contains(PREFIX_1w_) || id.contains(PREFIX_1d_) || id.contains(PREFIX_12h_) || id.contains(PREFIX_4h_)) {
-            if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(0).isUptrend()
-                    && heken_list.get(1).isDown()) {
-                return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
+            if (Objects.equals(trend, Utils.TREND_LONG) && heiken_list.get(0).isUptrend()
+                    && heiken_list.get(1).isDown()) {
+                return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
             }
-            if (Objects.equals(trend, Utils.TREND_SHOT) && heken_list.get(0).isDown()
-                    && heken_list.get(1).isUptrend()) {
-                return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
+            if (Objects.equals(trend, Utils.TREND_SHOT) && heiken_list.get(0).isDown()
+                    && heiken_list.get(1).isUptrend()) {
+                return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
             }
             return "";
         }
 
         // -------------------------------------------------------------------------
-        if (Objects.equals(trend, Utils.TREND_LONG) && heken_list.get(1).isUptrend() && heken_list.get(2).isDown()) {
-            return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
+        if (Objects.equals(trend, Utils.TREND_LONG) && heiken_list.get(1).isUptrend() && heiken_list.get(2).isDown()) {
+            return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
         }
 
-        if (Objects.equals(trend, Utils.TREND_SHOT) && heken_list.get(1).isDown() && heken_list.get(2).isUptrend()) {
-            return Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
+        if (Objects.equals(trend, Utils.TREND_SHOT) && heiken_list.get(1).isDown() && heiken_list.get(2).isUptrend()) {
+            return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
         }
 
         // --------------------------------------------------------------------
@@ -4215,21 +4242,21 @@ public class Utils {
         return isUptrendByMa(list, maIndex, 0, 1) ? TREND_LONG : TREND_SHOT;
     }
 
-    public static String getTrendByHekenAshiList(List<BtcFutures> heken_list) {
-        return getTrendByHekenAshiList(heken_list, 0);
+    public static String getTrendByHekenAshiList(List<BtcFutures> heiken_list) {
+        return getTrendByHekenAshiList(heiken_list, 0);
     }
 
-    public static String getTrendByHekenAshiList(List<BtcFutures> heken_list, int candle_no) {
-        if (CollectionUtils.isEmpty(heken_list)) {
+    public static String getTrendByHekenAshiList(List<BtcFutures> heiken_list, int candle_no) {
+        if (CollectionUtils.isEmpty(heiken_list)) {
             return "";
         }
         int str = candle_no;
         int end = candle_no + 1;
 
-        boolean isUptrend_0 = heken_list.get(str).isUptrend();
-        boolean isUptrend_1 = heken_list.get(end).isUptrend();
-        boolean isUptrend_2 = isUptrendByMa(heken_list, 2, str, end);
-        boolean isUptrend_3 = isUptrendByMa(heken_list, 3, str, end);
+        boolean isUptrend_0 = heiken_list.get(str).isUptrend();
+        boolean isUptrend_1 = heiken_list.get(end).isUptrend();
+        boolean isUptrend_2 = isUptrendByMa(heiken_list, 2, str, end);
+        boolean isUptrend_3 = isUptrendByMa(heiken_list, 3, str, end);
 
         if ((isUptrend_0 == isUptrend_1) && (isUptrend_0 == isUptrend_2) && (isUptrend_0 == isUptrend_3)) {
             return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;

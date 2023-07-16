@@ -132,8 +132,7 @@ public class BscScanBinanceApplication {
                             alertMsgKillZone(binance_service);
                         }
 
-                        // if (Utils.isWeekday() && Utils.isAllowSendMsg())
-                        {
+                        if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
                             if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
                                 binance_service.saveMt5Data("ForexM.csv", Utils.MINUTES_RELOAD_CSV_DATA);
                                 wait(SLEEP_MINISECONDS);
@@ -176,7 +175,6 @@ public class BscScanBinanceApplication {
                         }
 
                         String SYMBOL = Utils.COINS.get(index_crypto).toUpperCase();
-
                         if (isReloadAfter(getWattingTime(SYMBOL), "CHECK_CRYPTO_" + SYMBOL)) {
                             String crypto_time = binance_service.initCryptoTrend(SYMBOL);
                             setWattingTime(SYMBOL, crypto_time);
