@@ -3344,6 +3344,7 @@ public class BinanceServiceImpl implements BinanceService {
         WATCHLIST.addAll(Utils.LIST_WAITING);
         WATCHLIST.addAll(Utils.COINS_FUTURES);
 
+        String orderId_M1 = "CRYPTO_" + SYMBOL + "_1M";
         String orderId_d1 = "CRYPTO_" + SYMBOL + "_1d";
         if (!WATCHLIST.contains(SYMBOL)) {
             deleteOrders(orderId_d1);
@@ -3360,9 +3361,14 @@ public class BinanceServiceImpl implements BinanceService {
             return Utils.CRYPTO_TIME_H4;
         }
         String trend_month = Utils.getTrendByHekenAshiList(heiken_list_month);
+        String switch_trend_month = Utils.switchTrendByHeken_12(heiken_list_month);
         if (!Objects.equals(Utils.TREND_LONG, trend_month)) {
             return Utils.CRYPTO_TIME_H4;
+        } else {
+            String trend_candle_1 = Utils.getTrendByHekenAshiList(heiken_list_month, 1);
+            createOrders(SYMBOL, orderId_M1, switch_trend_month, switch_trend_month, heiken_list_month, trend_candle_1);
         }
+
         // ------------------------------------------------------------------
         List<BtcFutures> heiken_list_w = Utils.getHeikenList(Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_W1, 15));
         if (CollectionUtils.isEmpty(heiken_list_w)) {
@@ -3423,6 +3429,7 @@ public class BinanceServiceImpl implements BinanceService {
         String switch_trend = Utils.has_switch_trend_by_heiken_ma35_ma10(heiken_list_h4);
         switch_trend += Utils.switchTrendByHeken_12(heiken_list_d);
         switch_trend += Utils.switchTrendByHeken_12(heiken_list_w);
+        switch_trend += switch_trend_month;
 
         if (switch_trend.contains(trend_d)) {
             String trend_candle_1 = Utils.getTrendByHekenAshiList(heiken_list_d, 1);
