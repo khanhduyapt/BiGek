@@ -3373,7 +3373,6 @@ public class BinanceServiceImpl implements BinanceService {
             return Utils.CRYPTO_TIME_H4;
         }
         // ------------------------------------------------------------------
-
         List<BtcFutures> heiken_list_d = Utils.getHeikenList(Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_D1, 15));
         if (CollectionUtils.isEmpty(heiken_list_d)) {
             return Utils.CRYPTO_TIME_H4;
