@@ -3353,16 +3353,25 @@ public class BinanceServiceImpl implements BinanceService {
 
             return Utils.CRYPTO_TIME_H4;
         }
-
-        List<BtcFutures> heiken_list_m = Utils.getHeikenList(Utils.loadData(SYMBOL, "1M", 15));
-        if (CollectionUtils.isEmpty(heiken_list_m)) {
+        // TODO: initCryptoTrend
+        // ------------------------------------------------------------------
+        List<BtcFutures> heiken_list_month = Utils.getHeikenList(Utils.loadData(SYMBOL, "1M", 15));
+        if (CollectionUtils.isEmpty(heiken_list_month)) {
             return Utils.CRYPTO_TIME_H4;
         }
-        String trend_m = Utils.getTrendByHekenAshiList(heiken_list_m);
-        if (!Objects.equals(Utils.TREND_LONG, trend_m)) {
+        String trend_month = Utils.getTrendByHekenAshiList(heiken_list_month);
+        if (!Objects.equals(Utils.TREND_LONG, trend_month)) {
             return Utils.CRYPTO_TIME_H4;
         }
-
+        // ------------------------------------------------------------------
+        List<BtcFutures> heiken_list_w = Utils.getHeikenList(Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_W1, 15));
+        if (CollectionUtils.isEmpty(heiken_list_w)) {
+            return Utils.CRYPTO_TIME_H4;
+        }
+        String trend_w = Utils.getTrendByHekenAshiList(heiken_list_w);
+        if (!Objects.equals(Utils.TREND_LONG, trend_w)) {
+            return Utils.CRYPTO_TIME_H4;
+        }
         // ------------------------------------------------------------------
 
         List<BtcFutures> heiken_list_d = Utils.getHeikenList(Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_D1, 15));
@@ -3370,9 +3379,6 @@ public class BinanceServiceImpl implements BinanceService {
             return Utils.CRYPTO_TIME_H4;
         }
         String trend_d = Utils.getTrendByHekenAshiList(heiken_list_d);
-
-        // ------------------------------------------------------------------
-        // TODO: initCryptoTrend
         // ------------------------------------------------------------------
         String trading_trend = "";
         if (CRYPTO_LIST_BUYING.contains(SYMBOL)) {
@@ -3395,30 +3401,13 @@ public class BinanceServiceImpl implements BinanceService {
             logMsgPerHour(EVENT_ID, msg_d1 + log, Utils.MINUTES_OF_1H);
         }
         if (!Objects.equals(Utils.TREND_LONG, trend_d)) {
-            if (Utils.isNotBlank(trading_trend)) {
-                return Utils.CRYPTO_TIME_H1;
-            } else {
-                return Utils.CRYPTO_TIME_H4;
-            }
+            return Utils.CRYPTO_TIME_H1;
         }
         String zone_d = Utils.getZoneTrend(heiken_list_d);
         if (!zone_d.contains(Utils.TREND_LONG)) {
             return Utils.CRYPTO_TIME_H4;
         }
-
-        List<BtcFutures> heiken_list_w = Utils.getHeikenList(Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_W1, 15));
-        if (CollectionUtils.isEmpty(heiken_list_w)) {
-            return Utils.CRYPTO_TIME_H4;
-        }
-        String trend_w = Utils.getTrendByHekenAshiList(heiken_list_w);
-        if (!Objects.equals(Utils.TREND_LONG, trend_w)) {
-            if (Utils.isNotBlank(trading_trend)) {
-                return Utils.CRYPTO_TIME_H1;
-            } else {
-                return Utils.CRYPTO_TIME_H4;
-            }
-        }
-
+        // ------------------------------------------------------------------
         List<BtcFutures> heiken_list_h4 = Utils.getHeikenList(Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_H4, 15));
         if (CollectionUtils.isEmpty(heiken_list_h4)) {
             return Utils.CRYPTO_TIME_H4;
@@ -3429,13 +3418,9 @@ public class BinanceServiceImpl implements BinanceService {
         }
         String trend_h4 = Utils.getTrendByHekenAshiList(heiken_list_h4);
         if (!Objects.equals(Utils.TREND_LONG, trend_h4)) {
-            if (Utils.isNotBlank(trading_trend)) {
-                return Utils.CRYPTO_TIME_H1;
-            } else {
-                return Utils.CRYPTO_TIME_H4;
-            }
+            return Utils.CRYPTO_TIME_H4;
         }
-
+        // ------------------------------------------------------------------
         String switch_trend = Utils.has_switch_trend_by_heiken_ma35_ma10(heiken_list_h4);
         switch_trend += Utils.switchTrendByHeken_12(heiken_list_d);
         switch_trend += Utils.switchTrendByHeken_12(heiken_list_w);
