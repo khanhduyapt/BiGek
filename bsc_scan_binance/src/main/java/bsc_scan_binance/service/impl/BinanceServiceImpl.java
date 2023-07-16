@@ -3406,7 +3406,7 @@ public class BinanceServiceImpl implements BinanceService {
             logMsgPerHour(EVENT_ID, msg_d1 + log, Utils.MINUTES_OF_1H);
         }
         if (!Objects.equals(Utils.TREND_LONG, trend_d)) {
-            return Utils.CRYPTO_TIME_H1;
+            return Utils.CRYPTO_TIME_H4;
         }
         String zone_d = Utils.getZoneTrend(heiken_list_d);
         if (!zone_d.contains(Utils.TREND_LONG)) {

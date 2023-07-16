@@ -401,7 +401,7 @@ public class BscScanBinanceApplication {
             time = Utils.MINUTES_OF_4H;
             break;
         default:
-            time = Utils.MINUTES_OF_15M;
+            time = Utils.MINUTES_OF_1H;
             break;
         }
         watting_dict.put(SYMBOL, time);
