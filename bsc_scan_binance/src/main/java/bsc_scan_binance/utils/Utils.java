@@ -4216,7 +4216,7 @@ public class Utils {
         String trend = Utils.getTrendByHekenAshiList(heiken_list);
         String chart_name = getChartName(heiken_list);
 
-        if (id.contains(PREFIX_1w_) || id.contains(PREFIX_1d_) || id.contains(PREFIX_12h_) || id.contains(PREFIX_4h_)) {
+        if (id.contains(PREFIX_1w_) || id.contains(PREFIX_1d_) || id.contains(PREFIX_12h_)) {
             if (Objects.equals(trend, Utils.TREND_LONG) && heiken_list.get(0).isUptrend()
                     && heiken_list.get(1).isDown()) {
                 return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
@@ -4229,11 +4229,13 @@ public class Utils {
         }
 
         // -------------------------------------------------------------------------
-        if (Objects.equals(trend, Utils.TREND_LONG) && heiken_list.get(1).isUptrend() && heiken_list.get(2).isDown()) {
+        if (Objects.equals(trend, Utils.TREND_LONG) && heiken_list.get(0).isUptrend() && heiken_list.get(1).isUptrend()
+                && heiken_list.get(2).isDown()) {
             return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
         }
 
-        if (Objects.equals(trend, Utils.TREND_SHOT) && heiken_list.get(1).isDown() && heiken_list.get(2).isUptrend()) {
+        if (Objects.equals(trend, Utils.TREND_SHOT) && heiken_list.get(0).isDown() && heiken_list.get(1).isDown()
+                && heiken_list.get(2).isUptrend()) {
             return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
         }
 
