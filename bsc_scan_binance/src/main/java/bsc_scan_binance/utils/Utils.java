@@ -4361,12 +4361,6 @@ public class Utils {
             range = ".dg";
         }
 
-        String start = "";
-        if (note_d1.contains(trend)) {
-            String type = Objects.equals(trend, TREND_LONG) ? "b" : "s";
-            start = "*" + type + "*";
-        }
-
         Mt5OpenTrade dto = new Mt5OpenTrade();
         dto.setEpic(EPIC);
         dto.setOrder_type(trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
@@ -4375,7 +4369,7 @@ public class Utils {
         dto.setEntry(en_05);
         dto.setStop_loss(sl_d1);
         dto.setTake_profit(tp_d1);
-        dto.setComment(start + BscScanBinanceApplication.hostname + "" + encrypted_trend_w1d1h4h1 + "" + range);
+        dto.setComment(BscScanBinanceApplication.hostname + "" + encrypted_trend_w1d1h4h1 + "" + range);
 
         return dto;
     }
