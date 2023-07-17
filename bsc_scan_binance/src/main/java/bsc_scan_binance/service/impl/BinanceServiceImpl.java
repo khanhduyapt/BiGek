@@ -2728,6 +2728,7 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
+        String trend_w1 = dto_w1.getTrend();
         String trend_d1 = dto_d1.getTrend();
         String trend_h4 = dto_h4.getTrend();
         String trend_h1 = dto_h1.getTrend();
@@ -2739,12 +2740,19 @@ public class BinanceServiceImpl implements BinanceService {
             append += "     ";
         }
 
+        String text_risk = "0.15% ";
+        BigDecimal risk = Utils.RISK_0_15_PERCENT;
+        if (!Objects.equals(trend_w1, trend_d1)) {
+            text_risk = "0.1 % ";
+            risk = Utils.RISK_0_10_PERCENT;
+        }
+
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_h1.getCurrent_price(), 5)), 11);
         log += Utils.appendSpace(append.trim(), 126) + " ";
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
-        log += "0.15% " + Utils.appendSpace(
-                Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_15_PERCENT, false, trend_fi, EPIC, dto_h1, dto_d1), 56);
+        log += text_risk + Utils.appendSpace(
+                Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, trend_fi, EPIC, dto_h1, dto_d1), 56);
 
         if (dto_w1.getSwitch_trend().contains(dto_w1.getTrend())
                 && dto_w1.getTrend_zone().contains(dto_w1.getTrend())) {
@@ -3758,7 +3766,8 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_d1 = dto_d1.getTrend();
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
             // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau (Đinh Tùng Lâm)
-            if (!Objects.equals(trend_w1, trend_d1)) {
+            if (!Objects.equals(trend_w1, trend_d1)
+                    && !(dto_d1.getSwitch_trend() + dto_h12.getSwitch_trend()).contains(trend_d1)) {
                 // Không đánh pha điều chỉnh
                 continue;
             }
@@ -3845,6 +3854,14 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (!Objects.equals(trend_w1, trend_d1) && dto_h12.getSwitch_trend().contains(trend_d1)
+                        && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
+                        && Objects.equals(trend_d1, trend_h1)) {
+                    String append = ".002412w41";
+                    action = trend_d1;
+                    dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, action, dto_h1, dto_d1, append,
+                            true, switch_trend_d1);
+                }
+                if (!Objects.equals(trend_w1, trend_d1) && dto_d1.getSwitch_trend().contains(trend_d1)
                         && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
                         && Objects.equals(trend_d1, trend_h1)) {
                     String append = ".0024w1241";
