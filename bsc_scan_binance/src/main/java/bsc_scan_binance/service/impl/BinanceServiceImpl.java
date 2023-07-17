@@ -2988,7 +2988,7 @@ public class BinanceServiceImpl implements BinanceService {
                 result += Utils.appendSpace(TRADE_TREND, 10) + "    ";
                 result += Utils.appendSpace(EPIC, 10);
                 result += Utils.appendSpace(trade.getTicket(), 10);
-                result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(PROFIT), 10);
+                result += "   (Profit):" + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 10);
                 result += "    " + multi_timeframes;
                 result += Utils.appendSpace(trade.getComment(), 30);
                 result += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
@@ -3845,7 +3845,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     if (Utils.isNotBlank(reject_id)) {
-                        String msg_reject = Utils.appendLeft(" ", 100);
+                        String msg_reject = Utils.appendLeft(" ", 70);
                         msg_reject += "Reject: " + Utils.appendSpace(action, 10);
                         msg_reject += Utils.appendSpace(dto.getEpic(), 10);
                         msg_reject += Utils.appendSpace(reject_id, 60);
@@ -3989,7 +3989,8 @@ public class BinanceServiceImpl implements BinanceService {
                     prefix += "(Trade):" + Utils.appendSpace(TRADE_TREND, 10);
                     prefix += Utils.getChartNameCapital(mt5Entity.getTimeframe()) + ":"
                             + Utils.appendSpace(trend_h4, 10);
-                    prefix += "(Profit):" + Utils.appendSpace(Utils.appendLeft(PROFIT.toString(), 10), 15);
+                    prefix += "(Profit):"
+                            + Utils.appendSpace(Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 10), 15);
                     prefix += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
                     Utils.logWritelnDraft(prefix);
 
