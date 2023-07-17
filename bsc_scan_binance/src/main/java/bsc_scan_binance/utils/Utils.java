@@ -4196,9 +4196,15 @@ public class Utils {
                 switch_trend += Utils.TEXT_SWITCH_TREND_Ma_1_10;
             }
         }
+
+        String chart_name = getChartName(heiken_list);
         if (Utils.isNotBlank(switch_trend)) {
-            switch_trend = appendSpace(getChartName(heiken_list) + switch_trend, 30);
+            if (!switch_trend.contains(chart_name)) {
+                switch_trend = chart_name + switch_trend;
+            }
+            switch_trend = appendSpace(switch_trend, 30);
         }
+
         return switch_trend;
     }
 
@@ -4212,23 +4218,23 @@ public class Utils {
             return "";
         }
 
-        String id = heiken_list.get(0).getId();
         String trend = Utils.getTrendByHekenAshiList(heiken_list);
         String chart_name = getChartName(heiken_list);
-
-        if (id.contains(PREFIX_1w_) || id.contains(PREFIX_1d_) || id.contains(PREFIX_12h_)) {
-            if (Objects.equals(trend, Utils.TREND_LONG) && heiken_list.get(0).isUptrend()
-                    && heiken_list.get(1).isDown()) {
-                return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
-            }
-            if (Objects.equals(trend, Utils.TREND_SHOT) && heiken_list.get(0).isDown()
-                    && heiken_list.get(1).isUptrend()) {
-                return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
-            }
-            return "";
-        }
+        //Không chờ đóng nến:
+        //String id = heiken_list.get(0).getId();
+        //if (id.contains(PREFIX_1w_) || id.contains(PREFIX_1d_) || id.contains(PREFIX_12h_)) {
+        //    if (Objects.equals(trend, Utils.TREND_LONG) && heiken_list.get(0).isUptrend()
+        //            && heiken_list.get(1).isDown()) {
+        //        return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
+        //    }
+        //    if (Objects.equals(trend, Utils.TREND_SHOT) && heiken_list.get(0).isDown()
+        //            && heiken_list.get(1).isUptrend()) {
+        //        return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
+        //    }
+        //}
 
         // -------------------------------------------------------------------------
+        //Chờ đóng nến:
         if (Objects.equals(trend, Utils.TREND_LONG) && heiken_list.get(0).isUptrend() && heiken_list.get(1).isUptrend()
                 && heiken_list.get(2).isDown()) {
             return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
@@ -4238,7 +4244,6 @@ public class Utils {
                 && heiken_list.get(2).isUptrend()) {
             return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
         }
-
         // --------------------------------------------------------------------
         return "";
     }

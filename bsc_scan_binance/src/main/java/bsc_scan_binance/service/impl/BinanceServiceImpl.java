@@ -2741,7 +2741,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_h1.getCurrent_price(), 5)), 11);
-        log += Utils.appendSpace(append.trim(), 126);
+        log += Utils.appendSpace(append.trim(), 126) + " ";
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
         log += "0.15% " + Utils.appendSpace(
                 Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_15_PERCENT, false, trend_fi, EPIC, dto_h1, dto_d1), 56);
@@ -3656,13 +3656,9 @@ public class BinanceServiceImpl implements BinanceService {
         if (CollectionUtils.isEmpty(heiken_list)) {
             return "";
         }
-        String trend = Utils.getTrendByHekenAshiList(heiken_list);
-        String type = Utils.has_switch_trend_by_heiken_ma35_ma10(heiken_list);
 
-        String note = "";
-        if (Utils.isNotBlank(type)) {
-            note = Utils.getChartNameCapital(CAPITAL_TIME_XX) + type;
-        }
+        String trend = Utils.getTrendByHekenAshiList(heiken_list);
+        String switch_trend = Utils.has_switch_trend_by_heiken_ma35_ma10(heiken_list);
 
         // -----------------------------DATABASE---------------------------
         int size = 10;
@@ -3726,7 +3722,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_zone = Utils.getZoneTrend(heiken_list);
 
         Orders entity = new Orders(orderId, date_time, trend, heiken_list.get(0).getCurrPrice(), str_body, end_body,
-                sl_long, sl_shot, note, allow_trade_by_ma50, trend_candle_1, trend_zone);
+                sl_long, sl_shot, switch_trend, allow_trade_by_ma50, trend_candle_1, trend_zone);
 
         ordersRepository.save(entity);
 
@@ -3804,15 +3800,15 @@ public class BinanceServiceImpl implements BinanceService {
             String note_xx = "";
             if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
                     && switch_trend_h12.contains(trend_d1)) {
-                note_xx = switch_trend_h12 + " D=H12w=H4";
+                note_xx = switch_trend_h12 + " D=H12w=H4.";
             }
             if (Utils.isBlank(note_xx) && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
                     && switch_trend_h4.contains(trend_d1)) {
-                note_xx = switch_trend_h4 + " D=H12=H4w";
+                note_xx = switch_trend_h4 + " D=H12=H4w.";
             }
             if (Utils.isBlank(note_xx) && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
                     && Objects.equals(trend_h4, trend_h1) && switch_trend_h1.contains(trend_d1)) {
-                note_xx = switch_trend_h4 + " D=H12=H4=H1w";
+                note_xx = switch_trend_h4 + " D=H12=H4=H1w.";
             }
 
             count += 1;
