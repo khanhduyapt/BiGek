@@ -3840,7 +3840,7 @@ public class BinanceServiceImpl implements BinanceService {
                         append = ".96241241w";
                     }
                     action = trend_d1;
-                    String text_risk = "(0.15%:" + Utils.RISK_0_15_PERCENT + ")";
+                    String text_risk = "(0.15%:" + Utils.RISK_0_15_PERCENT.intValue() + "$)";
                     append = append.replace("w", type) + text_risk;
                     dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, action, dto_h1, dto_d1, append, true,
                             switch_trend_d1);
@@ -3860,7 +3860,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (Utils.isNotBlank(append) && Objects.equals(trend_d1, trend_h12)
                             && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
-                        String text_risk = "(0.1 %:" + Utils.RISK_0_10_PERCENT + ")";
+                        String text_risk = "(0.1 %:" + Utils.RISK_0_10_PERCENT.intValue() + "$)";
                         append = append.replace("w", type) + text_risk;
                         dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, action, dto_h1, dto_d1, append,
                                 true, switch_trend_d1);
