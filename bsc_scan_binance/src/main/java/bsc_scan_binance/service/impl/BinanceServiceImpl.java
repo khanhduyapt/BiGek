@@ -3593,7 +3593,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.isNull(entity)) {
 
                 String find_trend = (trade.getType().toUpperCase().contains(Utils.TREND_LONG)) ? Utils.TREND_LONG
-                        : Utils.TREND_SHOT;
+                        : (trade.getType().toUpperCase().contains(Utils.TREND_SHOT)) ? Utils.TREND_SHOT : "_";
                 List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_d1, find_trend);
                 BigDecimal sl_d1 = sl1_tp2.get(0);
                 BigDecimal tp_d1 = sl1_tp2.get(1);
@@ -3813,7 +3813,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 Mt5OpenTrade dto = null;
                 String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "B"
-                        : Objects.equals(Utils.TREND_LONG, trend_d1) ? "S" : "?";
+                        : Objects.equals(Utils.TREND_SHOT, trend_d1) ? "S" : "?";
 
                 if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
                         && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
