@@ -2340,10 +2340,6 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     public void sendMsgPerHour_ToAll(String EVENT_ID, String msg_content) {
-        if (!Utils.isBusinessTime_8h_to_22h()) {
-            return;
-        }
-
         String msg = BscScanBinanceApplication.hostname + Utils.getTimeHHmm();
         msg += msg_content;
         msg = msg.replace(" ", "").replace(",", ", ");
@@ -2358,10 +2354,6 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public void sendMsgPerHour_OnlyMe(String EVENT_ID, String msg_content) {
-        if (!Utils.isBusinessTime_8h_to_22h()) {
-            return;
-        }
-
         String msg = BscScanBinanceApplication.hostname + Utils.getTimeHHmm();
         msg += msg_content;
         msg = msg.replace(" ", "").replace(",", ", ");
@@ -2839,16 +2831,9 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private void openTrade() {
-        // if (!CollectionUtils.isEmpty(BscScanBinanceApplication.mt5_open_trade_List))
-        // {
-        // if (Utils.isNewsAt_19_20_21h()) {
-        // if (isReloadAfter(Utils.MINUTES_OF_1H, "OpenTrade")) {
-        // Utils.logWritelnDraft("[OpenTrade] thoi gian nghi, khong vao lenh.");
-        // }
-        // BscScanBinanceApplication.mt5_open_trade_List = new
-        // ArrayList<Mt5OpenTrade>();
-        // }
-        // }
+        if (Utils.isSleepTime_8h_to_22h()) {
+            return;
+        }
 
         String mt5_open_trade_file = Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + "OpenTrade.csv";
         int MAX_TRADE = 100;
@@ -3888,9 +3873,11 @@ public class BinanceServiceImpl implements BinanceService {
 
                             Utils.logWritelnDraft(msg.replace(Utils.new_line_from_service, " ").replace("___", "   "));
 
-                            String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type();
-                            if (isReloadAfter(Utils.MINUTES_OF_1H, EVENT_ID)) {
-                                sendMsgPerHour_OnlyMe(EVENT_ID, msg);
+                            if (!Utils.isSleepTime_8h_to_22h()) {
+                                String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type();
+                                if (isReloadAfter(Utils.MINUTES_OF_1H, EVENT_ID)) {
+                                    sendMsgPerHour_OnlyMe(EVENT_ID, msg);
+                                }
                             }
                         }
                     }

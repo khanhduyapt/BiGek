@@ -1465,16 +1465,14 @@ public class Utils {
         return false;
     }
 
-    public static boolean isBusinessTime_8h_to_22h() {
-        // Sang 6-8h, Trua: 1h-3h, Chieu 5h-6h, toi 8h-9h: la khung gio gia ro rang
-        // nhat, sau khung gio nay gia moi chay.
+    public static boolean isSleepTime_8h_to_22h() {
         List<Integer> times = Arrays.asList(8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
-            return true;
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     public static String getChatId(String userName) {
@@ -4171,8 +4169,8 @@ public class Utils {
 
     public static String switchTrendByHeken_12(List<BtcFutures> heiken_list) {
         if (CollectionUtils.isEmpty(heiken_list)) {
-            Utils.logWritelnDraft("(switchTrendByHeken_12)list Empty"
-                    + heiken_list.size() + "   " + Utils.getCryptoLink_Spot(getEpicFromId(heiken_list.get(0).getId())));
+            Utils.logWritelnDraft("(switchTrendByHeken_12)list Empty" + heiken_list.size() + "   "
+                    + Utils.getCryptoLink_Spot(getEpicFromId(heiken_list.get(0).getId())));
             return "";
         }
         if (heiken_list.size() < 5) {
