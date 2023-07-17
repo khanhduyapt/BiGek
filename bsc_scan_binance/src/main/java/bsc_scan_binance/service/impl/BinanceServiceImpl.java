@@ -3846,32 +3846,20 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (!Objects.equals(trend_w1, trend_d1)) {
-                    if (dto_d1.getSwitch_trend().contains(trend_d1)
-                            && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
-                            && Objects.equals(trend_d1, trend_h1)) {
-                        String append = ".0024w1241";
-                        action = trend_d1;
-                        append = append.replace("w", type);
-                        dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, action, dto_h1, dto_d1, append,
-                                true, switch_trend_d1);
+                    action = trend_d1;
+
+                    String append = "";
+                    if (dto_d1.getSwitch_trend().contains(trend_d1)) {
+                        append = ".0024w1241";
+                    } else if (dto_h12.getSwitch_trend().contains(trend_d1)) {
+                        append = ".002412w41";
+                    } else if (dto_h4.getSwitch_trend().contains(trend_d1)) {
+                        append = ".0024124w1";
                     }
 
-                    if (dto_h12.getSwitch_trend().contains(trend_d1)
-                            && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
-                            && Objects.equals(trend_d1, trend_h1)) {
-                        String append = ".002412w41";
-                        action = trend_d1;
+                    if (Utils.isNotBlank(append) && Objects.equals(trend_d1, trend_h12)
+                            && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
                         append = append.replace("w", type);
-                        dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, action, dto_h1, dto_d1, append,
-                                true, switch_trend_d1);
-                    }
-
-                    if (dto_h4.getSwitch_trend().contains(trend_d1)
-                            && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
-                            && Objects.equals(trend_d1, trend_h1)) {
-                        String append = ".0024124w1";
-                        append = append.replace("w", type);
-                        action = trend_d1;
                         dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, action, dto_h1, dto_d1, append,
                                 true, switch_trend_d1);
                     }
