@@ -2904,15 +2904,15 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type();
                     if (isReloadAfter(Utils.MINUTES_OF_15M, EVENT_ID)) {
-                        String msg = "openTrade: ";
+                        String msg = "OpenTrade: ";
                         msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4) + ")", 10);
                         msg += Utils.appendSpace(dto.getEpic(), 10)
-                                + Utils.appendLeft(dto.getCur_price().toString(), 15);
+                                + ":::" + Utils.appendLeft(dto.getCur_price().toString(), 15);
                         msg += Utils.new_line_from_service;
-                        msg += "Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
-                        msg += "E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
-                        msg += "SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 15);
-                        msg += "TP: " + Utils.appendLeft(dto.getTake_profit().toString(), 15);
+                        msg += ":::Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
+                        msg += ":::E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
+                        msg += ":::SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 15);
+                        msg += ":::TP: " + Utils.appendLeft(dto.getTake_profit().toString(), 15);
                         msg += Utils.appendSpace(dto.getComment(), 25);
 
                         // System.out.println(msg.replace(Utils.new_line_from_service, " "));
@@ -3846,6 +3846,15 @@ public class BinanceServiceImpl implements BinanceService {
                     action = trend_d1;
                     dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, action, dto_h1, dto_d1, append, true,
                             switch_trend_d1);
+                }
+
+                if (!Objects.equals(trend_w1, trend_d1) && dto_d1.getSwitch_trend().contains(trend_d1)
+                        && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
+                        && Objects.equals(trend_d1, trend_h1)) {
+                    String append = ".0024w1241";
+                    action = trend_d1;
+                    dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, action, dto_h1, dto_d1, append,
+                            true, switch_trend_d1);
                 }
 
                 // ---------------------------------------------------------------------

@@ -63,6 +63,9 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 public class Utils {
     private static final BigDecimal ACCOUNT = BigDecimal.valueOf(200000);
 
+    // Trend W != D (200$ / 1trade)
+    public static final BigDecimal RISK_0_10_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
+
     // Step1: Khi mới nhận tài khoản (300$ / 1trade)
     public static final BigDecimal RISK_0_15_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
 
