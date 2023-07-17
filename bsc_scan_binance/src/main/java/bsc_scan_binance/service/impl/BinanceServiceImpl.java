@@ -2751,8 +2751,8 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_h1.getCurrent_price(), 5)), 11);
         log += Utils.appendSpace(append.trim(), 126) + " ";
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
-        log += text_risk + Utils.appendSpace(
-                Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, trend_fi, EPIC, dto_h1, dto_d1), 56);
+        log += text_risk
+                + Utils.appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, trend_fi, EPIC, dto_h1, dto_d1), 56);
 
         if (dto_w1.getSwitch_trend().contains(dto_w1.getTrend())
                 && dto_w1.getTrend_zone().contains(dto_w1.getTrend())) {
@@ -3877,8 +3877,8 @@ public class BinanceServiceImpl implements BinanceService {
                         if (!is_opening_trade(EPIC)) {
                             String msg = Utils.appendSpace("", 50) + "OpenTrade: ";
                             msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4) + ")", 10);
-                            msg += Utils.appendSpace(dto.getEpic(), 10) + "___" +
-                                    Utils.appendLeft(dto.getCur_price().toString(), 15);
+                            msg += Utils.appendSpace(dto.getEpic(), 10) + "___"
+                                    + Utils.appendLeft(dto.getCur_price().toString(), 15);
                             msg += Utils.new_line_from_service;
                             msg += "___Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
                             msg += "___E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
@@ -3963,8 +3963,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ---------------------------------------------------------------------------------
             boolean isTrendInverse = false;
-            if ((!Objects.equals(trend_h12, TRADE_TREND) || !Objects.equals(dto_h4.getTrend_c1(), TRADE_TREND))
-                    && !Objects.equals(trend_h4, TRADE_TREND)
+            if (!Objects.equals(trend_h12, TRADE_TREND) && !Objects.equals(trend_h4, TRADE_TREND)
                     && !Objects.equals(trend_h1, TRADE_TREND)) {
                 isTrendInverse = true;
             }
