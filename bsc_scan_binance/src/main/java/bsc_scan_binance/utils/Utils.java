@@ -90,7 +90,7 @@ public class Utils {
 
     public static final String TREND_LONG = "BUY";
     public static final String TREND_SHOT = "SELL";
-    public static final String SIDEWAY = "Sway";
+    public static final String TREND_UNSURE = "UNSURE";
 
     public static final String TEXT_EQUAL_TO_D1 = "Ed1";
     public static final String TEXT_EQUAL_TO_H4 = "Eh4";
@@ -794,43 +794,6 @@ public class Utils {
         }
 
         return CAPITAL_TIME_H1;
-    }
-
-    public static String getEncrypted_trend_w1d1h4h1(String trend_w1, String trend_d1, String trend_h12,
-            String trend_h4, String trend_h1) {
-        String result = "";
-
-        if (Objects.equals(Utils.TREND_LONG, trend_w1)) {
-            result += "1";
-        } else {
-            result += "2";
-        }
-
-        if (Objects.equals(Utils.TREND_LONG, trend_d1)) {
-            result += "1";
-        } else {
-            result += "2";
-        }
-
-        if (Objects.equals(Utils.TREND_LONG, trend_h12)) {
-            result += "1";
-        } else {
-            result += "2";
-        }
-
-        if (Objects.equals(Utils.TREND_LONG, trend_h4)) {
-            result += "1";
-        } else {
-            result += "2";
-        }
-
-        if (Objects.equals(Utils.TREND_LONG, trend_h1)) {
-            result += "1";
-        } else {
-            result += "2";
-        }
-
-        return result;
     }
 
     public static String getChartNameCapital(String TIME) {
@@ -3938,14 +3901,14 @@ public class Utils {
 
     public static String getTrendPrifix(String trend) {
         String check = Objects.equals(trend, Utils.TREND_LONG) ? " 💹(" + CHAR_LONG_UP + ")"
-                : "  📉 (" + CHAR_SHORT_DN + ")";
+                : Objects.equals(trend, Utils.TREND_SHOT) ? "  📉 (" + CHAR_SHORT_DN + ")" : " ";
 
         return check;
     }
 
     public static String getTrendPrifix(String trend, int maFast, int maSlow) {
         String check = Objects.equals(trend, Utils.TREND_LONG) ? maFast + CHAR_LONG_UP + maSlow + " 💹"
-                : maFast + CHAR_SHORT_DN + maSlow + " 📉";
+                : Objects.equals(trend, Utils.TREND_SHOT) ? maFast + CHAR_SHORT_DN + maSlow + " 📉" : " ";
 
         return "(" + check + " )";
     }
@@ -3966,6 +3929,7 @@ public class Utils {
         EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_H4, "");
         EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_D1, "");
         EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_W1, "");
+        EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_M1, "");
 
         EPIC = EPIC.replace("_00", "");
         EPIC = EPIC.replace("_", "");
@@ -4074,7 +4038,7 @@ public class Utils {
         List<BigDecimal> lohi = Utils.getLowHighCandle(heiken_list.subList(1, length));
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
             SL = lohi.get(0).subtract(bread);
-        } else {
+        } else if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
             SL = lohi.get(1).add(bread);
         }
 
@@ -4163,7 +4127,7 @@ public class Utils {
         for (Mt5OpenTrade trade : open_trade_list) {
             String TRADE_EPIC = trade.getEpic().toUpperCase();
             String TRADE_TREND = trade.getOrder_type().toUpperCase().contains(Utils.TREND_LONG) ? Utils.TREND_LONG
-                    : Utils.TREND_SHOT;
+                    : trade.getOrder_type().toUpperCase().contains(Utils.TREND_SHOT) ? Utils.TREND_SHOT : "    ";
 
             if (EPIC_ACTION.contains(TRADE_EPIC) && !EPIC_ACTION.contains(TRADE_TREND)) {
                 return true;
@@ -4206,31 +4170,18 @@ public class Utils {
 
     public static String switchTrendByHeken_12(List<BtcFutures> heiken_list) {
         if (CollectionUtils.isEmpty(heiken_list)) {
+            Utils.logWritelnDraft("(switchTrendByHeken_12)list Empty"
+                    + heiken_list.size() + "   " + Utils.getCryptoLink_Spot(getEpicFromId(heiken_list.get(0).getId())));
             return "";
         }
-        if (CollectionUtils.isEmpty(heiken_list) || heiken_list.size() < 5) {
-            Utils.logWritelnDraft("(switchTrendByHeken_12)list Size < 5: " + heiken_list.get(0).getId() + "  "
-                    + heiken_list.size() + "   " + Utils.getCryptoLink_Spot(getEpicFromId(heiken_list.get(0).getId())));
+        if (heiken_list.size() < 5) {
             return "";
         }
 
         String trend = Utils.getTrendByHekenAshiList(heiken_list);
         String chart_name = getChartName(heiken_list);
-        //Không chờ đóng nến:
-        //String id = heiken_list.get(0).getId();
-        //if (id.contains(PREFIX_1w_) || id.contains(PREFIX_1d_) || id.contains(PREFIX_12h_)) {
-        //    if (Objects.equals(trend, Utils.TREND_LONG) && heiken_list.get(0).isUptrend()
-        //            && heiken_list.get(1).isDown()) {
-        //        return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
-        //    }
-        //    if (Objects.equals(trend, Utils.TREND_SHOT) && heiken_list.get(0).isDown()
-        //            && heiken_list.get(1).isUptrend()) {
-        //        return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
-        //    }
-        //}
-
         // -------------------------------------------------------------------------
-        //Chờ đóng nến:
+        // Chờ đóng nến:
         if (Objects.equals(trend, Utils.TREND_LONG) && heiken_list.get(0).isUptrend() && heiken_list.get(1).isUptrend()
                 && heiken_list.get(2).isDown()) {
             return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
@@ -4272,7 +4223,15 @@ public class Utils {
             return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
         }
 
-        return isUptrend_3 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        if ((isUptrend_0 == isUptrend_3)) {
+            return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        }
+
+        // khi Trend_heiken # Ma thì bỏ qua, không đánh
+        String id = heiken_list.get(str).getId();
+        String result = Utils.TREND_UNSURE + getChartName(id).trim();
+
+        return result;
     }
 
     public static String getTypeOfEpic(String EPIC) {
@@ -4320,7 +4279,7 @@ public class Utils {
         if (Objects.equals(Utils.TREND_LONG, entity.getTrend())) {
             sl += Utils.appendLeft(Utils.removeLastZero(entity.getBody_low()), 10);
             sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getLow_price()), 10);
-        } else {
+        } else if (Objects.equals(Utils.TREND_SHOT, entity.getTrend())) {
             sl += Utils.appendLeft(Utils.removeLastZero(entity.getBody_hig()), 10);
             sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getHigh_price()), 10);
         }
@@ -4340,7 +4299,7 @@ public class Utils {
         BigDecimal en_05 = BigDecimal.ZERO;
         if (Objects.equals(Utils.TREND_LONG, trend)) {
             en_05 = Utils.getBigDecimal(dto_en.getLow_price());
-        } else {
+        } else if (Objects.equals(Utils.TREND_SHOT, trend)) {
             en_05 = Utils.getBigDecimal(dto_en.getHigh_price());
         }
 

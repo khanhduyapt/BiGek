@@ -2666,7 +2666,8 @@ public class BinanceServiceImpl implements BinanceService {
                 result += ",";
 
             result += chart_name + ":";
-            result += Objects.equals(dto.getTrend(), Utils.TREND_LONG) ? "Buy " : "Sell";
+            result += Objects.equals(dto.getTrend(), Utils.TREND_LONG) ? "Buy "
+                    : Objects.equals(dto.getTrend(), Utils.TREND_SHOT) ? "Sell" : "    ";
         }
         result = Utils.appendSpace("(" + result + ")", 30);
 
@@ -2791,9 +2792,10 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.equals(Utils.TREND_LONG, trend)) {
                 msg = " 💹 (D1)" + SYMBOL + "_kill_Short 💔 ";
-            }
-            if (Objects.equals(Utils.TREND_SHOT, trend)) {
+            } else if (Objects.equals(Utils.TREND_SHOT, trend)) {
                 msg = " 🔻 (D1)" + SYMBOL + "_kill_Long 💔 ";
+            } else {
+                return Utils.CRYPTO_TIME_H1;
             }
             msg += "(" + Utils.appendSpace(Utils.removeLastZero(list.get(0).getCurrPrice()), 5) + ")";
 
@@ -3003,7 +3005,8 @@ public class BinanceServiceImpl implements BinanceService {
                 result += Utils.appendSpace(trade.getTicket(), 10);
                 result += "   (Profit):" + Utils.appendLeft(Utils.removeLastZero(PROFIT), 10);
                 result += "    " + multi_timeframes;
-                result += "    " + Utils.appendSpace(trade.getComment(), 30);
+                result += Utils.appendSpace(trade.getComment(), 30);
+                result += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
 
                 total = total.add(PROFIT);
                 msg += result + Utils.new_line_from_service;
@@ -3675,13 +3678,13 @@ public class BinanceServiceImpl implements BinanceService {
         List<BigDecimal> body = Utils.getBodyCandle(heiken_list);
         BigDecimal str_body = body.get(0);
         BigDecimal end_body = body.get(1);
-        BigDecimal sl_long = lohi.get(0).subtract(bread);
-        BigDecimal sl_shot = lohi.get(1).add(bread);
+        BigDecimal sl_long = BigDecimal.ZERO;
+        BigDecimal sl_shot = BigDecimal.ZERO;
 
         BigDecimal sl_at_switch_trend = Utils.getSL(heiken_list, trend);
         if (Objects.equals(trend, Utils.TREND_LONG)) {
             sl_long = sl_at_switch_trend;
-        } else {
+        } else if (Objects.equals(trend, Utils.TREND_SHOT)) {
             sl_shot = sl_at_switch_trend;
         }
 
@@ -3825,7 +3828,8 @@ public class BinanceServiceImpl implements BinanceService {
                     || Utils.EPICS_METALS.contains(EPIC))) {
 
                 Mt5OpenTrade dto = null;
-                String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "B" : "S";
+                String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "B"
+                        : Objects.equals(Utils.TREND_LONG, trend_d1) ? "S" : "?";
 
                 if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
                         && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
