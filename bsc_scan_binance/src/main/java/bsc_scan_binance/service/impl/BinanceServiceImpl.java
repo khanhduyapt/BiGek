@@ -3666,10 +3666,13 @@ public class BinanceServiceImpl implements BinanceService {
         List<BigDecimal> body = Utils.getBodyCandle(heiken_list);
         BigDecimal str_body = body.get(0);
         BigDecimal end_body = body.get(1);
-        BigDecimal sl_long = BigDecimal.ZERO;
-        BigDecimal sl_shot = BigDecimal.ZERO;
 
-        BigDecimal sl_at_switch_trend = Utils.getSL(heiken_list, trend);
+        BigDecimal bread = Utils.calcMaxBread(heiken_list);
+        List<BigDecimal> lohi = Utils.getLowHighCandle(heiken_list);
+        BigDecimal sl_long = lohi.get(0).subtract(bread);
+        BigDecimal sl_shot = lohi.get(1).add(bread);
+
+        BigDecimal sl_at_switch_trend = Utils.getSL(EPIC, heiken_list, trend);
         if (Objects.equals(trend, Utils.TREND_LONG)) {
             sl_long = sl_at_switch_trend;
         } else if (Objects.equals(trend, Utils.TREND_SHOT)) {
@@ -3743,13 +3746,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
             // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau (Đinh Tùng Lâm)
-            if (!is_opening_trade(EPIC)) {
-                if (!Objects.equals(trend_w1, trend_d1)
-                        && !(dto_d1.getSwitch_trend() + dto_h12.getSwitch_trend() + dto_h4.getSwitch_trend())
-                                .contains(trend_d1)) {
-                    // Không đánh pha điều chỉnh
-                    continue;
-                }
+            if (!is_opening_trade(EPIC) && !Objects.equals(trend_w1, trend_d1)) {
+                continue;
             }
 
             String trend_h12 = dto_h12.getTrend();
@@ -3779,12 +3777,6 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
             // ---------------------------------------------------------------------
-
-            // String wdh4h1 = Utils.getEncrypted_trend_w1d1h4h1(trend_w1, trend_d1,
-            // trend_h12, trend_h4, trend_h1);
-            String action = "";
-
-            // -------------------------------------------------------------------------------
             String log_trend = trend_d1;
             String note_xx = "";
             if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
@@ -3810,7 +3802,7 @@ public class BinanceServiceImpl implements BinanceService {
                     log_trend);
 
             // ---------------------------------------------------------------------------------------------
-
+            String action = "";
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
                     || Utils.EPICS_METALS.contains(EPIC))) {
 
@@ -3835,27 +3827,6 @@ public class BinanceServiceImpl implements BinanceService {
                     append = append.replace("w", type) + text_risk;
                     dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, action, dto_h1, dto_d1, append, true,
                             switch_trend_d1);
-                }
-
-                if (!Objects.equals(trend_w1, trend_d1)) {
-                    action = trend_d1;
-
-                    String append = "";
-                    if (dto_d1.getSwitch_trend().contains(trend_d1)) {
-                        append = "0024w1241";
-                    } else if (dto_h12.getSwitch_trend().contains(trend_d1)) {
-                        append = "002412w41";
-                    } else if (dto_h4.isAllow_trade_by_ma50() && dto_h4.getSwitch_trend().contains(trend_d1)) {
-                        append = "0024124w1";
-                    }
-
-                    if (Utils.isNotBlank(append) && Objects.equals(trend_d1, trend_h12)
-                            && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
-                        String text_risk = "(0.1 %:" + Utils.RISK_0_10_PERCENT.intValue() + "$)";
-                        append = append.replace("w", type) + text_risk;
-                        dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, action, dto_h1, dto_w1, append,
-                                true, switch_trend_d1);
-                    }
                 }
 
                 // ---------------------------------------------------------------------
@@ -3992,7 +3963,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ---------------------------------------------------------------------------------
             boolean isTrendInverse = false;
-            if (!Objects.equals(trend_h12, TRADE_TREND) && !Objects.equals(trend_h4, TRADE_TREND)
+            if ((!Objects.equals(trend_h12, TRADE_TREND) || !Objects.equals(dto_h4.getTrend_c1(), TRADE_TREND))
+                    && !Objects.equals(trend_h4, TRADE_TREND)
                     && !Objects.equals(trend_h1, TRADE_TREND)) {
                 isTrendInverse = true;
             }

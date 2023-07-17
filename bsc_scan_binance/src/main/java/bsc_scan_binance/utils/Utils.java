@@ -4017,24 +4017,25 @@ public class Utils {
         return heiken_list;
     }
 
-    public static BigDecimal getSL(List<BtcFutures> heiken_list, String find_trend) {
+    public static BigDecimal getSL(String EPIC, List<BtcFutures> heiken_list, String find_trend) {
         BigDecimal SL = BigDecimal.ZERO;
+        int length = heiken_list.size() - 1;
 
-        int index = 1;
-        for (index = 1; index < heiken_list.size(); index++) {
-            BtcFutures dto = heiken_list.get(index);
-            String trend = dto.isUptrend() ? TREND_LONG : TREND_SHOT;
-            if (!Objects.equals(trend, find_trend)) {
-                break;
+        if (EPICS_FOREXS_ALL.contains(EPIC)) {
+            int index = 1;
+            for (index = 1; index < heiken_list.size(); index++) {
+                BtcFutures dto = heiken_list.get(index);
+                String trend = dto.isUptrend() ? TREND_LONG : TREND_SHOT;
+                if (!Objects.equals(trend, find_trend)) {
+                    break;
+                }
+            }
+            if (index < (heiken_list.size() / 2)) {
+                length = index + 3;
             }
         }
 
-        int length = heiken_list.size() - 1;
-        if (index < (heiken_list.size() / 2)) {
-            length = index + 3;
-        }
-
-        BigDecimal bread = Utils.calcAvgBread(heiken_list.subList(1, length));
+        BigDecimal bread = Utils.calcMaxBread(heiken_list.subList(1, length));
         List<BigDecimal> lohi = Utils.getLowHighCandle(heiken_list.subList(1, length));
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
             SL = lohi.get(0).subtract(bread);
