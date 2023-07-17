@@ -2340,7 +2340,7 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     public void sendMsgPerHour_ToAll(String EVENT_ID, String msg_content) {
-        if (!Utils.isBusinessTime_6h_to_22h()) {
+        if (!Utils.isBusinessTime_8h_to_22h()) {
             return;
         }
 
@@ -2358,7 +2358,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public void sendMsgPerHour_OnlyMe(String EVENT_ID, String msg_content) {
-        if (!Utils.isBusinessTime_6h_to_22h()) {
+        if (!Utils.isBusinessTime_8h_to_22h()) {
             return;
         }
 
