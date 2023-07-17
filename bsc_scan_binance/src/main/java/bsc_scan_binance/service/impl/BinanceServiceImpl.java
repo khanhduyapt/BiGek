@@ -2908,24 +2908,6 @@ public class BinanceServiceImpl implements BinanceService {
                 if (trade_count < MAX_TRADE) {
                     writer.write(sb.toString());
                     trade_count += 1;
-
-                    String msg = "OpenTrade: ";
-                    msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4) + ")", 10);
-                    msg += Utils.appendSpace(dto.getEpic(), 10)
-                            + ":::" + Utils.appendLeft(dto.getCur_price().toString(), 15);
-                    msg += Utils.new_line_from_service;
-                    msg += ":::Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
-                    msg += ":::E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
-                    msg += ":::SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 15);
-                    msg += ":::TP: " + Utils.appendLeft(dto.getTake_profit().toString(), 15);
-                    msg += Utils.appendSpace(dto.getComment(), 25);
-
-                    Utils.logWritelnDraft(msg.replace(Utils.new_line_from_service, " "));
-
-                    String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type();
-                    if (isReloadAfter(Utils.MINUTES_OF_1H, EVENT_ID)) {
-                        sendMsgPerHour_OnlyMe(EVENT_ID, msg);
-                    }
                 }
             }
             // }
@@ -3943,6 +3925,26 @@ public class BinanceServiceImpl implements BinanceService {
                         Utils.logWritelnDraft(msg_reject);
                     } else {
                         BscScanBinanceApplication.mt5_open_trade_List.add(dto);
+
+                        if (!is_opening_trade(EPIC)) {
+                            String msg = Utils.appendSpace("", 50) + "OpenTrade: ";
+                            msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4) + ")", 10);
+                            msg += Utils.appendSpace(dto.getEpic(), 10)
+                                    + ":::" + Utils.appendLeft(dto.getCur_price().toString(), 15);
+                            msg += Utils.new_line_from_service;
+                            msg += ":::Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
+                            msg += ":::E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
+                            msg += ":::SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 15);
+                            msg += ":::TP: " + Utils.appendLeft(dto.getTake_profit().toString(), 15);
+                            msg += Utils.appendSpace(dto.getComment(), 25);
+
+                            Utils.logWritelnDraft(msg.replace(Utils.new_line_from_service, " "));
+
+                            String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type();
+                            if (isReloadAfter(Utils.MINUTES_OF_1H, EVENT_ID)) {
+                                sendMsgPerHour_OnlyMe(EVENT_ID, msg);
+                            }
+                        }
                     }
                 }
 
