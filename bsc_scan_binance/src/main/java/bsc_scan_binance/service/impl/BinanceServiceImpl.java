@@ -3929,16 +3929,16 @@ public class BinanceServiceImpl implements BinanceService {
                         if (!is_opening_trade(EPIC)) {
                             String msg = Utils.appendSpace("", 50) + "OpenTrade: ";
                             msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4) + ")", 10);
-                            msg += Utils.appendSpace(dto.getEpic(), 10)
-                                    + ":::" + Utils.appendLeft(dto.getCur_price().toString(), 15);
+                            msg += Utils.appendSpace(dto.getEpic(), 10) + "___" +
+                                    Utils.appendLeft(dto.getCur_price().toString(), 15);
                             msg += Utils.new_line_from_service;
-                            msg += ":::Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
-                            msg += ":::E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
-                            msg += ":::SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 15);
-                            msg += ":::TP: " + Utils.appendLeft(dto.getTake_profit().toString(), 15);
+                            msg += "___Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
+                            msg += "___E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
+                            msg += "___SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 15);
+                            msg += "___TP: " + Utils.appendLeft(dto.getTake_profit().toString(), 15);
                             msg += Utils.appendSpace(dto.getComment(), 25);
 
-                            Utils.logWritelnDraft(msg.replace(Utils.new_line_from_service, " "));
+                            Utils.logWritelnDraft(msg.replace(Utils.new_line_from_service, " ").replace("___", "   "));
 
                             String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type();
                             if (isReloadAfter(Utils.MINUTES_OF_1H, EVENT_ID)) {
