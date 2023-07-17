@@ -2679,14 +2679,14 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         int length = 60;
-        BigDecimal profit = BigDecimal.ZERO;
+        BigDecimal t_profit = BigDecimal.ZERO;
         List<Mt5OpenTradeEntity> tradeList = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
         for (Mt5OpenTradeEntity trade : tradeList) {
-            profit = profit.add(trade.getProfit());
+            t_profit = t_profit.add(trade.getProfit());
         }
 
         String append = prifix + dto_sweet_trend_note
-                + Utils.appendSpace(tradeList.size() > 0 ? "Profit:" + String.valueOf(profit.intValue()) : "", 15);
+                + Utils.appendSpace(tradeList.size() > 0 ? " T_Profit:" + String.valueOf(t_profit.intValue()) : "", 15);
 
         outputLog(EPIC, append, find_trend);
 
@@ -2699,7 +2699,6 @@ public class BinanceServiceImpl implements BinanceService {
             ea += " Profit:" + trade.getProfit().intValue();
             ea = Utils.appendLeft("", 65) + Utils.appendSpace(ea, length);
 
-            profit = profit.add(trade.getProfit());
             Utils.logWritelnDraft(ea);
         }
         if (tradeList.size() > 0) {
@@ -4068,21 +4067,20 @@ public class BinanceServiceImpl implements BinanceService {
                                 + Utils.appendSpace(trade.getSymbol(), 10)
                                 + Utils.appendSpace("_Vol:" + trade.getVolume(), 15) + "_Profit:"
                                 + Utils.appendSpace(trade.getProfit().toString(), 10) + Utils.appendLeft(REASON, 30);
+                        total_profit = total_profit.add(trade.getProfit());
+                        if (isReloadAfter(Utils.MINUTES_OF_15M,
+                                trade.getCompany() + trade.getTypeDescription() + "_PRINTLN")) {
+                            System.out.println(BscScanBinanceApplication.hostname + "mt5CloseSymbol: " + text);
+                        }
 
                         String key = trade.getSymbol() + "_" + trade.getTypeDescription() + ".";
                         String EVENT_ID = "CLOSE_TRADE" + Utils.getCurrentYyyyMmDd_HH() + key;
-
                         String msg = "(FTMO)" + trade.getTicket() + "." + REASON;
                         msg += Utils.new_line_from_service;
                         msg += trade.getCompany() + ".Close:" + trade.getTypeDescription() + ":" + trade.getSymbol();
                         msg += ".Profit:" + trade.getProfit().toString();
                         sendMsgPerHour_OnlyMe(EVENT_ID, msg);
 
-                        total_profit = total_profit.add(trade.getProfit());
-                        if (isReloadAfter(Utils.MINUTES_OF_15M,
-                                trade.getCompany() + trade.getTypeDescription() + "_PRINTLN")) {
-                            System.out.println(BscScanBinanceApplication.hostname + "mt5CloseSymbol: " + text);
-                        }
                         break;
                     }
                 }
