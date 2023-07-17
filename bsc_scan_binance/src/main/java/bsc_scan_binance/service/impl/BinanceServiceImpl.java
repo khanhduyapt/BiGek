@@ -3829,7 +3829,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
                         && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
-                    String append = ".96241241_";
+                    String append = ".96241241" + type.toLowerCase();
                     if (dto_d1.getSwitch_trend().contains(trend_d1)) {
                         append = ".9624w1241";
                     } else if (dto_h12.getSwitch_trend().contains(trend_d1)) {
