@@ -3884,18 +3884,18 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     if (Utils.isNotBlank(reject_id)) {
-                        String msg_reject = Utils.appendLeft("", 150);
+                        String msg_reject = Utils.appendLeft(" ", 150);
                         msg_reject += "Reject: " + Utils.appendSpace(action, 10);
                         msg_reject += Utils.appendSpace(dto.getEpic(), 10);
-                        msg_reject += "Vol: " + Utils.appendSpace(dto.getLots().toString(), 10);
-                        msg_reject += "E: " + Utils.appendSpace(dto.getEntry().toString(), 12);
-                        msg_reject += "SL: " + Utils.appendSpace(dto.getStop_loss().toString(), 12);
-                        msg_reject += "TP: " + Utils.appendSpace(dto.getTake_profit().toString(), 12);
-                        msg_reject += Utils.appendSpace("     " + reject_id, 60);
+                        //msg_reject += "Vol: " + Utils.appendSpace(dto.getLots().toString(), 10);
+                        //msg_reject += "E: " + Utils.appendSpace(dto.getEntry().toString(), 12);
+                        //msg_reject += "SL: " + Utils.appendSpace(dto.getStop_loss().toString(), 12);
+                        //msg_reject += "TP: " + Utils.appendSpace(dto.getTake_profit().toString(), 20);
+                        msg_reject += Utils.appendSpace(reject_id, 60);
                         msg_reject += Utils.appendSpace(dto.getComment(), 15);
 
                         if (isReloadAfter(Utils.MINUTES_OF_1H, dto.getEpic() + dto.getOrder_type())) {
-                            // System.out.println(msg_reject.trim());
+                            System.out.println(msg_reject.trim());
                         }
 
                         Utils.logWritelnDraft(msg_reject);
