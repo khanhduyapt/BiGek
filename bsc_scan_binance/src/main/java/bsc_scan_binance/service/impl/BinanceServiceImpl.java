@@ -3726,8 +3726,12 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnDraft("[controlMt5] (" + EPIC + ") dto is null");
                 continue;
             }
+
             String trend_w1 = dto_w1.getTrend();
             String trend_d1 = dto_d1.getTrend();
+            String trend_h12 = dto_h12.getTrend();
+            String trend_h4 = dto_h4.getTrend();
+            String trend_h1 = dto_h1.getTrend();
 
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
             boolean allow_trade = false;
@@ -3738,20 +3742,18 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(trend_w1, trend_d1)) {
                 allow_trade = true;
             }
-            if (dto_h12.isAllow_trade_by_ma50() && dto_h12.getSwitch_trend().contains(trend_d1)) {
+            if (dto_h12.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h4)
+                    && Objects.equals(trend_d1, trend_h1) && dto_h12.getSwitch_trend().contains(trend_d1)) {
                 allow_trade = true;
             }
-            if (dto_d1.getSwitch_trend().contains(trend_d1)) {
+            if (dto_h4.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h4)
+                    && Objects.equals(trend_d1, trend_h1) && dto_h4.getSwitch_trend().contains(trend_d1)) {
                 allow_trade = true;
             }
 
             if (!allow_trade) {
                 continue;
             }
-
-            String trend_h12 = dto_h12.getTrend();
-            String trend_h4 = dto_h4.getTrend();
-            String trend_h1 = dto_h1.getTrend();
 
             String switch_trend_w1 = dto_w1.getSwitch_trend().trim();
             String switch_trend_d1 = dto_d1.getSwitch_trend().trim();
@@ -3868,8 +3870,7 @@ public class BinanceServiceImpl implements BinanceService {
                         if (isReloadAfter(Utils.MINUTES_OF_1H, dto.getEpic() + dto.getOrder_type())) {
                             System.out.println(msg_reject.trim());
                         }
-
-                        Utils.logWritelnDraft(msg_reject);
+                        // Utils.logWritelnDraft(msg_reject);
                     } else {
                         BscScanBinanceApplication.mt5_open_trade_List.add(dto);
 
