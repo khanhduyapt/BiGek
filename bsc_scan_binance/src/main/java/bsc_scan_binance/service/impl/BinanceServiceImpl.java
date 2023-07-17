@@ -3661,18 +3661,6 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // -----------------------------DATABASE---------------------------
-        int size = 10;
-        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)) {
-            size = 5;
-        }
-        List<BigDecimal> lohi = Utils.getLowHighCandle(heiken_list.subList(0, size));
-        BigDecimal bread = BigDecimal.ZERO;
-        if (Utils.EPICS_STOCKS.contains(EPIC)) {
-            bread = Utils.calcMaxCandleHigh(heiken_list.subList(1, 5));
-        } else {
-            bread = Utils.calcAvgBread(heiken_list.subList(0, size));
-        }
-
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
         String date_time = LocalDateTime.now().toString();
         List<BigDecimal> body = Utils.getBodyCandle(heiken_list);
@@ -3690,10 +3678,6 @@ public class BinanceServiceImpl implements BinanceService {
 
         // TODO: 1. initForexTrend
         String nocation = "";
-        if (orderId.contains("US30_HOUR_01")) {
-            nocation = "";
-        }
-
         if (heiken_list.size() >= 50) {
             if (Utils.isBelowMALine(heiken_list, 50)) {
                 nocation = Utils.NOCATION_BELOW_MA50;
