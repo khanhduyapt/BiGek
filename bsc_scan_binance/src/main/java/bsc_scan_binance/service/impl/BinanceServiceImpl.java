@@ -3845,7 +3845,7 @@ public class BinanceServiceImpl implements BinanceService {
                         append = "0024w1241";
                     } else if (dto_h12.getSwitch_trend().contains(trend_d1)) {
                         append = "002412w41";
-                    } else if (dto_h4.getSwitch_trend().contains(trend_d1)) {
+                    } else if (dto_h4.isAllow_trade_by_ma50() && dto_h4.getSwitch_trend().contains(trend_d1)) {
                         append = "0024124w1";
                     }
 
