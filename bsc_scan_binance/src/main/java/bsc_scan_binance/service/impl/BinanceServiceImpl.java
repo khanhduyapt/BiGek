@@ -3740,13 +3740,16 @@ public class BinanceServiceImpl implements BinanceService {
             }
             String trend_w1 = dto_w1.getTrend();
             String trend_d1 = dto_d1.getTrend();
+
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
             // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau (Đinh Tùng Lâm)
-            if (!Objects.equals(trend_w1, trend_d1)
-                    && !(dto_d1.getSwitch_trend() + dto_h12.getSwitch_trend() + dto_h4.getSwitch_trend())
-                            .contains(trend_d1)) {
-                // Không đánh pha điều chỉnh
-                continue;
+            if (!is_opening_trade(EPIC)) {
+                if (!Objects.equals(trend_w1, trend_d1)
+                        && !(dto_d1.getSwitch_trend() + dto_h12.getSwitch_trend() + dto_h4.getSwitch_trend())
+                                .contains(trend_d1)) {
+                    // Không đánh pha điều chỉnh
+                    continue;
+                }
             }
 
             String trend_h12 = dto_h12.getTrend();
