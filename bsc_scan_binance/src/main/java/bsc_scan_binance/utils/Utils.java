@@ -4350,7 +4350,7 @@ public class Utils {
 
         MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, risk, dto_en.getCurrent_price(), sl_d1, tp_d1);
 
-        String range = "...";
+        String range = "";
         BigDecimal en_sl = dto_d1.getCurrent_price().subtract(sl_d1).abs();
         BigDecimal en_tp = dto_d1.getCurrent_price().subtract(tp_d1).abs();
         if (en_tp.compareTo(en_sl) < 0) {
@@ -4365,7 +4365,7 @@ public class Utils {
         dto.setEntry(en_05);
         dto.setStop_loss(sl_d1);
         dto.setTake_profit(tp_d1);
-        dto.setComment(BscScanBinanceApplication.hostname + "" + encrypted_trend_w1d1h4h1 + "" + range);
+        dto.setComment("(" + BscScanBinanceApplication.hostname + ")" + encrypted_trend_w1d1h4h1 + range);
 
         return dto;
     }

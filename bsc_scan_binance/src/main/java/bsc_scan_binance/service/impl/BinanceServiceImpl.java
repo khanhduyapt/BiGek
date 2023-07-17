@@ -3829,15 +3829,15 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
                         && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
-                    String append = ".96241241" + type.toLowerCase();
+                    String append = "96241241" + type.toLowerCase();
                     if (dto_d1.getSwitch_trend().contains(trend_d1)) {
-                        append = ".9624w1241";
+                        append = "9624w1241";
                     } else if (dto_h12.getSwitch_trend().contains(trend_d1)) {
-                        append = ".962412w41";
+                        append = "962412w41";
                     } else if (dto_h4.getSwitch_trend().contains(trend_d1)) {
-                        append = ".9624124w1";
+                        append = "9624124w1";
                     } else if (dto_h1.getSwitch_trend().contains(trend_d1)) {
-                        append = ".96241241w";
+                        append = "96241241w";
                     }
                     action = trend_d1;
                     String text_risk = "(0.15%:" + Utils.RISK_0_15_PERCENT.intValue() + "$)";
@@ -3851,11 +3851,11 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String append = "";
                     if (dto_d1.getSwitch_trend().contains(trend_d1)) {
-                        append = ".0024w1241";
+                        append = "0024w1241";
                     } else if (dto_h12.getSwitch_trend().contains(trend_d1)) {
-                        append = ".002412w41";
+                        append = "002412w41";
                     } else if (dto_h4.getSwitch_trend().contains(trend_d1)) {
-                        append = ".0024124w1";
+                        append = "0024124w1";
                     }
 
                     if (Utils.isNotBlank(append) && Objects.equals(trend_d1, trend_h12)
@@ -3898,13 +3898,9 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     if (Utils.isNotBlank(reject_id)) {
-                        String msg_reject = Utils.appendLeft(" ", 150);
+                        String msg_reject = Utils.appendLeft(" ", 100);
                         msg_reject += "Reject: " + Utils.appendSpace(action, 10);
                         msg_reject += Utils.appendSpace(dto.getEpic(), 10);
-                        //msg_reject += "Vol: " + Utils.appendSpace(dto.getLots().toString(), 10);
-                        //msg_reject += "E: " + Utils.appendSpace(dto.getEntry().toString(), 12);
-                        //msg_reject += "SL: " + Utils.appendSpace(dto.getStop_loss().toString(), 12);
-                        //msg_reject += "TP: " + Utils.appendSpace(dto.getTake_profit().toString(), 20);
                         msg_reject += Utils.appendSpace(reject_id, 60);
                         msg_reject += Utils.appendSpace(dto.getComment(), 15);
 
