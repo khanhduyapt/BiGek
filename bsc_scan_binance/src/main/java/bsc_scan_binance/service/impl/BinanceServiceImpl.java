@@ -3853,7 +3853,7 @@ public class BinanceServiceImpl implements BinanceService {
                             && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
                         String text_risk = "(0.1 %:" + Utils.RISK_0_10_PERCENT.intValue() + "$)";
                         append = append.replace("w", type) + text_risk;
-                        dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, action, dto_h1, dto_d1, append,
+                        dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, action, dto_h1, dto_w1, append,
                                 true, switch_trend_d1);
                     }
                 }
