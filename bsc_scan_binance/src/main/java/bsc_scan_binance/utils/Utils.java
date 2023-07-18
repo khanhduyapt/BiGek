@@ -115,6 +115,7 @@ public class Utils {
     public static final String NOCATION_BELOW_MA50 = "BelowMa50";
     public static final String NOCATION_CUTTING_MA50 = "CuttingMa50";
 
+    public static final String TEXT_SWITCH_TREND_Ma_3_2_1 = "Ma3.2.1";
     public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma3.5)";
     public static final String TEXT_SWITCH_TREND_Ma_1_10 = "(Ma1.10)";
     public static final String TEXT_SWITCH_TREND_Ma_1_50 = "(Ma1.50)";
@@ -239,9 +240,9 @@ public class Utils {
     public static final List<String> EPICS_FOREXS_ALL = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
             "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD",
             "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD",
-            "USDCHF", "USDCZK", "USDJPY");
+            "USDCHF", "USDJPY");
 
-    public static final List<String> EPICS_FOREXS_USD = Arrays.asList("USDCAD", "USDCHF", "USDCZK", "USDJPY", "AUDUSD",
+    public static final List<String> EPICS_FOREXS_USD = Arrays.asList("USDCAD", "USDCHF", "USDJPY", "AUDUSD",
             "EURUSD", "GBPUSD", "NZDUSD");
 
     public static final List<String> EPICS_FOREXS_JPY = Arrays.asList("AUDJPY", "CADJPY", "CHFJPY", "EURJPY", "GBPJPY",
@@ -1203,7 +1204,7 @@ public class Utils {
             if (Utils.isNotBlank(msg)) {
                 if (Objects.equals(text, "...")) {
                     msg = Utils.appendSpace("", 363, "_");
-                } else if (text.length() > 50 && isBlank(text.substring(0, 50))) {
+                } else if (text.length() > 20 && isBlank(text.substring(0, 20))) {
                     msg = Utils.appendLeft("",
                             (BscScanBinanceApplication.hostname + Utils.getMmDD_TimeHHmm() + " ").length())
                             + text.replace(Utils.new_line_from_service, "\n");
@@ -4136,9 +4137,21 @@ public class Utils {
         return false;
     }
 
+    public static String switchTrendByMa3_2_1(List<BtcFutures> heiken_list) {
+        String switch_trend = "";
+        boolean ma3_1_uptrend = isUptrendByMa(heiken_list, 3, 1, 2);
+        boolean ma3_2_uptrend = isUptrendByMa(heiken_list, 3, 2, 3);
+        if (ma3_1_uptrend != ma3_2_uptrend) {
+            String trend_2_1 = ma3_1_uptrend ? TREND_LONG : TREND_SHOT;
+            switch_trend = "(" + TEXT_SWITCH_TREND_Ma_3_2_1 + ":" + Utils.appendSpace(trend_2_1, 4) + ")";
+        }
+        return switch_trend;
+    }
+
     public static String has_switch_trend_by_heiken_ma35_ma10(List<BtcFutures> heiken_list) {
         String trend_d = Utils.getTrendByHekenAshiList(heiken_list);
         String switch_trend = Utils.switchTrendByHeken_12(heiken_list);
+
         String switch_trend_3_5 = Utils.switchTrendByMaXX(heiken_list, 3, 5);
         if (Utils.isNotBlank(switch_trend_3_5) && switch_trend_3_5.contains(trend_d)) {
             if (Utils.isBlank(switch_trend)) {
@@ -4147,6 +4160,7 @@ public class Utils {
                 switch_trend += Utils.TEXT_SWITCH_TREND_Ma_3_5;
             }
         }
+
         String switch_trend_1_10 = Utils.switchTrendByMaXX(heiken_list, 1, 10);
         if (Utils.isNotBlank(switch_trend_1_10) && switch_trend_1_10.contains(trend_d)) {
             if (Utils.isBlank(switch_trend)) {
@@ -4213,6 +4227,7 @@ public class Utils {
         boolean isUptrend_1 = heiken_list.get(end).isUptrend();
         boolean isUptrend_2 = isUptrendByMa(heiken_list, 2, str, end);
         boolean isUptrend_3 = isUptrendByMa(heiken_list, 3, str, end);
+        boolean isUptrend_5 = isUptrendByMa(heiken_list, 3, 1, 2);
 
         if ((isUptrend_0 == isUptrend_1) && (isUptrend_0 == isUptrend_2) && (isUptrend_0 == isUptrend_3)) {
             return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
@@ -4226,9 +4241,11 @@ public class Utils {
             return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
         }
 
-        // khi Trend_heiken # Ma thì bỏ qua, không đánh
-        String id = heiken_list.get(str).getId();
-        String result = Utils.TREND_UNSURE + getChartName(id).trim();
+        if ((isUptrend_3 == isUptrend_5)) {
+            return isUptrend_3 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        }
+
+        String result = isUptrend_5 ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
         return result;
     }

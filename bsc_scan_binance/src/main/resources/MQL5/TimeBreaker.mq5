@@ -60,7 +60,7 @@ void OnTimer(void)
                              "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
                              "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD",
                              "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD",
-                             "USDCAD", "USDCHF", "USDCZK", "USDSEK", "USDJPY"
+                             "USDCAD", "USDCHF", "USDJPY"
                             };
 
 
@@ -78,7 +78,7 @@ void OnTimer(void)
            {
             MqlRates rates_w1[];
             ArraySetAsSeries(rates_w1,true);
-            copied=CopyRates(symbol, PERIOD_W1, 0, 10, rates_w1);
+            copied=CopyRates(symbol, PERIOD_W1, 0, 55, rates_w1);
             if(copied>0)
               {
                int size=fmin(copied, 10);
@@ -94,7 +94,7 @@ void OnTimer(void)
             //---------------------------------------------
             MqlRates rates_d1[];
             ArraySetAsSeries(rates_d1,true);
-            copied=CopyRates(symbol, PERIOD_D1, 0, 15, rates_d1);
+            copied=CopyRates(symbol, PERIOD_D1, 0, 55, rates_d1);
             if(copied>0)
               {
                int size=fmin(copied, 15);
