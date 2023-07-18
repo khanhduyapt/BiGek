@@ -2647,6 +2647,8 @@ public class BinanceServiceImpl implements BinanceService {
         List<String> times = Arrays.asList(Utils.CAPITAL_TIME_W1, Utils.CAPITAL_TIME_D1, Utils.CAPITAL_TIME_H12,
                 Utils.CAPITAL_TIME_H4, Utils.CAPITAL_TIME_H1, Utils.CAPITAL_TIME_15);
 
+        String trend_w = "";
+        String trend_d = "";
         for (String CAPITAL_TIME_XX : times) {
             String chart_name = Utils.getChartNameCapital(CAPITAL_TIME_XX).replace("(", "").replace(")", "").trim();
             Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
@@ -2660,8 +2662,21 @@ public class BinanceServiceImpl implements BinanceService {
             result += chart_name + ":";
             result += Objects.equals(dto.getTrend(), Utils.TREND_LONG) ? "Buy "
                     : Objects.equals(dto.getTrend(), Utils.TREND_SHOT) ? "Sell" : "    ";
+
+            if (Objects.equals(Utils.CAPITAL_TIME_W1, CAPITAL_TIME_XX)) {
+                trend_w = dto.getTrend();
+            }
+            if (Objects.equals(Utils.CAPITAL_TIME_D1, CAPITAL_TIME_XX)) {
+                trend_d = dto.getTrend();
+            }
         }
-        result = Utils.appendSpace("(" + result + ")", 30);
+        result = "(" + result + ")";
+        if (Objects.equals(trend_w, trend_d)) {
+            result = "       " + result;
+        } else {
+            result = "  W#D  " + result;
+        }
+        result = Utils.appendSpace(result, 50);
 
         return result;
     }
@@ -3019,7 +3034,7 @@ public class BinanceServiceImpl implements BinanceService {
                 result += Utils.appendSpace(EPIC, 10);
                 result += Utils.appendSpace(trade.getTicket(), 10);
                 result += "   (Profit):" + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 10);
-                result += "    " + multi_timeframes;
+                result += "    " + multi_timeframes + "    ";
                 result += Utils.appendSpace(trade.getComment(), 30);
                 result += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
 
