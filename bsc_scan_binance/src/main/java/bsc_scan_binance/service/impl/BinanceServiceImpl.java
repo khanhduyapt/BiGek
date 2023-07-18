@@ -3604,7 +3604,13 @@ public class BinanceServiceImpl implements BinanceService {
 
                 String find_trend = (trade.getType().toUpperCase().contains(Utils.TREND_LONG)) ? Utils.TREND_LONG
                         : (trade.getType().toUpperCase().contains(Utils.TREND_SHOT)) ? Utils.TREND_SHOT : "_";
-                List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_d1, find_trend);
+
+                boolean same_trend_w_d = true;
+                if (comment.contains("00")) {
+                    same_trend_w_d = false;
+                }
+
+                List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_d1, find_trend, same_trend_w_d);
                 BigDecimal sl_d1 = sl1_tp2.get(0);
                 BigDecimal tp_d1 = sl1_tp2.get(1);
 
