@@ -3820,9 +3820,9 @@ public class BinanceServiceImpl implements BinanceService {
                             && Objects.equals(trend_d1, trend_h4)) {
                         String append = "2412w0401";
                         action = trend_d1;
-                        String text_risk = "(0.15%:" + Utils.RISK_0_15_PERCENT.intValue() + "$)";
+                        String text_risk = "(0.15%:" + Utils.RISK_0_10_PERCENT.intValue() + "$)";
                         append = type + ":" + append + text_risk;
-                        dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, action, dto_h1, dto_d1, append,
+                        dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, action, dto_h1, dto_d1, append,
                                 true, switch_trend_d1);
                     }
 
