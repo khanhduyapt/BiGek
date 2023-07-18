@@ -3748,14 +3748,13 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_trend_d1 = dto_d1.getSwitch_trend().trim();
             String switch_trend_h12 = dto_h12.getSwitch_trend().trim();
             String switch_trend_h4 = dto_h4.getSwitch_trend().trim();
-            String switch_trend_h1 = dto_h1.getSwitch_trend().trim();
 
             String zone_d1 = dto_d1.getTrend_zone();
             String zone_h12 = dto_h12.getTrend_zone();
             String zone_h4 = dto_h4.getTrend_zone();
             String end_zone = "";
             if (!(zone_d1).contains(trend_d1) || !(zone_h12).contains(trend_d1) || !(zone_h4).contains(trend_d1)) {
-                end_zone += "End of " + Utils.appendSpace(trend_d1, 4) + " zone";
+                end_zone += "EOZ:" + Utils.appendSpace(trend_d1, 4);
                 if (!zone_h4.contains(trend_d1)) {
                     end_zone += ".h4";
                 }
@@ -3777,10 +3776,6 @@ public class BinanceServiceImpl implements BinanceService {
                     && switch_trend_h4.contains(trend_d1)) {
                 note_xx = switch_trend_h4 + " D=H12=H4w.";
             }
-            if (Utils.isBlank(note_xx) && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)
-                    && Objects.equals(trend_h4, trend_h1) && switch_trend_h1.contains(trend_d1)) {
-                note_xx = switch_trend_h4 + " D=H12=H4=H1w.";
-            }
 
             count += 1;
             String tracking_trend = trend_w1;
@@ -3788,7 +3783,7 @@ public class BinanceServiceImpl implements BinanceService {
             String prefix = Utils.getPrefix_FollowTrackingTrend(count, trend_w1, trend_d1, trend_h12, trend_h4,
                     trend_h1, switch_trend_w1, switch_trend_d1, switch_trend_h12, switch_trend_h4, tracking_trend);
 
-            analysis_profit(prefix, EPIC, Utils.appendSpace(note_xx, 20), log_trend);
+            analysis_profit(prefix, EPIC, Utils.appendSpace(end_zone, 30) + Utils.appendSpace(note_xx, 20), log_trend);
 
             // ---------------------------------------------------------------------------------------------
             String action = "";
@@ -3800,97 +3795,47 @@ public class BinanceServiceImpl implements BinanceService {
                         : Objects.equals(Utils.TREND_SHOT, trend_h4) ? "S" : "?";
 
                 // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
-                if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
-                        && Objects.equals(trend_d1, trend_h4)) {
-                    String append = "48241241" + type.toLowerCase();
-                    if (dto_d1.getSwitch_trend().contains(trend_d1)) {
-                        append = "4824w1241";
-                    } else if (dto_h12.getSwitch_trend().contains(trend_d1)) {
-                        append = "482412w41";
-                    } else if (dto_h4.getSwitch_trend().contains(trend_d1)) {
-                        append = "4824124w1";
-                    } else if (dto_h1.getSwitch_trend().contains(trend_d1)) {
-                        append = "48241241w";
-                    }
-                    action = trend_d1;
-                    String text_risk = "(0.15%:" + Utils.RISK_0_15_PERCENT.intValue() + "$)";
-                    append = append.replace("w", type) + text_risk;
-                    dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, action, dto_h1, dto_d1, append, true,
-                            switch_trend_d1);
-                }
-
-                if (Objects.isNull(dto) && Objects.equals(dto_w1.getTrend_c1(), dto_d1.getTrend_c1())) {
-                    if (dto_h4.getSwitch_trend().contains(dto_d1.getTrend_c1())
-                            && Objects.equals(dto_d1.getTrend_c1(), trend_h4)) {
-                        String append = "9648124w1";
-                        action = dto_d1.getTrend_c1();
-                        String text_risk = "(0.15%:" + Utils.RISK_0_15_PERCENT.intValue() + "$)";
-                        append = append.replace("w", type) + text_risk;
-                        dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, action, dto_h1, dto_d1, append,
-                                true, switch_trend_d1);
+                if (Objects.isNull(dto) && Objects.equals(trend_w1, trend_d1)) {
+                    if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)) {
+                        String append = "";
+                        if (dto_d1.getSwitch_trend().contains(trend_d1)) {
+                            append = "4824w1241";
+                        } else if (dto_h12.getSwitch_trend().contains(trend_d1)) {
+                            append = "482412w41";
+                        } else if (dto_h4.getSwitch_trend().contains(trend_d1)) {
+                            append = "4824124w1";
+                        }
+                        if (Utils.isNotBlank(append)) {
+                            action = trend_d1;
+                            String text_risk = "(0.15%:" + Utils.RISK_0_15_PERCENT.intValue() + "$)";
+                            append = type + ":" + append + text_risk;
+                            dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, action, dto_h1, dto_d1, append,
+                                    true, switch_trend_d1);
+                        }
                     }
                 }
-
-                if (Objects.isNull(dto) && dto_d1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_3_2_1)
-                        && dto_d1.getSwitch_trend().contains(trend_d1)
+                if (Objects.isNull(dto) && dto_h12.getSwitch_trend().contains(trend_d1)
                         && Objects.equals(trend_d1, trend_h4)) {
-                    String append = "0024w0401";
+                    String append = "2412w0401";
                     action = trend_d1;
                     String text_risk = "(0.15%:" + Utils.RISK_0_15_PERCENT.intValue() + "$)";
-                    append = append.replace("w", type) + text_risk;
+                    append = type + ":" + append + text_risk;
                     dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, action, dto_h1, dto_d1, append,
                             true, switch_trend_d1);
                 }
 
                 if (Objects.isNull(dto) && dto_h12.isAllow_trade_by_ma50() && dto_h4.isAllow_trade_by_ma50()
-                        && dto_h1.isAllow_trade_by_ma50() && dto_h4.getSwitch_trend().contains(trend_h12)) {
+                        && dto_h1.isAllow_trade_by_ma50() && dto_h4.getSwitch_trend().contains(trend_h4)) {
                     String append = "001204w01";
                     action = trend_h12;
                     String text_risk = "(0.1 %:" + Utils.RISK_0_10_PERCENT.intValue() + "$)";
-                    append = append.replace("w", type) + text_risk;
-                    dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, action, dto_h1, dto_h4, append,
+                    append = type + ":" + append + text_risk;
+                    dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, action, dto_h1, dto_d1, append,
                             true, switch_trend_d1);
                 }
-
-                if (Objects.isNull(dto) && Objects.equals(dto_w1.getTrend_c1(), trend_w1)
-                        && Objects.equals(trend_w1, trend_h4)
-                        && dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_3_2_1)) {
-                    String append = "964804w01";
-                    action = trend_w1;
-                    String text_risk = "(0.1 %:" + Utils.RISK_0_10_PERCENT.intValue() + "$)";
-                    append = append.replace("w", type) + text_risk;
-                    dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, action, dto_h1, dto_h4, append,
-                            true, switch_trend_d1);
-                }
-
                 // ---------------------------------------------------------------------
                 if (Objects.nonNull(dto)) {
-                    String reject_id = "";
-                    if (!Objects.equals(trend_h4, trend_h1)) {
-                        reject_id = " RejectID: h4!=h1 -> wait";
-                    }
-
-                    if (Objects.equals(trend_h4, trend_h1) && !Objects.equals(trend_h4, action)) {
-                        reject_id = " RejectID: h4=h1 and h4!=action " + switch_trend_d1 + switch_trend_h12
-                                + switch_trend_h4;
-                    }
-
-                    if (Utils.isNotBlank(end_zone)) {
-                        reject_id += end_zone;
-                    }
-
-                    if (Utils.isNotBlank(reject_id)) {
-                        String msg_reject = Utils.appendLeft(" ", 70);
-                        msg_reject += "Reject: " + Utils.appendSpace(action, 10);
-                        msg_reject += Utils.appendSpace(dto.getComment(), 30);
-                        msg_reject += Utils.appendSpace(dto.getEpic(), 10);
-                        msg_reject += Utils.appendSpace(reject_id, 30);
-
-                        if (isReloadAfter(Utils.MINUTES_OF_1H, dto.getEpic() + dto.getOrder_type())) {
-                            System.out.println(msg_reject.trim());
-                        }
-                        Utils.logWritelnDraft(msg_reject);
-                    } else if (!is_opening_trade(EPIC, action)) {
+                    if (Utils.isBlank(end_zone) && !is_opening_trade(EPIC, action)) {
                         String msg = Utils.appendSpace("", 50) + "OpenTrade: ";
                         msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4) + ")", 10);
                         msg += Utils.appendSpace(dto.getEpic(), 10) + "___"
@@ -3986,7 +3931,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && !Objects.equals(trend_h1, TRADE_TREND)) {
                 isTrendInverse = true;
             }
-            if (Utils.isCloseTradeThisWeek() && !Objects.equals(trend_h1, TRADE_TREND)) {
+            if (Utils.isCloseTradeThisWeek() && !Objects.equals(dto_h1.getTrend_c1(), TRADE_TREND)) {
                 isTrendInverse = true;
             }
             // ---------------------------------------------------------------------------------

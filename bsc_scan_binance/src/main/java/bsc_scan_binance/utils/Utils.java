@@ -185,7 +185,7 @@ public class Utils {
     public static final Integer MINUTES_OF_15M = 15;
     public static final Integer MINUTES_OF_5M = 5;
 
-    public static final Integer MINUTES_RELOAD_CSV_DATA = 5;
+    public static final Integer MINUTES_RELOAD_CSV_DATA = 15;
 
     public static final List<String> COMPANIES = Arrays.asList("FTMO");
 
@@ -4142,8 +4142,9 @@ public class Utils {
         boolean ma3_1_uptrend = isUptrendByMa(heiken_list, 3, 1, 2);
         boolean ma3_2_uptrend = isUptrendByMa(heiken_list, 3, 2, 3);
         if (ma3_1_uptrend != ma3_2_uptrend) {
+            String chart_name = getChartName(heiken_list).replace(")", "").trim() + " ";
             String trend_2_1 = ma3_1_uptrend ? TREND_LONG : TREND_SHOT;
-            switch_trend = "(" + TEXT_SWITCH_TREND_Ma_3_2_1 + ":" + Utils.appendSpace(trend_2_1, 4) + ")";
+            switch_trend = chart_name + TEXT_SWITCH_TREND_Ma_3_2_1 + ":" + Utils.appendSpace(trend_2_1, 4) + ")";
         }
         return switch_trend;
     }
