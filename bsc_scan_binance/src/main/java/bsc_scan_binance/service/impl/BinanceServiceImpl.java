@@ -3800,6 +3800,8 @@ public class BinanceServiceImpl implements BinanceService {
                             append = "962412w41";
                         } else if (dto_h4.getSwitch_trend().contains(trend_d1)) {
                             append = "9624124w1";
+                        } else if (dto_h1.isAllow_trade_by_ma50() && dto_h1.getSwitch_trend().contains(trend_d1)) {
+                            append = "96241241w";
                         }
                         if (Utils.isNotBlank(append)) {
                             action = trend_d1;
@@ -3811,14 +3813,12 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (!Objects.equals(trend_w1, trend_d1)) {
-                    if (Objects.isNull(dto) && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
-                            && dto_h12.isAllow_trade_by_ma50() && dto_h4.isAllow_trade_by_ma50()) {
-
+                if (Objects.isNull(dto) && !Objects.equals(trend_w1, trend_d1)) {
+                    if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)) {
                         String append = "";
-                        if (dto_h12.getSwitch_trend().contains(trend_d1)) {
+                        if (dto_h12.isAllow_trade_by_ma50() && dto_h12.getSwitch_trend().contains(trend_d1)) {
                             append = "002412w41";
-                        } else if (dto_h4.getSwitch_trend().contains(trend_d1)) {
+                        } else if (dto_h4.isAllow_trade_by_ma50() && dto_h4.getSwitch_trend().contains(trend_d1)) {
                             append = "0024124w1";
                         }
                         if (Utils.isNotBlank(append)) {
