@@ -2891,7 +2891,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String msg = Utils.appendSpace("", 30) + "OpenTrade: ";
                     msg += Utils.appendSpace(dto.getComment(), 35);
-                    msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4) + ")", 10);
+                    msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4, "_") + ")", 10);
                     msg += Utils.appendSpace(dto.getEpic(), 10) + ":"
                             + Utils.appendLeft(dto.getCur_price().toString(), 15);
                     msg += Utils.new_line_from_service;
@@ -3820,7 +3820,7 @@ public class BinanceServiceImpl implements BinanceService {
                             && Objects.equals(trend_d1, trend_h4)) {
                         String append = "2412w0401";
                         action = trend_d1;
-                        String text_risk = "(0.15%:" + Utils.RISK_0_10_PERCENT.intValue() + "$)";
+                        String text_risk = "(0.1 %:" + Utils.RISK_0_10_PERCENT.intValue() + "$)";
                         append = type + ":" + append + text_risk;
                         dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, action, dto_h1, dto_d1, append,
                                 true, switch_trend_d1);
@@ -3830,6 +3830,17 @@ public class BinanceServiceImpl implements BinanceService {
                             && dto_h4.isAllow_trade_by_ma50() && dto_h4.getSwitch_trend().contains(trend_h4)) {
                         String append = "002404w01";
                         action = trend_h12;
+                        String text_risk = "(0.1 %:" + Utils.RISK_0_10_PERCENT.intValue() + "$)";
+                        append = type + ":" + append + text_risk;
+                        dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, action, dto_h1, dto_d1, append,
+                                true, switch_trend_d1);
+                    }
+
+                    if (Objects.isNull(dto) && Objects.equals(dto_w1.getTrend_c1(), trend_w1)
+                            && Objects.equals(dto_d1.getTrend_c1(), trend_w1) && Objects.equals(trend_w1, trend_h4)
+                            && dto_h4.getSwitch_trend().contains(trend_w1)) {
+                        String append = "9648244w1";
+                        action = trend_w1;
                         String text_risk = "(0.1 %:" + Utils.RISK_0_10_PERCENT.intValue() + "$)";
                         append = type + ":" + append + text_risk;
                         dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, action, dto_h1, dto_d1, append,
