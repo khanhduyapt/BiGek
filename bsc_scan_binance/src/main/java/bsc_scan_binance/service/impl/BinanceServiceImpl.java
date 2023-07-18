@@ -2886,7 +2886,13 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                String msg = Utils.appendSpace("", 30) + "OpenTrade: ";
+                String msg = Utils.appendSpace("", 30);
+                if (allow_padding_trade_after_1day(EPIC)) {
+                    msg += "ExtenTrade: ";
+                } else {
+                    msg += "Open_Trade: ";
+                }
+
                 msg += Utils.appendSpace(dto.getComment(), 35);
                 msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4, "_") + ")", 10);
                 msg += Utils.appendSpace(dto.getEpic(), 10) + ":"
