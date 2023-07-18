@@ -32,6 +32,7 @@ public class BscScanBinanceApplication {
     private static Hashtable<String, LocalTime> keys_dict = new Hashtable<String, LocalTime>();
     public static Hashtable<String, String> forex_naming_dict = new Hashtable<String, String>();
     public static Hashtable<String, String> linked_2_ftmo = new Hashtable<String, String>();
+    public static Hashtable<String, String> dic_comment = new Hashtable<String, String>();
     public static Hashtable<String, Integer> watting_dict = new Hashtable<String, Integer>();
     public static String hostname = " ";
     public static ApplicationContext applicationContext;
@@ -318,12 +319,12 @@ public class BscScanBinanceApplication {
         String EVENT_ID = "KILL_ZONE_" + Utils.getCurrentYyyyMmDd_HH_Blog15m();
 
         long elapsedMinutes_ld = Duration.between(kill_zone_ld, cur_time).toMinutes();
-        if ((0 <= elapsedMinutes_ld) && (elapsedMinutes_ld <= 30) && isReloadAfter(15, "Start_London_Kill_Zone")) {
+        if ((0 <= elapsedMinutes_ld) && (elapsedMinutes_ld <= 30) && isReloadAfter(60, "Start_London_Kill_Zone")) {
             binance_service.sendMsgPerHour_OnlyMe(EVENT_ID, "Start_London_Kill_Zone");
         }
 
         long elapsedMinutes_ny = Duration.between(kill_zone_ny, cur_time).toMinutes();
-        if ((0 <= elapsedMinutes_ny) && (elapsedMinutes_ny <= 30) && isReloadAfter(15, "Start_NewYork_Kill_Zone")) {
+        if ((0 <= elapsedMinutes_ny) && (elapsedMinutes_ny <= 30) && isReloadAfter(60, "Start_NewYork_Kill_Zone")) {
             binance_service.sendMsgPerHour_OnlyMe(EVENT_ID, "Start_NewYork_Kill_Zone");
         }
 
@@ -338,12 +339,12 @@ public class BscScanBinanceApplication {
         }
 
         long close_London = Duration.between(close_London_Orders, cur_time).toMinutes();
-        if ((0 <= close_London) && (close_London <= 30) && isReloadAfter(15, "Close_London_Orders")) {
+        if ((0 <= close_London) && (close_London <= 30) && isReloadAfter(60, "Close_London_Orders")) {
             binance_service.sendMsgPerHour_OnlyMe(EVENT_ID, "Close_London_Orders");
         }
 
         long close_NewYork = Duration.between(close_NewYork_Orders, cur_time).toMinutes();
-        if ((0 <= close_NewYork) && (close_NewYork <= 30) && isReloadAfter(15, "Close_NewYork_Orders")) {
+        if ((0 <= close_NewYork) && (close_NewYork <= 30) && isReloadAfter(60, "Close_NewYork_Orders")) {
             binance_service.sendMsgPerHour_OnlyMe(EVENT_ID, "close_NewYork_Orders");
         }
     }

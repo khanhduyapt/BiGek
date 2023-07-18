@@ -242,8 +242,8 @@ public class Utils {
             "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD",
             "USDCHF", "USDJPY");
 
-    public static final List<String> EPICS_FOREXS_USD = Arrays.asList("USDCAD", "USDCHF", "USDJPY", "AUDUSD",
-            "EURUSD", "GBPUSD", "NZDUSD");
+    public static final List<String> EPICS_FOREXS_USD = Arrays.asList("USDCAD", "USDCHF", "USDJPY", "AUDUSD", "EURUSD",
+            "GBPUSD", "NZDUSD");
 
     public static final List<String> EPICS_FOREXS_JPY = Arrays.asList("AUDJPY", "CADJPY", "CHFJPY", "EURJPY", "GBPJPY",
             "NZDJPY", "USDJPY");
@@ -753,47 +753,30 @@ public class Utils {
         return TIME;
     }
 
-    // public static String getEncryptedChartNameCapital(String TIME) {
-    // if (Objects.equals(TIME, CAPITAL_TIME_05)) {
-    // return ENCRYPTED_05;
-    // }
-    // if (Objects.equals(TIME, CAPITAL_TIME_15)) {
-    // return ENCRYPTED_15;
-    // }
-    // if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
-    // return ENCRYPTED_H1;
-    // }
-    // if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
-    // return ENCRYPTED_H4;
-    // }
-    // if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
-    // return ENCRYPTED_H12;
-    // }
-    // if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
-    // return ENCRYPTED_D1;
-    // }
-    //
-    // return ENCRYPTED_H1;
-    // }
+    public static String getEncryptedChartNameCapital(String TIME) {
+        if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
+            return ENCRYPTED_H4;
+        }
+        if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
+            return ENCRYPTED_H12;
+        }
+        if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
+            return ENCRYPTED_D1;
+        }
+
+        return ENCRYPTED_H1;
+    }
 
     public static String getDeEncryptedChartNameCapital(String encryptedChartName) {
-        // if (encryptedChartName.contains(ENCRYPTED_05)) {
-        // return CAPITAL_TIME_05;
-        // }
-        // if (encryptedChartName.contains(ENCRYPTED_15)) {
-        // return CAPITAL_TIME_15;
-        // }
-        // if (encryptedChartName.contains(ENCRYPTED_H1)) {
-        // return CAPITAL_TIME_H1;
-        // }
-
         if (encryptedChartName.contains(ENCRYPTED_H4)) {
             return CAPITAL_TIME_H4;
         }
         if (encryptedChartName.contains(ENCRYPTED_H12)) {
             return CAPITAL_TIME_H12;
         }
-
+        if (encryptedChartName.contains(ENCRYPTED_D1)) {
+            return CAPITAL_TIME_D1;
+        }
         return CAPITAL_TIME_H1;
     }
 
@@ -4328,7 +4311,7 @@ public class Utils {
     }
 
     public static Mt5OpenTrade calc_Lot_En_SL_TP(BigDecimal risk, String EPIC, String trend, Orders dto_en,
-            Orders dto_d1, String encrypted_trend_w1d1h4h1, boolean isTradeNow, String note_d1) {
+            Orders dto_d1, String append, boolean isTradeNow, String CAPITAL_TIME_XX) {
         BigDecimal en_05 = BigDecimal.ZERO;
         if (Objects.equals(Utils.TREND_LONG, trend)) {
             en_05 = Utils.getBigDecimal(dto_en.getLow_price());
@@ -4337,7 +4320,7 @@ public class Utils {
         }
 
         boolean same_trend_w_d = false;
-        if (!encrypted_trend_w1d1h4h1.contains("00")) {
+        if (!append.contains("00")) {
             same_trend_w_d = true;
         }
         List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_d1, trend, same_trend_w_d);
@@ -4352,7 +4335,7 @@ public class Utils {
         if (en_tp.compareTo(en_sl) < 0) {
             range = ".dg";
         }
-
+        String timeframe = "." + getEncryptedChartNameCapital(CAPITAL_TIME_XX);
         Mt5OpenTrade dto = new Mt5OpenTrade();
         dto.setEpic(EPIC);
         dto.setOrder_type(trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
@@ -4361,7 +4344,7 @@ public class Utils {
         dto.setEntry(en_05);
         dto.setStop_loss(sl_d1);
         dto.setTake_profit(tp_d1);
-        dto.setComment("(" + BscScanBinanceApplication.hostname + ")" + encrypted_trend_w1d1h4h1 + range);
+        dto.setComment("(" + BscScanBinanceApplication.hostname + ")" + append + range + timeframe);
 
         return dto;
     }
