@@ -3562,6 +3562,7 @@ public class BinanceServiceImpl implements BinanceService {
      * 15895.35 16111.0 0.0 -185.77 EURCAD 81249169 0 1.46448 1.45172 0.0 -22.2
      * EURGBP 81246958 0 0.87056 0.86395 0.0 108.2
      */
+    @Override
     @Transactional
     public void initTradeList() {
         List<Mt5DataTrade> tradeList = new ArrayList<Mt5DataTrade>();
@@ -3692,14 +3693,15 @@ public class BinanceServiceImpl implements BinanceService {
                     entity.setStopLoss(trade.getStopLoss());
                 }
 
-                if (Utils.getBigDecimal(trade.getProfit()).compareTo(BigDecimal.ZERO) > 0) {
-                    entity.setProfit(trade.getProfit());
+                if (Utils.getBigDecimal(trade.getTakeProfit()).compareTo(BigDecimal.ZERO) > 0) {
+                    entity.setTakeProfit(trade.getTakeProfit());
                 }
             }
 
             if (Utils.isBlank(entity.getComment()) && Utils.isNotBlank(comment)) {
                 entity.setComment(comment.replace(" ", ""));
             }
+            entity.setProfit(trade.getProfit());
             entity.setTypeDescription(trade.getType());
             entity.setVolume(trade.getVolume());
             entity.setCurrprice(trade.getCurrPrice());

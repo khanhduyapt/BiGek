@@ -65,4 +65,6 @@ public interface BinanceService {
 
     public void closeTrade_by_SL_TP();
 
+    public void initTradeList();
+
 }

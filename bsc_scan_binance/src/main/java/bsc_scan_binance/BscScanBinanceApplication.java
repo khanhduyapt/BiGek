@@ -133,6 +133,10 @@ public class BscScanBinanceApplication {
                         }
 
                         if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
+                            if (isReloadAfter(2, "MT5_TRADING_DATA")) {
+                                binance_service.initTradeList();
+                            }
+
                             if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
                                 binance_service.saveMt5Data("ForexM.csv", Utils.MINUTES_RELOAD_CSV_DATA);
                                 wait(SLEEP_MINISECONDS);
