@@ -2644,8 +2644,8 @@ public class BinanceServiceImpl implements BinanceService {
 
     private String getTrendTimeframes(String EPIC) {
         String result = "";// "(W1:Buy ,D1:Buy ,H12:Buy ,H8:Buy ,H4:Buy ,H2:Sell,30:Buy )";
-        List<String> times = Arrays.asList(Utils.CAPITAL_TIME_W1, Utils.CAPITAL_TIME_D1, Utils.CAPITAL_TIME_H12,
-                Utils.CAPITAL_TIME_H4, Utils.CAPITAL_TIME_H1, Utils.CAPITAL_TIME_15);
+        List<String> times = Arrays.asList(Utils.CAPITAL_TIME_MO, Utils.CAPITAL_TIME_W1, Utils.CAPITAL_TIME_D1,
+                Utils.CAPITAL_TIME_H12, Utils.CAPITAL_TIME_H4, Utils.CAPITAL_TIME_H1, Utils.CAPITAL_TIME_15);
 
         String trend_w = "";
         String trend_d1 = "";
@@ -2686,10 +2686,12 @@ public class BinanceServiceImpl implements BinanceService {
         boolean has_trade_not_eq_h12 = false;
         List<Mt5OpenTradeEntity> tradeList = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
         for (Mt5OpenTradeEntity trade : tradeList) {
-            if (!Objects.equals(trade.getTypeDescription().toUpperCase(), trend_d1.toUpperCase())) {
+            if (Utils.isNotBlank(trend_d1)
+                    && !Objects.equals(trade.getTypeDescription().toUpperCase(), trend_d1.toUpperCase())) {
                 has_trade_not_eq_d1 = true;
                 action = trade.getTypeDescription().toLowerCase();
-            } else if (!Objects.equals(trade.getTypeDescription().toUpperCase(), trend_h12.toUpperCase())) {
+            } else if (Utils.isNotBlank(trend_h12)
+                    && !Objects.equals(trade.getTypeDescription().toUpperCase(), trend_h12.toUpperCase())) {
                 has_trade_not_eq_h12 = true;
                 action = trade.getTypeDescription().toLowerCase();
             }
@@ -3061,7 +3063,8 @@ public class BinanceServiceImpl implements BinanceService {
                 result += Utils.appendSpace(TRADE_TREND, 10) + "    ";
                 result += Utils.appendSpace(EPIC, 10);
                 result += Utils.appendSpace(trade.getTicket(), 10);
-                result += "   (Profit):" + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 10);
+                result += "   Vol:" + Utils.appendLeft(Utils.getStringValue(trade.getVolume()), 6);
+                result += "   (Profit):" + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 6);
                 result += "    " + multi_timeframes;
                 result += Utils.appendSpace(" " + trade.getComment() + " ", 35, "-") + " ";
                 result += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
@@ -3505,40 +3508,44 @@ public class BinanceServiceImpl implements BinanceService {
         }
         int index = 1;
         for (String EPIC : Utils.EPICS_STOCKS) {
+            Orders dto_mo = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_MO).orElse(null);
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
 
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
+            if (Objects.isNull(dto_mo) || Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4)
+                    || Objects.isNull(dto_h1)) {
                 Utils.logWritelnDraft("[scapStocks] dto(" + EPIC + ") is null.");
                 continue;
             }
-
+            String trend_mo = dto_mo.getTrend();
             String trend_w1 = dto_w1.getTrend();
             String trend_d1 = dto_d1.getTrend();
             String trend_h4 = dto_h4.getTrend();
             String trend_h1 = dto_h1.getTrend();
 
-            String switch_trend = ". " + Utils.appendSpace(trend_w1, 4) + "  W1.D1.H4.H1              ";
+            String switch_trend = ". " + Utils.appendSpace(trend_w1, 4) + "  MO.W1.D1.H4.H1           ";
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
-            if (!Objects.equals(trend_w1, trend_d1)) {
+            if (!Objects.equals(trend_mo, trend_w1)) {
                 prefix = prefix.replace("W1", "  ");
             }
-            if (!Objects.equals(trend_h4, trend_d1)) {
+            if (!Objects.equals(trend_d1, trend_w1)) {
+                prefix = prefix.replace("W1", "  ");
+            }
+            if (!Objects.equals(trend_h4, trend_w1)) {
                 prefix = prefix.replace("H4", "  ");
             }
-            if (!Objects.equals(trend_h1, trend_d1)) {
+            if (!Objects.equals(trend_h1, trend_w1)) {
                 prefix = prefix.replace("H1", "  ");
             }
 
             // TODO: scapStocks
-            // Cổ phiếu W xuống thì đứng ngoài (Đinh Tùng Lâm)
-            if (Objects.equals(trend_w1, Utils.TREND_LONG) && Objects.equals(trend_w1, trend_d1)
-                    && Objects.equals(trend_w1, trend_h4) && Objects.equals(trend_w1, trend_h1)) {
+            String comment = dto_mo.getSwitch_trend() + dto_w1.getSwitch_trend() + dto_d1.getSwitch_trend()
+                    + dto_h4.getSwitch_trend() + dto_h1.getSwitch_trend();
 
-                String comment = dto_w1.getSwitch_trend() + dto_d1.getSwitch_trend() + dto_h4.getSwitch_trend()
-                        + dto_h1.getSwitch_trend();
+            if (comment.contains(trend_w1) && Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_h4)
+                    && Objects.equals(trend_w1, trend_h1)) {
 
                 analysis_profit(prefix, EPIC, comment, trend_w1);
                 index += 1;
@@ -3720,7 +3727,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         String trend = Utils.getTrendByHekenAshiList(heiken_list);
         String switch_trend = "";
-        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_W1)
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_MO)
+                || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_W1)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H12)) {
             switch_trend = Utils.switchTrendByHeken_12(heiken_list);
