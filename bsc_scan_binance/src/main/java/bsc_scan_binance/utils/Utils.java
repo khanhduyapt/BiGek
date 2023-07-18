@@ -4239,7 +4239,7 @@ public class Utils {
         boolean isUptrend_1 = heiken_list.get(end).isUptrend();
         boolean isUptrend_2 = isUptrendByMa(heiken_list, 2, str, end);
         boolean isUptrend_3 = isUptrendByMa(heiken_list, 3, str, end);
-        boolean isUptrend_5 = isUptrendByMa(heiken_list, 3, 1, 2);
+        boolean isUptrend_3_12 = isUptrendByMa(heiken_list, 3, 1, 2);
 
         if ((isUptrend_0 == isUptrend_1) && (isUptrend_0 == isUptrend_2) && (isUptrend_0 == isUptrend_3)) {
             return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
@@ -4253,11 +4253,11 @@ public class Utils {
             return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
         }
 
-        if ((isUptrend_3 == isUptrend_5)) {
+        if ((isUptrend_3 == isUptrend_3_12)) {
             return isUptrend_3 ? Utils.TREND_LONG : Utils.TREND_SHOT;
         }
 
-        String result = isUptrend_5 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        String result = isUptrend_3_12 ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
         return result;
     }

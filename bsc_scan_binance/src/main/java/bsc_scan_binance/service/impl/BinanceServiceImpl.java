@@ -2744,13 +2744,16 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(append.trim(), 126) + " ";
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
         log += text_risk
-                + Utils.appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, trend_fi, EPIC, dto_h1, dto_d1), 56);
+                + Utils.appendSpace(
+                        Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, dto_d1.getTrend(), EPIC, dto_h1, dto_d1), 56);
 
         if (dto_w1.getSwitch_trend().contains(dto_w1.getTrend())
                 && dto_w1.getTrend_zone().contains(dto_w1.getTrend())) {
             log += "     ";
             log += "0.15% " + Utils.appendSpace(
-                    Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_15_PERCENT, false, trend_fi, EPIC, dto_h1, dto_w1), 56);
+                    Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_15_PERCENT, false, dto_w1.getTrend(), EPIC, dto_h1,
+                            dto_w1),
+                    56) + dto_w1.getSwitch_trend();
         }
 
         Utils.logWritelnDraft(log);
@@ -3632,8 +3635,8 @@ public class BinanceServiceImpl implements BinanceService {
         if (required_update_bars_csv) {
             return "";
         }
-        // EPIC = "CHFJPY";
-        // CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H1;
+        //        EPIC = "GBPJPY";
+        //        CAPITAL_TIME_XX = Utils.CAPITAL_TIME_W1;
         // ----------------------------TREND------------------------
         List<BtcFutures> heiken_list = Utils.getHeikenList(getCapitalData(EPIC, CAPITAL_TIME_XX));
         if (CollectionUtils.isEmpty(heiken_list)) {
