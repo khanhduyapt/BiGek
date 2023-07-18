@@ -2649,6 +2649,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String trend_w = "";
         String trend_d = "";
+        String trend_h12 = "";
         for (String CAPITAL_TIME_XX : times) {
             String chart_name = Utils.getChartNameCapital(CAPITAL_TIME_XX).replace("(", "").replace(")", "").trim();
             Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
@@ -2669,6 +2670,9 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(Utils.CAPITAL_TIME_D1, CAPITAL_TIME_XX)) {
                 trend_d = dto.getTrend();
             }
+            if (Objects.equals(Utils.CAPITAL_TIME_H12, CAPITAL_TIME_XX)) {
+                trend_h12 = dto.getTrend();
+            }
         }
         result = "(" + result + ")";
         if (Objects.equals(trend_w, trend_d)) {
@@ -2676,7 +2680,20 @@ public class BinanceServiceImpl implements BinanceService {
         } else {
             result = "  W#D  " + result;
         }
+
+        boolean has_trade_not_eq_h12 = false;
+        List<Mt5OpenTradeEntity> tradeList = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
+        for (Mt5OpenTradeEntity trade : tradeList) {
+            if (!Objects.equals(trade.getTypeDescription(), trend_h12)) {
+                has_trade_not_eq_h12 = true;
+            }
+        }
         result = Utils.appendSpace(result, 50);
+        if (has_trade_not_eq_h12) {
+            result += " #h12->Stop ";
+        } else {
+            result += "            ";
+        }
 
         return result;
     }
@@ -3035,7 +3052,7 @@ public class BinanceServiceImpl implements BinanceService {
                 result += Utils.appendSpace(trade.getTicket(), 10);
                 result += "   (Profit):" + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 10);
                 result += "    " + multi_timeframes + "    ";
-                result += Utils.appendSpace(trade.getComment(), 30);
+                result += Utils.appendSpace(trade.getComment(), 26);
                 result += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
 
                 total = total.add(PROFIT);
