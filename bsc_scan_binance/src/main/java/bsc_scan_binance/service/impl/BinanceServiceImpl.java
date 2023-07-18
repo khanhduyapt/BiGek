@@ -2837,6 +2837,7 @@ public class BinanceServiceImpl implements BinanceService {
             return false;
         }
 
+        int count = 0;
         for (Mt5OpenTradeEntity mt5Entity : list) {
             String insert_time = Utils.getStringValue(mt5Entity.getOpenTime());
             if (Utils.isNotBlank(insert_time)) {
@@ -2845,11 +2846,14 @@ public class BinanceServiceImpl implements BinanceService {
                 long elapsedMinutes = duration.toMinutes();
 
                 if (elapsedMinutes > MINUTES_OF_1D) {
-                    return true;
+                    count += 1;
                 }
             }
         }
 
+        if (count == list.size()) {
+            return true;
+        }
         return false;
     }
 
@@ -3032,9 +3036,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             int count = 0;
-            String risk_0_15 = "     Risk:0.15%=" + Utils.appendLeft(Utils.removeLastZero(Utils.RISK_0_15_PERCENT), 10)
-                    + "$_1Trade";
-
+            String risk_0_15 = "     Risk:0.15%=" + Utils.RISK_0_15_PERCENT.intValue() + "$_1Trade";
             for (Mt5OpenTradeEntity trade : mt5Openlist) {
                 String EPIC = trade.getSymbol();
                 String TRADE_TREND = trade.getTypeDescription().toUpperCase();
