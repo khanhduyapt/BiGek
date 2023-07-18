@@ -4222,8 +4222,12 @@ public class Utils {
         }
         int str = candle_no;
         int end = candle_no + 1;
-
+        String id = heiken_list.get(0).getId();
         boolean isUptrend_0 = heiken_list.get(str).isUptrend();
+        if (id.contains(PREFIX_1w_)) {
+            return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        }
+
         boolean isUptrend_1 = heiken_list.get(end).isUptrend();
         boolean isUptrend_2 = isUptrendByMa(heiken_list, 2, str, end);
         boolean isUptrend_3 = isUptrendByMa(heiken_list, 3, str, end);

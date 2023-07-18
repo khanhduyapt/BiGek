@@ -2648,7 +2648,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.CAPITAL_TIME_H4, Utils.CAPITAL_TIME_H1, Utils.CAPITAL_TIME_15);
 
         String trend_w = "";
-        String trend_d = "";
+        String trend_d1 = "";
         String trend_h12 = "";
         for (String CAPITAL_TIME_XX : times) {
             String chart_name = Utils.getChartNameCapital(CAPITAL_TIME_XX).replace("(", "").replace(")", "").trim();
@@ -2668,31 +2668,40 @@ public class BinanceServiceImpl implements BinanceService {
                 trend_w = dto.getTrend();
             }
             if (Objects.equals(Utils.CAPITAL_TIME_D1, CAPITAL_TIME_XX)) {
-                trend_d = dto.getTrend();
+                trend_d1 = dto.getTrend();
             }
             if (Objects.equals(Utils.CAPITAL_TIME_H12, CAPITAL_TIME_XX)) {
                 trend_h12 = dto.getTrend();
             }
         }
         result = "(" + result + ")";
-        if (Objects.equals(trend_w, trend_d)) {
+        if (Objects.equals(trend_w, trend_d1)) {
             result = "       " + result;
         } else {
             result = "  W#D  " + result;
         }
 
+        String action = "";
+        boolean has_trade_not_eq_d1 = false;
         boolean has_trade_not_eq_h12 = false;
         List<Mt5OpenTradeEntity> tradeList = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
         for (Mt5OpenTradeEntity trade : tradeList) {
-            if (!Objects.equals(trade.getTypeDescription(), trend_h12)) {
+            if (!Objects.equals(trade.getTypeDescription().toUpperCase(), trend_d1.toUpperCase())) {
+                has_trade_not_eq_d1 = true;
+                action = trade.getTypeDescription().toLowerCase();
+            } else if (!Objects.equals(trade.getTypeDescription().toUpperCase(), trend_h12.toUpperCase())) {
                 has_trade_not_eq_h12 = true;
+                action = trade.getTypeDescription().toLowerCase();
             }
         }
         result = Utils.appendSpace(result, 50);
-        if (has_trade_not_eq_h12) {
-            result += " #h12->Stop ";
+
+        if (has_trade_not_eq_d1) {
+            result += " " + Utils.appendSpace(action.trim(), 4) + "#d1 ->Stop ";
+        } else if (has_trade_not_eq_h12) {
+            result += " " + Utils.appendSpace(action.trim(), 4) + "#h12->Stop ";
         } else {
-            result += "            ";
+            result += "                ";
         }
 
         return result;
@@ -3053,8 +3062,8 @@ public class BinanceServiceImpl implements BinanceService {
                 result += Utils.appendSpace(EPIC, 10);
                 result += Utils.appendSpace(trade.getTicket(), 10);
                 result += "   (Profit):" + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 10);
-                result += "    " + multi_timeframes + "    ";
-                result += Utils.appendSpace(trade.getComment(), 35) + " ";
+                result += "    " + multi_timeframes;
+                result += Utils.appendSpace(" " + trade.getComment() + " ", 35, "-") + " ";
                 result += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
 
                 total = total.add(PROFIT);
@@ -3661,10 +3670,17 @@ public class BinanceServiceImpl implements BinanceService {
                 entity.setTakeProfit(tp_d1);
                 entity.setComment(comment);
                 entity.setTimeframe(timeframe);
+            } else {
+                if (Utils.getBigDecimal(trade.getStopLoss()).compareTo(BigDecimal.ZERO) > 0) {
+                    entity.setStopLoss(trade.getStopLoss());
+                }
+
+                if (Utils.getBigDecimal(trade.getProfit()).compareTo(BigDecimal.ZERO) > 0) {
+                    entity.setProfit(trade.getProfit());
+                }
             }
 
             entity.setTypeDescription(trade.getType());
-            entity.setProfit(trade.getProfit());
             entity.setVolume(trade.getVolume());
             entity.setCurrprice(trade.getCurrPrice());
             entity.setCompany(trade.getCompany());
@@ -3782,9 +3798,18 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnDraft("[controlMt5] (" + EPIC + ") dto is null");
                 continue;
             }
+            String switch_trend_w1 = dto_w1.getSwitch_trend().trim();
+            String trend_w1 = dto_w1.getTrend_c1();
+            if (switch_trend_w1.contains(dto_w1.getTrend())) {
+                trend_w1 = dto_w1.getTrend();
+            }
 
-            String trend_w1 = dto_w1.getTrend();
-            String trend_d1 = dto_d1.getTrend();
+            String trend_d1 = dto_d1.getTrend_c1();
+            String switch_trend_d1 = dto_d1.getSwitch_trend().trim();
+            if (switch_trend_d1.contains(dto_d1.getTrend())) {
+                trend_d1 = dto_d1.getTrend();
+            }
+
             String trend_h12 = dto_h12.getTrend();
             String trend_h4 = dto_h4.getTrend();
             String trend_h1 = dto_h1.getTrend();
@@ -3794,8 +3819,6 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            String switch_trend_w1 = dto_w1.getSwitch_trend().trim();
-            String switch_trend_d1 = dto_d1.getSwitch_trend().trim();
             String switch_trend_h12 = dto_h12.getSwitch_trend().trim();
             String switch_trend_h4 = dto_h4.getSwitch_trend().trim();
 
