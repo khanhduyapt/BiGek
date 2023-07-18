@@ -2854,8 +2854,6 @@ public class BinanceServiceImpl implements BinanceService {
             FileWriter writer = new FileWriter(mt5_open_trade_file, true);
 
             // TODO: 4. openTrade
-            // if (Utils.isPcCongTy()) {
-
             for (Mt5OpenTrade dto : BscScanBinanceApplication.mt5_open_trade_List) {
                 if (Objects.isNull(dto)) {
                     continue;
@@ -2867,18 +2865,6 @@ public class BinanceServiceImpl implements BinanceService {
                 }
                 if (is_opening_trade(EPIC, dto.getOrder_type())) {
                     continue;
-                }
-
-                boolean allow_trade = false;
-                if (Utils.allow_open_trade_at_tokyo_session()) {
-                    if (EPIC.contains("JPY") || EPIC.contains("AUD")) {
-                        allow_trade = true;
-                    }
-                } else if (Utils.allow_open_trade_at_london_and_newyork_session()) {
-                    allow_trade = true;
-                }
-                if (!allow_trade) {
-                    // dto.setLots(BigDecimal.valueOf(0.01));
                 }
 
                 StringBuilder sb = new StringBuilder();
@@ -2898,11 +2884,32 @@ public class BinanceServiceImpl implements BinanceService {
                 sb.append('\n');
 
                 if (trade_count < MAX_TRADE) {
-                    writer.write(sb.toString());
+                    if (Utils.isPcCongTy()) {
+                        writer.write(sb.toString());
+                    }
                     trade_count += 1;
+
+                    String msg = Utils.appendSpace("", 50) + "OpenTrade: ";
+                    msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4) + ")", 10);
+                    msg += Utils.appendSpace(dto.getEpic(), 10) + "___"
+                            + Utils.appendLeft(dto.getCur_price().toString(), 15);
+                    msg += Utils.new_line_from_service;
+                    msg += "___Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
+                    msg += "___E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
+                    msg += "___SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 15);
+                    msg += "___TP: " + Utils.appendLeft(dto.getTake_profit().toString(), 15);
+                    msg += Utils.appendSpace(dto.getComment(), 25);
+
+                    Utils.logWritelnDraft(msg.replace(Utils.new_line_from_service, " ").replace("___", "   "));
+
+                    if (!Utils.isSleepTime_8h_to_22h()) {
+                        String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type();
+                        if (isReloadAfter(Utils.MINUTES_OF_1H, EVENT_ID)) {
+                            sendMsgPerHour_OnlyMe(EVENT_ID, msg);
+                        }
+                    }
                 }
             }
-            // }
 
             writer.close();
         } catch (Exception e) {
@@ -3814,6 +3821,7 @@ public class BinanceServiceImpl implements BinanceService {
                         }
                     }
                 }
+
                 if (Objects.isNull(dto) && dto_h12.getSwitch_trend().contains(trend_d1)
                         && Objects.equals(trend_d1, trend_h4)) {
                     String append = "2412w0401";
@@ -3824,39 +3832,20 @@ public class BinanceServiceImpl implements BinanceService {
                             true, switch_trend_d1);
                 }
 
-                if (Objects.isNull(dto) && dto_h12.isAllow_trade_by_ma50() && dto_h4.isAllow_trade_by_ma50()
-                        && dto_h1.isAllow_trade_by_ma50() && dto_h4.getSwitch_trend().contains(trend_h4)) {
-                    String append = "001204w01";
+                if (Objects.isNull(dto) && Objects.equals(trend_d1, trend_h4) && dto_h12.isAllow_trade_by_ma50()
+                        && dto_h4.isAllow_trade_by_ma50() && dto_h4.getSwitch_trend().contains(trend_h4)) {
+                    String append = "002404w01";
                     action = trend_h12;
                     String text_risk = "(0.1 %:" + Utils.RISK_0_10_PERCENT.intValue() + "$)";
                     append = type + ":" + append + text_risk;
                     dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, action, dto_h1, dto_d1, append,
                             true, switch_trend_d1);
                 }
+
                 // ---------------------------------------------------------------------
                 if (Objects.nonNull(dto)) {
                     if (Utils.isBlank(end_zone) && !is_opening_trade(EPIC, action)) {
-                        String msg = Utils.appendSpace("", 50) + "OpenTrade: ";
-                        msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4) + ")", 10);
-                        msg += Utils.appendSpace(dto.getEpic(), 10) + "___"
-                                + Utils.appendLeft(dto.getCur_price().toString(), 15);
-                        msg += Utils.new_line_from_service;
-                        msg += "___Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
-                        msg += "___E: " + Utils.appendLeft(dto.getEntry().toString(), 15) + "   ";
-                        msg += "___SL: " + Utils.appendLeft(dto.getStop_loss().toString(), 15);
-                        msg += "___TP: " + Utils.appendLeft(dto.getTake_profit().toString(), 15);
-                        msg += Utils.appendSpace(dto.getComment(), 25);
-
-                        Utils.logWritelnDraft(msg.replace(Utils.new_line_from_service, " ").replace("___", "   "));
-
-                        if (!Utils.isSleepTime_8h_to_22h()) {
-                            BscScanBinanceApplication.mt5_open_trade_List.add(dto);
-
-                            String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type();
-                            if (isReloadAfter(Utils.MINUTES_OF_1H, EVENT_ID)) {
-                                sendMsgPerHour_OnlyMe(EVENT_ID, msg);
-                            }
-                        }
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                     }
                 }
 

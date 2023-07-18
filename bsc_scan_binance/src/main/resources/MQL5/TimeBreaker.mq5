@@ -20,7 +20,7 @@ int OnInit(void)
   {
    OnTimer();
 
-   EventSetTimer(300); //1800=30minutes; 900=15minutes; 300=5minutes; 180=3minutes; 60=1minute;
+   EventSetTimer(900); //1800=30minutes; 900=15minutes; 300=5minutes; 180=3minutes; 60=1minute;
 
    return(INIT_SUCCEEDED);
   }
@@ -78,7 +78,7 @@ void OnTimer(void)
            {
             MqlRates rates_w1[];
             ArraySetAsSeries(rates_w1,true);
-            copied=CopyRates(symbol, PERIOD_W1, 0, 55, rates_w1);
+            copied=CopyRates(symbol, PERIOD_W1, 0, 15, rates_w1);
             if(copied>0)
               {
                int size=fmin(copied, 10);
@@ -157,6 +157,7 @@ void OnTimer(void)
                FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_H1");
               }
             //---------------------------------------------
+            /*
             MqlRates rates_15[];
             ArraySetAsSeries(rates_15,true);
             copied=CopyRates(symbol, PERIOD_M15, 0, 55, rates_15);
@@ -172,6 +173,7 @@ void OnTimer(void)
               {
                FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M15");
               }
+            
             //---------------------------------------------
             MqlRates rates_05[];
             ArraySetAsSeries(rates_05,true);
@@ -188,6 +190,8 @@ void OnTimer(void)
               {
                FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M5");
               }
+              
+              */
             //---------------------------------------------
            } //mod5
 
