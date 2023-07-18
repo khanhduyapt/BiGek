@@ -3047,7 +3047,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             int count = 0;
-            String risk_0_15 = "     Risk:0.15%=" + Utils.RISK_0_15_PERCENT.intValue() + "$_1Trade";
+            String risk_0_15 = "     Risk:0.15%=" + Utils.RISK_0_15_PERCENT.intValue() + "$per_trade";
             for (Mt5OpenTradeEntity trade : mt5Openlist) {
                 String EPIC = trade.getSymbol();
                 String TRADE_TREND = trade.getTypeDescription().toUpperCase();
@@ -3528,10 +3528,10 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_trend = ". " + Utils.appendSpace(trend_w1, 4) + "  MO.W1.D1.H4.H1           ";
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
             if (!Objects.equals(trend_mo, trend_w1)) {
-                prefix = prefix.replace("W1", "  ");
+                prefix = prefix.replace("MO.", "   ");
             }
             if (!Objects.equals(trend_d1, trend_w1)) {
-                prefix = prefix.replace("W1", "  ");
+                prefix = prefix.replace("D1", "  ");
             }
             if (!Objects.equals(trend_h4, trend_w1)) {
                 prefix = prefix.replace("H4", "  ");
@@ -3541,16 +3541,17 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // TODO: scapStocks
-            String comment = dto_mo.getSwitch_trend() + dto_w1.getSwitch_trend() + dto_d1.getSwitch_trend()
-                    + dto_h4.getSwitch_trend() + dto_h1.getSwitch_trend();
+            String comment = Utils.appendSpace(dto_mo.getSwitch_trend(), 20)
+                    + Utils.appendSpace(dto_w1.getSwitch_trend(), 20) + Utils.appendSpace(dto_d1.getSwitch_trend(), 20)
+                    + Utils.appendSpace(dto_h4.getSwitch_trend(), 20) + Utils.appendSpace(dto_h1.getSwitch_trend(), 20);
 
             if (comment.contains(trend_w1) && Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_h4)
                     && Objects.equals(trend_w1, trend_h1)) {
 
-                analysis_profit(prefix, EPIC, comment, trend_w1);
+                analysis_profit(prefix, EPIC, comment.trim(), trend_w1);
                 index += 1;
 
-                BscScanBinanceApplication.dic_comment.put(EPIC.toUpperCase(), comment);
+                BscScanBinanceApplication.dic_comment.put(EPIC.toUpperCase(), comment.replace(" ", ""));
             }
         }
 
