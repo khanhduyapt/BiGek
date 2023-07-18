@@ -3615,20 +3615,20 @@ public class BinanceServiceImpl implements BinanceService {
                 entity.setStopLoss(sl_d1);
                 entity.setTakeProfit(tp_d1);
 
-                if (Utils.isPcCongTy() && trade.getCompany().contains("FTMO")) {
-                    if (!trade.getType().toUpperCase().contains("LIMIT") && Utils.isNotBlank(trade.getComment())) {
-                        String EVENT_ID = "MSG_PER_HOUR" + trade.getTicket();
-
-                        String msg_alert = "(FTMO)";
-                        msg_alert += trade.getType() + ":" + EPIC;
-                        msg_alert += "," + trade.getVolume() + "(lot)";
-                        msg_alert += ",SL:" + Utils.removeLastZero(sl_d1);
-                        msg_alert += ",TP:" + Utils.removeLastZero(tp_d1);
-                        msg_alert += "," + trade.getComment();
-
-                        sendMsgPerHour_OnlyMe(EVENT_ID, msg_alert);
-                    }
-                }
+                //if (Utils.isPcCongTy() && trade.getCompany().contains("FTMO")) {
+                //    if (!trade.getType().toUpperCase().contains("LIMIT") && Utils.isNotBlank(trade.getComment())) {
+                //        String EVENT_ID = "MSG_PER_HOUR" + trade.getTicket();
+                //
+                //        String msg_alert = "(FTMO)";
+                //        msg_alert += trade.getType() + ":" + EPIC;
+                //        msg_alert += "," + trade.getVolume() + "(lot)";
+                //        msg_alert += ",SL:" + Utils.removeLastZero(sl_d1);
+                //        msg_alert += ",TP:" + Utils.removeLastZero(tp_d1);
+                //        msg_alert += "," + trade.getComment();
+                //
+                //        sendMsgPerHour_OnlyMe(EVENT_ID, msg_alert);
+                //    }
+                //}
             }
 
             entity.setComment(comment);
