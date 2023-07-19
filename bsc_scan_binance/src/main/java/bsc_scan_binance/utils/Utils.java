@@ -180,6 +180,7 @@ public class Utils {
     public static final String ENCRYPTED_H4 = "bong";
     public static final String ENCRYPTED_H12 = "mhag";
     public static final String ENCRYPTED_D1 = "mngy";
+    public static final String ENCRYPTED_W1 = "week";
 
     public static final Integer MINUTES_OF_D = 1440;
     public static final Integer MINUTES_OF_12H = 720;
@@ -188,7 +189,7 @@ public class Utils {
     public static final Integer MINUTES_OF_15M = 15;
     public static final Integer MINUTES_OF_5M = 5;
 
-    public static final Integer MINUTES_RELOAD_CSV_DATA = 5;
+    public static final Integer MINUTES_RELOAD_CSV_DATA = 15;
 
     public static final List<String> COMPANIES = Arrays.asList("FTMO");
 
@@ -775,7 +776,9 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
             return ENCRYPTED_D1;
         }
-
+        if (Objects.equals(TIME, CAPITAL_TIME_W1)) {
+            return ENCRYPTED_W1;
+        }
         return ENCRYPTED_H1;
     }
 
@@ -795,7 +798,9 @@ public class Utils {
         if (encryptedChartName.contains(ENCRYPTED_D1)) {
             return CAPITAL_TIME_D1;
         }
-
+        if (encryptedChartName.contains(ENCRYPTED_W1)) {
+            return CAPITAL_TIME_W1;
+        }
         return CAPITAL_TIME_H1;
     }
 
@@ -4504,19 +4509,19 @@ public class Utils {
         String prefix_trend = "MO.W1.D1.H4.H1";
 
         if (!Objects.equals(trend_d1, trend_mo)) {
-            prefix_trend = prefix_trend.replace("MO.", "...");
+            prefix_trend = prefix_trend.replace("MO.", "   ");
         }
         if (!Objects.equals(trend_d1, trend_w1)) {
-            prefix_trend = prefix_trend.replace("W1", "..");
+            prefix_trend = prefix_trend.replace("W1.", "   ");
         }
         if (!Objects.equals(trend_d1, trend_h4)) {
-            prefix_trend = prefix_trend.replace("H4", "..");
+            prefix_trend = prefix_trend.replace("H4.", "   ");
         }
         if (!Objects.equals(trend_d1, trend_h1)) {
-            prefix_trend = prefix_trend.replace("H1", "..");
+            prefix_trend = prefix_trend.replace("H1", "  ");
         }
 
-        prefix_trend = appendSpace(prefix_trend, 25);
+        prefix_trend = appendSpace(prefix_trend + ":" + trend_d1, 25);
 
         String switch_trend = "{";
         if (Objects.equals(trend_d1, trend_h12) && note_d1.contains(trend_h12)) {

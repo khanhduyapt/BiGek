@@ -3640,8 +3640,8 @@ public class BinanceServiceImpl implements BinanceService {
         if (required_update_bars_csv) {
             return "";
         }
-        EPIC = "AUDCHF";
-        CAPITAL_TIME_XX = Utils.CAPITAL_TIME_15;
+        //        EPIC = "AUDCHF";
+        //        CAPITAL_TIME_XX = Utils.CAPITAL_TIME_15;
         // ----------------------------TREND------------------------
         List<BtcFutures> heiken_list = Utils.getHeikenList(getCapitalData(EPIC, CAPITAL_TIME_XX));
         if (CollectionUtils.isEmpty(heiken_list)) {
@@ -3673,12 +3673,9 @@ public class BinanceServiceImpl implements BinanceService {
         if (Objects.equals(trend, Utils.TREND_SHOT) && Objects.equals(nocation, Utils.NOCATION_ABOVE_MA50)) {
             allow_trade_by_ma50 = true;
         }
-        String trend_zone = Utils.getZoneTrend(heiken_list);
-        if (trend_zone.contains(trend)) {
-            allow_trade_by_ma50 = true;
-        }
 
         String switch_trend = "";
+        String zone_trend = Utils.getZoneTrend(heiken_list);
         if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_MO)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_W1)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)
@@ -3709,7 +3706,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         Orders entity = new Orders(orderId, date_time, trend, heiken_list.get(0).getCurrPrice(), str_body, end_body,
-                sl_long, sl_shot, switch_trend, allow_trade_by_ma50, trend_candle_1, trend_zone);
+                sl_long, sl_shot, switch_trend, allow_trade_by_ma50, trend_candle_1, zone_trend);
 
         ordersRepository.save(entity);
 
@@ -3786,6 +3783,16 @@ public class BinanceServiceImpl implements BinanceService {
                 // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
                 if (Objects.equals(trend_w1, trend_d1)) {
                     if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)) {
+
+                        if (dto_w1.getSwitch_trend().contains(trend_w1) && dto_w1.getTrend_zone().contains(trend_w1)) {
+                            String key = EPIC + Utils.CAPITAL_TIME_W1;
+                            String append = type + ":96w241241" + text_risk_010;
+                            Mt5OpenTrade trade_w1 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1,
+                                    dto_h1, dto_d1, append, true, Utils.CAPITAL_TIME_W1);
+
+                            BscScanBinanceApplication.mt5_open_trade_List.add(trade_w1);
+                            BscScanBinanceApplication.dic_comment.put(key, trade_w1.getComment());
+                        }
 
                         if (dto_d1.isAllow_trade_by_ma50() && switch_trend_d1.contains(trend_d1)) {
                             String key = EPIC + Utils.CAPITAL_TIME_D1;
