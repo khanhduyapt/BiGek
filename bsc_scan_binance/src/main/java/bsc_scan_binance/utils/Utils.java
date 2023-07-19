@@ -4208,9 +4208,10 @@ public class Utils {
 
         if (ma3_1_uptrend != ma3_2_uptrend) {
             String chart_name = getChartName(heiken_list).replace(")", "").trim() + " ";
-            String trend_2_1 = ma3_1_uptrend ? TREND_LONG : TREND_SHOT;
-            switch_trend = chart_name + TEXT_SWITCH_TREND_Ma_3_2_1 + ":" + Utils.appendSpace(trend_2_1, 4) + ")";
+            String trend = ma3_1_uptrend ? TREND_LONG : TREND_SHOT;
+            switch_trend = chart_name + TEXT_SWITCH_TREND_Ma_3_2_1 + ":" + Utils.appendSpace(trend, 4) + ")";
         }
+
         return switch_trend;
     }
 
@@ -4260,14 +4261,14 @@ public class Utils {
         String trend = Utils.getTrendByHekenAshiList(heiken_list);
         String chart_name = getChartName(heiken_list);
         // -------------------------------------------------------------------------
-        // Chờ đóng nến:
-        if (Objects.equals(trend, Utils.TREND_LONG) && heiken_list.get(0).isUptrend() && heiken_list.get(1).isUptrend()
-                && heiken_list.get(2).isDown()) {
+        // Dựa vào nến đóng:
+        if (Objects.equals(trend, Utils.TREND_LONG) && heiken_list.get(1).isUptrend() && heiken_list.get(2).isDown()
+                && heiken_list.get(3).isDown()) {
             return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
         }
 
-        if (Objects.equals(trend, Utils.TREND_SHOT) && heiken_list.get(0).isDown() && heiken_list.get(1).isDown()
-                && heiken_list.get(2).isUptrend()) {
+        if (Objects.equals(trend, Utils.TREND_SHOT) && heiken_list.get(1).isDown() && heiken_list.get(2).isUptrend()
+                && heiken_list.get(3).isUptrend()) {
             return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
         }
         // --------------------------------------------------------------------
@@ -4483,41 +4484,39 @@ public class Utils {
     }
 
     // [1W=1D=12H 8H=4H=2H=30] {D1~H12~H8~H4~H2~30}
-    public static String getPrefix_FollowTrackingTrend(int index, String trend_w1, String trend_d1, String trend_h12,
-            String trend_h4, String trend_h1,
+    public static String getPrefix_FollowTrackingTrend(int index,
 
-            String note_w1, String note_d1, String note_h12, String note_h4,
+            String trend_mo, String trend_w1, String trend_d1, String trend_h12, String trend_h4, String trend_h1,
+
+            String note_mo, String note_w1, String note_d1, String note_h12, String note_h4,
 
             String tracking_trend) {
 
-        String No = Utils.appendLeft(String.valueOf(index), 2) + ". ";
-        String prefix_wd = "";
-        String find_trend = "";
-        if (Objects.equals(trend_w1, trend_d1)) {
-            find_trend = trend_d1;
-            prefix_wd = appendSpace(trend_w1, 4) + ": W=D";
-            if (Objects.equals(find_trend, trend_h4)) {
-                prefix_wd += "=H12";
-            } else {
-                prefix_wd += "    ";
-            }
-        } else if (Objects.equals(trend_w1, trend_h12)) {
-            find_trend = trend_h12;
-            prefix_wd = appendSpace(trend_w1, 4) + ": W  =H12";
-        } else if (Objects.equals(trend_d1, trend_h12)) {
-            find_trend = trend_d1;
-            prefix_wd = appendSpace(trend_d1, 4) + ":   D=H12";
+        String week = "";
+        String type = Objects.equals(Utils.TREND_LONG, trend_w1) ? "B"
+                : Objects.equals(Utils.TREND_SHOT, trend_w1) ? "S" : "?";
+        if (note_w1.contains(trend_w1)) {
+            week = " (W1~" + type + ") ";
+        }
+        week = appendSpace(week, 10);
+
+        String No = Utils.appendLeft(String.valueOf(index), 2) + ". " + week;
+        String prefix_trend = "MO.W1.D1.H4.H1";
+
+        if (!Objects.equals(trend_d1, trend_mo)) {
+            prefix_trend = prefix_trend.replace("MO.", "...");
+        }
+        if (!Objects.equals(trend_d1, trend_w1)) {
+            prefix_trend = prefix_trend.replace("W1", "..");
+        }
+        if (!Objects.equals(trend_d1, trend_h4)) {
+            prefix_trend = prefix_trend.replace("H4", "..");
+        }
+        if (!Objects.equals(trend_d1, trend_h1)) {
+            prefix_trend = prefix_trend.replace("H1", "..");
         }
 
-        if (Utils.isNotBlank(prefix_wd)) {
-            if (Objects.equals(find_trend, trend_h4)) {
-                prefix_wd += "=H4";
-            }
-            if (Objects.equals(find_trend, trend_h1)) {
-                prefix_wd += "=H1";
-            }
-        }
-        prefix_wd = appendSpace(prefix_wd, 25);
+        prefix_trend = appendSpace(prefix_trend, 25);
 
         String switch_trend = "{";
         if (Objects.equals(trend_d1, trend_h12) && note_d1.contains(trend_h12)) {
@@ -4539,7 +4538,7 @@ public class Utils {
         }
         switch_trend += "}  ";
 
-        String result = No + prefix_wd + switch_trend;
+        String result = No + prefix_trend + switch_trend;
         return result;
     }
 
