@@ -3849,16 +3849,18 @@ public class BinanceServiceImpl implements BinanceService {
             String zone_h12 = dto_h12.getTrend_zone();
             String zone_h4 = dto_h4.getTrend_zone();
             String end_zone = "";
-            if (!(zone_d1).contains(trend_d1) || !(zone_h12).contains(trend_d1) || !(zone_h4).contains(trend_d1)) {
-                end_zone += "EOZ:" + Utils.appendSpace(trend_d1, 4);
-                if (!zone_h4.contains(trend_d1)) {
-                    end_zone += ".h4";
-                }
-                if (!zone_h12.contains(trend_d1)) {
-                    end_zone += ".h12";
-                }
-                if (!zone_d1.contains(trend_d1)) {
-                    end_zone += ".d1";
+            if (!Objects.equals(trend_w1, trend_d1)) {
+                if (!(zone_d1).contains(trend_d1) || !(zone_h12).contains(trend_d1) || !(zone_h4).contains(trend_d1)) {
+                    end_zone += "EOZ:" + Utils.appendSpace(trend_d1, 4);
+                    if (!zone_h4.contains(trend_d1)) {
+                        end_zone += ".h4";
+                    }
+                    if (!zone_h12.contains(trend_d1)) {
+                        end_zone += ".h12";
+                    }
+                    if (!zone_d1.contains(trend_d1)) {
+                        end_zone += ".d1";
+                    }
                 }
             }
             // ---------------------------------------------------------------------
@@ -3904,7 +3906,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (Objects.isNull(dto) && !Objects.equals(trend_w1, trend_d1)) {
+                if (Objects.isNull(dto) && Utils.isBlank(end_zone) && !Objects.equals(trend_w1, trend_d1)) {
                     if (dto_h12.isAllow_trade_by_ma50() && dto_h4.isAllow_trade_by_ma50()
                             && dto_h1.isAllow_trade_by_ma50()
                             && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)) {
@@ -3927,7 +3929,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // ---------------------------------------------------------------------
-                if (Utils.isBlank(end_zone) && Objects.nonNull(dto)) {
+                if (Objects.nonNull(dto)) {
                     if (!is_opening_trade(EPIC, action) || allow_padding_trade_after_1day(EPIC)) {
                         BscScanBinanceApplication.mt5_open_trade_List.add(dto);
                         BscScanBinanceApplication.dic_comment.put(dto.getEpic().toUpperCase(), dto.getComment());
