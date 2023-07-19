@@ -3541,8 +3541,7 @@ public class BinanceServiceImpl implements BinanceService {
                 index += 1;
 
             } else if (comment.contains(trend_w1) && Objects.equals(trend_w1, trend_d1)
-                    && Objects.equals(trend_w1, trend_h4)
-                    && Objects.equals(trend_w1, trend_h1)) {
+                    && Objects.equals(trend_w1, trend_h4) && Objects.equals(trend_w1, trend_h1)) {
 
                 analysis_profit(prefix, EPIC, comment.trim(), trend_w1);
                 index += 1;
@@ -3898,7 +3897,7 @@ public class BinanceServiceImpl implements BinanceService {
                                 && dto_h4.getSwitch_trend().contains(trend_d1)) {
                             append = "9624124w1";
                         } else if (dto_05.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_05)
-                                && dto_h1.isAllow_trade_by_ma50() && dto_h1.getSwitch_trend().contains(trend_d1)) {
+                                && dto_h1.getSwitch_trend().contains(trend_d1)) {
                             append = "96241241w";
                         } else if (dto_05.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_15)
                                 && Objects.equals(trend_d1, trend_05)) {
