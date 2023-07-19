@@ -1471,7 +1471,17 @@ public class Utils {
         return false;
     }
 
-    public static boolean isSleepTime_8h_to_22h() {
+    public static String get_trending_by_dow_definitions(Orders dto_xx) {
+        String trend = dto_xx.getTrend_c1();
+        String switch_trend = dto_xx.getSwitch_trend().trim();
+        if (switch_trend.contains(dto_xx.getTrend())) {
+            trend = dto_xx.getTrend();
+        }
+
+        return trend;
+    }
+
+    public static boolean isSleepTime_23h_to_8h() {
         List<Integer> times = Arrays.asList(8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
@@ -2835,16 +2845,11 @@ public class Utils {
             zone = Utils.TREND_SHOT;
         }
 
-        // BUY + SELL area
-        if ((buy_sel_area.get(0).compareTo(curr_price) < 0) && (curr_price.compareTo(buy_sel_area.get(1)) < 0)) {
-            zone = Utils.TREND_LONG + "_" + Utils.TREND_SHOT;
-        }
-
         return zone; // Utils.appendSpace(zone, 10);
     }
 
     public static List<BigDecimal> getBuySellArea(List<BtcFutures> heiken_list) {
-        int section = 3;
+        int section = 2;
         List<BigDecimal> LoHi = Utils.getLowHighCandle(heiken_list);
         BigDecimal high = LoHi.get(1).subtract(LoHi.get(0));
         BigDecimal quarter = high.divide(BigDecimal.valueOf(section), 10, RoundingMode.CEILING);
@@ -3972,7 +3977,7 @@ public class Utils {
         msg += Utils.appendSpace(dto.getComment(), 35) + timeframe;
         msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4, "_") + ")", 10);
         msg += Utils.appendSpace(dto.getEpic(), 10);
-        msg += "    ";
+        msg += "  ";
         msg += " Price: " + Utils.appendLeft(Utils.removeLastZero(dto.getCur_price().toString()), 10);
         msg += "      ";
         msg += " Vol: " + Utils.appendSpace(Utils.removeLastZero(dto.getLots().toString()), 10) + "(lot)   ";
@@ -3990,11 +3995,13 @@ public class Utils {
         msg += Utils.appendSpace(dto.getComment(), 35) + timeframe;
         msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getTypeDescription(), 4, "_") + ")", 10);
         msg += Utils.appendSpace(dto.getSymbol(), 10);
-        msg += "    ";
+        msg += "  ";
         msg += " Ticket: " + Utils.appendSpace(dto.getTicket(), 15);
         msg += " Vol: " + Utils.appendSpace(Utils.removeLastZero(dto.getVolume().toString()), 10) + "(lot)   ";
-        msg += " Profit:" + Utils.appendLeft(Utils.getStringValue(dto.getProfit().intValue()), 6);
-        msg += Utils.appendSpace("", 35);
+        msg += " Profit:" + Utils.appendLeft(Utils.getStringValue(dto.getProfit().intValue()), 6) + "   ";
+        msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStopLoss()), 10);
+
+        msg += Utils.appendSpace("", 17);
         msg += Utils.appendSpace(Utils.getCapitalLink(dto.getSymbol()), 62);
         msg += Utils.appendSpace(reason, 30);
 
