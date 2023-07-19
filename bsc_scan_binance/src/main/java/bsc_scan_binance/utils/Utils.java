@@ -3964,7 +3964,7 @@ public class Utils {
         msg += " Vol: " + Utils.appendSpace(Utils.removeLastZero(dto.getLots().toString()), 10) + "(lot)   ";
         msg += " E: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()), 10) + "   ";
         msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10);
-        msg += " TP: " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit()), 10);
+        msg += " TP: " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit()), 10) + " ";
 
         return msg;
     }
@@ -3979,7 +3979,7 @@ public class Utils {
         msg += " Ticket: " + Utils.appendSpace(dto.getTicket(), 15);
         msg += " Vol: " + Utils.appendSpace(Utils.removeLastZero(dto.getVolume().toString()), 10) + "(lot)   ";
         msg += " Profit:" + Utils.appendLeft(Utils.getStringValue(dto.getProfit().intValue()), 6);
-        msg += Utils.appendSpace("     ", 30);
+        msg += Utils.appendSpace("", 35);
         msg += Utils.appendSpace(Utils.getCapitalLink(dto.getSymbol()), 62);
         msg += Utils.appendSpace(reason, 30);
 
@@ -4392,7 +4392,7 @@ public class Utils {
         dto.setEntry(en_05);
         dto.setStop_loss(sl_d1);
         dto.setTake_profit(tp_d1);
-        dto.setComment("(" + BscScanBinanceApplication.hostname + ")" + append + range + timeframe);
+        dto.setComment(BscScanBinanceApplication.hostname  + append + range + timeframe);
 
         return dto;
     }

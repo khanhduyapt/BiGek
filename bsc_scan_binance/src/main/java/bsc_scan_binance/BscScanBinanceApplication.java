@@ -51,6 +51,7 @@ public class BscScanBinanceApplication {
             if (hostname.length() > 2) {
                 hostname = hostname.substring(0, 2);
             }
+            hostname = "(" + hostname + ")";
 
             System.out.println("Start "
                     + Utils.convertDateToString("yyyy-MM-dd HH:mm:ss", Calendar.getInstance().getTime()) + " ---->");
@@ -151,6 +152,7 @@ public class BscScanBinanceApplication {
 
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_15);
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_05);
                                 }
 
                                 for (String EPIC : Utils.EPICS_STOCKS) {
