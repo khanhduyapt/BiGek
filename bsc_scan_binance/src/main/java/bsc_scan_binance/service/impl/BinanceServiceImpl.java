@@ -4036,7 +4036,8 @@ public class BinanceServiceImpl implements BinanceService {
             if (isPriceHit_TP || isPriceHit_SL || isTimeout || isOpenOtherTrend) {
                 if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H) || isPriceHit_TP || isPriceHit_SL) {
                     String prefix = Utils.getChartNameCapital(mt5Entity.getTimeframe()) + "Close:   ";
-                    prefix += Utils.appendSpace(trade.getCompany(), 8);
+                    prefix += Utils.appendSpace(trade.getCompany(), 10);
+                    prefix += Utils.appendSpace(trade.getSymbol(), 15);
                     prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
                     prefix += "(Trade):" + Utils.appendSpace(TRADE_TREND, 10);
                     prefix += Utils.getChartNameCapital(mt5Entity.getTimeframe()) + ":"
