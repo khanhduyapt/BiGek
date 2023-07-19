@@ -1195,7 +1195,7 @@ public class Utils {
             if (Utils.isNotBlank(msg)) {
                 if (Objects.equals(text, "...")) {
                     msg = Utils.appendSpace("", 363, "_");
-                } else if (text.length() > 20 && isBlank(text.substring(0, 20))) {
+                } else if (text.length() > 10 && isBlank(text.substring(0, 10))) {
                     msg = Utils.appendLeft("",
                             (BscScanBinanceApplication.hostname + Utils.getMmDD_TimeHHmm() + " ").length())
                             + text.replace(Utils.new_line_from_service, "\n");

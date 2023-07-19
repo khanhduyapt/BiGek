@@ -2934,7 +2934,7 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                String msg = Utils.appendSpace("", 30);
+                String msg = Utils.appendSpace("", 10);
                 if (allow_padding_trade_after_1day(EPIC)) {
                     msg += "ExtenTrade: ";
                 } else {
@@ -2943,15 +2943,15 @@ public class BinanceServiceImpl implements BinanceService {
 
                 msg += Utils.appendSpace(dto.getComment(), 35);
                 msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4, "_") + ")", 10);
-                msg += Utils.appendSpace(dto.getEpic(), 10) + ":" + Utils.appendLeft(dto.getCur_price().toString(), 15);
+                msg += Utils.appendSpace(dto.getEpic(), 10) + ":" + Utils.appendLeft(dto.getCur_price().toString(), 10);
                 msg += Utils.new_line_from_service;
                 msg += "___Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
-                msg += "___E: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()), 15) + "   ";
-                msg += "___SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 15);
-                msg += "___TP: " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit()), 15);
+                msg += "___E: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()), 10) + "   ";
+                msg += "___SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10);
+                msg += "___TP: " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit()), 10);
 
                 String log = msg.replace(Utils.new_line_from_service, " ").replace("___", "   ");
-                Utils.logWritelnDraft(log);
+                Utils.logWritelnDraft(log + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
 
                 StringBuilder sb = new StringBuilder();
                 sb.append(dto.getEpic());
@@ -3906,12 +3906,15 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (Objects.isNull(dto) && !Objects.equals(trend_w1, trend_d1)) {
                     if (dto_h12.isAllow_trade_by_ma50() && dto_h4.isAllow_trade_by_ma50()
+                            && dto_h1.isAllow_trade_by_ma50()
                             && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)) {
                         String append = "";
                         if (dto_h12.getSwitch_trend().contains(trend_d1)) {
                             append = "002412w41";
                         } else if (dto_h4.getSwitch_trend().contains(trend_d1)) {
                             append = "0024124w1";
+                        } else if (dto_h1.getSwitch_trend().contains(trend_d1)) {
+                            append = "00241241w";
                         }
                         if (Utils.isNotBlank(append)) {
                             action = trend_d1;
