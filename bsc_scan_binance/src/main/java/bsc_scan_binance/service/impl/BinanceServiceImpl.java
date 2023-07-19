@@ -2934,24 +2934,14 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                String msg = Utils.appendSpace("", 10);
+                String msg = "";
                 if (allow_padding_trade_after_1day(EPIC)) {
                     msg += "ExtenTrade: ";
                 } else {
                     msg += "Open_Trade: ";
                 }
-
-                msg += Utils.appendSpace(dto.getComment(), 35);
-                msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4, "_") + ")", 10);
-                msg += Utils.appendSpace(dto.getEpic(), 10) + ":" + Utils.appendLeft(dto.getCur_price().toString(), 10);
-                msg += Utils.new_line_from_service;
-                msg += "___Vol: " + Utils.appendSpace(dto.getLots().toString(), 10) + "(lot)   ";
-                msg += "___E: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()), 10) + "   ";
-                msg += "___SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10);
-                msg += "___TP: " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit()), 10);
-
-                String log = msg.replace(Utils.new_line_from_service, " ").replace("___", "   ");
-                Utils.logWritelnDraft(log + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
+                msg = Utils.createOpenTradeMsg(dto, msg);
+                Utils.logWritelnDraft(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
 
                 StringBuilder sb = new StringBuilder();
                 sb.append(dto.getEpic());
@@ -4040,29 +4030,22 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------
             if (isPriceHit_TP || isPriceHit_SL || isTimeout || isOpenOtherTrend) {
                 if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H) || isPriceHit_TP || isPriceHit_SL) {
-                    String prefix = Utils.getChartNameCapital(mt5Entity.getTimeframe()) + "Close:   ";
-                    prefix += Utils.appendSpace(trade.getCompany(), 10);
-                    prefix += Utils.appendSpace(trade.getSymbol(), 15);
-                    prefix += "(Ticket):" + Utils.appendSpace(trade.getTicket(), 15);
-                    prefix += "(Trade):" + Utils.appendSpace(TRADE_TREND, 10);
-                    prefix += Utils.getChartNameCapital(mt5Entity.getTimeframe()) + ":"
-                            + Utils.appendSpace(trend_h4, 10);
-                    prefix += "(Profit):"
-                            + Utils.appendSpace(Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 10), 15);
-                    prefix += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
-                    Utils.logWritelnDraft(prefix);
-
                     mt5_close_trade_list.add(TICKET);
 
+                    String reason = "";
                     if (isPriceHit_TP) {
-                        mt5_close_trade_reason.add("+1R");
+                        reason = "+1R(TrendInverse)";
                     } else if (isPriceHit_SL) {
-                        mt5_close_trade_reason.add("-1R");
+                        reason = "-1R(TrendInverse)";
                     } else if (isTimeout) {
-                        mt5_close_trade_reason.add("Timeout.");
+                        reason = "Timeout(TrendInverse)";
                     } else if (isOpenOtherTrend) {
-                        mt5_close_trade_reason.add("OtherTrend.");
+                        reason = "OtherTrend(TrendInverse)";
                     }
+                    mt5_close_trade_reason.add(reason);
+
+                    String log = Utils.createCloseTradeMsg(mt5Entity, "CloseTrade: ", reason);
+                    Utils.logWritelnDraft(log);
                 }
             }
         }

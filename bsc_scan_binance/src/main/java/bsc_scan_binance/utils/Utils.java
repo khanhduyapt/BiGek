@@ -53,6 +53,7 @@ import org.springframework.web.servlet.LocaleResolver;
 import bsc_scan_binance.BscScanBinanceApplication;
 import bsc_scan_binance.entity.BtcFutures;
 import bsc_scan_binance.entity.Mt5OpenTrade;
+import bsc_scan_binance.entity.Mt5OpenTradeEntity;
 import bsc_scan_binance.entity.Orders;
 import bsc_scan_binance.response.CandidateTokenCssResponse;
 import bsc_scan_binance.response.DepthResponse;
@@ -3949,6 +3950,40 @@ public class Utils {
         default:
             return MINUTES_OF_12H;
         }
+    }
+
+    public static String createOpenTradeMsg(Mt5OpenTrade dto, String prefix) {
+        String msg = Utils.appendSpace("", 10) + prefix;
+
+        msg += Utils.appendSpace(dto.getComment(), 35);
+        msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4, "_") + ")", 10);
+        msg += Utils.appendSpace(dto.getEpic(), 10);
+        msg += "    ";
+        msg += " Price: " + Utils.appendLeft(Utils.removeLastZero(dto.getCur_price().toString()), 10);
+        msg += "      ";
+        msg += " Vol: " + Utils.appendSpace(Utils.removeLastZero(dto.getLots().toString()), 10) + "(lot)   ";
+        msg += " E: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()), 10) + "   ";
+        msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10);
+        msg += " TP: " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit()), 10);
+
+        return msg;
+    }
+
+    public static String createCloseTradeMsg(Mt5OpenTradeEntity dto, String prefix, String reason) {
+        String msg = Utils.appendSpace("", 10) + prefix;
+
+        msg += Utils.appendSpace(dto.getComment(), 35);
+        msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getTypeDescription(), 4, "_") + ")", 10);
+        msg += Utils.appendSpace(dto.getSymbol(), 10);
+        msg += "    ";
+        msg += " Ticket: " + Utils.appendSpace(dto.getTicket(), 15);
+        msg += " Vol: " + Utils.appendSpace(Utils.removeLastZero(dto.getVolume().toString()), 10) + "(lot)   ";
+        msg += " Profit:" + Utils.appendLeft(Utils.getStringValue(dto.getProfit().intValue()), 6);
+        msg += Utils.appendSpace("     ", 30);
+        msg += Utils.appendSpace(Utils.getCapitalLink(dto.getSymbol()), 62);
+        msg += Utils.appendSpace(reason, 30);
+
+        return msg;
     }
 
     public static String createLineForex_Body(BigDecimal risk, Orders dto_entry, Orders dto_sl, String find_trend,
