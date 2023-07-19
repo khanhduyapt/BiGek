@@ -161,12 +161,12 @@ public class BscScanBinanceApplication {
 
                                 binance_service.initTradeList();
                                 monitorForex(binance_service);
+                                binance_service.monitorProfit();
                             }
                         }
 
                         if (isReloadAfter(5, "MT5_SL_TP")) {
                             binance_service.initTradeList();
-                            binance_service.monitorProfit();
                             binance_service.closeTrade_by_SL_TP();
                         }
 

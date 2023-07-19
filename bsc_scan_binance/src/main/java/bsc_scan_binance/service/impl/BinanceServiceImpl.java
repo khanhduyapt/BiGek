@@ -2655,6 +2655,9 @@ public class BinanceServiceImpl implements BinanceService {
             String chart_name = Utils.getChartNameCapital(CAPITAL_TIME_XX).replace("(", "").replace(")", "").trim();
             Orders dto = ordersRepository.findById(EPIC + "_" + CAPITAL_TIME_XX).orElse(null);
             if (Objects.isNull(dto)) {
+                if (Utils.isNotBlank(result))
+                    result += " ";
+                result += Utils.appendSpace("", chart_name.length()) + "     ";
                 continue;
             }
 
@@ -2722,20 +2725,21 @@ public class BinanceServiceImpl implements BinanceService {
             t_profit = t_profit.add(Utils.getBigDecimal(trade.getProfit()));
         }
 
-        String append = prifix + dto_sweet_trend_note + Utils.appendSpace(
+        String append = prifix + Utils.appendSpace(
                 tradeList.size() > 0 ? " T_Profit:" + Utils.appendLeft(String.valueOf(t_profit.intValue()), 6) : "",
                 15);
 
         outputLog(EPIC, append, find_trend);
 
         for (Mt5OpenTradeEntity trade : tradeList) {
-            String ea = " Opening: ";
+            String ea = "  Opening: ";
             ea += Utils.appendLeft(trade.getCompany(), 9) + ": ";
             ea += Utils.appendSpace(trade.getTypeDescription(), 12) + " ";
             ea += " SL:" + Utils.appendSpace(Utils.removeLastZero(trade.getStopLoss()), 11);
-            ea += " TP:" + Utils.appendSpace(Utils.removeLastZero(trade.getTakeProfit()), 15);
-            ea += " Profit:" + Utils.getBigDecimal(trade.getProfit()).intValue();
-            ea = Utils.appendLeft("", 150) + Utils.appendSpace(ea, length);
+            ea += " TP:" + Utils.appendSpace(Utils.removeLastZero(trade.getTakeProfit()), 10);
+            ea += " Profit:"
+                    + Utils.appendLeft(Utils.getStringValue(Utils.getBigDecimal(trade.getProfit()).intValue()), 6);
+            ea = Utils.appendLeft("", 118) + Utils.appendSpace(ea, length);
 
             Utils.logWritelnDraft(ea);
         }
@@ -2768,14 +2772,6 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_w1 = dto_w1.getTrend();
         String trend_d1 = dto_d1.getTrend();
         String trend_h4 = dto_h4.getTrend();
-        String trend_h1 = dto_h1.getTrend();
-
-        if (dto_h1.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_h4)
-                && Objects.equals(trend_h4, trend_h1)) {
-            append += " A   ";
-        } else {
-            append += "     ";
-        }
 
         String text_risk = "0.1 % ";
         BigDecimal risk = Utils.RISK_0_10_PERCENT;
@@ -2786,7 +2782,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_h1.getCurrent_price(), 5)), 11);
-        log += Utils.appendSpace(append.trim(), 126) + " ";
+        log += Utils.appendSpace(append.trim(), 95) + " ";
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
         log += text_risk + Utils
                 .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, dto_d1.getTrend(), EPIC, dto_h1, dto_d1), 56);
@@ -2985,8 +2981,8 @@ public class BinanceServiceImpl implements BinanceService {
                 result += "   Vol:" + Utils.appendLeft(Utils.removeLastZero(trade.getVolume()), 6);
                 result += "   (Profit):" + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 6);
                 result += "    " + Utils.appendSpace(multi_timeframes, 85);
-                result += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
-                result += Utils.appendSpace(" " + trade.getComment() + " ", 35, "-") + " ";
+                result += Utils.appendSpace(Utils.getCapitalLink(EPIC) + " ", 62, "-") ;
+                result += Utils.appendSpace(trade.getComment() + " ", 35, "-") + " ";
 
                 total = total.add(PROFIT);
                 msg += result + Utils.new_line_from_service;
@@ -3442,25 +3438,26 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnDraft("[scapStocks] dto(" + EPIC + ") is null.");
                 continue;
             }
-            String trend_mo = dto_mo.getTrend();
-            String trend_w1 = dto_w1.getTrend();
-            String trend_d1 = dto_d1.getTrend();
-            String trend_h4 = dto_h4.getTrend();
-            String trend_h1 = dto_h1.getTrend();
 
-            String switch_trend = ". " + Utils.appendSpace(trend_w1, 4) + "  MO.W1.D1.H4.H1           ";
+            String trend_mo = Utils.get_trending_by_dow_definitions(dto_mo);
+            String trend_w1 = Utils.get_trending_by_dow_definitions(dto_w1);
+            String trend_d1 = Utils.get_trending_by_dow_definitions(dto_d1);
+            String trend_h4 = Utils.get_trending_by_dow_definitions(dto_h4);
+            String trend_h1 = Utils.get_trending_by_dow_definitions(dto_h1);
+
+            String switch_trend = ". " + Utils.appendSpace(trend_w1, 4) + "  MO-W1-D1-H4-H1-          ";
             String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
             if (!Objects.equals(trend_mo, trend_w1)) {
-                prefix = prefix.replace("MO.", "   ");
+                prefix = prefix.replace("MO-", "---");
             }
             if (!Objects.equals(trend_d1, trend_w1)) {
-                prefix = prefix.replace("D1", "  ");
+                prefix = prefix.replace("D1-", "---");
             }
             if (!Objects.equals(trend_h4, trend_w1)) {
-                prefix = prefix.replace("H4", "  ");
+                prefix = prefix.replace("H4-", "---");
             }
             if (!Objects.equals(trend_h1, trend_w1)) {
-                prefix = prefix.replace("H1", "  ");
+                prefix = prefix.replace("H1-", "---");
             }
 
             // TODO: scapStocks
