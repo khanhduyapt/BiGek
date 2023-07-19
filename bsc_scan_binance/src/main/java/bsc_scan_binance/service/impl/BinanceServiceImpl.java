@@ -4024,7 +4024,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ---------------------------------------------------------------------------------
             boolean isTimeout = false;
-            if (isTrendInverse && allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H)) {
+            if (isTrendInverse && allow_close_trade_after(TICKET, Utils.MINUTES_OF_D)) {
                 isTimeout = true;
             }
             // ---------------------------------------------------------------------------------
