@@ -4510,7 +4510,7 @@ public class Utils {
         week = appendSpace(week, 10);
 
         String No = Utils.appendLeft(String.valueOf(index), 2) + ". " + week;
-        String prefix_trend = "MO.W1.D1.H12.H4.H1";
+        String prefix_trend = "MO.W1.D1.H12.H4.H1.";
 
         if (!Objects.equals(trend_d1, trend_mo)) {
             prefix_trend = prefix_trend.replace("MO.", "   ");
@@ -4525,7 +4525,7 @@ public class Utils {
             prefix_trend = prefix_trend.replace("H4.", "   ");
         }
         if (!Objects.equals(trend_d1, trend_h1)) {
-            prefix_trend = prefix_trend.replace("H1", "  ");
+            prefix_trend = prefix_trend.replace("H1.", "   ");
         }
 
         prefix_trend = prefix_trend + "     " + appendSpace(trend_d1, 5);
