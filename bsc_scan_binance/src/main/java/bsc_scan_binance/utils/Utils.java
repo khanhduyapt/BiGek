@@ -236,7 +236,7 @@ public class Utils {
 
     public static final String EPICS_INDEXS = "_US30_SP500_GER30_GER40_UK100_FRA40_SPN35_EU50_US100_AUS200_BTCUSD_";
 
-    public static final List<String> EPICS_METALS = Arrays.asList("DX.f", "XAUUSD", "XAGUSD", "USOIL", "BTCUSD");
+    public static final List<String> EPICS_METALS = Arrays.asList("DX", "XAUUSD", "XAGUSD", "USOIL", "BTCUSD");
 
     public static final List<String> EPICS_CRYPTO_CFD = Arrays.asList("BTCUSD", "ETHUSD", "ADAUSD", "DASHUSD",
             "DOGEUSD", "DOTUSD", "LTCUSD", "XRPUSD");
@@ -1099,7 +1099,7 @@ public class Utils {
         } else if ("_GER40_FRA40_UK100_US30_XAUUSD_AUS200_".contains(epic)) {
             EXCHANGE = "PEPPERSTONE";
 
-        } else if (Objects.equals("DX.f", epic)) {
+        } else if (Objects.equals("DX.f", epic) || Objects.equals("DX", epic)) {
             epic = "DXY";
 
         } else if (Objects.equals("SPN35", epic)) {
@@ -3538,6 +3538,7 @@ public class Utils {
             break;
 
         case "DX.f":
+        case "DX":
             standard_lot = BigDecimal.valueOf(1);
             unit_risk_per_pip = BigDecimal.valueOf(100);
             break;
@@ -4509,13 +4510,16 @@ public class Utils {
         week = appendSpace(week, 10);
 
         String No = Utils.appendLeft(String.valueOf(index), 2) + ". " + week;
-        String prefix_trend = "MO.W1.D1.H4.H1";
+        String prefix_trend = "MO.W1.D1.H12.H4.H1";
 
         if (!Objects.equals(trend_d1, trend_mo)) {
             prefix_trend = prefix_trend.replace("MO.", "   ");
         }
         if (!Objects.equals(trend_d1, trend_w1)) {
             prefix_trend = prefix_trend.replace("W1.", "   ");
+        }
+        if (!Objects.equals(trend_d1, trend_h12)) {
+            prefix_trend = prefix_trend.replace("H12.", "    ");
         }
         if (!Objects.equals(trend_d1, trend_h4)) {
             prefix_trend = prefix_trend.replace("H4.", "   ");
@@ -4524,26 +4528,45 @@ public class Utils {
             prefix_trend = prefix_trend.replace("H1", "  ");
         }
 
-        prefix_trend = appendSpace(prefix_trend + ":" + trend_d1, 25);
+        prefix_trend = appendSpace(prefix_trend + " : " + trend_d1, 25);
 
         String switch_trend = "{";
-        if (Objects.equals(trend_d1, trend_h12) && note_d1.contains(trend_h12)) {
+
+        boolean same_d1h12h4 = false;
+        if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)) {
+            same_d1h12h4 = true;
+        }
+
+        if (same_d1h12h4 && Objects.equals(trend_mo, trend_d1) && note_mo.contains(trend_mo)) {
+            switch_trend += getTrendPrefix("MO", note_mo, " ");
+        } else {
+            switch_trend += getTrendPrefix("MO", "", " ");
+        }
+
+        if (same_d1h12h4 && Objects.equals(trend_w1, trend_d1) && note_w1.contains(trend_w1)) {
+            switch_trend += getTrendPrefix("W1", note_w1, " ");
+        } else {
+            switch_trend += getTrendPrefix("W1", "", " ");
+        }
+
+        if (same_d1h12h4 && note_d1.contains(trend_d1)) {
             switch_trend += getTrendPrefix("D1", note_d1, " ");
         } else {
             switch_trend += getTrendPrefix("D1", "", " ");
         }
 
-        if (Objects.equals(trend_d1, trend_h12) && note_h12.contains(trend_h12)) {
+        if (same_d1h12h4 && note_h12.contains(trend_h12)) {
             switch_trend += getTrendPrefix("H12", note_h12, " ");
         } else {
             switch_trend += getTrendPrefix("H12", "", " ");
         }
 
-        if (Objects.equals(trend_h12, trend_h4) && note_h4.contains(trend_h4)) {
+        if (same_d1h12h4 && note_h4.contains(trend_h4)) {
             switch_trend += getTrendPrefix("H4", note_h4, "");
         } else {
             switch_trend += getTrendPrefix("H4", "", "");
         }
+
         switch_trend += "}  ";
 
         String result = No + prefix_trend + switch_trend;

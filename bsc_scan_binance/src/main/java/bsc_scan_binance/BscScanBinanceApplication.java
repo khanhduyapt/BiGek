@@ -44,6 +44,7 @@ public class BscScanBinanceApplication {
     public static List<Mt5OpenTrade> mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
     public static Hashtable<String, Mt5OpenTrade> waitingM05list = new Hashtable<String, Mt5OpenTrade>();
     public static List<String> msg_w_noteq_d_but_h12_sweet_trend = new ArrayList<String>();
+
     public static void main(String[] args) {
         try {
             initForex_naming_dict();
@@ -134,15 +135,10 @@ public class BscScanBinanceApplication {
                         }
 
                         if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
-                            if (isReloadAfter(2, "MT5_TRADING_DATA")) {
-                                binance_service.initTradeList();
-                            }
 
                             if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
                                 binance_service.saveMt5Data("ForexM.csv", Utils.MINUTES_RELOAD_CSV_DATA);
-                                wait(SLEEP_MINISECONDS);
                                 binance_service.saveMt5Data("Stocks.csv", Utils.MINUTES_OF_1H);
-                                wait(SLEEP_MINISECONDS);
 
                                 for (String EPIC : CAPITAL_LIST) {
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MO);
@@ -163,11 +159,14 @@ public class BscScanBinanceApplication {
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
                                 }
 
+                                binance_service.initTradeList();
                                 monitorForex(binance_service);
                             }
                         }
 
-                        if (isReloadAfter(3, "MT5_SL_TP")) {
+                        if (isReloadAfter(5, "MT5_SL_TP")) {
+                            binance_service.initTradeList();
+                            binance_service.monitorProfit();
                             binance_service.closeTrade_by_SL_TP();
                         }
 
@@ -292,8 +291,6 @@ public class BscScanBinanceApplication {
         Utils.logWritelnDraftFooter();
         binance_service.scapStocks();
         Utils.logWritelnDraftFooter();
-        // --------------------------------------------------------------------------
-        binance_service.monitorProfit();
         // --------------------------------------------------------------------------
         String cur_epics = EPICS_OUTPUT_MSG;
         String[] arr = cur_epics.split("_");

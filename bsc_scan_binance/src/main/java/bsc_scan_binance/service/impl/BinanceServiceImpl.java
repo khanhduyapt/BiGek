@@ -2722,19 +2722,20 @@ public class BinanceServiceImpl implements BinanceService {
             t_profit = t_profit.add(Utils.getBigDecimal(trade.getProfit()));
         }
 
-        String append = prifix + dto_sweet_trend_note
-                + Utils.appendSpace(tradeList.size() > 0 ? " T_Profit:" + String.valueOf(t_profit.intValue()) : "", 15);
+        String append = prifix + dto_sweet_trend_note + Utils.appendSpace(
+                tradeList.size() > 0 ? " T_Profit:" + Utils.appendLeft(String.valueOf(t_profit.intValue()), 6) : "",
+                15);
 
         outputLog(EPIC, append, find_trend);
 
         for (Mt5OpenTradeEntity trade : tradeList) {
-            String ea = "Opening: ";
-            ea += Utils.appendLeft(trade.getCompany(), 9) + ":";
+            String ea = " Opening: ";
+            ea += Utils.appendLeft(trade.getCompany(), 9) + ": ";
             ea += Utils.appendSpace(trade.getTypeDescription(), 12) + " ";
             ea += " SL:" + Utils.appendSpace(Utils.removeLastZero(trade.getStopLoss()), 11);
             ea += " TP:" + Utils.appendSpace(Utils.removeLastZero(trade.getTakeProfit()), 15);
-            ea += "     Profit:" + Utils.getBigDecimal(trade.getProfit()).intValue();
-            ea = Utils.appendLeft("", 33) + Utils.appendSpace(ea, length);
+            ea += " Profit:" + Utils.getBigDecimal(trade.getProfit()).intValue();
+            ea = Utils.appendLeft("", 150) + Utils.appendSpace(ea, length);
 
             Utils.logWritelnDraft(ea);
         }
@@ -2914,9 +2915,6 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public void monitorProfit() {
-        initTradeList();
-        closeTrade_by_SL_TP();
-
         // -------------------------------------------------------------------------------------
         // "BTCUSD", GER40", "US30", "US100", "UK100", "USOIL", "XAGUSD", "XAUUSD"
         // "AUDJPY", "AUDUSD", "CADJPY", "CHFJPY",
@@ -3082,7 +3080,7 @@ public class BinanceServiceImpl implements BinanceService {
             while ((line = fin.readLine()) != null) {
                 total_line += 1;
 
-                String[] tempArr = line.replace(".cash", "").split("\\t");
+                String[] tempArr = line.replace(".f", "").replace(".cash", "").replace(".pro", "").split("\\t");
                 if (tempArr.length == 7) {
                     Mt5DataCandle dto = new Mt5DataCandle(new Mt5DataCandleKey(tempArr[0], tempArr[1], tempArr[2]),
                             Utils.getBigDecimal(tempArr[3]), Utils.getBigDecimal(tempArr[4]),
@@ -3527,11 +3525,11 @@ public class BinanceServiceImpl implements BinanceService {
                     if (row_count == 1) {
                         continue;
                     }
-                    String[] tempArr = line.replace(".cash", "").replace(".pro", "").split("\\t");
+                    String[] tempArr = line.replace(".f", "").replace(".cash", "").replace(".pro", "").split("\\t");
                     if (tempArr.length == 10) {
                         Mt5DataTrade dto = new Mt5DataTrade();
 
-                        dto.setSymbol(tempArr[0].toUpperCase());
+                        dto.setSymbol(tempArr[0]);
                         dto.setTicket(tempArr[1].toUpperCase());
                         dto.setType(tempArr[2].toUpperCase());
 
@@ -3575,12 +3573,12 @@ public class BinanceServiceImpl implements BinanceService {
 
         // TODO: 2. initTradeList
         for (Mt5DataTrade trade : tradeList) {
-            String EPIC = trade.getSymbol().toUpperCase();
-            // if (Objects.equals(EPIC, "BAC")) {
-            // boolean debug = true;
-            // }
+            String EPIC = trade.getSymbol();
+            if (EPIC.contains("DX")) {
+                boolean debug = true;
+            }
             for (String key : BscScanBinanceApplication.linked_2_ftmo.keySet()) {
-                if (key.contains(EPIC)) {
+                if (key.contains("_" + EPIC + "_")) {
                     EPIC = BscScanBinanceApplication.linked_2_ftmo.get(key);
                     break;
                 }
@@ -3627,7 +3625,7 @@ public class BinanceServiceImpl implements BinanceService {
                     entity.setTakeProfit(trade.getTakeProfit());
                 }
             }
-
+            entity.setSymbol(EPIC);
             if (Utils.isBlank(entity.getComment()) && Utils.isNotBlank(comment)) {
                 entity.setComment(comment.replace(" ", ""));
             }
@@ -3860,7 +3858,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (!is_opening_trade(EPIC, trend_d1)) {
+                if (!is_opening_trade(EPIC, "")) {
                     if (!Objects.equals(trend_w1, trend_d1) && dto_h12.getSwitch_trend().contains(trend_d1)
                             && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
                             && Objects.equals(trend_d1, trend_h1)) {
@@ -3992,6 +3990,10 @@ public class BinanceServiceImpl implements BinanceService {
         List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAll();
         for (Mt5OpenTradeEntity trade : mt5Openlist) {
             String EPIC = trade.getSymbol().toUpperCase();
+            if (Objects.equals(EPIC, "DX.F")) {
+                EPIC = "DX";
+            }
+
             String TICKET = trade.getTicket();
             String TRADE_TREND = trade.getTypeDescription().toUpperCase();
             BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
@@ -4060,8 +4062,9 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ---------------------------------------------------------------------------------
             boolean isTimeout = false;
-            if (Utils.isCloseTradeThisWeek() && !Objects.equals(dto_h1.getTrend_c1(), TRADE_TREND)) {
-                // isTimeout = true;
+            if (Utils.isCloseTradeThisWeek() && !Objects.equals(dto_h4.getTrend_c1(), TRADE_TREND)
+                    && !Objects.equals(trend_h4, TRADE_TREND)) {
+                isTimeout = true;
             }
             // ---------------------------------------------------------------------------------
             boolean isOpenOtherTrend = false;
