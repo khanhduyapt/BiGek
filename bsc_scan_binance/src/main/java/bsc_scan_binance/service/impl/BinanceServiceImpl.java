@@ -2982,11 +2982,11 @@ public class BinanceServiceImpl implements BinanceService {
                 result += Utils.appendSpace(TRADE_TREND, 10) + "    ";
                 result += Utils.appendSpace(EPIC, 10);
                 result += Utils.appendSpace(trade.getTicket(), 10);
-                result += "   Vol:" + Utils.appendLeft(Utils.getStringValue(trade.getVolume()), 6);
+                result += "   Vol:" + Utils.appendLeft(Utils.removeLastZero(trade.getVolume()), 6);
                 result += "   (Profit):" + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 6);
                 result += "    " + multi_timeframes;
-                result += Utils.appendSpace(" " + trade.getComment() + " ", 35, "-") + " ";
                 result += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
+                result += Utils.appendSpace(" " + trade.getComment() + " ", 35, "-") + " ";
 
                 total = total.add(PROFIT);
                 msg += result + Utils.new_line_from_service;

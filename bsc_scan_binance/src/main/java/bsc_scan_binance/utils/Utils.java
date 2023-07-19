@@ -3987,9 +3987,9 @@ public class Utils {
         msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4, "_") + ")", 10);
         msg += Utils.appendSpace(dto.getEpic(), 10);
         msg += "  ";
-        msg += " Price: " + Utils.appendLeft(Utils.removeLastZero(dto.getCur_price().toString()), 10);
+        msg += " Price: " + Utils.appendLeft(Utils.removeLastZero(dto.getCur_price()), 10);
         msg += "      ";
-        msg += " Vol: " + Utils.appendSpace(Utils.removeLastZero(dto.getLots().toString()), 10) + "(lot)   ";
+        msg += " Vol: " + Utils.appendLeft(Utils.removeLastZero(dto.getLots()), 10) + "(lot)   ";
         msg += " E: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()), 10) + "   ";
         msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10);
         msg += " TP: " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit()), 10) + " ";
@@ -4006,7 +4006,7 @@ public class Utils {
         msg += Utils.appendSpace(dto.getSymbol(), 10);
         msg += "  ";
         msg += " Ticket: " + Utils.appendSpace(dto.getTicket(), 15);
-        msg += " Vol: " + Utils.appendSpace(Utils.removeLastZero(dto.getVolume().toString()), 10) + "(lot)   ";
+        msg += " Vol: " + Utils.appendLeft(Utils.removeLastZero(dto.getVolume()), 10) + "(lot)   ";
         msg += " Profit:" + Utils.appendLeft(Utils.getStringValue(dto.getProfit().intValue()), 6) + "   ";
         msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStopLoss()), 10);
 
@@ -4528,7 +4528,7 @@ public class Utils {
             prefix_trend = prefix_trend.replace("H1", "  ");
         }
 
-        prefix_trend = appendSpace(prefix_trend + " : " + trend_d1, 25);
+        prefix_trend = prefix_trend + "     " + appendSpace(trend_d1, 5);
 
         String switch_trend = "{";
 
