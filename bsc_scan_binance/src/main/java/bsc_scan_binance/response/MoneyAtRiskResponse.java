@@ -79,7 +79,7 @@ public class MoneyAtRiskResponse {
         volume = standard_lot.multiply(money_risk.divide((entry.subtract(stop_loss)).abs(), 10, RoundingMode.CEILING));
         volume = volume.divide(unit_risk_per_pip, 10, RoundingMode.CEILING);
 
-        BigDecimal multi = volume.divide(BigDecimal.valueOf(0.05), 0, RoundingMode.CEILING);
+        BigDecimal multi = volume.divide(BigDecimal.valueOf(0.05), 0, RoundingMode.FLOOR);
         if (multi.intValue() == 0) {
             volume = BigDecimal.valueOf(0.01);
         } else {

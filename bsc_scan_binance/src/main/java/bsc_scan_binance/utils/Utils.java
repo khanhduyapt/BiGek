@@ -68,7 +68,8 @@ public class Utils {
     public static final BigDecimal RISK_0_10_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
 
     // Step1: Khi mới nhận tài khoản (300$ / 1trade)
-    // public static final BigDecimal RISK_0_15_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
+    // public static final BigDecimal RISK_0_15_PERCENT =
+    // ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
 
     //// Step2: Khi tài khoản tăng trưởng 2% (500$ / 1trade)
     // public static final BigDecimal RISK_0_25_PERCENT =
@@ -82,6 +83,8 @@ public class Utils {
 
     public static final String new_line_from_bot = "\n";
     public static final String new_line_from_service = "%0A";
+
+    public static final String EVENT_ID_NO_DUPLICATES = "MSG_PER_HOUR";
 
     public static final int const_app_flag_msg_on = 1; // 1: msg_on; 2: msg_off; 3: web only; 4: all coin
     public static final int const_app_flag_Future_msg_off = 2;
@@ -1321,7 +1324,7 @@ public class Utils {
         try {
             String msg = text.replaceAll("↑", "^").replaceAll("↓", "v").replaceAll(" ", "");
             System.out.println();
-            System.out.println(msg.replace(Utils.new_line_from_service, " ") + ". 💰 ");
+            System.out.println(msg.replace(Utils.new_line_from_service, "    ") + ". 💰 ");
             if (isAllowSendMsg()) {
                 sendToChatId(Utils.chatId_duydk, msg + ". 💰 ");
             }
