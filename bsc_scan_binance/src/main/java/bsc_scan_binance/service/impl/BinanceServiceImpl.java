@@ -2775,8 +2775,8 @@ public class BinanceServiceImpl implements BinanceService {
             append += "     ";
         }
 
-        String text_risk = "0.15% ";
-        BigDecimal risk = Utils.RISK_0_15_PERCENT;
+        String text_risk = "0.1 % ";
+        BigDecimal risk = Utils.RISK_0_10_PERCENT;
         if (!Objects.equals(trend_w1, trend_d1)) {
             text_risk = "0.1 % ";
             risk = Utils.RISK_0_10_PERCENT;
@@ -2792,7 +2792,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (dto_w1.getSwitch_trend().contains(dto_w1.getTrend())
                 && dto_w1.getTrend_zone().contains(dto_w1.getTrend())) {
             log += "     ";
-            log += "0.15% " + Utils.appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_15_PERCENT, false,
+            log += "0.1 % " + Utils.appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_10_PERCENT, false,
                     dto_w1.getTrend(), EPIC, dto_h1, dto_w1), 56) + dto_w1.getSwitch_trend();
         }
 
@@ -2962,7 +2962,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             int count = 0;
-            String risk_0_15 = "     Risk:0.15%=" + Utils.RISK_0_15_PERCENT.intValue() + "$per_trade";
+            String risk_0_15 = "     Risk:0.1 %=" + Utils.RISK_0_10_PERCENT.intValue() + "$per_trade";
             for (Mt5OpenTradeEntity trade : mt5Openlist) {
                 String EPIC = trade.getSymbol();
                 String TRADE_TREND = trade.getTypeDescription().toUpperCase();
@@ -3220,7 +3220,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String append = Utils.appendSpace(dto_d1.getSwitch_trend(), 35);
                     String log = Utils.createLineForex_Header(dto_d1, dto_d1, append);
                     log += Utils.appendSpace(Utils.removeLastZero(dto_d1.getCurrent_price()), 15);
-                    log += Utils.createLineForex_Body(Utils.RISK_0_15_PERCENT, dto_d1, dto_d1, trend_w1, true).trim();
+                    log += Utils.createLineForex_Body(Utils.RISK_0_10_PERCENT, dto_d1, dto_d1, trend_w1, true).trim();
                     list_d1_log.add(log);
                     index += 1;
                 }
@@ -4005,7 +4005,7 @@ public class BinanceServiceImpl implements BinanceService {
             if ((PROFIT.compareTo(Utils.RISK_0_10_PERCENT) > 0) && isTrendInverse) {
                 isPriceHit_TP = true;
             }
-            if ((PROFIT.compareTo(Utils.RISK_0_15_PERCENT) > 0) && !Objects.equals(dto_h4.getTrend_c1(), TRADE_TREND)
+            if ((PROFIT.compareTo(Utils.RISK_0_10_PERCENT) > 0) && !Objects.equals(dto_h4.getTrend_c1(), TRADE_TREND)
                     && !Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)) {
                 isPriceHit_TP = true;
             }
