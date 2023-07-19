@@ -3885,16 +3885,21 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
                 if (Objects.isNull(dto) && Objects.equals(trend_w1, trend_d1)) {
-                    if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)) {
+                    if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
+                            && Objects.equals(trend_d1, trend_15)) {
 
                         String append = "";
-                        if (dto_d1.getSwitch_trend().contains(trend_d1)) {
+                        if (dto_05.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_05)
+                                && dto_d1.getSwitch_trend().contains(trend_d1)) {
                             append = "9624w1241";
-                        } else if (dto_h12.getSwitch_trend().contains(trend_d1)) {
+                        } else if (dto_05.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_05)
+                                && dto_05.isAllow_trade_by_ma50() && dto_h12.getSwitch_trend().contains(trend_d1)) {
                             append = "962412w41";
-                        } else if (dto_h4.getSwitch_trend().contains(trend_d1)) {
+                        } else if (dto_05.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_05)
+                                && dto_h4.getSwitch_trend().contains(trend_d1)) {
                             append = "9624124w1";
-                        } else if (dto_h1.isAllow_trade_by_ma50() && dto_h1.getSwitch_trend().contains(trend_d1)) {
+                        } else if (dto_05.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_05)
+                                && dto_h1.isAllow_trade_by_ma50() && dto_h1.getSwitch_trend().contains(trend_d1)) {
                             append = "96241241w";
                         }
 
@@ -3908,10 +3913,12 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
+                // Khó đánh lắm, bỏ qua
                 if (Objects.isNull(dto) && Utils.isBlank(end_zone) && !Objects.equals(trend_w1, trend_d1)) {
                     if (dto_h12.isAllow_trade_by_ma50() && dto_h4.isAllow_trade_by_ma50()
-                            && dto_h1.isAllow_trade_by_ma50()
-                            && Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)) {
+                            && dto_h1.isAllow_trade_by_ma50() && dto_05.isAllow_trade_by_ma50()
+                            && Objects.equals(trend_d1, trend_05) && Objects.equals(trend_d1, trend_h12)
+                            && Objects.equals(trend_d1, trend_h4)) {
                         String append = "";
                         if (dto_h12.getSwitch_trend().contains(trend_d1)) {
                             append = "002412w41";
