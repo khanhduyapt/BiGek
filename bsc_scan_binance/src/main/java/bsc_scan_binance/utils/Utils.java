@@ -3966,12 +3966,12 @@ public class Utils {
     }
 
     public static String createOpenTradeMsg(Mt5OpenTrade dto, String prefix) {
-        String timeframe = getDeEncryptedChartNameCapital(dto.getComment());
+        String timeframe = " " + Utils.appendSpace(getDeEncryptedChartNameCapital(dto.getComment()), 10);
 
         String msg = Utils.appendSpace("", 10) + prefix;
-        msg += Utils.appendSpace(dto.getComment(), 35);
+        msg += Utils.appendSpace(dto.getComment(), 35) + timeframe;
         msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4, "_") + ")", 10);
-        msg += Utils.appendSpace(dto.getEpic(), 10) + timeframe;
+        msg += Utils.appendSpace(dto.getEpic(), 10);
         msg += "    ";
         msg += " Price: " + Utils.appendLeft(Utils.removeLastZero(dto.getCur_price().toString()), 10);
         msg += "      ";
@@ -3984,12 +3984,12 @@ public class Utils {
     }
 
     public static String createCloseTradeMsg(Mt5OpenTradeEntity dto, String prefix, String reason) {
-        String timeframe = getDeEncryptedChartNameCapital(dto.getComment());
+        String timeframe = " " + Utils.appendSpace(getDeEncryptedChartNameCapital(dto.getComment()), 10);
 
         String msg = Utils.appendSpace("", 10) + prefix;
-        msg += Utils.appendSpace(dto.getComment(), 35);
+        msg += Utils.appendSpace(dto.getComment(), 35) + timeframe;
         msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getTypeDescription(), 4, "_") + ")", 10);
-        msg += Utils.appendSpace(dto.getSymbol(), 10) + timeframe;
+        msg += Utils.appendSpace(dto.getSymbol(), 10);
         msg += "    ";
         msg += " Ticket: " + Utils.appendSpace(dto.getTicket(), 15);
         msg += " Vol: " + Utils.appendSpace(Utils.removeLastZero(dto.getVolume().toString()), 10) + "(lot)   ";

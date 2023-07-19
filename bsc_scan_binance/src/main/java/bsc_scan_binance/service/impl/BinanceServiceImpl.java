@@ -2972,6 +2972,8 @@ public class BinanceServiceImpl implements BinanceService {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+
+        Utils.logWritelnDraft("");
     }
 
     @Override
@@ -3889,7 +3891,7 @@ public class BinanceServiceImpl implements BinanceService {
                             BscScanBinanceApplication.dic_comment.put(key, trade_d1.getComment());
                         }
 
-                        if (dto_h12.isAllow_trade_by_ma50() && dto_h12.getSwitch_trend().contains(trend_d1)) {
+                        if (dto_h12.getSwitch_trend().contains(trend_d1)) {
                             String key = EPIC + Utils.CAPITAL_TIME_H12;
                             String append = type + ":962412w41" + text_risk_010;
 
@@ -3900,8 +3902,7 @@ public class BinanceServiceImpl implements BinanceService {
                             BscScanBinanceApplication.dic_comment.put(key, trade_h12.getComment());
                         }
 
-                        if (dto_h4.isAllow_trade_by_ma50()
-                                && dto_h4.getSwitch_trend().contains(trend_d1)) {
+                        if (dto_h4.getSwitch_trend().contains(trend_d1)) {
                             String key = EPIC + Utils.CAPITAL_TIME_H4;
                             String append = type + ":9624124w1" + text_risk_010;
 
@@ -3912,7 +3913,7 @@ public class BinanceServiceImpl implements BinanceService {
                             BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                         }
 
-                        if (dto_h1.isAllow_trade_by_ma50() && dto_h1.getSwitch_trend().contains(trend_d1)) {
+                        if (dto_h1.getSwitch_trend().contains(trend_d1)) {
                             String key = EPIC + Utils.CAPITAL_TIME_H1;
                             String append = type + ":96241241w" + text_risk_010;
 
