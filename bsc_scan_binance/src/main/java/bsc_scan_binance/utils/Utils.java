@@ -2849,23 +2849,22 @@ public class Utils {
         return trend;
     }
 
-    public static String getZoneTrend(List<BtcFutures> heiken_list) {
+    public static String getZone(List<BtcFutures> heiken_list) {
         List<BigDecimal> buy_sel_area = Utils.getBuySellArea(heiken_list);
 
-        String zone = "";
         BigDecimal curr_price = heiken_list.get(0).getCurrPrice();
         if (curr_price.compareTo(buy_sel_area.get(0)) < 0) {
-            zone = Utils.TREND_LONG;
+            return Utils.TREND_LONG;
         }
         if (curr_price.compareTo(buy_sel_area.get(1)) > 0) {
-            zone = Utils.TREND_SHOT;
+            return Utils.TREND_SHOT;
         }
 
-        return zone; // Utils.appendSpace(zone, 10);
+        return Utils.TREND_LONG + "_" + Utils.TREND_SHOT;
     }
 
     public static List<BigDecimal> getBuySellArea(List<BtcFutures> heiken_list) {
-        int section = 2;
+        int section = 3;
         List<BigDecimal> LoHi = Utils.getLowHighCandle(heiken_list);
         BigDecimal high = LoHi.get(1).subtract(LoHi.get(0));
         BigDecimal quarter = high.divide(BigDecimal.valueOf(section), 10, RoundingMode.CEILING);
@@ -4508,7 +4507,7 @@ public class Utils {
             String note_mo, String note_w1, String note_d1, String note_h12, String note_h4,
 
             String tracking_trend) {
-        //--------------------------------------------
+        // --------------------------------------------
         String week = "";
         String type = Objects.equals(Utils.TREND_LONG, trend_w1) ? "B"
                 : Objects.equals(Utils.TREND_SHOT, trend_w1) ? "S" : "?";
@@ -4518,7 +4517,7 @@ public class Utils {
             week = "        ";
         }
         String No = Utils.appendLeft(String.valueOf(index), 2, "0") + ". " + week;
-        //--------------------------------------------
+        // --------------------------------------------
         String prefix_trend = "[MO-W1-D1-H12-H4-H1]";
 
         if (!Objects.equals(trend_d1, trend_mo)) {
@@ -4534,11 +4533,11 @@ public class Utils {
             prefix_trend = prefix_trend.replace("H4-", "---");
         }
         if (!Objects.equals(trend_d1, trend_h1)) {
-            prefix_trend = prefix_trend.replace("H1-", "---");
+            prefix_trend = prefix_trend.replace("H1]", "--]");
         }
         prefix_trend = prefix_trend + "   " + appendSpace(trend_d1, 5);
 
-        //--------------------------------------------
+        // --------------------------------------------
         String switch_trend = "{";
 
         boolean same_d1h12h4 = false;
@@ -4577,12 +4576,12 @@ public class Utils {
         }
         switch_trend += "}  ";
 
-        //--------------------------------------------
+        // --------------------------------------------
         String w_d = "        ";
         if (prefix_trend.contains("W1-D1")) {
             w_d = "(W=D)   ";
         }
-        //--------------------------------------------
+        // --------------------------------------------
         String result = No + w_d + prefix_trend + switch_trend;
 
         return result;
@@ -4607,7 +4606,7 @@ public class Utils {
 
         temp += Utils.appendLeft(getStringValue(money_x1_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x1).replace(".0", ""), 4) + "$";
-        // temp += "  E" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 10);
+        // temp += " E" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 10);
         String result = Utils.appendSpace(temp, 28);
         return result;
     }
@@ -4630,7 +4629,7 @@ public class Utils {
 
         temp += Utils.appendLeft(getStringValue(money_x1_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x1).replace(".0", ""), 4) + "$";
-        // temp += "  E" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 10);
+        // temp += " E" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 10);
 
         String result = Utils.appendSpace(temp, 28);
         return result;
