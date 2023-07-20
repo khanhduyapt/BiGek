@@ -3762,7 +3762,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
             if (!is_opening_trade(EPIC, "") && !Objects.equals(trend_h4, trend_h1)) {
-                continue;
+                // continue;
             }
 
             // ---------------------------------------------------------------------
@@ -4041,7 +4041,6 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h4 = get_trend_by_dow_definitions(EPIC, Utils.CAPITAL_TIME_H4);
             String trend_h1 = get_trend_by_dow_definitions(EPIC, Utils.CAPITAL_TIME_H1);
 
-            //
             if ((trend_h12 + trend_h4 + trend_h1).contains(Utils.TREND_NULL)) {
                 Utils.logWritelnDraft(
                         String.format("closeTrade_by_SL_TP %s, %s, %s, %s ", EPIC, trend_h12, trend_h4, trend_h1));
@@ -4057,8 +4056,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ---------------------------------------------------------------------------------
             boolean isTrendInverse = false;
-            if (!Objects.equals(trend_h12, TRADE_TREND)
-                    && !Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)) {
+            if (!Objects.equals(trend_h12, TRADE_TREND) && !Objects.equals(trend_h4, TRADE_TREND)
+                    && !Objects.equals(trend_h1, TRADE_TREND)) {
                 isTrendInverse = true;
             }
             if ((Utils.CAPITAL_TIME_H4 + Utils.CAPITAL_TIME_H1 + Utils.CAPITAL_TIME_15)
@@ -4085,7 +4084,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ---------------------------------------------------------------------------------
             boolean isTimeout = false;
-            if (Utils.isCloseTradeThisWeek() && !Objects.equals(trend_h4, TRADE_TREND)) {
+            if (isTrendInverse && Utils.isCloseTradeThisWeek()) {
                 isTimeout = true;
             }
             // ---------------------------------------------------------------------------------
