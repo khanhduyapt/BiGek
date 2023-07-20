@@ -95,6 +95,7 @@ public class Utils {
     public static final String TREND_LONG = "BUY";
     public static final String TREND_SHOT = "SELL";
     public static final String TREND_UNSURE = "UNSURE";
+    public static final String TREND_NULL = "TREND_NULL";
 
     public static final String TEXT_EQUAL_TO_D1 = "Ed1";
     public static final String TEXT_EQUAL_TO_H4 = "Eh4";
@@ -697,7 +698,7 @@ public class Utils {
                     if (strid.length() < 2) {
                         strid = "0" + strid;
                     }
-                    strid = epic + getChartNameCapital_(TIME) + strid;
+                    strid = epic + getChartPrefix(TIME) + strid;
                     dto.setId(strid);
                     dto.setCurrPrice(close_price);
                     dto.setLow_price(low_price);
@@ -733,34 +734,33 @@ public class Utils {
         return results;
     }
 
-    public static String getChartNameCapital_(String TIME) {
-
-        if (Objects.equals(TIME, CAPITAL_TIME_05)) {
+    public static String getChartPrefix(String CAPITAL_TIME_XX) {
+        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_05)) {
             return PREFIX_5m_;
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_15)) {
+        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_15)) {
             return PREFIX_15m_;
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
+        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H1)) {
             return PREFIX_1h_;
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
+        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H4)) {
             return PREFIX_4h_;
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
+        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H12)) {
             return PREFIX_12h_;
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
+        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_D1)) {
             return PREFIX_1d_;
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_W1)) {
+        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_W1)) {
             return PREFIX_1w_;
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_MO)) {
+        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_MO)) {
             return PREFIX_mo_;
         }
 
-        return TIME;
+        return "not_found_chart_prefix";
     }
 
     public static String getEncryptedChartNameCapital(String TIME) {
