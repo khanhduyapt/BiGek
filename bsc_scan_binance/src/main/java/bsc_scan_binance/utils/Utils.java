@@ -1480,6 +1480,10 @@ public class Utils {
     }
 
     public static String get_trending_by_dow_definitions(Orders dto_xx) {
+        if (Objects.isNull(dto_xx)) {
+            return Utils.TREND_NULL;
+        }
+
         String trend = dto_xx.getTrend_c1();
         String switch_trend = dto_xx.getSwitch_trend().trim();
         if (switch_trend.contains(dto_xx.getTrend())) {

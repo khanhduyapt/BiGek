@@ -2975,7 +2975,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             int count = 0;
-            String risk_0_15 = "     Risk:0.1 %=" + Utils.RISK_0_10_PERCENT.intValue() + "$per_trade";
+            String risk_0_15 = "     Risk: 0.1%=" + Utils.RISK_0_10_PERCENT.intValue() + "$per_trade";
             for (Mt5OpenTradeEntity trade : mt5Openlist) {
                 String EPIC = trade.getSymbol();
                 String TRADE_TREND = trade.getTypeDescription().toUpperCase();
@@ -3454,20 +3454,9 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h4 = Utils.get_trending_by_dow_definitions(dto_h4);
             String trend_h1 = Utils.get_trending_by_dow_definitions(dto_h1);
 
-            String switch_trend = ". " + Utils.appendSpace(trend_w1, 4) + "  MO-W1-D1-H4-H1-          ";
-            String prefix = Utils.appendLeft(String.valueOf(index), 2) + switch_trend;
-            if (!Objects.equals(trend_mo, trend_w1)) {
-                prefix = prefix.replace("MO-", "---");
-            }
-            if (!Objects.equals(trend_d1, trend_w1)) {
-                prefix = prefix.replace("D1-", "---");
-            }
-            if (!Objects.equals(trend_h4, trend_w1)) {
-                prefix = prefix.replace("H4-", "---");
-            }
-            if (!Objects.equals(trend_h1, trend_w1)) {
-                prefix = prefix.replace("H1-", "---");
-            }
+            String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_mo, trend_w1, trend_d1, "", trend_h4,
+                    trend_h1, dto_mo.getSwitch_trend(), dto_w1.getSwitch_trend(), dto_d1.getSwitch_trend(), "",
+                    dto_h4.getSwitch_trend(), trend_w1);
 
             // TODO: scapStocks
             String comment = Utils.appendSpace(dto_mo.getSwitch_trend(), 20)
@@ -3581,7 +3570,7 @@ public class BinanceServiceImpl implements BinanceService {
         for (Mt5DataTrade trade : tradeList) {
             String EPIC = trade.getSymbol();
             if (EPIC.contains("DX")) {
-                boolean debug = true;
+                // boolean debug = true;
             }
             for (String key : BscScanBinanceApplication.linked_2_ftmo.keySet()) {
                 if (key.contains("_" + EPIC + "_")) {
