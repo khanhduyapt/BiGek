@@ -2770,9 +2770,9 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        String trend_w1 = dto_w1.getTrend();
-        String trend_d1 = dto_d1.getTrend();
-        String trend_h4 = dto_h4.getTrend();
+        String trend_w1 = Utils.get_trending_by_dow_definitions(dto_w1);
+        String trend_d1 = Utils.get_trending_by_dow_definitions(dto_d1);
+        String trend_h4 = Utils.get_trending_by_dow_definitions(dto_h4);
 
         String text_risk = "0.1 % ";
         BigDecimal risk = Utils.RISK_0_10_PERCENT;
@@ -2792,7 +2792,7 @@ public class BinanceServiceImpl implements BinanceService {
                 && dto_w1.getTrend_zone().contains(dto_w1.getTrend())) {
             log += "     ";
             log += "0.1 % " + Utils.appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_10_PERCENT, false,
-                    dto_w1.getTrend(), EPIC, dto_h1, dto_w1), 56) + dto_w1.getSwitch_trend();
+                    dto_w1.getTrend(), EPIC, dto_h1, dto_d1), 56) + dto_w1.getSwitch_trend();
         }
 
         Utils.logWritelnDraft(log);
@@ -3476,13 +3476,13 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (is_opening_trade(EPIC, "")) {
 
-                analysis_profit(prefix, EPIC, comment.trim(), trend_w1);
+                analysis_profit(prefix, EPIC, "", trend_w1);
                 index += 1;
 
-            } else if (comment.contains(trend_w1) && Objects.equals(trend_w1, trend_d1)
-                    && Objects.equals(trend_w1, trend_h4) && Objects.equals(trend_w1, trend_h1)) {
+            } else if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_h4)
+                    && Objects.equals(trend_w1, trend_h1)) {
 
-                analysis_profit(prefix, EPIC, comment.trim(), trend_w1);
+                analysis_profit(prefix, EPIC, "", trend_w1);
                 index += 1;
 
                 BscScanBinanceApplication.dic_comment.put(EPIC.toUpperCase(), comment.replace(" ", ""));
