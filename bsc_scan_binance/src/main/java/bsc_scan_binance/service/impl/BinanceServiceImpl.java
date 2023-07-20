@@ -3906,7 +3906,7 @@ public class BinanceServiceImpl implements BinanceService {
                     if (!Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
                             && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
 
-                        String append = type + ":002412w41" + text_risk_010;
+                        String append = type + ":002412415" + text_risk_010;
                         Mt5OpenTrade trade_h12 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1,
                                 dto_h1, dto_d1, append, true, Utils.CAPITAL_TIME_H12);
 
