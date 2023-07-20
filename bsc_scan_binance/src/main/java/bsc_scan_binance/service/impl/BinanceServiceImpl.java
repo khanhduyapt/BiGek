@@ -3451,7 +3451,15 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.isNull(dto_mo) || Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4)
                     || Objects.isNull(dto_h1)) {
-                Utils.logWritelnDraft("[scapStocks] dto(" + EPIC + ") is null.");
+                String mo = "MO:" + (Objects.isNull(dto_mo) ? "null" : "    ");
+                String w1 = "W1:" + (Objects.isNull(dto_w1) ? "null" : "    ");
+                String d1 = "D1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
+                String h4 = "H4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
+                String h1 = "H1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
+
+                Utils.logWritelnDraft(
+                        String.format("[scapStocks] dto (%s) :  %s, %s, %s, %s, %s.", Utils.appendSpace(EPIC, 10),
+                                mo, w1, d1, h4, h1));
                 continue;
             }
 
@@ -3466,22 +3474,18 @@ public class BinanceServiceImpl implements BinanceService {
                     dto_h4.getSwitch_trend(), trend_w1);
 
             // TODO: scapStocks
-            String comment = Utils.appendSpace(dto_mo.getSwitch_trend(), 20)
-                    + Utils.appendSpace(dto_w1.getSwitch_trend(), 20) + Utils.appendSpace(dto_d1.getSwitch_trend(), 20)
-                    + Utils.appendSpace(dto_h4.getSwitch_trend(), 20) + Utils.appendSpace(dto_h1.getSwitch_trend(), 20);
-
             if (is_opening_trade(EPIC, "")) {
 
                 analysis_profit(prefix, EPIC, "", trend_w1);
                 index += 1;
 
-            } else if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_h4)
-                    && Objects.equals(trend_w1, trend_h1)) {
+            } else if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_h4)) {
 
                 analysis_profit(prefix, EPIC, "", trend_w1);
                 index += 1;
 
-                BscScanBinanceApplication.dic_comment.put(EPIC.toUpperCase(), comment.replace(" ", ""));
+                BscScanBinanceApplication.dic_comment.put(EPIC.toUpperCase(),
+                        "wdh4" + Utils.getEncryptedChartNameCapital(Utils.CAPITAL_TIME_D1));
             }
         }
 
@@ -3801,9 +3805,7 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)) {
 
                         // CAPITAL_TIME_W1
-                        if (m15_allow_trade && dto_h4.isAllow_trade_by_ma50()
-                                && dto_w1.getSwitch_trend().contains(trend_w1)
-                                && dto_w1.getTrend_zone().contains(trend_w1)) {
+                        if (m15_allow_trade && dto_h4.isAllow_trade_by_ma50() && switch_trend_w1.contains(trend_w1)) {
                             String key = EPIC + Utils.CAPITAL_TIME_W1;
                             String append = type + ":96w241241" + text_risk_010;
                             Mt5OpenTrade trade_w1 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1,
@@ -3825,7 +3827,7 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         // CAPITAL_TIME_H12
-                        if (m15_allow_trade && dto_h4.isAllow_trade_by_ma50() && switch_trend_h12.contains(trend_d1)) {
+                        if (m15_allow_trade && switch_trend_h12.contains(trend_d1)) {
                             String key = EPIC + Utils.CAPITAL_TIME_H12;
                             String append = type + ":962412w41" + text_risk_010;
 
@@ -3841,7 +3843,7 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         // CAPITAL_TIME_H4
-                        if (m15_allow_trade && dto_h4.isAllow_trade_by_ma50() && switch_trend_h4.contains(trend_d1)) {
+                        if (m15_allow_trade && switch_trend_h4.contains(trend_d1)) {
                             String key = EPIC + Utils.CAPITAL_TIME_H4;
                             String append = type + ":9624124w1" + text_risk_010;
 
@@ -3853,7 +3855,7 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         // CAPITAL_TIME_H1
-                        if (m15_allow_trade && dto_h1.isAllow_trade_by_ma50() && switch_trend_h1.contains(trend_d1)) {
+                        if (m15_allow_trade && switch_trend_h1.contains(trend_d1)) {
                             String key = EPIC + Utils.CAPITAL_TIME_H1;
                             String append = type + ":96241241w" + text_risk_010;
 

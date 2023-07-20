@@ -4503,18 +4503,18 @@ public class Utils {
             String note_mo, String note_w1, String note_d1, String note_h12, String note_h4,
 
             String tracking_trend) {
-
+        //--------------------------------------------
         String week = "";
         String type = Objects.equals(Utils.TREND_LONG, trend_w1) ? "B"
                 : Objects.equals(Utils.TREND_SHOT, trend_w1) ? "S" : "?";
         if (note_w1.contains(trend_w1)) {
-            week = "(W1~" + type + ")   ";
+            week = "(W~" + type + ")   ";
         } else {
-            week = "         ";
+            week = "        ";
         }
-
         String No = Utils.appendLeft(String.valueOf(index), 2) + ". " + week;
-        String prefix_trend = "MO-W1-D1-H12-H4-H1-";
+        //--------------------------------------------
+        String prefix_trend = "[MO-W1-D1-H12-H4-H1]";
 
         if (!Objects.equals(trend_d1, trend_mo)) {
             prefix_trend = prefix_trend.replace("MO-", "---");
@@ -4531,9 +4531,9 @@ public class Utils {
         if (!Objects.equals(trend_d1, trend_h1)) {
             prefix_trend = prefix_trend.replace("H1-", "---");
         }
-
         prefix_trend = prefix_trend + "   " + appendSpace(trend_d1, 5);
 
+        //--------------------------------------------
         String switch_trend = "{";
 
         boolean same_d1h12h4 = false;
@@ -4570,16 +4570,15 @@ public class Utils {
         } else {
             switch_trend += getTrendPrefix("H4", "", "");
         }
-
         switch_trend += "}  ";
 
-        String result = No + prefix_trend + switch_trend;
-
-        if (result.contains("W1-D1")) {
-            result += "(W=D)   ";
-        } else {
-            result += "        ";
+        //--------------------------------------------
+        String w_d = "        ";
+        if (prefix_trend.contains("W1-D1")) {
+            w_d = "(W=D)   ";
         }
+        //--------------------------------------------
+        String result = No + w_d + prefix_trend + switch_trend;
 
         return result;
     }
