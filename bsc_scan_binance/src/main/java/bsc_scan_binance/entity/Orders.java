@@ -80,6 +80,6 @@ public class Orders {
     private String trend_c1;
 
     @Column(name = "trend_zone")
-    private String trend_zone;
+    private boolean tradable_zone;
 
 }

@@ -2634,11 +2634,16 @@ public class BinanceServiceImpl implements BinanceService {
             allow_trade_by_ma50 = true;
         }
 
-        String trend_zone = Utils.getZone(list);
+        String zone = Utils.getZone(list);
+        String trend_d1 = get_trend_by_dow_definitions(SYMBOL, Utils.CAPITAL_TIME_D1);
+        boolean tradable_zone = false;
+        if (zone.contains(trend_d1)) {
+            tradable_zone = true;
+        }
 
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
                 low_high.get(0), low_high.get(1), Utils.appendSpace(note, 50), allow_trade_by_ma50, trend_candle_1,
-                trend_zone);
+                tradable_zone);
 
         ordersRepository.save(entity);
     }
@@ -2890,7 +2895,7 @@ public class BinanceServiceImpl implements BinanceService {
         log += text_risk + Utils
                 .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, dto_d1.getTrend(), EPIC, dto_h1, dto_d1), 45);
 
-        if (dto_w1.getSwitch_trend().contains(dto_w1.getTrend()) && dto_w1.getTrend_zone().contains(dto_w1.getTrend())
+        if (dto_w1.getSwitch_trend().contains(dto_w1.getTrend()) && dto_w1.isTradable_zone()
                 && Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_h4)) {
             log += log_week;
         } else {
@@ -3802,7 +3807,6 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         String switch_trend = "";
-        String zone = Utils.getZone(heiken_list);
         if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_MO)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_W1)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)
@@ -3832,8 +3836,14 @@ public class BinanceServiceImpl implements BinanceService {
             sl_shot = sl_at_switch_trend;
         }
 
+        String zone = Utils.getZone(heiken_list);
+        boolean tradable_zone = false;
+        if (zone.contains(trend_d1)) {
+            tradable_zone = true;
+        }
+
         Orders entity = new Orders(orderId, date_time, trend, heiken_list.get(0).getCurrPrice(), str_body, end_body,
-                sl_long, sl_shot, switch_trend, allow_trade_by_ma50, trend_candle_1, zone);
+                sl_long, sl_shot, switch_trend, allow_trade_by_ma50, trend_candle_1, tradable_zone);
 
         ordersRepository.save(entity);
 
@@ -3893,7 +3903,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean zone_h12_allow_trade = true;
             String zone_h12 = " EOZ:" + type + ":h12     ";
-            if (!dto_h12.getTrend_zone().contains(trend_d1)) {
+            if (!dto_h12.isTradable_zone()) {
                 zone_h12 = Utils.appendSpace("", zone_h12.length());
                 zone_h12_allow_trade = false;
             }
