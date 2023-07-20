@@ -4163,9 +4163,6 @@ public class BinanceServiceImpl implements BinanceService {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        Utils.logWritelnDraft("");
-        Utils.logWritelnDraft("");
-        Utils.logWritelnDraft("");
     }
 
 }
