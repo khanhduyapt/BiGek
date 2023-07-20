@@ -2736,9 +2736,10 @@ public class BinanceServiceImpl implements BinanceService {
             t_profit = t_profit.add(Utils.getBigDecimal(trade.getProfit()));
         }
 
-        String append = prifix + append2 + Utils.appendSpace(
-                tradeList.size() > 0 ? " T_Profit:" + Utils.appendLeft(String.valueOf(t_profit.intValue()), 6) : "",
-                15);
+        String append = prifix + append2
+                + Utils.appendSpace(tradeList.size() > 0
+                        ? " T_Profit:" + Utils.appendLeft(String.valueOf(t_profit.intValue()), 6) + "$"
+                        : "", 15);
 
         outputLog(EPIC, append, find_trend);
 
@@ -3571,7 +3572,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_mo, trend_w1, trend_d1, "", trend_h4,
                     trend_h1, dto_mo.getSwitch_trend(), dto_w1.getSwitch_trend(), dto_d1.getSwitch_trend(), "",
-                    dto_h4.getSwitch_trend(), trend_w1);
+                    dto_h4.getSwitch_trend(), trend_w1) + Utils.appendSpace("", 18);
 
             // TODO: scapStocks
             if (is_opening_trade(EPIC, "")) {
@@ -3901,12 +3902,29 @@ public class BinanceServiceImpl implements BinanceService {
             String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "B"
                     : Objects.equals(Utils.TREND_SHOT, trend_d1) ? "S" : "?";
 
-            boolean zone_h12_allow_trade = true;
-            String zone_h12 = " EOZ:" + type + ":h12     ";
-            if (!dto_h12.isTradable_zone()) {
-                zone_h12 = Utils.appendSpace("", zone_h12.length());
-                zone_h12_allow_trade = false;
+            String eoz = " EOZ(" + type + "):";
+            if (!dto_w1.isTradable_zone() && switch_trend_w1.contains(trend_d1)) {
+                eoz += "W";
+            } else {
+                eoz += "-";
             }
+            if (!dto_d1.isTradable_zone() && switch_trend_d1.contains(trend_d1)) {
+                eoz += "D";
+            } else {
+                eoz += "-";
+            }
+            if (!dto_h12.isTradable_zone() && switch_trend_h12.contains(trend_d1)) {
+                eoz += "H12";
+            } else {
+                eoz += "---";
+            }
+            if (!dto_h4.isTradable_zone() && switch_trend_h4.contains(trend_d1)) {
+                eoz += "H4";
+            } else {
+                eoz += "--";
+            }
+            eoz += "|  ";
+
             if (Objects.equals(EPIC, "USDCAD")) {
                 // boolean debug = true;
             }
@@ -3914,7 +3932,7 @@ public class BinanceServiceImpl implements BinanceService {
                     trend_h4, trend_h1, switch_trend_mo, switch_trend_w1, switch_trend_d1, switch_trend_h12,
                     switch_trend_h4, tracking_trend);
 
-            analysis_profit(prefix, EPIC, zone_h12, log_trend);
+            analysis_profit(prefix, EPIC, eoz, log_trend);
 
             // ---------------------------------------------------------------------------------------------
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
@@ -3925,17 +3943,18 @@ public class BinanceServiceImpl implements BinanceService {
                 String text_risk_010 = "(0.1 %:" + Utils.RISK_0_10_PERCENT.intValue() + "$)";
 
                 boolean m15_allow_trade = false;
-                if (dto_15.isAllow_trade_by_ma50() && Objects.equals(trend_d1, trend_15)) {
+                if ((dto_15.isAllow_trade_by_ma50() || dto_15.isTradable_zone())
+                        && Objects.equals(trend_d1, trend_15)) {
                     m15_allow_trade = true;
                 }
 
                 // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
-                if (zone_h12_allow_trade && Objects.equals(trend_w1, trend_d1)) {
+                if (Objects.equals(trend_w1, trend_d1)) {
                     if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
                             && Objects.equals(trend_d1, trend_h1)) {
 
                         // CAPITAL_TIME_W1
-                        if (m15_allow_trade && dto_h4.isAllow_trade_by_ma50() && switch_trend_w1.contains(trend_w1)) {
+                        if (m15_allow_trade && dto_w1.isTradable_zone() && switch_trend_w1.contains(trend_w1)) {
                             String key = EPIC + Utils.CAPITAL_TIME_W1;
                             String append = type + ":96w241241" + text_risk_010;
                             Mt5OpenTrade trade_w1 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1,
@@ -3946,7 +3965,7 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         // CAPITAL_TIME_D1
-                        if (m15_allow_trade && dto_h4.isAllow_trade_by_ma50() && switch_trend_d1.contains(trend_d1)) {
+                        if (m15_allow_trade && dto_d1.isTradable_zone() && switch_trend_d1.contains(trend_d1)) {
                             String key = EPIC + Utils.CAPITAL_TIME_D1;
                             String append = type + ":9624w1241" + text_risk_010;
                             Mt5OpenTrade trade_d1 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1,
@@ -3957,7 +3976,7 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         // CAPITAL_TIME_H12
-                        if (m15_allow_trade && dto_h12.isAllow_trade_by_ma50() && switch_trend_h12.contains(trend_d1)) {
+                        if (m15_allow_trade && dto_h12.isTradable_zone() && switch_trend_h12.contains(trend_d1)) {
                             String key = EPIC + Utils.CAPITAL_TIME_H12;
                             String append = type + ":962412w41" + text_risk_010;
 
@@ -3973,7 +3992,7 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         // CAPITAL_TIME_H4
-                        if (m15_allow_trade && dto_h4.isAllow_trade_by_ma50() && switch_trend_h4.contains(trend_d1)) {
+                        if (m15_allow_trade && dto_h4.isTradable_zone() && switch_trend_h4.contains(trend_d1)) {
                             String key = EPIC + Utils.CAPITAL_TIME_H4;
                             String append = type + ":9624124w1" + text_risk_010;
 
@@ -3985,7 +4004,7 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         // CAPITAL_TIME_H1
-                        if (m15_allow_trade && dto_h1.isAllow_trade_by_ma50() && switch_trend_h1.contains(trend_d1)) {
+                        if (m15_allow_trade && dto_h1.isTradable_zone() && switch_trend_h1.contains(trend_d1)) {
                             String key = EPIC + Utils.CAPITAL_TIME_H1;
                             String append = type + ":96241241w" + text_risk_010;
 
@@ -4015,16 +4034,21 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // CAPITAL_TIME_H12
-                if (zone_h12_allow_trade && m15_allow_trade && Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
+                if (m15_allow_trade && Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
                     if (!Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
                             && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
 
                         String append = "";
                         String CAPITAL_TIME_XX = "";
-                        if (dto_h12.isAllow_trade_by_ma50() && switch_trend_h12.contains(trend_d1)) {
+                        if ((dto_h12.isAllow_trade_by_ma50() || dto_h12.isTradable_zone())
+                                && switch_trend_h12.contains(trend_d1)) {
+
                             CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
                             append = type + ":002412w41" + text_risk_010;
-                        } else if (dto_h4.isAllow_trade_by_ma50() && switch_trend_h4.contains(trend_d1)) {
+
+                        } else if ((dto_h4.isAllow_trade_by_ma50() || dto_h4.isTradable_zone())
+                                && switch_trend_h4.contains(trend_d1)) {
+
                             CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
                             append = type + ":0024124w1" + text_risk_010;
                         }
