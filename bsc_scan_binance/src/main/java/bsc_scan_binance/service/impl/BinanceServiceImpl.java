@@ -3855,7 +3855,7 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         // CAPITAL_TIME_H1
-                        if (m15_allow_trade && switch_trend_h1.contains(trend_d1)) {
+                        if (m15_allow_trade && dto_h1.isAllow_trade_by_ma50() && switch_trend_h1.contains(trend_d1)) {
                             String key = EPIC + Utils.CAPITAL_TIME_H1;
                             String append = type + ":96241241w" + text_risk_010;
 
