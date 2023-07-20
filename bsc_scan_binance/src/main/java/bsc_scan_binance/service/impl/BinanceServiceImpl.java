@@ -2643,17 +2643,15 @@ public class BinanceServiceImpl implements BinanceService {
         ordersRepository.save(entity);
     }
 
-    private String getTimeframes(String EPIC) {
+    private String get_time_frames(String EPIC) {
         // "(W1:Buy ,D1:Buy ,H12:Buy ,H8:Buy ,H4:Buy ,H2:Sell,30:Buy )";
         List<String> times = Arrays.asList(Utils.CAPITAL_TIME_MO, Utils.CAPITAL_TIME_W1, Utils.CAPITAL_TIME_D1,
                 Utils.CAPITAL_TIME_H12, Utils.CAPITAL_TIME_H4, Utils.CAPITAL_TIME_H1);
 
-        String timeframe = "NOT_FOUND";
         String TRADE_TREND = "NOT_FOUND";
         List<Mt5OpenTradeEntity> tradeList = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
         if (!CollectionUtils.isEmpty(tradeList)) {
             Mt5OpenTradeEntity trade = tradeList.get(0);
-            timeframe = trade.getTimeframe();
             TRADE_TREND = trade.getTypeDescription().toUpperCase().contains(Utils.TREND_LONG) ? Utils.TREND_LONG
                     : Utils.TREND_SHOT;
         }
@@ -2671,7 +2669,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (trend_xx.contains(Utils.TREND_NULL)) {
                 if (Utils.isNotBlank(summary))
                     summary += " ";
-                summary += Utils.appendSpace("", chart_name.length()) + "     ";
+                summary += Utils.appendSpace("", chart_name.length()) + " ";
                 continue;
             }
 
@@ -2679,8 +2677,8 @@ public class BinanceServiceImpl implements BinanceService {
                 summary += ",";
 
             summary += chart_name + ":";
-            summary += Objects.equals(trend_xx, Utils.TREND_LONG) ? "Buy "
-                    : Objects.equals(trend_xx, Utils.TREND_SHOT) ? "Sell" : "    ";
+            summary += Objects.equals(trend_xx, Utils.TREND_LONG) ? "B"
+                    : Objects.equals(trend_xx, Utils.TREND_SHOT) ? "S" : " ";
 
             if (Objects.equals(Utils.CAPITAL_TIME_W1, CAPITAL_TIME_XX)) {
                 trend_w = trend_xx;
@@ -2711,15 +2709,11 @@ public class BinanceServiceImpl implements BinanceService {
                 && !Objects.equals(trend_h1, TRADE_TREND)) {
             isTrendInverse = true;
         }
-        if ((Utils.CAPITAL_TIME_H4 + Utils.CAPITAL_TIME_H1 + Utils.CAPITAL_TIME_15).contains(timeframe)) {
-            if (!Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)) {
-                isTrendInverse = true;
-            }
-        }
+
         if (isTrendInverse) {
-            summary += " " + Utils.appendSpace(TRADE_TREND, 4) + "  -> Stop  ";
+            summary = "Stop <- " + Utils.appendSpace(TRADE_TREND, 4) + summary;
         } else {
-            summary += "                ";
+            summary = "            " + summary;
         }
 
         return summary;
@@ -2813,11 +2807,11 @@ public class BinanceServiceImpl implements BinanceService {
             log += Utils.appendSpace("", log_week.length());
         }
 
-        Utils.logWritelnDraft(log);
+        Utils.logWritelnDraft(log.trim());
 
         if (Objects.equals(trend_d1, trend_h4)) {
             if (log.contains("Heiken") || log.contains("Ma")) {
-                Utils.logWritelnReport(log);
+                Utils.logWritelnReport(log.trim());
             }
         }
     }
@@ -3002,7 +2996,7 @@ public class BinanceServiceImpl implements BinanceService {
                 // ---------------------------------------------------------------------------------
                 count += 1;
 
-                String multi_timeframes = getTimeframes(EPIC);
+                String multi_timeframes = get_time_frames(EPIC);
                 String result = "";
                 result = Utils.appendLeft("Trade:" + Utils.appendLeft(String.valueOf(count), 3), 15) + ". "
                         + Utils.appendSpace(trade.getCompany(), 10);
@@ -3011,9 +3005,9 @@ public class BinanceServiceImpl implements BinanceService {
                 result += Utils.appendSpace(trade.getTicket(), 10);
                 result += "   Vol:" + Utils.appendLeft(Utils.removeLastZero(trade.getVolume()), 6);
                 result += "   (Profit):" + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 6);
-                result += "    " + Utils.appendSpace(multi_timeframes, 85);
-                result += Utils.appendSpace(Utils.getCapitalLink(EPIC) + " ", 62, "-");
-                result += Utils.appendSpace(trade.getComment(), 35, "-") + " ";
+                result += "    " + Utils.appendSpace(multi_timeframes, 55);
+                result += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62);
+                result += "---" + Utils.appendSpace(trade.getComment(), 35, "-");
 
                 total = total.add(PROFIT);
                 msg += result + Utils.new_line_from_service;
@@ -4039,7 +4033,7 @@ public class BinanceServiceImpl implements BinanceService {
         // ----------------------------------------PROFIT--------------------------------------
         List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAll();
         for (Mt5OpenTradeEntity trade : mt5Openlist) {
-            String EPIC = trade.getSymbol().toUpperCase();
+            String EPIC = trade.getSymbol();
             if (Objects.equals(EPIC, "DX.F")) {
                 EPIC = "DX";
             }

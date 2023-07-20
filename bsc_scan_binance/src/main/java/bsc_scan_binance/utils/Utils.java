@@ -3997,7 +3997,7 @@ public class Utils {
         msg += "  ";
         msg += " Price: " + Utils.appendLeft(Utils.removeLastZero(dto.getCur_price()), 10);
         msg += "      ";
-        msg += " Vol: " + Utils.appendLeft(Utils.removeLastZero(dto.getLots()), 10) + "(lot)   ";
+        msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 10) + "(lot)   ";
         msg += " E: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()), 10) + "   ";
         msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10);
         msg += " TP: " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit()), 10) + " ";
@@ -4014,7 +4014,7 @@ public class Utils {
         msg += Utils.appendSpace(dto.getSymbol(), 10);
         msg += "  ";
         msg += " Ticket: " + Utils.appendSpace(dto.getTicket(), 15);
-        msg += " Vol: " + Utils.appendLeft(Utils.removeLastZero(dto.getVolume()), 10) + "(lot)   ";
+        msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getVolume()), 10) + "(lot)   ";
         msg += " Profit:" + Utils.appendLeft(Utils.getStringValue(dto.getProfit().intValue()), 6) + "   ";
         msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStopLoss()), 10);
 
@@ -4517,7 +4517,7 @@ public class Utils {
         } else {
             week = "        ";
         }
-        String No = Utils.appendLeft(String.valueOf(index), 2) + ". " + week;
+        String No = Utils.appendLeft(String.valueOf(index), 2, "0") + ". " + week;
         //--------------------------------------------
         String prefix_trend = "[MO-W1-D1-H12-H4-H1]";
 
@@ -4605,7 +4605,7 @@ public class Utils {
         // temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
         // // 500$
 
-        temp += Utils.appendLeft(removeLastZero(money_x1_now.calcLot()), 8) + "(lot)";
+        temp += Utils.appendLeft(getStringValue(money_x1_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x1).replace(".0", ""), 4) + "$";
         // temp += "  E" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 10);
         String result = Utils.appendSpace(temp, 28);
@@ -4624,11 +4624,11 @@ public class Utils {
         String temp = "";
         temp += chartSL + "(Sell)SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10);
 
-        // temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) +
+        // temp += Utils.appendLeft(getStringValue(money_x5_now.calcLot()), 8) +
         // "(lot)";
         // temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
 
-        temp += Utils.appendLeft(removeLastZero(money_x1_now.calcLot()), 8) + "(lot)";
+        temp += Utils.appendLeft(getStringValue(money_x1_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x1).replace(".0", ""), 4) + "$";
         // temp += "  E" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 10);
 
