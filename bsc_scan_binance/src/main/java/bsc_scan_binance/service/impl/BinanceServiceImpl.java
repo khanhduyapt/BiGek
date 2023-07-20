@@ -4015,7 +4015,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // CAPITAL_TIME_H12
-                if (zone_h12_allow_trade && m15_allow_trade && !is_opening_trade(EPIC, "")) {
+                if (zone_h12_allow_trade && m15_allow_trade && Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
                     if (!Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
                             && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
 
