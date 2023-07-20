@@ -166,7 +166,7 @@ public class Utils {
     public static final String CRYPTO_TIME_D1 = "1d";
     public static final String CRYPTO_TIME_D3 = "3d";
     public static final String CRYPTO_TIME_W1 = "1w";
-    public static final String CRYPTO_TIME_M1 = "1M";
+    public static final String CRYPTO_TIME_MO = "1M";
 
     public static final String PREFIX_5m_ = "_5m_";
     public static final String PREFIX_15m_ = "_15m_";
@@ -1486,6 +1486,11 @@ public class Utils {
         String trend = dto_xx.getTrend_c1();
         String switch_trend = dto_xx.getSwitch_trend().trim();
         if (switch_trend.contains(dto_xx.getTrend())) {
+            trend = dto_xx.getTrend();
+        }
+
+        if (dto_xx.getId().contains(PREFIX_mo_) || dto_xx.getId().contains(CAPITAL_TIME_MO)
+                || dto_xx.getId().contains(CRYPTO_TIME_MO)) {
             trend = dto_xx.getTrend();
         }
 
@@ -3956,7 +3961,7 @@ public class Utils {
         EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_H4, "");
         EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_D1, "");
         EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_W1, "");
-        EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_M1, "");
+        EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_MO, "");
 
         EPIC = EPIC.replace("_00", "");
         EPIC = EPIC.replace("_", "");
