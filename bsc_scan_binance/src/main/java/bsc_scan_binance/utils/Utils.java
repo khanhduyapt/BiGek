@@ -67,9 +67,8 @@ public class Utils {
     // Trend W != D (200$ / 1trade)
     public static final BigDecimal RISK_0_10_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
 
-    // Step1: Khi mới nhận tài khoản (300$ / 1trade)
-    // public static final BigDecimal RISK_0_15_PERCENT =
-    // ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
+    // Trend W == D (300$ / 1trade)
+    public static final BigDecimal RISK_0_15_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
 
     //// Step2: Khi tài khoản tăng trưởng 2% (500$ / 1trade)
     // public static final BigDecimal RISK_0_25_PERCENT =
@@ -4509,9 +4508,10 @@ public class Utils {
         String type = Objects.equals(Utils.TREND_LONG, trend_w1) ? "B"
                 : Objects.equals(Utils.TREND_SHOT, trend_w1) ? "S" : "?";
         if (note_w1.contains(trend_w1)) {
-            week = " (W1~" + type + ") ";
+            week = "(W1~" + type + ")   ";
+        } else {
+            week = "         ";
         }
-        week = appendSpace(week, 10);
 
         String No = Utils.appendLeft(String.valueOf(index), 2) + ". " + week;
         String prefix_trend = "MO-W1-D1-H12-H4-H1-";
@@ -4532,7 +4532,7 @@ public class Utils {
             prefix_trend = prefix_trend.replace("H1-", "---");
         }
 
-        prefix_trend = prefix_trend + "     " + appendSpace(trend_d1, 5);
+        prefix_trend = prefix_trend + "   " + appendSpace(trend_d1, 5);
 
         String switch_trend = "{";
 
@@ -4574,6 +4574,13 @@ public class Utils {
         switch_trend += "}  ";
 
         String result = No + prefix_trend + switch_trend;
+
+        if (result.contains("W1-D1")) {
+            result += "(W=D)   ";
+        } else {
+            result += "        ";
+        }
+
         return result;
     }
 
@@ -4596,8 +4603,8 @@ public class Utils {
 
         temp += Utils.appendLeft(removeLastZero(money_x1_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x1).replace(".0", ""), 4) + "$";
-        temp += "  E" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 10);
-        String result = Utils.appendSpace(temp, 38);
+        // temp += "  E" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 10);
+        String result = Utils.appendSpace(temp, 28);
         return result;
     }
 
@@ -4619,9 +4626,9 @@ public class Utils {
 
         temp += Utils.appendLeft(removeLastZero(money_x1_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x1).replace(".0", ""), 4) + "$";
-        temp += "  E" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 10);
+        // temp += "  E" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 10);
 
-        String result = Utils.appendSpace(temp, 38);
+        String result = Utils.appendSpace(temp, 28);
         return result;
     }
 }

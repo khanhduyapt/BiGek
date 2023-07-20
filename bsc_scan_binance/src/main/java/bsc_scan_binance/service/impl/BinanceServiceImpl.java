@@ -2781,18 +2781,25 @@ public class BinanceServiceImpl implements BinanceService {
             risk = Utils.RISK_0_10_PERCENT;
         }
 
+        String log_week = "     0.15% "
+                + Utils.appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(
+                        Utils.RISK_0_15_PERCENT, false, dto_w1.getTrend(), EPIC, dto_h1, dto_w1), 45)
+                + dto_w1.getSwitch_trend();
+
+        // TODO: outputLog
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_h1.getCurrent_price(), 5)), 11);
         log += Utils.appendSpace(append.trim(), 95) + " ";
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
         log += text_risk + Utils
-                .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, dto_d1.getTrend(), EPIC, dto_h1, dto_d1), 56);
+                .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, dto_d1.getTrend(), EPIC, dto_h1, dto_d1), 45);
 
         if (dto_w1.getSwitch_trend().contains(dto_w1.getTrend())
-                && dto_w1.getTrend_zone().contains(dto_w1.getTrend())) {
-            log += "     ";
-            log += "0.1 % " + Utils.appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_10_PERCENT, false,
-                    dto_w1.getTrend(), EPIC, dto_h1, dto_d1), 56) + dto_w1.getSwitch_trend();
+                && dto_w1.getTrend_zone().contains(dto_w1.getTrend()) && Objects.equals(trend_w1, trend_d1)
+                && Objects.equals(trend_w1, trend_h4)) {
+            log += log_week;
+        } else {
+            log += Utils.appendSpace("", log_week.length());
         }
 
         Utils.logWritelnDraft(log);
@@ -2995,7 +3002,7 @@ public class BinanceServiceImpl implements BinanceService {
                 result += "   (Profit):" + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 6);
                 result += "    " + Utils.appendSpace(multi_timeframes, 85);
                 result += Utils.appendSpace(Utils.getCapitalLink(EPIC) + " ", 62, "-");
-                result += Utils.appendSpace(trade.getComment() + " ", 35, "-") + " ";
+                result += Utils.appendSpace(trade.getComment(), 35, "-") + " ";
 
                 total = total.add(PROFIT);
                 msg += result + Utils.new_line_from_service;
@@ -3984,7 +3991,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.isNotBlank(msg)) {
-                String EVENT_ID = "OPEN_TRADE" + Utils.getCurrentYyyyMmDd_HH() + Utils.getMmDD_TimeHHmm();
+                String EVENT_ID = "OPEN_TRADE" + Utils.getCurrentYyyyMmDd_HH();
                 sendMsgPerHour_OnlyMe(EVENT_ID, "(FTMO)" + Utils.new_line_from_service + msg);
             }
         } catch (Exception e) {
