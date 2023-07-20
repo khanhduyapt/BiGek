@@ -3876,13 +3876,12 @@ public class BinanceServiceImpl implements BinanceService {
 
                         // CAPITAL_TIME_H1
                         if (m15_allow_trade && dto_h1.isAllow_trade_by_ma50() && switch_trend_h1.contains(trend_d1)) {
-
+                            String key = EPIC + Utils.CAPITAL_TIME_H1;
                             String append = type + ":96241241w" + text_risk_010;
 
                             Mt5OpenTrade trade_h1 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1,
                                     dto_h1, dto_d1, append, true, Utils.CAPITAL_TIME_H1);
 
-                            String key = EPIC + Utils.CAPITAL_TIME_H1;
                             BscScanBinanceApplication.mt5_open_trade_List.add(trade_h1);
                             BscScanBinanceApplication.dic_comment.put(key, trade_h1.getComment());
                         }
@@ -3906,17 +3905,28 @@ public class BinanceServiceImpl implements BinanceService {
                     if (!Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
                             && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
 
-                        String append = type + ":002412415" + text_risk_010;
-                        Mt5OpenTrade trade_h12 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1,
-                                dto_h1, dto_d1, append, true, Utils.CAPITAL_TIME_H12);
+                        String append = "";
+                        String CAPITAL_TIME_XX = "";
+                        if (dto_h12.isAllow_trade_by_ma50() && switch_trend_h12.contains(trend_d1)) {
+                            CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
+                            append = type + ":002412w41" + text_risk_010;
+                        } else if (dto_h4.isAllow_trade_by_ma50() && switch_trend_h4.contains(trend_d1)) {
+                            CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
+                            append = type + ":0024124w1" + text_risk_010;
+                        }
 
-                        String msg = Utils.createOpenTradeMsg(trade_h12, "W#D H12~D1: ");
-                        BscScanBinanceApplication.msg_w_noteq_d_but_h12_sweet_trend
-                                .add(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
+                        if (Utils.isNotBlank(append)) {
+                            Mt5OpenTrade trade_h12 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1,
+                                    dto_h1, dto_d1, append, true, CAPITAL_TIME_XX);
 
-                        String key = EPIC + Utils.CAPITAL_TIME_H12;
-                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_h12);
-                        BscScanBinanceApplication.dic_comment.put(key, trade_h12.getComment());
+                            String msg = Utils.createOpenTradeMsg(trade_h12, "W#D H12~D1: ");
+                            BscScanBinanceApplication.msg_w_noteq_d_but_h12_sweet_trend
+                                    .add(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
+
+                            String key = EPIC + CAPITAL_TIME_XX;
+                            BscScanBinanceApplication.mt5_open_trade_List.add(trade_h12);
+                            BscScanBinanceApplication.dic_comment.put(key, trade_h12.getComment());
+                        }
                     }
                 }
                 // ---------------------------------------------------------------------
