@@ -4208,7 +4208,7 @@ public class Utils {
         // cur_price, sl_long, tp_long);
 
         String temp = "";
-        temp += chartSL + "(Buy )SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 10);
+        temp += chartSL + "(Buy ) SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 10);
 
         // temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) +
         // "(lot)";
@@ -4232,7 +4232,7 @@ public class Utils {
         // cur_price, sl_shot, tp_shot);
 
         String temp = "";
-        temp += chartSL + "(Sell)SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10);
+        temp += chartSL + "(Sell) SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10);
 
         // temp += Utils.appendLeft(getStringValue(money_x5_now.calcLot()), 8) +
         // "(lot)";

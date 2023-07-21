@@ -2751,7 +2751,7 @@ public class BinanceServiceImpl implements BinanceService {
             ea += " TP:" + Utils.appendSpace(Utils.removeLastZero(trade.getTakeProfit()), 10);
             ea += "     Profit:"
                     + Utils.appendLeft(Utils.getStringValue(Utils.getBigDecimal(trade.getProfit()).intValue()), 6);
-            ea += "$   " + Utils.appendLeft(Utils.getStringValue(Utils.formatPrice(trade.getVolume(), 2)), 18)
+            ea += "$    " + Utils.appendLeft(Utils.getStringValue(Utils.formatPrice(trade.getVolume(), 2)), 18)
                     + "(lot)";
             ea = Utils.appendLeft("", 138) + Utils.appendSpace(ea, length);
 
@@ -3971,8 +3971,10 @@ public class BinanceServiceImpl implements BinanceService {
                         BscScanBinanceApplication.dic_comment.put(key, trade_h12.getComment());
                     }
 
+                    // -------------------------------------------------------------------------------------
+
                     // CAPITAL_TIME_H4
-                    if (m15_allow_trade && switch_trend_h4.contains(trend_d1)) {
+                    if (m15_allow_trade && dto_h4.isTradable_zone() && switch_trend_h4.contains(trend_d1)) {
                         String key = EPIC + Utils.CAPITAL_TIME_H4;
                         String append = type + ":9624124w1" + text_risk_010;
 
