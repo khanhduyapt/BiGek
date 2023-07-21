@@ -4019,9 +4019,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // W#D FOREX ONLY (H12)
-                if (is_tradable_zone && !Objects.equals(trend_w1, trend_d1)
-                        && Objects.equals(trend_d1, trend_h1)) {
-
+                if (is_tradable_zone && m15_allow_trade && !Objects.equals(trend_w1, trend_d1)) {
                     String append = "";
                     String CAPITAL_TIME_XX = "";
                     if (is_eq_d_h12_h4 && dto_h12.isTradable_zone() && m15_allow_trade
