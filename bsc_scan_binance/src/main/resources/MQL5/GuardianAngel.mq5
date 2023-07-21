@@ -154,7 +154,7 @@ void closeSymbol(ulong ticket)
         {
          if(OrderSelect(orderTicket))
            {
-            // trade.OrderDelete(orderTicket);
+            trade.OrderDelete(orderTicket);
             Comment("-----------------------------GuardianAngel: (OrderDelete)" + (string) orderTicket +  " Symbol: " + OrderGetString(ORDER_SYMBOL));
            }
         }
@@ -166,7 +166,7 @@ void closeSymbol(ulong ticket)
 
       if(positionTicket == ticket)
         {
-         // trade.PositionClose(positionTicket);
+         trade.PositionClose(positionTicket);
          Comment("-----------------------------GuardianAngel: (PositionClose)" + (string) positionTicket +  " Symbol: " + PositionGetString(POSITION_SYMBOL));
         }
      }
