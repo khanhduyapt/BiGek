@@ -4145,7 +4145,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (!Objects.equals(trend_h12, TRADE_TREND) && !Objects.equals(trend_h4, TRADE_TREND)
                     && !Objects.equals(trend_h1, TRADE_TREND)) {
 
-                if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H) || Utils.isCloseTradeThisWeek()) {
+                if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_1D) || Utils.isCloseTradeThisWeek()) {
                     is_reverse_h12 = true;
                 }
             }
@@ -4160,11 +4160,11 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String reason = "";
                     if (has_profit_h4) {
-                        reason = "profit(4h_reverse)";
+                        reason = "4h_reverse_profit";
                     } else if (is_hit_sl) {
-                        reason = "-1R(TrendInverse)";
+                        reason = "hit_sl_1r";
                     } else if (is_reverse_h12) {
-                        reason = "12h_reverse";
+                        reason = "12h_reverse_timeout";
                     } else if (is_open_other_trend) {
                         reason = "open_other_trend";
                     }
