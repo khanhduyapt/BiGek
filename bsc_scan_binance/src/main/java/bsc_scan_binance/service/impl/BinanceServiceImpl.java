@@ -4126,11 +4126,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ---------------------------------------------------------------------------------
             boolean has_profit_h4 = false;
-            if ((Utils.CAPITAL_TIME_H4 + Utils.CAPITAL_TIME_H1 + Utils.CAPITAL_TIME_15)
-                    .contains(mt5Entity.getTimeframe())) {
-                if ((PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0) && is_reverse_h4) {
-                    has_profit_h4 = true;
-                }
+            if ((PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0) && is_reverse_h4) {
+                has_profit_h4 = true;
             }
             // ---------------------------------------------------------------------------------
             boolean is_hit_sl = false;
