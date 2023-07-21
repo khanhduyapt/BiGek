@@ -4093,11 +4093,6 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            // TODO: 5. closeTrade_by_SL_TP
-            String hold = "__";
-            if (hold.contains(EPIC)) {
-                continue;
-            }
             String CAPITAL_TIME_H12 = Utils.CAPITAL_TIME_H12;
             if (Utils.EPICS_STOCKS.contains(EPIC)) {
                 CAPITAL_TIME_H12 = Utils.CAPITAL_TIME_D1;
@@ -4149,7 +4144,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ---------------------------------------------------------------------------------
             boolean isTimeout = false;
-            if (isTrendInverse_h4 && Utils.isCloseTradeThisWeek()) {
+            if (isTrendInverse_h4
+                    && (allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H) || Utils.isCloseTradeThisWeek())) {
                 isTimeout = true;
             }
             // ---------------------------------------------------------------------------------
@@ -4158,9 +4154,8 @@ public class BinanceServiceImpl implements BinanceService {
                 isOpenOtherTrend = true;
             }
             // ---------------------------------------------------------------------------------
-            if (isTrendInverse_h12 || isPriceHit_TP || isPriceHit_SL || isTimeout || isOpenOtherTrend) {
-                if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H) || isPriceHit_TP || isPriceHit_SL) {
-                    mt5_close_trade_list.add(TICKET);
+            if (isTrendInverse_h12 || isPriceHit_TP || isTimeout || isOpenOtherTrend) {
+                if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H) || isPriceHit_TP) {
 
                     String reason = "";
                     if (isPriceHit_TP) {
@@ -4172,6 +4167,8 @@ public class BinanceServiceImpl implements BinanceService {
                     } else if (isOpenOtherTrend) {
                         reason = "OtherTrend(TrendInverse)";
                     }
+
+                    mt5_close_trade_list.add(TICKET);
                     mt5_close_trade_reason.add(reason);
 
                     String log = Utils.createCloseTradeMsg(mt5Entity, "CloseTrade: ", reason);
@@ -4189,10 +4186,26 @@ public class BinanceServiceImpl implements BinanceService {
                 String TICKET = mt5_close_trade_list.get(index);
                 String REASON = mt5_close_trade_reason.get(index);
 
-                StringBuilder sb = new StringBuilder();
-                sb.append(TICKET);
-                sb.append('\n');
-                writer.write(sb.toString());
+                // TODO: 5. closeTrade_by_SL_TP
+                String hold = "_SPN35_";
+                if (hold.length() > 5) {
+                    String EPIC = "NOT_FOUND";
+                    Mt5OpenTradeEntity mt5Entity = mt5OpenTradeRepository.findById(TICKET).orElse(null);
+                    if (Objects.nonNull(mt5Entity)) {
+                        EPIC = mt5Entity.getSymbol();
+                        if (!hold.contains(EPIC)) {
+                            StringBuilder sb = new StringBuilder();
+                            sb.append(TICKET);
+                            sb.append('\n');
+                            writer.write(sb.toString());
+                        }
+                    }
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(TICKET);
+                    sb.append('\n');
+                    writer.write(sb.toString());
+                }
 
                 for (Mt5OpenTradeEntity trade : mt5Openlist) {
                     if (Objects.equals(TICKET, trade.getTicket())) {
