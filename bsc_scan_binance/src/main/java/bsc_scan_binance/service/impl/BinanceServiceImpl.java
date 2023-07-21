@@ -2399,7 +2399,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     @SuppressWarnings("unused")
     private boolean isReloadPrepareOrderTrend(String EPIC, String CAPITAL_TIME_XXX) {
-        long elapsedMinutes = Utils.MINUTES_OF_D + 1;
+        long elapsedMinutes = Utils.MINUTES_OF_1D + 1;
         LocalDateTime date_time = LocalDateTime.now();
 
         String id = EPIC + "_" + CAPITAL_TIME_XXX;
@@ -2415,7 +2415,7 @@ public class BinanceServiceImpl implements BinanceService {
         long time = Utils.MINUTES_OF_1H;
         if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_D1)
                 || Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_D1)) {
-            time = Utils.MINUTES_OF_D;
+            time = Utils.MINUTES_OF_1D;
         } else if (Objects.equals(CAPITAL_TIME_XXX, Utils.CAPITAL_TIME_H12)
                 || Objects.equals(CAPITAL_TIME_XXX, Utils.CRYPTO_TIME_H4)) {
             time = Utils.MINUTES_OF_4H;
@@ -3907,8 +3907,7 @@ public class BinanceServiceImpl implements BinanceService {
             eoz += !dto_d1.isTradable_zone() ? "D" : "-";
             eoz += !dto_h12.isTradable_zone() ? "H12" : "---";
             eoz += !dto_h4.isTradable_zone() ? "H4" : "--";
-            eoz += !dto_h1.isTradable_zone() ? "H1" : "--";
-            eoz += "|  ";
+            eoz += "  ";
 
             if (Objects.equals(EPIC, "USDCAD")) {
                 // boolean debug = true;
@@ -4022,9 +4021,9 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // CAPITAL_TIME_H12
-                if (m15_allow_trade && Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
-                    if (!Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)
-                            && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
+                if (m15_allow_trade && !Objects.equals(trend_w1, trend_d1)) {
+                    if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)
+                            && Objects.equals(trend_d1, trend_h1)) {
 
                         String append = "";
                         String CAPITAL_TIME_XX = "";
@@ -4119,20 +4118,17 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // ---------------------------------------------------------------------------------
-            boolean is_reverse_h12 = false;
-            if (!Objects.equals(trend_h12, TRADE_TREND) && !Objects.equals(trend_h4, TRADE_TREND)
-                    && !Objects.equals(trend_h1, TRADE_TREND)) {
-                is_reverse_h12 = true;
-            }
-
             boolean is_reverse_h4 = false;
             if (!Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)) {
                 is_reverse_h4 = true;
             }
             // ---------------------------------------------------------------------------------
-            boolean is_hit_tp = false;
-            if ((PROFIT.compareTo(Utils.RISK_0_10_PERCENT) > 0) && is_reverse_h4) {
-                is_hit_tp = true;
+            boolean has_profit_h4 = false;
+            if ((Utils.CAPITAL_TIME_H4 + Utils.CAPITAL_TIME_H1 + Utils.CAPITAL_TIME_15)
+                    .contains(mt5Entity.getTimeframe())) {
+                if ((PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0) && is_reverse_h4) {
+                    has_profit_h4 = true;
+                }
             }
             // ---------------------------------------------------------------------------------
             boolean is_hit_sl = false;
@@ -4143,29 +4139,32 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
             // ---------------------------------------------------------------------------------
-            boolean is_timeout = false;
-            if (is_reverse_h12
-                    && (allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H) || Utils.isCloseTradeThisWeek())) {
-                is_timeout = true;
+            boolean is_reverse_h12 = false;
+            if (!Objects.equals(trend_h12, TRADE_TREND) && !Objects.equals(trend_h4, TRADE_TREND)
+                    && !Objects.equals(trend_h1, TRADE_TREND)) {
+
+                if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H) || Utils.isCloseTradeThisWeek()) {
+                    is_reverse_h12 = true;
+                }
             }
             // ---------------------------------------------------------------------------------
-            boolean isOpenOtherTrend = false;
+            boolean is_open_other_trend = false;
             if (Utils.isTradingAgainstTrend(EPIC, TRADE_TREND, BscScanBinanceApplication.mt5_open_trade_List)) {
-                isOpenOtherTrend = true;
+                is_open_other_trend = true;
             }
             // ---------------------------------------------------------------------------------
-            if (is_reverse_h12 || is_hit_tp || is_hit_sl || is_timeout || isOpenOtherTrend) {
-                if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H) || is_hit_tp) {
+            if (has_profit_h4 || is_hit_sl || is_reverse_h12 || is_open_other_trend) {
+                if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
 
                     String reason = "";
-                    if (is_hit_tp) {
-                        reason = "+1R(TrendInverse)";
+                    if (has_profit_h4) {
+                        reason = "profit(4h_reverse)";
                     } else if (is_hit_sl) {
                         reason = "-1R(TrendInverse)";
-                    } else if (is_timeout) {
-                        reason = "Timeout(12h_reverse)";
-                    } else if (isOpenOtherTrend) {
-                        reason = "OpenOtherTrend";
+                    } else if (is_reverse_h12) {
+                        reason = "12h_reverse";
+                    } else if (is_open_other_trend) {
+                        reason = "open_other_trend";
                     }
 
                     mt5_close_trade_list.add(TICKET);

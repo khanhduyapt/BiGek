@@ -81,8 +81,6 @@ void OnTimer()
         }
       //--------------------------------------------------------------------------------------------------------------------
       FileClose(nfile_handle);
-
-      Comment("-----------------------------TradeList: (Buy)" + (string)count_buys + " (Sell):"+ (string)count_sells);
      }
    else
      {

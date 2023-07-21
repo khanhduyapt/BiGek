@@ -186,8 +186,6 @@ string toLower(string text)
 //+------------------------------------------------------------------+
 void OnTimer()
   {
-   Comment("-----------------------------FTMOSafeGuard: (Forex)" + (string)TimeLocal() + " (Symbol):"+ Symbol());
-
    int n_close_trade_file_handle = FileOpen("Data//CloseSymbols.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
    if(n_close_trade_file_handle != INVALID_HANDLE)
      {

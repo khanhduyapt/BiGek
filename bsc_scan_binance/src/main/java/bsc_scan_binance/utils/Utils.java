@@ -64,6 +64,8 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 public class Utils {
     private static final BigDecimal ACCOUNT = BigDecimal.valueOf(200000);
 
+    public static final BigDecimal RISK_0_05_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
+
     // Trend W != D (200$ / 1trade)
     public static final BigDecimal RISK_0_10_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
 
@@ -185,7 +187,7 @@ public class Utils {
     public static final String ENCRYPTED_D1 = "mngy";
     public static final String ENCRYPTED_W1 = "week";
 
-    public static final Integer MINUTES_OF_D = 1440;
+    public static final Integer MINUTES_OF_1D = 1440;
     public static final Integer MINUTES_OF_12H = 720;
     public static final Integer MINUTES_OF_4H = 240;
     public static final Integer MINUTES_OF_1H = 60;
@@ -3628,6 +3630,7 @@ public class Utils {
 
         String msg = Utils.appendSpace("", 10) + prefix;
         msg += Utils.appendSpace(dto.getSymbol(), 10) + new_line_from_service + " ";
+        msg += Utils.appendSpace(reason, 30);
         msg += Utils.appendSpace(dto.getComment(), 35) + timeframe;
         msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getTypeDescription(), 4, "_") + ")", 10);
         msg += "  ";
@@ -3638,7 +3641,6 @@ public class Utils {
 
         msg += Utils.appendSpace("", 17);
         msg += Utils.appendSpace(Utils.getCapitalLink(dto.getSymbol()), 62);
-        msg += Utils.appendSpace(reason, 30);
 
         return msg;
     }
