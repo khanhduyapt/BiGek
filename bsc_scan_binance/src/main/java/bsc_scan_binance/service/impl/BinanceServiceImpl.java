@@ -3076,13 +3076,6 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO: 6. monitorProfit
         Utils.logWritelnDraft("");
         for (String company : Utils.COMPANIES) {
-            List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByCompanyOrderBySymbolAsc(company);
-
-            String msg = "";
-            String msgStopLoss = "";
-            String msgStopScalping = "";
-            BigDecimal total = BigDecimal.ZERO;
-
             try {
                 String mt5_close_trade_file = Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + "CloseSymbols.csv";
                 File myScap = new File(mt5_close_trade_file);
@@ -3091,19 +3084,20 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             int count = 0;
+            String msg = "";
+            BigDecimal total = BigDecimal.ZERO;
             String risk_0_15 = "     Risk: 0.1% : " + Utils.RISK_0_10_PERCENT.intValue() + "$ per trade";
+            List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByCompanyOrderBySymbolAsc(company);
             for (Mt5OpenTradeEntity trade : mt5Openlist) {
-                String EPIC = trade.getSymbol();
-                String TRADE_TREND = trade.getTypeDescription().toUpperCase();
-                BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
-
-                // ---------------------------------------------------------------------------------
                 count += 1;
-
+                String EPIC = trade.getSymbol();
                 String multi_timeframes = get_time_frames(EPIC);
+                BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
+                String TRADE_TREND = trade.getTypeDescription().toUpperCase();
+
                 String result = "";
-                result = Utils.appendLeft("Trade:" + Utils.appendLeft(String.valueOf(count), 3), 15) + ". "
-                        + Utils.appendSpace(trade.getCompany(), 10);
+                result += Utils.appendLeft("Trade:" + Utils.appendLeft(String.valueOf(count), 3), 15) + ". ";
+                result += Utils.appendSpace(trade.getCompany(), 10);
                 result += Utils.appendSpace(TRADE_TREND, 10) + "   ";
                 result += Utils.getTypeOfEpic(EPIC) + "   ";
                 result += Utils.appendSpace(EPIC, 10);
@@ -3116,10 +3110,6 @@ public class BinanceServiceImpl implements BinanceService {
 
                 total = total.add(PROFIT);
                 msg += result + Utils.new_line_from_service;
-
-                if (result.contains("StopLoss")) {
-                    msgStopLoss += result.replace(multi_timeframes, "") + Utils.new_line_from_service;
-                }
             }
 
             if (Utils.isNotBlank(msg)) {
@@ -3127,19 +3117,8 @@ public class BinanceServiceImpl implements BinanceService {
                         + risk_0_15 + Utils.new_line_from_service + msg;
                 Utils.logWritelnDraft(msg.replace(Utils.new_line_from_service, "\n"));
             }
-            if (Utils.isNotBlank(msgStopLoss)) {
-                msgStopLoss = "[STOP_LOSS]" + risk_0_15 + Utils.new_line_from_service + msgStopLoss;
-
-                String EVENT_ID = "StopLoss" + Utils.getCurrentYyyyMmDd_HH();
-                sendMsgPerHour_OnlyMe(EVENT_ID, msgStopLoss);
-            }
-            if (Utils.isNotBlank(msgStopScalping)) {
-                msgStopScalping = "[STOP_SCALPING]" + Utils.new_line_from_service + msgStopScalping;
-
-                String EVENT_ID = "StopScalping" + Utils.getCurrentYyyyMmDd_HH();
-                sendMsgPerHour_OnlyMe(EVENT_ID, msgStopScalping);
-            }
         }
+
         Utils.logWritelnDraft("");
         openTrade();
 
