@@ -3987,48 +3987,20 @@ public class BinanceServiceImpl implements BinanceService {
                         BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
                         BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                     }
-
-                    // CAPITAL_TIME_H1
-                    if (dto_h1.isTradable_zone() && is_eq_d_h4_h1
-                            && dto_h4.isTradable_zone() && (m15_allow_trade || switch_trend_h1.contains(trend_d1))) {
-                        String key = EPIC + Utils.CAPITAL_TIME_H1;
-                        String append = type + ":96241241w" + text_risk_010;
-
-                        Mt5OpenTrade trade_h1 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1,
-                                dto_h1, dto_d1, append, true, Utils.CAPITAL_TIME_H1);
-
-                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_h1);
-                        BscScanBinanceApplication.dic_comment.put(key, trade_h1.getComment());
-                    }
-
-                    // CAPITAL_TIME_15
-                    if (m15_allow_trade) {
-                        String key = EPIC + Utils.CAPITAL_TIME_15;
-                        String append = type + ":962412415" + text_risk_010;
-
-                        Mt5OpenTrade trade_15 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1,
-                                dto_h1, dto_d1, append, true, Utils.CAPITAL_TIME_15);
-
-                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_15);
-                        BscScanBinanceApplication.dic_comment.put(key, trade_15.getComment());
-
-                        String msg = Utils.createOpenTradeMsg(trade_15, "W=D=H m15 : ");
-                        BscScanBinanceApplication.msg_w_noteq_d_but_h12_sweet_trend
-                                .add(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
-                    }
                 }
 
                 // W#D FOREX ONLY (H12)
                 if (is_tradable_zone && m15_allow_trade && !Objects.equals(trend_w1, trend_d1)) {
                     String append = "";
                     String CAPITAL_TIME_XX = "";
-                    if (is_eq_d_h12_h4 && dto_h12.isTradable_zone() && m15_allow_trade
+                    if (is_eq_d_h12_h4 && dto_h12.isTradable_zone() && (m15_allow_trade || is_eq_d_h4_h1)
                             && switch_trend_h12.contains(trend_d1)) {
                         CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H12;
                         append = type + ":002412w41" + text_risk_010;
                     }
 
-                    if (is_eq_d_h4_h1 && dto_h4.isTradable_zone() && switch_trend_h4.contains(trend_d1)) {
+                    if (m15_allow_trade && is_eq_d_h4_h1 && dto_h4.isTradable_zone()
+                            && switch_trend_h4.contains(trend_d1)) {
                         CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
                         append = type + ":0024124w1" + text_risk_010;
                     }
