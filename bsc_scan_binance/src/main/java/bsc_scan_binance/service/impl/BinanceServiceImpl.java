@@ -4147,13 +4147,13 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_1D) || Utils.isCloseTradeThisWeek()
                         || (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
-                    // is_reverse_h12 = true;
+                    is_reverse_h12 = true;
                 }
             }
             // ---------------------------------------------------------------------------------
             boolean is_open_other_trend = false;
             if (Utils.isTradingAgainstTrend(EPIC, TRADE_TREND, BscScanBinanceApplication.mt5_open_trade_List)) {
-                // is_open_other_trend = true;
+                is_open_other_trend = true;
             }
             // ---------------------------------------------------------------------------------
             if (has_profit_h4 || is_hit_sl || is_reverse_h12 || is_open_other_trend) {
@@ -4169,8 +4169,11 @@ public class BinanceServiceImpl implements BinanceService {
                     } else if (is_open_other_trend) {
                         reason = "open_other_trend";
                     }
-                    mt5_close_trade_list.add(TICKET);
-                    mt5_close_trade_reason.add(reason);
+
+                    if (has_profit_h4 || is_hit_sl) {
+                        mt5_close_trade_list.add(TICKET);
+                        mt5_close_trade_reason.add(reason);
+                    }
 
                     // --------------------------------------------------------------------------
                     String log = Utils.createCloseTradeMsg(mt5Entity, "CloseTrade: ", reason);
