@@ -2747,11 +2747,12 @@ public class BinanceServiceImpl implements BinanceService {
             String ea = "   Opening: ";
             ea += Utils.appendLeft(trade.getCompany(), 9) + ": ";
             ea += Utils.appendSpace(trade.getTypeDescription(), 8);
-            ea += " Vol:" + Utils.appendLeft(Utils.getStringValue(trade.getVolume()), 6) + "(lot)";
             ea += " SL:" + Utils.appendSpace(Utils.removeLastZero(trade.getStopLoss()), 11);
             ea += " TP:" + Utils.appendSpace(Utils.removeLastZero(trade.getTakeProfit()), 10);
-            ea += " Profit:"
+            ea += "     Profit:"
                     + Utils.appendLeft(Utils.getStringValue(Utils.getBigDecimal(trade.getProfit()).intValue()), 6);
+            ea += "$   " + Utils.appendLeft(Utils.getStringValue(Utils.formatPrice(trade.getVolume(), 2)), 18)
+                    + "(lot)";
             ea = Utils.appendLeft("", 138) + Utils.appendSpace(ea, length);
 
             Utils.logWritelnDraft(ea);
@@ -3090,7 +3091,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             int count = 0;
-            String risk_0_15 = "     Risk: 0.1%=" + Utils.RISK_0_10_PERCENT.intValue() + "$per_trade";
+            String risk_0_15 = "     Risk: 0.1% : " + Utils.RISK_0_10_PERCENT.intValue() + "$ per trade";
             for (Mt5OpenTradeEntity trade : mt5Openlist) {
                 String EPIC = trade.getSymbol();
                 String TRADE_TREND = trade.getTypeDescription().toUpperCase();
@@ -3947,7 +3948,7 @@ public class BinanceServiceImpl implements BinanceService {
                             && Objects.equals(trend_d1, trend_h1)) {
 
                         // CAPITAL_TIME_W1
-                        if (m15_allow_trade && dto_w1.isTradable_zone() && switch_trend_w1.contains(trend_w1)) {
+                        if (m15_allow_trade && dto_w1.isTradable_zone() && switch_trend_w1.contains(trend_d1)) {
                             String key = EPIC + Utils.CAPITAL_TIME_W1;
                             String append = type + ":96w241241" + text_risk_010;
                             Mt5OpenTrade trade_w1 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1,

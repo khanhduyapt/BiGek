@@ -1053,7 +1053,7 @@ public class Utils {
 
     public static boolean isKillZoneTime() {
         LocalTime kill_zone_tk = LocalTime.parse("05:45:00"); // to: 06:15
-        LocalTime kill_zone_ld = LocalTime.parse("13:45:00"); // to: 14:15
+        LocalTime kill_zone_ld = LocalTime.parse("14:25:00"); // to: 14:15
         LocalTime kill_zone_ny = LocalTime.parse("18:45:00"); // to: 19:15
         LocalTime cur_time = LocalTime.now();
 
