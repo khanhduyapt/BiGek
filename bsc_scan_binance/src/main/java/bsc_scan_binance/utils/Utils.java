@@ -4120,15 +4120,15 @@ public class Utils {
 
             String tracking_trend) {
         // --------------------------------------------
-        String week = "";
-        String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "B"
-                : Objects.equals(Utils.TREND_SHOT, trend_d1) ? "S" : "?";
-        if (note_w1.contains(trend_w1)) {
-            week = " (W~" + type + ")  ";
-        } else {
-            week = "        ";
-        }
-        String No = Utils.appendLeft(String.valueOf(index), 2, "0") + ". " + week;
+        //String week = "";
+        //String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "B"
+        //        : Objects.equals(Utils.TREND_SHOT, trend_d1) ? "S" : "?";
+        //if (note_w1.contains(trend_w1)) {
+        //    week = " (W~" + type + ")  ";
+        //} else {
+        //    week = "        ";
+        //}
+        String No = Utils.appendLeft(String.valueOf(index), 2, "0") + ". ";
         // --------------------------------------------
         String prefix_trend = "[MO-W1-D1-H12-H4-H1]";
 
@@ -4147,7 +4147,7 @@ public class Utils {
         if (!Objects.equals(trend_d1, trend_h1)) {
             prefix_trend = prefix_trend.replace("H1]", "--]");
         }
-        prefix_trend = prefix_trend + "   " + appendSpace(trend_d1, 5);
+        prefix_trend = prefix_trend + "   D:" + appendSpace(trend_d1, 5);
 
         // --------------------------------------------
         String switch_trend = "{";
