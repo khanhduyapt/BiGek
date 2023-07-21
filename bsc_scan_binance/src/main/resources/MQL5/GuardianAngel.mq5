@@ -6,7 +6,7 @@
 #property copyright "Copyright 2023, MetaQuotes Ltd."
 #property link      "https://www.mql5.com"
 #property version   "1.00"
-
+//+------------------------------------------------------------------+
 #include <Trade\Trade.mqh>
 #include <Trade\PositionInfo.mqh>
 #include <Trade\OrderInfo.mqh>
@@ -155,7 +155,7 @@ void closeSymbol(ulong ticket)
          if(OrderSelect(orderTicket))
            {
             // trade.OrderDelete(orderTicket);
-            Alert("OrderDelete " + (string) orderTicket +  " Symbol: " + OrderGetString(ORDER_SYMBOL));
+            Comment("-----------------------------GuardianAngel: (OrderDelete)" + (string) orderTicket +  " Symbol: " + OrderGetString(ORDER_SYMBOL));
            }
         }
      }
@@ -167,7 +167,7 @@ void closeSymbol(ulong ticket)
       if(positionTicket == ticket)
         {
          // trade.PositionClose(positionTicket);
-         Alert("PositionClose " + (string) positionTicket +  " Symbol: " + PositionGetString(POSITION_SYMBOL));
+         Comment("-----------------------------GuardianAngel: (PositionClose)" + (string) positionTicket +  " Symbol: " + PositionGetString(POSITION_SYMBOL));
         }
      }
   }
