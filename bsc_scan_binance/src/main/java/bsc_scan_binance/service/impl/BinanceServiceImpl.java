@@ -2746,7 +2746,8 @@ public class BinanceServiceImpl implements BinanceService {
         for (Mt5OpenTradeEntity trade : tradeList) {
             String ea = "   Opening: ";
             ea += Utils.appendLeft(trade.getCompany(), 9) + ": ";
-            ea += Utils.appendSpace(trade.getTypeDescription(), 12) + " ";
+            ea += Utils.appendSpace(trade.getTypeDescription(), 8);
+            ea += " Vol:" + Utils.appendLeft(Utils.getStringValue(trade.getVolume()), 6) + "(lot)";
             ea += " SL:" + Utils.appendSpace(Utils.removeLastZero(trade.getStopLoss()), 11);
             ea += " TP:" + Utils.appendSpace(Utils.removeLastZero(trade.getTakeProfit()), 10);
             ea += " Profit:"
@@ -4075,6 +4076,9 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public void closeTrade_by_SL_TP() {
+        if (Utils.isNewsAt_19_20_21h()) {
+            return;
+        }
         if (BscScanBinanceApplication.mt5_open_trade_List.size() > 0) {
             Utils.logWritelnDraft("");
         }
