@@ -2744,7 +2744,7 @@ public class BinanceServiceImpl implements BinanceService {
         outputLog(EPIC, append, find_trend);
 
         for (Mt5OpenTradeEntity trade : tradeList) {
-            String ea = " Opening: ";
+            String ea = "   Opening: ";
             ea += Utils.appendLeft(trade.getCompany(), 9) + ": ";
             ea += Utils.appendSpace(trade.getTypeDescription(), 12) + " ";
             ea += " SL:" + Utils.appendSpace(Utils.removeLastZero(trade.getStopLoss()), 11);
