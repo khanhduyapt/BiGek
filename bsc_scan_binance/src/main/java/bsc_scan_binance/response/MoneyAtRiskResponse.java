@@ -112,15 +112,18 @@ public class MoneyAtRiskResponse {
             standard_lot = BigDecimal.valueOf(0.71428);
             unit_risk_per_pip = BigDecimal.valueOf(0.71428);
             break;
+        case "DASHUSD":
+            standard_lot = BigDecimal.valueOf(1);
+            unit_risk_per_pip = BigDecimal.valueOf(1);
+            break;
+        case "DOGEUSD":
+            standard_lot = BigDecimal.valueOf(1);
+            unit_risk_per_pip = BigDecimal.valueOf(1000);
+            break;
         case "XRPUSD":
         case "DOTUSD":
         case "ADAUSD":
         case "LTCUSD":
-        case "DASHUSD":
-            standard_lot = BigDecimal.valueOf(1);
-            unit_risk_per_pip = BigDecimal.valueOf(100);
-            break;
-        case "DOGEUSD":
             standard_lot = BigDecimal.valueOf(1);
             unit_risk_per_pip = BigDecimal.valueOf(1000);
             break;

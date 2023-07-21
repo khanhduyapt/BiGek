@@ -1130,7 +1130,7 @@ public class Utils {
             EXCHANGE = "FOREXCOM";
         }
 
-        return "https://tradingview.com/chart/?symbol=" + EXCHANGE + "%3A" + epic + " ";
+        return " https://tradingview.com/chart/?symbol=" + EXCHANGE + "%3A" + epic + " ";
     }
 
     public static String getDraftLogFile() {
@@ -3608,39 +3608,30 @@ public class Utils {
     }
 
     public static String createOpenTradeMsg(Mt5OpenTrade dto, String prefix) {
-        String timeframe = " " + Utils.appendSpace(getDeEncryptedChartNameCapital(dto.getComment()), 10);
-
-        String msg = Utils.appendSpace("", 10) + prefix;
+        String msg = Utils.appendSpace("", 10) + "(Open Msg)   " + prefix;
+        msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type().toUpperCase(), 4, "_") + ")", 10);
         msg += Utils.appendSpace(dto.getEpic(), 10) + new_line_from_service + " ";
-        msg += Utils.appendSpace(dto.getComment(), 35) + timeframe;
-        msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type(), 4, "_") + ")", 10);
-        msg += Utils.appendSpace(dto.getEpic(), 10);
+        msg += Utils.appendSpace(dto.getComment(), 35) + "  ";
         msg += "  ";
         msg += ":Price: " + Utils.appendLeft(Utils.removeLastZero(dto.getCur_price()), 10);
         msg += "      ";
         msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 10) + "(lot)   ";
         msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10);
-        msg += " TP: " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit()), 10) + " ";
 
         return msg;
     }
 
     public static String createCloseTradeMsg(Mt5OpenTradeEntity dto, String prefix, String reason) {
-        String timeframe = " " + Utils.appendSpace(getDeEncryptedChartNameCapital(dto.getComment()), 10);
-
-        String msg = Utils.appendSpace("", 10) + prefix;
-        msg += Utils.appendSpace(dto.getSymbol(), 10) + new_line_from_service + " ";
-        msg += Utils.appendSpace(reason, 30);
-        msg += Utils.appendSpace(dto.getComment(), 35) + timeframe;
+        String msg = Utils.appendSpace("", 10) + "(CloseMsg)   " + prefix;
         msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getTypeDescription(), 4, "_") + ")", 10);
-        msg += "  ";
-        msg += ":Ticket: " + Utils.appendSpace(dto.getTicket(), 15);
+        msg += Utils.appendSpace(dto.getSymbol(), 10) + new_line_from_service + " ";
+        msg += Utils.appendSpace(reason, 20);
+        msg += " :Ticket: " + Utils.appendSpace(dto.getTicket(), 15);
         msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getVolume()), 10) + "(lot)   ";
         msg += " Profit:" + Utils.appendLeft(Utils.getStringValue(dto.getProfit().intValue()), 6) + "   ";
         msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStopLoss()), 10);
-
-        msg += Utils.appendSpace("", 17);
         msg += Utils.appendSpace(Utils.getCapitalLink(dto.getSymbol()), 62);
+        msg += Utils.appendSpace(dto.getComment(), 35);
 
         return msg;
     }
