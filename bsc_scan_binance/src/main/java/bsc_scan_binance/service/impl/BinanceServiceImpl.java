@@ -3037,6 +3037,16 @@ public class BinanceServiceImpl implements BinanceService {
         return false;
     }
 
+    private boolean is_candidate_open_trade(String EPIC) {
+        for (Mt5OpenTrade dto : BscScanBinanceApplication.mt5_open_trade_List) {
+            if (Objects.equals(EPIC.toUpperCase(), dto.getEpic().toUpperCase())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     @Override
     @Transactional
     public void monitorProfit() {
@@ -3899,12 +3909,6 @@ public class BinanceServiceImpl implements BinanceService {
                 is_tradable_zone = false;
             }
 
-            String prefix = Utils.getPrefix_FollowTrackingTrend(count, trend_mo, trend_w1, trend_d1, trend_h12,
-                    trend_h4, trend_h1, switch_trend_mo, switch_trend_w1, switch_trend_d1, switch_trend_h12,
-                    switch_trend_h4, tracking_trend);
-
-            analysis_profit(prefix, EPIC, eoz, log_trend);
-
             // ---------------------------------------------------------------------------------------------
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC)
@@ -4044,6 +4048,14 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (!Objects.equals(EPIC, "BTCUSD")) {
                     BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
+                }
+
+                if (is_opening_trade(EPIC, "") || is_candidate_open_trade(EPIC)) {
+                    String prefix = Utils.getPrefix_FollowTrackingTrend(count, trend_mo, trend_w1, trend_d1, trend_h12,
+                            trend_h4, trend_h1, switch_trend_mo, switch_trend_w1, switch_trend_d1, switch_trend_h12,
+                            switch_trend_h4, tracking_trend);
+
+                    analysis_profit(prefix, EPIC, eoz, log_trend);
                 }
             }
 
