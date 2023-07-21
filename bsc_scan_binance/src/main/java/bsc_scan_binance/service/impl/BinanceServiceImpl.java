@@ -3123,7 +3123,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isNotBlank(msg)) {
                 msg = Utils.appendSpace(company, 15) + Utils.appendLeft(String.valueOf(total.intValue()), 10)
                         + risk_0_15 + Utils.new_line_from_service + msg;
-                Utils.logWritelnDraft(msg);
+                Utils.logWritelnDraft(msg.replace(Utils.new_line_from_service, "\n"));
             }
             if (Utils.isNotBlank(msgStopLoss)) {
                 msgStopLoss = "[STOP_LOSS]" + risk_0_15 + Utils.new_line_from_service + msgStopLoss;
