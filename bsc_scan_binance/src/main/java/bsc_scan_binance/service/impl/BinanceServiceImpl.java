@@ -3908,9 +3908,13 @@ public class BinanceServiceImpl implements BinanceService {
             if (eoz.contains("H12H4")) {
                 is_tradable_zone = false;
             }
+            boolean is_eq_d_h4_h1 = false;
             boolean is_eq_d_h12_h4 = false;
             if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)) {
                 is_eq_d_h12_h4 = true;
+            }
+            if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
+                is_eq_d_h4_h1 = true;
             }
             // ---------------------------------------------------------------------------------------------
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
@@ -4053,7 +4057,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
             // ---------------------------------------------------------------------------------------------
-            if (is_eq_d_h12_h4 || is_opening_trade(EPIC, "") || is_candidate_open_trade(EPIC)) {
+            if (is_eq_d_h12_h4 || is_eq_d_h4_h1 || is_opening_trade(EPIC, "") || is_candidate_open_trade(EPIC)) {
                 count += 1;
 
                 String prefix = Utils.getPrefix_FollowTrackingTrend(count, trend_mo, trend_w1, trend_d1, trend_h12,
