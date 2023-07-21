@@ -3572,7 +3572,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_mo, trend_w1, trend_d1, "", trend_h4,
                     trend_h1, dto_mo.getSwitch_trend(), dto_w1.getSwitch_trend(), dto_d1.getSwitch_trend(), "",
-                    dto_h4.getSwitch_trend(), trend_w1) + Utils.appendSpace("", 20);
+                    dto_h4.getSwitch_trend(), trend_w1) + Utils.appendSpace("", 15);
 
             // TODO: scapStocks
             if (is_opening_trade(EPIC, "")) {
@@ -4217,7 +4217,10 @@ public class BinanceServiceImpl implements BinanceService {
                                 + Utils.appendSpace(Utils.getStringValue(trade.getProfit().intValue()), 10)
                                 + Utils.appendLeft(REASON, 30);
 
-                        System.out.println(BscScanBinanceApplication.hostname + "mt5CloseSymbol: " + text);
+                        String key = trade.getSymbol() + "_" + trade.getTypeDescription() + trade.getTimeframe();
+                        if (isReloadAfter(Utils.MINUTES_OF_1H, key)) {
+                            System.out.println(BscScanBinanceApplication.hostname + "mt5CloseSymbol: " + text);
+                        }
 
                         //String key = trade.getSymbol() + "_" + trade.getTypeDescription() + ".";
                         //String EVENT_ID = "CLOSE_TRADE" + Utils.getCurrentYyyyMmDd_HH() + key;
