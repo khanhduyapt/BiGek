@@ -3934,18 +3934,6 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
                 if (is_tradable_zone && Objects.equals(trend_w1, trend_d1) && (is_eq_d_h4_h1 || is_eq_d_h12_h4)) {
-
-                    // CAPITAL_TIME_W1
-                    if (m15_allow_trade && dto_w1.isTradable_zone() && switch_trend_w1.contains(trend_d1)) {
-                        String key = EPIC + Utils.CAPITAL_TIME_W1;
-                        String append = type + ":96w241241" + text_risk_010;
-                        Mt5OpenTrade trade_w1 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1,
-                                dto_d1, append, true, Utils.CAPITAL_TIME_W1);
-
-                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_w1);
-                        BscScanBinanceApplication.dic_comment.put(key, trade_w1.getComment());
-                    }
-
                     // CAPITAL_TIME_D1
                     if (m15_allow_trade && switch_trend_d1.contains(trend_d1)) {
                         String key = EPIC + Utils.CAPITAL_TIME_D1;
@@ -3973,8 +3961,6 @@ public class BinanceServiceImpl implements BinanceService {
                         BscScanBinanceApplication.dic_comment.put(key, trade_h12.getComment());
                     }
 
-                    // -------------------------------------------------------------------------------------
-
                     // CAPITAL_TIME_H4
                     if ((m15_allow_trade || is_eq_d_h4_h1) && dto_h4.isTradable_zone()
                             && switch_trend_h4.contains(trend_d1)) {
@@ -3988,7 +3974,7 @@ public class BinanceServiceImpl implements BinanceService {
                         BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                     }
                 }
-
+                // -------------------------------------------------------------------------------------
                 // W#D FOREX ONLY (H12)
                 if (is_tradable_zone && m15_allow_trade && !Objects.equals(trend_w1, trend_d1)) {
                     String append = "";
