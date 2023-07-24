@@ -194,7 +194,7 @@ public class Utils {
     public static final Integer MINUTES_OF_15M = 15;
     public static final Integer MINUTES_OF_5M = 5;
 
-    public static final Integer MINUTES_RELOAD_CSV_DATA = 15;
+    public static final Integer MINUTES_RELOAD_CSV_DATA = 5;
 
     public static final List<String> COMPANIES = Arrays.asList("FTMO");
 

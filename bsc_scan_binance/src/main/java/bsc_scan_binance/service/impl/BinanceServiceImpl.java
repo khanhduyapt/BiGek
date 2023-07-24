@@ -3895,7 +3895,6 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_trend_d1 = dto_d1.getSwitch_trend().trim();
             String switch_trend_h12 = dto_h12.getSwitch_trend().trim();
             String switch_trend_h4 = dto_h4.getSwitch_trend().trim();
-            String switch_trend_h1 = dto_h1.getSwitch_trend().trim();
 
             String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "B"
                     : Objects.equals(Utils.TREND_SHOT, trend_d1) ? "S" : "?";
@@ -3916,10 +3915,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
             if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
                 is_eq_d_h4_h1 = true;
-            }
-            boolean is_sweet_trend = false;
-            if (Utils.isNotBlank(switch_trend_d1 + switch_trend_h12 + switch_trend_h4)) {
-                is_sweet_trend = true;
             }
             // ---------------------------------------------------------------------------------------------
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
@@ -4096,7 +4091,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ---------------------------------------------------------------------------------
             boolean has_profit_h4 = false;
-            if ((PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0) && is_reverse_h4) {
+            if ((PROFIT.compareTo(BigDecimal.ZERO) > 0) && is_reverse_h4) {
                 has_profit_h4 = true;
             }
             // ---------------------------------------------------------------------------------
@@ -4113,7 +4108,8 @@ public class BinanceServiceImpl implements BinanceService {
                     && !Objects.equals(trend_h4, TRADE_TREND) && !Objects.equals(trend_h1, TRADE_TREND)
                     && !Objects.equals(trend_15, TRADE_TREND)) {
 
-                if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_1D) || Utils.isCloseTradeThisWeek()
+                if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_1D)
+                        || Utils.isCloseTradeThisWeek()
                         || (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
                     is_reverse_d1 = true;
                 }
