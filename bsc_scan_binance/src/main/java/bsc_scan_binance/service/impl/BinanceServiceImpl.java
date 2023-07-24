@@ -3823,7 +3823,7 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal str_body = body.get(0);
         BigDecimal end_body = body.get(1);
 
-        BigDecimal bread = Utils.calcMaxBread(heiken_list);
+        BigDecimal bread = Utils.calcAvgBread(heiken_list);
         List<BigDecimal> lohi = Utils.getLowHighCandle(heiken_list);
         BigDecimal sl_long = lohi.get(0).subtract(bread);
         BigDecimal sl_shot = lohi.get(1).add(bread);

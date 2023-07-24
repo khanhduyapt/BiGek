@@ -3716,7 +3716,7 @@ public class Utils {
             }
         }
 
-        BigDecimal bread = Utils.calcMaxBread(heiken_list.subList(1, length));
+        BigDecimal bread = Utils.calcAvgBread(heiken_list.subList(1, length));
         List<BigDecimal> lohi = Utils.getLowHighCandle(heiken_list.subList(1, length));
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
             SL = lohi.get(0).subtract(bread);
