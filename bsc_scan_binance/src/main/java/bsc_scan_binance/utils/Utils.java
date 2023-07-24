@@ -4181,7 +4181,7 @@ public class Utils {
             switch_trend += getTrendPrefix("H12", "", " ");
         }
 
-        if (Objects.equals(trend_h12, trend_h4) && note_h4.contains(trend_h4)) {
+        if ((note_h4.contains(trend_d1) || note_h4.contains(trend_h12))) {
             switch_trend += getTrendPrefix("H4", note_h4, "");
         } else {
             switch_trend += getTrendPrefix("H4", "", "");

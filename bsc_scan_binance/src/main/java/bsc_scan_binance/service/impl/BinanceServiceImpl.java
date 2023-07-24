@@ -3977,6 +3977,17 @@ public class BinanceServiceImpl implements BinanceService {
                         BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
                         BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                     }
+
+                    if (m15_allow_trade && is_eq_d_h12_h4) {
+                        String key = EPIC + Utils.CAPITAL_TIME_H4;
+                        String append = type + ":962412415" + text_risk_010;
+
+                        Mt5OpenTrade trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1,
+                                dto_d1, append, true, Utils.CAPITAL_TIME_H4);
+
+                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
+                        BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
+                    }
                 }
 
                 // -------------------------------------------------------------------------------------
