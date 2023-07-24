@@ -3577,7 +3577,8 @@ public class BinanceServiceImpl implements BinanceService {
                 index += 1;
                 analysis_profit(prefix, EPIC, "", trend_w1);
 
-            } else if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_h4)) {
+            } else if ((Objects.equals(trend_w1, trend_d1) || dto_d1.getSwitch_trend().contains(Utils.TREND_LONG))
+                    && Objects.equals(trend_w1, trend_h4)) {
                 index += 1;
                 analysis_profit(prefix, EPIC, "", trend_w1);
 
@@ -3916,6 +3917,10 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
                 is_eq_d_h4_h1 = true;
             }
+            boolean is_sweet_trend = false;
+            if (Utils.isNotBlank(switch_trend_d1 + switch_trend_h12 + switch_trend_h4)) {
+                is_sweet_trend = true;
+            }
             // ---------------------------------------------------------------------------------------------
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
             if ((Utils.EPICS_FOREXS_ALL.contains(EPIC)
@@ -4010,7 +4015,9 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
             // ---------------------------------------------------------------------------------------------
-            if (is_eq_d_h12_h4 || is_eq_d_h4_h1 || is_opening_trade(EPIC, "") || is_candidate_open_trade(EPIC)) {
+            //            if (is_sweet_trend || is_eq_d_h12_h4 || is_eq_d_h4_h1 || is_opening_trade(EPIC, "")
+            //                    || is_candidate_open_trade(EPIC))
+            {
                 count += 1;
 
                 String prefix = Utils.getPrefix_FollowTrackingTrend(count, trend_mo, trend_w1, trend_d1, trend_h12,

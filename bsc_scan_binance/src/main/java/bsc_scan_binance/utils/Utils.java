@@ -240,7 +240,7 @@ public class Utils {
 
     public static final List<String> EPICS_METALS = Arrays.asList("DX", "XAUUSD", "XAGUSD", "USOIL", "BTCUSD");
 
-    public static final List<String> EPICS_CRYPTO_CFD = Arrays.asList("BTCUSD", "ETHUSD", "ADAUSD", "DASHUSD",
+    public static final List<String> EPICS_CRYPTO_CFD = Arrays.asList("BTCUSD", "ETHUSD", "ADAUSD",
             "DOGEUSD", "DOTUSD", "LTCUSD", "XRPUSD");
 
     public static final List<String> EPICS_CASH_CFD = Arrays.asList("AUS200", "EU50", "FRA40", "GER40", "SPN35",
@@ -4157,17 +4157,17 @@ public class Utils {
             same_d1h12h4 = true;
         }
 
-        if (same_d1h12h4 && Objects.equals(trend_mo, trend_d1) && note_mo.contains(trend_mo)) {
-            switch_trend += getTrendPrefix("MO", note_mo, " ");
-        } else {
-            switch_trend += getTrendPrefix("MO", "", " ");
-        }
-
-        if (same_d1h12h4 && Objects.equals(trend_w1, trend_d1) && note_w1.contains(trend_w1)) {
-            switch_trend += getTrendPrefix("W1", note_w1, " ");
-        } else {
-            switch_trend += getTrendPrefix("W1", "", " ");
-        }
+        //if (same_d1h12h4 && Objects.equals(trend_mo, trend_d1) && note_mo.contains(trend_mo)) {
+        //    switch_trend += getTrendPrefix("MO", note_mo, " ");
+        //} else {
+        //    switch_trend += getTrendPrefix("MO", "", " ");
+        //}
+        //
+        //if (same_d1h12h4 && Objects.equals(trend_w1, trend_d1) && note_w1.contains(trend_w1)) {
+        //    switch_trend += getTrendPrefix("W1", note_w1, " ");
+        //} else {
+        //    switch_trend += getTrendPrefix("W1", "", " ");
+        //}
 
         if (same_d1h12h4 && note_d1.contains(trend_d1)) {
             switch_trend += getTrendPrefix("D1", note_d1, " ");
@@ -4175,13 +4175,13 @@ public class Utils {
             switch_trend += getTrendPrefix("D1", "", " ");
         }
 
-        if (same_d1h12h4 && note_h12.contains(trend_h12)) {
+        if (note_h12.contains(trend_h12)) {
             switch_trend += getTrendPrefix("H12", note_h12, " ");
         } else {
             switch_trend += getTrendPrefix("H12", "", " ");
         }
 
-        if (same_d1h12h4 && note_h4.contains(trend_h4)) {
+        if (Objects.equals(trend_h12, trend_h4) && note_h4.contains(trend_h4)) {
             switch_trend += getTrendPrefix("H4", note_h4, "");
         } else {
             switch_trend += getTrendPrefix("H4", "", "");
