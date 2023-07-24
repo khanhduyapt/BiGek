@@ -2730,15 +2730,18 @@ public class BinanceServiceImpl implements BinanceService {
         // }
 
         int length = 60;
+        String type = "";
         BigDecimal t_profit = BigDecimal.ZERO;
         List<Mt5OpenTradeEntity> tradeList = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
         for (Mt5OpenTradeEntity trade : tradeList) {
+            type = Objects.equals(trade.getTypeDescription(), Utils.TREND_LONG) ? "B"
+                    : Objects.equals(trade.getTypeDescription(), Utils.TREND_SHOT) ? "S" : " ";
             t_profit = t_profit.add(Utils.getBigDecimal(trade.getProfit()));
         }
 
         String append = prifix + append2
                 + Utils.appendSpace(tradeList.size() > 0
-                        ? " T_Profit:" + Utils.appendLeft(String.valueOf(t_profit.intValue()), 6) + "$"
+                        ? " (" + type + ")_Profit:" + Utils.appendLeft(String.valueOf(t_profit.intValue()), 6) + "$"
                         : "", 15);
 
         outputLog(EPIC, append, find_trend);
