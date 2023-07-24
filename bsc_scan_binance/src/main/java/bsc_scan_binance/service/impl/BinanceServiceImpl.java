@@ -4123,10 +4123,9 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ---------------------------------------------------------------------------------
             boolean is_reverse_d1 = false;
-            if (!Objects.equals(trend_d1, TRADE_TREND) && !Objects.equals(trend_h12, TRADE_TREND) && is_reverse_h4) {
-                if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_1D)
-                        || Utils.isCloseTradeThisWeek()
-                        || (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
+            if (!Objects.equals(trend_d1, TRADE_TREND) && !Objects.equals(trend_h12, TRADE_TREND) && is_reverse_h4
+                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_1D)) {
+                if (Utils.isCloseTradeThisWeek() || (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
                     is_reverse_d1 = true;
                 }
             }
