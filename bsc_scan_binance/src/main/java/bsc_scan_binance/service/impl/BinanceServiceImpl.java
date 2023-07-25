@@ -3934,7 +3934,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (eoz.contains("H12") || eoz.contains("H4")) {
                 is_tradable_zone = false;
             }
-            boolean is_eq_w_d_h12 = false;
+            boolean is_eq_w_d_h4_h1_15 = false;
             boolean is_eq_d_h4_h1 = false;
             boolean is_eq_d_h12_h4 = false;
             if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)) {
@@ -3943,8 +3943,8 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
                 is_eq_d_h4_h1 = true;
             }
-            if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)) {
-                is_eq_w_d_h12 = true;
+            if (is_eq_d_h4_h1 && Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_15)) {
+                is_eq_w_d_h4_h1_15 = true;
             }
             // ---------------------------------------------------------------------------------------------
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
@@ -3963,10 +3963,14 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
                 if (m15_allow_trade && is_tradable_zone && Objects.equals(trend_w1, trend_d1)) {
+
                     // CAPITAL_TIME_H4
-                    if (m15_allow_trade && is_eq_d_h4_h1 && switch_trend_h4.contains(trend_d1)) {
+                    if (m15_allow_trade && is_eq_d_h4_h1
+                            && (switch_trend_h4.contains(trend_d1) || dto_h1.isAllow_trade_by_ma50()
+                                    || is_eq_w_d_h4_h1_15)) {
+
                         String key = EPIC + Utils.CAPITAL_TIME_H4;
-                        String append = type + "2412_4w_1" + text_risk_010;
+                        String append = type + "241201015" + text_risk_010;
 
                         Mt5OpenTrade trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1,
                                 dto_d1, append, true, Utils.CAPITAL_TIME_H4);
@@ -3990,7 +3994,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // CAPITAL_TIME_H12
-                if (is_tradable_zone && is_eq_d_h12_h4 && is_eq_d_h4_h1 && dto_h12.isAllow_trade_by_ma50()
+                if (is_eq_d_h12_h4 && is_eq_d_h4_h1 && dto_h12.isAllow_trade_by_ma50()
                         && switch_trend_h12.contains(trend_d1)) {
                     String key = EPIC + Utils.CAPITAL_TIME_H12;
                     String append = type + "24_12w_41" + text_risk_010;
