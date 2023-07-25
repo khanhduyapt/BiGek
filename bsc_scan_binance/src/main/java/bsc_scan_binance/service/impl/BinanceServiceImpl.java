@@ -4111,13 +4111,13 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ---------------------------------------------------------------------------------
             boolean has_profit_h4 = false;
-            if (is_reverse_h4 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
+            if (is_reverse_h4 && (PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0)) {
                 has_profit_h4 = true;
             }
             if (is_reverse_h1 && (PROFIT.compareTo(Utils.RISK_0_15_PERCENT) > 0)) {
                 has_profit_h4 = true;
             }
-            if (is_reverse_h1 && (PROFIT.compareTo(BigDecimal.ZERO) > 0) && Utils.isCloseTradeToday()) {
+            if (is_reverse_h1 && (PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0) && Utils.isCloseTradeToday()) {
                 has_profit_h4 = true;
             }
             // ---------------------------------------------------------------------------------
