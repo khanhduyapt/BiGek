@@ -4109,68 +4109,36 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_hit_sl = false;
             if (Utils.getBigDecimal(trade.getStopLoss()).compareTo(BigDecimal.ZERO) <= 0) {
                 if (is_reverse_h4 && (PROFIT.add(Utils.RISK_0_10_PERCENT).compareTo(BigDecimal.ZERO) < 0)
-                        && allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
+                        && allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H)) {
                     is_hit_sl = true;
                 }
             }
             // ---------------------------------------------------------------------------------
-            boolean is_reverse_d1 = false;
-            if (!Objects.equals(trend_d1, TRADE_TREND) && !Objects.equals(trend_h12, TRADE_TREND) && is_reverse_h4) {
-                if (Utils.isCloseTradeThisWeek() || (PROFIT.compareTo(BigDecimal.ZERO) > 0)
-                        || allow_close_trade_after(TICKET, Utils.MINUTES_OF_2D)) {
-                    is_reverse_d1 = true;
+            if ((has_profit_h4 || is_hit_sl) && (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H))) {
+                String reason = "";
+                if (has_profit_h4) {
+                    reason = "4h_reverse_profit";
+                } else if (is_hit_sl) {
+                    reason = "hit_sl_1r";
                 }
-            }
-            // ---------------------------------------------------------------------------------
-            if (has_profit_h4 || is_hit_sl || is_reverse_d1) {
-                if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
 
-                    String reason = "";
-                    if (has_profit_h4) {
-                        reason = "4h_reverse_profit";
-                    } else if (is_hit_sl) {
-                        reason = "hit_sl_1r";
-                    } else if (is_reverse_d1) {
-                        reason = "d1_reverse_after_48h";
-                    }
-
-                    if (!Utils.EPICS_STOCKS.contains(EPIC) && Utils.isNotBlank(reason)) {
-                        mt5_close_trade_list.add(TICKET);
-                        mt5_close_trade_reason.add(reason);
-                    }
-
-                    // --------------------------------------------------------------------------
-                    String log = Utils.createCloseTradeMsg(mt5Entity, "CloseTrade: ", reason);
-                    Utils.logWritelnDraft(log);
-
-                    String key = trade.getSymbol() + "_" + trade.getTypeDescription() + trade.getTimeframe();
-                    if (isReloadAfter(Utils.MINUTES_OF_1H, key)) {
-                        String EVENT_ID = "CLOSE_TRADE" + Utils.getCurrentYyyyMmDd_HH() + key;
-                        String msg = "(" + trade.getCompany() + ") Close:" + trade.getSymbol() + "." + reason;
-                        msg += Utils.getStringValue(trade.getProfit().intValue()) + "$";
-
-                        if (is_reverse_d1) {
-                            msg += Utils.new_line_from_service;
-
-                            String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "B"
-                                    : Objects.equals(Utils.TREND_SHOT, trend_d1) ? "S" : "?";
-
-                            String text_risk_010 = "(0.1 %:" + Utils.RISK_0_10_PERCENT.intValue() + "$)";
-                            String append = type + ":0024124w1" + text_risk_010;
-
-                            Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-                            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
-
-                            Mt5OpenTrade trade_d1 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1,
-                                    dto_h1, dto_d1, append, true, Utils.CAPITAL_TIME_D1);
-
-                            msg += Utils.createOpenTradeMsg(trade_d1, "D1 Reverse: ");
-                        }
-
-                        sendMsgPerHour_OnlyMe(EVENT_ID, msg);
-                    }
-
+                if (!Utils.EPICS_STOCKS.contains(EPIC) && Utils.isNotBlank(reason)) {
+                    mt5_close_trade_list.add(TICKET);
+                    mt5_close_trade_reason.add(reason);
                 }
+
+                // --------------------------------------------------------------------------
+                String log = Utils.createCloseTradeMsg(mt5Entity, "CloseTrade: ", reason);
+                Utils.logWritelnDraft(log);
+
+                String key = trade.getSymbol() + "_" + trade.getTypeDescription() + trade.getTimeframe();
+                if (isReloadAfter(Utils.MINUTES_OF_1H, key)) {
+                    String EVENT_ID = "CLOSE_TRADE" + Utils.getCurrentYyyyMmDd_HH() + key;
+                    String msg = "(" + trade.getCompany() + ") Close:" + trade.getSymbol() + "." + reason;
+                    msg += Utils.getStringValue(trade.getProfit().intValue()) + "$";
+                    sendMsgPerHour_OnlyMe(EVENT_ID, msg);
+                }
+
             }
         }
 
