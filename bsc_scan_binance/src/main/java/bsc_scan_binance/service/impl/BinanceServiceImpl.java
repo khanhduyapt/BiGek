@@ -4090,19 +4090,21 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ---------------------------------------------------------------------------------
             boolean has_profit_h4 = false;
-            if (is_reverse_h4 && (PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0)) {
-                has_profit_h4 = true;
-            }
-            if (is_reverse_h1 && (PROFIT.compareTo(Utils.RISK_0_15_PERCENT) > 0)) {
-                has_profit_h4 = true;
-            }
-            if (is_reverse_h1 && (PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0) && Utils.isCloseTradeToday()) {
-                has_profit_h4 = true;
-            }
-            if (is_reverse_h1 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
-                Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-                if (Objects.nonNull(dto_h4) && !dto_h4.isTradable_zone()) {
+            if (!Utils.EPICS_STOCKS.contains(EPIC)) {
+                if (is_reverse_h4 && (PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0)) {
                     has_profit_h4 = true;
+                }
+                if (is_reverse_h1 && (PROFIT.compareTo(Utils.RISK_0_15_PERCENT) > 0)) {
+                    has_profit_h4 = true;
+                }
+                if (is_reverse_h1 && (PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0) && Utils.isCloseTradeToday()) {
+                    has_profit_h4 = true;
+                }
+                if (is_reverse_h1 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
+                    Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+                    if (Objects.nonNull(dto_h4) && !dto_h4.isTradable_zone()) {
+                        has_profit_h4 = true;
+                    }
                 }
             }
             // ---------------------------------------------------------------------------------
