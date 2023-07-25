@@ -64,6 +64,11 @@ import bsc_scan_binance.response.MoneyAtRiskResponse;
 public class Utils {
     private static final BigDecimal ACCOUNT = BigDecimal.valueOf(200000);
 
+    // A $1.2 Million Funded Trader With The5ers:
+    // Cố gắng có mức lợi nhuận đệm là 2% trước khi tăng rủi ro.
+    // Nếu cảm thấy lo lắng về mức rủi ro 0,20% hoặc 0,25%, thì chỉnh về mức 0,10 đến 0,15%
+
+    //(100$ / 1 Tp)
     public static final BigDecimal RISK_0_05_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
 
     // Trend W != D (200$ / 1trade)
