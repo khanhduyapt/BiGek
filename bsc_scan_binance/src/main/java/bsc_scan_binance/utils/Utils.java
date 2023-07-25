@@ -123,6 +123,7 @@ public class Utils {
 
     public static final String TEXT_SWITCH_TREND_Ma_3_2_1 = "Ma3.2.1";
     public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma3.5)";
+    public static final String TEXT_SWITCH_TREND_Ma_3_68 = "(Ma3.68)";
     public static final String TEXT_SWITCH_TREND_Ma_1_10 = "(Ma1.10)";
     public static final String TEXT_SWITCH_TREND_Ma_1_50 = "(Ma1.50)";
     public static final String TEXT_SWITCH_TREND_50 = "(~50~)";
@@ -179,13 +180,13 @@ public class Utils {
     public static final String PREFIX_1w_ = "_1w_";
     public static final String PREFIX_mo_ = "_mo_";
 
-    public static final String ENCRYPTED_05 = "namp";
-    public static final String ENCRYPTED_15 = "mnmp";
-    public static final String ENCRYPTED_H1 = "motg";
-    public static final String ENCRYPTED_H4 = "bong";
-    public static final String ENCRYPTED_H12 = "mhag";
-    public static final String ENCRYPTED_D1 = "mngy";
-    public static final String ENCRYPTED_W1 = "week";
+    public static final String ENCRYPTED_05 = "(05)";
+    public static final String ENCRYPTED_15 = "(15)";
+    public static final String ENCRYPTED_H1 = "(h1)";
+    public static final String ENCRYPTED_H4 = "(h4)";
+    public static final String ENCRYPTED_H12 = "(12)";
+    public static final String ENCRYPTED_D1 = "(D1)";
+    public static final String ENCRYPTED_W1 = "(W1)";
 
     public static final Integer MINUTES_OF_2D = 2880;
     public static final Integer MINUTES_OF_1D = 1440;
@@ -250,10 +251,10 @@ public class Utils {
     public static final List<String> EPICS_FOREXS_ALL = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
             "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD",
             "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD",
-            "USDCHF", "USDJPY");
+            "USDCHF", "USDJPY", "CADCHF");
 
     public static final List<String> EPICS_FOREXS_JPY = Arrays.asList("AUDJPY", "CADJPY", "CHFJPY", "EURJPY", "GBPJPY",
-            "NZDJPY", "USDJPY", "USDCAD", "USDCHF");
+            "NZDJPY", "USDJPY", "USDCAD", "USDCHF", "CADCHF");
 
     public static final List<String> EPICS_FOREXS_GBP = Arrays.asList("GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD",
             "GBPUSD");
@@ -3372,24 +3373,22 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrendByMa5_8(List<BtcFutures> list) {
+    public static String switchTrendByMa3_68(List<BtcFutures> heiken_list) {
         String temp_long = "";
         String temp_shot = "";
 
-        BigDecimal ma3_0 = calcMA(list, 3, 0);
-        BigDecimal ma3_3 = calcMA(list, 3, 3);
-        BigDecimal ma6_0 = calcMA(list, 6, 0);
-        BigDecimal ma6_3 = calcMA(list, 6, 3);
+        BigDecimal ma3_0 = calcMA(heiken_list, 3, 0);
+        BigDecimal ma3_3 = calcMA(heiken_list, 3, 3);
+        BigDecimal ma6_0 = calcMA(heiken_list, 6, 0);
+        BigDecimal ma6_3 = calcMA(heiken_list, 6, 3);
         temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma6_0, ma6_3) + "_";
         temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma6_0, ma6_3) + "_";
 
-        BigDecimal ma5_0 = calcMA(list, 5, 0);
-        BigDecimal ma5_3 = calcMA(list, 5, 3);
-        BigDecimal ma8_0 = calcMA(list, 8, 0);
-        BigDecimal ma8_3 = calcMA(list, 8, 3);
+        BigDecimal ma8_0 = calcMA(heiken_list, 8, 0);
+        BigDecimal ma8_3 = calcMA(heiken_list, 8, 3);
 
-        temp_long += Utils.checkXCutUpY(ma5_0, ma5_3, ma8_0, ma8_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma5_0, ma5_3, ma8_0, ma8_3) + "_";
+        temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma8_0, ma8_3) + "_";
+        temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma8_0, ma8_3) + "_";
 
         String trend = "";
         trend += "_" + temp_long + "_";
@@ -3404,12 +3403,17 @@ public class Utils {
             return "";
         }
 
-        if (trend.contains(Utils.TREND_LONG)) {
-            return Utils.TREND_LONG;
-        }
+        if (trend.contains(Utils.TREND_LONG) || trend.contains(Utils.TREND_SHOT)) {
+            if (trend.contains(Utils.TREND_LONG)) {
+                trend = Utils.TREND_LONG;
+            }
+            if (trend.contains(Utils.TREND_SHOT)) {
+                trend = Utils.TREND_SHOT;
+            }
+            String chart_name = getChartName(heiken_list).trim();
+            String switch_trend = chart_name + TEXT_SWITCH_TREND_Ma_3_68 + ":" + Utils.appendSpace(trend, 4);
 
-        if (trend.contains(Utils.TREND_SHOT)) {
-            return Utils.TREND_SHOT;
+            return switch_trend;
         }
 
         return "";
