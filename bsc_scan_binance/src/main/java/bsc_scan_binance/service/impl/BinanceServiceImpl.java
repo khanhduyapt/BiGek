@@ -3570,7 +3570,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h4 = Utils.get_trending_by_dow_definitions(dto_h4);
             String trend_h1 = Utils.get_trending_by_dow_definitions(dto_h1);
 
-            String prefix = Utils.getPrefix_FollowTrackingTrend(index, trend_mo, trend_w1, trend_d1, "", trend_h4,
+            String prefix = Utils.getPrefix_FollowTrackingTrend(EPIC, index, trend_mo, trend_w1, trend_d1, "", trend_h4,
                     trend_h1, dto_mo.getSwitch_trend(), dto_w1.getSwitch_trend(), dto_d1.getSwitch_trend(), "",
                     dto_h4.getSwitch_trend(), trend_w1) + Utils.appendSpace("", 15);
 
@@ -3966,7 +3966,7 @@ public class BinanceServiceImpl implements BinanceService {
                     // CAPITAL_TIME_H4
                     if (m15_allow_trade && is_eq_d_h4_h1 && switch_trend_h4.contains(trend_d1)) {
                         String key = EPIC + Utils.CAPITAL_TIME_H4;
-                        String append = type + "24124w1" + text_risk_010;
+                        String append = type + "2412_4w_1" + text_risk_010;
 
                         Mt5OpenTrade trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1,
                                 dto_d1, append, true, Utils.CAPITAL_TIME_H4);
@@ -3977,10 +3977,10 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // CAPITAL_TIME_H4
-                if (is_eq_w_d_h12 && Objects.equals(trend_h4, trend_h1) && dto_h4.isAllow_trade_by_ma50()
+                if (Objects.equals(trend_h4, trend_h1) && dto_h4.isAllow_trade_by_ma50()
                         && (switch_trend_h4.contains(trend_d1) || switch_trend_h4.contains(trend_h12))) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
-                    String append = type + "24124w1" + text_risk_010;
+                    String append = type + "2412_4w_1" + text_risk_010;
 
                     Mt5OpenTrade trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1,
                             dto_d1, append, true, Utils.CAPITAL_TIME_H4);
@@ -3990,9 +3990,10 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // CAPITAL_TIME_H12
-                if (is_tradable_zone && is_eq_d_h12_h4 && is_eq_d_h4_h1 && switch_trend_h12.contains(trend_d1)) {
+                if (is_tradable_zone && is_eq_d_h12_h4 && is_eq_d_h4_h1 && dto_h12.isAllow_trade_by_ma50()
+                        && switch_trend_h12.contains(trend_d1)) {
                     String key = EPIC + Utils.CAPITAL_TIME_H12;
-                    String append = type + "2412w41" + text_risk_010;
+                    String append = type + "24_12w_41" + text_risk_010;
 
                     Mt5OpenTrade trade_h12 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1,
                             dto_d1, append, true, Utils.CAPITAL_TIME_H12);
@@ -4015,7 +4016,8 @@ public class BinanceServiceImpl implements BinanceService {
             {
                 count += 1;
 
-                String prefix = Utils.getPrefix_FollowTrackingTrend(count, trend_mo, trend_w1, trend_d1, trend_h12,
+                String prefix = Utils.getPrefix_FollowTrackingTrend(EPIC, count, trend_mo, trend_w1, trend_d1,
+                        trend_h12,
                         trend_h4, trend_h1, switch_trend_mo, switch_trend_w1, switch_trend_d1, switch_trend_h12,
                         switch_trend_h4, tracking_trend);
 
@@ -4114,7 +4116,8 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------
             boolean is_reverse_d1 = false;
             if (!Objects.equals(trend_d1, TRADE_TREND) && !Objects.equals(trend_h12, TRADE_TREND) && is_reverse_h4) {
-                if (Utils.isCloseTradeThisWeek() || (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
+                if (Utils.isCloseTradeThisWeek() || (PROFIT.compareTo(BigDecimal.ZERO) > 0)
+                        || allow_close_trade_after(TICKET, Utils.MINUTES_OF_2D)) {
                     is_reverse_d1 = true;
                 }
             }

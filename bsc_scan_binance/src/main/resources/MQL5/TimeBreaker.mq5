@@ -61,7 +61,7 @@ void OnTimer(void)
                              "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
                              "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD",
                              "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD",
-                             "USDCAD", "USDCHF", "USDJPY", "CADJPY", "CHFJPY"
+                             "USDCAD", "USDCHF", "USDJPY", "CADJPY", "CHFJPY", "CADCHF"
                             };
 
 

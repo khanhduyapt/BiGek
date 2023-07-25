@@ -268,7 +268,8 @@ public class Utils {
 
     // "16:30 - 23:00"
     public static final List<String> EPICS_STOCKS = Arrays.asList("AAPL", "AIRF", "AMZN", "BAC", "BAYGn", "DBKGn",
-            "GOOG", "LVMH", "META", "MSFT", "NFLX", "NVDA", "PFE", "RACE", "TSLA", "VOWG_p", "WMT");
+            "GOOG", "LVMH", "META", "MSFT", "NFLX", "NVDA", "PFE", "RACE", "TSLA", "VOWG_p", "WMT", "BABA", "T", "V",
+            "ZM");
 
     // ALL Binance.com
     public static final List<String> COINS = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ARB", "ADA", "ADX", "AERGO",
@@ -4047,9 +4048,9 @@ public class Utils {
         BigDecimal en_sl = dto_d1.getCurrent_price().subtract(sl_d1).abs();
         BigDecimal en_tp = dto_d1.getCurrent_price().subtract(tp_d1).abs();
         if (en_tp.compareTo(en_sl) < 0) {
-            range = ".dg";
+            range = ".dg.";
         }
-        String timeframe = "." + getEncryptedChartNameCapital(CAPITAL_TIME_XX);
+        String timeframe = getEncryptedChartNameCapital(CAPITAL_TIME_XX);
         Mt5OpenTrade dto = new Mt5OpenTrade();
         dto.setEpic(EPIC);
         dto.setOrder_type(trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
@@ -4058,7 +4059,7 @@ public class Utils {
         dto.setEntry(en_05);
         dto.setStop_loss(sl_d1);
         dto.setTake_profit(tp_d1);
-        dto.setComment(BscScanBinanceApplication.hostname + append + range + timeframe);
+        dto.setComment(BscScanBinanceApplication.hostname + append.trim() + range.trim() + timeframe);
 
         return dto;
     }
@@ -4127,7 +4128,7 @@ public class Utils {
     }
 
     // [1W=1D=12H 8H=4H=2H=30] {D1~H12~H8~H4~H2~30}
-    public static String getPrefix_FollowTrackingTrend(int index,
+    public static String getPrefix_FollowTrackingTrend(String EPIC, int index,
 
             String trend_mo, String trend_w1, String trend_d1, String trend_h12, String trend_h4, String trend_h1,
 
@@ -4172,17 +4173,19 @@ public class Utils {
             same_d1h12h4 = true;
         }
 
-        //if (same_d1h12h4 && Objects.equals(trend_mo, trend_d1) && note_mo.contains(trend_mo)) {
-        //    switch_trend += getTrendPrefix("MO", note_mo, " ");
-        //} else {
-        //    switch_trend += getTrendPrefix("MO", "", " ");
-        //}
-        //
-        //if (same_d1h12h4 && Objects.equals(trend_w1, trend_d1) && note_w1.contains(trend_w1)) {
-        //    switch_trend += getTrendPrefix("W1", note_w1, " ");
-        //} else {
-        //    switch_trend += getTrendPrefix("W1", "", " ");
-        //}
+        if (EPICS_STOCKS.contains(EPIC)) {
+            if (note_mo.contains(trend_mo)) {
+                switch_trend += getTrendPrefix("MO", note_mo, " ");
+            } else {
+                switch_trend += getTrendPrefix("MO", "", " ");
+            }
+
+            if (note_w1.contains(trend_w1)) {
+                switch_trend += getTrendPrefix("W1", note_w1, " ");
+            } else {
+                switch_trend += getTrendPrefix("W1", "", " ");
+            }
+        }
 
         if (same_d1h12h4 && note_d1.contains(trend_d1)) {
             switch_trend += getTrendPrefix("D1", note_d1, " ");
@@ -4190,10 +4193,12 @@ public class Utils {
             switch_trend += getTrendPrefix("D1", "", " ");
         }
 
-        if (note_h12.contains(trend_h12)) {
-            switch_trend += getTrendPrefix("H12", note_h12, " ");
-        } else {
-            switch_trend += getTrendPrefix("H12", "", " ");
+        if (!EPICS_STOCKS.contains(EPIC)) {
+            if (note_h12.contains(trend_h12)) {
+                switch_trend += getTrendPrefix("H12", note_h12, " ");
+            } else {
+                switch_trend += getTrendPrefix("H12", "", " ");
+            }
         }
 
         if ((note_h4.contains(trend_d1) || note_h4.contains(trend_h12))) {

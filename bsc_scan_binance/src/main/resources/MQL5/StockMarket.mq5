@@ -46,7 +46,7 @@ void OnTimer(void)
       FileWrite(nfile_handle, "");
 
       string arr_stocks[] = {"AAPL", "AIRF", "AMZN", "BAC", "BAYGn", "DBKGn",
-            "GOOG", "LVMH", "META", "MSFT", "NFLX", "NVDA", "PFE", "RACE", "TSLA", "VOWG_p", "WMT"};
+            "GOOG", "LVMH", "META", "MSFT", "NFLX", "NVDA", "PFE", "RACE", "TSLA", "VOWG_p", "WMT", "BABA", "T", "V", "ZM"};
 
       Comment("-----------------------------StockMarket: (Symbol):" + Symbol());
 

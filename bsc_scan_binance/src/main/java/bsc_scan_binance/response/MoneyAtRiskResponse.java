@@ -455,6 +455,10 @@ public class MoneyAtRiskResponse {
         case "UK1":
         case "US1":
         case "AUS2":
+        case "BABA":
+        case "T":
+        case "V":
+        case "ZM":
             standard_lot = BigDecimal.valueOf(10);
             unit_risk_per_pip = BigDecimal.valueOf(10);
             break;
