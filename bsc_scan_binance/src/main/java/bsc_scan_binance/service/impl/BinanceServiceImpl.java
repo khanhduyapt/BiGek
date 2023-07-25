@@ -4113,16 +4113,26 @@ public class BinanceServiceImpl implements BinanceService {
                     is_hit_sl = true;
                 }
             }
+            boolean is_stock_d1_reverse = false;
+            if (Utils.EPICS_STOCKS.contains(EPIC) && !Objects.equals(trend_d1, TRADE_TREND)
+                    && !Objects.equals(trend_h12, TRADE_TREND) && is_reverse_h4) {
+                if ((PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
+                    is_stock_d1_reverse = true;
+                }
+            }
             // ---------------------------------------------------------------------------------
-            if ((has_profit_h4 || is_hit_sl) && (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H))) {
+            if ((has_profit_h4 || is_hit_sl || is_stock_d1_reverse)
+                    && (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H))) {
                 String reason = "";
                 if (has_profit_h4) {
                     reason = "4h_reverse_profit";
                 } else if (is_hit_sl) {
                     reason = "hit_sl_1r";
+                } else if (is_stock_d1_reverse) {
+                    reason = "stock_d1_reverse";
                 }
 
-                if (!Utils.EPICS_STOCKS.contains(EPIC) && Utils.isNotBlank(reason)) {
+                if (Utils.isNotBlank(reason)) {
                     mt5_close_trade_list.add(TICKET);
                     mt5_close_trade_reason.add(reason);
                 }
