@@ -7,12 +7,13 @@
 #property link      "https://www.mql5.com"
 #property version   "1.00"
 //+------------------------------------------------------------------+
-#include <Trade\Trade.mqh>
 #include <Trade\PositionInfo.mqh>
 #include <Trade\OrderInfo.mqh>
+#include <Trade\Trade.mqh>
 
 CPositionInfo  m_position;
 COrderInfo     m_order;
+CTrade         m_trade;
 
 //+------------------------------------------------------------------+
 //| INPUT PARAMETERS                                                 |
@@ -22,11 +23,10 @@ string input BOT_NAME = "GuardianAngel";
 int input    EXPERT_MAGIC = 2023869;
 double input PASS_CRITERIA = 220000.;
 
-
 //+------------------------------------------------------------------+
 //| GLOBAL VARIABLES                                                 |
 //+------------------------------------------------------------------+
-CTrade trade;
+
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -36,7 +36,7 @@ int OnInit()
 //--- create timer
    EventSetTimer(60); //1800=30minutes; 900=15minutes; 300=5minutes; 180=3minutes; 60=1minute;
 
-   trade.SetExpertMagicNumber(EXPERT_MAGIC);
+   m_trade.SetExpertMagicNumber(EXPERT_MAGIC);
    printf(BOT_NAME + " initialized!");
 
    return(INIT_SUCCEEDED);
@@ -61,14 +61,14 @@ void ClearAll()
       ulong orderTicket = OrderGetTicket(i);
       if(OrderSelect(orderTicket))
         {
-         trade.OrderDelete(orderTicket);
+         m_trade.OrderDelete(orderTicket);
         }
      }
 
    for(int i = PositionsTotal() - 1; i >= 0; i--)
      {
       ulong posTicket = PositionGetTicket(i);
-      trade.PositionClose(posTicket);
+      m_trade.PositionClose(posTicket);
      }
   }
 
@@ -83,10 +83,10 @@ bool isDailyLimit()
    TimeToStruct(TimeCurrent(), date_time);
    int current_day = date_time.day, current_month = date_time.mon, current_year = date_time.year;
 
-   // Current balance
+// Current balance
    double current_balance = AccountInfoDouble(ACCOUNT_BALANCE);
 
-   // today closed trades PL
+// today closed trades PL
    HistorySelect(0, TimeCurrent());
    int orders = HistoryDealsTotal();
 
@@ -154,7 +154,7 @@ void closeSymbol(ulong ticket)
         {
          if(OrderSelect(orderTicket))
            {
-            trade.OrderDelete(orderTicket);
+            m_trade.OrderDelete(orderTicket);
             Comment("-----------------------------GuardianAngel: (OrderDelete)" + (string) orderTicket +  " Symbol: " + OrderGetString(ORDER_SYMBOL));
            }
         }
@@ -166,7 +166,7 @@ void closeSymbol(ulong ticket)
 
       if(positionTicket == ticket)
         {
-         trade.PositionClose(positionTicket);
+         m_trade.PositionClose(positionTicket);
          Comment("-----------------------------GuardianAngel: (PositionClose)" + (string) positionTicket +  " Symbol: " + PositionGetString(POSITION_SYMBOL));
         }
      }
@@ -205,12 +205,38 @@ void OnTimer()
       // Alert("n_close_trade_file_handle Error " + (string) GetLastError());
      }
 //------------------------------------------------------------
-   if(Success())
-     {
-     }
    if(isDailyLimit())
      {
       Alert("Loss more than 2000$. Stop trading today!");
      }
+
+
+//---
+   double Loss_In_Money = -200;     // loss in money $
+   double Profit_In_Money = 500;    // profit in money $
+   
+   for(int i=PositionsTotal()-1; i>=0; i--) // returns the number of current positions
+     {
+      if(m_position.SelectByIndex(i)) // selects the position by index for further access to its properties
+        {
+         double profit = m_position.Commission() + m_position.Swap() + m_position.Profit();
+
+         if(profit < Loss_In_Money)
+           {
+            m_trade.PositionClose(m_position.Ticket());
+            Alert("PositionClose=" + (string) m_position.Ticket() + " Loss_In_Money="+ (string)profit);
+           }
+
+         if(profit > Profit_In_Money)
+           {
+            m_trade.PositionClose(m_position.Ticket());
+            Alert("PositionClose=" + (string) m_position.Ticket() + " Profit_In_Money="+ (string)profit);
+           }
+
+        }
+     }
+
+
+//+------------------------------------------------------------------+
   }
 //+------------------------------------------------------------------+

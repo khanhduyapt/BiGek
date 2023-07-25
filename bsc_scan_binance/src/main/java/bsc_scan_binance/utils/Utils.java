@@ -187,6 +187,7 @@ public class Utils {
     public static final String ENCRYPTED_D1 = "mngy";
     public static final String ENCRYPTED_W1 = "week";
 
+    public static final Integer MINUTES_OF_2D = 2880;
     public static final Integer MINUTES_OF_1D = 1440;
     public static final Integer MINUTES_OF_12H = 720;
     public static final Integer MINUTES_OF_4H = 240;
@@ -1346,6 +1347,16 @@ public class Utils {
     public static boolean allowFinishTradeThisDay() {
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (isWeekday() && ((hh <= 3) || (22 <= hh))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isCloseTradeToday() {
+        int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
+
+        if ((hh > 22) || (hh < 4)) {
             return true;
         }
 
@@ -3615,8 +3626,8 @@ public class Utils {
         msg += "  ";
         msg += ":Price: " + Utils.appendLeft(Utils.removeLastZero(dto.getCur_price()), 10);
         msg += "      ";
-        msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 10) + "(lot)   ";
         msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10);
+        msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 10) + "(lot)   ";
 
         return msg;
     }
@@ -3627,9 +3638,9 @@ public class Utils {
         msg += Utils.appendSpace(dto.getSymbol(), 10) + new_line_from_service + " ";
         msg += Utils.appendSpace(reason, 20);
         msg += " :Ticket: " + Utils.appendSpace(dto.getTicket(), 15);
-        msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getVolume()), 10) + "(lot)   ";
         msg += " Profit:" + Utils.appendLeft(Utils.getStringValue(dto.getProfit().intValue()), 6) + "   ";
         msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStopLoss()), 10);
+        msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getVolume()), 10) + "(lot)   ";
         msg += Utils.appendSpace(Utils.getCapitalLink(dto.getSymbol()), 62);
         msg += Utils.appendSpace(dto.getComment(), 35);
 
