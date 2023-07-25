@@ -3941,7 +3941,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean is_tradable_zone = true;
-            if (eoz.contains("H12") || eoz.contains("H4")) {
+            if (eoz.contains("H12") && eoz.contains("H4")) {
                 is_tradable_zone = false;
             }
             boolean is_eq_w_d_h4_h1_15 = false;
@@ -3972,7 +3972,8 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
-                if (m15_allow_trade && Objects.equals(trend_w1, trend_d1) && is_eq_d_h4_h1 & is_eq_w_d_h4_h1_15) {
+                if (m15_allow_trade && is_tradable_zone && Objects.equals(trend_w1, trend_d1)
+                        && is_eq_d_h4_h1 & is_eq_w_d_h4_h1_15) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     String append = type + "241201015" + text_risk_010;
 
