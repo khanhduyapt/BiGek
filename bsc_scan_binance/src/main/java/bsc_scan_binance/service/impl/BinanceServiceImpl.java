@@ -3972,20 +3972,15 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
-                if (m15_allow_trade && Objects.equals(trend_w1, trend_d1)) {
-                    // CAPITAL_TIME_H4
-                    if (is_eq_d_h4_h1 && (switch_trend_h4.contains(trend_d1) || dto_h1.isAllow_trade_by_ma50()
-                            || is_eq_w_d_h4_h1_15)) {
+                if (m15_allow_trade && Objects.equals(trend_w1, trend_d1) && is_eq_d_h4_h1 & is_eq_w_d_h4_h1_15) {
+                    String key = EPIC + Utils.CAPITAL_TIME_H4;
+                    String append = type + "241201015" + text_risk_010;
 
-                        String key = EPIC + Utils.CAPITAL_TIME_H4;
-                        String append = type + "241201015" + text_risk_010;
+                    Mt5OpenTrade trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1,
+                            dto_d1, append, true, Utils.CAPITAL_TIME_H4);
 
-                        Mt5OpenTrade trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1,
-                                dto_d1, append, true, Utils.CAPITAL_TIME_H4);
-
-                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
-                        BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
-                    }
+                    BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
+                    BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                 }
 
                 if (Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
@@ -4010,8 +4005,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String append = type + "24_12w_41" + text_risk_010;
 
                         Mt5OpenTrade trade_h12 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1,
-                                dto_h1,
-                                dto_d1, append, true, Utils.CAPITAL_TIME_H12);
+                                dto_h1, dto_d1, append, true, Utils.CAPITAL_TIME_H12);
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(trade_h12);
                         BscScanBinanceApplication.dic_comment.put(key, trade_h12.getComment());
@@ -4026,8 +4020,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // ---------------------------------------------------------------------------------------------
-            //            if (is_sweet_trend || is_eq_d_h12_h4 || is_eq_d_h4_h1 || is_opening_trade(EPIC, "")
-            //                    || is_candidate_open_trade(EPIC))
             {
                 count += 1;
 
