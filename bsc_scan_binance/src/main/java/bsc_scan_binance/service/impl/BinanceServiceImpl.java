@@ -3894,7 +3894,17 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h12) || Objects.isNull(dto_h4)
                     || Objects.isNull(dto_h1) || Objects.isNull(dto_15) || Objects.isNull(dto_mo)) {
-                Utils.logWritelnDraft("[controlMt5] (" + EPIC + ") dto is null");
+
+                String mo = "MO:" + (Objects.isNull(dto_mo) ? "null" : "    ");
+                String w1 = "W1:" + (Objects.isNull(dto_w1) ? "null" : "    ");
+                String d1 = "D1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
+                String h12 = "H12:" + (Objects.isNull(dto_h12) ? "null" : "    ");
+                String h4 = "H4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
+                String h1 = "H1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
+
+                Utils.logWritelnDraft(String.format("[controlMt5] dto (%s) :  %s, %s, %s, %s, %s, %s.",
+                        Utils.appendSpace(EPIC, 10), mo, w1, d1, h12, h4, h1));
+
                 continue;
             }
 

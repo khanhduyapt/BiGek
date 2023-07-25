@@ -142,6 +142,11 @@ public class MoneyAtRiskResponse {
             standard_lot = BigDecimal.valueOf(0.25);
             unit_risk_per_pip = BigDecimal.valueOf(25);
             break;
+        case "NATGAS":
+        case "NATGAS.f":
+            standard_lot = BigDecimal.valueOf(0.25);
+            unit_risk_per_pip = BigDecimal.valueOf(250);
+            break;
         case "SILVER":
         case "XAGUSD":
             standard_lot = BigDecimal.valueOf(0.02);
@@ -187,6 +192,13 @@ public class MoneyAtRiskResponse {
             standard_lot = BigDecimal.valueOf(0.098);
             unit_risk_per_pip = BigDecimal.valueOf(0.125);
             break;
+
+        case "ERBN":
+        case "ERBN.f":
+            standard_lot = BigDecimal.valueOf(0.004);
+            unit_risk_per_pip = BigDecimal.valueOf(0.25);
+            break;
+
         case "EURUSD":
             standard_lot = BigDecimal.valueOf(0.025);
             unit_risk_per_pip = BigDecimal.valueOf(2500);

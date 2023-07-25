@@ -214,7 +214,7 @@ void OnTimer()
 //---
    double Loss_In_Money = -200;     // loss in money $
    double Profit_In_Money = 500;    // profit in money $
-   
+
    for(int i=PositionsTotal()-1; i>=0; i--) // returns the number of current positions
      {
       if(m_position.SelectByIndex(i)) // selects the position by index for further access to its properties
