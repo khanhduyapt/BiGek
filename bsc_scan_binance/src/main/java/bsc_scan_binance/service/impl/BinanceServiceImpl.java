@@ -2899,7 +2899,7 @@ public class BinanceServiceImpl implements BinanceService {
         log += text_risk + Utils
                 .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, dto_d1.getTrend(), EPIC, dto_h1, dto_d1), 45);
 
-        if (!dto_d1.isTradable_zone() && !dto_h4.isTradable_zone()) {
+        if (!dto_d1.isTradable_zone() || !dto_h4.isTradable_zone()) {
             String reverse_trend = (Objects.equals(dto_d1.getTrend(), Utils.TREND_LONG)) ? Utils.TREND_SHOT
                     : Utils.TREND_LONG;
 
@@ -3940,30 +3940,35 @@ public class BinanceServiceImpl implements BinanceService {
                 type += ":00";
             }
 
-            boolean is_eq_d_h4_h1 = false;
-            boolean is_eq_h4_h1_15 = false;
-            boolean is_eq_w_d_h4_h1_15 = false;
-
             boolean is_eq_w_d_h12 = false;
-            if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h12)) {
+            if (Objects.equals(trend_w1, trend_d1)
+                    && (Objects.equals(trend_d1, trend_h12) || Objects.equals(trend_d1, trend_h12))) {
                 is_eq_w_d_h12 = true;
             }
 
+            boolean is_eq_d_h4_h1 = false;
             if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
                 is_eq_d_h4_h1 = true;
             }
+
+            boolean is_eq_h4_h1_15 = false;
             if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
                 is_eq_h4_h1_15 = true;
             }
-            if (is_eq_d_h4_h1 && is_eq_h4_h1_15 && Objects.equals(trend_w1, trend_d1)) {
+
+            boolean is_eq_w_d_h4_h1_15 = false;
+            if (is_eq_d_h4_h1 && is_eq_h4_h1_15
+                    && (Objects.equals(trend_w1, trend_d1) || Objects.equals(trend_w1, trend_h12))) {
                 is_eq_w_d_h4_h1_15 = true;
             }
+
             boolean m15_allow_trade = false;
             if (dto_15.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_15)) {
                 m15_allow_trade = true;
             }
+
             boolean h1_allow_trade = false;
-            if (dto_h1.isAllow_trade_by_ma50() && is_eq_h4_h1_15) {
+            if (dto_h1.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_h1)) {
                 h1_allow_trade = true;
             }
             // ---------------------------------------------------------------------------------------------
@@ -3989,7 +3994,7 @@ public class BinanceServiceImpl implements BinanceService {
                         BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                     }
                 } else {
-                    if (m15_allow_trade && h1_allow_trade && dto_h1.isAllow_trade_by_ma50() && is_eq_h4_h1_15) {
+                    if (m15_allow_trade && h1_allow_trade && is_eq_h4_h1_15) {
                         String key = EPIC + Utils.CAPITAL_TIME_H4;
                         String append = type + "_h4_h1_15" + text_risk_010;
 
@@ -4017,9 +4022,8 @@ public class BinanceServiceImpl implements BinanceService {
                 count += 1;
 
                 String prefix = Utils.getPrefix_FollowTrackingTrend(EPIC, count, trend_mo, trend_w1, trend_d1,
-                        trend_h12,
-                        trend_h4, trend_h1, switch_trend_mo, switch_trend_w1, switch_trend_d1, switch_trend_h12,
-                        switch_trend_h4, tracking_trend);
+                        trend_h12, trend_h4, trend_h1, switch_trend_mo, switch_trend_w1, switch_trend_d1,
+                        switch_trend_h12, switch_trend_h4, tracking_trend);
 
                 analysis_profit(prefix, EPIC, eoz, log_trend);
             }
