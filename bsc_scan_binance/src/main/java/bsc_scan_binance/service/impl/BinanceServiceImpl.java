@@ -3938,24 +3938,16 @@ public class BinanceServiceImpl implements BinanceService {
                 type += ":00";
             }
 
-            boolean is_tradable_zone = true;
-            if (eoz.contains("H12") && eoz.contains("H4")) {
-                is_tradable_zone = false;
-            }
-            boolean is_eq_w_d_h4_h1_15 = false;
             boolean is_eq_d_h4_h1 = false;
             boolean is_eq_h4_h1_15 = false;
-            boolean is_eq_d_h12_h4 = false;
-            if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_d1, trend_h4)) {
-                is_eq_d_h12_h4 = true;
-            }
+            boolean is_eq_w_d_h4_h1_15 = false;
             if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
                 is_eq_d_h4_h1 = true;
             }
             if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
                 is_eq_h4_h1_15 = true;
             }
-            if (is_eq_d_h4_h1 && Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_15)) {
+            if (is_eq_d_h4_h1 && is_eq_h4_h1_15 && Objects.equals(trend_w1, trend_d1)) {
                 is_eq_w_d_h4_h1_15 = true;
             }
             // ---------------------------------------------------------------------------------------------
