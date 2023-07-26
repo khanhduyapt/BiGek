@@ -2808,9 +2808,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String msg = Utils.createOpenTradeMsg(dto, prefix);
                     Utils.logWritelnDraft(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
 
-                    if (!Utils.isSleepTime_23h_to_8h() && !dto.getComment().contains("EOZ:H12H4")
-                            && !is_opening_trade(EPIC, "")) {
-
+                    if (!Utils.isSleepTime_23h_to_8h() && !dto.getComment().contains("EOZ:H12H4")) {
                         String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type()
                                 + Utils.getCurrentYyyyMmDd_Blog4h()
                                 + Utils.getDeEncryptedChartNameCapital(dto.getComment());
