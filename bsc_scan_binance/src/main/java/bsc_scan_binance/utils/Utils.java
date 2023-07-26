@@ -3635,7 +3635,7 @@ public class Utils {
         msg += Utils.appendSpace(dto.getEpic(), 10) + new_line_from_service + " ";
         msg += Utils.appendSpace(dto.getComment(), 35) + "  ";
         msg += "  ";
-        msg += ":Price: " + Utils.appendLeft(Utils.removeLastZero(dto.getCur_price()), 10);
+        msg += " Entry: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()), 10);
         msg += "      ";
         msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10);
         msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 10) + "(lot)   ";
@@ -3966,7 +3966,11 @@ public class Utils {
             return isUptrend_3 ? Utils.TREND_LONG : Utils.TREND_SHOT;
         }
 
-        String result = isUptrend_3_12 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        if ((isUptrend_0 == isUptrend_1)) {
+            return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        }
+
+        String result = isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
         return result;
     }

@@ -3807,12 +3807,11 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        boolean allow_trade_by_ma50 = false;
-
         String sw_by_ma50 = "";
         if (CAPITAL_TIME_XX.contains(Utils.CAPITAL_TIME_15)) {
             sw_by_ma50 = Utils.switchTrendByMa13_XX(heiken_list, 50);
         }
+        boolean allow_trade_by_ma50 = false;
         if (Objects.equals(trend, Utils.TREND_LONG)
                 && (Objects.equals(nocation, Utils.NOCATION_BELOW_MA50) || sw_by_ma50.contains(Utils.TREND_LONG))) {
             allow_trade_by_ma50 = true;
@@ -4078,21 +4077,25 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ---------------------------------------------------------------------------------
             boolean has_profit_h4 = false;
-            if (!Utils.EPICS_STOCKS.contains(EPIC)) {
-                if (is_reverse_h4 && (PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0)) {
+            if (is_reverse_h4 && (PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0)) {
+                has_profit_h4 = true;
+            }
+            if (is_reverse_h1 && (PROFIT.compareTo(Utils.RISK_0_15_PERCENT) > 0)) {
+                has_profit_h4 = true;
+            }
+            if (is_reverse_h1 && (PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0) && Utils.isCloseTradeToday()) {
+                has_profit_h4 = true;
+            }
+            if (is_reverse_h1 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
+                Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+                if (Objects.nonNull(dto_h4) && !dto_h4.isTradable_zone()) {
                     has_profit_h4 = true;
                 }
-                if (is_reverse_h1 && (PROFIT.compareTo(Utils.RISK_0_15_PERCENT) > 0)) {
+            }
+            if ((PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
+                if (is_reverse_h4 && (Utils.CAPITAL_TIME_H4 + Utils.CAPITAL_TIME_H1 + Utils.CAPITAL_TIME_15)
+                        .contentEquals(trade.getTimeframe())) {
                     has_profit_h4 = true;
-                }
-                if (is_reverse_h1 && (PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0) && Utils.isCloseTradeToday()) {
-                    has_profit_h4 = true;
-                }
-                if (is_reverse_h1 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
-                    Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-                    if (Objects.nonNull(dto_h4) && !dto_h4.isTradable_zone()) {
-                        has_profit_h4 = true;
-                    }
                 }
             }
             // ---------------------------------------------------------------------------------
@@ -4102,10 +4105,6 @@ public class BinanceServiceImpl implements BinanceService {
                         && allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H)) {
                     is_hit_sl = true;
                 }
-            }
-            if (is_reverse_h4 && (Utils.CAPITAL_TIME_H4 + Utils.CAPITAL_TIME_H1 + Utils.CAPITAL_TIME_15)
-                    .contentEquals(trade.getTimeframe())) {
-                is_hit_sl = true;
             }
             // ---------------------------------------------------------------------------------
             boolean is_stock_d1_reverse = false;
