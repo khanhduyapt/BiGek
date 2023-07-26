@@ -3951,6 +3951,9 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_15)) {
                 is_eq_d_h4_15 = true;
             }
+            if (Objects.equals(trend_h12, trend_h4) && Objects.equals(trend_h12, trend_15)) {
+                is_eq_d_h4_15 = true;
+            }
 
             boolean m15_allow_trade = false;
             if (dto_15.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_15) && dto_05.isAllow_trade_by_ma50()
