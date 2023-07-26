@@ -176,14 +176,14 @@ public class Utils {
     public static final String CRYPTO_TIME_W1 = "1w";
     public static final String CRYPTO_TIME_MO = "1M";
 
-    public static final String PREFIX_5m_ = "_5m_";
-    public static final String PREFIX_15m_ = "_15m_";
-    public static final String PREFIX_1h_ = "_1h_";
-    public static final String PREFIX_4h_ = "_4h_";
-    public static final String PREFIX_12h_ = "_12h_";
-    public static final String PREFIX_1d_ = "_1d_";
-    public static final String PREFIX_1w_ = "_1w_";
-    public static final String PREFIX_mo_ = "_mo_";
+    public static final String PREFIX_05_ = "_5m_";
+    public static final String PREFIX_15_ = "_15m_";
+    public static final String PREFIX_H1_ = "_1h_";
+    public static final String PREFIX_4H_ = "_4h_";
+    public static final String PREFIX_H12_ = "_12h_";
+    public static final String PREFIX_D1_ = "_1d_";
+    public static final String PREFIX_W1_ = "_1w_";
+    public static final String PREFIX_MO_ = "_mo_";
 
     public static final String ENCRYPTED_05 = "(05)";
     public static final String ENCRYPTED_15 = "(15)";
@@ -743,28 +743,28 @@ public class Utils {
 
     public static String getChartPrefix(String CAPITAL_TIME_XX) {
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_05)) {
-            return PREFIX_5m_;
+            return PREFIX_05_;
         }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_15)) {
-            return PREFIX_15m_;
+            return PREFIX_15_;
         }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H1)) {
-            return PREFIX_1h_;
+            return PREFIX_H1_;
         }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H4)) {
-            return PREFIX_4h_;
+            return PREFIX_4H_;
         }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H12)) {
-            return PREFIX_12h_;
+            return PREFIX_H12_;
         }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_D1)) {
-            return PREFIX_1d_;
+            return PREFIX_D1_;
         }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_W1)) {
-            return PREFIX_1w_;
+            return PREFIX_W1_;
         }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_MO)) {
-            return PREFIX_mo_;
+            return PREFIX_MO_;
         }
 
         return "not_found_chart_prefix";
@@ -815,28 +815,28 @@ public class Utils {
     }
 
     public static String getChartNameCapital(String TIME) {
-        if (TIME.contains(CAPITAL_TIME_05) || TIME.contains(PREFIX_5m_)) {
+        if (TIME.contains(CAPITAL_TIME_05) || TIME.contains(PREFIX_05_)) {
             return "(05)";
         }
-        if (TIME.contains(CAPITAL_TIME_15) || TIME.contains(PREFIX_15m_)) {
+        if (TIME.contains(CAPITAL_TIME_15) || TIME.contains(PREFIX_15_)) {
             return "(15)";
         }
-        if (TIME.contains(CAPITAL_TIME_H1) || TIME.contains(PREFIX_1h_)) {
+        if (TIME.contains(CAPITAL_TIME_H1) || TIME.contains(PREFIX_H1_)) {
             return "(H1)";
         }
-        if (TIME.contains(CAPITAL_TIME_H4) || TIME.contains(PREFIX_4h_)) {
+        if (TIME.contains(CAPITAL_TIME_H4) || TIME.contains(PREFIX_4H_)) {
             return "(H4)";
         }
-        if (TIME.contains(CAPITAL_TIME_H12) || TIME.contains(PREFIX_12h_)) {
+        if (TIME.contains(CAPITAL_TIME_H12) || TIME.contains(PREFIX_H12_)) {
             return "(H12)";
         }
-        if (TIME.contains(CAPITAL_TIME_D1) || TIME.contains(PREFIX_1d_)) {
+        if (TIME.contains(CAPITAL_TIME_D1) || TIME.contains(PREFIX_D1_)) {
             return "(D1)";
         }
-        if (TIME.contains(CAPITAL_TIME_W1) || TIME.contains(PREFIX_1w_)) {
+        if (TIME.contains(CAPITAL_TIME_W1) || TIME.contains(PREFIX_W1_)) {
             return "(W1)";
         }
-        if (TIME.contains(CAPITAL_TIME_MO) || TIME.contains(PREFIX_mo_)) {
+        if (TIME.contains(CAPITAL_TIME_MO) || TIME.contains(PREFIX_MO_)) {
             return "(MO)";
         }
 
@@ -1511,8 +1511,13 @@ public class Utils {
             trend = dto_xx.getTrend();
         }
 
-        if (dto_xx.getId().contains(PREFIX_mo_) || dto_xx.getId().contains(CAPITAL_TIME_MO)
+        if (dto_xx.getId().contains(PREFIX_MO_) || dto_xx.getId().contains(CAPITAL_TIME_MO)
                 || dto_xx.getId().contains(CRYPTO_TIME_MO)) {
+            trend = dto_xx.getTrend();
+        }
+
+        if (dto_xx.getId().contains(PREFIX_W1_) || dto_xx.getId().contains(CAPITAL_TIME_W1)
+                || dto_xx.getId().contains(CRYPTO_TIME_W1)) {
             trend = dto_xx.getTrend();
         }
 
@@ -1736,15 +1741,15 @@ public class Utils {
     public static String getCurrentYyyyMmDdHHByChart(String id) {
         String result = getCurrentYyyyMmDd_HH_Blog15m() + "_";
 
-        if (id.contains(PREFIX_4h_) || id.contains(CAPITAL_TIME_H4)) {
+        if (id.contains(PREFIX_4H_) || id.contains(CAPITAL_TIME_H4)) {
             return getCurrentYyyyMmDd_Blog4h() + "_";
         }
 
-        if (id.contains(PREFIX_1h_) || id.contains(CAPITAL_TIME_H1)) {
+        if (id.contains(PREFIX_H1_) || id.contains(CAPITAL_TIME_H1)) {
             return getCurrentYyyyMmDd_HH() + "_";
         }
 
-        if (id.contains(PREFIX_1d_) || id.contains(CAPITAL_TIME_D1)) {
+        if (id.contains(PREFIX_D1_) || id.contains(CAPITAL_TIME_D1)) {
             return getYyyyMmDdHH_ChangeDailyChart() + "_";
         }
 
@@ -2483,13 +2488,13 @@ public class Utils {
 
     public static int getSlowIndex(List<BtcFutures> list) {
         String symbol = list.get(0).getId().toLowerCase();
-        if (symbol.contains(PREFIX_4h_)) {
+        if (symbol.contains(PREFIX_4H_)) {
             return 50;
         }
-        if (symbol.contains(PREFIX_1d_)) {
+        if (symbol.contains(PREFIX_D1_)) {
             return 8;
         }
-        if (symbol.contains(PREFIX_1w_)) {
+        if (symbol.contains(PREFIX_W1_)) {
             return 8;
         }
 
@@ -2523,19 +2528,19 @@ public class Utils {
 
             String symbol = list.get(0).getId().toLowerCase();
 
-            if (symbol.contains(PREFIX_5m_)) {
+            if (symbol.contains(PREFIX_05_)) {
                 result = "(05)";
-            } else if (symbol.contains(PREFIX_1h_)) {
+            } else if (symbol.contains(PREFIX_H1_)) {
                 result = "(H1)";
-            } else if (symbol.contains(PREFIX_4h_)) {
+            } else if (symbol.contains(PREFIX_4H_)) {
                 result = "(H4)";
-            } else if (symbol.contains(PREFIX_12h_)) {
+            } else if (symbol.contains(PREFIX_H12_)) {
                 result = "(H12)";
-            } else if (symbol.contains(PREFIX_1d_)) {
+            } else if (symbol.contains(PREFIX_D1_)) {
                 result = "(D1)";
-            } else if (symbol.contains(PREFIX_1w_)) {
+            } else if (symbol.contains(PREFIX_W1_)) {
                 result = "(W1)";
-            } else if (symbol.contains(PREFIX_mo_)) {
+            } else if (symbol.contains(PREFIX_MO_)) {
                 result = "(MO)";
             } else {
                 result = "(" + symbol.replace("_00", "") + ")";
@@ -2551,21 +2556,21 @@ public class Utils {
         String result = "";
 
         try {
-            if (dto_id.contains(CAPITAL_TIME_05) || dto_id.contains(PREFIX_5m_)) {
+            if (dto_id.contains(CAPITAL_TIME_05) || dto_id.contains(PREFIX_05_)) {
                 result = "(05)";
-            } else if (dto_id.contains(CAPITAL_TIME_15) || dto_id.contains(PREFIX_15m_)) {
+            } else if (dto_id.contains(CAPITAL_TIME_15) || dto_id.contains(PREFIX_15_)) {
                 result = "(15)";
-            } else if (dto_id.contains(CAPITAL_TIME_H1) || dto_id.contains(PREFIX_1h_)) {
+            } else if (dto_id.contains(CAPITAL_TIME_H1) || dto_id.contains(PREFIX_H1_)) {
                 result = "(H1)";
-            } else if (dto_id.contains(CAPITAL_TIME_H4) || dto_id.contains(PREFIX_4h_)) {
+            } else if (dto_id.contains(CAPITAL_TIME_H4) || dto_id.contains(PREFIX_4H_)) {
                 result = "(H4)";
-            } else if (dto_id.contains(CAPITAL_TIME_H12) || dto_id.contains(PREFIX_12h_)) {
+            } else if (dto_id.contains(CAPITAL_TIME_H12) || dto_id.contains(PREFIX_H12_)) {
                 result = "(H12)";
-            } else if (dto_id.contains(CAPITAL_TIME_D1) || dto_id.contains(PREFIX_1d_)) {
+            } else if (dto_id.contains(CAPITAL_TIME_D1) || dto_id.contains(PREFIX_D1_)) {
                 result = "(D1)";
-            } else if (dto_id.contains(CAPITAL_TIME_W1) || dto_id.contains(PREFIX_1w_)) {
+            } else if (dto_id.contains(CAPITAL_TIME_W1) || dto_id.contains(PREFIX_W1_)) {
                 result = "(W1)";
-            } else if (dto_id.contains(CAPITAL_TIME_MO) || dto_id.contains(PREFIX_mo_)) {
+            } else if (dto_id.contains(CAPITAL_TIME_MO) || dto_id.contains(PREFIX_MO_)) {
                 result = "(MO)";
             } else {
                 result = "(" + dto_id + ")";
@@ -3552,9 +3557,9 @@ public class Utils {
         BigDecimal ma;
         BigDecimal pre_close_price = list.get(1).getPrice_close_candle();
 
-        if (symbol.contains(PREFIX_1d_)) {
+        if (symbol.contains(PREFIX_D1_)) {
             ma = calcMA(list, MA_INDEX_D1_START_LONG, cur);
-        } else if (symbol.contains(PREFIX_4h_)) {
+        } else if (symbol.contains(PREFIX_4H_)) {
             ma = calcMA(list, MA_INDEX_H4_START_LONG, cur);
         } else {
             ma = calcMA(list, 50, cur);
@@ -3852,7 +3857,7 @@ public class Utils {
         boolean ma3_2_uptrend = true;
 
         String id = heiken_list.get(0).getId();
-        if (id.contains(PREFIX_mo_) || id.contains(PREFIX_1w_) || id.contains(PREFIX_1d_)) {
+        if (id.contains(PREFIX_MO_) || id.contains(PREFIX_W1_) || id.contains(PREFIX_D1_)) {
             ma3_1_uptrend = isUptrendByMa(heiken_list, 3, 0, 1);
             ma3_2_uptrend = isUptrendByMa(heiken_list, 3, 1, 2);
         } else {
@@ -3945,7 +3950,7 @@ public class Utils {
         int end = candle_no + 1;
         String id = heiken_list.get(0).getId();
         boolean isUptrend_0 = heiken_list.get(str).isUptrend();
-        if (id.contains(PREFIX_mo_) || id.contains(PREFIX_1w_)) {
+        if (id.contains(PREFIX_MO_) || id.contains(PREFIX_W1_)) {
             return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
         }
 
