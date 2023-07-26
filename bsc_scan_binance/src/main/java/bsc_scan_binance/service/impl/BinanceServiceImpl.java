@@ -3953,7 +3953,7 @@ public class BinanceServiceImpl implements BinanceService {
                 is_eq_d_h4_h1 = true;
             }
             if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
-                is_eq_d_h12_h4 = true;
+                is_eq_h4_h1_15 = true;
             }
             if (is_eq_d_h4_h1 && Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_15)) {
                 is_eq_w_d_h4_h1_15 = true;
@@ -3974,8 +3974,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
-                if (m15_allow_trade && is_tradable_zone && Objects.equals(trend_w1, trend_d1)
-                        && is_eq_d_h4_h1 & is_eq_w_d_h4_h1_15) {
+                if (m15_allow_trade && is_eq_w_d_h4_h1_15) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     String append = type + "241201015" + text_risk_010;
 
@@ -4076,13 +4075,6 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            Mt5OpenTradeEntity mt5Entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
-            if (Objects.isNull(mt5Entity)) {
-                Utils.logWritelnDraft("closeTrade_by_SL_TP Mt5OpenTradeEntity not found Ticket: " + trade.getTicket()
-                        + "   " + trade.getSymbol());
-                continue;
-            }
-
             // ---------------------------------------------------------------------------------
             boolean is_reverse_h1 = false;
             if (!Objects.equals(trend_h1, TRADE_TREND) && !Objects.equals(trend_15, TRADE_TREND)) {
@@ -4119,6 +4111,11 @@ public class BinanceServiceImpl implements BinanceService {
                     is_hit_sl = true;
                 }
             }
+            if (is_reverse_h4 && (Utils.CAPITAL_TIME_H4 + Utils.CAPITAL_TIME_H1 + Utils.CAPITAL_TIME_15)
+                    .contentEquals(trade.getTimeframe())) {
+                is_hit_sl = true;
+            }
+            // ---------------------------------------------------------------------------------
             boolean is_stock_d1_reverse = false;
             if (Utils.EPICS_STOCKS.contains(EPIC) && !Objects.equals(trend_d1, TRADE_TREND)
                     && !Objects.equals(trend_h12, TRADE_TREND) && is_reverse_h4) {
@@ -4144,7 +4141,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // --------------------------------------------------------------------------
-                String log = Utils.createCloseTradeMsg(mt5Entity, "CloseTrade: ", reason);
+                String log = Utils.createCloseTradeMsg(trade, "CloseTrade: ", reason);
                 Utils.logWritelnDraft(log);
 
                 String key = trade.getSymbol() + "_" + trade.getTypeDescription() + trade.getTimeframe();
