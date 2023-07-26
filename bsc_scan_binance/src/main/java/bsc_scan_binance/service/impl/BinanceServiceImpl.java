@@ -4115,8 +4115,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
             // ---------------------------------------------------------------------------------
-            if ((has_profit_h4 || is_hit_sl)
-                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H)) {
+            if ((has_profit_h4 || is_hit_sl) && allow_close_trade_after(TICKET, Utils.MINUTES_OF_2D)) {
                 String reason = "";
                 if (has_profit_h4) {
                     reason = "4h_reverse_profit";
