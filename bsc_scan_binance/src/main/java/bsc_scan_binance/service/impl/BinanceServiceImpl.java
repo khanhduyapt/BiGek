@@ -3890,21 +3890,19 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H12).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(null);
 
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h12) || Objects.isNull(dto_h4)
-                    || Objects.isNull(dto_h1) || Objects.isNull(dto_15) || Objects.isNull(dto_05)) {
+                    || Objects.isNull(dto_15) || Objects.isNull(dto_05)) {
 
                 String w1 = "W1:" + (Objects.isNull(dto_w1) ? "null" : "    ");
                 String d1 = "D1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
                 String h12 = "H12:" + (Objects.isNull(dto_h12) ? "null" : "    ");
                 String h4 = "H4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
-                String h1 = "H1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
 
-                Utils.logWritelnDraft(String.format("[controlMt5] dto (%s) :  %s, %s, %s, %s, %s.",
-                        Utils.appendSpace(EPIC, 10), w1, d1, h12, h4, h1));
+                Utils.logWritelnDraft(String.format("[controlMt5] dto (%s) :  %s, %s, %s, %s.",
+                        Utils.appendSpace(EPIC, 10), w1, d1, h12, h4));
 
                 continue;
             }
@@ -3913,7 +3911,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_d1 = Utils.get_trending_by_dow_definitions(dto_d1);
             String trend_h12 = Utils.get_trending_by_dow_definitions(dto_h12);
             String trend_h4 = Utils.get_trending_by_dow_definitions(dto_h4);
-            String trend_h1 = Utils.get_trending_by_dow_definitions(dto_h1);
+            // String trend_h1 = Utils.get_trending_by_dow_definitions(dto_h1);
             String trend_15 = Utils.get_trending_by_dow_definitions(dto_15);
             String trend_05 = Utils.get_trending_by_dow_definitions(dto_05);
 
@@ -3949,31 +3947,15 @@ public class BinanceServiceImpl implements BinanceService {
                 is_eq_w_d_h12 = true;
             }
 
-            boolean is_eq_d_h4_h1 = false;
-            if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
-                is_eq_d_h4_h1 = true;
-            }
-
-            boolean is_eq_h4_h1_15 = false;
-            if (Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h1, trend_15)) {
-                is_eq_h4_h1_15 = true;
-            }
-
-            boolean is_eq_w_d_h4_h1_15 = false;
-            if (is_eq_d_h4_h1 && is_eq_h4_h1_15
-                    && (Objects.equals(trend_w1, trend_d1) || Objects.equals(trend_w1, trend_h12))) {
-                is_eq_w_d_h4_h1_15 = true;
+            boolean is_eq_d_h4_15 = false;
+            if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_15)) {
+                is_eq_d_h4_15 = true;
             }
 
             boolean m15_allow_trade = false;
             if (dto_15.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_15) && dto_05.isAllow_trade_by_ma50()
                     && Objects.equals(trend_h4, trend_05)) {
                 m15_allow_trade = true;
-            }
-
-            boolean h1_allow_trade = false;
-            if (dto_h1.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_h1)) {
-                h1_allow_trade = true;
             }
 
             if (is_eq_w_d_h12) {
@@ -3996,23 +3978,23 @@ public class BinanceServiceImpl implements BinanceService {
                 Mt5OpenTrade trade_h4 = null;
 
                 // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
-                if (is_eq_w_d_h12 && m15_allow_trade && is_eq_w_d_h4_h1_15) {
+                if (is_eq_w_d_h12 && m15_allow_trade && is_eq_d_h4_15) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     String append = type + "241201015" + text_risk_010;
 
-                    trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1,
+                    trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_15,
                             dto_h4, append, true, Utils.CAPITAL_TIME_H4);
 
                     BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
                     BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                 }
 
-                if (Objects.isNull(trade_h4) && m15_allow_trade && is_eq_d_h4_h1 && is_eq_h4_h1_15) {
+                if (Objects.isNull(trade_h4) && m15_allow_trade && is_eq_d_h4_15) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     String append = type + "_h4_h1_15" + text_risk_010;
 
                     trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4,
-                            dto_h1, dto_h4, append, true, Utils.CAPITAL_TIME_H4);
+                            dto_15, dto_h4, append, true, Utils.CAPITAL_TIME_H4);
 
                     BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
                     BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
@@ -4030,7 +4012,7 @@ public class BinanceServiceImpl implements BinanceService {
                 count += 1;
 
                 String prefix = Utils.getPrefix_FollowTrackingTrend(EPIC, count, "", trend_w1, trend_d1,
-                        trend_h12, trend_h4, trend_h1, "", switch_trend_w1, switch_trend_d1,
+                        trend_h12, trend_h4, "", "", switch_trend_w1, switch_trend_d1,
                         switch_trend_h12, switch_trend_h4, tracking_trend);
 
                 analysis_profit(prefix, EPIC, eoz, log_trend);
