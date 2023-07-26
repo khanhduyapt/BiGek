@@ -3917,7 +3917,10 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_15 = Utils.get_trending_by_dow_definitions(dto_15);
 
             // ---------------------------------------------------------------------
-
+            String trend_btc_h4 = "";
+            if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
+                trend_btc_h4 = get_trend_by_dow_definitions("BTCUSD", Utils.CAPITAL_TIME_H4);
+            }
             String log_trend = trend_d1;
             String tracking_trend = trend_w1;
 
@@ -3927,18 +3930,18 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_trend_h12 = dto_h12.getSwitch_trend().trim();
             String switch_trend_h4 = dto_h4.getSwitch_trend().trim();
 
-            String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "B"
-                    : Objects.equals(Utils.TREND_SHOT, trend_d1) ? "S" : "?";
+            String type = Objects.equals(Utils.TREND_LONG, trend_h4) ? "B"
+                    : Objects.equals(Utils.TREND_SHOT, trend_h4) ? "S" : "?";
+
+            Boolean allow_trade = true;
+            if (!dto_h12.isTradable_zone() || !dto_h4.isTradable_zone()) {
+                allow_trade = false;
+            }
 
             String eoz = " (" + type + ")EOZ:";
-            eoz += (!dto_h12.isTradable_zone() && Objects.equals(trend_d1, trend_h12)) ? "H12" : "---";
-            eoz += (!dto_h4.isTradable_zone() && Objects.equals(trend_d1, trend_h4)) ? "H4" : "--";
+            eoz += (!dto_h12.isTradable_zone() && Objects.equals(trend_h4, trend_h12)) ? "H12" : "---";
+            eoz += (!dto_h4.isTradable_zone() && Objects.equals(trend_h4, trend_h4)) ? "H4" : "--";
             eoz += "  ";
-            if (Objects.equals(trend_w1, trend_d1)) {
-                type += ":96";
-            } else {
-                type += ":00";
-            }
 
             boolean is_eq_w_d_h12 = false;
             if (Objects.equals(trend_w1, trend_d1)
@@ -3971,13 +3974,21 @@ public class BinanceServiceImpl implements BinanceService {
             if (dto_h1.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_h1)) {
                 h1_allow_trade = true;
             }
+
+            if (is_eq_w_d_h12) {
+                type += ":96";
+            } else {
+                type += ":00";
+            }
+
             // ---------------------------------------------------------------------------------------------
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
-            if ((Utils.EPICS_FOREXS_ALL.contains(EPIC)
-                    || (Utils.EPICS_CASH_CFD.contains(EPIC) && Objects.equals(trend_w1, trend_d1))
-                    || (Utils.EPICS_METALS.contains(EPIC) && Objects.equals(trend_w1, trend_d1))
+            if (allow_trade && (Utils.EPICS_FOREXS_ALL.contains(EPIC)
+                    || Utils.EPICS_CASH_CFD.contains(EPIC)
+                    || Utils.EPICS_METALS.contains(EPIC)
                     || (Utils.EPICS_CRYPTO_CFD.contains(EPIC) && Objects.equals(trend_w1, trend_d1)
-                            && Objects.equals(trend_d1, Utils.TREND_LONG)))) {
+                            && Objects.equals(trend_d1, Utils.TREND_LONG)
+                            && Objects.equals(trend_btc_h4, Utils.TREND_LONG)))) {
 
                 String text_risk_010 = "(0.1 %:" + Utils.RISK_0_10_PERCENT.intValue() + "$)" + eoz;
 
