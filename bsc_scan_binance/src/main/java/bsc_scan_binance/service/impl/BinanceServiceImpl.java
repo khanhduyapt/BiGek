@@ -3977,7 +3977,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
-                    if (is_eq_h4_h1_15 && dto_15.isAllow_trade_by_ma50() && dto_h1.isAllow_trade_by_ma50()) {
+                    if (is_eq_h4_h1_15 && dto_15.isAllow_trade_by_ma50()) {
                         String key = EPIC + Utils.CAPITAL_TIME_H4;
                         String append = type + "h4_h1_15" + text_risk_010;
 

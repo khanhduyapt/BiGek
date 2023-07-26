@@ -257,7 +257,7 @@ public class Utils {
     public static final List<String> EPICS_FOREXS_ALL = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
             "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD",
             "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD",
-            "USDCHF", "USDJPY", "CADCHF");
+            "USDCHF", "USDJPY", "CADCHF", "XAUUSD");
 
     public static final List<String> EPICS_FOREXS_JPY = Arrays.asList("AUDJPY", "CADJPY", "CHFJPY", "EURJPY", "GBPJPY",
             "NZDJPY", "USDJPY", "USDCAD", "USDCHF", "CADCHF");
@@ -1108,6 +1108,10 @@ public class Utils {
 
         } else if (Objects.equals("DX.f", epic) || Objects.equals("DX", epic)) {
             epic = "DXY";
+
+        } else if (epic.contains("NATGAS")) {
+            epic = "NATGAS";
+            EXCHANGE = "PEPPERSTONE";
 
         } else if (Objects.equals("SPN35", epic)) {
             epic = "SP35";
