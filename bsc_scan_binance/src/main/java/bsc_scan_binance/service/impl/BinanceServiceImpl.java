@@ -3943,6 +3943,8 @@ public class BinanceServiceImpl implements BinanceService {
             eoz += (!dto_h4.isTradable_zone() && Objects.equals(trend_h4, trend_h4)) ? "H4" : "--";
             eoz += "  ";
 
+            boolean is_sweet_trend_to_d = (switch_trend_d1 + switch_trend_h12 + switch_trend_h4).contains(trend_d1);
+
             boolean is_eq_w_d_h12 = false;
             if (Objects.equals(trend_w1, trend_d1)
                     && (Objects.equals(trend_d1, trend_h12) || Objects.equals(trend_d1, trend_h12))) {
@@ -3996,7 +3998,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Mt5OpenTrade trade_h4 = null;
 
                 // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
-                if (is_eq_w_d_h12 && m15_allow_trade && is_eq_d_h4_15) {
+                if (is_eq_w_d_h12 && m15_allow_trade && is_eq_d_h4_15 && is_sweet_trend_to_d) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     String append = type + "241201015" + text_risk_010;
 
@@ -4007,7 +4009,7 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                 }
 
-                if (Objects.isNull(trade_h4) && m15_allow_trade && is_eq_d_h4_15) {
+                if (Objects.isNull(trade_h4) && m15_allow_trade && is_eq_d_h4_15 && is_sweet_trend_to_d) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     String append = type + "_h4_h1_15" + text_risk_010;
 
@@ -4018,7 +4020,7 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                 }
 
-                if (Objects.isNull(trade_h4) && m05_allow_trade && is_eq_d_h4_h1) {
+                if (Objects.isNull(trade_h4) && m05_allow_trade && is_eq_d_h4_h1 && is_sweet_trend_to_d) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     String append = type + "_h4_h1_05" + text_risk_010;
 
