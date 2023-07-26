@@ -3038,16 +3038,6 @@ public class BinanceServiceImpl implements BinanceService {
         return false;
     }
 
-    private boolean is_candidate_open_trade(String EPIC) {
-        for (Mt5OpenTrade dto : BscScanBinanceApplication.mt5_open_trade_List) {
-            if (Objects.equals(EPIC.toUpperCase(), dto.getEpic().toUpperCase())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     @Override
     @Transactional
     public void monitorProfit() {
@@ -3927,7 +3917,6 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_trend_d1 = dto_d1.getSwitch_trend().trim();
             String switch_trend_h12 = dto_h12.getSwitch_trend().trim();
             String switch_trend_h4 = dto_h4.getSwitch_trend().trim();
-            String switch_trend_h1 = dto_h1.getSwitch_trend().trim();
 
             String type = Objects.equals(Utils.TREND_LONG, trend_h4) ? "B"
                     : Objects.equals(Utils.TREND_SHOT, trend_h4) ? "S" : "?";
@@ -3942,8 +3931,8 @@ public class BinanceServiceImpl implements BinanceService {
             eoz += (!dto_h4.isTradable_zone() && Objects.equals(trend_h4, trend_h4)) ? "H4" : "--";
             eoz += "  ";
 
-            boolean is_sweet_trend_to_d = (switch_trend_d1 + switch_trend_h12 + switch_trend_h4 + switch_trend_h1)
-                    .contains(trend_d1);
+            boolean is_sweet_trend_to_d = switch_trend_d1.contains(Utils.TEXT_SWITCH_TREND_HEIKEN)
+                    || switch_trend_d1.contains("Ma");
 
             boolean is_eq_w_d_h12 = false;
             if (Objects.equals(trend_w1, trend_d1)
