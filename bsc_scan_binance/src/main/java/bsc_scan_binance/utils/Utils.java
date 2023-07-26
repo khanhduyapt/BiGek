@@ -3962,12 +3962,8 @@ public class Utils {
             return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
         }
 
-        if ((isUptrend_0 == isUptrend_3)) {
+        if ((isUptrend_0 == isUptrend_3) || (isUptrend_3 == isUptrend_3_12)) {
             return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
-        }
-
-        if ((isUptrend_3 == isUptrend_3_12)) {
-            return isUptrend_3 ? Utils.TREND_LONG : Utils.TREND_SHOT;
         }
 
         if ((isUptrend_0 == isUptrend_1)) {
