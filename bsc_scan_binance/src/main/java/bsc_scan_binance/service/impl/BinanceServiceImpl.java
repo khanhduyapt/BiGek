@@ -3811,15 +3811,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (CAPITAL_TIME_XX.contains(Utils.CAPITAL_TIME_15)) {
             sw_by_ma50 = Utils.switchTrendByMa13_XX(heiken_list, 50);
         }
-        boolean allow_trade_by_ma50 = false;
-        if (Objects.equals(trend, Utils.TREND_LONG)
-                && (Objects.equals(nocation, Utils.NOCATION_BELOW_MA50) || sw_by_ma50.contains(Utils.TREND_LONG))) {
-            allow_trade_by_ma50 = true;
-        }
-        if (Objects.equals(trend, Utils.TREND_SHOT)
-                && (Objects.equals(nocation, Utils.NOCATION_ABOVE_MA50) || sw_by_ma50.contains(Utils.TREND_SHOT))) {
-            allow_trade_by_ma50 = true;
-        }
+        String main_trend = "";
 
         String switch_trend = "";
         if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_MO)
@@ -3827,11 +3819,23 @@ public class BinanceServiceImpl implements BinanceService {
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H12)) {
             switch_trend = Utils.switchTrendByHeken_12(heiken_list);
+            main_trend = get_trend_by_dow_definitions(EPIC, Utils.CAPITAL_TIME_D1);
         } else {
             switch_trend = Utils.has_switch_trend_by_heiken_ma35_ma10(heiken_list);
+            main_trend = get_trend_by_dow_definitions(EPIC, Utils.CAPITAL_TIME_H4);
         }
         switch_trend += Utils.switchTrendByMa3_2_1(heiken_list);
         switch_trend += Utils.switchTrendByMa3_68(heiken_list);
+
+        boolean allow_trade_by_ma50 = false;
+        if (Objects.equals(main_trend, Utils.TREND_LONG)
+                && (Objects.equals(nocation, Utils.NOCATION_BELOW_MA50) || sw_by_ma50.contains(Utils.TREND_LONG))) {
+            allow_trade_by_ma50 = true;
+        }
+        if (Objects.equals(main_trend, Utils.TREND_SHOT)
+                && (Objects.equals(nocation, Utils.NOCATION_ABOVE_MA50) || sw_by_ma50.contains(Utils.TREND_SHOT))) {
+            allow_trade_by_ma50 = true;
+        }
 
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
@@ -3854,8 +3858,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String zone = Utils.getZone(heiken_list);
         boolean tradable_zone = false;
-        String trend_d1 = get_trend_by_dow_definitions(EPIC, Utils.CAPITAL_TIME_D1);
-        if (zone.contains(trend_d1)) {
+        if (zone.contains(main_trend)) {
             tradable_zone = true;
         }
 
