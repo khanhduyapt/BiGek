@@ -1131,6 +1131,9 @@ public class Utils {
             epic = "DB";
             EXCHANGE = "NYSE";
 
+        } else if (Objects.equals("T", epic.toUpperCase()) || Objects.equals("V", epic.toUpperCase())) {
+            EXCHANGE = "NYSE";
+
         } else if (Objects.equals("VOWG_P", epic.toUpperCase())) {
             epic = "VOW";
             EXCHANGE = "XETR";
