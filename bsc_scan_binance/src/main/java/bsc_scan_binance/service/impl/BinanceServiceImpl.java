@@ -4142,8 +4142,8 @@ public class BinanceServiceImpl implements BinanceService {
                 String key = trade.getSymbol() + "_" + trade.getTypeDescription() + trade.getTimeframe();
                 if (isReloadAfter(Utils.MINUTES_OF_1H, key)) {
                     String EVENT_ID = "CLOSE_TRADE" + Utils.getCurrentYyyyMmDd_HH() + key;
-                    String msg = "(" + trade.getCompany() + ") Close:" + trade.getSymbol() + "." + reason;
-                    msg += Utils.getStringValue(trade.getProfit().intValue()) + "$";
+                    String msg = "(" + trade.getCompany() + ") Close:" + trade.getSymbol() + ":";
+                    msg += Utils.getStringValue(trade.getProfit().intValue()) + "$:" + reason;
                     sendMsgPerHour_OnlyMe(EVENT_ID, msg);
                 }
 
