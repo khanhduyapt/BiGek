@@ -341,7 +341,7 @@ public class BscScanBinanceApplication {
 
         long close_London = Duration.between(close_London_Orders, cur_time).toMinutes();
         if ((0 <= close_London) && (close_London <= 30) && isReloadAfter(60, "Close_London_Orders")) {
-            binance_service.sendMsgPerHour_OnlyMe(EVENT_ID, "Close_London_Orders");
+            // binance_service.sendMsgPerHour_OnlyMe(EVENT_ID, "Close_London_Orders");
         }
 
         long close_NewYork = Duration.between(close_NewYork_Orders, cur_time).toMinutes();
