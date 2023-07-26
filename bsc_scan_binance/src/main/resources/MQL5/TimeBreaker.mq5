@@ -52,11 +52,11 @@ void OnTimer(void)
      {
       FileWrite(nfile_handle, "");
 
-      string arr_symbol[] = {"DX.f", "XAUUSD", "XAGUSD", 
+      string arr_symbol[] = {"DX.f", "XAUUSD", "XAGUSD",
                              "US30.cash", "US100.cash", "EU50.cash", "GER40.cash", "UK100.cash", "USOIL.cash", "AUS200.cash", "FRA40.cash", "SPN35.cash", "NATGAS.f", "ERBN.f",
-                             
-                             "BTCUSD", "ETHUSD", "DOGEUSD", "DASHUSD", "ADAUSD", "DOTUSD", "LTCUSD", "XRPUSD", 
-                             
+
+                             "BTCUSD", "ETHUSD", "DOGEUSD", "DASHUSD", "ADAUSD", "DOTUSD", "LTCUSD", "XRPUSD",
+
                              "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
                              "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
                              "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD",
@@ -77,21 +77,24 @@ void OnTimer(void)
          //---------------------------------------------
          //if(mod5 == 1)
            {
-            MqlRates rates_month[];
-            ArraySetAsSeries(rates_month,true);
-            copied=CopyRates(symbol, PERIOD_MN1, 0, 6, rates_month);
-            if(copied>0)
-              {
-               int size=fmin(copied, 10);
-               for(int i=0; i<size; i++)
-                 {
-                  FileWrite(nfile_handle, symbol, "MONTH", rates_month[i].time, rates_month[i].open, rates_month[i].high, rates_month[i].low, rates_month[i].close);
-                 }
-              }
-            else
-              {
-               FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_MN1");
-              }
+            /*
+             MqlRates rates_month[];
+             ArraySetAsSeries(rates_month,true);
+             copied=CopyRates(symbol, PERIOD_MN1, 0, 6, rates_month);
+             if(copied>0)
+               {
+                int size=fmin(copied, 10);
+                for(int i=0; i<size; i++)
+                  {
+                   FileWrite(nfile_handle, symbol, "MONTH", rates_month[i].time, rates_month[i].open, rates_month[i].high, rates_month[i].low, rates_month[i].close);
+                  }
+               }
+             else
+               {
+                FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_MN1");
+               }
+
+               */
             //---------------------------------------------
             MqlRates rates_w1[];
             ArraySetAsSeries(rates_w1,true);
@@ -174,7 +177,7 @@ void OnTimer(void)
                FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_H1");
               }
             //---------------------------------------------
-            
+
             MqlRates rates_15[];
             ArraySetAsSeries(rates_15,true);
             copied=CopyRates(symbol, PERIOD_M15, 0, 55, rates_15);
@@ -189,8 +192,26 @@ void OnTimer(void)
             else
               {
                FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M15");
-              }             
+              }
             //---------------------------------------------
+
+            MqlRates rates_05[];
+            ArraySetAsSeries(rates_05,true);
+            copied=CopyRates(symbol, PERIOD_M5, 0, 55, rates_05);
+            if(copied>0)
+              {
+               int size=fmin(copied, 55);
+               for(int i=0; i<size; i++)
+                 {
+                  FileWrite(nfile_handle, symbol, "MINUTE_5", rates_05[i].time, rates_05[i].open, rates_05[i].high, rates_05[i].low, rates_05[i].close);
+                 }
+              }
+            else
+              {
+               FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M5");
+              }
+
+
            } //mod5
 
         } //for
