@@ -179,8 +179,8 @@ public class Utils {
     public static final String PREFIX_05_ = "_5m_";
     public static final String PREFIX_15_ = "_15m_";
     public static final String PREFIX_H1_ = "_1h_";
-    public static final String PREFIX_4H_ = "_4h_";
-    public static final String PREFIX_H12_ = "_12h_";
+    public static final String PREFIX_H4_ = "_4h_";
+    public static final String PREFIX_H12 = "_12h_";
     public static final String PREFIX_D1_ = "_1d_";
     public static final String PREFIX_W1_ = "_1w_";
     public static final String PREFIX_MO_ = "_mo_";
@@ -196,6 +196,7 @@ public class Utils {
     public static final Integer MINUTES_OF_2D = 2880;
     public static final Integer MINUTES_OF_1D = 1440;
     public static final Integer MINUTES_OF_12H = 720;
+    public static final Integer MINUTES_OF_8H = 480;
     public static final Integer MINUTES_OF_4H = 240;
     public static final Integer MINUTES_OF_1H = 60;
     public static final Integer MINUTES_OF_15M = 15;
@@ -752,10 +753,10 @@ public class Utils {
             return PREFIX_H1_;
         }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H4)) {
-            return PREFIX_4H_;
+            return PREFIX_H4_;
         }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H12)) {
-            return PREFIX_H12_;
+            return PREFIX_H12;
         }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_D1)) {
             return PREFIX_D1_;
@@ -824,10 +825,10 @@ public class Utils {
         if (TIME.contains(CAPITAL_TIME_H1) || TIME.contains(PREFIX_H1_)) {
             return "(H1)";
         }
-        if (TIME.contains(CAPITAL_TIME_H4) || TIME.contains(PREFIX_4H_)) {
+        if (TIME.contains(CAPITAL_TIME_H4) || TIME.contains(PREFIX_H4_)) {
             return "(H4)";
         }
-        if (TIME.contains(CAPITAL_TIME_H12) || TIME.contains(PREFIX_H12_)) {
+        if (TIME.contains(CAPITAL_TIME_H12) || TIME.contains(PREFIX_H12)) {
             return "(H12)";
         }
         if (TIME.contains(CAPITAL_TIME_D1) || TIME.contains(PREFIX_D1_)) {
@@ -1745,7 +1746,7 @@ public class Utils {
     public static String getCurrentYyyyMmDdHHByChart(String id) {
         String result = getCurrentYyyyMmDd_HH_Blog15m() + "_";
 
-        if (id.contains(PREFIX_4H_) || id.contains(CAPITAL_TIME_H4)) {
+        if (id.contains(PREFIX_H4_) || id.contains(CAPITAL_TIME_H4)) {
             return getCurrentYyyyMmDd_Blog4h() + "_";
         }
 
@@ -2492,7 +2493,7 @@ public class Utils {
 
     public static int getSlowIndex(List<BtcFutures> list) {
         String symbol = list.get(0).getId().toLowerCase();
-        if (symbol.contains(PREFIX_4H_)) {
+        if (symbol.contains(PREFIX_H4_)) {
             return 50;
         }
         if (symbol.contains(PREFIX_D1_)) {
@@ -2536,9 +2537,9 @@ public class Utils {
                 result = "(05)";
             } else if (symbol.contains(PREFIX_H1_)) {
                 result = "(H1)";
-            } else if (symbol.contains(PREFIX_4H_)) {
+            } else if (symbol.contains(PREFIX_H4_)) {
                 result = "(H4)";
-            } else if (symbol.contains(PREFIX_H12_)) {
+            } else if (symbol.contains(PREFIX_H12)) {
                 result = "(H12)";
             } else if (symbol.contains(PREFIX_D1_)) {
                 result = "(D1)";
@@ -2566,9 +2567,9 @@ public class Utils {
                 result = "(15)";
             } else if (dto_id.contains(CAPITAL_TIME_H1) || dto_id.contains(PREFIX_H1_)) {
                 result = "(H1)";
-            } else if (dto_id.contains(CAPITAL_TIME_H4) || dto_id.contains(PREFIX_4H_)) {
+            } else if (dto_id.contains(CAPITAL_TIME_H4) || dto_id.contains(PREFIX_H4_)) {
                 result = "(H4)";
-            } else if (dto_id.contains(CAPITAL_TIME_H12) || dto_id.contains(PREFIX_H12_)) {
+            } else if (dto_id.contains(CAPITAL_TIME_H12) || dto_id.contains(PREFIX_H12)) {
                 result = "(H12)";
             } else if (dto_id.contains(CAPITAL_TIME_D1) || dto_id.contains(PREFIX_D1_)) {
                 result = "(D1)";
@@ -3563,7 +3564,7 @@ public class Utils {
 
         if (symbol.contains(PREFIX_D1_)) {
             ma = calcMA(list, MA_INDEX_D1_START_LONG, cur);
-        } else if (symbol.contains(PREFIX_4H_)) {
+        } else if (symbol.contains(PREFIX_H4_)) {
             ma = calcMA(list, MA_INDEX_H4_START_LONG, cur);
         } else {
             ma = calcMA(list, 50, cur);

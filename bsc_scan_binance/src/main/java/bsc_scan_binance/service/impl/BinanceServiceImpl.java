@@ -2803,20 +2803,6 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                if (!is_opening_trade(EPIC, dto.getOrder_type())) {
-                    String prefix = "Open_Trade: ";
-                    String msg = Utils.createOpenTradeMsg(dto, prefix);
-                    Utils.logWritelnDraft(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
-
-                    if (!Utils.isSleepTime_23h_to_8h() && !dto.getComment().contains("EOZ:H12H4")) {
-                        String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type()
-                                + Utils.getCurrentYyyyMmDd_Blog4h()
-                                + Utils.getDeEncryptedChartNameCapital(dto.getComment());
-
-                        msg_dict.put(EVENT_ID, msg);
-                    }
-                }
-
                 StringBuilder sb = new StringBuilder();
                 sb.append(dto.getEpic());
                 sb.append('\t');
@@ -2833,13 +2819,28 @@ public class BinanceServiceImpl implements BinanceService {
                 sb.append(dto.getComment());
                 sb.append('\n');
 
-                if (trade_count < MAX_TRADE) {
-                    if (Utils.isPcCongTy()) {
-                        writer.write(sb.toString());
-                    }
-                    trade_count += 1;
+                if (!is_opening_trade(EPIC, dto.getOrder_type())) {
+                    String prefix = "Open_Trade: ";
+                    String msg = Utils.createOpenTradeMsg(dto, prefix);
+                    Utils.logWritelnDraft(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
 
+                    if (!Utils.isSleepTime_23h_to_8h() && !dto.getComment().contains("EOZ:H12H4")) {
+
+                        String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type()
+                                + Utils.getCurrentYyyyMmDd_Blog4h()
+                                + Utils.getDeEncryptedChartNameCapital(dto.getComment());
+
+                        msg_dict.put(EVENT_ID, msg);
+
+                        if (trade_count < MAX_TRADE) {
+                            if (Utils.isPcCongTy()) {
+                                writer.write(sb.toString());
+                            }
+                            trade_count += 1;
+                        }
+                    }
                 }
+
             }
             writer.close();
 
@@ -2971,7 +2972,6 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private boolean allow_padding_trade_after_1day(String EPIC) {
-        Integer MINUTES_OF_1D = 1440;
         List<Mt5OpenTradeEntity> list = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
         if (CollectionUtils.isEmpty(list)) {
             return false;
@@ -2985,7 +2985,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Duration duration = Duration.between(pre_time, LocalDateTime.now());
                 long elapsedMinutes = duration.toMinutes();
 
-                if (elapsedMinutes > MINUTES_OF_1D) {
+                if (elapsedMinutes > Utils.MINUTES_OF_1D) {
                     count += 1;
                 }
             }
@@ -3983,8 +3983,16 @@ public class BinanceServiceImpl implements BinanceService {
                 m05_allow_trade = true;
             }
             boolean m15_allow_trade = false;
-            if (m05_allow_trade && dto_15.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_15)) {
+            if (dto_15.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_15)) {
                 m15_allow_trade = true;
+            }
+            boolean h1_allow_trade = false;
+            if (dto_h1.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_h1)) {
+                h1_allow_trade = true;
+            }
+            boolean h4_allow_trade = false;
+            if (dto_h4.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_h1)) {
+                h1_allow_trade = true;
             }
 
             if (is_eq_w_d_h12) {
@@ -4020,6 +4028,22 @@ public class BinanceServiceImpl implements BinanceService {
 
                     BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
                     BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
+                }
+
+                if (Objects.isNull(trade_h4) && h4_allow_trade && h1_allow_trade && m15_allow_trade
+                        && m05_allow_trade) {
+                    String key = EPIC + Utils.CAPITAL_TIME_H4;
+                    String append = type + "h4h1_1505" + text_risk_010;
+
+                    trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_15,
+                            dto_h4, append, true, Utils.CAPITAL_TIME_H4);
+
+                    BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
+                    BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
+
+                    String msg = Utils.createOpenTradeMsg(trade_h4, "h4h1_1505 ");
+                    BscScanBinanceApplication.msg_w_not_eq_d_but_h12_sweet_trend
+                            .add(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
                 }
 
                 if (Objects.isNull(trade_h4) && is_eq_d_h4_h1 && is_candidate && m15_allow_trade) {
@@ -4148,16 +4172,13 @@ public class BinanceServiceImpl implements BinanceService {
                     has_profit = true;
                 }
             } else {
-                if (is_reverse_h4 && (PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0)) {
-                    has_profit = true;
-                }
                 if (is_reverse_h1 && (PROFIT.compareTo(Utils.RISK_0_15_PERCENT) > 0)) {
                     has_profit = true;
                 }
                 if (is_reverse_h1 && (PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0) && Utils.isCloseTradeToday()) {
                     has_profit = true;
                 }
-                if (is_reverse_h4 && (PROFIT.compareTo(BigDecimal.ZERO) > 0) && Utils.isCloseTradeToday()) {
+                if (is_reverse_h4 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
                     has_profit = true;
                 }
                 if (is_reverse_h1 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
@@ -4176,7 +4197,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
             // ---------------------------------------------------------------------------------
-            if ((has_profit && allow_close_trade_after(TICKET, Utils.MINUTES_OF_1D)) || is_hit_sl || is_reverse_w1) {
+            if ((has_profit && allow_close_trade_after(TICKET, Utils.MINUTES_OF_8H)) || is_hit_sl) {
                 String reason = "";
                 if (has_profit) {
                     reason = "4hprofit";
