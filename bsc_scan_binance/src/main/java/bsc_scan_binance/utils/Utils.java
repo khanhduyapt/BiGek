@@ -3924,17 +3924,32 @@ public class Utils {
         String trend = Utils.getTrendByHekenAshiList(heiken_list);
         String chart_name = getChartName(heiken_list);
         // -------------------------------------------------------------------------
-        // Dựa vào nến đóng:
-        if (Objects.equals(trend, Utils.TREND_LONG) && heiken_list.get(1).isUptrend() && heiken_list.get(2).isDown()
-                && heiken_list.get(3).isDown()) {
-            return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
+        String id = heiken_list.get(0).getId();
+
+        if (id.contains(PREFIX_05_) || id.contains(PREFIX_15_) || id.contains(PREFIX_H1_)) {
+            // Dựa vào nến đóng khung H1 trở xuống:
+            if (Objects.equals(trend, Utils.TREND_LONG) && heiken_list.get(1).isUptrend() && heiken_list.get(2).isDown()
+                    && heiken_list.get(3).isDown()) {
+                return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
+            }
+
+            if (Objects.equals(trend, Utils.TREND_SHOT) && heiken_list.get(1).isDown() && heiken_list.get(2).isUptrend()
+                    && heiken_list.get(3).isUptrend()) {
+                return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
+            }
+        } else {
+            //OK không sửa nữa, khung lớn thì dùng 0_1
+            if (Objects.equals(trend, Utils.TREND_LONG) && heiken_list.get(0).isUptrend()
+                    && heiken_list.get(1).isDown()) {
+                return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
+            }
+
+            if (Objects.equals(trend, Utils.TREND_SHOT) && heiken_list.get(0).isDown()
+                    && heiken_list.get(1).isUptrend()) {
+                return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
+            }
         }
 
-        if (Objects.equals(trend, Utils.TREND_SHOT) && heiken_list.get(1).isDown() && heiken_list.get(2).isUptrend()
-                && heiken_list.get(3).isUptrend()) {
-            return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
-        }
-        // --------------------------------------------------------------------
         return "";
     }
 
@@ -4151,35 +4166,35 @@ public class Utils {
 
             String trend_mo, String trend_w1, String trend_d1, String trend_h12, String trend_h4, String trend_h1,
 
-            String note_mo, String note_w1, String note_d1, String note_h12, String note_h4,
+            String switch_mo, String switch_w1, String switch_d1, String switch_h12, String switch_h4,
 
             String tracking_trend) {
         // --------------------------------------------
         //String week = "";
         //String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "B"
         //        : Objects.equals(Utils.TREND_SHOT, trend_d1) ? "S" : "?";
-        //if (note_w1.contains(trend_w1)) {
+        //if (switch_w1.contains(trend_w1)) {
         //    week = " (W~" + type + ")  ";
         //} else {
         //    week = "        ";
         //}
         String No = Utils.appendLeft(String.valueOf(index), 2, "0") + ". ";
         // --------------------------------------------
-        String prefix_trend = "[MO-W1-D1-H12-H4-H1]";
+        String prefix_trend = "[MO-W1-D1-12-H4-H1]";
         if (!EPICS_STOCKS.contains(EPIC)) {
             prefix_trend = "[W1-D1-H12-H4]      ";
         }
         if (!Objects.equals(trend_d1, trend_mo)) {
-            prefix_trend = prefix_trend.replace("MO-", "---");
+            prefix_trend = prefix_trend.replace("MO", "--");
         }
         if (!Objects.equals(trend_d1, trend_w1)) {
-            prefix_trend = prefix_trend.replace("W1-", "---");
+            prefix_trend = prefix_trend.replace("W1", "--");
         }
         if (!Objects.equals(trend_d1, trend_h12)) {
-            prefix_trend = prefix_trend.replace("H12-", "----");
+            prefix_trend = prefix_trend.replace("12", "--");
         }
         if (!Objects.equals(trend_d1, trend_h4)) {
-            prefix_trend = prefix_trend.replace("H4-", "---");
+            prefix_trend = prefix_trend.replace("H4", "--");
         }
         if (!Objects.equals(trend_d1, trend_h1)) {
             prefix_trend = prefix_trend.replace("H1]", "--]");
@@ -4189,41 +4204,37 @@ public class Utils {
         // --------------------------------------------
         String switch_trend = "{";
 
-        boolean same_d1h12h4 = false;
-        if (Objects.equals(trend_d1, trend_h12) && Objects.equals(trend_h12, trend_h4)) {
-            same_d1h12h4 = true;
-        }
-
         if (EPICS_STOCKS.contains(EPIC)) {
-            if (note_mo.contains(trend_mo)) {
-                switch_trend += getTrendPrefix("MO", note_mo, " ");
+            if (switch_mo.contains(trend_mo)) {
+                switch_trend += getTrendPrefix("MO", switch_mo, " ");
             } else {
                 switch_trend += getTrendPrefix("MO", "", " ");
             }
 
-            if (note_w1.contains(trend_w1)) {
-                switch_trend += getTrendPrefix("W1", note_w1, " ");
+            if (switch_w1.contains(trend_w1)) {
+                switch_trend += getTrendPrefix("W1", switch_w1, " ");
             } else {
                 switch_trend += getTrendPrefix("W1", "", " ");
             }
         }
 
-        if (same_d1h12h4 && note_d1.contains(trend_d1)) {
-            switch_trend += getTrendPrefix("D1", note_d1, " ");
+        if (switch_d1.contains(trend_d1) || switch_h12.contains(trend_h12)) {
+            switch_trend += getTrendPrefix("D1", switch_d1, " ");
         } else {
             switch_trend += getTrendPrefix("D1", "", " ");
         }
 
-        if (!EPICS_STOCKS.contains(EPIC)) {
-            if (note_h12.contains(trend_h12)) {
-                switch_trend += getTrendPrefix("H12", note_h12, " ");
-            } else {
-                switch_trend += getTrendPrefix("H12", "", " ");
-            }
-        }
+        //if (!EPICS_STOCKS.contains(EPIC)) {
+        //    if (switch_h12.contains(trend_h12)) {
+        //        switch_trend += getTrendPrefix("12", switch_h12, " ");
+        //    } else {
+        //        switch_trend += getTrendPrefix("12", "", " ");
+        //    }
+        //}
+        switch_trend += "   ";
 
-        if ((note_h4.contains(trend_d1) || note_h4.contains(trend_h12))) {
-            switch_trend += getTrendPrefix("H4", note_h4, "");
+        if (switch_h4.contains(trend_h4)) {
+            switch_trend += getTrendPrefix("H4", switch_h4, "");
         } else {
             switch_trend += getTrendPrefix("H4", "", "");
         }
