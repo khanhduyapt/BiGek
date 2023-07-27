@@ -3838,6 +3838,7 @@ public class BinanceServiceImpl implements BinanceService {
         // EPIC = "GBPNZD";
         // CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
         // ----------------------------TREND------------------------
+        // TODO: 1. initForexTrend
         List<BtcFutures> list = getCapitalData(EPIC, CAPITAL_TIME_XX);
         List<BtcFutures> heiken_list = Utils.getHeikenList(list);
         if (CollectionUtils.isEmpty(heiken_list)) {
@@ -3849,9 +3850,12 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_candle_1 = "";
         switch_trend += Utils.switchTrendByHeken_12(heiken_list);
         switch_trend += Utils.switchTrendByMa3_2_1(heiken_list);
+
+        // TODO: 1. initForexTrend
         if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_MO)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_W1)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)) {
+
             trend = Utils.getTrendByLineChart(list);
             trend_candle_1 = Utils.getTrendByHekenAshiList(heiken_list);
         } else {
@@ -3862,7 +3866,6 @@ public class BinanceServiceImpl implements BinanceService {
             switch_trend += Utils.has_switch_trend_by_heiken_ma35_ma10(heiken_list);
         }
 
-        // TODO: 1. initForexTrend
         String nocation = "";
         if (heiken_list.size() >= 50) {
             if (Utils.isBelowMALine(heiken_list, 50)) {
