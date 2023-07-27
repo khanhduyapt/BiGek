@@ -2803,7 +2803,7 @@ public class BinanceServiceImpl implements BinanceService {
                     writer.write(sb.toString());
                 }
 
-                System.out.println("CloseTicket: " + sb.toString() + "    Resion: "
+                System.out.println("CloseTicket: " + TICKET + "    Resion: "
                         + BscScanBinanceApplication.mt5_close_ticket_dict.get(TICKET));
             }
 
