@@ -4107,6 +4107,7 @@ public class BinanceServiceImpl implements BinanceService {
                 CAPITAL_TIME_H12 = Utils.CAPITAL_TIME_D1;
             }
 
+            String trend_w1 = get_trend_by_dow_definitions(EPIC, Utils.CAPITAL_TIME_W1);
             String trend_d1 = get_trend_by_dow_definitions(EPIC, Utils.CAPITAL_TIME_D1);
             String trend_h12 = get_trend_by_dow_definitions(EPIC, CAPITAL_TIME_H12);
             String trend_h4 = get_trend_by_dow_definitions(EPIC, Utils.CAPITAL_TIME_H4);
@@ -4136,7 +4137,10 @@ public class BinanceServiceImpl implements BinanceService {
             if (is_reverse_h4 && !Objects.equals(trend_d1, TRADE_TREND)) {
                 is_reverse_d1 = true;
             }
-
+            boolean is_reverse_w1 = false;
+            if (is_reverse_d1 && !Objects.equals(trend_w1, TRADE_TREND)) {
+                is_reverse_w1 = true;
+            }
             // ---------------------------------------------------------------------------------
             boolean has_profit = false;
             if (Utils.EPICS_STOCKS.contains(EPIC)) {
@@ -4172,12 +4176,14 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
             // ---------------------------------------------------------------------------------
-            if ((has_profit && allow_close_trade_after(TICKET, Utils.MINUTES_OF_1D)) || is_hit_sl) {
+            if ((has_profit && allow_close_trade_after(TICKET, Utils.MINUTES_OF_1D)) || is_hit_sl || is_reverse_w1) {
                 String reason = "";
                 if (has_profit) {
                     reason = "4hprofit";
                 } else if (is_hit_sl) {
                     reason = "hitsl1r";
+                } else if (is_reverse_w1) {
+                    reason = "reverse";
                 }
 
                 if (has_profit || is_hit_sl) {
