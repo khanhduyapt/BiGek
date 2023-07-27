@@ -4187,7 +4187,7 @@ public class Utils {
             prefix_trend = prefix_trend.replace("W1", "--");
         }
         if (!Objects.equals(trend_d1, trend_h12)) {
-            prefix_trend = prefix_trend.replace("12", "--");
+            prefix_trend = prefix_trend.replace("H12", "---");
         }
         if (!Objects.equals(trend_d1, trend_h4)) {
             prefix_trend = prefix_trend.replace("H4", "--");

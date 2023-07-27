@@ -3854,7 +3854,8 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO: 1. initForexTrend
         if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_MO)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_W1)
-                || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)) {
+                || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)
+                || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H12)) {
 
             trend = Utils.getTrendByLineChart(list);
             trend_candle_1 = Utils.getTrendByHekenAshiList(heiken_list);
@@ -3995,6 +3996,21 @@ public class BinanceServiceImpl implements BinanceService {
             eoz += (!dto_h4.isTradable_zone() && Objects.equals(trend_h4, trend_h4)) ? "H4" : "--";
             eoz += "  ";
 
+            boolean is_trade_zone = true;
+            if (eoz.contains("EOZ:H12H4")) {
+                is_trade_zone = false;
+            }
+
+            boolean is_eq_w_d_h12 = false;
+            if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_12)) {
+                is_eq_w_d_h12 = true;
+            }
+
+            boolean is_eq_d_h4_h1 = false;
+            if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
+                is_eq_d_h4_h1 = true;
+            }
+
             boolean minus_allow_trade = false;
             {
                 if (dto_05.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_05)
@@ -4007,42 +4023,11 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            boolean is_switch_d1 = false;
-            if (Objects.equals(trend_d1, trend_h4) && (switch_d1.contains(trend_d1) || switch_12.contains(trend_d1))) {
-                is_switch_d1 = true;
-            }
-            boolean is_trade_zone = true;
-            if (eoz.contains("EOZ:H12H4")) {
-                is_trade_zone = false;
-            }
-
-            boolean is_eq_w_d_h12 = false;
-            if (Objects.equals(trend_w1, trend_d1)
-                    || (Objects.equals(trend_w1, trend_12) && Objects.equals(trend_w1, trend_h4))) {
-                is_eq_w_d_h12 = true;
-            }
-
-            boolean is_eq_d_h4_h1 = false;
-            if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)
-                    && Objects.equals(trend_h1, trend_15)) {
-                is_eq_d_h4_h1 = true;
-            }
-            if (Objects.equals(trend_12, trend_h4) && Objects.equals(trend_12, trend_h1)
-                    && Objects.equals(trend_h1, trend_15)) {
-                is_eq_d_h4_h1 = true;
-            }
-
-            if (is_eq_w_d_h12) {
-                type += ":96";
-            } else {
-                type += ":00";
-            }
-
             boolean is_candidate = false;
-            if ((is_eq_w_d_h12 || is_switch_d1) && is_trade_zone) {
+            if (is_eq_w_d_h12 && is_trade_zone) {
                 is_candidate = true;
             }
-
+            type += is_eq_w_d_h12 ? ":96" : ":00";
             // ---------------------------------------------------------------------------------------------
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
             if (allow_trade && (Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
