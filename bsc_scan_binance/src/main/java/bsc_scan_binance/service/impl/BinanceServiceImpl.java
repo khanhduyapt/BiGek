@@ -3002,6 +3002,9 @@ public class BinanceServiceImpl implements BinanceService {
         if (!BTC_ETH_BNB.contains(SYMBOL)) {
             return Utils.CRYPTO_TIME_H1;
         }
+        if (Utils.isSleepTime_23h_to_8h()) {
+            return Utils.CRYPTO_TIME_H1;
+        }
 
         List<BtcFutures> list = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_D1, 15);
         if (CollectionUtils.isEmpty(list)) {
