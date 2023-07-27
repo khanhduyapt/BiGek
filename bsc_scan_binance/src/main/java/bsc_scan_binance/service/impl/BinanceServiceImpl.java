@@ -3838,13 +3838,29 @@ public class BinanceServiceImpl implements BinanceService {
         // EPIC = "GBPNZD";
         // CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
         // ----------------------------TREND------------------------
-        List<BtcFutures> heiken_list = Utils.getHeikenList(getCapitalData(EPIC, CAPITAL_TIME_XX));
+        List<BtcFutures> list = getCapitalData(EPIC, CAPITAL_TIME_XX);
+        List<BtcFutures> heiken_list = Utils.getHeikenList(list);
         if (CollectionUtils.isEmpty(heiken_list)) {
             return "";
         }
 
-        String trend = Utils.getTrendByHekenAshiList(heiken_list);
-        String trend_candle_1 = Utils.getTrendByHekenAshiList(heiken_list, 1);
+        String trend = "";
+        String switch_trend = "";
+        String trend_candle_1 = "";
+        switch_trend += Utils.switchTrendByHeken_12(heiken_list);
+        switch_trend += Utils.switchTrendByMa3_2_1(heiken_list);
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_MO)
+                || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_W1)
+                || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)) {
+            trend = Utils.getTrendByLineChart(list);
+            trend_candle_1 = Utils.getTrendByHekenAshiList(heiken_list);
+        } else {
+            trend = Utils.getTrendByHekenAshiList(heiken_list);
+            trend_candle_1 = Utils.getTrendByHekenAshiList(heiken_list, 1);
+
+            switch_trend += Utils.switchTrendByMa3_68(heiken_list);
+            switch_trend += Utils.has_switch_trend_by_heiken_ma35_ma10(heiken_list);
+        }
 
         // TODO: 1. initForexTrend
         String nocation = "";
@@ -3861,36 +3877,11 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        String main_trend = "";
-        String switch_trend = "";
-        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_MO)
-                || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_W1)
-                || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)
-                || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H12)) {
-
-            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)) {
-                main_trend = trend;
-            } else {
-                main_trend = get_trend_by_dow_definitions(EPIC, Utils.CAPITAL_TIME_D1);
-            }
-        } else {
-            switch_trend = Utils.has_switch_trend_by_heiken_ma35_ma10(heiken_list);
-
-            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4)) {
-                main_trend = trend;
-            } else {
-                main_trend = get_trend_by_dow_definitions(EPIC, Utils.CAPITAL_TIME_H4);
-            }
-        }
-        switch_trend = Utils.switchTrendByHeken_12(heiken_list);
-        switch_trend += Utils.switchTrendByMa3_2_1(heiken_list);
-        switch_trend += Utils.switchTrendByMa3_68(heiken_list);
-
         boolean allow_trade_by_ma50 = false;
-        if (Objects.equals(main_trend, Utils.TREND_LONG) && Objects.equals(nocation, Utils.NOCATION_BELOW_MA50)) {
+        if (Objects.equals(trend, Utils.TREND_LONG) && Objects.equals(nocation, Utils.NOCATION_BELOW_MA50)) {
             allow_trade_by_ma50 = true;
         }
-        if (Objects.equals(main_trend, Utils.TREND_SHOT) && Objects.equals(nocation, Utils.NOCATION_ABOVE_MA50)) {
+        if (Objects.equals(trend, Utils.TREND_SHOT) && Objects.equals(nocation, Utils.NOCATION_ABOVE_MA50)) {
             allow_trade_by_ma50 = true;
         }
 
@@ -3915,7 +3906,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String zone = Utils.getZone(heiken_list);
         boolean tradable_zone = false;
-        if (zone.contains(main_trend)) {
+        if (zone.contains(trend)) {
             tradable_zone = true;
         }
 

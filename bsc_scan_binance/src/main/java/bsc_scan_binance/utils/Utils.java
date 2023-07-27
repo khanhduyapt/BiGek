@@ -66,9 +66,10 @@ public class Utils {
 
     // A $1.2 Million Funded Trader With The5ers:
     // Cố gắng có mức lợi nhuận đệm là 2% trước khi tăng rủi ro.
-    // Nếu cảm thấy lo lắng về mức rủi ro 0,20% hoặc 0,25%, thì chỉnh về mức 0,10 đến 0,15%
+    // Nếu cảm thấy lo lắng về mức rủi ro 0,20% hoặc 0,25%, thì chỉnh về mức 0,10
+    // đến 0,15%
 
-    //(100$ / 1 Tp)
+    // (100$ / 1 Tp)
     public static final BigDecimal RISK_0_05_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
 
     // Trend W != D (200$ / 1trade)
@@ -249,8 +250,8 @@ public class Utils {
     public static final List<String> EPICS_METALS = Arrays.asList("DX", "XAUUSD", "XAGUSD", "USOIL", "BTCUSD",
             "NATGAS");
 
-    public static final List<String> EPICS_CRYPTO_CFD = Arrays.asList("BTCUSD", "ETHUSD", "ADAUSD",
-            "DOGEUSD", "DOTUSD", "LTCUSD", "XRPUSD");
+    public static final List<String> EPICS_CRYPTO_CFD = Arrays.asList("BTCUSD", "ETHUSD", "ADAUSD", "DOGEUSD", "DOTUSD",
+            "LTCUSD", "XRPUSD");
 
     public static final List<String> EPICS_CASH_CFD = Arrays.asList("AUS200", "EU50", "FRA40", "GER40", "SPN35",
             "UK100", "US100", "US30", "ERBN");
@@ -1512,17 +1513,7 @@ public class Utils {
 
         String trend = dto_xx.getTrend_c1();
         String switch_trend = dto_xx.getSwitch_trend().trim();
-        if (switch_trend.contains(dto_xx.getTrend())) {
-            trend = dto_xx.getTrend();
-        }
-
-        if (dto_xx.getId().contains(PREFIX_MO_) || dto_xx.getId().contains(CAPITAL_TIME_MO)
-                || dto_xx.getId().contains(CRYPTO_TIME_MO)) {
-            trend = dto_xx.getTrend();
-        }
-
-        if (dto_xx.getId().contains(PREFIX_W1_) || dto_xx.getId().contains(CAPITAL_TIME_W1)
-                || dto_xx.getId().contains(CRYPTO_TIME_W1)) {
+        if (switch_trend.contains(dto_xx.getTrend()) || !Objects.equals(dto_xx.getTrend_c1(), dto_xx.getTrend())) {
             trend = dto_xx.getTrend();
         }
 
@@ -3939,7 +3930,7 @@ public class Utils {
                 return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
             }
         } else {
-            //OK không sửa nữa, khung lớn thì dùng 0_1
+            // OK không sửa nữa, khung lớn thì dùng 0_1
             if (Objects.equals(trend, Utils.TREND_LONG) && heiken_list.get(0).isUptrend()
                     && heiken_list.get(1).isDown()) {
                 return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
@@ -3952,6 +3943,10 @@ public class Utils {
         }
 
         return "";
+    }
+
+    public static String getTrendByLineChart(List<BtcFutures> list) {
+        return isUptrendByMa(list, 1, 0, 1) ? TREND_LONG : TREND_SHOT;
     }
 
     public static String getTrendByMaXx(List<BtcFutures> list, int maIndex) {
@@ -4171,14 +4166,14 @@ public class Utils {
 
             String tracking_trend) {
         // --------------------------------------------
-        //String week = "";
-        //String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "B"
-        //        : Objects.equals(Utils.TREND_SHOT, trend_d1) ? "S" : "?";
-        //if (switch_w1.contains(trend_w1)) {
-        //    week = " (W~" + type + ")  ";
-        //} else {
-        //    week = "        ";
-        //}
+        // String week = "";
+        // String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "B"
+        // : Objects.equals(Utils.TREND_SHOT, trend_d1) ? "S" : "?";
+        // if (switch_w1.contains(trend_w1)) {
+        // week = " (W~" + type + ") ";
+        // } else {
+        // week = " ";
+        // }
         String No = Utils.appendLeft(String.valueOf(index), 2, "0") + ". ";
         // --------------------------------------------
         String prefix_trend = "[MO-W1-D1-12-H4-H1]";
@@ -4225,13 +4220,6 @@ public class Utils {
             switch_trend += getTrendPrefix("D1", "", " ");
         }
 
-        //if (!EPICS_STOCKS.contains(EPIC)) {
-        //    if (switch_h12.contains(trend_h12)) {
-        //        switch_trend += getTrendPrefix("12", switch_h12, " ");
-        //    } else {
-        //        switch_trend += getTrendPrefix("12", "", " ");
-        //    }
-        //}
         switch_trend += "   ";
 
         if (switch_h4.contains(trend_h4)) {
