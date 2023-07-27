@@ -2908,6 +2908,10 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
+            for (String stock : BscScanBinanceApplication.msg_open_trade_stocks) {
+                msg += stock + Utils.new_line_from_service + Utils.new_line_from_service;
+            }
+
             if (Utils.isNotBlank(msg)) {
                 String EVENT_ID = "OPEN_TRADE" + Utils.getCurrentYyyyMmDd_HH();
                 sendMsgPerHour_OnlyMe(EVENT_ID, "(FTMO)" + Utils.new_line_from_service + msg);
@@ -3181,7 +3185,7 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.logWritelnDraft("");
         openTrade();
 
-        for (String msg : BscScanBinanceApplication.msg_w_not_eq_d_but_h12_sweet_trend) {
+        for (String msg : BscScanBinanceApplication.msg_open_trade_stocks) {
             Utils.logWritelnDraft(msg);
         }
     }
@@ -3656,12 +3660,8 @@ public class BinanceServiceImpl implements BinanceService {
                     Mt5OpenTrade trade_d1 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1,
                             dto_d1, append, true, Utils.CAPITAL_TIME_D1);
 
-                    String key = EPIC + Utils.CAPITAL_TIME_D1;
-                    BscScanBinanceApplication.mt5_open_trade_List.add(trade_d1);
-                    BscScanBinanceApplication.dic_comment.put(key, trade_d1.getComment());
-
                     String msg = Utils.createOpenTradeMsg(trade_d1, "STOCK_TODAY ");
-                    BscScanBinanceApplication.msg_w_not_eq_d_but_h12_sweet_trend
+                    BscScanBinanceApplication.msg_open_trade_stocks
                             .add(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
                 }
                 // -------------------------------------------------------
@@ -4054,7 +4054,7 @@ public class BinanceServiceImpl implements BinanceService {
                 // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
                 if (is_eq_w_d_h12 && is_eq_d_h4_h1 && is_candidate && minus_allow_trade) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
-                    String append = type + "241204015" + text_risk_010;
+                    String append = type + ".2412040105" + text_risk_010;
 
                     trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_15, dto_h4, append,
                             true, Utils.CAPITAL_TIME_H4);
@@ -4195,7 +4195,7 @@ public class BinanceServiceImpl implements BinanceService {
                     if (has_profit) {
                         reason = "4hprofit";
                     } else if (is_hit_sl) {
-                        reason = "hitsl1r";
+                        reason = "sl1r";
                     } else if (is_reverse_w1) {
                         reason = "w_reverse";
                     }

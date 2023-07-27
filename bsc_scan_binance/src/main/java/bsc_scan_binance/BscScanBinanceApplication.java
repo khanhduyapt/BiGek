@@ -43,7 +43,7 @@ public class BscScanBinanceApplication {
 
     public static List<Mt5OpenTrade> mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
     public static Hashtable<String, Mt5OpenTrade> waitingM05list = new Hashtable<String, Mt5OpenTrade>();
-    public static List<String> msg_w_not_eq_d_but_h12_sweet_trend = new ArrayList<String>();
+    public static List<String> msg_open_trade_stocks = new ArrayList<String>();
     public static Hashtable<String, String> mt5_close_ticket_dict = new Hashtable<String, String>();
 
     public static void main(String[] args) {
@@ -227,7 +227,7 @@ public class BscScanBinanceApplication {
     public static void control_Mt5(BinanceService binance_service) {
         mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
         waitingM05list = new Hashtable<String, Mt5OpenTrade>();
-        msg_w_not_eq_d_but_h12_sweet_trend = new ArrayList<String>();
+        msg_open_trade_stocks = new ArrayList<String>();
         try {
             String mt5_open_trade_file = Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + "OpenTrade.csv";
             File myScap = new File(mt5_open_trade_file);
