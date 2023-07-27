@@ -4042,6 +4042,7 @@ public class BinanceServiceImpl implements BinanceService {
             if ((is_eq_w_d_h12 || is_switch_d1) && is_trade_zone) {
                 is_candidate = true;
             }
+
             // ---------------------------------------------------------------------------------------------
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
             if (allow_trade && (Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
@@ -4055,7 +4056,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Mt5OpenTrade trade_h4 = null;
 
                 // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
-                if (is_eq_w_d_h12 && is_eq_d_h4_h1 && is_candidate && minus_allow_trade) {
+                if (is_eq_w_d_h12 && is_eq_d_h4_h1 && minus_allow_trade) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     String append = type + ".2412040105" + text_risk_010;
 
