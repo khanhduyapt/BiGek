@@ -3993,6 +3993,10 @@ public class BinanceServiceImpl implements BinanceService {
                 type += ":00";
             }
 
+            boolean is_candidate = false;
+            if (((is_eq_w_d_h12 && is_change_to_w) || is_switch_d1) && is_trade_zone) {
+                is_candidate = true;
+            }
             // ---------------------------------------------------------------------------------------------
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
             if (allow_trade && (Utils.EPICS_FOREXS_ALL.contains(EPIC)
@@ -4007,7 +4011,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Mt5OpenTrade trade_h4 = null;
 
                 // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
-                if (is_trade_zone && is_eq_w_d_h12 && m15_allow_trade && is_eq_d_h4_h1 && is_change_to_w) {
+                if (is_eq_w_d_h12 && is_eq_d_h4_h1 && is_candidate && m05_allow_trade) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     String append = type + "241204015" + text_risk_010;
 
@@ -4018,10 +4022,9 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                 }
 
-                if (Objects.isNull(trade_h4) && is_trade_zone && (is_eq_w_d_h12 || is_switch_d1) && m15_allow_trade
-                        && is_eq_d_h4_h1 && is_change_to_w) {
+                if (Objects.isNull(trade_h4) && is_eq_d_h4_h1 && is_candidate && m15_allow_trade) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
-                    String append = type + "_h4_h1_15" + text_risk_010;
+                    String append = type + "_d1_h4_15" + text_risk_010;
 
                     trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4,
                             dto_15, dto_h4, append, true, Utils.CAPITAL_TIME_H4);
@@ -4030,8 +4033,7 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                 }
 
-                if (Objects.isNull(trade_h4) && is_trade_zone && (is_eq_w_d_h12 || is_switch_d1) && m05_allow_trade
-                        && is_eq_d_h4_h1 && is_change_to_w) {
+                if (Objects.isNull(trade_h4) && is_eq_d_h4_h1 && is_candidate && m05_allow_trade) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     String append = type + "_d1_h4_05" + text_risk_010;
 
@@ -4051,7 +4053,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // ---------------------------------------------------------------------------------------------
-            if (((is_eq_w_d_h12 && is_change_to_w) || is_switch_d1) && is_trade_zone) {
+            if (is_candidate) {
                 count += 1;
 
                 String prefix = Utils.getPrefix_FollowTrackingTrend(EPIC, count, "", trend_w1, trend_d1,
