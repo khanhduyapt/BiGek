@@ -44,6 +44,7 @@ public class BscScanBinanceApplication {
     public static List<Mt5OpenTrade> mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
     public static Hashtable<String, Mt5OpenTrade> waitingM05list = new Hashtable<String, Mt5OpenTrade>();
     public static List<String> msg_w_not_eq_d_but_h12_sweet_trend = new ArrayList<String>();
+    public static Hashtable<String, String> mt5_close_ticket_dict = new Hashtable<String, String>();
 
     public static void main(String[] args) {
         try {
@@ -136,8 +137,8 @@ public class BscScanBinanceApplication {
 
                         if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
 
+                            binance_service.saveMt5Data("ForexM.csv", Utils.MINUTES_RELOAD_CSV_DATA);
                             if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
-                                binance_service.saveMt5Data("ForexM.csv", Utils.MINUTES_RELOAD_CSV_DATA);
                                 binance_service.saveMt5Data("Stocks.csv", Utils.MINUTES_OF_1H);
 
                                 for (String EPIC : CAPITAL_LIST) {
@@ -161,7 +162,7 @@ public class BscScanBinanceApplication {
                                 }
 
                                 binance_service.initTradeList();
-                                monitorForex(binance_service);
+                                control_Mt5(binance_service);
                                 binance_service.monitorProfit();
                             }
                         }
@@ -169,6 +170,7 @@ public class BscScanBinanceApplication {
                         if (isReloadAfter(5, "MT5_SL_TP")) {
                             binance_service.initTradeList();
                             binance_service.closeTrade_by_SL_TP();
+                            binance_service.CloseTickets();
                         }
 
                         // ---------------------------------------------------------
@@ -222,7 +224,7 @@ public class BscScanBinanceApplication {
         }
     }
 
-    public static void monitorForex(BinanceService binance_service) {
+    public static void control_Mt5(BinanceService binance_service) {
         mt5_open_trade_List = new ArrayList<Mt5OpenTrade>();
         waitingM05list = new Hashtable<String, Mt5OpenTrade>();
         msg_w_not_eq_d_but_h12_sweet_trend = new ArrayList<String>();
@@ -326,7 +328,7 @@ public class BscScanBinanceApplication {
 
         long elapsedMinutes_ny = Duration.between(kill_zone_ny, cur_time).toMinutes();
         if ((0 <= elapsedMinutes_ny) && (elapsedMinutes_ny <= 30) && isReloadAfter(60, "Start_NewYork_Kill_Zone")) {
-            binance_service.sendMsgPerHour_OnlyMe(EVENT_ID, "Start_NewYork_Kill_Zone");
+            // binance_service.sendMsgPerHour_OnlyMe(EVENT_ID, "Start_NewYork_Kill_Zone");
         }
 
         // ---------------------------------------------------------------------------

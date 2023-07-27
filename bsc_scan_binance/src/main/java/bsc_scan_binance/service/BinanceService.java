@@ -67,4 +67,6 @@ public interface BinanceService {
 
     public void initTradeList();
 
+    public void CloseTickets();
+
 }
