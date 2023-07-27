@@ -4024,10 +4024,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean is_candidate = false;
-            if (is_eq_w_d_h12 && is_trade_zone) {
+            if (is_eq_w_d_h12 && is_eq_d_h4_h1 && is_trade_zone && !is_opening_trade(EPIC, "")) {
                 is_candidate = true;
             }
-            type += is_eq_w_d_h12 ? ":96" : ":00";
+
             // ---------------------------------------------------------------------------------------------
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
             if (allow_trade && (Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
@@ -4043,7 +4043,7 @@ public class BinanceServiceImpl implements BinanceService {
                 // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
                 if (is_eq_w_d_h12 && is_eq_d_h4_h1 && minus_allow_trade) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
-                    String append = type + ".2412040105" + text_risk_010;
+                    String append = "962412_040105" + text_risk_010;
 
                     trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_15, dto_h4, append,
                             true, Utils.CAPITAL_TIME_H4);
