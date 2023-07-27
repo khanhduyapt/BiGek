@@ -2840,27 +2840,26 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                String find_reverse_trend = dto.getOrder_type().contains(Utils.TREND_LONG) ? Utils.TREND_LONG
-                        : dto.getOrder_type().contains(Utils.TREND_SHOT) ? Utils.TREND_SHOT : "_";
-
-                List<Mt5OpenTradeEntity> opening_list = mt5OpenTradeRepository
-                        .findAllBySymbolAndTypeOrderBySymbolAsc(EPIC, find_reverse_trend);
-
-                for (Mt5OpenTradeEntity trade : opening_list) {
-                    String log = Utils.createCloseTradeMsg(trade, "MUST_CLOSE_TRADE: ", "reverse_trade_opening");
-                    Utils.logWritelnDraft(log);
-
-                    String EVENT_ID = "MUST_CLOSE_TRADE" + dto.getEpic() + dto.getOrder_type()
-                            + Utils.getCurrentYyyyMmDd_Blog4h()
-                            + Utils.getDeEncryptedChartNameCapital(dto.getComment());
-
-                    msg_dict.put(EVENT_ID, log);
-
-                    BscScanBinanceApplication.mt5_close_ticket_dict.put(trade.getTicket(), "reverse_trade_opening");
-                }
-
                 if (!is_opening_trade(EPIC, dto.getOrder_type()) && !dto.getComment().contains("EOZ:H12H4")) {
+                    String find_reverse_trend = dto.getOrder_type().contains(Utils.TREND_LONG) ? Utils.TREND_LONG
+                            : dto.getOrder_type().contains(Utils.TREND_SHOT) ? Utils.TREND_SHOT : "_";
 
+                    List<Mt5OpenTradeEntity> opening_list = mt5OpenTradeRepository
+                            .findAllBySymbolAndTypeOrderBySymbolAsc(EPIC, find_reverse_trend);
+
+                    for (Mt5OpenTradeEntity trade : opening_list) {
+                        String log = Utils.createCloseTradeMsg(trade, "MUST_CLOSE_TRADE: ", "reverse_trade_opening");
+                        Utils.logWritelnDraft(log);
+
+                        String EVENT_ID = "MUST_CLOSE_TRADE" + dto.getEpic() + dto.getOrder_type()
+                                + Utils.getCurrentYyyyMmDd_Blog4h()
+                                + Utils.getDeEncryptedChartNameCapital(dto.getComment());
+
+                        msg_dict.put(EVENT_ID, log);
+
+                        BscScanBinanceApplication.mt5_close_ticket_dict.put(trade.getTicket(), "reverse_trade_opening");
+                    }
+                    // ----------------------------------------------------------------------------------
                     String prefix = "Open_Trade: ";
                     String msg = Utils.createOpenTradeMsg(dto, prefix);
                     Utils.logWritelnDraft(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
@@ -3967,7 +3966,6 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
             if (Objects.equals(EPIC, "GBPNZD")) {
-                boolean debug = true;
             }
             String trend_w1 = Utils.get_trending_by_dow_definitions(dto_w1);
             String trend_d1 = Utils.get_trending_by_dow_definitions(dto_d1);
@@ -3989,7 +3987,6 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_d1 = dto_d1.getSwitch_trend().trim();
             String switch_12 = dto_12.getSwitch_trend().trim();
             String switch_h4 = dto_h4.getSwitch_trend().trim();
-            String switch_h1 = dto_h1.getSwitch_trend().trim();
 
             String type = Objects.equals(Utils.TREND_LONG, trend_h4) ? "B"
                     : Objects.equals(Utils.TREND_SHOT, trend_h4) ? "S" : "?";
@@ -4004,8 +4001,6 @@ public class BinanceServiceImpl implements BinanceService {
             eoz += (!dto_h4.isTradable_zone() && Objects.equals(trend_h4, trend_h4)) ? "H4" : "--";
             eoz += "  ";
 
-            boolean h1_allow_trade = false;
-            boolean h4_allow_trade = false;
             boolean minus_allow_trade = false;
             {
                 if (dto_05.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_05)
@@ -4015,14 +4010,6 @@ public class BinanceServiceImpl implements BinanceService {
                 if (dto_15.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_15)
                         && Objects.equals(trend_15, trend_05)) {
                     minus_allow_trade = true;
-                }
-
-                if (dto_h1.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_h1)) {
-                    h1_allow_trade = true;
-                }
-
-                if (dto_h4.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_h1)) {
-                    h1_allow_trade = true;
                 }
             }
 
@@ -4036,10 +4023,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean is_eq_w_d_h12 = false;
-            if (Objects.equals(trend_w1, trend_d1) || Objects.equals(trend_w1, trend_12)) {
+            if (Objects.equals(trend_w1, trend_d1)
+                    || (Objects.equals(trend_w1, trend_12) && Objects.equals(trend_w1, trend_h4))) {
                 is_eq_w_d_h12 = true;
             }
-            boolean is_change_to_w = (switch_d1 + switch_12 + switch_h4 + switch_h1).contains(trend_w1);
 
             boolean is_eq_d_h4_h1 = false;
             if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)
@@ -4058,7 +4045,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean is_candidate = false;
-            if (((is_eq_w_d_h12 && is_change_to_w) || is_switch_d1) && is_trade_zone) {
+            if ((is_eq_w_d_h12 || is_switch_d1) && is_trade_zone) {
                 is_candidate = true;
             }
             // ---------------------------------------------------------------------------------------------
@@ -4087,23 +4074,6 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
                     BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                 }
-
-                if (Utils.EPICS_FOREXS_ALL.contains(EPIC) && Objects.isNull(trade_h4) && h4_allow_trade
-                        && h1_allow_trade && minus_allow_trade) {
-                    String key = EPIC + Utils.CAPITAL_TIME_H4;
-                    String append = type + "h4h1_1505" + text_risk_010;
-
-                    trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_15,
-                            dto_h4, append, true, Utils.CAPITAL_TIME_H4);
-
-                    BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
-                    BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
-
-                    String msg = Utils.createOpenTradeMsg(trade_h4, "h4h1_1505 ");
-                    BscScanBinanceApplication.msg_w_not_eq_d_but_h12_sweet_trend
-                            .add(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
-                }
-                // -------------------------------------------------------------------------------------
             }
 
             // ---------------------------------------------------------------------
@@ -4124,7 +4094,6 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         return count;
-
     }
 
     @Override
@@ -4231,7 +4200,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ---------------------------------------------------------------------------------
             // TODO: 5. closeTrade_by_SL_TP
-            if ((has_profit && allow_close_trade_after(TICKET, Utils.MINUTES_OF_8H)) || is_hit_sl) {
+            if ((has_profit && allow_close_trade_after(TICKET, Utils.MINUTES_OF_8H)) || is_hit_sl || is_reverse_w1) {
                 String reason = "";
                 if (has_profit) {
                     reason = "4hprofit";
@@ -4241,7 +4210,7 @@ public class BinanceServiceImpl implements BinanceService {
                     reason = "reverse";
                 }
 
-                if (has_profit || is_hit_sl) {
+                if (has_profit || is_hit_sl || is_reverse_w1) {
                     BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
                 }
 

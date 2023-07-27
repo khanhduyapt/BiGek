@@ -182,6 +182,134 @@ string toLower(string text)
   };
 
 //+------------------------------------------------------------------+
+//|//String EPIC, String ORDER_TYPE, BigDecimal lots, BigDecimal entry, BigDecimal stop_loss
+//+------------------------------------------------------------------+
+void openTrade(string line)
+  {
+   bool exit = true;
+   if(exit)
+     {
+      // return;
+     }
+
+
+// Alert("openTrade: " + line);
+   string result[];
+   int k=StringSplit(line,'\t',result);
+   if(k != 7)
+     {
+      return ;
+     }
+
+   string cash = toLower("US30.cash_US100.cash_EU50.cash_GER40.cash_FRA40.cash_SPN35.cash_UK100.cash_USOIL.cash_AUS200.cash");
+
+   string epic = toLower(result[0]);
+   string type = toLower(result[1]);
+   double volume = StringToDouble(result[2]);
+   double price = StringToDouble(result[3]);
+   double stop_loss = StringToDouble(result[4]);
+   double tp = StringToDouble(result[5]);
+   string comment = result[6];
+
+   string trade_symbol = result[0];
+   string lowcase_symbol = epic;
+   if(StringFind(cash, epic, 0) >= 0)
+     {
+      lowcase_symbol = epic + ".cash";
+      trade_symbol = trade_symbol + ".cash";
+     }
+
+   /*
+      Alert("lowcase_symbol: " + lowcase_symbol);
+      Alert("EPIC: " + epic);
+      Alert("ORDER_TYPE: " + result[1]);
+      Alert("lots: " + result[2]);
+      Alert("entry: " + result[3]);
+      Alert("stop_loss: " + result[4]);
+   */
+
+   bool not_found = true;
+   for(int i = OrdersTotal() - 1; i >= 0; i--)
+     {
+      ulong orderTicket = OrderGetTicket(i);
+
+      string order_symbol = OrderGetString(ORDER_SYMBOL);
+      order_symbol = toLower(order_symbol);
+
+      if(lowcase_symbol == order_symbol)
+        {
+         // Alert(type + " order_symbol: " + order_symbol + " lowcase_symbol:" + lowcase_symbol);
+         not_found = false;
+         break;
+        }
+     }
+
+   for(int i = PositionsTotal() - 1; i >= 0; i--)
+     {
+      string trading_symbol = PositionGetSymbol(i);
+      trading_symbol = toLower(trading_symbol);
+
+      if(lowcase_symbol == trading_symbol)
+        {
+         // Alert(type + " order_symbol: " + order_symbol + " lowcase_symbol:" + lowcase_symbol);
+         not_found = false;
+         break;
+        }
+     }
+
+   if(not_found == false)
+     {
+      // Alert(type + " " + trade_symbol + " REALLY EXIST.");
+     }
+
+
+
+   if(not_found)
+     {
+      // Alert(type + " " + trade_symbol + " ADDED ORDER.");
+      int    digits=(int)SymbolInfoInteger(trade_symbol,SYMBOL_DIGITS);    // number of decimal places
+      double point=SymbolInfoDouble(trade_symbol,SYMBOL_POINT);            // point
+
+      price=NormalizeDouble(price,digits);                                 // normalizing open price
+      stop_loss=NormalizeDouble(stop_loss, digits);                        // normalizing Stop Loss
+      tp=NormalizeDouble(tp, digits);                                      // normalizing TP
+      // tp=0.0;
+      // stop_loss=0.0;
+      datetime expiration=TimeTradeServer()+PeriodSeconds(PERIOD_D1);
+
+
+
+      if(type== "buy")
+        {
+         //--- open position
+         if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp, comment))
+            Alert("Duydk: BUY: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
+        }
+
+      if(type== "buy_limit")
+        {
+         if(!m_trade.BuyLimit(volume, price, trade_symbol, 0.0, 0.0, ORDER_TIME_GTC, expiration, comment))
+            Alert("Duydk: BUY LIMIT: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
+        }
+
+      if(type== "sell")
+        {
+         //--- open position
+         if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, tp, comment))
+            Alert("Duydk: SELL: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
+        }
+
+      if(type== "sell_limit")
+        {
+         if(!m_trade.SellLimit(volume, price, trade_symbol, 0.0, 0.0, ORDER_TIME_GTC, expiration, comment))
+            Alert("Duydk: SELL LIMIT: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
+        }
+
+     }
+
+  }
+
+//+------------------------------------------------------------------+
 //| Timer function                                                   |
 //+------------------------------------------------------------------+
 void OnTimer()
@@ -234,7 +362,26 @@ void OnTimer()
 
         }
      }
+//------------------------------------------------------------
+   int n_open_trade_file_handle = FileOpen("Data//OpenTrade.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\n', CP_UTF8);
+   if(n_open_trade_file_handle != INVALID_HANDLE)
+     {
+      for(int Count=0; Count<99; Count++)
+        {
+         if(FileIsEnding(n_open_trade_file_handle))
+            break;
 
+         string DataItem = FileReadString(n_open_trade_file_handle,0);
+         openTrade(DataItem);
+        }
+
+      FileClose(n_open_trade_file_handle);
+     }
+   else
+     {
+      // Alert("n_open_trade_file_handle Error " + (string) GetLastError());
+     }
+//------------------------------------------------------------
 
 //+------------------------------------------------------------------+
   }
