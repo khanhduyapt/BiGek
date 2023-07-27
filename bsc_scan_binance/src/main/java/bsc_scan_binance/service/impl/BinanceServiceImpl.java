@@ -4207,7 +4207,7 @@ public class BinanceServiceImpl implements BinanceService {
                 } else if (is_hit_sl) {
                     reason = "hitsl1r";
                 } else if (is_reverse_w1) {
-                    reason = "reverse";
+                    reason = "w_reverse";
                 }
 
                 if (has_profit || is_hit_sl || is_reverse_w1) {
