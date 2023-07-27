@@ -1125,7 +1125,8 @@ public class Utils {
             EXCHANGE = "XETR";
 
         } else if (Objects.equals("AIRF", epic)) {
-            epic = "AIRFR";
+            epic = "AF";
+            EXCHANGE = "EURONEXT";
 
         } else if (Objects.equals("DBKGN", epic.toUpperCase())) {
             epic = "DB";
@@ -4165,7 +4166,9 @@ public class Utils {
         String No = Utils.appendLeft(String.valueOf(index), 2, "0") + ". ";
         // --------------------------------------------
         String prefix_trend = "[MO-W1-D1-H12-H4-H1]";
-
+        if (!EPICS_STOCKS.contains(EPIC)) {
+            prefix_trend = "[W1-D1-H12-H4]      ";
+        }
         if (!Objects.equals(trend_d1, trend_mo)) {
             prefix_trend = prefix_trend.replace("MO-", "---");
         }
