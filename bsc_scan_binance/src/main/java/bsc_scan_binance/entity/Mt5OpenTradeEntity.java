@@ -53,7 +53,7 @@ public class Mt5OpenTradeEntity {
     private String comment;
 
     @Column(name = "typedescription")
-    private String typeDescription;
+    private String type;
 
     @Column(name = "volume")
     private BigDecimal volume;
