@@ -4141,9 +4141,9 @@ public class BinanceServiceImpl implements BinanceService {
             if (is_reverse_h4 && !Objects.equals(trend_d1, TRADE_TREND)) {
                 is_reverse_d1 = true;
             }
-            boolean is_reverse_w1 = false;
+            boolean is_reverse = false;
             if (is_reverse_d1 && !Objects.equals(trend_w1, TRADE_TREND)) {
-                is_reverse_w1 = true;
+                is_reverse = true;
             }
             // ---------------------------------------------------------------------------------
             boolean has_profit = false;
@@ -4152,6 +4152,9 @@ public class BinanceServiceImpl implements BinanceService {
                     has_profit = true;
                 }
             } else {
+                if (is_reverse_d1 && Utils.isCloseTradeToday()) {
+                    is_reverse = true;
+                }
                 if (is_reverse_h4 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
                     has_profit = true;
                 }
@@ -4167,6 +4170,7 @@ public class BinanceServiceImpl implements BinanceService {
                         has_profit = true;
                     }
                 }
+
             }
             // ---------------------------------------------------------------------------------
             boolean is_hit_sl = false;
@@ -4179,17 +4183,17 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------
             // TODO: 5. closeTrade_by_SL_TP
             if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_1H)) {
-                if (has_profit || is_reverse_w1 || is_hit_sl) {
+                if (has_profit || is_reverse || is_hit_sl) {
                     String reason = "";
                     if (has_profit) {
                         reason = "4hprofit";
                     } else if (is_hit_sl) {
                         reason = "sl1r";
-                    } else if (is_reverse_w1) {
-                        reason = "w_reverse";
+                    } else if (is_reverse) {
+                        reason = "reverse";
                     }
 
-                    if (has_profit || is_hit_sl || is_reverse_w1) {
+                    if (has_profit || is_hit_sl || is_reverse) {
                         BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
                     }
 
