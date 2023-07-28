@@ -3873,6 +3873,9 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO: 1. initForexTrend
         String trend_line = Utils.getTrendByLineChart(list);
         String trend_heiken = Utils.getTrendByHekenAshiList(heiken_list);
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_W1)) {
+            trend_heiken = Utils.getTrend_C1_ByLineChart(list);
+        }
 
         String nocation = "";
         if (heiken_list.size() >= 50) {
@@ -3893,6 +3896,7 @@ public class BinanceServiceImpl implements BinanceService {
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_W1)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H12)) {
+
             switch_trend += Utils.switchTrendByHeken_12(heiken_list);
             switch_trend += Utils.switchTrendByMa3_2_1(heiken_list);
         } else {
@@ -4031,7 +4035,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean is_eq_w_d_h12 = false;
-            if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_12)) {
+            if (Objects.equals(dto_w1.getTrend_line(), dto_w1.getTrend_heiken()) && Objects.equals(trend_w1, trend_d1)
+                    && Objects.equals(trend_d1, trend_12)) {
                 is_eq_w_d_h12 = true;
             }
 
