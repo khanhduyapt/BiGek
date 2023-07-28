@@ -1506,30 +1506,6 @@ public class Utils {
         return false;
     }
 
-    public static String get_trending_by_dow_definitions(Orders dto_xx) {
-        if (Objects.isNull(dto_xx)) {
-            return Utils.TREND_NULL;
-        }
-        String id = dto_xx.getId();
-        String trend = dto_xx.getTrend_c1();
-
-        if (id.contains(PREFIX_MO_) || id.contains(PREFIX_W1_) || id.contains(PREFIX_D1_) || id.contains(PREFIX_H12)) {
-            trend = dto_xx.getTrend_c0();
-        }
-        if (id.contains(Utils.CAPITAL_TIME_MO) || id.contains(Utils.CAPITAL_TIME_W1)
-                || id.contains(Utils.CAPITAL_TIME_D1) || id.contains(Utils.CAPITAL_TIME_H12)) {
-            trend = dto_xx.getTrend_c0();
-        }
-        if (dto_xx.getSwitch_trend().contains(dto_xx.getTrend_c0())) {
-            trend = dto_xx.getTrend_c0();
-        }
-        if (!Objects.equals(dto_xx.getTrend_c0(), dto_xx.getTrend_c1())) {
-            trend = dto_xx.getTrend_c0();
-        }
-
-        return trend;
-    }
-
     public static boolean isSleepTime_23h_to_8h() {
         List<Integer> times = Arrays.asList(8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
@@ -4040,7 +4016,7 @@ public class Utils {
 
         String header = "";
         header += Utils.appendSpace(append, 8);
-        header += chart_name + ":" + Utils.appendSpace(dto_entry.getTrend_c0(), 8);
+        header += chart_name + ":" + Utils.appendSpace(dto_entry.getTrend_line(), 8);
         header += Utils.appendSpace(EPIC, 12) + getTypeOfEpic(EPIC);
         header += Utils.appendSpace(Utils.getCapitalLink(EPIC), 68);
 
@@ -4051,16 +4027,16 @@ public class Utils {
         String chart = entity.getId().replace("CRYPTO_" + symbol, "").replace("_", "").toUpperCase();
 
         String sl = " (Entry:";
-        if (Objects.equals(Utils.TREND_LONG, entity.getTrend_c0())) {
+        if (Objects.equals(Utils.TREND_LONG, entity.getTrend_line())) {
             sl += Utils.appendLeft(Utils.removeLastZero(entity.getBody_low()), 10);
             sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getLow_price()), 10);
-        } else if (Objects.equals(Utils.TREND_SHOT, entity.getTrend_c0())) {
+        } else if (Objects.equals(Utils.TREND_SHOT, entity.getTrend_line())) {
             sl += Utils.appendLeft(Utils.removeLastZero(entity.getBody_hig()), 10);
             sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getHigh_price()), 10);
         }
         sl += ")  ";
 
-        String tmp_msg = type + Utils.appendSpace(chart, 8) + Utils.appendSpace(entity.getTrend_c0(), 15)
+        String tmp_msg = type + Utils.appendSpace(chart, 8) + Utils.appendSpace(entity.getTrend_line(), 15)
                 + Utils.appendSpace(symbol, 10);
 
         String price = Utils.appendSpace(Utils.removeLastZero(entity.getCurrent_price()), 10);

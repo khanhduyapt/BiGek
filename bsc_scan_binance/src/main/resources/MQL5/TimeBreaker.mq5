@@ -74,6 +74,11 @@ void OnTimer(void)
          //---------------------------------------------
          //string symbol = StringReplace(arr_symbol[index], ".cash", "");
          string symbol = arr_symbol[index];
+
+         //Get price data
+         double current_bid = SymbolInfoDouble(symbol, SYMBOL_BID);
+         double current_ask = SymbolInfoDouble(symbol, SYMBOL_ASK);
+         double current_price = (current_bid + current_ask) / 2;
          //---------------------------------------------
          //if(mod5 == 1)
            {
@@ -86,7 +91,7 @@ void OnTimer(void)
                 int size=fmin(copied, 10);
                 for(int i=0; i<size; i++)
                   {
-                   FileWrite(nfile_handle, symbol, "MONTH", rates_month[i].time, rates_month[i].open, rates_month[i].high, rates_month[i].low, rates_month[i].close);
+                   FileWrite(nfile_handle, symbol, "MONTH", rates_month[i].time, rates_month[i].open, rates_month[i].high, rates_month[i].low, rates_month[i].close, current_price);
                   }
                }
              else
@@ -104,7 +109,7 @@ void OnTimer(void)
                int size=fmin(copied, 10);
                for(int i=0; i<size; i++)
                  {
-                  FileWrite(nfile_handle, symbol, "WEEK", rates_w1[i].time, rates_w1[i].open, rates_w1[i].high, rates_w1[i].low, rates_w1[i].close);
+                  FileWrite(nfile_handle, symbol, "WEEK", rates_w1[i].time, rates_w1[i].open, rates_w1[i].high, rates_w1[i].low, rates_w1[i].close, current_price);
                  }
               }
             else
@@ -120,7 +125,7 @@ void OnTimer(void)
                int size=fmin(copied, 15);
                for(int i=0; i<size; i++)
                  {
-                  FileWrite(nfile_handle, symbol, "DAY", rates_d1[i].time, rates_d1[i].open, rates_d1[i].high, rates_d1[i].low, rates_d1[i].close);
+                  FileWrite(nfile_handle, symbol, "DAY", rates_d1[i].time, rates_d1[i].open, rates_d1[i].high, rates_d1[i].low, rates_d1[i].close, current_price);
                  }
               }
             else
@@ -137,7 +142,7 @@ void OnTimer(void)
                int size=fmin(copied, 55);
                for(int i=0; i<size; i++)
                  {
-                  FileWrite(nfile_handle, symbol, "HOUR_12", rates_h12[i].time, rates_h12[i].open, rates_h12[i].high, rates_h12[i].low, rates_h12[i].close);
+                  FileWrite(nfile_handle, symbol, "HOUR_12", rates_h12[i].time, rates_h12[i].open, rates_h12[i].high, rates_h12[i].low, rates_h12[i].close, current_price);
                  }
               }
             else
@@ -153,7 +158,7 @@ void OnTimer(void)
                int size=fmin(copied, 55);
                for(int i=0; i<size; i++)
                  {
-                  FileWrite(nfile_handle, symbol, "HOUR_04", rates_h4[i].time, rates_h4[i].open, rates_h4[i].high, rates_h4[i].low, rates_h4[i].close);
+                  FileWrite(nfile_handle, symbol, "HOUR_04", rates_h4[i].time, rates_h4[i].open, rates_h4[i].high, rates_h4[i].low, rates_h4[i].close, current_price);
                  }
               }
             else
@@ -169,7 +174,7 @@ void OnTimer(void)
                int size=fmin(copied, 55);
                for(int i=0; i<size; i++)
                  {
-                  FileWrite(nfile_handle, symbol, "HOUR_01", rates_h1[i].time, rates_h1[i].open, rates_h1[i].high, rates_h1[i].low, rates_h1[i].close);
+                  FileWrite(nfile_handle, symbol, "HOUR_01", rates_h1[i].time, rates_h1[i].open, rates_h1[i].high, rates_h1[i].low, rates_h1[i].close, current_price);
                  }
               }
             else
@@ -186,7 +191,7 @@ void OnTimer(void)
                int size=fmin(copied, 55);
                for(int i=0; i<size; i++)
                  {
-                  FileWrite(nfile_handle, symbol, "MINUTE_15", rates_15[i].time, rates_15[i].open, rates_15[i].high, rates_15[i].low, rates_15[i].close);
+                  FileWrite(nfile_handle, symbol, "MINUTE_15", rates_15[i].time, rates_15[i].open, rates_15[i].high, rates_15[i].low, rates_15[i].close, current_price);
                  }
               }
             else
@@ -203,7 +208,7 @@ void OnTimer(void)
                int size=fmin(copied, 55);
                for(int i=0; i<size; i++)
                  {
-                  FileWrite(nfile_handle, symbol, "MINUTE_5", rates_05[i].time, rates_05[i].open, rates_05[i].high, rates_05[i].low, rates_05[i].close);
+                  FileWrite(nfile_handle, symbol, "MINUTE_5", rates_05[i].time, rates_05[i].open, rates_05[i].high, rates_05[i].low, rates_05[i].close, current_price);
                  }
               }
             else

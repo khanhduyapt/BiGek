@@ -137,8 +137,8 @@ public class BscScanBinanceApplication {
 
                         if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
 
-                            binance_service.saveMt5Data("ForexM.csv", Utils.MINUTES_RELOAD_CSV_DATA);
                             if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
+                                binance_service.saveMt5Data("ForexM.csv", Utils.MINUTES_RELOAD_CSV_DATA);
                                 binance_service.saveMt5Data("Stocks.csv", Utils.MINUTES_OF_1H);
 
                                 for (String EPIC : CAPITAL_LIST) {

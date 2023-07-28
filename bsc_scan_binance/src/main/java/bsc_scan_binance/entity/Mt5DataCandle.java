@@ -35,6 +35,9 @@ public class Mt5DataCandle {
     @Column(name = "createddate")
     private String createddate;
 
+    @Column(name = "current_price")
+    private BigDecimal current_price = BigDecimal.ZERO;
+
     public Mt5DataCandle(Mt5DataCandleKey id) {
         this.id = id;
     }

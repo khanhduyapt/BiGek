@@ -53,7 +53,7 @@ public class Orders {
     private String insertTime;
 
     @Column(name = "trend")
-    private String trend_c0;
+    private String trend_line;
 
     @Column(name = "current_price")
     private BigDecimal current_price = BigDecimal.ZERO;
@@ -77,7 +77,7 @@ public class Orders {
     private boolean allow_trade_by_ma50;
 
     @Column(name = "trend_candle_1")
-    private String trend_c1;
+    private String trend_heiken;
 
     @Column(name = "trend_zone")
     private boolean tradable_zone;

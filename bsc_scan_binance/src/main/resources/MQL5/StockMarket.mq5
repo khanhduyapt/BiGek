@@ -46,7 +46,8 @@ void OnTimer(void)
       FileWrite(nfile_handle, "");
 
       string arr_stocks[] = {"AAPL", "AIRF", "AMZN", "BAC", "BAYGn", "DBKGn",
-            "GOOG", "LVMH", "META", "MSFT", "NFLX", "NVDA", "PFE", "RACE", "TSLA", "VOWG_p", "WMT", "BABA", "T", "V", "ZM"};
+                             "GOOG", "LVMH", "META", "MSFT", "NFLX", "NVDA", "PFE", "RACE", "TSLA", "VOWG_p", "WMT", "BABA", "T", "V", "ZM"
+                            };
 
       Comment("-----------------------------StockMarket: (Symbol):" + Symbol());
 
@@ -58,6 +59,11 @@ void OnTimer(void)
          //---------------------------------------------
          //string symbol = StringReplace(arr_stocks[index], ".cash", "");
          string symbol = arr_stocks[index];
+
+         //Get price data
+         double current_bid = SymbolInfoDouble(symbol, SYMBOL_BID);
+         double current_ask = SymbolInfoDouble(symbol, SYMBOL_ASK);
+         double current_price = (current_bid + current_ask) / 2;
          //---------------------------------------------
          MqlRates rates_month[];
          ArraySetAsSeries(rates_month,true);
@@ -67,7 +73,7 @@ void OnTimer(void)
             int size=fmin(stocks_copied, 10);
             for(int i=0; i<size; i++)
               {
-               FileWrite(nfile_handle, symbol, "MONTH", rates_month[i].time, rates_month[i].open, rates_month[i].high, rates_month[i].low, rates_month[i].close);
+               FileWrite(nfile_handle, symbol, "MONTH", rates_month[i].time, rates_month[i].open, rates_month[i].high, rates_month[i].low, rates_month[i].close, current_price);
               }
            }
          else
@@ -83,7 +89,7 @@ void OnTimer(void)
             int size=fmin(stocks_copied, 10);
             for(int i=0; i<size; i++)
               {
-               FileWrite(nfile_handle, symbol, "WEEK", rates_w1[i].time, rates_w1[i].open, rates_w1[i].high, rates_w1[i].low, rates_w1[i].close);
+               FileWrite(nfile_handle, symbol, "WEEK", rates_w1[i].time, rates_w1[i].open, rates_w1[i].high, rates_w1[i].low, rates_w1[i].close, current_price);
               }
            }
          else
@@ -99,7 +105,7 @@ void OnTimer(void)
             int size=fmin(stocks_copied, 55);
             for(int i=0; i<size; i++)
               {
-               FileWrite(nfile_handle, symbol, "DAY", rates_d1[i].time, rates_d1[i].open, rates_d1[i].high, rates_d1[i].low, rates_d1[i].close);
+               FileWrite(nfile_handle, symbol, "DAY", rates_d1[i].time, rates_d1[i].open, rates_d1[i].high, rates_d1[i].low, rates_d1[i].close, current_price);
               }
            }
          else
@@ -115,7 +121,7 @@ void OnTimer(void)
             int size=fmin(stocks_copied, 55);
             for(int i=0; i<size; i++)
               {
-               FileWrite(nfile_handle, symbol, "HOUR_04", rates_h4[i].time, rates_h4[i].open, rates_h4[i].high, rates_h4[i].low, rates_h4[i].close);
+               FileWrite(nfile_handle, symbol, "HOUR_04", rates_h4[i].time, rates_h4[i].open, rates_h4[i].high, rates_h4[i].low, rates_h4[i].close, current_price);
               }
            }
          else
@@ -131,7 +137,7 @@ void OnTimer(void)
             int size=fmin(stocks_copied, 55);
             for(int i=0; i<size; i++)
               {
-               FileWrite(nfile_handle, symbol, "HOUR_01", rates_h1[i].time, rates_h1[i].open, rates_h1[i].high, rates_h1[i].low, rates_h1[i].close);
+               FileWrite(nfile_handle, symbol, "HOUR_01", rates_h1[i].time, rates_h1[i].open, rates_h1[i].high, rates_h1[i].low, rates_h1[i].close, current_price);
               }
            }
          else
@@ -148,7 +154,7 @@ void OnTimer(void)
             int size=fmin(stocks_copied, 55);
             for(int i=0; i<size; i++)
               {
-               FileWrite(nfile_handle, symbol, "MINUTE_15", rates_15[i].time, rates_15[i].open, rates_15[i].high, rates_15[i].low, rates_15[i].close);
+               FileWrite(nfile_handle, symbol, "MINUTE_15", rates_15[i].time, rates_15[i].open, rates_15[i].high, rates_15[i].low, rates_15[i].close, current_price);
               }
            }
          else
