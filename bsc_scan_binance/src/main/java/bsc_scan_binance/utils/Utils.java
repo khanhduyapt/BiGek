@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.net.InetAddress;
 import java.net.URL;
@@ -128,8 +127,7 @@ public class Utils {
     public static final String NOCATION_CUTTING_MA50 = "CuttingMa50";
 
     public static final String TEXT_SWITCH_TREND_Ma_3_2_1 = "Ma3.2.1";
-    public static final String TEXT_SWITCH_TREND_Ma_3_5 = "(Ma3.5)";
-    public static final String TEXT_SWITCH_TREND_Ma_3_68 = "(Ma3.68)";
+    public static final String TEXT_SWITCH_TREND_Ma_1vs6810 = "(Ma16810)";
     public static final String TEXT_SWITCH_TREND_Ma_1_10 = "(Ma1.10)";
     public static final String TEXT_SWITCH_TREND_Ma_1_50 = "(Ma1.50)";
     public static final String TEXT_SWITCH_TREND_50 = "(~50~)";
@@ -1570,18 +1568,7 @@ public class Utils {
         BigDecimal ret = null;
         try {
             if (value != null) {
-                if (value instanceof BigDecimal) {
-                    ret = (BigDecimal) value;
-                } else if (value instanceof String) {
-                    ret = new BigDecimal((String) value);
-                } else if (value instanceof BigInteger) {
-                    ret = new BigDecimal((BigInteger) value);
-                } else if (value instanceof Number) {
-                    ret = new BigDecimal(((Number) value).doubleValue());
-                } else {
-                    throw new ClassCastException("Not possible to coerce [" + value + "] from class " + value.getClass()
-                            + " into a BigDecimal.");
-                }
+                ret = new BigDecimal(String.valueOf(value));
             }
             return ret;
         } catch (Exception e) {
@@ -3371,22 +3358,27 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrendByMa3_68(List<BtcFutures> heiken_list) {
+    public static String switchTrendByMa1_6810(List<BtcFutures> heiken_list) {
         String temp_long = "";
         String temp_shot = "";
 
-        BigDecimal ma3_0 = calcMA(heiken_list, 3, 0);
-        BigDecimal ma3_3 = calcMA(heiken_list, 3, 3);
+        BigDecimal ma1_0 = calcMA(heiken_list, 1, 0);
+        BigDecimal ma1_2 = calcMA(heiken_list, 1, 1);
+
         BigDecimal ma6_0 = calcMA(heiken_list, 6, 0);
-        BigDecimal ma6_3 = calcMA(heiken_list, 6, 3);
-        temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma6_0, ma6_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma6_0, ma6_3) + "_";
+        BigDecimal ma6_2 = calcMA(heiken_list, 6, 2);
+        temp_long += Utils.checkXCutUpY(ma1_0, ma1_2, ma6_0, ma6_2) + "_";
+        temp_shot += Utils.checkXCutDnY(ma1_0, ma1_2, ma6_0, ma6_2) + "_";
 
         BigDecimal ma8_0 = calcMA(heiken_list, 8, 0);
-        BigDecimal ma8_3 = calcMA(heiken_list, 8, 3);
+        BigDecimal ma8_2 = calcMA(heiken_list, 8, 2);
+        temp_long += Utils.checkXCutUpY(ma1_0, ma1_2, ma8_0, ma8_2) + "_";
+        temp_shot += Utils.checkXCutDnY(ma1_0, ma1_2, ma8_0, ma8_2) + "_";
 
-        temp_long += Utils.checkXCutUpY(ma3_0, ma3_3, ma8_0, ma8_3) + "_";
-        temp_shot += Utils.checkXCutDnY(ma3_0, ma3_3, ma8_0, ma8_3) + "_";
+        BigDecimal ma10_0 = calcMA(heiken_list, 10, 0);
+        BigDecimal ma10_2 = calcMA(heiken_list, 10, 2);
+        temp_long += Utils.checkXCutUpY(ma1_0, ma1_2, ma10_0, ma10_2) + "_";
+        temp_shot += Utils.checkXCutDnY(ma1_0, ma1_2, ma10_0, ma10_2) + "_";
 
         String trend = "";
         trend += "_" + temp_long + "_";
@@ -3409,7 +3401,7 @@ public class Utils {
                 trend = Utils.TREND_SHOT;
             }
             String chart_name = getChartName(heiken_list).trim();
-            String switch_trend = chart_name + TEXT_SWITCH_TREND_Ma_3_68 + ":" + Utils.appendSpace(trend, 4);
+            String switch_trend = chart_name + TEXT_SWITCH_TREND_Ma_1vs6810 + ":" + Utils.appendSpace(trend, 4);
 
             return switch_trend;
         }
@@ -3668,6 +3660,7 @@ public class Utils {
         if (list.size() < 2) {
             return heiken_list;
         }
+        BigDecimal currPrice = list.get(0).getCurrPrice();
 
         int heken_index = 0;
         for (int index = list.size() - 1; index >= 0; index--) {
@@ -3700,7 +3693,7 @@ public class Utils {
 
             boolean uptrend = (ope.compareTo(clo) < 0) ? true : false;
 
-            BtcFutures heiken = new BtcFutures(dto.getId(), dto.getCurrPrice(), low, hig, ope, clo, BigDecimal.ZERO,
+            BtcFutures heiken = new BtcFutures(dto.getId(), currPrice, low, hig, ope, clo, BigDecimal.ZERO,
                     BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, uptrend);
 
             heiken_list.add(heiken);
@@ -3851,39 +3844,6 @@ public class Utils {
             String chart_name = getChartName(heiken_list).replace(")", "").trim() + " ";
             String trend = ma3_1_uptrend ? TREND_LONG : TREND_SHOT;
             switch_trend = chart_name + TEXT_SWITCH_TREND_Ma_3_2_1 + ":" + Utils.appendSpace(trend, 4) + ")";
-        }
-
-        return switch_trend;
-    }
-
-    public static String has_switch_trend_by_heiken_ma35_ma10(List<BtcFutures> heiken_list) {
-        String trend_d = Utils.getTrendByHekenAshiList(heiken_list);
-        String switch_trend = Utils.switchTrendByHeken_12(heiken_list);
-
-        String switch_trend_3_5 = Utils.switchTrendByMaXX(heiken_list, 3, 5);
-        if (Utils.isNotBlank(switch_trend_3_5) && switch_trend_3_5.contains(trend_d)) {
-            if (Utils.isBlank(switch_trend)) {
-                switch_trend = Utils.appendSpace(trend_d, 4) + Utils.TEXT_SWITCH_TREND_Ma_3_5;
-            } else {
-                switch_trend += Utils.TEXT_SWITCH_TREND_Ma_3_5;
-            }
-        }
-
-        String switch_trend_1_10 = Utils.switchTrendByMaXX(heiken_list, 1, 10);
-        if (Utils.isNotBlank(switch_trend_1_10) && switch_trend_1_10.contains(trend_d)) {
-            if (Utils.isBlank(switch_trend)) {
-                switch_trend = Utils.appendSpace(trend_d, 4) + Utils.TEXT_SWITCH_TREND_Ma_1_10;
-            } else {
-                switch_trend += Utils.TEXT_SWITCH_TREND_Ma_1_10;
-            }
-        }
-
-        String chart_name = getChartName(heiken_list);
-        if (Utils.isNotBlank(switch_trend)) {
-            if (!switch_trend.contains(chart_name)) {
-                switch_trend = chart_name + switch_trend;
-            }
-            switch_trend = appendSpace(switch_trend, 30);
         }
 
         return switch_trend;
