@@ -2888,10 +2888,10 @@ public class BinanceServiceImpl implements BinanceService {
                                 sb.append('\t');
                                 sb.append(dto.getTake_profit());
                                 sb.append('\t');
-                                sb.append(dto.getComment());
+                                sb.append(Utils.TEXT_EQ_WDH12);
                                 sb.append('\n');
 
-                                // TODO: OpenTrade:  writer.write(sb.toString());
+                                writer.write(sb.toString());
                             }
 
                         }
@@ -3989,14 +3989,15 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(EPIC, "FRA40")) {
                 boolean debug = true;
             }
+
             String trend_w1 = dto_w1.getTrend_line();
             String trend_d1 = dto_d1.getTrend_line();
             String trend_12 = dto_12.getTrend_line();
 
-            String trend_h4 = dto_h4.getTrend_heiken();
-            String trend_h1 = dto_h1.getTrend_heiken();
-            String trend_15 = dto_15.getTrend_heiken();
-            String trend_05 = dto_05.getTrend_heiken();
+            String trend_h4 = dto_h4.getTrend_line();
+            String trend_h1 = dto_h1.getTrend_line();
+            String trend_15 = dto_15.getTrend_line();
+            String trend_05 = dto_05.getTrend_line();
             // ---------------------------------------------------------------------
             String trend_btc = "";
             if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
@@ -4059,7 +4060,14 @@ public class BinanceServiceImpl implements BinanceService {
             if (is_eq_w_d_h12 && (is_eq_d_h4_h1 || is_eq_d_h4_15) && is_trade_zone) {
                 is_candidate = true;
             }
-
+            boolean is_sweet_trend = false;
+            if ((dto_h4.getSwitch_trend() + dto_15.getSwitch_trend() + dto_05.getSwitch_trend())
+                    .contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
+                if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_15)
+                        && Objects.equals(trend_15, trend_05)) {
+                    is_sweet_trend = true;
+                }
+            }
             // ---------------------------------------------------------------------------------------------
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
             if (allow_trade && (Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
@@ -4073,9 +4081,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Mt5OpenTrade trade_h4 = null;
 
                 // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
-                if (is_candidate && (minus_allow_trade
-                        || (Objects.equals(trend_d1, trend_05)
-                                && dto_05.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)))) {
+                if (is_candidate && (minus_allow_trade || is_sweet_trend)) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     String append = "962412_040105" + text_risk_010;
 
@@ -4088,7 +4094,7 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                 }
 
-                if (is_trade_zone && minus_allow_trade
+                if (Objects.isNull(trade_h4) && is_trade_zone && minus_allow_trade
                         && dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     String append = "1vs6810_040105" + text_risk_010;
@@ -4109,8 +4115,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ---------------------------------------------------------------------------------------------
             if (is_trade_zone) {
-                if (is_candidate || is_eq_w_d_h12
-                        || dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
+                if (is_candidate || is_sweet_trend) {
                     count += 1;
 
                     String prefix = Utils.getPrefix_FollowTrackingTrend(EPIC, count, "", trend_w1, trend_d1, trend_12,
