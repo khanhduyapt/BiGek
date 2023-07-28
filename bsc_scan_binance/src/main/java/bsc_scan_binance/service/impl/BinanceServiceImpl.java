@@ -4074,6 +4074,7 @@ public class BinanceServiceImpl implements BinanceService {
                     is_sweet_trend = true;
                 }
             }
+            boolean isMa_1vs6810 = false;
             // ---------------------------------------------------------------------------------------------
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
             if (allow_trade && (Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_CASH_CFD.contains(EPIC)
@@ -4102,6 +4103,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (Objects.isNull(trade_h4) && is_trade_zone && minus_allow_trade
                         && dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
+                    isMa_1vs6810 = true;
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     String append = "1vs6810_040105" + text_risk_010;
 
@@ -4120,8 +4122,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // ---------------------------------------------------------------------------------------------
-            if (is_trade_zone && Objects.equals(trend_w1, trend_d1)) {
-                if (is_candidate || is_sweet_trend) {
+            if ((is_trade_zone && Objects.equals(trend_w1, trend_d1)) || isMa_1vs6810) {
+                if (is_candidate || is_sweet_trend || isMa_1vs6810) {
                     count += 1;
 
                     String prefix = Utils.getPrefix_FollowTrackingTrend(EPIC, count, "", trend_w1, trend_d1, trend_12,
