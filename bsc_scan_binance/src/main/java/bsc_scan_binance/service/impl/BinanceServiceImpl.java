@@ -2947,10 +2947,8 @@ public class BinanceServiceImpl implements BinanceService {
         String text_risk = "0.1% ";
         BigDecimal risk = Utils.RISK_0_10_PERCENT;
 
-        String log_week = "     0.1% " + Utils.appendSpace(
-                Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_10_PERCENT, false, dto_w1.getTrend_line(), EPIC, dto_h1,
-                        dto_w1),
-                45) + dto_w1.getSwitch_trend();
+        String log_week = "     0.1% " + Utils.appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_10_PERCENT,
+                false, dto_w1.getTrend_line(), EPIC, dto_h1, dto_w1), 45) + dto_w1.getSwitch_trend();
 
         if (Objects.equals(EPIC, "NATGAS")) {
             boolean debug = true;
@@ -2961,9 +2959,8 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_h1.getCurrent_price(), 5)), 11);
         log += Utils.appendSpace(append.trim(), 115) + " ";
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
-        log += text_risk + Utils
-                .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, dto_d1.getTrend_line(), EPIC, dto_h1, dto_d1),
-                        45);
+        log += text_risk + Utils.appendSpace(
+                Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, dto_d1.getTrend_line(), EPIC, dto_h1, dto_d1), 45);
 
         if (!dto_d1.isTradable_zone() || !dto_h4.isTradable_zone()
                 || (Utils.isNotBlank(dto_h4.getSwitch_trend()) && !dto_h4.getSwitch_trend().contains(trend_d1))) {
@@ -3301,8 +3298,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             for (Mt5DataCandle dto : list_delete) {
-                List<Mt5DataCandle> temp = mt5DataCandleRepository.findAllByIdEpicAndIdCandle(
-                        dto.getId().getEpic(), dto.getId().getCandle());
+                List<Mt5DataCandle> temp = mt5DataCandleRepository.findAllByIdEpicAndIdCandle(dto.getId().getEpic(),
+                        dto.getId().getCandle());
 
                 if (!CollectionUtils.isEmpty(temp)) {
                     mt5DataCandleRepository.deleteAll(temp);
@@ -3353,8 +3350,8 @@ public class BinanceServiceImpl implements BinanceService {
             strid = dto.getId().getEpic() + Utils.getChartPrefix(dto.getId().getCandle()) + strid;
 
             BtcFutures entity = new BtcFutures(strid, currPrice, dto.getLow_price(), dto.getHig_price(),
-                    dto.getOpe_price(), clo_price, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-                    BigDecimal.ZERO, uptrend);
+                    dto.getOpe_price(), clo_price, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+                    uptrend);
             list.add(entity);
 
             id += 1;
@@ -4140,6 +4137,17 @@ public class BinanceServiceImpl implements BinanceService {
 
         // ----------------------------------------PROFIT--------------------------------------
         List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAll();
+        BigDecimal TOTAL_PROFIT = BigDecimal.ZERO;
+        for (Mt5OpenTradeEntity trade : mt5Openlist) {
+            BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
+            TOTAL_PROFIT = TOTAL_PROFIT.add(PROFIT);
+        }
+        BigDecimal MAX_LOSS = Utils.RISK_0_10_PERCENT.multiply(BigDecimal.valueOf(5));
+        boolean is_clean_up_trades = false;
+        if (TOTAL_PROFIT.add(MAX_LOSS).compareTo(BigDecimal.ZERO) < 0) {
+            is_clean_up_trades = true;
+        }
+
         for (Mt5OpenTradeEntity trade : mt5Openlist) {
             String EPIC = trade.getSymbol();
             if (Objects.equals(EPIC, "DX.F")) {
@@ -4247,7 +4255,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (is_reverse_d1 && Utils.isCloseTradeToday()) {
                     is_reverse = true;
                 }
-                //-----------------------------------------------------------------
+                // -----------------------------------------------------------------
                 if (is_reverse_h4 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
                     has_profit = true;
                 }
@@ -4271,7 +4279,7 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------
             // TODO: 5. closeTrade_by_SL_TP
             if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
-                if (has_profit || is_hit_sl || (is_reverse && allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H))) {
+                if (has_profit || is_hit_sl || (is_reverse && is_clean_up_trades)) {
                     String reason = "";
                     if (has_profit) {
                         reason = "4hprofit";
