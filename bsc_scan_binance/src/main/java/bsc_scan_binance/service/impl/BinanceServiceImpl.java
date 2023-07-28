@@ -4114,7 +4114,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // ---------------------------------------------------------------------------------------------
-            if (is_trade_zone) {
+            if (is_trade_zone && Objects.equals(trend_w1, trend_d1)) {
                 if (is_candidate || is_sweet_trend) {
                     count += 1;
 
