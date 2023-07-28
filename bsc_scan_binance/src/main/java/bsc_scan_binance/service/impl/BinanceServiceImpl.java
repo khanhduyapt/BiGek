@@ -2880,7 +2880,11 @@ public class BinanceServiceImpl implements BinanceService {
                                 sb.append('\t');
                                 sb.append(dto.getOrder_type());
                                 sb.append('\t');
-                                sb.append(dto.getLots());
+                                if (EPIC.contains("ERBN")) {
+                                    sb.append(1);
+                                } else {
+                                    sb.append(dto.getLots());
+                                }
                                 sb.append('\t');
                                 sb.append(dto.getEntry());
                                 sb.append('\t');
