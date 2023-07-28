@@ -3898,10 +3898,10 @@ public class BinanceServiceImpl implements BinanceService {
             switch_trend += Utils.switchTrendByMa1_6810(heiken_list);
 
             if (Objects.equals(nocation, Utils.NOCATION_BELOW_MA50) && switch_trend.contains(Utils.TREND_LONG)) {
-                switch_trend = "";
+                // switch_trend = "";
             }
             if (Objects.equals(nocation, Utils.NOCATION_ABOVE_MA50) && switch_trend.contains(Utils.TREND_SHOT)) {
-                switch_trend = "";
+                // switch_trend = "";
             }
         }
 
