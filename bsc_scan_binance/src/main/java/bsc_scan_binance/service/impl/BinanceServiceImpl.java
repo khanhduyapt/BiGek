@@ -2872,6 +2872,9 @@ public class BinanceServiceImpl implements BinanceService {
 
                         msg_dict.put(EVENT_ID, msg);
 
+                        if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
+                            continue;
+                        }
                         if ((trade_count < MAX_TRADE) && dto.getComment().contains(Utils.TEXT_EQ_WDH12)) {
                             trade_count += 1;
 
