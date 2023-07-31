@@ -4049,13 +4049,15 @@ public class BinanceServiceImpl implements BinanceService {
                 is_eq_d_h4_h1 = true;
             }
 
+            boolean m5_allow_trade = false;
+            if (dto_05.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_15)
+                    && Objects.equals(trend_15, trend_05)) {
+                m5_allow_trade = true;
+            }
+
             boolean minus_allow_trade = false;
             {
-                if (dto_05.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_15)
-                        && Objects.equals(trend_15, trend_05)) {
-                    minus_allow_trade = true;
-                }
-                if (dto_15.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_15)
+                if (m5_allow_trade & dto_15.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_15)
                         && Objects.equals(trend_15, trend_05)) {
                     minus_allow_trade = true;
                 }
@@ -4092,7 +4094,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Mt5OpenTrade trade_h4 = null;
 
                 // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
-                if (is_candidate && (minus_allow_trade || is_sweet_trend)) {
+                if (is_candidate && m5_allow_trade && (minus_allow_trade || is_sweet_trend)) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     String append = "962412_040105" + text_risk_010;
 
