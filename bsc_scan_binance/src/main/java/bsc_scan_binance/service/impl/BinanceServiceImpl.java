@@ -4108,7 +4108,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     String append = "1vs6810_040105" + text_risk_010;
 
-                    trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_15, dto_h4, append,
+                    trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4, dto_15, dto_h4, append,
                             true, Utils.CAPITAL_TIME_H4);
 
                     BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
