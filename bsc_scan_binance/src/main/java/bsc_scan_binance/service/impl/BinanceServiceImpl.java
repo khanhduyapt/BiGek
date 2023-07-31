@@ -2877,7 +2877,6 @@ public class BinanceServiceImpl implements BinanceService {
                         }
                         if ((trade_count < MAX_TRADE) && dto.getComment().contains(Utils.TEXT_EQ_WDH12)) {
                             trade_count += 1;
-
                             if (Utils.isPcCongTy()) {
                                 StringBuilder sb = new StringBuilder();
                                 sb.append(dto.getEpic());
@@ -2892,22 +2891,18 @@ public class BinanceServiceImpl implements BinanceService {
                                 sb.append('\t');
                                 sb.append(dto.getEntry());
                                 sb.append('\t');
-                                // sb.append(dto.getStop_loss());
-                                sb.append(BigDecimal.ZERO);
+                                sb.append(BigDecimal.ZERO); // sb.append(dto.getStop_loss());
                                 sb.append('\t');
-                                // sb.append(dto.getTake_profit());
-                                sb.append(BigDecimal.ZERO);
+                                sb.append(BigDecimal.ZERO); // sb.append(dto.getTake_profit());
                                 sb.append('\t');
                                 sb.append(Utils.TEXT_EQ_WDH12);
                                 sb.append('\n');
 
                                 writer.write(sb.toString());
                             }
-
                         }
                     }
                 }
-
             }
             writer.close();
 
