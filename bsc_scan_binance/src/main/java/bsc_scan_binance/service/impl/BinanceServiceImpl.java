@@ -2892,9 +2892,11 @@ public class BinanceServiceImpl implements BinanceService {
                                 sb.append('\t');
                                 sb.append(dto.getEntry());
                                 sb.append('\t');
-                                sb.append(dto.getStop_loss());
+                                // sb.append(dto.getStop_loss());
+                                sb.append(BigDecimal.ZERO);
                                 sb.append('\t');
-                                sb.append(dto.getTake_profit());
+                                // sb.append(dto.getTake_profit());
+                                sb.append(BigDecimal.ZERO);
                                 sb.append('\t');
                                 sb.append(Utils.TEXT_EQ_WDH12);
                                 sb.append('\n');
