@@ -4055,16 +4055,16 @@ public class BinanceServiceImpl implements BinanceService {
                 m5_allow_trade = true;
             }
 
-            boolean minus_allow_trade = false;
+            boolean m15_allow_trade = false;
             {
                 if (m5_allow_trade & dto_15.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_15)
                         && Objects.equals(trend_15, trend_05)) {
-                    minus_allow_trade = true;
+                    m15_allow_trade = true;
                 }
             }
 
             boolean is_eq_d_h4_15 = false;
-            if (minus_allow_trade && Objects.equals(trend_d1, trend_h4)) {
+            if (m15_allow_trade && Objects.equals(trend_d1, trend_h4)) {
                 is_eq_d_h4_h1 = true;
             }
 
@@ -4094,7 +4094,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Mt5OpenTrade trade_h4 = null;
 
                 // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
-                if (is_candidate && m5_allow_trade && (minus_allow_trade || is_sweet_trend)) {
+                if (is_candidate && m5_allow_trade && (m15_allow_trade || is_sweet_trend)) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     String append = "962412_040105" + text_risk_010;
 
@@ -4107,7 +4107,7 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                 }
 
-                if (Objects.isNull(trade_h4) && is_trade_zone && minus_allow_trade
+                if (Objects.isNull(trade_h4) && is_trade_zone && m15_allow_trade
                         && dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
                     isMa_1vs6810 = true;
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
