@@ -2836,7 +2836,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
                 String EPIC = dto.getEpic().toUpperCase();
 
-                if ("_DX.f_".toUpperCase().contains(EPIC)) {
+                if ("_DX.f_NATGAS___".toUpperCase().contains(EPIC)) {
                     continue;
                 }
 
@@ -2859,6 +2859,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                         BscScanBinanceApplication.mt5_close_ticket_dict.put(trade.getTicket(), "reverse_trade_opening");
                     }
+
                     // ----------------------------------------------------------------------------------
                     String prefix = "Open_Trade: ";
                     String msg = Utils.createOpenTradeMsg(dto, prefix);

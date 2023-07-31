@@ -235,6 +235,13 @@ public class Utils {
     // Trustpilot: 4.7
     // public static String MT5_COMPANY_FTUK = "FTUK"; // FTUK Trustpilot: 4.7
 
+    // Các quỹ cấm Trader Việt Nam:
+    // MyFundedFX (MFFX): https://bit.ly/3lwhlEs
+    // Bespoke Funding Program (BFP): https://bit.ly/43uTV34
+    // Funded Engineer: https://bit.ly/44jb67S
+    // Alpha Capital Group (ACG): https://bit.ly/3YrGn6h
+    // Blue Guardian: https://bit.ly/3J5YyaR
+
     public static final String LINKED_NAME_2_USOIL = "_USOIL_USOUSD_";
     public static final String LINKED_NAME_2_US100 = "_NDX100_US100_NAS100_";
     public static final String LINKED_NAME_2_GER40 = "_GER40_GER30_";
