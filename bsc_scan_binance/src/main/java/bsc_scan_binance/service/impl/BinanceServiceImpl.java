@@ -4056,11 +4056,9 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean m15_allow_trade = false;
-            {
-                if (m5_allow_trade & dto_15.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_15)
-                        && Objects.equals(trend_15, trend_05)) {
-                    m15_allow_trade = true;
-                }
+            if (m5_allow_trade & dto_15.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_15)
+                    && Objects.equals(trend_15, trend_05)) {
+                m15_allow_trade = true;
             }
 
             boolean is_eq_d_h4_15 = false;
