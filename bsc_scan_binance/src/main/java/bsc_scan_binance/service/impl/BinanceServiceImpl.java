@@ -2878,7 +2878,9 @@ public class BinanceServiceImpl implements BinanceService {
                         if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
                             continue;
                         }
-                        if ((trade_count < MAX_TRADE) && dto.getComment().contains(Utils.TEXT_EQ_WDH12)) {
+
+                        // && dto.getComment().contains(Utils.TEXT_EQ_WDH12)
+                        if ((trade_count < MAX_TRADE)) {
                             trade_count += 1;
                             if (Utils.isPcCongTy()) {
                                 StringBuilder sb = new StringBuilder();
@@ -4098,8 +4100,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                 Mt5OpenTrade trade_h4 = null;
 
-                if (Objects.isNull(trade_h4) && is_trade_zone && h1_allow_trade && m15_allow_trade && m05_allow_trade
-                        && dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
+                if (!is_eq_w_d_h12 && Objects.isNull(trade_h4) && is_trade_zone && h1_allow_trade && m15_allow_trade
+                        && m05_allow_trade && dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
                     isMa_1vs6810 = true;
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     String append = "1vs6810_411505";
@@ -4111,7 +4113,7 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                 }
 
-                if (Objects.isNull(trade_h4) && is_trade_zone && m15_allow_trade && m05_allow_trade
+                if (!is_eq_w_d_h12 && Objects.isNull(trade_h4) && is_trade_zone && m15_allow_trade && m05_allow_trade
                         && dto_h4.isAllow_trade_by_ma50()
                         && dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
                     isMa_1vs6810 = true;
