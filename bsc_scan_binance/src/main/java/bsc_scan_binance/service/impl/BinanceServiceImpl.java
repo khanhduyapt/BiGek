@@ -3878,7 +3878,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_line = Utils.getTrendByLineChart(list);
         String trend_heiken = Utils.getTrendByHekenAshiList(heiken_list);
         if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_W1)) {
-            trend_heiken = Utils.getTrend_C1_ByLineChart(list);
+            // trend_heiken = Utils.getTrend_C1_ByLineChart(list);
         }
 
         String nocation = "";
@@ -4007,7 +4007,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1 = dto_h1.getTrend_line();
             String trend_15 = dto_15.getTrend_line();
             String trend_05 = dto_05.getTrend_line();
-            // ---------------------------------------------------------------------
+            // ---------------------------------------------------------------------------------------------
             String trend_btc = "";
             if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
                 trend_btc = get_trend_by_line_chart("BTCUSD", Utils.CAPITAL_TIME_D1);
@@ -4076,6 +4076,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (is_eq_w_d_h12 && (is_eq_d_h4_h1 || is_eq_d_h4_15) && is_trade_zone) {
                 is_candidate = true;
             }
+
             boolean is_sweet_trend = false;
             if ((dto_h4.getSwitch_trend() + dto_15.getSwitch_trend() + dto_05.getSwitch_trend())
                     .contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
@@ -4139,7 +4140,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             }
 
-            // ---------------------------------------------------------------------
+            // ---------------------------------------------------------------------------------------------
             if (!Objects.equals(EPIC, "BTCUSD")) {
                 BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
             }
