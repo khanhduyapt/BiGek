@@ -4080,10 +4080,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean is_sweet_trend = false;
-            if ((dto_h4.getSwitch_trend() + dto_15.getSwitch_trend() + dto_05.getSwitch_trend())
-                    .contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
-                if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_15)
-                        && Objects.equals(trend_15, trend_05)) {
+            if ((dto_h4.getSwitch_trend() + dto_h1.getSwitch_trend() + dto_15.getSwitch_trend()
+                    + dto_05.getSwitch_trend()).contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
+                if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(trend_h1, trend_15) && Objects.equals(trend_15, trend_05)) {
                     is_sweet_trend = true;
                 }
             }
