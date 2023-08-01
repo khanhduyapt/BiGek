@@ -4062,7 +4062,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean h1_allow_trade = false;
-            if (m5_allow_trade && m15_allow_trade & dto_h1.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_h1)
+            if (m5_allow_trade && dto_h1.isAllow_trade_by_ma50() && Objects.equals(trend_h4, trend_h1)
                     && Objects.equals(trend_h1, trend_15)) {
                 h1_allow_trade = true;
             }
@@ -4124,7 +4124,8 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                 }
 
-                if (Objects.isNull(trade_h4) && is_trade_zone && h1_allow_trade) {
+                if (Objects.isNull(trade_h4) && is_trade_zone && h1_allow_trade
+                        && dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
                     isMa_1vs6810 = true;
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     String append = "1vs6810_411505" + text_risk_010;
