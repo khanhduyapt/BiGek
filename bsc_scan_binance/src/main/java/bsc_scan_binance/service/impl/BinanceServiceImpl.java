@@ -2836,7 +2836,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
                 String EPIC = dto.getEpic().toUpperCase();
 
-                if ("_DX.f_NATGAS___".toUpperCase().contains(EPIC)) {
+                if ("_DX.f_NATGAS_ERBN__".toUpperCase().contains(EPIC)) {
                     continue;
                 }
 
@@ -2863,7 +2863,7 @@ public class BinanceServiceImpl implements BinanceService {
                     // ----------------------------------------------------------------------------------
                     String prefix = "Open_Trade: ";
                     if (dto.getComment().contains("1vs6810")) {
-                        prefix = "Check:      ";
+                        // prefix = "Check:      ";
                     }
                     String msg = Utils.createOpenTradeMsg(dto, prefix);
                     Utils.logWritelnDraft(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
