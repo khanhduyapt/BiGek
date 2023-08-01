@@ -4111,7 +4111,7 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                 }
 
-                if (Objects.isNull(trade_h4) && is_trade_zone && m15_allow_trade
+                if (Objects.isNull(trade_h4) && is_trade_zone && m15_allow_trade && dto_h4.isAllow_trade_by_ma50()
                         && dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
                     isMa_1vs6810 = true;
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
