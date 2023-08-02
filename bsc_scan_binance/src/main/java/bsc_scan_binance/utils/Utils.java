@@ -1469,9 +1469,19 @@ public class Utils {
     }
 
     public static boolean allow_open_trade_at_newyork_session() {
-        List<Integer> times = Arrays.asList(20, 21, 22, 23);
+        List<Integer> times = Arrays.asList(21, 22, 23, 0, 1, 2);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (isWeekday() && times.contains(hh)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean is_vn_working_time() {
+        List<Integer> times = Arrays.asList(8, 9, 10, 11, 12, 13, 14, 15, 16, 17);
+        Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
+        if (times.contains(hh)) {
             return true;
         }
 

@@ -3683,10 +3683,10 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // -------------------------------------------------------
 
-                if (is_eq_w_d_h4_h1 && is_trade_zone
+                if (Utils.allow_open_trade_at_newyork_session() && is_eq_w_d_h4_h1 && is_trade_zone
                         && dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
-                    String append = "1vs6810_04w01.";
+                    String append = "1vs6810_04w01." + Utils.TEXT_PASS;
 
                     Mt5OpenTrade trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1,
                             dto_h4, append, true, Utils.CAPITAL_TIME_H4);
@@ -4124,19 +4124,6 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                 }
 
-                if (Objects.isNull(trade_h4) && is_eq_d_h4_h1 && is_trade_zone && h1_allow_trade
-                        && dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
-                    isMa_1vs6810 = true;
-                    String key = EPIC + Utils.CAPITAL_TIME_H1;
-                    String append = "1vs6810_0401w05." + Utils.TEXT_PASS;
-
-                    trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_15, dto_h4, append,
-                            true, Utils.CAPITAL_TIME_H1);
-
-                    BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
-                    BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
-                }
-
                 if (Objects.isNull(trade_h4) && is_eq_d_h4_h1 && is_trade_zone && h4_allow_trade && m05_allow_trade
                         && dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
                     isMa_1vs6810 = true;
@@ -4156,6 +4143,19 @@ public class BinanceServiceImpl implements BinanceService {
 
                     trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_15, dto_h4, append,
                             true, Utils.CAPITAL_TIME_H4);
+
+                    BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
+                    BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
+                }
+
+                if (Objects.isNull(trade_h4) && Utils.is_vn_working_time() && is_eq_d_h4_h1 && is_trade_zone
+                        && h1_allow_trade && dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
+                    isMa_1vs6810 = true;
+                    String key = EPIC + Utils.CAPITAL_TIME_H1;
+                    String append = "1vs6810_0401w05." + Utils.TEXT_PASS;
+
+                    trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_15, dto_h4, append,
+                            true, Utils.CAPITAL_TIME_H1);
 
                     BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
                     BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
