@@ -4271,6 +4271,10 @@ public class BinanceServiceImpl implements BinanceService {
                     && !Objects.equals(trend_05, TRADE_TREND)) {
                 is_reverse_h1 = true;
             }
+            if (dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)
+                    && Objects.equals(dto_h1.getTrend_line(), REVERSE_TRADE_TREND)) {
+                is_reverse_h1 = true;
+            }
 
             boolean is_reverse_h4 = false;
             if (is_reverse_h1 && !Objects.equals(trend_h4, TRADE_TREND)) {
@@ -4346,7 +4350,6 @@ public class BinanceServiceImpl implements BinanceService {
             if (is_reverse_d1 && (PROFIT.add(Utils.RISK_0_10_PERCENT).compareTo(BigDecimal.ZERO) < 0)) {
                 is_hit_sl = true;
             }
-
             // ---------------------------------------------------------------------------------
             // TODO: 5. closeTrade_by_SL_TP
             if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
