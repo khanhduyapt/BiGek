@@ -4279,9 +4279,19 @@ public class BinanceServiceImpl implements BinanceService {
                 is_reverse_d1 = true;
             }
 
+            boolean is_clean_up_trades = false;
+            if ((PROFIT.add(Utils.RISK_0_05_PERCENT).compareTo(BigDecimal.ZERO) < 0)
+                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H)) {
+                is_clean_up_trades = true;
+            }
             boolean is_reverse = false;
             if (is_reverse_d1 && !Objects.equals(trend_w1, TRADE_TREND)) {
                 is_reverse = true;
+            }
+            if (is_reverse_d1 && !Objects.equals(dto_w1.getTrend_line(), TRADE_TREND)
+                    && !Objects.equals(dto_w1.getTrend_heiken(), TRADE_TREND)) {
+                is_reverse = true;
+                is_clean_up_trades = true;
             }
             // ---------------------------------------------------------------------------------
             boolean has_profit = false;
@@ -4320,11 +4330,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (is_reverse_d1 && (PROFIT.add(Utils.RISK_0_10_PERCENT).compareTo(BigDecimal.ZERO) < 0)) {
                 is_hit_sl = true;
             }
-            boolean is_clean_up_trades = false;
-            if ((PROFIT.add(Utils.RISK_0_05_PERCENT).compareTo(BigDecimal.ZERO) < 0)
-                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H)) {
-                is_clean_up_trades = true;
-            }
+
             // ---------------------------------------------------------------------------------
             // TODO: 5. closeTrade_by_SL_TP
             if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
