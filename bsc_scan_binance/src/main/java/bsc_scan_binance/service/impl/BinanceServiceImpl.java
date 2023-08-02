@@ -4164,7 +4164,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                         if (Objects.isNull(trade_h4) && h12_allow_trade) {
                             String key = EPIC + Utils.CAPITAL_TIME_H4;
-                            String append = "heiken_24w4115." + Utils.TEXT_PASS;
+                            String append = "heiken_12w4115." + Utils.TEXT_PASS;
 
                             trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_15, dto_h4,
                                     append, true, Utils.CAPITAL_TIME_H4);
