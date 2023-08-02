@@ -4339,10 +4339,8 @@ public class BinanceServiceImpl implements BinanceService {
                 if (is_reverse_h1 && (PROFIT.compareTo(BigDecimal.ZERO) > 0) && Utils.isCloseTradeToday()) {
                     has_profit = true;
                 }
-                if (is_reverse_h1 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
-                    if (!dto_h4.isTradable_zone()) {
-                        has_profit = true;
-                    }
+                if (is_reverse_h1 && (PROFIT.compareTo(BigDecimal.ZERO) > 0) && !dto_h4.isTradable_zone()) {
+                    has_profit = true;
                 }
             }
             // ---------------------------------------------------------------------------------
