@@ -3920,9 +3920,8 @@ public class BinanceServiceImpl implements BinanceService {
         switch_trend += Utils.switchTrendByMa1_6810(heiken_list);
 
         boolean allow_trade_by_ma50 = false;
+        String trend_d1 = get_trend_by_line_chart(EPIC, Utils.CAPITAL_TIME_D1);
         if (list.size() > 30) {
-            String trend_d1 = get_trend_by_line_chart(EPIC, Utils.CAPITAL_TIME_D1);
-
             if (Objects.equals(trend_d1, Utils.TREND_LONG) && Objects.equals(nocation, Utils.NOCATION_BELOW_MA50)) {
                 allow_trade_by_ma50 = true;
             }
@@ -3951,7 +3950,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String zone = Utils.getZone(heiken_list);
         boolean tradable_zone = false;
-        if (zone.contains(trend_line)) {
+        if (zone.contains(trend_d1)) {
             tradable_zone = true;
         }
 
@@ -4314,7 +4313,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean is_reverse_d1 = false;
-            if (is_reverse_h4 && !Objects.equals(trend_d1, TRADE_TREND) && !Objects.equals(trend_12, TRADE_TREND)) {
+            if (is_reverse_h4 && Objects.equals(trend_d1, REVERSE_TRADE_TREND)
+                    && Objects.equals(trend_12, REVERSE_TRADE_TREND)) {
                 is_reverse_d1 = true;
             }
 
@@ -4340,21 +4340,14 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------
             boolean has_profit = false;
             if (Utils.EPICS_STOCKS.contains(EPIC)) {
-                if (is_reverse_d1 && is_reverse_h4_c1) {
-                    is_reverse = true;
-                }
-                if (is_reverse_d1 && (PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0)) {
+                if (is_reverse_d1 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
                     has_profit = true;
                 }
             } else {
-                if (is_reverse_h4_c1) {
-                    is_reverse = true;
+                if (is_reverse_d1 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
+                    has_profit = true;
                 }
-                if (is_reverse_d1 && Utils.isCloseTradeToday()) {
-                    is_reverse = true;
-                }
-                // -----------------------------------------------------------------
-                if (is_reverse_h4 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
+                if (is_reverse_h4 && is_reverse_h4_c1 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
                     has_profit = true;
                 }
                 if (is_reverse_h1 && (PROFIT.compareTo(Utils.RISK_0_15_PERCENT) > 0)) {
