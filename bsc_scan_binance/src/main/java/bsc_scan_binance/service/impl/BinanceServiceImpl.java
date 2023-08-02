@@ -3641,9 +3641,9 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_mo = dto_mo.getTrend_line();
             String trend_w1 = dto_w1.getTrend_line();
 
-            String trend_d1 = dto_d1.getTrend_heiken();
-            String trend_h4 = dto_h4.getTrend_heiken();
-            String trend_h1 = dto_h1.getTrend_heiken();
+            String trend_d1 = dto_d1.getTrend_line();
+            String trend_h4 = dto_h4.getTrend_line();
+            String trend_h1 = dto_h1.getTrend_line();
 
             String prefix = Utils.getPrefix_FollowTrackingTrend(EPIC, index, trend_mo, trend_w1, trend_d1, "", trend_h4,
                     trend_h1, dto_mo.getSwitch_trend(), dto_w1.getSwitch_trend(), dto_d1.getSwitch_trend(), "",
@@ -3658,8 +3658,13 @@ public class BinanceServiceImpl implements BinanceService {
             eoz += "  ";
 
             boolean is_trade_zone = true;
-            if (eoz.contains("EOZ:MNW1")) {
+            if (eoz.contains("EOZ:MNW1") || eoz.contains("EOZ:--W1")) {
                 is_trade_zone = false;
+            }
+            boolean is_eq_w_d_h4_h1 = false;
+            if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)
+                    && Objects.equals(trend_h4, trend_h1)) {
+                is_eq_w_d_h4_h1 = true;
             }
 
             boolean is_sweet_trend = Utils.isNotBlank(dto_mo.getSwitch_trend() + dto_w1.getSwitch_trend()
@@ -3677,18 +3682,23 @@ public class BinanceServiceImpl implements BinanceService {
                 analysis_profit(prefix, EPIC, eoz, trend_w1);
 
                 // -------------------------------------------------------
-                if (dto_h1.isAllow_trade_by_ma50() && !is_opening_trade(EPIC, "")
-                        && Objects.equals(trend_d1, trend_h1)) {
-                    String text_risk_010 = "(0.1 %:" + Utils.RISK_0_10_PERCENT.intValue() + "$)";
-                    String append = "B:CK9624041" + text_risk_010;
 
-                    Mt5OpenTrade trade_d1 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1,
-                            dto_d1, append, true, Utils.CAPITAL_TIME_D1);
+                if (is_eq_w_d_h4_h1 && is_trade_zone
+                        && dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
+                    String key = EPIC + Utils.CAPITAL_TIME_H4;
+                    String append = "1vs6810_04w01.";
 
-                    String msg = Utils.createOpenTradeMsg(trade_d1, "STOCK_TODAY ");
-                    BscScanBinanceApplication.msg_open_trade_stocks
-                            .add(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
+                    Mt5OpenTrade trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1,
+                            dto_h4, append, true, Utils.CAPITAL_TIME_H4);
+
+                    BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
+                    BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
+
+                    //String msg = Utils.createOpenTradeMsg(trade_h4, "STOCK_TODAY ");
+                    //BscScanBinanceApplication.msg_open_trade_stocks
+                    //        .add(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
                 }
+
                 // -------------------------------------------------------
                 BscScanBinanceApplication.dic_comment.put(EPIC.toUpperCase(),
                         "wdh4" + Utils.getEncryptedChartNameCapital(Utils.CAPITAL_TIME_D1));
