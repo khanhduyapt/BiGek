@@ -3965,7 +3965,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public int controlMt5(List<String> CAPITAL_LIST) {
-        if (Utils.is_loss_time()) {
+        if (Utils.is_loss_time() || Utils.isNewsAt_19_20_21h()) {
             return 0;
         }
 
@@ -4270,10 +4270,6 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(EPIC, "GBPNZD")) {
             }
 
-            String trend_w1 = dto_w1.getTrend_line();
-            String trend_d1 = dto_d1.getTrend_line();
-            String trend_12 = dto_12.getTrend_line();
-
             // ---------------------------------------------------------------------------------
             boolean is_reverse_h1 = false;
             if (Objects.equals(dto_h1.getTrend_heiken(), REVERSE_TRADE_TREND)
@@ -4298,25 +4294,28 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean is_reverse_d1 = false;
-            if (is_reverse_h4 && Objects.equals(trend_d1, REVERSE_TRADE_TREND)
-                    && Objects.equals(trend_12, REVERSE_TRADE_TREND)) {
+            if (is_reverse_h4
+                    && Objects.equals(dto_d1.getTrend_line(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_d1.getTrend_heiken(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_12.getTrend_line(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_12.getTrend_heiken(), REVERSE_TRADE_TREND)) {
                 is_reverse_d1 = true;
             }
 
             boolean is_reverse = false;
-            if (is_reverse_d1 && Objects.equals(trend_w1, REVERSE_TRADE_TREND)) {
+            if (is_reverse_d1 && allow_close_trade_after(TICKET, Utils.MINUTES_OF_1D)) {
                 is_reverse = true;
             }
             if (dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)
-                    && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)) {
+                    && dto_h4.getSwitch_trend().contains(REVERSE_TRADE_TREND)) {
                 is_reverse = true;
             }
             if (dto_12.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)
-                    && Objects.equals(dto_12.getTrend_line(), REVERSE_TRADE_TREND)) {
+                    && dto_12.getSwitch_trend().contains(REVERSE_TRADE_TREND)) {
                 is_reverse = true;
             }
             if (dto_d1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)
-                    && Objects.equals(dto_d1.getTrend_line(), REVERSE_TRADE_TREND)) {
+                    && dto_d1.getSwitch_trend().contains(REVERSE_TRADE_TREND)) {
                 is_reverse = true;
             }
             // ---------------------------------------------------------------------------------
