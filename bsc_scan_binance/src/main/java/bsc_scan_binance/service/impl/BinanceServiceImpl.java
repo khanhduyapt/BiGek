@@ -4063,7 +4063,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean m15_allow_trade = false;
-            if (dto_15.isAllow_trade_by_ma50() && dto_05.isAllow_trade_by_ma50()
+            if (dto_15.isAllow_trade_by_ma50() && dto_05.isAllow_trade_by_ma50() && dto_h1.isAllow_trade_by_ma50()
                     && dto_15.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
                 m15_allow_trade = true;
             }
