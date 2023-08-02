@@ -3908,17 +3908,15 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        BigDecimal bread = BigDecimal.ZERO;
         String switch_trend = "";
         if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_MO)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_W1)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H12)) {
-            bread = Utils.calcAvgBread(heiken_list);
             switch_trend += Utils.switchTrendByHeken_12(heiken_list);
             switch_trend += Utils.switchTrendByMa3_2_1(heiken_list);
+            switch_trend += Utils.switchTrendByMa1_6810(list);
         } else {
-            bread = Utils.calcMaxBread(heiken_list);
             switch_trend += Utils.switchTrendByMa1_6810(heiken_list);
         }
 
@@ -3940,6 +3938,7 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal str_body = body.get(0);
         BigDecimal end_body = body.get(1);
 
+        BigDecimal bread = Utils.calcAvgBread(heiken_list);
         List<BigDecimal> lohi = Utils.getLowHighCandle(heiken_list);
         BigDecimal sl_long = lohi.get(0).subtract(bread);
         BigDecimal sl_shot = lohi.get(1).add(bread);
@@ -4046,7 +4045,7 @@ public class BinanceServiceImpl implements BinanceService {
             eoz += "  ";
 
             boolean is_trade_zone = true;
-            if (eoz.contains("EOZ:H12H4")) {
+            if (dto_12.isTradable_zone() && dto_h4.isTradable_zone() && dto_h1.isTradable_zone()) {
                 is_trade_zone = false;
             }
 
@@ -4066,7 +4065,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean m15_allow_trade = false;
-            if (dto_15.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
+            if (dto_15.isAllow_trade_by_ma50() && dto_05.isAllow_trade_by_ma50()
+                    && dto_15.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
                 m15_allow_trade = true;
             }
 
@@ -4083,7 +4083,9 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean d1_allow_trade = false;
-            if (switch_d1.contains(Utils.TEXT_SWITCH_TREND_HEIKEN)) {
+            if (switch_d1.contains(Utils.TEXT_SWITCH_TREND_HEIKEN)
+                    || dto_12.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)
+                    || dto_d1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
                 d1_allow_trade = true;
             }
 
@@ -4119,8 +4121,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (is_eq_w_d_h12) {
                     // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
-                    if (is_eq_d_h4_h1 && is_eq_h1_15_05 && dto_12.isTradable_zone() && dto_h4.isTradable_zone()
-                            && dto_h1.isTradable_zone()) {
+                    if (is_eq_d_h4_h1 && is_eq_h1_15_05 && is_trade_zone) {
                         String key = EPIC + Utils.CAPITAL_TIME_H4;
                         String append = "962412_401155." + Utils.TEXT_PASS;
 
@@ -4131,6 +4132,18 @@ public class BinanceServiceImpl implements BinanceService {
                         BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                     }
                 } else if (is_eq_d_h4_h1 && is_eq_h1_15_05 && is_trade_zone) {
+
+                    if (Objects.isNull(trade_h4) && m15_allow_trade) {
+                        isMa_1vs6810 = true;
+                        String key = EPIC + Utils.CAPITAL_TIME_H1;
+                        String append = "1vs6810_4115w5." + Utils.TEXT_PASS;
+
+                        trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_15, dto_h4,
+                                append, true, Utils.CAPITAL_TIME_H1);
+
+                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
+                        BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
+                    }
 
                     if (Objects.isNull(trade_h4) && h1_allow_trade) {
                         isMa_1vs6810 = true;
