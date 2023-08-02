@@ -4047,7 +4047,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean is_eq_d_h4_h1 = false;
-            if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
+            if (Objects.equals(trend_d1, trend_12) && Objects.equals(trend_d1, trend_h4)
+                    && Objects.equals(trend_h4, trend_h1)) {
                 is_eq_d_h4_h1 = true;
             }
 
