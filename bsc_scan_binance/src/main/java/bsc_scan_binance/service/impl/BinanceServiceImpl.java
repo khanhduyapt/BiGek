@@ -4212,6 +4212,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String TICKET = trade.getTicket();
             String TRADE_TREND = trade.getType().toUpperCase();
+            String REVERSE_TRADE_TREND = TRADE_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_SHOT : Utils.TREND_LONG;
             BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
 
             if (TRADE_TREND.contains("LIMIT")) {
@@ -4303,6 +4304,11 @@ public class BinanceServiceImpl implements BinanceService {
             }
             if (is_reverse_d1 && !Objects.equals(dto_w1.getTrend_line(), TRADE_TREND)
                     && !Objects.equals(dto_w1.getTrend_heiken(), TRADE_TREND)) {
+                is_reverse = true;
+                is_clean_up_trades = true;
+            }
+            if (dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)
+                    && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)) {
                 is_reverse = true;
                 is_clean_up_trades = true;
             }
