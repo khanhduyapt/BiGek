@@ -1478,6 +1478,16 @@ public class Utils {
         return false;
     }
 
+    public static boolean is_loss_time() {
+        List<Integer> times = Arrays.asList(13, 17);
+        Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
+        if (times.contains(hh)) {
+            return true;
+        }
+
+        return false;
+    }
+
     public static boolean is_vn_working_time() {
         List<Integer> times = Arrays.asList(8, 9, 10, 11, 12, 13, 14, 15, 16, 17);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));

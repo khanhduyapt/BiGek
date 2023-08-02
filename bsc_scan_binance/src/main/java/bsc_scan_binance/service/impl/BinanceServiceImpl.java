@@ -3968,6 +3968,10 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public int controlMt5(List<String> CAPITAL_LIST) {
+        if (Utils.is_loss_time()) {
+            return 0;
+        }
+
         if (required_update_bars_csv) {
             return 0;
         }
@@ -4112,9 +4116,11 @@ public class BinanceServiceImpl implements BinanceService {
                 // String text_risk_010 = "(0.1 %:" + Utils.RISK_0_10_PERCENT.intValue() + "$)" + eoz;
 
                 Mt5OpenTrade trade_h4 = null;
+
                 if (is_eq_w_d_h12) {
                     // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
-                    if (is_eq_d_h4_h1 && is_eq_h1_15_05 && is_trade_zone && m15_allow_trade) {
+                    if (is_eq_d_h4_h1 && is_eq_h1_15_05 && dto_12.isTradable_zone() && dto_h4.isTradable_zone()
+                            && dto_h1.isTradable_zone()) {
                         String key = EPIC + Utils.CAPITAL_TIME_H4;
                         String append = "962412_401155." + Utils.TEXT_PASS;
 
@@ -4152,7 +4158,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (Objects.isNull(trade_h4) && d1_allow_trade) {
                         String key = EPIC + Utils.CAPITAL_TIME_H4;
-                        String append = "heiken__24w4115." + Utils.TEXT_PASS;
+                        String append = "heiken_24w4115." + Utils.TEXT_PASS;
 
                         trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, trend_d1, dto_15, dto_h4,
                                 append, true, Utils.CAPITAL_TIME_H4);
