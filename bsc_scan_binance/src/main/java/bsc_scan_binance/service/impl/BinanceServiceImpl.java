@@ -4073,7 +4073,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean is_h1_allow_trade = false;
             if ((dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)
-                    || dto_h1.isTradable_zone())) {
+                    && dto_h1.isTradable_zone())) {
                 is_h1_allow_trade = true;
             }
 
@@ -4109,7 +4109,7 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
             }
             // ---------------------------------------------------------------------------------------------
-            if (is_eq_d_h4_h1 || is_opening) {
+            if ((is_eq_w_d_h12 && is_eq_d_h4_h1) || is_opening) {
                 count += 1;
 
                 String prefix = Utils.getPrefix_FollowTrackingTrend(EPIC, count, "", trend_w1, trend_d1, trend_12,
@@ -4210,7 +4210,8 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_reverse_h4 = false; // Đóng khi H4 đảo chiều theo Ma10 & giữ lệnh 12h
             if (Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)
-                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H)) {
+                    && (allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H)
+                            || (PROFIT.compareTo(Utils.RISK_0_02_PERCENT) > 0))) {
                 is_reverse_h4 = true;
             }
             // ---------------------------------------------------------------------------------
