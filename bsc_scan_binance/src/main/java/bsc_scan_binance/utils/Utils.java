@@ -3989,19 +3989,22 @@ public class Utils {
     public static String getTypeOfEpic(String EPIC) {
         String type = "";
         if (Utils.EPICS_CASH_CFD.contains(EPIC)) {
-            type = "Dx";
+            type = "iDx";
         }
         if (Utils.EPICS_METALS.contains(EPIC)) {
-            type = "Au";
+            type = "xAu";
         }
         if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
-            type = "Cr";
+            type = "Btc";
         }
-        if (Utils.EPICS_STOCKS.contains(EPIC)) {
-            type = "Eq";
+        if (Utils.EPICS_STOCKS_USA.contains(EPIC)) {
+            type = "USA";
+        }
+        if (Utils.EPICS_STOCKS_EUR.contains(EPIC)) {
+            type = "EUR";
         }
         if (Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
-            type = "Fx";
+            type = "fOx";
         }
         type = appendSpace(type, 5);
 
