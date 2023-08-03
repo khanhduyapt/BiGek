@@ -3403,11 +3403,6 @@ public class Utils {
         BigDecimal ma1_0 = calcMA(heiken_list, 1, 0);
         BigDecimal ma1_2 = calcMA(heiken_list, 1, 1);
 
-        BigDecimal ma6_0 = calcMA(heiken_list, 6, 0);
-        BigDecimal ma6_2 = calcMA(heiken_list, 6, 2);
-        temp_long += Utils.checkXCutUpY(ma1_0, ma1_2, ma6_0, ma6_2) + "_";
-        temp_shot += Utils.checkXCutDnY(ma1_0, ma1_2, ma6_0, ma6_2) + "_";
-
         BigDecimal ma8_0 = calcMA(heiken_list, 8, 0);
         BigDecimal ma8_2 = calcMA(heiken_list, 8, 2);
         temp_long += Utils.checkXCutUpY(ma1_0, ma1_2, ma8_0, ma8_2) + "_";
