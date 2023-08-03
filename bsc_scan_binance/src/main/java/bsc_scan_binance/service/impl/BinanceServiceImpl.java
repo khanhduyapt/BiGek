@@ -2899,9 +2899,9 @@ public class BinanceServiceImpl implements BinanceService {
                                 sb.append('\t');
                                 sb.append(dto.getStop_loss());
                                 sb.append('\t');
-                                sb.append(BigDecimal.ZERO); // sb.append(dto.getTake_profit());
+                                sb.append(dto.getTake_profit());
                                 sb.append('\t');
-                                sb.append(dto.getComment()); // sb.append(Utils.TEXT_EQ_WDH12);
+                                sb.append(dto.getComment());
                                 sb.append('\n');
 
                                 writer.write(sb.toString());
@@ -3660,7 +3660,7 @@ public class BinanceServiceImpl implements BinanceService {
             eoz += "  ";
 
             boolean is_trade_zone = false;
-            if (dto_mo.isTradable_zone() && dto_w1.isTradable_zone()) {
+            if (dto_w1.isTradable_zone()) {
                 is_trade_zone = true;
             }
 
@@ -4089,7 +4089,6 @@ public class BinanceServiceImpl implements BinanceService {
                     || (Utils.EPICS_CRYPTO_CFD.contains(EPIC) && Objects.equals(trend_w1, trend_d1)
                             && Objects.equals(trend_d1, Utils.TREND_LONG)
                             && Objects.equals(trend_btc, Utils.TREND_LONG)))) {
-                // String text_risk_010 = "(0.1 %:" + Utils.RISK_0_10_PERCENT.intValue() + "$)" + eoz;
 
                 if (is_eq_w_d_h12 && is_eq_d_h4_h1 && is_eq_h1_15_05 && is_trade_zone
                         && (dto_05.isAllow_trade_by_ma50() || is_h1_allow_trade)) {
@@ -4208,7 +4207,7 @@ public class BinanceServiceImpl implements BinanceService {
                 is_hit_sl = true;
             }
             // ---------------------------------------------------------------------------------
-            boolean is_reverse_h4 = false; // H4 đảo chiều theo Ma10 là té
+            boolean is_reverse_h4 = false; // Đóng khi H4 đảo chiều theo Ma10 & giữ lệnh 12h
             if (Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)
                     && allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H)) {
