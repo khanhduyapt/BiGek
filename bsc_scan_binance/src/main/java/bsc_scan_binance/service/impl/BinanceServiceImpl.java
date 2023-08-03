@@ -4119,10 +4119,9 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                 }
 
-                if (Objects.isNull(trade_h4) && is_eq_d_h4_h1 && is_eq_h1_15_05 && is_trade_zone
-                        && dto_05.isAllow_trade_by_ma50() && is_h4_allow_trade) {
+                if (Objects.isNull(trade_h4) && is_eq_d_h4_h1 && is_eq_h1_15_05 && is_trade_zone && is_h4_allow_trade) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
-                    String append = "24_45." + Utils.TEXT_PASS;
+                    String append = "24_4." + Utils.TEXT_PASS;
 
                     trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, trend_d1, dto_15,
                             dto_d1, append, true, Utils.CAPITAL_TIME_H4);
@@ -4249,7 +4248,8 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_reverse = false; // Đóng khi H4 đảo chiều theo Ma10 & giữ lệnh 12h
             if (Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)
-                    && (allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H)
+                    && (allow_close_trade_after(TICKET, Utils.MINUTES_OF_2D)
+                            || Utils.isCloseTradeThisWeek()
                             || (PROFIT.compareTo(Utils.RISK_0_02_PERCENT) > 0))) {
                 is_reverse = true;
             }
