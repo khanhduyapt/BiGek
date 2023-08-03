@@ -3669,12 +3669,12 @@ public class BinanceServiceImpl implements BinanceService {
             }
             eoz += "     ";
 
-            boolean is_eq_w_d_h4_h1 = false;
+            boolean is_eq_mo_w_d_h4_h1 = false;
             if (Objects.equals(trend_mo, trend_d1)
                     && Objects.equals(trend_w1, trend_d1)
                     && Objects.equals(trend_d1, trend_h4)
                     && Objects.equals(trend_h4, trend_h1)) {
-                is_eq_w_d_h4_h1 = true;
+                is_eq_mo_w_d_h4_h1 = true;
             }
 
             // TODO: scapStocks
@@ -3684,25 +3684,26 @@ public class BinanceServiceImpl implements BinanceService {
                 analysis_profit(prefix, EPIC, eoz, trend_w1);
 
             } else if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)) {
+
                 index += 1;
                 analysis_profit(prefix, EPIC, eoz, trend_w1);
 
-                // -------------------------------------------------------
+                if ((Utils.EPICS_STOCKS_EUR.contains(EPIC) && Utils.is_london_session())
+                        || (Utils.EPICS_STOCKS_USA.contains(EPIC) && Utils.is_newyork_session())) {
 
-                if (((Utils.EPICS_STOCKS_EUR.contains(EPIC) && Utils.is_london_session())
-                        || (Utils.EPICS_STOCKS_USA.contains(EPIC) && Utils.is_newyork_session()))
+                    if (is_eq_mo_w_d_h4_h1 && is_trade_zone && dto_h4.isAllow_trade_by_ma50()
+                            && dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
+                        String key = EPIC + Utils.CAPITAL_TIME_H4;
+                        String append = "96.4." + Utils.TEXT_PASS;
 
-                        && is_eq_w_d_h4_h1 && is_trade_zone
-                        && dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
-                    String key = EPIC + Utils.CAPITAL_TIME_H4;
-                    String append = "96.4." + Utils.TEXT_PASS;
+                        Mt5OpenTrade trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, trend_d1, dto_h1,
+                                dto_h1, append, true, Utils.CAPITAL_TIME_H4);
 
-                    Mt5OpenTrade trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, trend_d1, dto_h1,
-                            dto_h1, append, true, Utils.CAPITAL_TIME_H4);
-
-                    BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
-                    BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
+                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
+                        BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
+                    }
                 }
+                // -------------------------------------------------------
 
                 // -------------------------------------------------------
                 BscScanBinanceApplication.dic_comment.put(EPIC.toUpperCase(),
@@ -4241,7 +4242,8 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_05.getTrend_line(), REVERSE_TRADE_TREND)) {
                 has_profit = true;
             }
-            if ((PROFIT.compareTo(Utils.RISK_0_15_PERCENT) > 0) // 300$
+
+            if ((PROFIT.compareTo(Utils.RISK_0_02_PERCENT) > 0) // 50$
                     && Objects.equals(dto_w1.getTrend_line(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_d1.getTrend_line(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_12.getTrend_line(), REVERSE_TRADE_TREND)
@@ -4260,7 +4262,6 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_reverse = false; // Đóng khi H4 đảo chiều theo Ma10
             if (Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)
-                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H)
                     && (PROFIT.compareTo(Utils.RISK_0_02_PERCENT) > 0)) {
                 is_reverse = true;
             }
