@@ -291,6 +291,13 @@ public class Utils {
             "GOOG", "LVMH", "META", "MSFT", "NFLX", "NVDA", "PFE", "RACE", "TSLA", "VOWG_p", "WMT", "BABA", "T", "V",
             "ZM");
 
+    public static final List<String> EPICS_STOCKS_EUR = Arrays.asList("AIRF", "LVMH", "ALVG", "BAYGn", "VOWG_p",
+            "DBKGn", "IBE");
+
+    public static final List<String> EPICS_STOCKS_USA = Arrays.asList("AAPL", "AMZN", "BAC",
+            "GOOG", "META", "MSFT", "NFLX", "NVDA", "PFE", "RACE", "TSLA", "WMT", "BABA", "T", "V",
+            "ZM");
+
     // ALL Binance.com
     public static final List<String> COINS = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ARB", "ADA", "ADX", "AERGO",
             "AGIX", "AGLD", "AKRO", "ALCX", "ALGO", "ALICE", "ALPACA", "ALPHA", "ALPINE", "AMB", "AMP", "ANKR", "ANT",
@@ -1464,8 +1471,8 @@ public class Utils {
         return false;
     }
 
-    public static boolean allow_open_trade_at_london_and_newyork_session() {
-        List<Integer> times = Arrays.asList(15, 16, 17, 18, 19, 20, 21, 22, 23);
+    public static boolean is_london_session() {
+        List<Integer> times = Arrays.asList(15, 16, 17, 18);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -1474,7 +1481,7 @@ public class Utils {
         return false;
     }
 
-    public static boolean allow_open_trade_at_newyork_session() {
+    public static boolean is_newyork_session() {
         List<Integer> times = Arrays.asList(21, 22, 23, 0, 1, 2);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (isWeekday() && times.contains(hh)) {
