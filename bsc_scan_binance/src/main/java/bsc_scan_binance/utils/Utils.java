@@ -2602,7 +2602,7 @@ public class Utils {
 
         BigDecimal multi = BigDecimal.valueOf(1);
         if (same_trend_w_d) {
-            multi = BigDecimal.valueOf(2);
+            multi = BigDecimal.valueOf(1);
         }
 
         BigDecimal sl_d1 = BigDecimal.ZERO;
@@ -4059,9 +4059,6 @@ public class Utils {
         }
 
         boolean same_trend_w_d = false;
-        if (!append.contains("00")) {
-            same_trend_w_d = true;
-        }
         List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_d1, trend, same_trend_w_d);
         BigDecimal sl_d1 = sl1_tp2.get(0);
         BigDecimal tp_d1 = sl1_tp2.get(1);
