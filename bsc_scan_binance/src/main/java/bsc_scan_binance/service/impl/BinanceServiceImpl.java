@@ -3662,8 +3662,11 @@ public class BinanceServiceImpl implements BinanceService {
                 is_trade_zone = false;
             }
             boolean is_eq_w_d_h4_h1 = false;
-            if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)
-                    && Objects.equals(trend_h4, trend_h1)) {
+            if (Objects.equals(trend_w1, trend_d1)
+                    && Objects.equals(trend_d1, trend_h4)
+                    && Objects.equals(dto_h4.getTrend_line(), dto_h4.getTrend_by_ma10())
+                    && Objects.equals(trend_h4, trend_h1)
+                    && Objects.equals(trend_h1, dto_h1.getTrend_by_ma10())) {
                 is_eq_w_d_h4_h1 = true;
             }
 
@@ -4199,7 +4202,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ---------------------------------------------------------------------------------
             boolean has_profit = false;
-            if ((PROFIT.compareTo(Utils.RISK_0_02_PERCENT) > 0)
+            if ((PROFIT.compareTo(Utils.RISK_0_02_PERCENT) > 0) // 50$
                     && Objects.equals(dto_h1.getTrend_by_ma10(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_line(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_line(), REVERSE_TRADE_TREND)
@@ -4212,9 +4215,10 @@ public class BinanceServiceImpl implements BinanceService {
                 is_hit_sl = true;
             }
             // ---------------------------------------------------------------------------------
-            boolean is_reverse_h4 = false;
+            boolean is_reverse_h4 = false; // H4 đảo chiều theo Ma10 là té
             if (Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)) {
+                    && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)
+                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H)) {
                 is_reverse_h4 = true;
             }
             // ---------------------------------------------------------------------------------

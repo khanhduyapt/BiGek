@@ -68,7 +68,7 @@ public class Utils {
     // Nếu cảm thấy lo lắng về mức rủi ro 0,20% hoặc 0,25%, thì chỉnh về mức 0,10
     // đến 0,15%
 
-    // (50$ / 1 Tp)
+    // (50$)
     public static final BigDecimal RISK_0_02_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.00025));
 
     // (100$ / 1 Tp)
