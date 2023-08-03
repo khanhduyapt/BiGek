@@ -4131,6 +4131,18 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                 }
 
+                if (Objects.isNull(trade_h4) && is_eq_w_d && is_eq_d_h12_h4_h1 && is_eq_h1_15_05 && is_trade_zone
+                        && dto_d1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs6810)) {
+                    String key = EPIC + Utils.CAPITAL_TIME_D1;
+                    String append = "96_24." + Utils.TEXT_PASS;
+
+                    trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, trend_d1, dto_05,
+                            dto_d1, append, is_trade_now, Utils.CAPITAL_TIME_D1);
+
+                    BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
+                    BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
+                }
+
                 if (Objects.isNull(trade_h4) && !is_eq_w_d && is_eq_d_h12_h4_h1 && is_eq_h1_15_05 && is_trade_zone
                         && is_h4_allow_trade) {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
@@ -4142,6 +4154,7 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
                     BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
                 }
+
             }
 
             // ---------------------------------------------------------------------------------------------
