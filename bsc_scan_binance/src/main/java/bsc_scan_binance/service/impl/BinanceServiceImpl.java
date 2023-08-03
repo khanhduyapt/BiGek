@@ -4245,12 +4245,10 @@ public class BinanceServiceImpl implements BinanceService {
                 is_hit_sl = true;
             }
             // ---------------------------------------------------------------------------------
-            boolean is_reverse = false; // Đóng khi H4 đảo chiều theo Ma10 & giữ lệnh 12h
+            boolean is_reverse = false; // Đóng khi H4 đảo chiều theo Ma10
             if (Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)
-                    && (allow_close_trade_after(TICKET, Utils.MINUTES_OF_2D)
-                            || Utils.isCloseTradeThisWeek()
-                            || (PROFIT.compareTo(Utils.RISK_0_02_PERCENT) > 0))) {
+                    && (PROFIT.compareTo(Utils.RISK_0_02_PERCENT) > 0)) {
                 is_reverse = true;
             }
             // ---------------------------------------------------------------------------------
