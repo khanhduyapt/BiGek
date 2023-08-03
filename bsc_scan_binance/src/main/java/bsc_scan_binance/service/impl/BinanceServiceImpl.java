@@ -4222,14 +4222,14 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ---------------------------------------------------------------------------------
             boolean has_profit = false;
-            if ((PROFIT.compareTo(Utils.RISK_0_02_PERCENT) > 0) // 50$
+            if ((PROFIT.compareTo(Utils.RISK_0_15_PERCENT) > 0) // 300$
                     && Objects.equals(dto_h1.getTrend_by_ma10(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_line(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_line(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_05.getTrend_line(), REVERSE_TRADE_TREND)) {
                 has_profit = true;
             }
-            if ((PROFIT.compareTo(Utils.RISK_0_02_PERCENT) > 0) // 50$
+            if ((PROFIT.compareTo(Utils.RISK_0_15_PERCENT) > 0) // 300$
                     && Objects.equals(dto_w1.getTrend_line(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_d1.getTrend_line(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_12.getTrend_line(), REVERSE_TRADE_TREND)
@@ -4248,6 +4248,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_reverse = false; // Đóng khi H4 đảo chiều theo Ma10
             if (Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)
+                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_2D)
                     && (PROFIT.compareTo(Utils.RISK_0_02_PERCENT) > 0)) {
                 is_reverse = true;
             }

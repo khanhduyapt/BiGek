@@ -2600,10 +2600,7 @@ public class Utils {
             return result;
         }
 
-        BigDecimal multi = BigDecimal.valueOf(1);
-        if (same_trend_w_d) {
-            multi = BigDecimal.valueOf(1);
-        }
+        BigDecimal multi = BigDecimal.valueOf(1.5);
 
         BigDecimal sl_d1 = BigDecimal.ZERO;
         BigDecimal tp_d1 = BigDecimal.ZERO;
