@@ -4060,7 +4060,6 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_eq_d_h4_h1 = false;
             if (Objects.equals(trend_d1, trend_12)
                     && Objects.equals(trend_d1, trend_h4)
-                    && Objects.equals(dto_h4.getTrend_line(), dto_h4.getTrend_by_ma10())
                     && Objects.equals(trend_h4, trend_h1)
                     && Objects.equals(dto_h1.getTrend_line(), dto_h1.getTrend_by_ma10())) {
                 is_eq_d_h4_h1 = true;
@@ -4207,23 +4206,23 @@ public class BinanceServiceImpl implements BinanceService {
                 is_hit_sl = true;
             }
             // ---------------------------------------------------------------------------------
-            boolean is_reverse_h4 = false; // Đóng khi H4 đảo chiều theo Ma10 & giữ lệnh 12h
+            boolean is_reverse = false; // Đóng khi H4 đảo chiều theo Ma10 & giữ lệnh 12h
             if (Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)
                     && (allow_close_trade_after(TICKET, Utils.MINUTES_OF_12H)
                             || (PROFIT.compareTo(Utils.RISK_0_02_PERCENT) > 0))) {
-                is_reverse_h4 = true;
+                is_reverse = true;
             }
             // ---------------------------------------------------------------------------------
             // TODO: 5. closeTrade_by_SL_TP
             if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
-                if (has_profit || is_hit_sl || is_reverse_h4) {
+                if (has_profit || is_hit_sl || is_reverse) {
                     String reason = "";
                     if (has_profit) {
                         reason = "4hprofit";
                     } else if (is_hit_sl) {
                         reason = "sl1r";
-                    } else if (is_reverse_h4) {
+                    } else if (is_reverse) {
                         reason = "reverse";
                     }
 
