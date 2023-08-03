@@ -4162,7 +4162,7 @@ public class Utils {
         // }
         String No = Utils.appendLeft(String.valueOf(index), 2, "0") + ". ";
         // --------------------------------------------
-        String prefix_trend = "[MO-W1-D1-12-H4-H1]";
+        String prefix_trend = "[MO-W1-D1-H4-H1]";
         if (!EPICS_STOCKS.contains(EPIC)) {
             prefix_trend = "[W1-D1-H12-H4]      ";
         }

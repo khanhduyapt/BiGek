@@ -3970,7 +3970,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public int controlMt5(List<String> CAPITAL_LIST) {
-        if (Utils.is_loss_time() || Utils.isNewsAt_19_20_21h()) {
+        if (Utils.isNewsAt_19_20_21h()) {
             return 0;
         }
 
