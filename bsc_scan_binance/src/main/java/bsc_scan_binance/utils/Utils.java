@@ -132,7 +132,7 @@ public class Utils {
 
     public static final String TEXT_SWITCH_TREND_Ma_3_2_1 = "Ma3.2.1";
     public static final String TEXT_SWITCH_TREND_Ma_1vs3456 = "(Ma13456)";
-    public static final String TEXT_SWITCH_TREND_Ma_1vs6810 = "(Ma16810)";
+    public static final String TEXT_SWITCH_TREND_Ma_1vs1015 = "(Ma11015)";
     public static final String TEXT_SWITCH_TREND_Ma_1_10 = "(Ma1.10)";
     public static final String TEXT_SWITCH_TREND_Ma_1_50 = "(Ma1.50)";
     public static final String TEXT_SWITCH_TREND_50 = "(~50~)";
@@ -266,7 +266,7 @@ public class Utils {
     public static final List<String> EPICS_CASH_CFD = Arrays.asList("AUS200", "EU50", "FRA40", "GER40", "SPN35",
             "UK100", "US100", "US30", "ERBN", "BTCUSD");
 
-    public static final List<String> EPICS_M15 = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD",
+    public static final List<String> EPICS_MAIN_FX = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD",
             "USDCAD", "NZDUSD", "US100", "US30", "XAUUSD", "USOIL");
 
     public static final List<String> EPICS_FOREXS_ALL = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
@@ -3438,7 +3438,7 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrendByMa1_6810(List<BtcFutures> heiken_list) {
+    public static String switchTrendByMa1vs1015(List<BtcFutures> heiken_list) {
         String trend = "_";
 
         BigDecimal ma1_0 = calcMA(heiken_list, 1, 0);
@@ -3475,7 +3475,7 @@ public class Utils {
                 trend = Utils.TREND_SHOT;
             }
             String chart_name = getChartName(heiken_list).trim();
-            String switch_trend = chart_name + TEXT_SWITCH_TREND_Ma_1vs6810 + ":" + Utils.appendSpace(trend, 4);
+            String switch_trend = chart_name + TEXT_SWITCH_TREND_Ma_1vs1015 + ":" + Utils.appendSpace(trend, 4);
 
             return switch_trend;
         }
