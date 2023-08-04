@@ -2819,7 +2819,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (CollectionUtils.isEmpty(BscScanBinanceApplication.mt5_open_trade_List)) {
             return;
         }
-        if (Utils.isSleepTime_23h_to_8h()) {
+        if (!Utils.isOpenTradeTime_6h_to_1h()) {
             return;
         }
 
@@ -2870,42 +2870,40 @@ public class BinanceServiceImpl implements BinanceService {
                     String msg = Utils.createOpenTradeMsg(dto, prefix);
                     Utils.logWritelnDraft(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
 
-                    if (!Utils.isSleepTime_23h_to_8h()) {
-                        String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type()
-                                + Utils.getCurrentYyyyMmDd_Blog4h()
-                                + Utils.getDeEncryptedChartNameCapital(dto.getComment());
+                    String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type()
+                            + Utils.getCurrentYyyyMmDd_Blog4h()
+                            + Utils.getDeEncryptedChartNameCapital(dto.getComment());
 
-                        msg_dict.put(EVENT_ID, msg);
+                    msg_dict.put(EVENT_ID, msg);
 
-                        if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
-                            continue;
-                        }
+                    if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
+                        continue;
+                    }
 
-                        if ((trade_count < MAX_TRADE) && dto.getComment().contains(Utils.TEXT_PASS)) {
-                            trade_count += 1;
-                            if (Utils.isPcCongTy()) {
-                                StringBuilder sb = new StringBuilder();
-                                sb.append(dto.getEpic());
-                                sb.append('\t');
-                                sb.append(dto.getOrder_type());
-                                sb.append('\t');
-                                if (EPIC.contains("ERBN")) {
-                                    sb.append(1);
-                                } else {
-                                    sb.append(dto.getLots());
-                                }
-                                sb.append('\t');
-                                sb.append(dto.getEntry());
-                                sb.append('\t');
-                                sb.append(dto.getStop_loss());
-                                sb.append('\t');
-                                sb.append(dto.getTake_profit());
-                                sb.append('\t');
-                                sb.append(dto.getComment());
-                                sb.append('\n');
-
-                                writer.write(sb.toString());
+                    if ((trade_count < MAX_TRADE) && dto.getComment().contains(Utils.TEXT_PASS)) {
+                        trade_count += 1;
+                        if (Utils.isPcCongTy()) {
+                            StringBuilder sb = new StringBuilder();
+                            sb.append(dto.getEpic());
+                            sb.append('\t');
+                            sb.append(dto.getOrder_type());
+                            sb.append('\t');
+                            if (EPIC.contains("ERBN")) {
+                                sb.append(1);
+                            } else {
+                                sb.append(dto.getLots());
                             }
+                            sb.append('\t');
+                            sb.append(dto.getEntry());
+                            sb.append('\t');
+                            sb.append(dto.getStop_loss());
+                            sb.append('\t');
+                            sb.append(dto.getTake_profit());
+                            sb.append('\t');
+                            sb.append(dto.getComment());
+                            sb.append('\n');
+
+                            writer.write(sb.toString());
                         }
                     }
                 }
@@ -3016,7 +3014,7 @@ public class BinanceServiceImpl implements BinanceService {
         if (!BTC_ETH_BNB.contains(SYMBOL)) {
             return Utils.CRYPTO_TIME_H1;
         }
-        if (Utils.isSleepTime_23h_to_8h()) {
+        if (!Utils.isOpenTradeTime_6h_to_1h()) {
             return Utils.CRYPTO_TIME_H1;
         }
 
@@ -3930,7 +3928,7 @@ public class BinanceServiceImpl implements BinanceService {
         switch_trend += Utils.switchTrendByMa1_6810(heiken_list);
 
         if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)) {
-            switch_trend = Utils.switchTrendByMa1_6810(heiken_list);
+            switch_trend = Utils.switchTrendByMa1vs3456(heiken_list);
         }
 
         boolean allow_trade_by_ma50 = false;
@@ -3987,16 +3985,7 @@ public class BinanceServiceImpl implements BinanceService {
             return 0;
         }
 
-        List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAll();
-        BigDecimal TOTAL_PROFIT = BigDecimal.ZERO;
-        for (Mt5OpenTradeEntity trade : mt5Openlist) {
-            BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
-            TOTAL_PROFIT = TOTAL_PROFIT.add(PROFIT);
-        }
-        boolean is_trade_now = false;
-        if ((TOTAL_PROFIT.compareTo(BigDecimal.ZERO) > 0) && (mt5Openlist.size() < 15)) {
-            is_trade_now = true;
-        }
+        boolean is_trade_now = true;
 
         int count = 0;
         for (String EPIC : CAPITAL_LIST) {
@@ -4118,29 +4107,46 @@ public class BinanceServiceImpl implements BinanceService {
                             && Objects.equals(trend_d1, Utils.TREND_LONG)
                             && Objects.equals(trend_btc, Utils.TREND_LONG)))) {
 
-                Mt5OpenTrade trade_h4 = null;
-                if (is_eq_w_d && is_eq_d_h12_h4_h1 && is_eq_h1_15_05 && is_trade_zone
-                        && (dto_05.isAllow_trade_by_ma50() || dto_15.isAllow_trade_by_ma50() || is_h1_allow_trade)) {
-                    String key = EPIC + Utils.CAPITAL_TIME_H4;
-                    String append = "96_1." + Utils.TEXT_PASS;
+                Mt5OpenTrade trade_dto = null;
 
-                    trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, trend_d1, dto_05,
-                            dto_d1, append, is_trade_now, Utils.CAPITAL_TIME_H4);
+                if (is_eq_w_d && is_eq_d_h12_h4_h1 && is_eq_h1_15_05 && is_trade_zone) {
+                    if (dto_d1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs3456)) {
+                        String key = EPIC + Utils.CAPITAL_TIME_D1;
+                        String append = "96_24." + Utils.TEXT_PASS;
 
-                    BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
-                    BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
+                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, trend_d1, dto_05,
+                                dto_d1, append, is_trade_now, Utils.CAPITAL_TIME_D1);
+
+                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
+                        BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
+                    }
                 }
 
-                if (Objects.isNull(trade_h4) && !is_eq_w_d && is_eq_d_h12_h4_h1 && is_eq_h1_15_05 && is_trade_zone
-                        && is_h4_allow_trade) {
-                    String key = EPIC + Utils.CAPITAL_TIME_H4;
-                    String append = "24_4." + Utils.TEXT_PASS;
+                if (Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
+                    if (Objects.isNull(trade_dto) && is_eq_w_d && is_eq_d_h12_h4_h1 && is_eq_h1_15_05 && is_trade_zone
+                            && (dto_05.isAllow_trade_by_ma50() || dto_15.isAllow_trade_by_ma50()
+                                    || is_h1_allow_trade)) {
+                        String key = EPIC + Utils.CAPITAL_TIME_H4;
+                        String append = "96_1." + Utils.TEXT_PASS;
 
-                    trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, trend_d1, dto_05,
-                            dto_d1, append, is_trade_now, Utils.CAPITAL_TIME_H4);
+                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, trend_d1, dto_05,
+                                dto_d1, append, is_trade_now, Utils.CAPITAL_TIME_H4);
 
-                    BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
-                    BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
+                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
+                        BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
+                    }
+
+                    if (Objects.isNull(trade_dto) && !is_eq_w_d && is_eq_d_h12_h4_h1
+                            && is_eq_h1_15_05 && is_trade_zone && is_h4_allow_trade) {
+                        String key = EPIC + Utils.CAPITAL_TIME_H4;
+                        String append = "24_4." + Utils.TEXT_PASS;
+
+                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_05,
+                                dto_d1, append, is_trade_now, Utils.CAPITAL_TIME_H4);
+
+                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
+                        BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
+                    }
                 }
 
             }

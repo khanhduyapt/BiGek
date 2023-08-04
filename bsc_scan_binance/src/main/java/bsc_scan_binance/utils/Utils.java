@@ -131,6 +131,7 @@ public class Utils {
     public static final String NOCATION_CUTTING_MA50 = "CuttingMa50";
 
     public static final String TEXT_SWITCH_TREND_Ma_3_2_1 = "Ma3.2.1";
+    public static final String TEXT_SWITCH_TREND_Ma_1vs3456 = "(Ma13456)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs6810 = "(Ma16810)";
     public static final String TEXT_SWITCH_TREND_Ma_1_10 = "(Ma1.10)";
     public static final String TEXT_SWITCH_TREND_Ma_1_50 = "(Ma1.50)";
@@ -263,7 +264,7 @@ public class Utils {
             "LTCUSD", "XRPUSD");
 
     public static final List<String> EPICS_CASH_CFD = Arrays.asList("AUS200", "EU50", "FRA40", "GER40", "SPN35",
-            "UK100", "US100", "US30", "ERBN");
+            "UK100", "US100", "US30", "ERBN", "BTCUSD");
 
     public static final List<String> EPICS_M15 = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD",
             "USDCAD", "NZDUSD", "US100", "US30", "XAUUSD", "USOIL");
@@ -1545,14 +1546,14 @@ public class Utils {
         return false;
     }
 
-    public static boolean isSleepTime_23h_to_8h() {
-        List<Integer> times = Arrays.asList(8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
+    public static boolean isOpenTradeTime_6h_to_1h() {
+        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     public static String getChatId(String userName) {
@@ -3396,27 +3397,67 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrendByMa1_6810(List<BtcFutures> heiken_list) {
-        String temp_long = "";
-        String temp_shot = "";
+    public static String switchTrendByMa1vs3456(List<BtcFutures> heiken_list) {
+        String trend = "_";
 
         BigDecimal ma1_0 = calcMA(heiken_list, 1, 0);
         BigDecimal ma1_2 = calcMA(heiken_list, 1, 1);
 
-        BigDecimal ma8_0 = calcMA(heiken_list, 8, 0);
-        BigDecimal ma8_2 = calcMA(heiken_list, 8, 2);
-        temp_long += Utils.checkXCutUpY(ma1_0, ma1_2, ma8_0, ma8_2) + "_";
-        temp_shot += Utils.checkXCutDnY(ma1_0, ma1_2, ma8_0, ma8_2) + "_";
+        for (int ma_index = 3; ma_index <= 6; ma_index++) {
+            BigDecimal maX_0 = calcMA(heiken_list, ma_index, 0);
+            BigDecimal maX_2 = calcMA(heiken_list, ma_index, 2);
 
-        BigDecimal ma10_0 = calcMA(heiken_list, 10, 0);
-        BigDecimal ma10_2 = calcMA(heiken_list, 10, 2);
-        temp_long += Utils.checkXCutUpY(ma1_0, ma1_2, ma10_0, ma10_2) + "_";
-        temp_shot += Utils.checkXCutDnY(ma1_0, ma1_2, ma10_0, ma10_2) + "_";
+            String cutUp = Utils.checkXCutUpY(ma1_0, ma1_2, maX_0, maX_2);
+            String cutDw = Utils.checkXCutDnY(ma1_0, ma1_2, maX_0, maX_2);
 
-        String trend = "";
-        trend += "_" + temp_long + "_";
-        trend += "_____";
-        trend += "_" + temp_shot + "_";
+            if (Utils.isNotBlank(cutUp)) {
+                trend += ma_index + ":" + cutUp + "_";
+            }
+            if (Utils.isNotBlank(cutDw)) {
+                trend += ma_index + ":" + cutDw + "_";
+            }
+        }
+
+        if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHOT)) {
+            return "";
+        }
+
+        if (trend.contains(Utils.TREND_LONG) || trend.contains(Utils.TREND_SHOT)) {
+            if (trend.contains(Utils.TREND_LONG)) {
+                trend = Utils.TREND_LONG;
+            }
+            if (trend.contains(Utils.TREND_SHOT)) {
+                trend = Utils.TREND_SHOT;
+            }
+            String chart_name = getChartName(heiken_list).trim();
+            String switch_trend = chart_name + TEXT_SWITCH_TREND_Ma_1vs3456 + ":" + Utils.appendSpace(trend, 4);
+
+            return switch_trend;
+        }
+
+        return "";
+    }
+
+    public static String switchTrendByMa1_6810(List<BtcFutures> heiken_list) {
+        String trend = "_";
+
+        BigDecimal ma1_0 = calcMA(heiken_list, 1, 0);
+        BigDecimal ma1_2 = calcMA(heiken_list, 1, 1);
+
+        for (int ma_index = 10; ma_index <= 15; ma_index++) {
+            BigDecimal maX_0 = calcMA(heiken_list, ma_index, 0);
+            BigDecimal maX_2 = calcMA(heiken_list, ma_index, 2);
+
+            String cutUp = Utils.checkXCutUpY(ma1_0, ma1_2, maX_0, maX_2);
+            String cutDw = Utils.checkXCutDnY(ma1_0, ma1_2, maX_0, maX_2);
+
+            if (Utils.isNotBlank(cutUp)) {
+                trend += ma_index + ":" + cutUp + "_";
+            }
+            if (Utils.isNotBlank(cutDw)) {
+                trend += ma_index + ":" + cutDw + "_";
+            }
+        }
 
         if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHOT)) {
             return "";
