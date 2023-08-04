@@ -2842,26 +2842,26 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                String REVERSE_TRADE_TREND = dto.getOrder_type().toUpperCase().contains(Utils.TREND_LONG)
-                        ? Utils.TREND_SHOT
-                        : dto.getOrder_type().toUpperCase().contains(Utils.TREND_SHOT) ? Utils.TREND_LONG
-                                : Utils.TREND_UNSURE;
-
-                List<Mt5OpenTradeEntity> opening_list = mt5OpenTradeRepository
-                        .findAllBySymbolAndTypeOrderBySymbolAsc(EPIC, REVERSE_TRADE_TREND);
-
-                for (Mt5OpenTradeEntity trade : opening_list) {
-                    String log = Utils.createCloseTradeMsg(trade, "MUST_CLOSE_TRADE: ", "reverse_trade_opening");
-                    Utils.logWritelnDraft(log);
-
-                    String EVENT_ID = "MUST_CLOSE_TRADE" + dto.getEpic() + dto.getOrder_type()
-                            + Utils.getCurrentYyyyMmDd_Blog4h()
-                            + Utils.getDeEncryptedChartNameCapital(dto.getComment());
-
-                    msg_dict.put(EVENT_ID, log);
-
-                    // TODO: BscScanBinanceApplication.mt5_close_ticket_dict.put(trade.getTicket(), "reverse_trade_opening");
-                }
+                //String REVERSE_TRADE_TREND = dto.getOrder_type().toUpperCase().contains(Utils.TREND_LONG)
+                //        ? Utils.TREND_SHOT
+                //        : dto.getOrder_type().toUpperCase().contains(Utils.TREND_SHOT) ? Utils.TREND_LONG
+                //                : Utils.TREND_UNSURE;
+                //
+                //List<Mt5OpenTradeEntity> opening_list = mt5OpenTradeRepository
+                //        .findAllBySymbolAndTypeOrderBySymbolAsc(EPIC, REVERSE_TRADE_TREND);
+                //
+                //for (Mt5OpenTradeEntity trade : opening_list) {
+                //    String log = Utils.createCloseTradeMsg(trade, "MUST_CLOSE_TRADE: ", "reverse_trade_opening");
+                //    Utils.logWritelnDraft(log);
+                //
+                //    String EVENT_ID = "MUST_CLOSE_TRADE" + dto.getEpic() + dto.getOrder_type()
+                //            + Utils.getCurrentYyyyMmDd_Blog4h()
+                //            + Utils.getDeEncryptedChartNameCapital(dto.getComment());
+                //
+                //    msg_dict.put(EVENT_ID, log);
+                //
+                //    // TODO: BscScanBinanceApplication.mt5_close_ticket_dict.put(trade.getTicket(), "reverse_trade_opening");
+                // }
 
                 if (!is_opening_trade(EPIC, dto.getOrder_type()) && !dto.getComment().contains("EOZ:H12H4")) {
                     // ----------------------------------------------------------------------------------
@@ -4103,7 +4103,7 @@ public class BinanceServiceImpl implements BinanceService {
                 eoz += "    ";
             }
 
-            if (dto_12.getSwitch_trend().contains(dto_12.getTrend_by_ma())) {
+            if (Objects.equals(trend_d1, trend_12) && dto_12.getSwitch_trend().contains(dto_12.getTrend_by_ma())) {
                 eoz += "  ~H12~  ";
             } else {
                 eoz += "         ";
@@ -4166,7 +4166,7 @@ public class BinanceServiceImpl implements BinanceService {
                             && dto_12.getSwitch_trend().contains(dto_12.getTrend_by_ma())) {
 
                         String key = EPIC + Utils.CAPITAL_TIME_H4;
-                        String append = "24_12.";// + Utils.TEXT_PASS;
+                        String append = "24_12." + Utils.TEXT_PASS;
 
                         trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1,
                                 dto_d1, append, true, Utils.CAPITAL_TIME_H4);
@@ -4291,6 +4291,11 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_05.getTrend_line(), REVERSE_TRADE_TREND)) {
                 has_profit = true;
             }
+            if ((PROFIT.compareTo(Utils.RISK_0_15_PERCENT) > 0)
+                    && Objects.equals(dto_12.getTrend_by_ma(), REVERSE_TRADE_TREND)) { // 300$
+                has_profit = true;
+            }
+
             // ---------------------------------------------------------------------------------
             boolean is_hit_sl = false;
             if (PROFIT.add(Utils.RISK_0_10_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
