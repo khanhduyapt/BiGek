@@ -4162,7 +4162,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
-                    if (Objects.isNull(trade_dto) && is_eq_d_h12_h4_h1 && is_eq_h1_15_05 && is_trade_zone
+                    if (Objects.isNull(trade_dto) && is_eq_w_d && is_eq_d_h12_h4_h1 && is_eq_h1_15_05 && is_trade_zone
                             && dto_12.getSwitch_trend().contains(dto_12.getTrend_by_ma())) {
 
                         String key = EPIC + Utils.CAPITAL_TIME_H4;
