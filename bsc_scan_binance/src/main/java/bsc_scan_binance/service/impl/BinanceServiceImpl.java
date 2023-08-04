@@ -4150,18 +4150,19 @@ public class BinanceServiceImpl implements BinanceService {
 
                 Mt5OpenTrade trade_dto = null;
 
-                if (is_eq_w_d && is_switch_trend && is_eq_d_h12_h4_h1 && is_eq_h1_15_05 && is_trade_zone) {
-                    String key = EPIC + Utils.CAPITAL_TIME_D1;
-                    String append = "96_24." + Utils.TEXT_PASS;
-
-                    trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1,
-                            dto_d1, append, true, Utils.CAPITAL_TIME_D1);
-
-                    BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
-                    BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
-                }
-
-                if (Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
+                //if (is_eq_w_d && is_switch_trend && is_eq_d_h12_h4_h1 && is_eq_h1_15_05 && is_trade_zone) {
+                //    String key = EPIC + Utils.CAPITAL_TIME_D1;
+                //    String append = "96_24." + Utils.TEXT_PASS;
+                //
+                //    trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1,
+                //            dto_d1, append, true, Utils.CAPITAL_TIME_D1);
+                //
+                //    BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
+                //    BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
+                //}
+                //
+                //if (Utils.EPICS_FOREXS_ALL.contains(EPIC))
+                {
                     if (Objects.isNull(trade_dto) && is_eq_w_d && is_eq_d_h12_h4_h1 && is_eq_h1_15_05 && is_trade_zone
                             && dto_12.getSwitch_trend().contains(dto_12.getTrend_by_ma())) {
 
