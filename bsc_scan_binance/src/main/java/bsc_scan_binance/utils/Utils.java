@@ -131,8 +131,9 @@ public class Utils {
     public static final String NOCATION_CUTTING_MA50 = "CuttingMa50";
 
     public static final String TEXT_SWITCH_TREND_Ma_3_2_1 = "Ma3.2.1";
-    public static final String TEXT_SWITCH_TREND_Ma_1vs3456 = "(Ma13456)";
-    public static final String TEXT_SWITCH_TREND_Ma_1vs1015 = "(Ma11015)";
+    public static final String TEXT_SWITCH_TREND_Ma_1vs3456 = "(Ma1.3456)";
+    public static final String TEXT_SWITCH_TREND_Ma_1vs8910 = "(Ma1.8910)";
+    public static final String TEXT_SWITCH_TREND_Ma_1vs1015 = "(Ma1.1015)";
     public static final String TEXT_SWITCH_TREND_Ma_1_10 = "(Ma1.10)";
     public static final String TEXT_SWITCH_TREND_Ma_1_50 = "(Ma1.50)";
     public static final String TEXT_SWITCH_TREND_50 = "(~50~)";
@@ -3476,6 +3477,51 @@ public class Utils {
             }
             String chart_name = getChartName(heiken_list).trim();
             String switch_trend = chart_name + TEXT_SWITCH_TREND_Ma_1vs1015 + ":" + Utils.appendSpace(trend, 4);
+
+            return switch_trend;
+        }
+
+        return "";
+    }
+
+    public static String switchTrendByMa1vs8910(List<BtcFutures> heiken_list) {
+        String trend = "_";
+
+        BigDecimal ma1_0 = calcMA(heiken_list, 1, 0);
+        BigDecimal ma1_2 = calcMA(heiken_list, 1, 1);
+
+        for (int ma_index = 8; ma_index <= 10; ma_index++) {
+            BigDecimal maX_0 = calcMA(heiken_list, ma_index, 0);
+            BigDecimal maX_2 = calcMA(heiken_list, ma_index, 2);
+
+            String cutUp = Utils.checkXCutUpY(ma1_0, ma1_2, maX_0, maX_2);
+            String cutDw = Utils.checkXCutDnY(ma1_0, ma1_2, maX_0, maX_2);
+
+            if (Utils.isNotBlank(cutUp)) {
+                trend += ma_index + ":" + cutUp + "_";
+            }
+            if (Utils.isNotBlank(cutDw)) {
+                trend += ma_index + ":" + cutDw + "_";
+            }
+        }
+
+        if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHOT)) {
+            return "";
+        }
+
+        if (isBlank(trend.replace("_", ""))) {
+            return "";
+        }
+
+        if (trend.contains(Utils.TREND_LONG) || trend.contains(Utils.TREND_SHOT)) {
+            if (trend.contains(Utils.TREND_LONG)) {
+                trend = Utils.TREND_LONG;
+            }
+            if (trend.contains(Utils.TREND_SHOT)) {
+                trend = Utils.TREND_SHOT;
+            }
+            String chart_name = getChartName(heiken_list).trim();
+            String switch_trend = chart_name + TEXT_SWITCH_TREND_Ma_1vs8910 + ":" + Utils.appendSpace(trend, 4);
 
             return switch_trend;
         }
