@@ -4114,7 +4114,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String key = EPIC + Utils.CAPITAL_TIME_D1;
                         String append = "96_24." + Utils.TEXT_PASS;
 
-                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, trend_d1, dto_05,
+                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_05,
                                 dto_d1, append, is_trade_now, Utils.CAPITAL_TIME_D1);
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
@@ -4129,7 +4129,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String key = EPIC + Utils.CAPITAL_TIME_H4;
                         String append = "96_1." + Utils.TEXT_PASS;
 
-                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_15_PERCENT, EPIC, trend_d1, dto_05,
+                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_05,
                                 dto_d1, append, is_trade_now, Utils.CAPITAL_TIME_H4);
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
