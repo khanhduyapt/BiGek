@@ -2903,6 +2903,25 @@ public class Utils {
         return Utils.TREND_LONG + "_" + Utils.TREND_SHOT;
     }
 
+    public static String getZoneH12(List<BtcFutures> heiken_list) {
+        List<BigDecimal> LoHi = Utils.getLowHighCandle(heiken_list);
+        BigDecimal high = LoHi.get(1).subtract(LoHi.get(0));
+        BigDecimal quarter = high.divide(BigDecimal.valueOf(2), 10, RoundingMode.CEILING);
+
+        BigDecimal buy_boundary = LoHi.get(0).add(quarter);
+        BigDecimal sal_boundary = LoHi.get(1).subtract(quarter);
+
+        BigDecimal curr_price = heiken_list.get(0).getCurrPrice();
+        if (curr_price.compareTo(buy_boundary) < 0) {
+            return Utils.TREND_LONG;
+        }
+        if (curr_price.compareTo(sal_boundary) > 0) {
+            return Utils.TREND_SHOT;
+        }
+
+        return TREND_UNSURE;
+    }
+
     public static List<BigDecimal> getBuySellArea(List<BtcFutures> heiken_list) {
         int section = 3;
         List<BigDecimal> LoHi = Utils.getLowHighCandle(heiken_list);
@@ -3408,7 +3427,7 @@ public class Utils {
         BigDecimal ma1_0 = calcMA(heiken_list, 1, 0);
         BigDecimal ma1_2 = calcMA(heiken_list, 1, 1);
 
-        for (int ma_index = 3; ma_index <= 6; ma_index++) {
+        for (int ma_index = 3; ma_index <= 5; ma_index++) {
             BigDecimal maX_0 = calcMA(heiken_list, ma_index, 0);
             BigDecimal maX_2 = calcMA(heiken_list, ma_index, 2);
 
