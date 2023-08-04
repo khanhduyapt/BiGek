@@ -4142,7 +4142,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (!is_eq_w_d && Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
                     if (Objects.isNull(trade_dto) && is_eq_d_h12_h4_h1 && is_eq_h1_15_05 && is_trade_zone
-                            && dto_05.isAllow_trade_by_ma50() && dto_h1.isAllow_trade_by_ma50()
+                            && dto_05.isAllow_trade_by_ma50()
                             && dto_h4.isAllow_trade_by_ma50() && dto_12.isAllow_trade_by_ma50()
                             && Utils.isNotBlank(dto_h4.getSwitch_trend())) {
 

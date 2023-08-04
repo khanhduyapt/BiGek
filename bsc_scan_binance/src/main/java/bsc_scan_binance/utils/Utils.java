@@ -215,7 +215,7 @@ public class Utils {
     // "ENG", "BFP", "E8F", "AUDA", "FTUK"
     // public static String MT5_COMPANY_NEXT = "608AB61EFF9C7B3585EC08B8CF6800E3";
     // // FundedNext
-    public static String MT5_COMPANY_FTMO = "49CDDEAA95A409ED22BD2287BB67CB9C"; // FTMO (FTMO)
+    public static String MT5_COMPANY_FTMO = "65FD2FDEC48B475B974F37EDB7D542A5"; // FTMO (FTMO)
     // public static String MT5_COMPANY_5ERS = "10CE948A1DFC9A8C27E56E827008EBD4";
     // // The5ers (FivePercentOnline)
     // public static String MT5_COMPANY_MFF = "D0E8209F77C8CF37AD8BF550E51FF075"; //
