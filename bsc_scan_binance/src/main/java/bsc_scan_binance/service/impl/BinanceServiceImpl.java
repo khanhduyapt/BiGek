@@ -4267,7 +4267,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
                 has_profit = true;
             }
-            if ((PROFIT.compareTo(Utils.RISK_0_02_PERCENT) > 0) // 50$
+            if ((PROFIT.compareTo(BigDecimal.ZERO) > 0) //
                     && Objects.equals(dto_w1.getTrend_line(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_d1.getTrend_line(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_12.getTrend_line(), REVERSE_TRADE_TREND)
@@ -4277,8 +4277,9 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_05.getTrend_line(), REVERSE_TRADE_TREND)) {
                 has_profit = true;
             }
-            if ((PROFIT.compareTo(Utils.RISK_0_15_PERCENT) > 0)
-                    && Objects.equals(dto_12.getTrend_by_ma(), REVERSE_TRADE_TREND)) { // 300$
+            if ((PROFIT.compareTo(BigDecimal.ZERO) > 0) //
+                    && Objects.equals(dto_12.getTrend_by_ma(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_12.getTrend_line(), REVERSE_TRADE_TREND)) {
                 has_profit = true;
             }
             // ---------------------------------------------------------------------------------
@@ -4290,13 +4291,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_reverse_h12 = false;
             if (Objects.equals(dto_12.getTrend_by_ma(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_12.getTrend_line(), REVERSE_TRADE_TREND)) {
-
                 is_reverse_h12 = true;
-
-                if (PROFIT.compareTo(BigDecimal.ZERO) > 0) {
-                    has_profit = true;
-                }
-
                 Utils.logWritelnDraft("reverse_h12: " + EPIC + "   " + Utils.getCapitalLink(EPIC));
             }
 
