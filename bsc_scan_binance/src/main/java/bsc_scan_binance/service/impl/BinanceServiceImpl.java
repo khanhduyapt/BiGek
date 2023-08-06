@@ -2773,7 +2773,7 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public void CloseTickets() {
-        String mt5_data_file = Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + "CloseSymbols.csv";
+        String mt5_data_file = Utils.getMt5DataFolder() + "CloseSymbols.csv";
         try {
             FileWriter writer = new FileWriter(mt5_data_file, true);
 
@@ -2823,7 +2823,7 @@ public class BinanceServiceImpl implements BinanceService {
             return;
         }
 
-        String mt5_open_trade_file = Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + "OpenTrade.csv";
+        String mt5_open_trade_file = Utils.getMt5DataFolder() + "OpenTrade.csv";
         int MAX_TRADE = 100;
         int trade_count = 0;
 
@@ -3154,7 +3154,7 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.logWritelnDraft("");
         for (String company : Utils.COMPANIES) {
             try {
-                String mt5_close_trade_file = Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + "CloseSymbols.csv";
+                String mt5_close_trade_file = Utils.getMt5DataFolder() + "CloseSymbols.csv";
                 File myScap = new File(mt5_close_trade_file);
                 myScap.delete();
             } catch (Exception e) {
@@ -3243,7 +3243,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Transactional
     public void saveMt5Data(String filename, Integer MINUTES_OF_XX) {
         try {
-            String mt5_data_file_path = Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + filename;
+            String mt5_data_file_path = Utils.getMt5DataFolder() + filename;
             String mt5_data_file = check_mt5_data_file(mt5_data_file_path, MINUTES_OF_XX);
             if (Utils.isBlank(mt5_data_file)) {
                 return;
@@ -3733,7 +3733,7 @@ public class BinanceServiceImpl implements BinanceService {
         List<Mt5DataTrade> tradeList = new ArrayList<Mt5DataTrade>();
 
         for (String company : Utils.COMPANIES) {
-            String company_id = Utils.MT5_COMPANY_FTMO;
+            // String company_id = Utils.MT5_COMPANY_FTMO;
             // if (Objects.equals(company, "8CAP")) {
             // company_id = Utils.MT5_COMPANY_NEXT;
             // } else if (Objects.equals(company, "ALPHA")) {
@@ -3744,7 +3744,7 @@ public class BinanceServiceImpl implements BinanceService {
             // company_id = Utils.MT5_COMPANY_MFF;
             // }
 
-            String mt5_ftmo_trading_file_path = Utils.getMt5DataFolder(company_id) + "Trade.csv";
+            String mt5_ftmo_trading_file_path = Utils.getMt5DataFolder() + "Trade.csv";
             String mt5_data_file = check_mt5_data_file(mt5_ftmo_trading_file_path, 3);
             if (Utils.isBlank(mt5_data_file)) {
                 continue;
@@ -4304,7 +4304,8 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(dto_12.getTrend_by_ma(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_12.getTrend_line(), REVERSE_TRADE_TREND)) {
                 is_reverse_h12 = true;
-                Utils.logWritelnDraft("reverse_h12: " + EPIC + "   " + Utils.getCapitalLink(EPIC));
+                Utils.logWritelnDraft("h12_reverse_to: " + Utils.appendSpace(REVERSE_TRADE_TREND.toUpperCase(), 5)
+                        + EPIC + "   " + Utils.getCapitalLink(EPIC));
             }
 
             // ---------------------------------------------------------------------------------
@@ -4317,7 +4318,7 @@ public class BinanceServiceImpl implements BinanceService {
                     } else if (is_hit_sl) {
                         reason = "sl1r";
                     } else if (is_reverse_h12) {
-                        reason = "h12_reverse";
+                        reason = "h12_reverse_to: " + Utils.appendSpace(REVERSE_TRADE_TREND.toUpperCase(), 5);
                     }
 
                     if (has_profit || is_hit_sl) {

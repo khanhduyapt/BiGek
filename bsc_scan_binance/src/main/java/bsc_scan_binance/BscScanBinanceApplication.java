@@ -121,7 +121,7 @@ public class BscScanBinanceApplication {
                 log = new File(Utils.getDraftLogFile());
                 System.out.println(log.getAbsolutePath());
 
-                System.out.println(Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + "OpenTrade.csv");
+                System.out.println(Utils.getMt5DataFolder() + "OpenTrade.csv");
                 System.out.println();
 
                 Utils.writelnLogFooter();
@@ -142,7 +142,7 @@ public class BscScanBinanceApplication {
                                 binance_service.saveMt5Data("Stocks.csv", Utils.MINUTES_OF_1H);
 
                                 for (String EPIC : CAPITAL_LIST) {
-                                    //binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MO);
+                                    // binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MO);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_W1);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_D1);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H12);
@@ -229,7 +229,7 @@ public class BscScanBinanceApplication {
         waitingM05list = new Hashtable<String, Mt5OpenTrade>();
         msg_open_trade_stocks = new ArrayList<String>();
         try {
-            String mt5_open_trade_file = Utils.getMt5DataFolder(Utils.MT5_COMPANY_FTMO) + "OpenTrade.csv";
+            String mt5_open_trade_file = Utils.getMt5DataFolder() + "OpenTrade.csv";
             File myScap = new File(mt5_open_trade_file);
             myScap.delete();
         } catch (Exception e) {

@@ -215,7 +215,9 @@ public class Utils {
     // "ENG", "BFP", "E8F", "AUDA", "FTUK"
     // public static String MT5_COMPANY_NEXT = "608AB61EFF9C7B3585EC08B8CF6800E3";
     // // FundedNext
-    public static String MT5_COMPANY_FTMO = "65FD2FDEC48B475B974F37EDB7D542A5"; // FTMO (FTMO)
+    public static String MT5_COMPANY_FTMO_PC = "65FD2FDEC48B475B974F37EDB7D542A5"; // FTMO (PC)
+    public static String MT5_COMPANY_FTMO_DE = "49CDDEAA95A409ED22BD2287BB67CB9C"; // FTMO (DESTOP)
+
     // public static String MT5_COMPANY_5ERS = "10CE948A1DFC9A8C27E56E827008EBD4";
     // // The5ers (FivePercentOnline)
     // public static String MT5_COMPANY_MFF = "D0E8209F77C8CF37AD8BF550E51FF075"; //
@@ -300,9 +302,8 @@ public class Utils {
     public static final List<String> EPICS_STOCKS_EUR = Arrays.asList("AIRF", "LVMH", "ALVG", "BAYGn", "VOWG_p",
             "DBKGn", "IBE");
 
-    public static final List<String> EPICS_STOCKS_USA = Arrays.asList("AAPL", "AMZN", "BAC",
-            "GOOG", "META", "MSFT", "NFLX", "NVDA", "PFE", "RACE", "TSLA", "WMT", "BABA", "T", "V",
-            "ZM");
+    public static final List<String> EPICS_STOCKS_USA = Arrays.asList("AAPL", "AMZN", "BAC", "GOOG", "META", "MSFT",
+            "NFLX", "NVDA", "PFE", "RACE", "TSLA", "WMT", "BABA", "T", "V", "ZM");
 
     // ALL Binance.com
     public static final List<String> COINS = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ARB", "ADA", "ADX", "AERGO",
@@ -1231,18 +1232,18 @@ public class Utils {
         return result;
     }
 
-    public static String getMt5DataFolder(String MT5_COMPANY_ID) {
+    public static String getMt5DataFolder() {
         String mt5_data_file = "";
         try {
             String pcname = InetAddress.getLocalHost().getHostName().toLowerCase();
             if (Objects.equals(pcname, "pc")) {
                 // PC cong ty:
-                mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + MT5_COMPANY_ID
+                mt5_data_file = "C:\\Users\\Admin\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + MT5_COMPANY_FTMO_PC
                         + "\\MQL5\\Files\\Data\\";
 
             } else if (Objects.equals(pcname, "desktop-l4m1ju2")) {
                 // Laptop
-                mt5_data_file = "C:\\Users\\DellE5270\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + MT5_COMPANY_ID
+                mt5_data_file = "C:\\Users\\DellE5270\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + MT5_COMPANY_FTMO_DE
                         + "\\MQL5\\Files\\Data\\";
 
             }
@@ -4177,7 +4178,8 @@ public class Utils {
         dto.setTake_profit(tp_d1);
         dto.setComment(append.trim());
         // String timeframe = getEncryptedChartNameCapital(CAPITAL_TIME_XX);
-        // dto.setComment(BscScanBinanceApplication.hostname + append.trim() + timeframe);
+        // dto.setComment(BscScanBinanceApplication.hostname + append.trim() +
+        // timeframe);
 
         return dto;
     }
