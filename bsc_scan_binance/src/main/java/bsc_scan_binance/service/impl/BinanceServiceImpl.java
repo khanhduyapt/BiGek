@@ -4136,7 +4136,8 @@ public class BinanceServiceImpl implements BinanceService {
                         BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
                     }
 
-                    if (Objects.isNull(trade_dto) && h12_ma_eq_line && Utils.isNotBlank(dto_h12.getSwitch_trend())) {
+                    if (Objects.isNull(trade_dto) && d1_ma_eq_line && h12_ma_eq_line
+                            && Utils.isNotBlank(dto_h12.getSwitch_trend())) {
                         String key = EPIC + Utils.CAPITAL_TIME_H12;
                         String append = "96_12w." + Utils.TEXT_PASS;
 
