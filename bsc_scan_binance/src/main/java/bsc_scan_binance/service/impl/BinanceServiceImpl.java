@@ -4084,9 +4084,9 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Objects.equals(trend_d1, trend_12) && dto_h12.getSwitch_trend().contains(dto_h12.getTrend_by_ma())) {
-                eoz += "  ~H12~  ";
+                eoz += "   ~H12~" + (Objects.equals(Utils.TREND_LONG, trend_12) ? "B" : "S") + "  ";
             } else {
-                eoz += "         ";
+                eoz += "           ";
             }
 
             boolean is_eq_w_d = false;
