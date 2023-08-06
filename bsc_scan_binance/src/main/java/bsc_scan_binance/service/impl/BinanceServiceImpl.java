@@ -4112,6 +4112,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean h4_ma_eq_line = Objects.equals(dto_h4.getTrend_line(), dto_h4.getTrend_by_ma());
             boolean h12_ma_eq_line = Objects.equals(dto_h12.getTrend_line(), dto_h12.getTrend_by_ma());
+            boolean d1_ma_eq_line = Objects.equals(dto_d1.getTrend_line(), dto_d1.getTrend_by_ma());
 
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
             // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
@@ -4123,6 +4124,17 @@ public class BinanceServiceImpl implements BinanceService {
 
                 Mt5OpenTrade trade_dto = null;
                 if (is_eq_w_d && is_eq_d_h12_h4_h1 && is_eq_h1_15_05 && is_trade_zone) {
+
+                    if (Objects.isNull(trade_dto) && d1_ma_eq_line && Utils.isNotBlank(dto_d1.getSwitch_trend())) {
+                        String key = EPIC + Utils.CAPITAL_TIME_D1;
+                        String append = "96_24w." + Utils.TEXT_PASS;
+
+                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
+                                append, true, Utils.CAPITAL_TIME_D1);
+
+                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
+                        BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
+                    }
 
                     if (Objects.isNull(trade_dto) && h12_ma_eq_line && Utils.isNotBlank(dto_h12.getSwitch_trend())) {
                         String key = EPIC + Utils.CAPITAL_TIME_H12;
