@@ -3685,7 +3685,7 @@ public class BinanceServiceImpl implements BinanceService {
             eoz += (!dto_h4.isTradable_zone() && Objects.equals(trend_d1, trend_h4)) ? "H4" : "--";
 
             boolean is_trade_zone = true;
-            if (eoz.contains("D1") || eoz.contains("W1") || eoz.contains("H4")) {
+            if (eoz.contains("D1") || eoz.contains("W1")) {
                 eoz += ".end";
                 is_trade_zone = false;
             } else {
