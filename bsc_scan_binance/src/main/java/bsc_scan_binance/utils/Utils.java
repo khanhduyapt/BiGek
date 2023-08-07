@@ -4154,11 +4154,12 @@ public class Utils {
 
     public static Mt5OpenTrade calc_Lot_En_SL_TP(BigDecimal risk, String EPIC, String trend, Orders dto_en,
             Orders dto_d1, String append, boolean isTradeNow, String CAPITAL_TIME_XX) {
-        BigDecimal en_05 = BigDecimal.ZERO;
+        BigDecimal entry = BigDecimal.ZERO;
+
         if (Objects.equals(Utils.TREND_LONG, trend)) {
-            en_05 = Utils.getBigDecimal(dto_en.getLow_price());
+            entry = Utils.getBigDecimal(dto_en.getBody_low());
         } else if (Objects.equals(Utils.TREND_SHOT, trend)) {
-            en_05 = Utils.getBigDecimal(dto_en.getHigh_price());
+            entry = Utils.getBigDecimal(dto_en.getBody_hig());
         }
 
         boolean same_trend_w_d = false;
@@ -4173,7 +4174,7 @@ public class Utils {
         dto.setOrder_type(trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
         dto.setCur_price(dto_en.getCurrent_price());
         dto.setLots(money.calcLot());
-        dto.setEntry(en_05);
+        dto.setEntry(entry);
         dto.setStop_loss(sl_d1);
         dto.setTake_profit(tp_d1);
         dto.setComment(append.trim());
