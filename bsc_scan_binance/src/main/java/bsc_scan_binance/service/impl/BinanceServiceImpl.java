@@ -3963,7 +3963,9 @@ public class BinanceServiceImpl implements BinanceService {
         } else if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H12)) {
 
-            switch_trend += Utils.switchTrendByMa1vs3456(list);
+            if (Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
+                switch_trend += Utils.switchTrendByMa1vs3456(list);
+            }
             switch_trend += Utils.switchTrendByMa1vs8910(list);
 
         } else {

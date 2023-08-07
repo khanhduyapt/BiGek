@@ -3758,7 +3758,7 @@ public class Utils {
 
     public static String createOpenTradeMsg(Mt5OpenTrade dto, String prefix) {
         String msg = Utils.appendSpace("", 10) + "(Open Msg)   " + prefix;
-        msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type().toUpperCase(), 4, "_") + ")", 10);
+        msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type().toUpperCase(), 4, "_") + ")", 15);
         msg += Utils.appendSpace(dto.getEpic(), 10) + new_line_from_service + " ";
         msg += Utils.appendSpace(dto.getComment(), 35) + "  ";
         msg += "  ";
@@ -3772,7 +3772,7 @@ public class Utils {
 
     public static String createCloseTradeMsg(Mt5OpenTradeEntity dto, String prefix, String reason) {
         String msg = Utils.appendSpace("", 10) + "(CloseMsg)   " + prefix;
-        msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getType(), 4, "_") + ")", 10);
+        msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getType(), 4, "_") + ")", 15);
         msg += Utils.appendSpace(dto.getSymbol(), 10) + new_line_from_service + " ";
         msg += Utils.appendSpace(reason, 20);
         msg += " :Ticket: " + Utils.appendSpace(dto.getTicket(), 15);
