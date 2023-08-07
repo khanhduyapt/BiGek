@@ -2851,15 +2851,15 @@ public class BinanceServiceImpl implements BinanceService {
                     String msg = Utils.createOpenTradeMsg(dto, prefix);
                     Utils.logWritelnDraft(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
 
+                    if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
+                        continue;
+                    }
+
                     String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type()
                             + Utils.getCurrentYyyyMmDd_Blog4h()
                             + Utils.getDeEncryptedChartNameCapital(dto.getComment());
 
                     msg_dict.put(EVENT_ID, msg);
-
-                    if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
-                        continue;
-                    }
 
                     if ((trade_count < MAX_TRADE) && dto.getComment().contains(Utils.TEXT_PASS)) {
                         trade_count += 1;
