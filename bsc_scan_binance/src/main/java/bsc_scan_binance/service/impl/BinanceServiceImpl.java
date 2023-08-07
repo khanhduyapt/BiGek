@@ -4174,11 +4174,11 @@ public class BinanceServiceImpl implements BinanceService {
                         BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
                     }
 
-                    if (Objects.isNull(trade_dto) && d1_ma_eq_line && h12_ma_eq_line //
+                    if (Objects.isNull(trade_dto) && h12_ma_eq_line //
                             && Utils.isNotBlank(dto_h12.getSwitch_trend())) {
                         String key = EPIC + Utils.CAPITAL_TIME_H12;
                         String append = "24_12w.";
-                        if (is_eq_w_d) {
+                        if (is_eq_w_d && d1_ma_eq_line) {
                             append = "96_12w." + Utils.TEXT_PASS;
                         }
 
@@ -4204,13 +4204,10 @@ public class BinanceServiceImpl implements BinanceService {
                         BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
                     }
 
-                    if (Objects.isNull(trade_dto) && d1_ma_eq_line //
+                    if (Objects.isNull(trade_dto) && is_eq_w_d && d1_ma_eq_line //
                             && dto_h1.isAllow_trade_by_ma50() && dto_05.isAllow_trade_by_ma50()) {
                         String key = EPIC + Utils.CAPITAL_TIME_H4;
-                        String append = "24_1w.";
-                        if (is_eq_w_d) {
-                            append = "96_1w." + Utils.TEXT_PASS;
-                        }
+                        String append = "96_1w." + Utils.TEXT_PASS;
 
                         trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
                                 append, true, Utils.CAPITAL_TIME_H4);
@@ -4220,11 +4217,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     if (Objects.isNull(trade_dto) && is_eq_w_d && d1_ma_eq_line
-                            && Utils.isNotBlank(dto_05.getSwitch_trend())
-
-                            && (!is_opening_trade(EPIC, "") || dto_05.isAllow_trade_by_ma50()
-                                    || (Utils.isNotBlank(dto_15.getSwitch_trend())
-                                            && Objects.equals(dto_15.getTrend_line(), dto_15.getTrend_by_ma())))) {
+                            && Utils.isNotBlank(dto_05.getSwitch_trend()) && !is_opening_trade(EPIC, "")) {
 
                         String key = EPIC + Utils.CAPITAL_TIME_H4;
                         String append = "init." + Utils.TEXT_PASS;
@@ -4387,9 +4380,6 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_12.getTrend_by_ma(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_12.getTrend_line(), REVERSE_TRADE_TREND)) {
                 is_reverse_h12 = true;
-                Utils.logWritelnDraft("h12_reverse_to: " + Utils.appendSpace(REVERSE_TRADE_TREND.toUpperCase(), 8)
-                        + EPIC + "   (" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 6) + "$)   "
-                        + Utils.getCapitalLink(EPIC));
             }
 
             // ---------------------------------------------------------------------------------
