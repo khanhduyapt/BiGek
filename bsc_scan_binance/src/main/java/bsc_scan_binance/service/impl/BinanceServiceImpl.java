@@ -2855,13 +2855,14 @@ public class BinanceServiceImpl implements BinanceService {
                         continue;
                     }
 
-                    String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type()
-                            + Utils.getCurrentYyyyMmDd_Blog4h()
-                            + Utils.getDeEncryptedChartNameCapital(dto.getComment());
-
-                    msg_dict.put(EVENT_ID, msg);
-
                     if ((trade_count < MAX_TRADE) && dto.getComment().contains(Utils.TEXT_PASS)) {
+
+                        String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type()
+                                + Utils.getCurrentYyyyMmDd_Blog4h()
+                                + Utils.getDeEncryptedChartNameCapital(dto.getComment());
+
+                        msg_dict.put(EVENT_ID, msg);
+
                         trade_count += 1;
                         if (Utils.isPcCongTy()) {
                             StringBuilder sb = new StringBuilder();
@@ -2964,25 +2965,27 @@ public class BinanceServiceImpl implements BinanceService {
 
         log += "          ";
 
-        if (!dto_d1.isTradable_zone() || !dto_h4.isTradable_zone()
-                || (Utils.isNotBlank(dto_h4.getSwitch_trend()) && !dto_h4.getSwitch_trend().contains(trend_d1))) {
-            String reverse_trend = (Objects.equals(dto_d1.getTrend_line(), Utils.TREND_LONG)) ? Utils.TREND_SHOT
-                    : Utils.TREND_LONG;
+        if (!is_opening_trade(EPIC, "")) {
+            if (!dto_d1.isTradable_zone() || !dto_h4.isTradable_zone()
+                    || (Utils.isNotBlank(dto_h4.getSwitch_trend()) && !dto_h4.getSwitch_trend().contains(trend_d1))) {
+                String reverse_trend = (Objects.equals(dto_d1.getTrend_line(), Utils.TREND_LONG)) ? Utils.TREND_SHOT
+                        : Utils.TREND_LONG;
 
-            log += text_risk + Utils
-                    .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, reverse_trend, EPIC, dto_h1, dto_d1), 45);
+                log += text_risk + Utils
+                        .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, reverse_trend, EPIC, dto_h1, dto_d1),
+                                45);
 
-            type = Objects.equals(Utils.TREND_LONG, reverse_trend) ? "B"
-                    : Objects.equals(Utils.TREND_SHOT, reverse_trend) ? "S" : "?";
+                type = Objects.equals(Utils.TREND_LONG, reverse_trend) ? "B"
+                        : Objects.equals(Utils.TREND_SHOT, reverse_trend) ? "S" : "?";
 
-            if (Objects.equals(Utils.TREND_LONG, trend_d1)) {
-                log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_low()), 10)
-                        + "   ";
-            } else {
-                log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_hig()), 10)
-                        + "   ";
+                if (Objects.equals(Utils.TREND_LONG, trend_d1)) {
+                    log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_low()), 10)
+                            + "   ";
+                } else {
+                    log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_hig()), 10)
+                            + "   ";
+                }
             }
-
         }
 
         if (dto_w1.getSwitch_trend().contains(dto_w1.getTrend_line()) && dto_w1.isTradable_zone()
@@ -4154,12 +4157,15 @@ public class BinanceServiceImpl implements BinanceService {
                             && Objects.equals(trend_btc, Utils.TREND_LONG)))) {
 
                 Mt5OpenTrade trade_dto = null;
-                if (is_eq_w_d && is_eq_d_h12_h4_h1 && is_eq_h1_15_05 && is_trade_zone) {
+                if (is_eq_d_h12_h4_h1 && is_eq_h1_15_05 && is_trade_zone) {
 
                     if (Objects.isNull(trade_dto) && d1_ma_eq_line //
                             && Utils.isNotBlank(dto_d1.getSwitch_trend())) {
                         String key = EPIC + Utils.CAPITAL_TIME_D1;
-                        String append = "96_24w." + Utils.TEXT_PASS;
+                        String append = "24_24w.";
+                        if (is_eq_w_d) {
+                            append = "96_24w." + Utils.TEXT_PASS;
+                        }
 
                         trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
                                 append, true, Utils.CAPITAL_TIME_D1);
@@ -4168,10 +4174,13 @@ public class BinanceServiceImpl implements BinanceService {
                         BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
                     }
 
-                    if (Objects.isNull(trade_dto) && h12_ma_eq_line //
+                    if (Objects.isNull(trade_dto) && d1_ma_eq_line && h12_ma_eq_line //
                             && Utils.isNotBlank(dto_h12.getSwitch_trend())) {
                         String key = EPIC + Utils.CAPITAL_TIME_H12;
-                        String append = "96_12w." + Utils.TEXT_PASS;
+                        String append = "24_12w.";
+                        if (is_eq_w_d) {
+                            append = "96_12w." + Utils.TEXT_PASS;
+                        }
 
                         trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
                                 append, true, Utils.CAPITAL_TIME_H12);
@@ -4183,7 +4192,10 @@ public class BinanceServiceImpl implements BinanceService {
                     if (Objects.isNull(trade_dto) && d1_ma_eq_line && h4_ma_eq_line
                             && Utils.isNotBlank(dto_h4.getSwitch_trend())) {
                         String key = EPIC + Utils.CAPITAL_TIME_H4;
-                        String append = "96_4w." + Utils.TEXT_PASS;
+                        String append = "24_4w.";
+                        if (is_eq_w_d) {
+                            append = "96_4w." + Utils.TEXT_PASS;
+                        }
 
                         trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
                                 append, true, Utils.CAPITAL_TIME_H4);
@@ -4192,10 +4204,28 @@ public class BinanceServiceImpl implements BinanceService {
                         BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
                     }
 
-                    if (Objects.isNull(trade_dto) && d1_ma_eq_line && h4_ma_eq_line
+                    if (Objects.isNull(trade_dto) && d1_ma_eq_line //
                             && dto_h1.isAllow_trade_by_ma50() && dto_05.isAllow_trade_by_ma50()) {
                         String key = EPIC + Utils.CAPITAL_TIME_H4;
-                        String append = "96_1w." + Utils.TEXT_PASS;
+                        String append = "24_1w.";
+                        if (is_eq_w_d) {
+                            append = "96_1w." + Utils.TEXT_PASS;
+                        }
+
+                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
+                                append, true, Utils.CAPITAL_TIME_H4);
+
+                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
+                        BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
+                    }
+
+                    if (Objects.isNull(trade_dto) && is_eq_w_d && d1_ma_eq_line
+                            && (!is_opening_trade(EPIC, "") || dto_05.isAllow_trade_by_ma50()
+                                    || (Utils.isNotBlank(dto_15.getSwitch_trend())
+                                            && Objects.equals(dto_15.getTrend_line(), dto_15.getTrend_by_ma())))) {
+
+                        String key = EPIC + Utils.CAPITAL_TIME_H4;
+                        String append = "init." + Utils.TEXT_PASS;
 
                         trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
                                 append, true, Utils.CAPITAL_TIME_H4);
