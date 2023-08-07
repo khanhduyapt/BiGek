@@ -2953,14 +2953,16 @@ public class BinanceServiceImpl implements BinanceService {
         String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "B"
                 : Objects.equals(Utils.TREND_SHOT, trend_d1) ? "S" : "?";
 
-        if (Objects.equals(Utils.TREND_LONG, trend_d1)) {
-            log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_low()), 10) + "   ";
-        } else {
-            log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_hig()), 10) + "   ";
-        }
-
         log += text_risk + Utils.appendSpace(
                 Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, dto_d1.getTrend_line(), EPIC, dto_h1, dto_d1), 45);
+
+        if (Objects.equals(Utils.TREND_LONG, trend_d1)) {
+            log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_low()), 10);
+        } else {
+            log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_hig()), 10);
+        }
+
+        log += "          ";
 
         if (!dto_d1.isTradable_zone() || !dto_h4.isTradable_zone()
                 || (Utils.isNotBlank(dto_h4.getSwitch_trend()) && !dto_h4.getSwitch_trend().contains(trend_d1))) {
@@ -2969,6 +2971,18 @@ public class BinanceServiceImpl implements BinanceService {
 
             log += text_risk + Utils
                     .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, reverse_trend, EPIC, dto_h1, dto_d1), 45);
+
+            type = Objects.equals(Utils.TREND_LONG, reverse_trend) ? "B"
+                    : Objects.equals(Utils.TREND_SHOT, reverse_trend) ? "S" : "?";
+
+            if (Objects.equals(Utils.TREND_LONG, trend_d1)) {
+                log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_low()), 10)
+                        + "   ";
+            } else {
+                log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_hig()), 10)
+                        + "   ";
+            }
+
         }
 
         if (dto_w1.getSwitch_trend().contains(dto_w1.getTrend_line()) && dto_w1.isTradable_zone()
