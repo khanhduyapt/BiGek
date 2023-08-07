@@ -3724,8 +3724,13 @@ public class BinanceServiceImpl implements BinanceService {
                             append += eoz.trim();
                         }
 
+                        boolean is_trade_now = true;
+                        if (eoz.contains("H4")) {
+                            is_trade_now = false;
+                        }
+
                         Mt5OpenTrade trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1,
-                                dto_h1, dto_d1, append, true, Utils.CAPITAL_TIME_H4);
+                                dto_h1, dto_d1, append, is_trade_now, Utils.CAPITAL_TIME_H4);
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
                         BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
