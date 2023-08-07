@@ -97,355 +97,355 @@ public class MoneyAtRiskResponse {
     public List<BigDecimal> getStandard_lot(String EPIC) {
         List<BigDecimal> result = new ArrayList<BigDecimal>();
         BigDecimal standard_lot = BigDecimal.ZERO;
-        BigDecimal unit_risk_per_pip = BigDecimal.ZERO;
+        BigDecimal contract_size = BigDecimal.ZERO;
 
         switch (EPIC) {
         case "DXY":
             standard_lot = BigDecimal.valueOf(25);
-            unit_risk_per_pip = BigDecimal.valueOf(25);
+            contract_size = BigDecimal.valueOf(25);
             break;
         case "BTCUSD":
-            standard_lot = BigDecimal.valueOf(0.05);
-            unit_risk_per_pip = BigDecimal.valueOf(0.05);
+            standard_lot = BigDecimal.valueOf(1);
+            contract_size = BigDecimal.valueOf(1);
             break;
         case "ETHUSD":
-            standard_lot = BigDecimal.valueOf(0.71428);
-            unit_risk_per_pip = BigDecimal.valueOf(0.71428);
+            standard_lot = BigDecimal.valueOf(1);
+            contract_size = BigDecimal.valueOf(1);
             break;
         case "DASHUSD":
             standard_lot = BigDecimal.valueOf(1);
-            unit_risk_per_pip = BigDecimal.valueOf(1);
+            contract_size = BigDecimal.valueOf(1);
             break;
         case "ADAUSD":
             standard_lot = BigDecimal.valueOf(1);
-            unit_risk_per_pip = BigDecimal.valueOf(100);
+            contract_size = BigDecimal.valueOf(100);
             break;
         case "DOGEUSD":
             standard_lot = BigDecimal.valueOf(1);
-            unit_risk_per_pip = BigDecimal.valueOf(1000);
+            contract_size = BigDecimal.valueOf(1000);
             break;
-
         case "XRPUSD":
+            standard_lot = BigDecimal.valueOf(1);
+            contract_size = BigDecimal.valueOf(100);
+            break;
         case "DOTUSD":
+            standard_lot = BigDecimal.valueOf(1);
+            contract_size = BigDecimal.valueOf(10);
+            break;
         case "LTCUSD":
             standard_lot = BigDecimal.valueOf(1);
-            unit_risk_per_pip = BigDecimal.valueOf(1000);
+            contract_size = BigDecimal.valueOf(1);
             break;
         case "GOLD":
         case "XAUUSD":
             standard_lot = BigDecimal.valueOf(0.0125);
-            unit_risk_per_pip = BigDecimal.valueOf(1.25);
+            contract_size = BigDecimal.valueOf(1.25);
             break;
         case "OIL_CRUDE":
         case "OILCRUDE":
         case "USOIL":
-            standard_lot = BigDecimal.valueOf(0.25);
-            unit_risk_per_pip = BigDecimal.valueOf(25);
+            standard_lot = BigDecimal.valueOf(1);
+            contract_size = BigDecimal.valueOf(100);
             break;
         case "NATGAS":
         case "NATGAS.f":
-            standard_lot = BigDecimal.valueOf(0.25);
-            unit_risk_per_pip = BigDecimal.valueOf(250);
+            standard_lot = BigDecimal.valueOf(1);
+            contract_size = BigDecimal.valueOf(1000);
             break;
         case "SILVER":
         case "XAGUSD":
-            standard_lot = BigDecimal.valueOf(0.02);
-            unit_risk_per_pip = BigDecimal.valueOf(100);
+            standard_lot = BigDecimal.valueOf(1);
+            contract_size = BigDecimal.valueOf(5000);
             break;
         case "NATURALGAS":
             standard_lot = BigDecimal.valueOf(0.05);
-            unit_risk_per_pip = BigDecimal.valueOf(250);
+            contract_size = BigDecimal.valueOf(250);
             break;
         case "US30":
-            standard_lot = BigDecimal.valueOf(0.833);
-            unit_risk_per_pip = BigDecimal.valueOf(0.833333333333333);
+            standard_lot = BigDecimal.valueOf(1);
+            contract_size = BigDecimal.valueOf(1);
             break;
         case "US500":
             standard_lot = BigDecimal.valueOf(0.05);
-            unit_risk_per_pip = BigDecimal.valueOf(0.5);
+            contract_size = BigDecimal.valueOf(0.5);
             break;
         case "SP500":
             standard_lot = BigDecimal.valueOf(0.5);
-            unit_risk_per_pip = BigDecimal.valueOf(0.5);
+            contract_size = BigDecimal.valueOf(0.5);
             break;
         case "SP35":
-            standard_lot = BigDecimal.valueOf(0.0234);
-            unit_risk_per_pip = BigDecimal.valueOf(0.25);
-            break;
         case "SPN35":
-            standard_lot = BigDecimal.valueOf(0.234);
-            unit_risk_per_pip = BigDecimal.valueOf(0.25);
+            standard_lot = BigDecimal.valueOf(1);
+            contract_size = BigDecimal.valueOf(1);
             break;
         case "UK100":
-            standard_lot = BigDecimal.valueOf(0.208);
-            unit_risk_per_pip = BigDecimal.valueOf(0.25);
+            standard_lot = BigDecimal.valueOf(1);
+            contract_size = BigDecimal.valueOf(1);
             break;
         case "FR40":
-            standard_lot = BigDecimal.valueOf(0.0234);
-            unit_risk_per_pip = BigDecimal.valueOf(0.25);
-            break;
         case "FRA40":
-            standard_lot = BigDecimal.valueOf(0.234);
-            unit_risk_per_pip = BigDecimal.valueOf(0.25);
+            standard_lot = BigDecimal.valueOf(1);
+            contract_size = BigDecimal.valueOf(1);
             break;
         case "HK50":
-            standard_lot = BigDecimal.valueOf(0.098);
-            unit_risk_per_pip = BigDecimal.valueOf(0.125);
+            standard_lot = BigDecimal.valueOf(1);
+            contract_size = BigDecimal.valueOf(1);
             break;
 
         case "ERBN":
         case "ERBN.f":
-            standard_lot = BigDecimal.valueOf(0.004);
-            unit_risk_per_pip = BigDecimal.valueOf(0.25);
+            standard_lot = BigDecimal.valueOf(1);
+            contract_size = BigDecimal.valueOf(100);
             break;
 
         case "EURUSD":
             standard_lot = BigDecimal.valueOf(0.025);
-            unit_risk_per_pip = BigDecimal.valueOf(2500);
+            contract_size = BigDecimal.valueOf(2500);
             break;
         case "GBPUSD":
             standard_lot = BigDecimal.valueOf(0.025);
-            unit_risk_per_pip = BigDecimal.valueOf(2500);
+            contract_size = BigDecimal.valueOf(2500);
             break;
         case "AUDUSD":
             standard_lot = BigDecimal.valueOf(0.05);
-            unit_risk_per_pip = BigDecimal.valueOf(5000);
+            contract_size = BigDecimal.valueOf(5000);
             break;
         case "NZDUSD":
             standard_lot = BigDecimal.valueOf(0.05);
-            unit_risk_per_pip = BigDecimal.valueOf(5000);
+            contract_size = BigDecimal.valueOf(5000);
             break;
         case "USDJPY":
             standard_lot = BigDecimal.valueOf(0.224);
-            unit_risk_per_pip = BigDecimal.valueOf(166.66);
+            contract_size = BigDecimal.valueOf(166.66);
             break;
         case "USDCAD":
             standard_lot = BigDecimal.valueOf(0.0225);
-            unit_risk_per_pip = BigDecimal.valueOf(1666.66);
+            contract_size = BigDecimal.valueOf(1666.66);
             break;
         case "USDCHF":
             standard_lot = BigDecimal.valueOf(0.0462);
-            unit_risk_per_pip = BigDecimal.valueOf(5000);
+            contract_size = BigDecimal.valueOf(5000);
             break;
         case "EURGBP":
             standard_lot = BigDecimal.valueOf(0.0416);
-            unit_risk_per_pip = BigDecimal.valueOf(5000);
+            contract_size = BigDecimal.valueOf(5000);
             break;
         case "GBPAUD":
             standard_lot = BigDecimal.valueOf(0.724);
-            unit_risk_per_pip = BigDecimal.valueOf(50000);
+            contract_size = BigDecimal.valueOf(50000);
             break;
         case "EURAUD":
             standard_lot = BigDecimal.valueOf(0.0724);
-            unit_risk_per_pip = BigDecimal.valueOf(5000);
+            contract_size = BigDecimal.valueOf(5000);
             break;
         case "EURJPY":
             standard_lot = BigDecimal.valueOf(0.672);
-            unit_risk_per_pip = BigDecimal.valueOf(500);
+            contract_size = BigDecimal.valueOf(500);
             break;
         case "EURCAD":
             standard_lot = BigDecimal.valueOf(0.0674);
-            unit_risk_per_pip = BigDecimal.valueOf(5000);
+            contract_size = BigDecimal.valueOf(5000);
             break;
         case "CADJPY":
             standard_lot = BigDecimal.valueOf(0.336);
-            unit_risk_per_pip = BigDecimal.valueOf(250);
+            contract_size = BigDecimal.valueOf(250);
             break;
         case "GBPJPY":
             standard_lot = BigDecimal.valueOf(0.0672);
-            unit_risk_per_pip = BigDecimal.valueOf(50);
+            contract_size = BigDecimal.valueOf(50);
             break;
         case "AUDCAD":
             standard_lot = BigDecimal.valueOf(0.0337);
-            unit_risk_per_pip = BigDecimal.valueOf(2500);
+            contract_size = BigDecimal.valueOf(2500);
             break;
         case "GBPCAD":
             standard_lot = BigDecimal.valueOf(0.0674);
-            unit_risk_per_pip = BigDecimal.valueOf(5000);
+            contract_size = BigDecimal.valueOf(5000);
             break;
         case "EURNZD":
             standard_lot = BigDecimal.valueOf(0.133);
-            unit_risk_per_pip = BigDecimal.valueOf(8333);
+            contract_size = BigDecimal.valueOf(8333);
             break;
         case "AUDNZD":
             standard_lot = BigDecimal.valueOf(0.2);
-            unit_risk_per_pip = BigDecimal.valueOf(12500);
+            contract_size = BigDecimal.valueOf(12500);
             break;
         case "NZDCAD":
             standard_lot = BigDecimal.valueOf(0.0225);
-            unit_risk_per_pip = BigDecimal.valueOf(1666.66);
+            contract_size = BigDecimal.valueOf(1666.66);
             break;
         case "USDNOK":
             standard_lot = BigDecimal.valueOf(0.128);
-            unit_risk_per_pip = BigDecimal.valueOf(1250);
+            contract_size = BigDecimal.valueOf(1250);
             break;
         case "USDPLN":
             standard_lot = BigDecimal.valueOf(0.0222);
-            unit_risk_per_pip = BigDecimal.valueOf(500);
+            contract_size = BigDecimal.valueOf(500);
             break;
         case "USDCZK":
             standard_lot = BigDecimal.valueOf(0.111);
-            unit_risk_per_pip = BigDecimal.valueOf(500);
+            contract_size = BigDecimal.valueOf(500);
             break;
         case "USDSEK":
             standard_lot = BigDecimal.valueOf(0.129);
-            unit_risk_per_pip = BigDecimal.valueOf(1250);
+            contract_size = BigDecimal.valueOf(1250);
             break;
         case "AUDJPY":
             standard_lot = BigDecimal.valueOf(0.225);
-            unit_risk_per_pip = BigDecimal.valueOf(170);
+            contract_size = BigDecimal.valueOf(170);
             break;
         case "NZDJPY":
             standard_lot = BigDecimal.valueOf(0.337);
-            unit_risk_per_pip = BigDecimal.valueOf(260);
+            contract_size = BigDecimal.valueOf(260);
             break;
 
         case "GBPNZD":
             standard_lot = BigDecimal.valueOf(0.0402);
-            unit_risk_per_pip = BigDecimal.valueOf(2500);
+            contract_size = BigDecimal.valueOf(2500);
             break;
         case "EURCHF":
             standard_lot = BigDecimal.valueOf(0.0468);
-            unit_risk_per_pip = BigDecimal.valueOf(5000);
+            contract_size = BigDecimal.valueOf(5000);
             break;
         case "AUDCHF":
             standard_lot = BigDecimal.valueOf(0.0234);
-            unit_risk_per_pip = BigDecimal.valueOf(2500);
+            contract_size = BigDecimal.valueOf(2500);
             break;
         case "GBPCHF":
             standard_lot = BigDecimal.valueOf(0.0468);
-            unit_risk_per_pip = BigDecimal.valueOf(5000);
+            contract_size = BigDecimal.valueOf(5000);
             break;
         case "CADCHF":
             standard_lot = BigDecimal.valueOf(0.0468);
-            unit_risk_per_pip = BigDecimal.valueOf(5000);
+            contract_size = BigDecimal.valueOf(5000);
             break;
         case "CHFJPY":
             standard_lot = BigDecimal.valueOf(0.674);
-            unit_risk_per_pip = BigDecimal.valueOf(500);
+            contract_size = BigDecimal.valueOf(500);
             break;
         case "NZDCHF":
             standard_lot = BigDecimal.valueOf(0.0468);
-            unit_risk_per_pip = BigDecimal.valueOf(5000);
+            contract_size = BigDecimal.valueOf(5000);
             break;
         case "J225":
         case "JPY225":
         case "JPN225":
         case "JP225":
             standard_lot = BigDecimal.valueOf(6.8);
-            unit_risk_per_pip = BigDecimal.valueOf(0.5);
+            contract_size = BigDecimal.valueOf(0.5);
             break;
         case "AU200":
         case "AUS200":
             standard_lot = BigDecimal.valueOf(0.746);
-            unit_risk_per_pip = BigDecimal.valueOf(0.5);
+            contract_size = BigDecimal.valueOf(0.5);
             break;
         case "GER30":
         case "GER40":
             standard_lot = BigDecimal.valueOf(0.158);
-            unit_risk_per_pip = BigDecimal.valueOf(0.16666);
+            contract_size = BigDecimal.valueOf(0.16666);
             break;
         case "DE40":
         case "DAX40":
             standard_lot = BigDecimal.valueOf(0.0158);
-            unit_risk_per_pip = BigDecimal.valueOf(0.16666);
+            contract_size = BigDecimal.valueOf(0.16666);
             break;
         case "EU50":
             standard_lot = BigDecimal.valueOf(0.474);
-            unit_risk_per_pip = BigDecimal.valueOf(0.5);
+            contract_size = BigDecimal.valueOf(0.5);
             break;
         case "EURCZK":
             standard_lot = BigDecimal.valueOf(0.0373);
-            unit_risk_per_pip = BigDecimal.valueOf(166.66);
+            contract_size = BigDecimal.valueOf(166.66);
             break;
         case "EURPLN":
             standard_lot = BigDecimal.valueOf(0.112);
-            unit_risk_per_pip = BigDecimal.valueOf(2500);
+            contract_size = BigDecimal.valueOf(2500);
             break;
         case "US100":
             standard_lot = BigDecimal.valueOf(0.167);
-            unit_risk_per_pip = BigDecimal.valueOf(0.16666);
+            contract_size = BigDecimal.valueOf(0.16666);
             break;
         case "NAS100":
             standard_lot = BigDecimal.valueOf(0.167);
-            unit_risk_per_pip = BigDecimal.valueOf(0.16666);
+            contract_size = BigDecimal.valueOf(0.16666);
             break;
         case "USDHKD":
             standard_lot = BigDecimal.valueOf(0.131);
-            unit_risk_per_pip = BigDecimal.valueOf(1666);
+            contract_size = BigDecimal.valueOf(1666);
             break;
         case "USDHUF":
             standard_lot = BigDecimal.valueOf(0.18);
-            unit_risk_per_pip = BigDecimal.valueOf(50);
+            contract_size = BigDecimal.valueOf(50);
             break;
         case "USDILS":
             standard_lot = BigDecimal.valueOf(0.184);
-            unit_risk_per_pip = BigDecimal.valueOf(5000);
+            contract_size = BigDecimal.valueOf(5000);
             break;
         case "USDMXN":
             standard_lot = BigDecimal.valueOf(0.0306);
-            unit_risk_per_pip = BigDecimal.valueOf(166);
+            contract_size = BigDecimal.valueOf(166);
             break;
         case "USDTRY":
             standard_lot = BigDecimal.valueOf(0.118);
-            unit_risk_per_pip = BigDecimal.valueOf(625);
+            contract_size = BigDecimal.valueOf(625);
             break;
         case "USDZAR":
             standard_lot = BigDecimal.valueOf(0.023);
-            unit_risk_per_pip = BigDecimal.valueOf(125);
+            contract_size = BigDecimal.valueOf(125);
             break;
         case "EURDKK":
             standard_lot = BigDecimal.valueOf(0.175);
-            unit_risk_per_pip = BigDecimal.valueOf(2500);
+            contract_size = BigDecimal.valueOf(2500);
             break;
         case "EURHUF":
             standard_lot = BigDecimal.valueOf(0.357);
-            unit_risk_per_pip = BigDecimal.valueOf(100);
+            contract_size = BigDecimal.valueOf(100);
             break;
         case "EURMXN":
             standard_lot = BigDecimal.valueOf(0.435);
-            unit_risk_per_pip = BigDecimal.valueOf(2421);
+            contract_size = BigDecimal.valueOf(2421);
             break;
         case "EURNOK":
             standard_lot = BigDecimal.valueOf(0.11);
-            unit_risk_per_pip = BigDecimal.valueOf(1063);
+            contract_size = BigDecimal.valueOf(1063);
             break;
         case "EURRON":
             standard_lot = BigDecimal.valueOf(0.116);
-            unit_risk_per_pip = BigDecimal.valueOf(2500);
+            contract_size = BigDecimal.valueOf(2500);
             break;
         case "EURSEK":
             standard_lot = BigDecimal.valueOf(0.261);
-            unit_risk_per_pip = BigDecimal.valueOf(2500);
+            contract_size = BigDecimal.valueOf(2500);
             break;
         case "EURSGD":
             standard_lot = BigDecimal.valueOf(0.336);
-            unit_risk_per_pip = BigDecimal.valueOf(25000);
+            contract_size = BigDecimal.valueOf(25000);
             break;
         case "EURTRY":
             standard_lot = BigDecimal.valueOf(0.314);
-            unit_risk_per_pip = BigDecimal.valueOf(1666.66);
+            contract_size = BigDecimal.valueOf(1666.66);
             break;
         case "GBPTRY":
             standard_lot = BigDecimal.valueOf(0.314);
-            unit_risk_per_pip = BigDecimal.valueOf(1666.66);
+            contract_size = BigDecimal.valueOf(1666.66);
             break;
         case "USDCNH":
             standard_lot = BigDecimal.valueOf(0.345);
-            unit_risk_per_pip = BigDecimal.valueOf(5000);
+            contract_size = BigDecimal.valueOf(5000);
             break;
         case "USDDKK":
             standard_lot = BigDecimal.valueOf(0.35);
-            unit_risk_per_pip = BigDecimal.valueOf(5000);
+            contract_size = BigDecimal.valueOf(5000);
             break;
         case "USDRON":
             standard_lot = BigDecimal.valueOf(0.232);
-            unit_risk_per_pip = BigDecimal.valueOf(5000);
+            contract_size = BigDecimal.valueOf(5000);
             break;
         case "USDSGD":
             standard_lot = BigDecimal.valueOf(0.135);
-            unit_risk_per_pip = BigDecimal.valueOf(10000);
+            contract_size = BigDecimal.valueOf(10000);
             break;
+
         case "AMZN":
         case "BAC":
         case "GOOG":
@@ -471,25 +471,25 @@ public class MoneyAtRiskResponse {
         case "T":
         case "V":
         case "ZM":
-            standard_lot = BigDecimal.valueOf(10);
-            unit_risk_per_pip = BigDecimal.valueOf(10);
+            standard_lot = BigDecimal.valueOf(1);
+            contract_size = BigDecimal.valueOf(1);
             break;
 
         case "DX.f":
         case "DX":
             standard_lot = BigDecimal.valueOf(1);
-            unit_risk_per_pip = BigDecimal.valueOf(100);
+            contract_size = BigDecimal.valueOf(100);
             break;
         default:
             standard_lot = BigDecimal.valueOf(0.01);
-            unit_risk_per_pip = BigDecimal.valueOf(10000);
+            contract_size = BigDecimal.valueOf(100000);
 
             System.out.println("MoneyAtRiskResponse: " + EPIC + " not exist!----------------------------------");
             break;
         }
 
         result.add(standard_lot);
-        result.add(unit_risk_per_pip);
+        result.add(contract_size);
 
         return result;
     }

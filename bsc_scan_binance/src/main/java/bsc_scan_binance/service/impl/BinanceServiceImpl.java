@@ -2949,6 +2949,16 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_h1.getCurrent_price(), 5)), 11);
         log += Utils.appendSpace(append.trim(), 115) + " ";
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
+
+        String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "B"
+                : Objects.equals(Utils.TREND_SHOT, trend_d1) ? "S" : "?";
+
+        if (Objects.equals(Utils.TREND_LONG, trend_d1)) {
+            log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_low()), 10) + "   ";
+        } else {
+            log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_hig()), 10) + "   ";
+        }
+
         log += text_risk + Utils.appendSpace(
                 Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, dto_d1.getTrend_line(), EPIC, dto_h1, dto_d1), 45);
 
@@ -3961,7 +3971,14 @@ public class BinanceServiceImpl implements BinanceService {
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
         String date_time = LocalDateTime.now().toString();
-        List<BigDecimal> body = Utils.getBodyCandle(heiken_list);
+
+        List<BigDecimal> body = new ArrayList<BigDecimal>();
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1)) {
+            body = Utils.getLowHighCandle(heiken_list);
+        } else {
+            body = Utils.getBodyCandle(heiken_list);
+        }
+
         BigDecimal str_body = body.get(0);
         BigDecimal end_body = body.get(1);
 
@@ -4153,6 +4170,18 @@ public class BinanceServiceImpl implements BinanceService {
                             && Utils.isNotBlank(dto_h4.getSwitch_trend())) {
                         String key = EPIC + Utils.CAPITAL_TIME_H4;
                         String append = "96_4w." + Utils.TEXT_PASS;
+
+                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
+                                append, true, Utils.CAPITAL_TIME_H4);
+
+                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
+                        BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
+                    }
+
+                    if (Objects.isNull(trade_dto) && d1_ma_eq_line && h4_ma_eq_line
+                            && dto_h1.isAllow_trade_by_ma50() && dto_05.isAllow_trade_by_ma50()) {
+                        String key = EPIC + Utils.CAPITAL_TIME_H4;
+                        String append = "96_1w." + Utils.TEXT_PASS;
 
                         trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
                                 append, true, Utils.CAPITAL_TIME_H4);
