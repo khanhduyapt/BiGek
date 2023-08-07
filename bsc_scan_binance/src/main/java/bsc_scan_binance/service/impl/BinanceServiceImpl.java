@@ -4220,6 +4220,8 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     if (Objects.isNull(trade_dto) && is_eq_w_d && d1_ma_eq_line
+                            && Utils.isNotBlank(dto_05.getSwitch_trend())
+
                             && (!is_opening_trade(EPIC, "") || dto_05.isAllow_trade_by_ma50()
                                     || (Utils.isNotBlank(dto_15.getSwitch_trend())
                                             && Objects.equals(dto_15.getTrend_line(), dto_15.getTrend_by_ma())))) {
