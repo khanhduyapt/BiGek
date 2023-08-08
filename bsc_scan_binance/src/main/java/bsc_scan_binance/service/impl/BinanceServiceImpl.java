@@ -4045,7 +4045,9 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.isNewsAt_19_20_21h()) {
             return 0;
         }
-
+        if (!Utils.is_vn_working_time()) {
+            return 0;
+        }
         if (required_update_bars_csv) {
             return 0;
         }
