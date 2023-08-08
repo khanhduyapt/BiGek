@@ -3980,12 +3980,11 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         boolean allow_trade_by_ma50 = false;
-        String trend_d1 = get_trend_by_line_chart(EPIC, Utils.CAPITAL_TIME_D1);
         if (list.size() > 30) {
-            if (Objects.equals(trend_d1, Utils.TREND_LONG) && Objects.equals(nocation, Utils.NOCATION_BELOW_MA50)) {
+            if (Objects.equals(trend_by_ma, Utils.TREND_LONG) && Objects.equals(nocation, Utils.NOCATION_BELOW_MA50)) {
                 allow_trade_by_ma50 = true;
             }
-            if (Objects.equals(trend_d1, Utils.TREND_SHOT) && Objects.equals(nocation, Utils.NOCATION_ABOVE_MA50)) {
+            if (Objects.equals(trend_by_ma, Utils.TREND_SHOT) && Objects.equals(nocation, Utils.NOCATION_ABOVE_MA50)) {
                 allow_trade_by_ma50 = true;
             }
         }
@@ -4018,7 +4017,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         boolean tradable_zone = false;
-        if (zone.contains(trend_d1)) {
+        if (zone.contains(trend_by_ma)) {
             tradable_zone = true;
         }
 
@@ -4108,10 +4107,8 @@ public class BinanceServiceImpl implements BinanceService {
             eoz += (!dto_h12.isTradable_zone() && Objects.equals(trend_h4, trend_12)) ? "H12" : "---";
             eoz += !dto_h4.isTradable_zone() ? "H4" : "--";
 
-            boolean is_trade_zone = true;
             if (eoz.contains("H12") || eoz.contains("H4")) {
                 eoz += ".end";
-                is_trade_zone = false;
             } else {
                 eoz += "    ";
             }
@@ -4155,7 +4152,9 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // Vào khi H4.ma.10 = H1.ma.10 && H1.ma.1 CUT ma.20.
                 // Ra khi H1.ma.10 != TRADE_TREND
-                if (is_eq_h4_h1_15_05 && h1_ma_eq_line && h4_ma_eq_line
+
+                boolean is_trade_zone = (dto_h4.isTradable_zone() && dto_h1.isTradable_zone());
+                if (is_trade_zone && is_eq_d_h12_h4_h1 && is_eq_h4_h1_15_05 && h1_ma_eq_line && h4_ma_eq_line
                         && Utils.isNotBlank(dto_h4.getSwitch_trend() + dto_h1.getSwitch_trend())) {
 
                     String key = EPIC + Utils.CAPITAL_TIME_H1;
@@ -4272,35 +4271,22 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.equals(EPIC, "GBPNZD")) {
             }
-            boolean d1_to_h1_reverse = false;
-            if (Objects.equals(dto_d1.getTrend_line(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_12.getTrend_line(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h1.getTrend_line(), REVERSE_TRADE_TREND)) {
-                d1_to_h1_reverse = true;
-            }
 
             boolean h1_to_05_reverse = false;
             if (Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h1.getTrend_by_ma(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_line(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h1.getTrend_by_ma(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_line(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_05.getTrend_line(), REVERSE_TRADE_TREND)) {
+                    && Objects.equals(dto_15.getTrend_by_ma(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_05.getTrend_line(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_05.getTrend_by_ma(), REVERSE_TRADE_TREND)) {
                 h1_to_05_reverse = true;
-            }
-
-            boolean h4_to_05_reverse = false;
-            if (h1_to_05_reverse
-                    && Objects.equals(dto_h4.getTrend_by_ma(), REVERSE_TRADE_TREND)) {
-                h4_to_05_reverse = true;
             }
 
             // ---------------------------------------------------------------------------------
             boolean has_profit = false;
-            if ((PROFIT.compareTo(Utils.RISK_0_02_PERCENT) > 0)) {
-                if (d1_to_h1_reverse || h4_to_05_reverse || h1_to_05_reverse) {
-                    has_profit = true;
-                }
+            if ((PROFIT.compareTo(Utils.RISK_0_02_PERCENT) > 0) && h1_to_05_reverse) {
+                has_profit = true;
             }
             // ---------------------------------------------------------------------------------
             boolean is_hit_sl = false;
