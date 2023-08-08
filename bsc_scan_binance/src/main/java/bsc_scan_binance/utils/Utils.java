@@ -3482,10 +3482,10 @@ public class Utils {
         String trend = "_";
 
         BigDecimal ma1_0 = calcMA(heiken_list, ma_x, 1);
-        BigDecimal ma1_2 = calcMA(heiken_list, ma_x, 2);
+        BigDecimal ma1_2 = calcMA(heiken_list, ma_x, 3);
 
         BigDecimal maX_0 = calcMA(heiken_list, ma_y, 1);
-        BigDecimal maX_2 = calcMA(heiken_list, ma_y, 2);
+        BigDecimal maX_2 = calcMA(heiken_list, ma_y, 3);
 
         String cutUp = Utils.checkXCutUpY(ma1_0, ma1_2, maX_0, maX_2);
         String cutDw = Utils.checkXCutDnY(ma1_0, ma1_2, maX_0, maX_2);
