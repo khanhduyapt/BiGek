@@ -135,6 +135,7 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_Ma_1vs8910 = "(Ma1.8910)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs1015 = "(Ma1.1015)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs1520 = "(Ma1.1520)";
+    public static final String TEXT_SWITCH_TREND_Ma_1vs2025 = "(Ma1.2025)";
 
     public static final String TEXT_SWITCH_TREND_Ma_1vs10 = "(Ma1.10)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs20 = "(Ma1.20)";
@@ -3442,6 +3443,10 @@ public class Utils {
         return switchTrendByMa1(heiken_list, 16, 20, TEXT_SWITCH_TREND_Ma_1vs1520);
     }
 
+    public static String switchTrendByMa1vs2025(List<BtcFutures> heiken_list) {
+        return switchTrendByMa1(heiken_list, 20, 25, TEXT_SWITCH_TREND_Ma_1vs2025);
+    }
+
     private static String switchTrendByMa1(List<BtcFutures> heiken_list, int ma_form, int ma_to,
             String id_switch_trend) {
 
@@ -4090,7 +4095,7 @@ public class Utils {
     }
 
     public static Mt5OpenTrade calc_Lot_En_SL_TP(BigDecimal risk, String EPIC, String trend, Orders dto_en,
-            Orders dto_d1, String append, boolean isTradeNow, String CAPITAL_TIME_XX) {
+            Orders dto_sl, String append, boolean isTradeNow, String CAPITAL_TIME_XX) {
         BigDecimal entry = BigDecimal.ZERO;
 
         if (Objects.equals(Utils.TREND_LONG, trend)) {
@@ -4100,7 +4105,7 @@ public class Utils {
         }
 
         boolean same_trend_w_d = false;
-        List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_d1, trend, same_trend_w_d);
+        List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_sl, trend, same_trend_w_d);
         BigDecimal sl_d1 = sl1_tp2.get(0);
         BigDecimal tp_d1 = sl1_tp2.get(1);
 
