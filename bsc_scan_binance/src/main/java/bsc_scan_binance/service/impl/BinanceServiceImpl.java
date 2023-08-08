@@ -3946,7 +3946,8 @@ public class BinanceServiceImpl implements BinanceService {
             boolean ma6_10_50 = false;
 
             if (Objects.equals(trend_line, Utils.TREND_LONG)) {
-                boolean is_uptrend_by_ma10 = Utils.isUptrendByMa(list, 10, 0, 1) && Utils.isUptrendByMa(list, 10, 1, 2);
+                boolean is_uptrend_by_ma10 = Utils.isUptrendByMa(list, 10, 0, 1) && Utils.isUptrendByMa(list, 10, 1, 2)
+                        && Utils.isUptrendByMa(list, 6, 0, 1) && Utils.isUptrendByMa(list, 6, 1, 2);
 
                 if (is_uptrend_by_ma10
 
@@ -3970,10 +3971,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Objects.equals(trend_line, Utils.TREND_SHOT)) {
-                boolean is_downtrend_by_ma10 = !Utils.isUptrendByMa(list, 10, 0, 1)
-                        && !Utils.isUptrendByMa(list, 10, 1, 2);
+                boolean is_down_by_ma10 = !Utils.isUptrendByMa(list, 10, 0, 1) && !Utils.isUptrendByMa(list, 10, 1, 2)
+                        && !Utils.isUptrendByMa(list, 6, 0, 1) && !Utils.isUptrendByMa(list, 6, 1, 2);
 
-                if (is_downtrend_by_ma10
+                if (is_down_by_ma10
 
                         && (ma01.compareTo(ma06) < 0) && (ma06.compareTo(ma10) < 0) && (ma10.compareTo(ma20) < 0)
 
@@ -3981,12 +3982,12 @@ public class BinanceServiceImpl implements BinanceService {
                     ma1_10_50 = true;
                     switch_trend = "(" + type + "1_10_20)";
 
-                } else if (is_downtrend_by_ma10 && (ma01.compareTo(ma10) < 0) && (ma10.compareTo(ma50) < 0)
+                } else if (is_down_by_ma10 && (ma01.compareTo(ma10) < 0) && (ma10.compareTo(ma50) < 0)
                         && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 1, 10))) {
                     ma1_10_50 = true;
                     switch_trend = "(" + type + "1_10_50)";
 
-                } else if (is_downtrend_by_ma10 && (ma06.compareTo(ma10) < 0) && (ma10.compareTo(ma50) < 0)
+                } else if (is_down_by_ma10 && (ma06.compareTo(ma10) < 0) && (ma10.compareTo(ma50) < 0)
                         && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 6, 10))) {
                     ma6_10_50 = true;
                     switch_trend = "(" + type + "6_10_50)";
