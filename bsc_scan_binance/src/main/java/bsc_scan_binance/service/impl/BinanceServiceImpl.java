@@ -2820,6 +2820,9 @@ public class BinanceServiceImpl implements BinanceService {
         if (CollectionUtils.isEmpty(BscScanBinanceApplication.mt5_open_trade_List)) {
             return;
         }
+        if (Utils.isNewsAt_19_20_21h()) {
+            return;
+        }
         if (!Utils.isOpenTradeTime_6h_to_1h()) {
             return;
         }
@@ -4045,12 +4048,6 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public int controlMt5(List<String> CAPITAL_LIST) {
-        if (Utils.isNewsAt_19_20_21h()) {
-            return 0;
-        }
-        if (!Utils.is_vn_working_time()) {
-            // return 0;
-        }
         if (required_update_bars_csv) {
             // return 0;
         }
@@ -4133,9 +4130,8 @@ public class BinanceServiceImpl implements BinanceService {
                 is_eq_d_h12_h4_h1 = true;
             }
 
-            boolean is_line_eq_ma_h4_h1_15_05 = false;
-            if (Objects.equals(dto_h4.getTrend_line(), dto_h1.getTrend_by_ma10())
-                    && Objects.equals(trend_h4, dto_h1.getTrend_line())
+            boolean is_eq_h4_h1_15_05 = false;
+            if (Objects.equals(trend_h4, trend_h1)
 
                     && Objects.equals(trend_h4, dto_15.getTrend_by_ma10())
                     && Objects.equals(trend_h4, dto_15.getTrend_line())
@@ -4143,7 +4139,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(trend_h4, dto_05.getTrend_by_ma10())
                     && Objects.equals(trend_h4, dto_05.getTrend_line())) {
 
-                is_line_eq_ma_h4_h1_15_05 = true;
+                is_eq_h4_h1_15_05 = true;
             }
 
             // TODO: 3. controlMt5 : Không đánh ngược trend_d1
@@ -4153,8 +4149,8 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_trade_zone = dto_h4.isTradable_zone();
 
             // Ra khi ma.10 != TRADE_TREND
-            if (Objects.isNull(trade_dto) && is_trade_zone && dto_15.isAllow_trade_by_ma1_6_10_50()
-                    && is_line_eq_ma_h4_h1_15_05 && (dto_h1.isTradable_zone() || is_eq_d_h12_h4_h1)) {
+            if (Objects.isNull(trade_dto) && is_trade_zone && is_eq_h4_h1_15_05 && dto_15.isAllow_trade_by_ma1_6_10_50()
+                    && (dto_h1.isTradable_zone() || is_eq_d_h12_h4_h1)) {
 
                 String key = EPIC + Utils.CAPITAL_TIME_15;
                 String append = "15_" + dto_15.getSwitch_trend() + "." + Utils.TEXT_PASS;
