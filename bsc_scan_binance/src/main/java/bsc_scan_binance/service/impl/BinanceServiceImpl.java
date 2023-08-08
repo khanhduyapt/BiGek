@@ -4104,11 +4104,6 @@ public class BinanceServiceImpl implements BinanceService {
             String type = Objects.equals(Utils.TREND_LONG, trend_w1) ? "B"
                     : Objects.equals(Utils.TREND_SHOT, trend_w1) ? "S" : "?";
 
-            Boolean allow_trade = true;
-            if (!dto_h12.isTradable_zone() || !dto_h4.isTradable_zone()) {
-                allow_trade = false;
-            }
-
             String eoz = " (" + type + ")EOZ:";
             eoz += (!dto_w1.isTradable_zone() && Objects.equals(trend_d1, trend_w1)) ? "W1" : "--";
             eoz += (!dto_w1.isTradable_zone()) ? "D1" : "--";
