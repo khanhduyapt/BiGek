@@ -4422,9 +4422,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        if (Utils.isNotBlank(msg))
-
-        {
+        if (Utils.isNotBlank(msg)) {
             String EVENT_ID = "CLOSE_TRADE" + Utils.getCurrentYyyyMmDd_HH();
             sendMsgPerHour_OnlyMe(EVENT_ID, Utils.new_line_from_service + msg);
         }
