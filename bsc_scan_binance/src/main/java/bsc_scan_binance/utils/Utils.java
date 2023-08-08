@@ -3435,11 +3435,11 @@ public class Utils {
     }
 
     public static String switchTrendByMa1vs1015(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 12, 15, TEXT_SWITCH_TREND_Ma_1vs1015);
+        return switchTrendByMa1(heiken_list, 10, 15, TEXT_SWITCH_TREND_Ma_1vs1015);
     }
 
     public static String switchTrendByMa1vs1520(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 18, 20, TEXT_SWITCH_TREND_Ma_1vs1520);
+        return switchTrendByMa1(heiken_list, 16, 20, TEXT_SWITCH_TREND_Ma_1vs1520);
     }
 
     private static String switchTrendByMa1(List<BtcFutures> heiken_list, int ma_form, int ma_to,
