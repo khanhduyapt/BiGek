@@ -3910,7 +3910,7 @@ public class BinanceServiceImpl implements BinanceService {
         // ----------------------------TREND------------------------
         // TODO: 1. initForexTrend
 
-        if (Objects.equals(EPIC, "AUS200")) {
+        if (Objects.equals(EPIC, "AUDNZD")) {
             boolean debug = true;
         }
 
@@ -3925,29 +3925,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_by_ma10 = Utils.isAboveMALine(list, 10) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
         String switch_trend = "";
-        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_MO)
-                || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_W1)) {
-
-            switch_trend = Utils.switchTrendByMa1vs3456(list);
-
-        } else if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)
-                || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H12)) {
-
-            switch_trend += Utils.switchTrendByMa1vs8910(list);
-
-        } else if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4)
-                || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1)) {
-
-            switch_trend += Utils.switchTrendByMa1vs8910(list);
-            switch_trend += Utils.switchTrendByMa1vs1015(list);
-            switch_trend += Utils.switchTrendByMa1vs1520(list);
-
-        } else {
-
-            switch_trend += Utils.switchTrendByMa1vs1015(list);
-            switch_trend += Utils.switchTrendByMa1vs1520(list);
-            switch_trend += Utils.switchTrendByMa1vs2025(list);
-        }
+        String type = Objects.equals(trend_line, Utils.TREND_LONG) ? "B" : "S";
 
         boolean allow_trade_by_ma1_6_10_50 = false;
         if ((list.size() > 50)) {
@@ -3970,19 +3948,24 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(trend_line, Utils.TREND_LONG)) {
                 boolean is_uptrend_by_ma10 = Utils.isUptrendByMa(list, 10, 0, 1) && Utils.isUptrendByMa(list, 10, 1, 2);
 
-                if (is_uptrend_by_ma10 && (ma01.compareTo(ma06) > 0) && (ma06.compareTo(ma10) > 0)
-                        && (ma10.compareTo(ma20) > 0)) {
-                    ma1_10_50 = true;
-                }
+                if (is_uptrend_by_ma10
 
-                if (is_uptrend_by_ma10 && Objects.equals(Utils.TREND_LONG, Utils.switchTrendBy_MaX_vs_MaY(list, 1, 10))
-                        && (ma01.compareTo(ma10) > 0) && (ma10.compareTo(ma50) > 0)) {
-                    ma1_10_50 = true;
-                }
+                        && (ma01.compareTo(ma06) > 0) && (ma06.compareTo(ma10) > 0) && (ma10.compareTo(ma20) > 0)
 
-                if (is_uptrend_by_ma10 && Objects.equals(Utils.TREND_LONG, Utils.switchTrendBy_MaX_vs_MaY(list, 6, 10))
+                        && Utils.switchTrendByMa1(list, 8, 20, "(1.vs.6_20)").contains(Utils.TREND_LONG)) {
+                    ma1_10_50 = true;
+                    switch_trend = "(" + type + "1_10_20)";
+
+                } else if (is_uptrend_by_ma10 && (ma01.compareTo(ma10) > 0) && (ma10.compareTo(ma50) > 0)
+                        && Objects.equals(Utils.TREND_LONG, Utils.switchTrendBy_MaX_vs_MaY(list, 1, 10))) {
+                    ma1_10_50 = true;
+                    switch_trend = "(" + type + "1_10_50)";
+
+                } else if (is_uptrend_by_ma10
+                        && Objects.equals(Utils.TREND_LONG, Utils.switchTrendBy_MaX_vs_MaY(list, 6, 10))
                         && (ma06.compareTo(ma10) > 0) && (ma10.compareTo(ma50) > 0)) {
                     ma6_10_50 = true;
+                    switch_trend = "(" + type + "6_10_50)";
                 }
             }
 
@@ -3990,21 +3973,23 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean is_downtrend_by_ma10 = !Utils.isUptrendByMa(list, 10, 0, 1)
                         && !Utils.isUptrendByMa(list, 10, 1, 2);
 
-                if (is_downtrend_by_ma10 && (ma01.compareTo(ma06) < 0) && (ma06.compareTo(ma10) < 0)
-                        && (ma10.compareTo(ma20) < 0)) {
-                    ma1_10_50 = true;
-                }
-
                 if (is_downtrend_by_ma10
-                        && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 1, 10))
-                        && (ma01.compareTo(ma10) < 0) && (ma10.compareTo(ma50) < 0)) {
-                    ma1_10_50 = true;
-                }
 
-                if (is_downtrend_by_ma10
-                        && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 6, 10))
-                        && (ma06.compareTo(ma10) < 0) && (ma10.compareTo(ma50) < 0)) {
+                        && (ma01.compareTo(ma06) < 0) && (ma06.compareTo(ma10) < 0) && (ma10.compareTo(ma20) < 0)
+
+                        && Utils.switchTrendByMa1(list, 8, 20, "(1.vs.6_20)").contains(Utils.TREND_SHOT)) {
+                    ma1_10_50 = true;
+                    switch_trend = "(" + type + "1_10_20)";
+
+                } else if (is_downtrend_by_ma10 && (ma01.compareTo(ma10) < 0) && (ma10.compareTo(ma50) < 0)
+                        && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 1, 10))) {
+                    ma1_10_50 = true;
+                    switch_trend = "(" + type + "1_10_50)";
+
+                } else if (is_downtrend_by_ma10 && (ma06.compareTo(ma10) < 0) && (ma10.compareTo(ma50) < 0)
+                        && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 6, 10))) {
                     ma6_10_50 = true;
+                    switch_trend = "(" + type + "6_10_50)";
                 }
             }
 
@@ -4172,7 +4157,7 @@ public class BinanceServiceImpl implements BinanceService {
                         && is_line_eq_ma_h4_h1_15_05 && (dto_h1.isTradable_zone() || is_eq_d_h12_h4_h1)) {
 
                     String key = EPIC + Utils.CAPITAL_TIME_15;
-                    String append = "15_161050." + Utils.TEXT_PASS;
+                    String append = "15_" + dto_15.getSwitch_trend() + "." + Utils.TEXT_PASS;
 
                     trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_02_PERCENT, EPIC, trend_h4, dto_15, dto_h1, append,
                             true, Utils.CAPITAL_TIME_15);
