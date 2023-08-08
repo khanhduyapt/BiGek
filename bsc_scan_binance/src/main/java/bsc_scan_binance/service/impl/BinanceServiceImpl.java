@@ -2749,8 +2749,8 @@ public class BinanceServiceImpl implements BinanceService {
         for (Mt5OpenTradeEntity trade : tradeList) {
             String ea = "   Opening: ";
             ea += Utils.appendLeft(trade.getCompany(), 9) + ": ";
-            ea += Utils.appendSpace(trade.getType(), 8);
-            ea += " SL:" + Utils.appendSpace(Utils.removeLastZero(trade.getStopLoss()), 11);
+            ea += Utils.appendSpace(trade.getType(), 11);
+            ea += " SL:" + Utils.appendSpace(Utils.removeLastZero(trade.getStopLoss()), 8);
             ea += " TP:" + Utils.appendSpace(Utils.removeLastZero(trade.getTakeProfit()), 10);
             ea += "     Profit:"
                     + Utils.appendLeft(Utils.getStringValue(Utils.getBigDecimal(trade.getProfit()).intValue()), 6);
@@ -2760,6 +2760,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             Utils.logWritelnDraft(ea);
         }
+
         if (tradeList.size() > 0) {
             // Utils.logWritelnDraft("");
         }
@@ -2958,34 +2959,32 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, dto_d1.getTrend_line(), EPIC, dto_h1, dto_d1), 45);
 
         if (Objects.equals(Utils.TREND_LONG, trend_d1)) {
-            log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_low()), 10);
+            log += "E:" + type + "(h4): " + Utils.appendLeft(Utils.removeLastZero(dto_h4.getBody_low()), 10);
         } else {
-            log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_hig()), 10);
+            log += "E:" + type + "(h4): " + Utils.appendLeft(Utils.removeLastZero(dto_h4.getBody_hig()), 10);
         }
 
         log += "          ";
 
-        String reverse_trend = (Objects.equals(dto_d1.getTrend_line(), Utils.TREND_LONG)) ? Utils.TREND_SHOT
-                : Utils.TREND_LONG;
+        if (is_opening_trade(EPIC, "") || !dto_d1.isTradable_zone() || !dto_h4.isTradable_zone()
+                || (Utils.isNotBlank(dto_h4.getSwitch_trend()) && !dto_h4.getSwitch_trend().contains(trend_d1))) {
 
-        if (is_opening_trade(EPIC, reverse_trend)) {
-            if (!dto_d1.isTradable_zone() || !dto_h4.isTradable_zone()
-                    || (Utils.isNotBlank(dto_h4.getSwitch_trend()) && !dto_h4.getSwitch_trend().contains(trend_d1))) {
+            String reverse_trend = (Objects.equals(dto_d1.getTrend_line(), Utils.TREND_LONG)) ? Utils.TREND_SHOT
+                    : Utils.TREND_LONG;
 
-                log += text_risk + Utils
-                        .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, reverse_trend, EPIC, dto_h1, dto_d1),
-                                45);
+            log += text_risk + Utils
+                    .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, reverse_trend, EPIC, dto_h1, dto_d1),
+                            45);
 
-                type = Objects.equals(Utils.TREND_LONG, reverse_trend) ? "B"
-                        : Objects.equals(Utils.TREND_SHOT, reverse_trend) ? "S" : "?";
+            type = Objects.equals(Utils.TREND_LONG, reverse_trend) ? "B"
+                    : Objects.equals(Utils.TREND_SHOT, reverse_trend) ? "S" : "?";
 
-                if (Objects.equals(Utils.TREND_LONG, trend_d1)) {
-                    log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_low()), 10)
-                            + "   ";
-                } else {
-                    log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_hig()), 10)
-                            + "   ";
-                }
+            if (Objects.equals(Utils.TREND_LONG, reverse_trend)) {
+                log += "E:" + type + "(h4): " + Utils.appendLeft(Utils.removeLastZero(dto_h4.getBody_low()), 10)
+                        + "   ";
+            } else {
+                log += "E:" + type + "(h4): " + Utils.appendLeft(Utils.removeLastZero(dto_h4.getBody_hig()), 10)
+                        + "   ";
             }
         }
 
@@ -3988,13 +3987,7 @@ public class BinanceServiceImpl implements BinanceService {
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
         String date_time = LocalDateTime.now().toString();
 
-        List<BigDecimal> body = new ArrayList<BigDecimal>();
-        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1)) {
-            body = Utils.getLowHighCandle(heiken_list);
-        } else {
-            body = Utils.getBodyCandle(heiken_list);
-        }
-
+        List<BigDecimal> body = Utils.getLowHighCandle(heiken_list);
         BigDecimal str_body = body.get(0);
         BigDecimal end_body = body.get(1);
 
