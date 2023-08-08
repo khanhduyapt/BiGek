@@ -3021,6 +3021,10 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String sendMsgKillLongShort(String SYMBOL) {
+        if (!Utils.isPcCongTy()) {
+            return Utils.CRYPTO_TIME_D1;
+        }
+
         if (!BTC_ETH_BNB.contains(SYMBOL)) {
             return Utils.CRYPTO_TIME_H1;
         }
