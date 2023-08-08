@@ -3371,26 +3371,6 @@ public class Utils {
         return "";
     }
 
-    public static String checkMaXCuttingDownY(List<BtcFutures> list, int maFast, int maSlow) {
-        if (list.size() < maSlow) {
-            return "";
-        }
-
-        int str = 1;
-        int end = 5;
-        BigDecimal ma3_1 = calcMA(list, maFast, str);
-        BigDecimal ma3_2 = calcMA(list, maFast, end);
-
-        BigDecimal ma50_1 = calcMA(list, maSlow, str);
-        BigDecimal ma50_2 = calcMA(list, maSlow, end);
-
-        if ((ma3_1.compareTo(ma3_2) < 0) && (ma3_1.compareTo(ma50_1) < 0) && (ma50_2.compareTo(ma3_2) < 0)) {
-            return TREND_SHOT;
-        }
-
-        return "";
-    }
-
     public static String stopTrendByMa50(List<BtcFutures> list) {
         if (CollectionUtils.isEmpty(list)) {
             Utils.logWritelnDraft("(stopTrendByMa50)list Empty");
@@ -3497,6 +3477,47 @@ public class Utils {
 
         return "";
 
+    }
+
+    public static String switchTrendBy_MaX_vs_MaY(List<BtcFutures> heiken_list, int ma_x, int ma_y) {
+        String trend = "_";
+
+        BigDecimal ma1_0 = calcMA(heiken_list, ma_x, 1);
+        BigDecimal ma1_2 = calcMA(heiken_list, ma_x, 2);
+
+        BigDecimal maX_0 = calcMA(heiken_list, ma_y, 1);
+        BigDecimal maX_2 = calcMA(heiken_list, ma_y, 2);
+
+        String cutUp = Utils.checkXCutUpY(ma1_0, ma1_2, maX_0, maX_2);
+        String cutDw = Utils.checkXCutDnY(ma1_0, ma1_2, maX_0, maX_2);
+
+        if (Utils.isNotBlank(cutUp)) {
+            trend += "ma" + ma_x + cutUp + "ma" + ma_y;
+        }
+        if (Utils.isNotBlank(cutDw)) {
+            trend += "ma" + ma_x + cutDw + "ma" + ma_y;
+        }
+
+        if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHOT)) {
+            return "";
+        }
+
+        if (isBlank(trend.replace("_", ""))) {
+            return "";
+        }
+
+        if (trend.contains(Utils.TREND_LONG) || trend.contains(Utils.TREND_SHOT)) {
+            if (trend.contains(Utils.TREND_LONG)) {
+                trend = Utils.TREND_LONG;
+            }
+            if (trend.contains(Utils.TREND_SHOT)) {
+                trend = Utils.TREND_SHOT;
+            }
+
+            return trend;
+        }
+
+        return "";
     }
 
     public static String switchTrendByMaXX_123(List<BtcFutures> list, int fastIndex, int slowIndex, int start,

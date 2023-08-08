@@ -74,7 +74,7 @@ public class Orders {
     private String switch_trend;
 
     @Column(name = "allow_trade_by_ma50")
-    private boolean allow_trade_by_ma1_10_20;
+    private boolean allow_trade_by_ma1_6_10_50;
 
     @Column(name = "trend_candle_1")
     private String trend_by_ma;
