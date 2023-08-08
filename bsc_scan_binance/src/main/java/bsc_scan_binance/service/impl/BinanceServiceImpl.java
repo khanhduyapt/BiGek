@@ -4355,6 +4355,12 @@ public class BinanceServiceImpl implements BinanceService {
                 h1_to_05_reverse = true;
             }
 
+            boolean h4_to_05_reverse = false;
+            if (h1_to_05_reverse
+                    && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h4.getTrend_by_ma(), REVERSE_TRADE_TREND)) {
+                h4_to_05_reverse = true;
+            }
             // ---------------------------------------------------------------------------------
             boolean has_profit = false;
             if ((PROFIT.compareTo(Utils.RISK_0_02_PERCENT) > 0) && h1_to_05_reverse) {
@@ -4367,6 +4373,9 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------
             boolean is_hit_sl = false;
             if (PROFIT.add(Utils.RISK_0_10_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
+                is_hit_sl = true;
+            }
+            if (h4_to_05_reverse) {
                 is_hit_sl = true;
             }
 
@@ -4383,6 +4392,7 @@ public class BinanceServiceImpl implements BinanceService {
                     is_hit_sl = true;
                 }
             }
+
             // ---------------------------------------------------------------------------------
             // TODO: 5. closeTrade_by_SL_TP
             if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_1H)) {
