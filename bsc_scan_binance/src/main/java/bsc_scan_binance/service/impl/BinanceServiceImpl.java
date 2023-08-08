@@ -3694,11 +3694,14 @@ public class BinanceServiceImpl implements BinanceService {
             eoz += "     ";
 
             boolean is_eq_mo_w_d_h4_h1 = false;
-            if (Objects.equals(trend_mo, trend_d1) && Objects.equals(trend_w1, trend_d1)
-                    && Objects.equals(dto_d1.getTrend_by_ma(), dto_d1.getTrend_line())
-                    && Objects.equals(dto_h4.getTrend_by_ma(), dto_h4.getTrend_line())
-                    && Objects.equals(dto_h1.getTrend_by_ma(), dto_h1.getTrend_line())
-                    && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
+            if (Objects.equals(trend_d1, trend_mo)
+                    && Objects.equals(trend_d1, trend_w1)
+                    && Objects.equals(trend_d1, trend_h4)
+                    && Objects.equals(trend_d1, trend_h1)
+
+                    && Objects.equals(trend_d1, dto_d1.getTrend_by_ma())
+                    && Objects.equals(trend_d1, dto_h4.getTrend_by_ma())
+                    && Objects.equals(trend_d1, dto_h1.getTrend_by_ma())) {
                 is_eq_mo_w_d_h4_h1 = true;
             }
 
@@ -3714,7 +3717,8 @@ public class BinanceServiceImpl implements BinanceService {
                 analysis_profit(prefix, EPIC, eoz, trend_w1);
 
                 if (is_eq_mo_w_d_h4_h1 && dto_d1.isTradable_zone()
-                        && Utils.isNotBlank(dto_d1.getSwitch_trend() + dto_h4.getSwitch_trend())) {
+                        && (Utils.isNotBlank(dto_d1.getSwitch_trend() + dto_h4.getSwitch_trend())
+                                || dto_h1.isAllow_trade_by_ma1_10_20())) {
 
                     if (((Utils.EPICS_STOCKS_EUR.contains(EPIC) && Utils.is_london_session())
                             || (Utils.EPICS_STOCKS_USA.contains(EPIC) && Utils.is_newyork_session()))) {
@@ -4163,7 +4167,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String key = EPIC + Utils.CAPITAL_TIME_H1;
                         String append = "05_1020." + Utils.TEXT_PASS;
 
-                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4, dto_h1, dto_h4,
+                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4, dto_h1, dto_d1,
                                 append, true, Utils.CAPITAL_TIME_H1);
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
@@ -4174,7 +4178,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String key = EPIC + Utils.CAPITAL_TIME_H1;
                         String append = "15_1020." + Utils.TEXT_PASS;
 
-                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4, dto_h1, dto_h4,
+                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4, dto_h1, dto_d1,
                                 append, true, Utils.CAPITAL_TIME_H1);
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
@@ -4185,7 +4189,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String key = EPIC + Utils.CAPITAL_TIME_H1;
                         String append = "h1_1020." + Utils.TEXT_PASS;
 
-                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4, dto_h1, dto_h4,
+                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4, dto_h1, dto_d1,
                                 append, true, Utils.CAPITAL_TIME_H1);
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
@@ -4196,7 +4200,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String key = EPIC + Utils.CAPITAL_TIME_H4;
                         String append = "h4_1020." + Utils.TEXT_PASS;
 
-                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4, dto_h1, dto_h4,
+                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4, dto_h1, dto_d1,
                                 append, true, Utils.CAPITAL_TIME_H4);
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
@@ -4204,7 +4208,8 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     if (Objects.isNull(trade_dto)
-                            && (dto_h4.getSwitch_trend() + dto_h1.getSwitch_trend()).contains(trend_h4)) {
+                            && (dto_h4.getSwitch_trend() + dto_h1.getSwitch_trend())
+                                    .contains(Utils.TEXT_SWITCH_TREND_Ma_1vs1520)) {
 
                         String key = EPIC + Utils.CAPITAL_TIME_H1;
                         String append = "";
@@ -4217,7 +4222,7 @@ public class BinanceServiceImpl implements BinanceService {
                         append += Utils.TEXT_PASS;
 
                         trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC,
-                                trend_h4, dto_h1, dto_h4,
+                                trend_h4, dto_h1, dto_d1,
                                 append, true, Utils.CAPITAL_TIME_H1);
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
@@ -4377,20 +4382,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
             if (h4_to_05_reverse) {
                 is_hit_sl = true;
-            }
-
-            // Giữ lại phần bắt đáy bắt đỉnh
-            if (h1_to_05_reverse) {
-                List<BtcFutures> list = getCapitalData(EPIC, Utils.CAPITAL_TIME_H4);
-                String zone = Utils.getZone(list);
-                if (!Objects.equals(TRADE_TREND, zone)) {
-                    is_hit_sl = true;
-
-                }
-
-                if (PROFIT.add(Utils.RISK_0_02_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
-                    is_hit_sl = true;
-                }
             }
 
             // ---------------------------------------------------------------------------------
