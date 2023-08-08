@@ -3970,6 +3970,7 @@ public class BinanceServiceImpl implements BinanceService {
         } else if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4)
                 || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1)) {
 
+            switch_trend += Utils.switchTrendByMa1vs8910(list);
             switch_trend += Utils.switchTrendByMa1vs1015(list);
             switch_trend += Utils.switchTrendByMa1vs1520(list);
 
@@ -4056,10 +4057,10 @@ public class BinanceServiceImpl implements BinanceService {
             return 0;
         }
         if (!Utils.is_vn_working_time()) {
-            return 0;
+            //  return 0;
         }
         if (required_update_bars_csv) {
-            return 0;
+            // return 0;
         }
 
         int count = 0;
@@ -4169,17 +4170,17 @@ public class BinanceServiceImpl implements BinanceService {
                 // Ra khi H1.ma.10 != TRADE_TREND
                 if (is_trade_zone && is_eq_d_h12_h4_h1 && is_line_eq_ma_h4_h1_15_05) {
 
-                    if (Objects.isNull(trade_dto) && dto_05.isAllow_trade_by_ma1_10_20()
-                            && dto_h1.isTradable_zone()) {
-                        String key = EPIC + Utils.CAPITAL_TIME_H1;
-                        String append = "05_1020." + Utils.TEXT_PASS;
-
-                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4, dto_h1, dto_d1,
-                                append, true, Utils.CAPITAL_TIME_H1);
-
-                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
-                        BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
-                    }
+//                    if (Objects.isNull(trade_dto) && dto_05.isAllow_trade_by_ma1_10_20()
+//                            && dto_h1.isTradable_zone()) {
+//                        String key = EPIC + Utils.CAPITAL_TIME_H1;
+//                        String append = "05_1020.";// + Utils.TEXT_PASS;
+//
+//                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4, dto_h1, dto_d1,
+//                                append, true, Utils.CAPITAL_TIME_H1);
+//
+//                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
+//                        BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
+//                    }
 
                     if (Objects.isNull(trade_dto) && dto_15.isAllow_trade_by_ma1_10_20() && dto_h1.isTradable_zone()) {
                         String key = EPIC + Utils.CAPITAL_TIME_H1;
@@ -4209,28 +4210,6 @@ public class BinanceServiceImpl implements BinanceService {
 
                         trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4, dto_h1, dto_d1,
                                 append, true, Utils.CAPITAL_TIME_H4);
-
-                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
-                        BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
-                    }
-
-                    if (Objects.isNull(trade_dto)
-                            && (dto_h4.getSwitch_trend() + dto_h1.getSwitch_trend())
-                                    .contains(Utils.TEXT_SWITCH_TREND_Ma_1vs1520)) {
-
-                        String key = EPIC + Utils.CAPITAL_TIME_H1;
-                        String append = "";
-                        if (dto_h4.getSwitch_trend().contains(trend_h4)) {
-                            append += "4w.";
-                        }
-                        if (dto_h1.getSwitch_trend().contains(trend_h4)) {
-                            append += "1w.";
-                        }
-                        append += Utils.TEXT_PASS;
-
-                        trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC,
-                                trend_h4, dto_h1, dto_d1,
-                                append, true, Utils.CAPITAL_TIME_H1);
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                         BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
