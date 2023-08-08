@@ -3989,11 +3989,21 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(trend_line, Utils.TREND_LONG)) {
                 if ((ma01.compareTo(ma10) > 0) && (ma10.compareTo(ma20) > 0)) {
                     allow_trade_by_ma1_10_20 = true;
+
+                } else if ((ma01.compareTo(ma10) > 0) && (ma01.compareTo(ma20) > 0)
+                        && Utils.isUptrendByMa(list, 10, 0, 1)
+                        && Utils.isUptrendByMa(list, 20, 0, 1)) {
+                    allow_trade_by_ma1_10_20 = true;
                 }
             }
 
             if (Objects.equals(trend_line, Utils.TREND_SHOT)) {
                 if ((ma01.compareTo(ma10) < 0) && (ma10.compareTo(ma20) < 0)) {
+                    allow_trade_by_ma1_10_20 = true;
+
+                } else if ((ma01.compareTo(ma10) < 0) && (ma01.compareTo(ma20) < 0)
+                        && !Utils.isUptrendByMa(list, 10, 0, 1)
+                        && !Utils.isUptrendByMa(list, 20, 0, 1)) {
                     allow_trade_by_ma1_10_20 = true;
                 }
             }
