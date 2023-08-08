@@ -3696,9 +3696,9 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(trend_d1, trend_mo) && Objects.equals(trend_d1, trend_w1)
                     && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)
 
-                    && Objects.equals(trend_d1, dto_d1.getTrend_by_ma())
-                    && Objects.equals(trend_d1, dto_h4.getTrend_by_ma())
-                    && Objects.equals(trend_d1, dto_h1.getTrend_by_ma())) {
+                    && Objects.equals(trend_d1, dto_d1.getTrend_by_ma10())
+                    && Objects.equals(trend_d1, dto_h4.getTrend_by_ma10())
+                    && Objects.equals(trend_d1, dto_h1.getTrend_by_ma10())) {
                 is_eq_mo_w_d_h4_h1 = true;
             }
 
@@ -3922,22 +3922,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // TODO: 1. initForexTrend Trên Ma chỉ LONG, dưới Ma chỉ SHORT
         String trend_line = Utils.getTrendByLineChart(list);
-        String trend_by_ma = Utils.isAboveMALine(list, 10) ? Utils.TREND_LONG : Utils.TREND_SHOT;
-
-        String nocation = "";
-        if (heiken_list.size() >= 50) {
-            if (Utils.isBelowMALine(heiken_list, 50)) {
-                nocation = Utils.NOCATION_BELOW_MA50;
-
-            } else if (Utils.isAboveMALine(heiken_list, 50)) {
-                nocation = Utils.NOCATION_ABOVE_MA50;
-            }
-
-            if (Utils.isBlank(nocation) && CAPITAL_TIME_XX.contains(Utils.CAPITAL_TIME_05)
-                    && Utils.switchTrendByMa13_XX(heiken_list, 50).contains(trend_line)) {
-                nocation = Utils.NOCATION_CUTTING_MA50;
-            }
-        }
+        String trend_by_ma10 = Utils.isAboveMALine(list, 10) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
         String switch_trend = "";
         if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_MO)
@@ -3965,9 +3950,8 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         boolean allow_trade_by_ma1_6_10_50 = false;
-        if ((list.size() > 50) && Utils.isNotBlank(switch_trend)) {
+        if ((list.size() > 50)) {
             BigDecimal ma01 = Utils.calcMA(list, 1, 1);
-
             BigDecimal ma06 = Utils.calcMA(list, 6, 1);
             BigDecimal ma10 = Utils.calcMA(list, 10, 1);
             BigDecimal ma20 = Utils.calcMA(list, 20, 1);
@@ -4057,12 +4041,12 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         boolean tradable_zone = false;
-        if (zone.contains(trend_by_ma)) {
+        if (zone.contains(trend_by_ma10)) {
             tradable_zone = true;
         }
 
         Orders entity = new Orders(orderId, date_time, trend_line, heiken_list.get(0).getCurrPrice(), str_body,
-                end_body, sl_long, sl_shot, switch_trend, allow_trade_by_ma1_6_10_50, trend_by_ma, tradable_zone);
+                end_body, sl_long, sl_shot, switch_trend, allow_trade_by_ma1_6_10_50, trend_by_ma10, tradable_zone);
 
         ordersRepository.save(entity);
 
@@ -4148,7 +4132,7 @@ public class BinanceServiceImpl implements BinanceService {
                 eoz += "    ";
             }
 
-            if (Objects.equals(trend_d1, trend_12) && dto_12.getSwitch_trend().contains(dto_12.getTrend_by_ma())) {
+            if (Objects.equals(trend_d1, trend_12) && dto_12.getSwitch_trend().contains(dto_12.getTrend_by_ma10())) {
                 eoz += "   ~H12~" + (Objects.equals(Utils.TREND_LONG, trend_12) ? "B" : "S") + "  ";
             } else {
                 eoz += "           ";
@@ -4161,12 +4145,12 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean is_line_eq_ma_h4_h1_15_05 = false;
-            if (Objects.equals(trend_h4, dto_h1.getTrend_by_ma()) && Objects.equals(trend_h4, dto_h1.getTrend_line())
+            if (Objects.equals(trend_h4, dto_h1.getTrend_by_ma10()) && Objects.equals(trend_h4, dto_h1.getTrend_line())
 
-                    && Objects.equals(trend_h4, dto_15.getTrend_by_ma())
+                    && Objects.equals(trend_h4, dto_15.getTrend_by_ma10())
                     && Objects.equals(trend_h4, dto_15.getTrend_line())
 
-                    && Objects.equals(trend_h4, dto_05.getTrend_by_ma())
+                    && Objects.equals(trend_h4, dto_05.getTrend_by_ma10())
                     && Objects.equals(trend_h4, dto_05.getTrend_line())) {
 
                 is_line_eq_ma_h4_h1_15_05 = true;
@@ -4315,16 +4299,16 @@ public class BinanceServiceImpl implements BinanceService {
             boolean m15_to_05_reverse = false;
             if (Objects.equals(dto_h1.getTrend_line(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_line(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_15.getTrend_by_ma(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_15.getTrend_by_ma10(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_05.getTrend_line(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_05.getTrend_by_ma(), REVERSE_TRADE_TREND)) {
+                    && Objects.equals(dto_05.getTrend_by_ma10(), REVERSE_TRADE_TREND)) {
                 m15_to_05_reverse = true;
             }
 
             boolean h1_to_05_reverse = false;
             if (m15_to_05_reverse && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_line(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h1.getTrend_by_ma(), REVERSE_TRADE_TREND)) {
+                    && Objects.equals(dto_h1.getTrend_by_ma10(), REVERSE_TRADE_TREND)) {
                 h1_to_05_reverse = true;
             }
 
