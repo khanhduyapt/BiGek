@@ -134,8 +134,12 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_Ma_1vs3456 = "(Ma1.3456)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs8910 = "(Ma1.8910)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs1015 = "(Ma1.1015)";
-    public static final String TEXT_SWITCH_TREND_Ma_1_10 = "(Ma1.10)";
-    public static final String TEXT_SWITCH_TREND_Ma_1_50 = "(Ma1.50)";
+    public static final String TEXT_SWITCH_TREND_Ma_1vs1520 = "(Ma1.1520)";
+
+    public static final String TEXT_SWITCH_TREND_Ma_1vs10 = "(Ma1.10)";
+    public static final String TEXT_SWITCH_TREND_Ma_1vs20 = "(Ma1.20)";
+    public static final String TEXT_SWITCH_TREND_Ma_1vs50 = "(Ma1.50)";
+
     public static final String TEXT_SWITCH_TREND_50 = "(~50~)";
     public static final String TEXT_SWITCH_TREND_HEIKEN = "(Heiken)";
 
@@ -2473,7 +2477,7 @@ public class Utils {
         }
 
         BigDecimal ma = calcMA(list, length, 1);
-        BigDecimal price = list.get(0).getCurrPrice();
+        BigDecimal price = list.get(1).getPrice_close_candle();
 
         if ((price.compareTo(ma) > 0)) {
             return true;
@@ -2494,7 +2498,7 @@ public class Utils {
         }
 
         BigDecimal ma = calcMA(list, length, 1);
-        BigDecimal price = list.get(0).getCurrPrice();
+        BigDecimal price = list.get(1).getPrice_close_candle();
 
         if ((price.compareTo(ma) < 0)) {
             return true;
@@ -3423,99 +3427,31 @@ public class Utils {
     }
 
     public static String switchTrendByMa1vs3456(List<BtcFutures> heiken_list) {
-        String trend = "_";
-
-        BigDecimal ma1_0 = calcMA(heiken_list, 1, 0);
-        BigDecimal ma1_2 = calcMA(heiken_list, 1, 1);
-
-        for (int ma_index = 3; ma_index <= 5; ma_index++) {
-            BigDecimal maX_0 = calcMA(heiken_list, ma_index, 0);
-            BigDecimal maX_2 = calcMA(heiken_list, ma_index, 2);
-
-            String cutUp = Utils.checkXCutUpY(ma1_0, ma1_2, maX_0, maX_2);
-            String cutDw = Utils.checkXCutDnY(ma1_0, ma1_2, maX_0, maX_2);
-
-            if (Utils.isNotBlank(cutUp)) {
-                trend += ma_index + ":" + cutUp + "_";
-            }
-            if (Utils.isNotBlank(cutDw)) {
-                trend += ma_index + ":" + cutDw + "_";
-            }
-        }
-
-        if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHOT)) {
-            return "";
-        }
-
-        if (trend.contains(Utils.TREND_LONG) || trend.contains(Utils.TREND_SHOT)) {
-            if (trend.contains(Utils.TREND_LONG)) {
-                trend = Utils.TREND_LONG;
-            }
-            if (trend.contains(Utils.TREND_SHOT)) {
-                trend = Utils.TREND_SHOT;
-            }
-            String chart_name = getChartName(heiken_list).trim();
-            String switch_trend = chart_name + TEXT_SWITCH_TREND_Ma_1vs3456 + ":" + Utils.appendSpace(trend, 4);
-
-            return switch_trend;
-        }
-
-        return "";
-    }
-
-    public static String switchTrendByMa1vs1015(List<BtcFutures> heiken_list) {
-        String trend = "_";
-
-        BigDecimal ma1_0 = calcMA(heiken_list, 1, 0);
-        BigDecimal ma1_2 = calcMA(heiken_list, 1, 1);
-
-        for (int ma_index = 10; ma_index <= 15; ma_index++) {
-            BigDecimal maX_0 = calcMA(heiken_list, ma_index, 0);
-            BigDecimal maX_2 = calcMA(heiken_list, ma_index, 2);
-
-            String cutUp = Utils.checkXCutUpY(ma1_0, ma1_2, maX_0, maX_2);
-            String cutDw = Utils.checkXCutDnY(ma1_0, ma1_2, maX_0, maX_2);
-
-            if (Utils.isNotBlank(cutUp)) {
-                trend += ma_index + ":" + cutUp + "_";
-            }
-            if (Utils.isNotBlank(cutDw)) {
-                trend += ma_index + ":" + cutDw + "_";
-            }
-        }
-
-        if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHOT)) {
-            return "";
-        }
-
-        if (isBlank(trend.replace("_", ""))) {
-            return "";
-        }
-
-        if (trend.contains(Utils.TREND_LONG) || trend.contains(Utils.TREND_SHOT)) {
-            if (trend.contains(Utils.TREND_LONG)) {
-                trend = Utils.TREND_LONG;
-            }
-            if (trend.contains(Utils.TREND_SHOT)) {
-                trend = Utils.TREND_SHOT;
-            }
-            String chart_name = getChartName(heiken_list).trim();
-            String switch_trend = chart_name + TEXT_SWITCH_TREND_Ma_1vs1015 + ":" + Utils.appendSpace(trend, 4);
-
-            return switch_trend;
-        }
-
-        return "";
+        return switchTrendByMa1(heiken_list, 5, 6, TEXT_SWITCH_TREND_Ma_1vs3456);
     }
 
     public static String switchTrendByMa1vs8910(List<BtcFutures> heiken_list) {
+        return switchTrendByMa1(heiken_list, 8, 10, TEXT_SWITCH_TREND_Ma_1vs8910);
+    }
+
+    public static String switchTrendByMa1vs1015(List<BtcFutures> heiken_list) {
+        return switchTrendByMa1(heiken_list, 12, 15, TEXT_SWITCH_TREND_Ma_1vs1015);
+    }
+
+    public static String switchTrendByMa1vs1520(List<BtcFutures> heiken_list) {
+        return switchTrendByMa1(heiken_list, 18, 20, TEXT_SWITCH_TREND_Ma_1vs1520);
+    }
+
+    private static String switchTrendByMa1(List<BtcFutures> heiken_list, int ma_form, int ma_to,
+            String id_switch_trend) {
+
         String trend = "_";
 
-        BigDecimal ma1_0 = calcMA(heiken_list, 1, 0);
-        BigDecimal ma1_2 = calcMA(heiken_list, 1, 1);
+        BigDecimal ma1_0 = calcMA(heiken_list, 1, 1);
+        BigDecimal ma1_2 = calcMA(heiken_list, 1, 2);
 
-        for (int ma_index = 8; ma_index <= 10; ma_index++) {
-            BigDecimal maX_0 = calcMA(heiken_list, ma_index, 0);
+        for (int ma_index = ma_form; ma_index <= ma_to; ma_index++) {
+            BigDecimal maX_0 = calcMA(heiken_list, ma_index, 1);
             BigDecimal maX_2 = calcMA(heiken_list, ma_index, 2);
 
             String cutUp = Utils.checkXCutUpY(ma1_0, ma1_2, maX_0, maX_2);
@@ -3545,12 +3481,13 @@ public class Utils {
                 trend = Utils.TREND_SHOT;
             }
             String chart_name = getChartName(heiken_list).trim();
-            String switch_trend = chart_name + TEXT_SWITCH_TREND_Ma_1vs8910 + ":" + Utils.appendSpace(trend, 4);
+            String switch_trend = chart_name + id_switch_trend + ":" + Utils.appendSpace(trend, 4);
 
             return switch_trend;
         }
 
         return "";
+
     }
 
     public static String switchTrendByMaXX_123(List<BtcFutures> list, int fastIndex, int slowIndex, int start,
