@@ -2604,9 +2604,9 @@ public class Utils {
         return result.trim();
     }
 
-    public static List<BigDecimal> calc_SL1_TP2(Orders dto_d1, String find_trend, boolean same_trend_w_d) {
+    public static List<BigDecimal> calc_SL1_TP2(Orders dto_sl, String find_trend, boolean same_trend_w_d) {
         List<BigDecimal> result = new ArrayList<BigDecimal>();
-        if (Objects.isNull(dto_d1)) {
+        if (Objects.isNull(dto_sl)) {
             result.add(BigDecimal.ZERO);
             result.add(BigDecimal.ZERO);
             return result;
@@ -2614,23 +2614,27 @@ public class Utils {
 
         BigDecimal multi = BigDecimal.valueOf(1.5);
 
-        BigDecimal sl_d1 = BigDecimal.ZERO;
-        BigDecimal tp_d1 = BigDecimal.ZERO;
+        BigDecimal sl = BigDecimal.ZERO;
+        BigDecimal tp = BigDecimal.ZERO;
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            sl_d1 = dto_d1.getLow_price();
-            BigDecimal high = dto_d1.getCurrent_price().subtract(dto_d1.getLow_price());
+            sl = dto_sl.getLow_price();
+            BigDecimal high = dto_sl.getCurrent_price().subtract(dto_sl.getLow_price());
             high = high.multiply(multi);
-            tp_d1 = dto_d1.getCurrent_price().add(high);
+            tp = dto_sl.getCurrent_price().add(high);
+
+            tp = dto_sl.getBody_hig();
         }
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            sl_d1 = dto_d1.getHigh_price();
-            BigDecimal high = dto_d1.getHigh_price().subtract(dto_d1.getCurrent_price());
+            sl = dto_sl.getHigh_price();
+            BigDecimal high = dto_sl.getHigh_price().subtract(dto_sl.getCurrent_price());
             high = high.multiply(multi);
-            tp_d1 = dto_d1.getCurrent_price().subtract(high);
+            tp = dto_sl.getCurrent_price().subtract(high);
+
+            tp = dto_sl.getBody_low();
         }
 
-        result.add(sl_d1);
-        result.add(tp_d1);
+        result.add(sl);
+        result.add(tp);
         return result;
     }
 

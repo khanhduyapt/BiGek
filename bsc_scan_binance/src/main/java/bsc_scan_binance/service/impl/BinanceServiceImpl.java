@@ -4163,7 +4163,17 @@ public class BinanceServiceImpl implements BinanceService {
                                     .contains(trend_h4)) {
 
                         String key = EPIC + Utils.CAPITAL_TIME_H1;
-                        String append = "4w1." + Utils.TEXT_PASS;
+                        String append = "4w1.";
+                        if (dto_h4.getSwitch_trend().contains(trend_h4)) {
+                            append += "h4.";
+                        }
+                        if (dto_h1.getSwitch_trend().contains(trend_h4)) {
+                            append += "h1.";
+                        }
+                        if (dto_h1.getSwitch_trend().contains(trend_h4)) {
+                            append += "15.";
+                        }
+                        append += Utils.TEXT_PASS;
 
                         trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC,
                                 trend_h4, dto_h1, dto_h4,
