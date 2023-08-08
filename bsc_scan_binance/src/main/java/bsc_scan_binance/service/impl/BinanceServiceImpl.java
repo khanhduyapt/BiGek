@@ -4385,7 +4385,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ---------------------------------------------------------------------------------
             // TODO: 5. closeTrade_by_SL_TP
-            if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
+            if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_1H)) {
                 if (has_profit || is_hit_sl) {
                     String reason = "";
                     if (has_profit) {
