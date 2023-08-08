@@ -4342,7 +4342,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (PROFIT.add(Utils.RISK_0_10_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
                 is_hit_sl = true;
             }
-            if (h1_to_05_reverse) {
+            if (m15_to_05_reverse) {
                 is_hit_sl = true;
             }
 
