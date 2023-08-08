@@ -2965,11 +2965,12 @@ public class BinanceServiceImpl implements BinanceService {
 
         log += "          ";
 
-        if (!is_opening_trade(EPIC, "")) {
+        String reverse_trend = (Objects.equals(dto_d1.getTrend_line(), Utils.TREND_LONG)) ? Utils.TREND_SHOT
+                : Utils.TREND_LONG;
+
+        if (is_opening_trade(EPIC, reverse_trend)) {
             if (!dto_d1.isTradable_zone() || !dto_h4.isTradable_zone()
                     || (Utils.isNotBlank(dto_h4.getSwitch_trend()) && !dto_h4.getSwitch_trend().contains(trend_d1))) {
-                String reverse_trend = (Objects.equals(dto_d1.getTrend_line(), Utils.TREND_LONG)) ? Utils.TREND_SHOT
-                        : Utils.TREND_LONG;
 
                 log += text_risk + Utils
                         .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, reverse_trend, EPIC, dto_h1, dto_d1),
@@ -4168,7 +4169,7 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
-                                append, true, Utils.CAPITAL_TIME_D1);
+                                append, false, Utils.CAPITAL_TIME_D1);
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                         BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
@@ -4183,7 +4184,7 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
-                                append, true, Utils.CAPITAL_TIME_H12);
+                                append, false, Utils.CAPITAL_TIME_H12);
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                         BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
@@ -4198,7 +4199,7 @@ public class BinanceServiceImpl implements BinanceService {
                         }
 
                         trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
-                                append, true, Utils.CAPITAL_TIME_H4);
+                                append, false, Utils.CAPITAL_TIME_H4);
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                         BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
@@ -4210,7 +4211,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String append = "96_1w." + Utils.TEXT_PASS;
 
                         trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
-                                append, true, Utils.CAPITAL_TIME_H4);
+                                append, false, Utils.CAPITAL_TIME_H4);
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                         BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
@@ -4221,7 +4222,7 @@ public class BinanceServiceImpl implements BinanceService {
                         String append = "init." + Utils.TEXT_PASS;
 
                         trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1, dto_d1,
-                                append, true, Utils.CAPITAL_TIME_H4);
+                                append, false, Utils.CAPITAL_TIME_H4);
 
                         BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                         BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
