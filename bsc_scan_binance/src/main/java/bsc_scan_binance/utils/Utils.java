@@ -1711,6 +1711,39 @@ public class Utils {
         return Utils.convertDateToString("(HH:mm) ", Calendar.getInstance().getTime());
     }
 
+    public static String getTime_day24Hmm() {
+        LocalDate today = LocalDate.now();
+        DayOfWeek day = DayOfWeek.of(today.get(ChronoField.DAY_OF_WEEK));
+
+        // Calendar calendar = Calendar.getInstance();
+        // String name = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.US);
+
+        String name = "";
+        if (day == DayOfWeek.MONDAY) {
+            name = "t2";
+        }
+        if (day == DayOfWeek.THURSDAY) {
+            name = "t3";
+        }
+        if (day == DayOfWeek.WEDNESDAY) {
+            name = "t4";
+        }
+        if (day == DayOfWeek.THURSDAY) {
+            name = "t5";
+        }
+        if (day == DayOfWeek.FRIDAY) {
+            name = "t6";
+        }
+        if (day == DayOfWeek.SATURDAY) {
+            name = "t7";
+        }
+        if (day == DayOfWeek.SUNDAY) {
+            name = "cn";
+        }
+
+        return name + Utils.convertDateToString("HHmm", Calendar.getInstance().getTime());
+    }
+
     public static String getYyyyMmDd_HHmmss() {
         return Utils.convertDateToString("yyyyMMdd_HHmmss", Calendar.getInstance().getTime());
     }
@@ -4145,7 +4178,7 @@ public class Utils {
         dto.setEntry(entry);
         dto.setStop_loss(sl_d1);
         dto.setTake_profit(tp_d1);
-        dto.setComment(timeframe + append.trim().replace(Utils.TEXT_PASS, ""));
+        dto.setComment(timeframe + append.trim().replace(Utils.TEXT_PASS, "") + getTime_day24Hmm());
 
         return dto;
     }
