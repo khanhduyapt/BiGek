@@ -4150,12 +4150,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean is_eq_ma_d_h4 = false;
-            if (Objects.equals(trend_d1, trend_h4)) {
-                if (dto_h1.getSwitch_trend().contains("1610205")) {
-                    is_eq_ma_d_h4 = true;
-                } else if (Objects.equals(trend_h4, dto_h4.getTrend_by_ma10())) {
-                    is_eq_ma_d_h4 = true;
-                }
+            if (Objects.equals(trend_d1, trend_h4)
+                    && Objects.equals(trend_d1, dto_d1.getTrend_by_ma10())
+                    && Objects.equals(trend_d1, dto_h4.getTrend_by_ma10())) {
+                is_eq_ma_d_h4 = true;
             }
 
             boolean is_eq_d_h12_h4_h1 = false;
@@ -4199,7 +4197,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4, dto_h1,
-                        dto_h4, append, is_buy_now, Utils.CAPITAL_TIME_H1);
+                        dto_h1, append, is_buy_now, Utils.CAPITAL_TIME_H1);
 
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
@@ -4321,8 +4319,8 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------
             boolean is_reverse = false;
             if (Objects.equals(dto_h1.getTrend_by_ma10(), REVERSE_TRADE_TREND)
-                    && (allow_close_trade_after(TICKET, Utils.MINUTES_OF_2D)
-                            || (PROFIT.compareTo(BigDecimal.ZERO) > 0))) {
+                    && (allow_close_trade_after(TICKET, Utils.MINUTES_OF_8H)
+                            || (PROFIT.compareTo(BigDecimal.ZERO) > 0) || Utils.isCloseTradeToday())) {
                 is_reverse = true;
             }
 
@@ -4346,8 +4344,10 @@ public class BinanceServiceImpl implements BinanceService {
                         reason = "profit";
                     }
 
-                    if (is_reverse || is_hit_sl || take_profit) {
-                        BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
+                    if (!"__HOLDING__XAUUSD__".contains("_" + EPIC + "_")) {
+                        if (is_reverse || is_hit_sl || take_profit) {
+                            BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
+                        }
                     }
 
                     // --------------------------------------------------------------------------
