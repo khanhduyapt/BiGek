@@ -4145,7 +4145,7 @@ public class Utils {
         dto.setEntry(entry);
         dto.setStop_loss(sl_d1);
         dto.setTake_profit(tp_d1);
-        dto.setComment(append.trim().replace(Utils.TEXT_PASS, "") + timeframe);
+        dto.setComment(timeframe + append.trim().replace(Utils.TEXT_PASS, ""));
 
         return dto;
     }

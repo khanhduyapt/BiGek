@@ -4164,51 +4164,13 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            // TODO: 3. controlMt5
-            // Không đánh ngược trend_d1
-            Mt5OpenTrade trade_dto = null;
-
-            //boolean is_trade_zone_m15 = dto_h4.isTradable_zone() && dto_h1.isTradable_zone()
-            //        && dto_15.isAllow_trade_by_ma1_6_10_50() && false;
-            //if (Objects.isNull(trade_dto) && is_eq_d_h12_h4_h1 && is_eq_h4_h1_15_05 && is_trade_zone_m15) {
-            //    String key = EPIC + Utils.CAPITAL_TIME_15;
-            //    String append = "15." + dto_15.getSwitch_trend() + "." + Utils.TEXT_PASS;
-            //
-            //    boolean is_buy_now = false;
-            //    if (append.contains(Utils.TEXT_PASS)) {
-            //        is_buy_now = true;
-            //    }
-            //
-            //    trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4, dto_15, dto_15, append,
-            //            is_buy_now, Utils.CAPITAL_TIME_15);
-            //
-            //    BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
-            //    BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
-            //}
-            // ---------------------------------------------------------------------------------------------
-            //boolean is_trade_zone_h4 = dto_h4.isTradable_zone() && dto_h1.isTradable_zone()
-            //        && dto_h4.isAllow_trade_by_ma1_6_10_50();
-            //
-            //if (is_eq_ma_d_h4 && is_eq_d_h12_h4_h1 && is_eq_h4_h1_15_05 && is_trade_zone_h4) {
-            //    String key = EPIC + Utils.CAPITAL_TIME_H4;
-            //
-            //    String append = "h4_" + dto_h4.getSwitch_trend() + "." + Utils.TEXT_PASS;
-            //    boolean is_buy_now = false;
-            //    if (append.contains(Utils.TEXT_PASS)) {
-            //        is_buy_now = true;
-            //    }
-            //
-            //    trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4, dto_h4,
-            //            dto_h4, append, is_buy_now, Utils.CAPITAL_TIME_H4);
-            //
-            //    BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
-            //    BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
-            //}
-            // ---------------------------------------------------------------------------------------------
-
             if (Objects.equals(EPIC, "GBPNZD")) {
                 boolean debug = true;
             }
+
+            // TODO: 3. controlMt5
+            // Không đánh ngược trend_d1
+            Mt5OpenTrade trade_dto = null;
 
             boolean is_trade_zone_h1 = dto_h4.isTradable_zone() && dto_h1.isTradable_zone()
                     && dto_h1.isAllow_trade_by_ma1_6_10_50();
@@ -4216,7 +4178,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (is_eq_ma_d_h4 && is_eq_d_h12_h4_h1 && is_eq_h4_h1_15_05 && is_trade_zone_h1) {
                 String key = EPIC + Utils.CAPITAL_TIME_H1;
 
-                String append = dto_h1.getSwitch_trend() + "." + Utils.TEXT_PASS;
+                String append = dto_h1.getSwitch_trend() + Utils.TEXT_PASS;
                 boolean is_buy_now = false;
                 if (append.contains(Utils.TEXT_PASS)) {
                     is_buy_now = true;
