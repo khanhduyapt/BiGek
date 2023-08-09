@@ -2885,7 +2885,7 @@ public class BinanceServiceImpl implements BinanceService {
                             sb.append('\t');
                             sb.append(dto.getEntry());
                             sb.append('\t');
-                            sb.append(BigDecimal.ZERO); // dto.getStop_loss()
+                            sb.append(dto.getStop_loss()); // BigDecimal.ZERO
                             sb.append('\t');
                             sb.append(dto.getTake_profit()); //
                             sb.append('\t');
@@ -3959,7 +3959,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.equals(trend_line, Utils.TREND_LONG)) {
                 boolean is_ma_up = (Utils.isUptrendByMa(list, 10, 0, 1) && Utils.isUptrendByMa(list, 10, 1, 2))
-                        || (Utils.isUptrendByMa(list, 6, 0, 1) && Utils.isUptrendByMa(list, 6, 1, 2));
+                        || (Utils.isUptrendByMa(list, 20, 0, 1));
 
                 if (is_ma_up
 
@@ -3988,7 +3988,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.equals(trend_line, Utils.TREND_SHOT)) {
                 boolean is_ma_dn = (!Utils.isUptrendByMa(list, 10, 0, 1) && !Utils.isUptrendByMa(list, 10, 1, 2))
-                        || (!Utils.isUptrendByMa(list, 6, 0, 1) && !Utils.isUptrendByMa(list, 6, 1, 2));
+                        || (!Utils.isUptrendByMa(list, 20, 0, 1));
 
                 if (is_ma_dn
 
@@ -4045,7 +4045,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String zone = Utils.getZone(heiken_list);
         boolean tradable_zone = false;
-        if (zone.contains(trend_by_ma10)) {
+        if (zone.contains(trend_line)) {
             tradable_zone = true;
         }
 
@@ -4092,7 +4092,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                 continue;
             }
-            if (Objects.equals(EPIC, "GBPCAD")) {
+
+            if (Objects.equals(EPIC, "XAGUSD")) {
                 boolean debug = true;
             }
 
@@ -4120,11 +4121,11 @@ public class BinanceServiceImpl implements BinanceService {
 
             String eoz = " (" + type + ")EOZ:";
             eoz += (!dto_w1.isTradable_zone() && Objects.equals(trend_d1, trend_w1)) ? "W1" : "--";
-            eoz += (!dto_w1.isTradable_zone()) ? "D1" : "--";
-            eoz += (!dto_12.isTradable_zone() && Objects.equals(trend_h4, trend_12)) ? "H12" : "---";
-            eoz += !dto_h4.isTradable_zone() ? "H4" : "--";
+            eoz += (!dto_d1.isTradable_zone()) ? "D1" : "--";
+            eoz += (!dto_12.isTradable_zone() && Objects.equals(trend_d1, trend_12)) ? "H12" : "---";
+            eoz += (!dto_h4.isTradable_zone() && Objects.equals(trend_d1, trend_h4)) ? "H4" : "--";
 
-            if (eoz.contains("H12") || eoz.contains("H4")) {
+            if (eoz.contains("H4")) {
                 eoz += ".end";
             } else {
                 eoz += "    ";
@@ -4158,8 +4159,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             // TODO: 3. controlMt5
             // Không đánh ngược trend_d1
-            // Từ triệu phú thành tay trắng do đánh W & D nghịch pha nhau.
-
             Mt5OpenTrade trade_dto = null;
             boolean is_trade_zone_m15 = dto_h4.isTradable_zone() && dto_h1.isTradable_zone()
                     && dto_15.isAllow_trade_by_ma1_6_10_50();
@@ -4279,20 +4278,20 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            if (Objects.equals(EPIC, "CHFJPY")) {
+            if (Objects.equals(EPIC, "AUDJPY")) {
                 boolean debug = true;
             }
 
             BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
             // ---------------------------------------------------------------------------------
-            boolean is_has_profit = false;
-            if (PROFIT.compareTo(BigDecimal.ZERO) > 0) {
+            boolean take_profit = false;
+            if (PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0) {
                 if (Objects.equals(dto_h1.getTrend_line(), REVERSE_TRADE_TREND)
                         && Objects.equals(dto_15.getTrend_line(), REVERSE_TRADE_TREND)
                         && Objects.equals(dto_05.getTrend_line(), REVERSE_TRADE_TREND)
                         && Objects.equals(dto_05.getTrend_by_ma10(), REVERSE_TRADE_TREND)) {
 
-                    is_has_profit = true;
+                    take_profit = true;
                 }
             }
             // ---------------------------------------------------------------------------------
@@ -4310,19 +4309,19 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ---------------------------------------------------------------------------------
             // TODO: 5. closeTrade_by_SL_TP
-            if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_1H)) {
-                if (is_has_profit || m15_reverse || is_hit_sl) {
+            if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_30M)) {
+                if (take_profit || m15_reverse || is_hit_sl) {
                     String reason = "";
 
                     if (m15_reverse) {
                         reason = "reverse";
                     } else if (is_hit_sl) {
                         reason = "stoploss";
-                    } else if (is_has_profit) {
+                    } else if (take_profit) {
                         reason = "profit";
                     }
 
-                    if (m15_reverse || is_hit_sl || is_has_profit) {
+                    if (m15_reverse || is_hit_sl || take_profit) {
                         BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
                     }
 

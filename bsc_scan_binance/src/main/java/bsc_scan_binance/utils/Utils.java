@@ -72,7 +72,7 @@ public class Utils {
     public static final BigDecimal RISK_0_02_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.00025));
 
     // (100$ / 1 Tp)
-    private static final BigDecimal RISK_0_05_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
+    public static final BigDecimal RISK_0_05_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
 
     // Trend W != D (200$ / 1trade)
     private static final BigDecimal RISK_0_10_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
@@ -210,6 +210,7 @@ public class Utils {
     public static final Integer MINUTES_OF_4H = 240;
     public static final Integer MINUTES_OF_2H = 120;
     public static final Integer MINUTES_OF_1H = 60;
+    public static final Integer MINUTES_OF_30M = 30;
     public static final Integer MINUTES_OF_15M = 15;
     public static final Integer MINUTES_OF_5M = 5;
 
@@ -2479,7 +2480,7 @@ public class Utils {
         }
 
         BigDecimal ma = calcMA(list, length, 1);
-        BigDecimal price = list.get(1).getPrice_close_candle();
+        BigDecimal price = list.get(0).getPrice_close_candle();
 
         if ((price.compareTo(ma) > 0)) {
             return true;
@@ -2500,7 +2501,7 @@ public class Utils {
         }
 
         BigDecimal ma = calcMA(list, length, 1);
-        BigDecimal price = list.get(1).getPrice_close_candle();
+        BigDecimal price = list.get(0).getPrice_close_candle();
 
         if ((price.compareTo(ma) < 0)) {
             return true;
