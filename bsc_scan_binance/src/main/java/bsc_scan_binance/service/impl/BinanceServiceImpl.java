@@ -4195,12 +4195,12 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_trade_zone_h4 = dto_h4.isTradable_zone() && dto_h1.isTradable_zone()
                     && dto_h4.isAllow_trade_by_ma1_6_10_50();
 
-            if (is_eq_ma_d_h4 && is_eq_d_h12_h4_h1 && is_eq_h4_h1_15_05 && is_trade_zone_h4) {
+            if (is_eq_d_h12_h4_h1 && is_eq_h4_h1_15_05 && is_trade_zone_h4) {
                 String key = EPIC + Utils.CAPITAL_TIME_H4;
 
                 String append = dto_h4.getSwitch_trend() + Utils.TEXT_PASS;
 
-                trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4, dto_h1,
+                trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_h4, dto_15,
                         dto_h4, append, false, Utils.CAPITAL_TIME_H4);
 
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
@@ -4312,8 +4312,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_reverse = false;
             if (Objects.equals(dto_h1.getTrend_by_ma10(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND)
-                    && (allow_close_trade_after(TICKET, Utils.MINUTES_OF_8H)
-                            || (PROFIT.compareTo(BigDecimal.ZERO) > 0) || Utils.isCloseTradeToday())) {
+                    && ((PROFIT.compareTo(BigDecimal.ZERO) > 0) || Utils.isCloseTradeToday())) {
                 is_reverse = true;
             }
 
@@ -4325,7 +4324,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ---------------------------------------------------------------------------------
             // TODO: 5. closeTrade_by_SL_TP
-            if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_2H)) {
+            if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_1H)) {
                 if (take_profit || is_reverse || is_hit_sl) {
                     String reason = "";
 
@@ -4338,7 +4337,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     if (!"__HOLDING__XAUUSD__".contains("_" + EPIC + "_")) {
-                        if (is_reverse || is_hit_sl || take_profit) {
+                        if (is_hit_sl || take_profit) {
                             BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
                         }
                     }
