@@ -4305,7 +4305,7 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------
             boolean is_reverse = false;
             if (Objects.equals(dto_h1.getTrend_by_ma10(), REVERSE_TRADE_TREND)
-                    && (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)
+                    && (allow_close_trade_after(TICKET, Utils.MINUTES_OF_8H)
                             || (PROFIT.compareTo(BigDecimal.ZERO) > 0))) {
                 is_reverse = true;
             }
