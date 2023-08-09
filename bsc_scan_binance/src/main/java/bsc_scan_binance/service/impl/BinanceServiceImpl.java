@@ -3967,22 +3967,22 @@ public class BinanceServiceImpl implements BinanceService {
 
                         && Utils.switchTrendByMa1(list, 6, 20, "(1.vs.6_20)").contains(Utils.TREND_LONG)) {
                     ma1_10_50 = true;
-                    switch_trend = "(" + type + "1_10_20)";
+                    switch_trend = "(" + type + "1o10o20)";
 
                 } else if (is_ma_up && (ma01.compareTo(ma10) > 0) && (ma10.compareTo(ma50) > 0)
                         && Objects.equals(Utils.TREND_LONG, Utils.switchTrendBy_MaX_vs_MaY(list, 1, 10))) {
                     ma1_10_50 = true;
-                    switch_trend = "(" + type + "1_10_50)";
+                    switch_trend = "(" + type + "1o10o50)";
 
                 } else if (is_ma_up && Objects.equals(Utils.TREND_LONG, Utils.switchTrendBy_MaX_vs_MaY(list, 6, 10))
                         && (ma06.compareTo(ma10) > 0) && (ma10.compareTo(ma50) > 0)) {
                     ma6_10_50 = true;
-                    switch_trend = "(" + type + "6_10_50)";
+                    switch_trend = "(" + type + "6o10o50)";
 
                 } else if (is_ma_up && (ma01.compareTo(ma20) > 0) && (ma20.compareTo(ma50) > 0)
                         && Objects.equals(Utils.TREND_LONG, Utils.switchTrendBy_MaX_vs_MaY(list, 1, 20))) {
                     ma1_10_50 = true;
-                    switch_trend = "(" + type + "1_20_50)";
+                    switch_trend = "(" + type + "1o20o50)";
 
                 } else if (is_ma_up && (ma01.compareTo(ma06) > 0) && (ma06.compareTo(ma10) > 0)
                         && (ma10.compareTo(ma20) > 0) && (ma50.compareTo(ma20) > 0)) {
@@ -4001,22 +4001,22 @@ public class BinanceServiceImpl implements BinanceService {
 
                         && Utils.switchTrendByMa1(list, 6, 20, "(1.vs.6_20)").contains(Utils.TREND_SHOT)) {
                     ma1_10_50 = true;
-                    switch_trend = "(" + type + "1_10_20)";
+                    switch_trend = "(" + type + "1o10o20)";
 
                 } else if (is_ma_dn && (ma01.compareTo(ma10) < 0) && (ma10.compareTo(ma50) < 0)
                         && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 1, 10))) {
                     ma1_10_50 = true;
-                    switch_trend = "(" + type + "1_10_50)";
+                    switch_trend = "(" + type + "1o10o50)";
 
                 } else if (is_ma_dn && (ma06.compareTo(ma10) < 0) && (ma10.compareTo(ma50) < 0)
                         && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 6, 10))) {
                     ma6_10_50 = true;
-                    switch_trend = "(" + type + "6_10_50)";
+                    switch_trend = "(" + type + "6o10o50)";
 
                 } else if (is_ma_dn && (ma01.compareTo(ma20) < 0) && (ma20.compareTo(ma50) < 0)
                         && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 1, 20))) {
                     ma1_10_50 = true;
-                    switch_trend = "(" + type + "1_20_50)";
+                    switch_trend = "(" + type + "1o20o50)";
 
                 } else if (is_ma_dn && (ma01.compareTo(ma06) < 0) && (ma06.compareTo(ma10) < 0)
                         && (ma10.compareTo(ma20) < 0) && (ma50.compareTo(ma20) < 0)) {
