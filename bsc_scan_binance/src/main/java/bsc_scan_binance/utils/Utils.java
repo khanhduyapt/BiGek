@@ -69,13 +69,13 @@ public class Utils {
     // đến 0,15%
 
     // (50$)
-    public static final BigDecimal RISK_0_02_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.00025));
+    private static final BigDecimal RISK_0_02_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.00025));
 
     // (100$ / 1 Tp)
     public static final BigDecimal RISK_0_05_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
 
     // Trend W != D (200$ / 1trade)
-    private static final BigDecimal RISK_0_10_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
+    public static final BigDecimal RISK_0_10_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
 
     // Trend W == D (300$ / 1trade)
     private static final BigDecimal RISK_0_15_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
@@ -195,13 +195,13 @@ public class Utils {
     public static final String PREFIX_W1_ = "_1w_";
     public static final String PREFIX_MO_ = "_mo_";
 
-    public static final String ENCRYPTED_05 = "(05)";
-    public static final String ENCRYPTED_15 = "(15)";
-    public static final String ENCRYPTED_H1 = "(h1)";
-    public static final String ENCRYPTED_H4 = "(h4)";
-    public static final String ENCRYPTED_H12 = "(12)";
-    public static final String ENCRYPTED_D1 = "(D1)";
-    public static final String ENCRYPTED_W1 = "(W1)";
+    public static final String ENCRYPTED_05 = "05.";
+    public static final String ENCRYPTED_15 = "15.";
+    public static final String ENCRYPTED_H1 = "60.";
+    public static final String ENCRYPTED_H4 = "240.";
+    public static final String ENCRYPTED_H12 = "720.";
+    public static final String ENCRYPTED_D1 = "1440.";
+    public static final String ENCRYPTED_W1 = "7200.";
 
     public static final Integer MINUTES_OF_2D = 2880;
     public static final Integer MINUTES_OF_1D = 1440;
@@ -4146,9 +4146,9 @@ public class Utils {
         dto.setStop_loss(sl_d1);
         dto.setTake_profit(tp_d1);
         dto.setComment(append.trim());
-        // String timeframe = getEncryptedChartNameCapital(CAPITAL_TIME_XX);
-        // dto.setComment(BscScanBinanceApplication.hostname + append.trim() +
-        // timeframe);
+
+        String timeframe = getEncryptedChartNameCapital(CAPITAL_TIME_XX);
+        dto.setComment(append.trim() + timeframe);
 
         return dto;
     }
