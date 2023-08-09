@@ -4178,7 +4178,7 @@ public class Utils {
         dto.setEntry(entry);
         dto.setStop_loss(sl_d1);
         dto.setTake_profit(tp_d1);
-        dto.setComment(timeframe + append.trim().replace(Utils.TEXT_PASS, "") + getTime_day24Hmm());
+        dto.setComment(getTime_day24Hmm() + "_" + timeframe + append.trim().replace(Utils.TEXT_PASS, ""));
 
         return dto;
     }
