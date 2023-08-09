@@ -72,13 +72,13 @@ public class Utils {
     public static final BigDecimal RISK_0_02_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.00025));
 
     // (100$ / 1 Tp)
-    public static final BigDecimal RISK_0_05_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
+    private static final BigDecimal RISK_0_05_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
 
     // Trend W != D (200$ / 1trade)
-    public static final BigDecimal RISK_0_10_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
+    private static final BigDecimal RISK_0_10_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
 
     // Trend W == D (300$ / 1trade)
-    public static final BigDecimal RISK_0_15_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
+    private static final BigDecimal RISK_0_15_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
 
     //// Step2: Khi tài khoản tăng trưởng 2% (500$ / 1trade)
     // public static final BigDecimal RISK_0_25_PERCENT =
@@ -208,6 +208,7 @@ public class Utils {
     public static final Integer MINUTES_OF_12H = 720;
     public static final Integer MINUTES_OF_8H = 480;
     public static final Integer MINUTES_OF_4H = 240;
+    public static final Integer MINUTES_OF_2H = 120;
     public static final Integer MINUTES_OF_1H = 60;
     public static final Integer MINUTES_OF_15M = 15;
     public static final Integer MINUTES_OF_5M = 5;
@@ -2604,7 +2605,7 @@ public class Utils {
         return result.trim();
     }
 
-    public static List<BigDecimal> calc_SL1_TP2(Orders dto_sl, String find_trend, boolean same_trend_w_d) {
+    public static List<BigDecimal> calc_SL1_TP2(Orders dto_sl, String find_trend) {
         List<BigDecimal> result = new ArrayList<BigDecimal>();
         if (Objects.isNull(dto_sl)) {
             result.add(BigDecimal.ZERO);
@@ -2622,7 +2623,7 @@ public class Utils {
             high = high.multiply(multi);
             tp = dto_sl.getCurrent_price().add(high);
 
-            tp = dto_sl.getBody_hig();
+            // tp = dto_sl.getBody_hig();
         }
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
             sl = dto_sl.getHigh_price();
@@ -2630,7 +2631,7 @@ public class Utils {
             high = high.multiply(multi);
             tp = dto_sl.getCurrent_price().subtract(high);
 
-            tp = dto_sl.getBody_low();
+            // tp = dto_sl.getBody_low();
         }
 
         result.add(sl);
@@ -4128,8 +4129,7 @@ public class Utils {
             entry = Utils.getBigDecimal(dto_en.getBody_hig());
         }
 
-        boolean same_trend_w_d = false;
-        List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_sl, trend, same_trend_w_d);
+        List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_sl, trend);
         BigDecimal sl_d1 = sl1_tp2.get(0);
         BigDecimal tp_d1 = sl1_tp2.get(1);
 

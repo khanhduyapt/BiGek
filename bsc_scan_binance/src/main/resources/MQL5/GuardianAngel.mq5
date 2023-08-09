@@ -128,7 +128,7 @@ bool isDailyLimit()
    bool result = current_equity < starting_balance - DAILY_LOSS_LIMIT;
    if(result)
      {
-      Alert("Daily loss limited! current_equity=" + (string) current_equity + " starting_balance=" + (string)starting_balance + " loss="+ (string)loss);
+      Alert("Stop trading today! Loss="+ (string)loss + " current_equity=" + (string) current_equity + " starting_balance=" + (string)starting_balance);
      }
 
    return result;
@@ -336,11 +336,11 @@ void OnTimer()
 //------------------------------------------------------------
    if(isDailyLimit())
      {
-      Alert("Loss more than 2000$. Stop trading today!");
+      // Alert("Loss more than 2000$. Stop trading today!");
      }
 //------------------------------------------------------------
-   double Loss_In_Money = -200;     // loss in money $
-   double Profit_In_Money = 500;    // profit in money $
+   double Loss_In_Money = -50;     // loss in money $
+   double Profit_In_Money = 150;    // profit in money $
 
    for(int i=PositionsTotal()-1; i>=0; i--) // returns the number of current positions
      {
