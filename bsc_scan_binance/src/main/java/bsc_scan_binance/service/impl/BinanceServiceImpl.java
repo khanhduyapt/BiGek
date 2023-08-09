@@ -3204,10 +3204,22 @@ public class BinanceServiceImpl implements BinanceService {
             for (Mt5OpenTradeEntity trade : mt5Openlist) {
                 count += 1;
                 String EPIC = trade.getSymbol();
-                String multi_timeframes = get_time_frames(EPIC);
+                // String multi_timeframes = get_time_frames(EPIC);
                 BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
                 String TRADE_TREND = trade.getType().toUpperCase();
+                //--------------------------------------------------------------------------
+                String time = "";
+                String insert_time = Utils.getStringValue(trade.getOpenTime());
+                if (Utils.isNotBlank(insert_time)) {
+                    LocalDateTime pre_time = LocalDateTime.parse(insert_time);
+                    Duration duration = Duration.between(pre_time, LocalDateTime.now());
+                    long elapsedMinutes = duration.toMinutes();
 
+                    int hours = Integer.valueOf(String.valueOf(elapsedMinutes)) / 60;
+                    int minutes = Integer.valueOf(String.valueOf(elapsedMinutes)) % 60;
+                    time = String.format("%dh:%02dmin", hours, minutes);
+                }
+                //--------------------------------------------------------------------------
                 String result = "";
                 result += Utils.appendLeft("Trade:" + Utils.appendLeft(String.valueOf(count), 3), 15) + ". ";
                 result += Utils.appendSpace(trade.getCompany(), 10);
@@ -3217,7 +3229,10 @@ public class BinanceServiceImpl implements BinanceService {
                 result += Utils.appendSpace(trade.getTicket(), 10);
                 result += "   Vol:" + Utils.appendLeft(Utils.removeLastZero(trade.getVolume()), 6);
                 result += "   (Profit):" + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 6) + "$";
-                result += "    " + Utils.appendSpace(multi_timeframes, 55);
+
+                result += "    " + Utils.appendSpace(time + "   " + trade.getComment(), 55);
+                // result += "    " + Utils.appendSpace(multi_timeframes, 55);
+
                 result += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62);
                 result += "---" + Utils.appendSpace(trade.getComment(), 35, "-");
 
@@ -3852,7 +3867,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String date_time = LocalDateTime.now().toString();
-            String comment = Utils.getStringValue(BscScanBinanceApplication.dic_comment.get(EPIC));
+            String comment = Utils.isNotBlank(trade.getComment()) ? trade.getComment()
+                    : Utils.getStringValue(BscScanBinanceApplication.dic_comment.get(EPIC));
             // ----------------------------------------------------------------------------------
             Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             if (Objects.isNull(dto_sl)) {
