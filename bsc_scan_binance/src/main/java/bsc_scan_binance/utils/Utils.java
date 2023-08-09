@@ -195,13 +195,13 @@ public class Utils {
     public static final String PREFIX_W1_ = "_1w_";
     public static final String PREFIX_MO_ = "_mo_";
 
-    public static final String ENCRYPTED_05 = "05.";
-    public static final String ENCRYPTED_15 = "15.";
-    public static final String ENCRYPTED_H1 = "60.";
-    public static final String ENCRYPTED_H4 = "240.";
-    public static final String ENCRYPTED_H12 = "720.";
-    public static final String ENCRYPTED_D1 = "1440.";
-    public static final String ENCRYPTED_W1 = "7200.";
+    public static final String ENCRYPTED_05 = "naph";
+    public static final String ENCRYPTED_15 = "mnph";
+    public static final String ENCRYPTED_H1 = "motg";
+    public static final String ENCRYPTED_H4 = "bong";
+    public static final String ENCRYPTED_H12 = "mhai";
+    public static final String ENCRYPTED_D1 = "mngy";
+    public static final String ENCRYPTED_W1 = "mtun";
 
     public static final Integer MINUTES_OF_2D = 2880;
     public static final Integer MINUTES_OF_1D = 1440;
@@ -4124,6 +4124,7 @@ public class Utils {
     public static Mt5OpenTrade calc_Lot_En_SL_TP(BigDecimal risk, String EPIC, String trend, Orders dto_en,
             Orders dto_sl, String append, boolean isTradeNow, String CAPITAL_TIME_XX) {
         BigDecimal entry = BigDecimal.ZERO;
+        String timeframe = getEncryptedChartNameCapital(CAPITAL_TIME_XX);
 
         if (Objects.equals(Utils.TREND_LONG, trend)) {
             entry = Utils.getBigDecimal(dto_en.getBody_low());
@@ -4134,7 +4135,6 @@ public class Utils {
         List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_sl, trend);
         BigDecimal sl_d1 = sl1_tp2.get(0);
         BigDecimal tp_d1 = sl1_tp2.get(1);
-
         MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, risk, dto_en.getCurrent_price(), sl_d1, tp_d1);
 
         Mt5OpenTrade dto = new Mt5OpenTrade();
@@ -4145,10 +4145,7 @@ public class Utils {
         dto.setEntry(entry);
         dto.setStop_loss(sl_d1);
         dto.setTake_profit(tp_d1);
-        dto.setComment(append.trim());
-
-        String timeframe = getEncryptedChartNameCapital(CAPITAL_TIME_XX);
-        dto.setComment(append.trim() + timeframe);
+        dto.setComment(append.trim().replace(Utils.TEXT_PASS, "") + timeframe);
 
         return dto;
     }
