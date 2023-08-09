@@ -3959,7 +3959,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Objects.equals(trend_line, Utils.TREND_LONG)) {
                 boolean is_ma_up = (Utils.isUptrendByMa(list, 10, 0, 1) && Utils.isUptrendByMa(list, 10, 1, 2))
-                        || (Utils.isUptrendByMa(list, 20, 0, 1));
+                        || (Utils.isUptrendByMa(list, 8, 0, 1) && Utils.isUptrendByMa(list, 8, 1, 2));
 
                 if (is_ma_up
 
@@ -3983,12 +3983,17 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(Utils.TREND_LONG, Utils.switchTrendBy_MaX_vs_MaY(list, 1, 20))) {
                     ma1_10_50 = true;
                     switch_trend = "(" + type + "1_20_50)";
+
+                } else if (is_ma_up && (ma01.compareTo(ma06) > 0) && (ma06.compareTo(ma10) > 0)
+                        && (ma10.compareTo(ma20) > 0) && (ma50.compareTo(ma20) > 0)) {
+                    ma1_10_50 = true;
+                    switch_trend = "(" + type + "1610205)";
                 }
             }
 
             if (Objects.equals(trend_line, Utils.TREND_SHOT)) {
                 boolean is_ma_dn = (!Utils.isUptrendByMa(list, 10, 0, 1) && !Utils.isUptrendByMa(list, 10, 1, 2))
-                        || (!Utils.isUptrendByMa(list, 20, 0, 1));
+                        || (!Utils.isUptrendByMa(list, 8, 0, 1) && !Utils.isUptrendByMa(list, 8, 1, 2));
 
                 if (is_ma_dn
 
@@ -4013,6 +4018,10 @@ public class BinanceServiceImpl implements BinanceService {
                     ma1_10_50 = true;
                     switch_trend = "(" + type + "1_20_50)";
 
+                } else if (is_ma_dn && (ma01.compareTo(ma06) < 0) && (ma06.compareTo(ma10) < 0)
+                        && (ma10.compareTo(ma20) < 0) && (ma50.compareTo(ma20) < 0)) {
+                    ma1_10_50 = true;
+                    switch_trend = "(" + type + "1610205)";
                 }
             }
 
@@ -4146,15 +4155,17 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_eq_h4_h1_15_05 = false;
             if (Objects.equals(trend_h4, trend_h1)
 
-                    && Objects.equals(trend_h4, dto_h4.getTrend_by_ma10())
-
                     && Objects.equals(trend_h4, dto_15.getTrend_by_ma10())
                     && Objects.equals(trend_h4, dto_15.getTrend_line())
 
                     && Objects.equals(trend_h4, dto_05.getTrend_by_ma10())
                     && Objects.equals(trend_h4, dto_05.getTrend_line())) {
 
-                is_eq_h4_h1_15_05 = true;
+                if (dto_15.getSwitch_trend().contains("1610205")) {
+                    is_eq_h4_h1_15_05 = true;
+                } else if (Objects.equals(trend_h4, dto_h4.getTrend_by_ma10())) {
+                    is_eq_h4_h1_15_05 = true;
+                }
             }
 
             // TODO: 3. controlMt5
