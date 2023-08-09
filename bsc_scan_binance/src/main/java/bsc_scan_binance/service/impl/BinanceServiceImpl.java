@@ -2849,7 +2849,7 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                if (!is_opening_trade(EPIC, dto.getOrder_type()) && !dto.getComment().contains("EOZ:H12H4")) {
+                if (!is_opening_trade(EPIC, dto.getOrder_type())) {
                     // ----------------------------------------------------------------------------------
                     String prefix = "Open_Trade: ";
                     if (dto.getComment().contains("1vs6810")) {
@@ -2862,7 +2862,7 @@ public class BinanceServiceImpl implements BinanceService {
                         continue;
                     }
 
-                    if ((trade_count < MAX_TRADE) && dto.getComment().contains(Utils.TEXT_PASS)) {
+                    if ((trade_count < MAX_TRADE)) {
 
                         String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type()
                                 + Utils.getCurrentYyyyMmDd_Blog4h()
@@ -3972,8 +3972,8 @@ public class BinanceServiceImpl implements BinanceService {
                     ma1_10_50 = true;
                     switch_trend = "(" + type + "1o20o50)";
 
-                } else if (is_ma_up && (ma01.compareTo(ma06) > 0) && (ma06.compareTo(ma10) > 0)
-                        && (ma10.compareTo(ma20) > 0) && (ma50.compareTo(ma20) > 0)) {
+                } else if (is_ma_up && (ma01.compareTo(ma50) > 0) && (ma01.compareTo(ma06) > 0)
+                        && (ma06.compareTo(ma10) > 0) && (ma10.compareTo(ma20) > 0) && (ma50.compareTo(ma20) > 0)) {
                     ma1_10_50 = true;
                     switch_trend = "(" + type + "1610205)";
                 }
@@ -3998,8 +3998,8 @@ public class BinanceServiceImpl implements BinanceService {
                     ma1_10_50 = true;
                     switch_trend = "(" + type + "1o20o50)";
 
-                } else if (is_ma_dn && (ma01.compareTo(ma06) < 0) && (ma06.compareTo(ma10) < 0)
-                        && (ma10.compareTo(ma20) < 0) && (ma50.compareTo(ma20) < 0)) {
+                } else if (is_ma_dn && (ma01.compareTo(ma50) < 0) && (ma01.compareTo(ma06) < 0)
+                        && (ma06.compareTo(ma10) < 0) && (ma10.compareTo(ma20) < 0) && (ma50.compareTo(ma20) < 0)) {
                     ma1_10_50 = true;
                     switch_trend = "(" + type + "1610205)";
                 }
@@ -4151,11 +4151,11 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_eq_h4_h1_15_05 = false;
             if (Objects.equals(trend_h4, trend_h1)
 
-                    && Objects.equals(trend_h4, dto_15.getTrend_by_ma10())
                     && Objects.equals(trend_h4, dto_15.getTrend_line())
+                    && Objects.equals(trend_h4, dto_15.getTrend_by_ma10())
 
-                    && Objects.equals(trend_h4, dto_05.getTrend_by_ma10())
-                    && Objects.equals(trend_h4, dto_05.getTrend_line())) {
+                    && Objects.equals(trend_h4, dto_05.getTrend_line())
+                    && Objects.equals(trend_h4, dto_05.getTrend_by_ma10())) {
 
                 if (dto_h1.getSwitch_trend().contains("1610205")) {
                     is_eq_h4_h1_15_05 = true;
