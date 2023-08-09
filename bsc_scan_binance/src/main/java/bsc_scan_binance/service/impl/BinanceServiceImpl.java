@@ -3960,22 +3960,22 @@ public class BinanceServiceImpl implements BinanceService {
                 if (is_ma_up && (ma01.compareTo(ma10) > 0) && (ma10.compareTo(ma50) > 0)
                         && Objects.equals(Utils.TREND_LONG, Utils.switchTrendBy_MaX_vs_MaY(list, 1, 10))) {
                     ma1_10_50 = true;
-                    switch_trend = "(" + type + "1o10o50)";
+                    switch_trend = "(" + type + ")1o10o50";
 
                 } else if (is_ma_up && Objects.equals(Utils.TREND_LONG, Utils.switchTrendBy_MaX_vs_MaY(list, 6, 10))
                         && (ma06.compareTo(ma10) > 0) && (ma10.compareTo(ma50) > 0)) {
                     ma6_10_50 = true;
-                    switch_trend = "(" + type + "6o10o50)";
+                    switch_trend = "(" + type + ")6o10o50";
 
                 } else if (is_ma_up && (ma01.compareTo(ma20) > 0) && (ma20.compareTo(ma50) > 0)
                         && Objects.equals(Utils.TREND_LONG, Utils.switchTrendBy_MaX_vs_MaY(list, 1, 20))) {
                     ma1_10_50 = true;
-                    switch_trend = "(" + type + "1o20o50)";
+                    switch_trend = "(" + type + ")1o20o50";
 
                 } else if (is_ma_up && (ma01.compareTo(ma50) > 0) && (ma01.compareTo(ma06) > 0)
                         && (ma06.compareTo(ma10) > 0) && (ma10.compareTo(ma20) > 0) && (ma50.compareTo(ma20) > 0)) {
                     ma1_10_50 = true;
-                    switch_trend = "(" + type + "1610205)";
+                    switch_trend = "(" + type + ")1610205";
                 }
             }
 
@@ -3986,22 +3986,22 @@ public class BinanceServiceImpl implements BinanceService {
                 if (is_ma_dn && (ma01.compareTo(ma10) < 0) && (ma10.compareTo(ma50) < 0)
                         && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 1, 10))) {
                     ma1_10_50 = true;
-                    switch_trend = "(" + type + "1o10o50)";
+                    switch_trend = "(" + type + ")1o10o50";
 
                 } else if (is_ma_dn && (ma06.compareTo(ma10) < 0) && (ma10.compareTo(ma50) < 0)
                         && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 6, 10))) {
                     ma6_10_50 = true;
-                    switch_trend = "(" + type + "6o10o50)";
+                    switch_trend = "(" + type + ")6o10o50";
 
                 } else if (is_ma_dn && (ma01.compareTo(ma20) < 0) && (ma20.compareTo(ma50) < 0)
                         && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 1, 20))) {
                     ma1_10_50 = true;
-                    switch_trend = "(" + type + "1o20o50)";
+                    switch_trend = "(" + type + ")1o20o50";
 
                 } else if (is_ma_dn && (ma01.compareTo(ma50) < 0) && (ma01.compareTo(ma06) < 0)
                         && (ma06.compareTo(ma10) < 0) && (ma10.compareTo(ma20) < 0) && (ma50.compareTo(ma20) < 0)) {
                     ma1_10_50 = true;
-                    switch_trend = "(" + type + "1610205)";
+                    switch_trend = "(" + type + ")1610205";
                 }
             }
 
@@ -4151,17 +4151,15 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_eq_h4_h1_15_05 = false;
             if (Objects.equals(trend_h4, trend_h1)
 
+                    && Objects.equals(trend_h4, dto_h4.getTrend_by_ma10())
+
                     && Objects.equals(trend_h4, dto_15.getTrend_line())
                     && Objects.equals(trend_h4, dto_15.getTrend_by_ma10())
 
                     && Objects.equals(trend_h4, dto_05.getTrend_line())
                     && Objects.equals(trend_h4, dto_05.getTrend_by_ma10())) {
 
-                if (dto_h1.getSwitch_trend().contains("1610205")) {
-                    is_eq_h4_h1_15_05 = true;
-                } else if (Objects.equals(trend_h4, dto_h4.getTrend_by_ma10())) {
-                    is_eq_h4_h1_15_05 = true;
-                }
+                is_eq_h4_h1_15_05 = true;
             }
 
             if (Objects.equals(EPIC, "GBPNZD")) {
