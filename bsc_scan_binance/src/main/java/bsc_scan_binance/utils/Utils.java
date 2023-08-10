@@ -133,9 +133,8 @@ public class Utils {
 
     public static final String TEXT_SWITCH_TREND_Ma_3_2_1 = "Ma3.2.1";
     public static final String TEXT_SWITCH_TREND_Ma_1vs3456 = "(Ma1.3456)";
-    public static final String TEXT_SWITCH_TREND_Ma_1vs1011 = "(Ma1.1011)";
-    public static final String TEXT_SWITCH_TREND_Ma_1vs1015 = "(Ma1.1015)";
-    public static final String TEXT_SWITCH_TREND_Ma_1vs1520 = "(Ma1.1520)";
+    public static final String TEXT_SWITCH_TREND_Ma_1vs1012 = "(Ma1.1012)";
+    public static final String TEXT_SWITCH_TREND_Ma_1vs1020 = "(Ma1.1020)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs2025 = "(Ma1.2025)";
 
     public static final String TEXT_SWITCH_TREND_Ma_1vs10 = "(Ma1.10)";
@@ -3455,16 +3454,12 @@ public class Utils {
         return switchTrendByMa1(heiken_list, 5, 6, TEXT_SWITCH_TREND_Ma_1vs3456);
     }
 
-    public static String switchTrendByMa1vs1011(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 10, 11, TEXT_SWITCH_TREND_Ma_1vs1011);
+    public static String switchTrendByMa1vs1012(List<BtcFutures> heiken_list) {
+        return switchTrendByMa1(heiken_list, 10, 12, TEXT_SWITCH_TREND_Ma_1vs1012);
     }
 
-    public static String switchTrendByMa1vs1015(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 10, 15, TEXT_SWITCH_TREND_Ma_1vs1015);
-    }
-
-    public static String switchTrendByMa1vs1520(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 16, 20, TEXT_SWITCH_TREND_Ma_1vs1520);
+    public static String switchTrendByMa1vs1020(List<BtcFutures> heiken_list) {
+        return switchTrendByMa1(heiken_list, 10, 20, TEXT_SWITCH_TREND_Ma_1vs1020);
     }
 
     public static String switchTrendByMa1vs2025(List<BtcFutures> heiken_list) {
@@ -3476,7 +3471,8 @@ public class Utils {
 
         String trend = "_";
 
-        BigDecimal ma1_0 = calcMA(heiken_list, 1, 0);
+        // Đánh trên D nên bắt buộc phải là ngày hiện tại.
+        BigDecimal ma1_0 = calcMA(heiken_list, 1, 0); // Không được sửa dòng này.
         BigDecimal ma1_2 = calcMA(heiken_list, 1, 1);
 
         for (int ma_index = ma_form; ma_index <= ma_to; ma_index++) {
@@ -3856,6 +3852,9 @@ public class Utils {
     public static BigDecimal getSL(String EPIC, List<BtcFutures> heiken_list, String find_trend) {
         BigDecimal SL = BigDecimal.ZERO;
         int length = heiken_list.size() - 1;
+        if (length > 10) {
+            length = 10;
+        }
 
         if (EPICS_FOREXS_ALL.contains(EPIC)) {
             int index = 1;
@@ -3870,8 +3869,13 @@ public class Utils {
                 length = index + 3;
             }
         }
+        if (length < 10) {
+            length = 10;
+        }
 
         BigDecimal bread = Utils.calcAvgBread(heiken_list.subList(1, length));
+        bread = bread.multiply(BigDecimal.valueOf(0.5));
+
         List<BigDecimal> lohi = Utils.getLowHighCandle(heiken_list.subList(1, length));
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
             SL = lohi.get(0).subtract(bread);
