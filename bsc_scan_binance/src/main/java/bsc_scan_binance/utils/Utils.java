@@ -133,7 +133,7 @@ public class Utils {
 
     public static final String TEXT_SWITCH_TREND_Ma_3_2_1 = "Ma3.2.1";
     public static final String TEXT_SWITCH_TREND_Ma_1vs3456 = "(Ma1.3456)";
-    public static final String TEXT_SWITCH_TREND_Ma_1vs8910 = "(Ma1.8910)";
+    public static final String TEXT_SWITCH_TREND_Ma_1vs1011 = "(Ma1.1011)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs1015 = "(Ma1.1015)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs1520 = "(Ma1.1520)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs2025 = "(Ma1.2025)";
@@ -3452,8 +3452,8 @@ public class Utils {
         return switchTrendByMa1(heiken_list, 5, 6, TEXT_SWITCH_TREND_Ma_1vs3456);
     }
 
-    public static String switchTrendByMa1vs8910(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 8, 10, TEXT_SWITCH_TREND_Ma_1vs8910);
+    public static String switchTrendByMa1vs1011(List<BtcFutures> heiken_list) {
+        return switchTrendByMa1(heiken_list, 10, 11, TEXT_SWITCH_TREND_Ma_1vs1011);
     }
 
     public static String switchTrendByMa1vs1015(List<BtcFutures> heiken_list) {
@@ -3763,8 +3763,7 @@ public class Utils {
         String msg = Utils.appendSpace("", 10) + "(Open Msg)   " + prefix;
         msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type().toUpperCase(), 4, "_") + ")", 15);
         msg += Utils.appendSpace(dto.getEpic(), 10) + new_line_from_service + " ";
-        msg += Utils.appendSpace(dto.getComment(), 35) + "  ";
-        msg += Utils.appendSpace("", 10);
+        msg += Utils.appendSpace(dto.getComment(), 45) + "  ";
         msg += " Entry: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()), 10);
         msg += "      ";
         msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10);
