@@ -4279,7 +4279,7 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
             }
             // ---------------------------------------------------------------------------------------------
-            boolean is_allow_trade_h1 = is_tradable_zone && is_tradable_ma10 && dto_h1.isTradable_zone()
+            boolean is_allow_trade_h1 = is_tradable_zone && is_tradable_ma10
                     && dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs1010);
 
             if (is_eq_w_d_h12_h4_h1 && is_eq_h4_h1_15_05 && is_allow_trade_h1) {
