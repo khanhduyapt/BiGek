@@ -90,6 +90,9 @@ public class MoneyAtRiskResponse {
         if (Utils.EPICS_STOCKS.contains(EPIC)) {
             volume = BigDecimal.valueOf(volume.intValue());
         }
+        if ("_ADAUSD_DOGEUSD_DOTUSD_LTCUSD_XRPUSD_".contains("_" + EPIC + "_")) {
+            volume = BigDecimal.valueOf(volume.intValue());
+        }
 
         return volume;
     }

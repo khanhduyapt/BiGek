@@ -1415,17 +1415,17 @@ public class Utils {
         return false;
     }
 
-    public static boolean isCloseTradeThisWeek() {
+    public static boolean isCloseTradeWeekEnd() {
         DayOfWeek day = DayOfWeek.of(LocalDate.now().get(ChronoField.DAY_OF_WEEK));
 
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
 
         // đêm thứ 4 phí qua đêm sẽ được X3 để bù cho 2 ngày cuối tuần.
         if ((day == DayOfWeek.WEDNESDAY) && (hh > 22)) {
-            return true;
+            // return true;
         }
         if ((day == DayOfWeek.THURSDAY) && (hh < 3)) {
-            return true;
+            // return true;
         }
 
         if ((day == DayOfWeek.FRIDAY) && (hh >= 22)) {
@@ -4103,7 +4103,7 @@ public class Utils {
             type = "xAu";
         }
         if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
-            type = "bTc";
+            type = "bIt";
         }
         if (Utils.EPICS_STOCKS_USA.contains(EPIC)) {
             type = "uSa";
