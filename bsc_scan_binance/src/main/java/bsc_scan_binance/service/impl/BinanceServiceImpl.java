@@ -4221,7 +4221,7 @@ public class BinanceServiceImpl implements BinanceService {
             Mt5OpenTrade trade_dto = null;
             String type_d1 = Objects.equals(trend_d1, Utils.TREND_LONG) ? "_b" : "_s";
             // ---------------------------------------------------------------------------------------------
-            boolean is_allow_trade_d1 = is_tradable_zone && is_tradable_ma10
+            boolean is_allow_trade_d1 = is_tradable_zone && is_tradable_ma10 && dto_h1.isTradable_zone()
                     && dto_d1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs1010)
                     && dto_05.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs1020);
 
@@ -4243,7 +4243,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ---------------------------------------------------------------------------------------------
 
-            boolean is_allow_trade_h12 = is_tradable_zone && is_tradable_ma10
+            boolean is_allow_trade_h12 = is_tradable_zone && is_tradable_ma10 && dto_h1.isTradable_zone()
                     && dto_h12.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs1010)
                     && dto_05.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs1020);
 
@@ -4262,9 +4262,10 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
             }
+
             // ---------------------------------------------------------------------------------------------
 
-            boolean is_allow_trade_h4 = is_tradable_zone && is_tradable_ma10
+            boolean is_allow_trade_h4 = is_tradable_zone && is_tradable_ma10 && dto_h1.isTradable_zone()
                     && dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs1010)
                     && dto_05.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs1020);
 
@@ -4278,7 +4279,9 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
             }
+
             // ---------------------------------------------------------------------------------------------
+
             boolean is_allow_trade_h1 = is_tradable_zone && is_tradable_ma10
                     && dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs1010);
 
