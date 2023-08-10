@@ -4323,7 +4323,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ---------------------------------------------------------------------------------
             // TODO: 5. closeTrade_by_SL_TP
-            if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_1H)) {
+            if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
                 if (take_profit || is_reverse || is_hit_sl) {
                     String reason = "";
 
