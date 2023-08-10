@@ -133,9 +133,8 @@ public class Utils {
 
     public static final String TEXT_SWITCH_TREND_Ma_3_2_1 = "Ma3.2.1";
     public static final String TEXT_SWITCH_TREND_Ma_1vs3456 = "(Ma1.3456)";
-    public static final String TEXT_SWITCH_TREND_Ma_1vs1012 = "(Ma1.1012)";
+    public static final String TEXT_SWITCH_TREND_Ma_1vs1010 = "(Ma1.1010)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs1020 = "(Ma1.1020)";
-    public static final String TEXT_SWITCH_TREND_Ma_1vs2025 = "(Ma1.2025)";
 
     public static final String TEXT_SWITCH_TREND_Ma_1vs10 = "(Ma1.10)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs20 = "(Ma1.20)";
@@ -3450,20 +3449,16 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrendByMa1vs3456(List<BtcFutures> heiken_list) {
+    public static String switchTrendByMa1vs56(List<BtcFutures> heiken_list) {
         return switchTrendByMa1(heiken_list, 5, 6, TEXT_SWITCH_TREND_Ma_1vs3456);
     }
 
-    public static String switchTrendByMa1vs1012(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 10, 12, TEXT_SWITCH_TREND_Ma_1vs1012);
+    public static String switchTrendByMa1vs10(List<BtcFutures> heiken_list) {
+        return switchTrendByMa1(heiken_list, 10, 10, TEXT_SWITCH_TREND_Ma_1vs1010);
     }
 
     public static String switchTrendByMa1vs1020(List<BtcFutures> heiken_list) {
         return switchTrendByMa1(heiken_list, 10, 20, TEXT_SWITCH_TREND_Ma_1vs1020);
-    }
-
-    public static String switchTrendByMa1vs2025(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 20, 25, TEXT_SWITCH_TREND_Ma_1vs2025);
     }
 
     public static String switchTrendByMa1(List<BtcFutures> heiken_list, int ma_form, int ma_to,
