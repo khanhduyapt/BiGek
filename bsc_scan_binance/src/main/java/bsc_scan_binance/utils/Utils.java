@@ -114,6 +114,7 @@ public class Utils {
     public static final String TEXT_STOP_LONG = "Stop:Long";
     public static final String TEXT_EQ_WDH12 = "wdh12";
     public static final String TEXT_PASS = "datyc";
+    public static final String TEXT_NOTICE_ONLY = "notice_only";
     public static final String TEXT_WAITING_ = " waiting: ";
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";
@@ -2648,7 +2649,7 @@ public class Utils {
             return result;
         }
 
-        BigDecimal multi = BigDecimal.valueOf(1.5);
+        BigDecimal multi = BigDecimal.valueOf(2);
 
         BigDecimal sl = BigDecimal.ZERO;
         BigDecimal tp = BigDecimal.ZERO;
@@ -3472,11 +3473,11 @@ public class Utils {
 
         String trend = "_";
 
-        BigDecimal ma1_0 = calcMA(heiken_list, 1, 1);
-        BigDecimal ma1_2 = calcMA(heiken_list, 1, 2);
+        BigDecimal ma1_0 = calcMA(heiken_list, 1, 0);
+        BigDecimal ma1_2 = calcMA(heiken_list, 1, 1);
 
         for (int ma_index = ma_form; ma_index <= ma_to; ma_index++) {
-            BigDecimal maX_0 = calcMA(heiken_list, ma_index, 1);
+            BigDecimal maX_0 = calcMA(heiken_list, ma_index, 0);
             BigDecimal maX_2 = calcMA(heiken_list, ma_index, 2);
 
             String cutUp = Utils.checkXCutUpY(ma1_0, ma1_2, maX_0, maX_2);
