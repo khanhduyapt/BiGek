@@ -13,7 +13,7 @@ public interface Mt5OpenTradeRepository extends JpaRepository<Mt5OpenTradeEntity
 
     List<Mt5OpenTradeEntity> findAllBySymbolAndTypeOrderBySymbolAsc(String symbol, String type);
 
-    List<Mt5OpenTradeEntity> findAllByCompanyOrderBySymbolAsc(String company);
+    List<Mt5OpenTradeEntity> findAllByCompanyOrderByCommentAscSymbolAsc(String company);
 
     List<Mt5OpenTradeEntity> findAllByOrderByCompanyAscSymbolAsc();
 }

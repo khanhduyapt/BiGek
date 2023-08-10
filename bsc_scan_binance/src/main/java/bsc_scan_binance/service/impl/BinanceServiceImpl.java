@@ -3205,7 +3205,7 @@ public class BinanceServiceImpl implements BinanceService {
             String msg = "";
             BigDecimal total = BigDecimal.ZERO;
             String risk_0_15 = "     Risk: 0.1% : " + Utils.RISK_0_10_PERCENT.intValue() + "$ per trade";
-            List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByCompanyOrderBySymbolAsc(company);
+            List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByCompanyOrderByCommentAscSymbolAsc(company);
             for (Mt5OpenTradeEntity trade : mt5Openlist) {
                 count += 1;
                 String EPIC = trade.getSymbol();
@@ -3224,7 +3224,7 @@ public class BinanceServiceImpl implements BinanceService {
                     int hours = Integer.valueOf(String.valueOf(elapsedMinutes)) / 60;
                     int minutes = Integer.valueOf(String.valueOf(elapsedMinutes)) % 60;
 
-                    time = Utils.appendLeft(String.valueOf(minutes), 2, "0");
+                    time = Utils.appendLeft(String.valueOf(minutes), 2, "0") + "m";
                     if (hours > 0) {
                         time = Utils.appendLeft(String.valueOf(hours), 2, "0") + "h:" + time;
                     } else {
@@ -3857,7 +3857,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // Đóng các lệnh đã close
             if (has_open_trade || (row_count == 1)) {
-                List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByCompanyOrderBySymbolAsc(company);
+                List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByCompanyOrderByCommentAscSymbolAsc(company);
                 for (Mt5OpenTradeEntity entity : mt5Openlist) {
                     boolean not_found = true;
                     for (Mt5DataTrade trade : tradeList) {

@@ -1742,7 +1742,10 @@ public class Utils {
             name = "cn";
         }
 
-        return name + Utils.convertDateToString("HHmm", Calendar.getInstance().getTime());
+        String date = Utils.convertDateToString("dd", Calendar.getInstance().getTime());
+        String minus = Utils.convertDateToString("mm", Calendar.getInstance().getTime()).substring(0, 1);
+
+        return date + name + "_" + Utils.convertDateToString("HH", Calendar.getInstance().getTime()) + minus;
     }
 
     public static String getYyyyMmDd_HHmmss() {
