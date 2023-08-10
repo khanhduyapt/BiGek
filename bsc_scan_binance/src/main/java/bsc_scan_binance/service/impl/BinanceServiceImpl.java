@@ -2848,56 +2848,57 @@ public class BinanceServiceImpl implements BinanceService {
                 if ("_DX.f_NATGAS_ERBN__".toUpperCase().contains(EPIC)) {
                     continue;
                 }
+                boolean is_openning = is_opening_trade(EPIC, dto.getOrder_type());
 
-                if (!is_opening_trade(EPIC, dto.getOrder_type())) {
-                    // ----------------------------------------------------------------------------------
-                    String prefix = "Open_Trade: ";
-                    if (dto.getComment().contains(Utils.TREND_UNSURE)) {
-                        prefix = "Check(H4): ";
-                    }
-                    String msg = Utils.createOpenTradeMsg(dto, prefix);
-                    Utils.logWritelnDraft(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
+                String prefix = "Open_Trade: ";
+                if (is_openning) {
+                    prefix = "Opened:     ";
+                } else if (dto.getComment().contains(Utils.TEXT_NOTICE_ONLY)) {
+                    prefix = "Notice(H4): ";
+                }
 
-                    if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
+                String msg = Utils.createOpenTradeMsg(dto, prefix);
+                Utils.logWritelnDraft(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
+
+                if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
+                    continue;
+                }
+
+                // ----------------------------------------------------------------------------------
+                if (!is_openning && (trade_count < MAX_TRADE)) {
+                    String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type()
+                            + Utils.getCurrentYyyyMmDd_Blog4h()
+                            + Utils.getDeEncryptedChartNameCapital(dto.getComment());
+
+                    msg_dict.put(EVENT_ID, msg);
+
+                    if (dto.getComment().contains(Utils.TEXT_NOTICE_ONLY)) {
                         continue;
                     }
 
-                    if ((trade_count < MAX_TRADE)) {
-
-                        String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type()
-                                + Utils.getCurrentYyyyMmDd_Blog4h()
-                                + Utils.getDeEncryptedChartNameCapital(dto.getComment());
-
-                        msg_dict.put(EVENT_ID, msg);
-
-                        if (dto.getComment().contains(Utils.TREND_UNSURE)) {
-                            continue;
+                    trade_count += 1;
+                    if (Utils.isPcCongTy()) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(dto.getEpic());
+                        sb.append('\t');
+                        sb.append(dto.getOrder_type());
+                        sb.append('\t');
+                        if (EPIC.contains("ERBN")) {
+                            sb.append(1);
+                        } else {
+                            sb.append(dto.getLots());
                         }
+                        sb.append('\t');
+                        sb.append(dto.getEntry());
+                        sb.append('\t');
+                        sb.append(dto.getStop_loss()); // BigDecimal.ZERO
+                        sb.append('\t');
+                        sb.append(dto.getTake_profit()); // BigDecimal.ZERO
+                        sb.append('\t');
+                        sb.append(dto.getComment());
+                        sb.append('\n');
 
-                        trade_count += 1;
-                        if (Utils.isPcCongTy()) {
-                            StringBuilder sb = new StringBuilder();
-                            sb.append(dto.getEpic());
-                            sb.append('\t');
-                            sb.append(dto.getOrder_type());
-                            sb.append('\t');
-                            if (EPIC.contains("ERBN")) {
-                                sb.append(1);
-                            } else {
-                                sb.append(dto.getLots());
-                            }
-                            sb.append('\t');
-                            sb.append(dto.getEntry());
-                            sb.append('\t');
-                            sb.append(dto.getStop_loss()); // BigDecimal.ZERO
-                            sb.append('\t');
-                            sb.append(dto.getTake_profit()); // BigDecimal.ZERO
-                            sb.append('\t');
-                            sb.append(dto.getComment());
-                            sb.append('\n');
-
-                            writer.write(sb.toString());
-                        }
+                        writer.write(sb.toString());
                     }
                 }
             }
@@ -4167,7 +4168,6 @@ public class BinanceServiceImpl implements BinanceService {
             // TODO: 3. controlMt5
             // Không đánh ngược trend_d1
             Mt5OpenTrade trade_dto = null;
-
             boolean is_allow_trade_d1 = dto_d1.toString().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs8910);
             if (is_eq_d_h12_h4_h1 && is_eq_h4_h1_15_05 && is_allow_trade_d1) {
                 String key = EPIC + Utils.CAPITAL_TIME_D1;
@@ -4176,6 +4176,20 @@ public class BinanceServiceImpl implements BinanceService {
 
                 trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_15,
                         dto_h4, append, true, Utils.CAPITAL_TIME_D1);
+
+                BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
+                BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
+            }
+
+            // ---------------------------------------------------------------------------------------------
+
+            boolean is_allow_trade_h4 = dto_h4.isAllow_trade_by_ma1_6_10_50();
+            if (is_eq_d_h12_h4_h1 && is_eq_h4_h1_15_05 && is_allow_trade_h4) {
+                String key = EPIC + Utils.CAPITAL_TIME_H4;
+                String append = dto_h4.getSwitch_trend() + "   " + Utils.TEXT_NOTICE_ONLY;
+
+                trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_15,
+                        dto_h4, append, true, Utils.CAPITAL_TIME_H4);
 
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
@@ -4203,7 +4217,7 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
             }
             // ---------------------------------------------------------------------------------------------
-            if (is_allow_trade_d1 || is_opening_trade(EPIC, "")) {
+            if (is_allow_trade_h4 || is_allow_trade_d1 || is_opening_trade(EPIC, "")) {
                 count += 1;
 
                 String prefix = Utils.getPrefix_FollowTrackingTrend(EPIC, count, "", trend_w1, trend_d1, trend_12,
@@ -4314,7 +4328,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String reason = "";
 
                     if (is_reverse) {
-                        reason = "reverse";
+                        reason = "reverse_h4_trailing_sl";
                     } else if (is_hit_sl) {
                         reason = "stoploss";
                     } else if (take_profit) {
@@ -4328,12 +4342,16 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     // --------------------------------------------------------------------------
-                    String log = Utils.createCloseTradeMsg(trade, "CloseTrade: ", reason);
+                    String prifix = "CloseTrade: ";
+                    if (is_reverse) {
+                        prifix = "Must Close: ";
+                    }
+                    String log = Utils.createCloseTradeMsg(trade, prifix, reason);
                     Utils.logWritelnDraft(log);
 
                     String key = trade.getSymbol() + "_" + trade.getType() + trade.getTimeframe();
                     if (isReloadAfter(Utils.MINUTES_OF_1H, key)) {
-                        msg += "(" + trade.getCompany() + ") Close:" + trade.getSymbol() + ":";
+                        msg += "(" + trade.getCompany() + ") " + prifix + trade.getSymbol() + ":";
                         msg += Utils.getStringValue(trade.getProfit().intValue()) + "$:" + reason
                                 + Utils.new_line_from_service;
                     }
