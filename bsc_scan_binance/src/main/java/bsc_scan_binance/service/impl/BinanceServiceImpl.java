@@ -3756,8 +3756,7 @@ public class BinanceServiceImpl implements BinanceService {
                 analysis_profit(prefix, EPIC, eoz, trend_w1);
 
             } else if ((Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)
-                    && dto_d1.isTradable_zone())
-                    || is_allow_trade_d1) {
+                    && dto_d1.isTradable_zone()) || is_allow_trade_d1) {
 
                 index += 1;
                 analysis_profit(prefix, EPIC, eoz, trend_w1);
