@@ -3713,24 +3713,26 @@ public class BinanceServiceImpl implements BinanceService {
             eoz += (!dto_d1.isTradable_zone()) ? "D1" : "--";
             eoz += (!dto_h4.isTradable_zone() && Objects.equals(trend_d1, trend_h4)) ? "H4" : "--";
 
-            boolean is_trade_zone = true;
             if (eoz.contains("D1") || eoz.contains("W1")) {
                 eoz += ".end";
-                is_trade_zone = false;
             } else {
                 eoz += "    ";
             }
             eoz += "     ";
 
-            boolean is_eq_mo_w_d_h4_h1 = false;
-            if (Objects.equals(trend_d1, trend_mo) && Objects.equals(trend_d1, trend_w1)
-                    && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)
+            boolean is_w_d_h4_h1 = false;
+            if (Objects.equals(trend_d1, trend_w1)
 
-                    && Objects.equals(trend_d1, dto_d1.getTrend_by_ma10())
+                    && Objects.equals(trend_d1, dto_h4.getTrend_line())
                     && Objects.equals(trend_d1, dto_h4.getTrend_by_ma10())
+
+                    && Objects.equals(trend_d1, dto_h1.getTrend_line())
                     && Objects.equals(trend_d1, dto_h1.getTrend_by_ma10())) {
-                is_eq_mo_w_d_h4_h1 = true;
+
+                is_w_d_h4_h1 = true;
             }
+
+            boolean is_allow_trade_d1 = dto_d1.toString().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs8910);
 
             // TODO: scapStocks
             if (is_opening_trade(EPIC, "")) {
@@ -3743,22 +3745,20 @@ public class BinanceServiceImpl implements BinanceService {
                 index += 1;
                 analysis_profit(prefix, EPIC, eoz, trend_w1);
 
-                if (is_eq_mo_w_d_h4_h1 && dto_d1.isTradable_zone()
-                        && (Utils.isNotBlank(dto_d1.getSwitch_trend() + dto_h4.getSwitch_trend())
-                                || dto_h1.isAllow_trade_by_ma1_6_10_50())) {
+                if (is_w_d_h4_h1 && is_allow_trade_d1) {
 
                     if (((Utils.EPICS_STOCKS_EUR.contains(EPIC) && Utils.is_london_session())
                             || (Utils.EPICS_STOCKS_USA.contains(EPIC) && Utils.is_newyork_session()))) {
 
-                        String key = EPIC + Utils.CAPITAL_TIME_H4;
-                        String append = "96.24w.";
-                        append += Utils.TEXT_PASS;
+                        String key = EPIC + Utils.CAPITAL_TIME_D1;
+                        String type_d1 = Objects.equals(trend_d1, Utils.TREND_LONG) ? "B" : "S";
+                        String append = "(" + type_d1 + ")24o8910" + Utils.TEXT_PASS;
 
-                        Mt5OpenTrade trade_h4 = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_h1,
-                                dto_d1, append, true, Utils.CAPITAL_TIME_H4);
+                        Mt5OpenTrade trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1,
+                                dto_h1, dto_h4, append, true, Utils.CAPITAL_TIME_D1);
 
-                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_h4);
-                        BscScanBinanceApplication.dic_comment.put(key, trade_h4.getComment());
+                        BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
+                        BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
                     }
 
                 }

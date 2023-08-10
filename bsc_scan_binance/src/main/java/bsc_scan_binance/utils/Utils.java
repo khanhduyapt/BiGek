@@ -4101,13 +4101,13 @@ public class Utils {
             type = "xAu";
         }
         if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
-            type = "Btc";
+            type = "bTc";
         }
         if (Utils.EPICS_STOCKS_USA.contains(EPIC)) {
-            type = "USA";
+            type = "uSa";
         }
         if (Utils.EPICS_STOCKS_EUR.contains(EPIC)) {
-            type = "EUR";
+            type = "eUr";
         }
         if (Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
             type = "fOx";
@@ -4179,7 +4179,8 @@ public class Utils {
         dto.setEntry(entry);
         dto.setStop_loss(sl_d1);
         dto.setTake_profit(tp_d1);
-        dto.setComment(getTime_day24Hmm() + "_" + timeframe + append.trim().replace(Utils.TEXT_PASS, ""));
+        dto.setComment(getTypeOfEpic(EPIC).trim() + "_" + getTime_day24Hmm() + "_" + timeframe
+                + append.trim().replace(Utils.TEXT_PASS, ""));
 
         return dto;
     }
