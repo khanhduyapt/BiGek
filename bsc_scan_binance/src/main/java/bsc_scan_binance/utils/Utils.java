@@ -3454,6 +3454,10 @@ public class Utils {
         return switchTrendByMa1(heiken_list, 8, 13, TEXT_SWITCH_TREND_Ma_1vs10);
     }
 
+    public static String switchTrendByMa1vs20(List<BtcFutures> heiken_list) {
+        return switchTrendByMa1(heiken_list, 18, 25, TEXT_SWITCH_TREND_Ma_1vs20);
+    }
+
     public static String switchTrendByMa1(List<BtcFutures> heiken_list, int ma_form, int ma_to,
             String id_switch_trend) {
         String trend = "_";
