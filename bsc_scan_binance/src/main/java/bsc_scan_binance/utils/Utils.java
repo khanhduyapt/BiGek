@@ -2654,7 +2654,7 @@ public class Utils {
             return result;
         }
 
-        BigDecimal multi = BigDecimal.valueOf(2);
+        BigDecimal multi = BigDecimal.valueOf(1.5);
 
         BigDecimal sl = BigDecimal.ZERO;
         BigDecimal tp = BigDecimal.ZERO;
@@ -2663,16 +2663,13 @@ public class Utils {
             BigDecimal high = dto_sl.getCurrent_price().subtract(dto_sl.getLow_price());
             high = high.multiply(multi);
             tp = dto_sl.getCurrent_price().add(high);
-
-            tp = dto_sl.getBody_hig();
         }
+
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
             sl = dto_sl.getHigh_price();
             BigDecimal high = dto_sl.getHigh_price().subtract(dto_sl.getCurrent_price());
             high = high.multiply(multi);
             tp = dto_sl.getCurrent_price().subtract(high);
-
-            tp = dto_sl.getBody_low();
         }
 
         result.add(sl);
@@ -2975,7 +2972,7 @@ public class Utils {
     }
 
     public static List<BigDecimal> getBuySellArea(List<BtcFutures> heiken_list) {
-        int section = 4;
+        int section = 3;
         List<BigDecimal> LoHi = Utils.getLowHighCandle(heiken_list);
         BigDecimal high = LoHi.get(1).subtract(LoHi.get(0));
         BigDecimal quarter = high.divide(BigDecimal.valueOf(section), 10, RoundingMode.CEILING);
@@ -3454,7 +3451,7 @@ public class Utils {
     }
 
     public static String switchTrendByMa1vs10(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 10, 11, TEXT_SWITCH_TREND_Ma_1vs10);
+        return switchTrendByMa1(heiken_list, 10, 13, TEXT_SWITCH_TREND_Ma_1vs10);
     }
 
     public static String switchTrendByMa1(List<BtcFutures> heiken_list, int ma_form, int ma_to,
