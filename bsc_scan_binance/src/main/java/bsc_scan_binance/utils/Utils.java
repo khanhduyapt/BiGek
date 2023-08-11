@@ -3457,7 +3457,7 @@ public class Utils {
     }
 
     public static String switchTrendByMa1vs20(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 21, 25, TEXT_SWITCH_TREND_Ma_1vs20);
+        return switchTrendByMa1(heiken_list, 10, 20, TEXT_SWITCH_TREND_Ma_1vs20);
     }
 
     public static String switchTrendByMa1(List<BtcFutures> heiken_list, int ma_form, int ma_to,
