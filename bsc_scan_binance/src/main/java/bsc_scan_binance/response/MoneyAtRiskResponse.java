@@ -94,6 +94,16 @@ public class MoneyAtRiskResponse {
             volume = BigDecimal.valueOf(volume.intValue());
         }
 
+        if (volume.compareTo(BigDecimal.valueOf(1)) < 0) {
+            BigDecimal progression = BigDecimal.valueOf(0.05);
+            for (int index = 1; index <= 20; index++) {
+                BigDecimal next_vol = progression.multiply(BigDecimal.valueOf(index));
+                if (volume.compareTo(next_vol) <= 0) {
+                    return next_vol;
+                }
+            }
+        }
+
         return volume;
     }
 

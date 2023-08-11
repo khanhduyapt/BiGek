@@ -106,7 +106,7 @@ public class BscScanBinanceApplication {
             List<String> CAPITAL_LIST = new ArrayList<String>();
             CAPITAL_LIST.addAll(Utils.EPICS_METALS);
             CAPITAL_LIST.addAll(Utils.EPICS_CRYPTO_CFD);
-            CAPITAL_LIST.addAll(Utils.EPICS_CASH_CFD);
+            CAPITAL_LIST.addAll(Utils.EPICS_INDEXS_CFD);
             CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_ALL);
 
             if (app_flag != Utils.const_app_flag_webonly) {
@@ -252,7 +252,7 @@ public class BscScanBinanceApplication {
         if (result > 0)
             Utils.logWritelnDraft("...");
 
-        result = binance_service.controlMt5(Utils.EPICS_CASH_CFD);
+        result = binance_service.controlMt5(Utils.EPICS_INDEXS_CFD);
         // --------------------------------------------------------------------------
         Utils.logWritelnDraftFooter();
         if (result > 0)

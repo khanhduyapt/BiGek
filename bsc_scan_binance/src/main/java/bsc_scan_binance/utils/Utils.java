@@ -270,7 +270,7 @@ public class Utils {
     public static final List<String> EPICS_CRYPTO_CFD = Arrays.asList("BTCUSD", "ETHUSD", "ADAUSD", "DOGEUSD", "DOTUSD",
             "LTCUSD", "XRPUSD");
 
-    public static final List<String> EPICS_CASH_CFD = Arrays.asList("AUS200", "EU50", "FRA40", "GER40", "SPN35",
+    public static final List<String> EPICS_INDEXS_CFD = Arrays.asList("AUS200", "EU50", "FRA40", "GER40", "SPN35",
             "UK100", "US100", "US30", "ERBN", "BTCUSD");
 
     public static final List<String> EPICS_7PAIRS_FX = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD",
@@ -4091,7 +4091,7 @@ public class Utils {
 
     public static String getTypeOfEpic(String EPIC) {
         String type = "";
-        if (Utils.EPICS_CASH_CFD.contains(EPIC)) {
+        if (Utils.EPICS_INDEXS_CFD.contains(EPIC)) {
             type = "iDx";
         }
         if (Utils.EPICS_METALS.contains(EPIC)) {
