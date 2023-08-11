@@ -3714,8 +3714,12 @@ public class BinanceServiceImpl implements BinanceService {
                     trend_h1, dto_mo.getSwitch_trend(), dto_w1.getSwitch_trend(), dto_d1.getSwitch_trend(), "",
                     dto_h4.getSwitch_trend(), trend_w1) + Utils.appendSpace("", 15);
 
-            String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "B"
-                    : Objects.equals(Utils.TREND_SHOT, trend_d1) ? "S" : "?";
+            String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "(B)"
+                    : Objects.equals(Utils.TREND_SHOT, trend_d1) ? "(S)" : "(?)";
+            String eoz = "         ";
+            if (!dto_d1.isTradable_zone()) {
+                eoz = "EOZ:D1" + type;
+            }
 
             boolean is_mo_w_d_h4_h1 = false;
             if (Objects.equals(trend_d1, trend_mo)
@@ -3737,13 +3741,13 @@ public class BinanceServiceImpl implements BinanceService {
             if (is_opening_trade(EPIC, "")) {
 
                 index += 1;
-                analysis_profit(prefix, EPIC, "", trend_w1);
+                analysis_profit(prefix, EPIC, eoz, trend_w1);
 
             } else if (is_allow_trade_d1
-                    || (Objects.equals(trend_d1, trend_mo) && Objects.equals(trend_d1, dto_d1.getTrend_by_ma10()))) {
+                    || (Objects.equals(trend_d1, trend_mo) && Objects.equals(trend_d1, trend_mo))) {
 
                 index += 1;
-                analysis_profit(prefix, EPIC, "", trend_w1);
+                analysis_profit(prefix, EPIC, eoz, trend_w1);
 
                 if (is_mo_w_d_h4_h1 && is_allow_trade_d1) {
 
@@ -3752,7 +3756,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                         String key = EPIC + Utils.CAPITAL_TIME_D1;
                         String type_d1 = Objects.equals(trend_d1, Utils.TREND_LONG) ? "_b" : "_s";
-                        String append = type_d1 + Utils.TEXT_NOTICE_ONLY;
+                        String append = type_d1 + Utils.TEXT_PASS;
 
                         Mt5OpenTrade trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1,
                                 dto_h1, dto_d1, append, true, Utils.CAPITAL_TIME_D1);
@@ -4176,7 +4180,15 @@ public class BinanceServiceImpl implements BinanceService {
                 String prefix = Utils.getPrefix_FollowTrackingTrend(EPIC, count, "", trend_w1, trend_d1, "", trend_h4,
                         "", "", switch_w1, switch_d1, "", switch_h4, tracking_trend);
 
-                analysis_profit(prefix, EPIC, "", log_trend);
+                String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "(B)"
+                        : Objects.equals(Utils.TREND_SHOT, trend_d1) ? "(S)" : "(?)";
+
+                String eoz = "         ";
+                if (!dto_d1.isTradable_zone()) {
+                    eoz = "EOZ:D1" + type;
+                }
+
+                analysis_profit(prefix, EPIC, eoz, log_trend);
             }
         }
 
