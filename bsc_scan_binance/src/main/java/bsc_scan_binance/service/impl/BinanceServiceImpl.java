@@ -4196,14 +4196,35 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnDraft("");
         }
 
-        // ----------------------------------------PROFIT--------------------------------------
+        // ----------------------------------------Trailing--------------------------------------
         List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAll();
         BigDecimal TOTAL_PROFIT = BigDecimal.ZERO;
-        for (Mt5OpenTradeEntity trade : mt5Openlist) {
-            BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
-            TOTAL_PROFIT = TOTAL_PROFIT.add(PROFIT);
-        }
 
+        String mt5_trailing_sl_file = Utils.getMt5DataFolder() + "TrailingStoploss.csv";
+        try {
+            FileWriter writer = new FileWriter(mt5_trailing_sl_file, true);
+
+            for (Mt5OpenTradeEntity trade : mt5Openlist) {
+                BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
+                TOTAL_PROFIT = TOTAL_PROFIT.add(PROFIT);
+
+                if (PROFIT.compareTo(Utils.RISK_0_10_PERCENT) > 0) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(trade.getTicket());
+                    sb.append('\t');
+                    sb.append(trade.getPriceOpen());
+                    sb.append('\t');
+                    sb.append(trade.getTakeProfit());
+                    sb.append('\n');
+
+                    writer.write(sb.toString());
+                }
+            }
+            writer.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        // ----------------------------------------PROFIT--------------------------------------
         String msg = "";
         for (Mt5OpenTradeEntity trade : mt5Openlist) {
             String EPIC = trade.getSymbol();
