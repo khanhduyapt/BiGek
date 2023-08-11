@@ -114,7 +114,7 @@ public class Utils {
     public static final String TEXT_STOP_LONG = "Stop:Long";
     public static final String TEXT_EQ_WDH12 = "wdh12";
     public static final String TEXT_PASS = "datyc";
-    public static final String TEXT_NOTICE_ONLY = "notice_only";
+    public static final String TEXT_NOTICE_ONLY = "_notice_only";
     public static final String TEXT_WAITING_ = " waiting: ";
 
     public static final String TEXT_SL_DAILY_CHART = "SL: Daily chart.";

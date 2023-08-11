@@ -4130,10 +4130,10 @@ public class BinanceServiceImpl implements BinanceService {
                     && dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs20)) {
 
                 String key = EPIC + Utils.CAPITAL_TIME_H4;
-                String append = type_d1 + "_" + Utils.TEXT_NOTICE_ONLY;
+                String append = type_d1 + Utils.TEXT_PASS;
 
                 trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_15,
-                        dto_d1, append, false, Utils.CAPITAL_TIME_H4);
+                        dto_d1, append, true, Utils.CAPITAL_TIME_H4);
 
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
