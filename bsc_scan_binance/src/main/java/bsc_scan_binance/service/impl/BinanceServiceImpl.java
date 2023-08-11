@@ -3957,12 +3957,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // TODO: 1. initForexTrend
         // Trên Ma chỉ LONG, dưới Ma chỉ SHORT
-        String trend_line = "";
-        if (CAPITAL_TIME_XX.contains("MINUTE")) {
-            trend_line = Utils.getTrendByHekenAshiList(heiken_list);
-        } else {
-            trend_line = Utils.getTrendByLineChart(list);
-        }
+        String trend_line = Utils.getTrendByHekenAshiList(heiken_list);
 
         String switch_trend = Utils.switchTrendByMa1vs10(list);
         if (Objects.equals(Utils.CAPITAL_TIME_H4, CAPITAL_TIME_XX)) {
@@ -4245,6 +4240,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
         // ----------------------------------------PROFIT--------------------------------------
         String msg = "";
+        String keys = "";
         for (Mt5OpenTradeEntity trade : mt5Openlist) {
             String EPIC = trade.getSymbol();
             String TICKET = trade.getTicket();
@@ -4383,6 +4379,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String key = trade.getSymbol() + "_" + trade.getType() + trade.getTimeframe();
                     if (isReloadAfter(Utils.MINUTES_OF_1H, key)) {
+                        keys += key;
                         msg += "(" + trade.getCompany() + ") " + prifix + trade.getSymbol() + ":";
                         msg += Utils.getStringValue(trade.getProfit().intValue()) + "$:" + reason
                                 + Utils.new_line_from_service;
@@ -4392,7 +4389,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (Utils.isNotBlank(msg)) {
-            String EVENT_ID = "CLOSE_TRADE" + Utils.getCurrentYyyyMmDd_HH();
+            String EVENT_ID = "CLOSE_TRADE" + Utils.getCurrentYyyyMmDd_HH() + keys;
             sendMsgPerHour_OnlyMe(EVENT_ID, Utils.new_line_from_service + msg);
         }
 
