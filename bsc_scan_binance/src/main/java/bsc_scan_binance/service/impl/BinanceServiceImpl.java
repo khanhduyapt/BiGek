@@ -4118,10 +4118,12 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ---------------------------------------------------------------------------------------------
             boolean is_tradable_h4 = false;
-            if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, dto_h1.getTrend_line())
-                    && Objects.equals(trend_d1, dto_h1.getTrend_by_ma10())
+            if (Objects.equals(trend_d1, trend_h4)
+
+                    && Objects.equals(trend_d1, dto_h4.getTrend_line())
+                    && Objects.equals(trend_d1, dto_h1.getTrend_line())
                     && Objects.equals(trend_d1, dto_15.getTrend_line())
-                    && Objects.equals(trend_d1, dto_15.getTrend_by_ma10())) {
+                    && Objects.equals(trend_d1, dto_05.getTrend_line())) {
                 is_tradable_h4 = true;
             }
 
