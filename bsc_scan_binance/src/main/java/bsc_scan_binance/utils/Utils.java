@@ -3451,16 +3451,15 @@ public class Utils {
     }
 
     public static String switchTrendByMa1vs10(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 10, 15, TEXT_SWITCH_TREND_Ma_1vs10);
+        return switchTrendByMa1(heiken_list, 8, 15, TEXT_SWITCH_TREND_Ma_1vs10);
     }
 
     public static String switchTrendByMa1(List<BtcFutures> heiken_list, int ma_form, int ma_to,
             String id_switch_trend) {
-
         String trend = "_";
 
-        BigDecimal ma1_0 = calcMA(heiken_list, 1, 1);
-        BigDecimal ma1_2 = calcMA(heiken_list, 1, 2);
+        BigDecimal ma1_0 = calcMA(heiken_list, 1, 1); // Đóng nến
+        BigDecimal ma1_2 = calcMA(heiken_list, 1, 2); // Đóng nến
 
         for (int ma_index = ma_form; ma_index <= ma_to; ma_index++) {
             BigDecimal maX_0 = calcMA(heiken_list, ma_index, 1);
