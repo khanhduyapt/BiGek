@@ -4108,6 +4108,18 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
             }
+            // ---------------------------------------------------------------------------------------------
+
+            if (is_tradable_ma10 && dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10)) {
+                String key = EPIC + Utils.CAPITAL_TIME_H4;
+                String append = type_d1 + Utils.TEXT_PASS;
+
+                trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_15,
+                        dto_d1, append, true, Utils.CAPITAL_TIME_H4);
+
+                BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
+                BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
+            }
 
             if (is_tradable_ma10 && dto_d1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10)) {
                 String key = EPIC + Utils.CAPITAL_TIME_D1;
@@ -4119,7 +4131,6 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
             }
-
             // ---------------------------------------------------------------------------------------------
 
             if (Objects.nonNull(trade_dto)) {
@@ -4231,6 +4242,14 @@ public class BinanceServiceImpl implements BinanceService {
 
             BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
             // ---------------------------------------------------------------------------------
+            boolean is_reverse_h4 = false;
+            if (Objects.equals(dto_h1.getTrend_line(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND)
+                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
+                is_reverse_h4 = true;
+            }
+            // ---------------------------------------------------------------------------------
             boolean take_profit = false;
             if ((PROFIT.compareTo(BigDecimal.ZERO) > 0) && Utils.isCloseTradeWeekEnd()) {
                 take_profit = true;
@@ -4241,7 +4260,9 @@ public class BinanceServiceImpl implements BinanceService {
                     take_profit = true;
                 }
             }
-
+            if (is_reverse_h4 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
+                take_profit = true;
+            }
             // ---------------------------------------------------------------------------------
             boolean is_hit_sl = false;
             if (PROFIT.add(Utils.RISK_0_10_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
@@ -4262,24 +4283,13 @@ public class BinanceServiceImpl implements BinanceService {
                     && allow_close_trade_after(TICKET, Utils.MINUTES_OF_1D)) {
                 is_hit_sl = true;
             }
-            // ---------------------------------------------------------------------------------
-            boolean is_reverse_h4 = false;
-            if (Objects.equals(dto_h1.getTrend_line(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND)
-                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
-                is_reverse_h4 = true;
-            }
-            if (is_reverse_h4 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
-                take_profit = true;
-            }
 
+            // ---------------------------------------------------------------------------------
             String timeframe = trade.getTimeframe();
             if (Objects.equals(timeframe, Utils.CAPITAL_TIME_H1)) {
                 boolean is_reverse_h1 = false;
 
-                if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_2H)
-                        && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)
+                if (Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)
                         && Objects.equals(dto_h1.getTrend_line(), REVERSE_TRADE_TREND)
                         && Objects.equals(dto_h1.getTrend_by_ma10(), REVERSE_TRADE_TREND)) {
                     is_reverse_h1 = true;
@@ -4287,7 +4297,8 @@ public class BinanceServiceImpl implements BinanceService {
                 if (is_reverse_h1 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
                     take_profit = true;
                 }
-                if (is_reverse_h1 && (PROFIT.compareTo(BigDecimal.ZERO) < 0)) {
+                if (is_reverse_h1 && (PROFIT.compareTo(BigDecimal.ZERO) < 0)
+                        && allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
                     is_hit_sl = true;
                 }
             }

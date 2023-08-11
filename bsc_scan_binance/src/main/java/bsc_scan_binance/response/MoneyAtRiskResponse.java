@@ -298,7 +298,7 @@ public class MoneyAtRiskResponse {
             contract_size = BigDecimal.valueOf(170);
             break;
         case "NZDJPY":
-            standard_lot = BigDecimal.valueOf(0.337);
+            standard_lot = BigDecimal.valueOf(0.35);
             contract_size = BigDecimal.valueOf(260);
             break;
 
