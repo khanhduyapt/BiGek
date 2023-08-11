@@ -4336,7 +4336,7 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------
             String timeframe = trade.getTimeframe();
             if (Objects.equals(timeframe, Utils.CAPITAL_TIME_H1)) {
-                boolean is_reverse_h1 = false;
+                is_reverse_h1 = false;
 
                 if (Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)
                         && Objects.equals(dto_h1.getTrend_line(), REVERSE_TRADE_TREND)
