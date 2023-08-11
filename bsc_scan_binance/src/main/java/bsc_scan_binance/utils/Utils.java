@@ -2592,6 +2592,8 @@ public class Utils {
 
             if (symbol.contains(PREFIX_05_)) {
                 result = "(05)";
+            } else if (symbol.contains(PREFIX_15_)) {
+                result = "(15)";
             } else if (symbol.contains(PREFIX_H1_)) {
                 result = "(H1)";
             } else if (symbol.contains(PREFIX_H4_)) {
