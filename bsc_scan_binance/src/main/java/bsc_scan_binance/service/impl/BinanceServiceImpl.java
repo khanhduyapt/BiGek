@@ -4074,17 +4074,12 @@ public class BinanceServiceImpl implements BinanceService {
             Mt5OpenTrade trade_dto = null;
             String type_d1 = Objects.equals(trend_d1, Utils.TREND_LONG) ? "_b" : "_s";
             // ---------------------------------------------------------------------------------------------
-            boolean is_tradable_h4 = false;
-            if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, dto_h1.getTrend_line())
-                    && Objects.equals(trend_d1, dto_h1.getTrend_by_ma10())
 
-                    && Objects.equals(trend_d1, dto_15.getTrend_line())
-                    && Objects.equals(trend_d1, dto_15.getTrend_by_ma10())
-
-                    && Objects.equals(trend_d1, dto_05.getTrend_by_ma10())) {
-                is_tradable_h4 = true;
+            String append = type_d1 + Utils.TEXT_PASS;
+            if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
+                append = type_d1 + Utils.TEXT_NOTICE_ONLY;
             }
-
+            // ---------------------------------------------------------------------------------------------
             boolean is_tradable_ma10 = false;
             if (Objects.equals(trend_d1, trend_h1)
 
@@ -4100,7 +4095,6 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(trend_d1, dto_15.getTrend_by_ma10())
 
                     && Objects.equals(trend_d1, dto_05.getTrend_by_ma10())) {
-
                 if (Utils.EPICS_INDEXS_CFD.contains(EPIC)) {
                     if (Objects.equals(trend_d1, trend_w1)) {
                         is_tradable_ma10 = true;
@@ -4110,11 +4104,6 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            String append = type_d1 + Utils.TEXT_PASS;
-            if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
-                append = type_d1 + Utils.TEXT_NOTICE_ONLY;
-            }
-            // ---------------------------------------------------------------------------------------------
             boolean is_allow_trade_d1 = dto_d1.isTradable_zone() && Utils.isNotBlank(dto_d1.getSwitch_trend());
 
             if (is_tradable_ma10 && is_allow_trade_d1) {
@@ -4127,9 +4116,18 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
             }
 
-            // ---------------------------------------------------------------------------------------------F
+            // ---------------------------------------------------------------------------------------------
+            boolean is_tradable_h4 = false;
+            if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, dto_h1.getTrend_line())
+                    && Objects.equals(trend_d1, dto_h1.getTrend_by_ma10())
+                    && Objects.equals(trend_d1, dto_15.getTrend_line())
+                    && Objects.equals(trend_d1, dto_15.getTrend_by_ma10())) {
+                is_tradable_h4 = true;
+            }
+
             if (is_tradable_h4 && dto_h4.isTradable_zone() && Utils.isNotBlank(dto_h4.getSwitch_trend())) {
                 String key = EPIC + Utils.CAPITAL_TIME_H4;
+                append = type_d1 + Utils.TEXT_NOTICE_ONLY;
 
                 trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_15, dto_d1, append,
                         false, Utils.CAPITAL_TIME_H4);
