@@ -3972,7 +3972,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (!CollectionUtils.isEmpty(heiken_list_d1)) {
                 BigDecimal bread_d1 = Utils.calcAvgBread(heiken_list_d1);
 
-                if (!Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
+                if (!Utils.EPICS_INDEXS_CFD.contains(EPIC)) {
                     bread_d1 = bread_d1.multiply(BigDecimal.valueOf(2));
                 }
 
@@ -4104,11 +4104,12 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_MAIN_FX.contains(EPIC)) {
-                boolean is_allow_trade_h1 = dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10)
-                        || dto_15.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10)
-                        || dto_05.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10);
+                boolean is_allow_trade_h1 = dto_h1.isTradable_zone() && dto_15.isTradable_zone() &&
+                        (dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10)
+                                || dto_15.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10)
+                                || dto_05.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10));
 
-                if (is_tradable_ma10 && is_allow_trade_h1 && dto_h1.isTradable_zone()) {
+                if (is_tradable_ma10 && is_allow_trade_h1) {
                     String key = EPIC + Utils.CAPITAL_TIME_H1;
                     String append = type_d1 + Utils.TEXT_PASS;
 
