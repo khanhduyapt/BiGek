@@ -4094,7 +4094,13 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(trend_d1, dto_05.getTrend_line())
                     && Objects.equals(trend_d1, dto_05.getTrend_by_ma10())) {
 
-                is_tradable_ma10 = true;
+                if (Utils.EPICS_INDEXS_CFD.contains(EPIC)) {
+                    if (Objects.equals(trend_d1, trend_w1)) {
+                        is_tradable_ma10 = true;
+                    }
+                } else {
+                    is_tradable_ma10 = true;
+                }
             }
 
             if (Utils.EPICS_FOREXS_ALL.contains(EPIC) || Utils.EPICS_MAIN_FX.contains(EPIC)) {
@@ -4130,7 +4136,8 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
             }
             // ---------------------------------------------------------------------------------------------
-            boolean is_allow_trade_d1 = dto_d1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10);
+            boolean is_allow_trade_d1 = (dto_h12.getSwitch_trend() + dto_d1.getSwitch_trend())
+                    .contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10);
 
             if (is_tradable_ma10 && is_allow_trade_d1) {
                 String key = EPIC + Utils.CAPITAL_TIME_D1;

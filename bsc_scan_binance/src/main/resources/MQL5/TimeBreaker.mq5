@@ -39,7 +39,7 @@ void OnTick(void)
 void OnTimer(void)
   {
    string scap_5m = "_XAUUSD_US30_";
-   string forex_main = "_XAUUSD_XAGUSD_US30_NAS100_EURUSD_USDJPY_GBPUSD_GBPJPY_USDCHF_NZDUSD_";
+   string indexs_cfd = "_US30_SP500_GER30_GER40_UK100_FRA40_SPN35_EU50_US100_AUS200_";
    MqlDateTime dt_struct;
    datetime dtSer=TimeToStruct(TimeLocal(), dt_struct);
    int cur_minu = (int)dt_struct.min;
@@ -103,7 +103,17 @@ void OnTimer(void)
             //---------------------------------------------
             MqlRates rates_w1[];
             ArraySetAsSeries(rates_w1,true);
-            copied=CopyRates(symbol, PERIOD_W1, 0, 15, rates_w1);
+
+            if(StringFind(indexs_cfd, symbol, 0) >= 0)
+              {
+               copied=CopyRates(symbol, PERIOD_MN1, 0, 15, rates_w1);
+              }
+            else
+              {
+               copied=CopyRates(symbol, PERIOD_W1, 0, 15, rates_w1);
+              }
+
+
             if(copied>0)
               {
                int size=fmin(copied, 10);
