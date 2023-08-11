@@ -4288,6 +4288,11 @@ public class BinanceServiceImpl implements BinanceService {
 
             BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
             // ---------------------------------------------------------------------------------
+            boolean is_reverse_h1 = false;
+            if (Objects.equals(dto_h1.getTrend_line(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h1.getTrend_by_ma10(), REVERSE_TRADE_TREND)) {
+                is_reverse_h1 = true;
+            }
             boolean is_reverse_h4 = false;
             if (Objects.equals(dto_h1.getTrend_line(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)
@@ -4297,7 +4302,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ---------------------------------------------------------------------------------
             boolean take_profit = false;
-            if ((PROFIT.compareTo(BigDecimal.ZERO) > 0) && Utils.isCloseTradeWeekEnd()) {
+            if (is_reverse_h1 && (PROFIT.compareTo(BigDecimal.ZERO) > 0) && Utils.isCloseTradeWeekEnd()) {
                 take_profit = true;
             }
             if (is_reverse_h4 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
