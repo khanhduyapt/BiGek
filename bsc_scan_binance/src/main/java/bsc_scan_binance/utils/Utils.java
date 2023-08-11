@@ -821,7 +821,7 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_W1)) {
             return ENCRYPTED_W1;
         }
-        return ENCRYPTED_H1;
+        return ENCRYPTED_H4;
     }
 
     public static String getDeEncryptedChartNameCapital(String encryptedChartName) {
@@ -843,7 +843,7 @@ public class Utils {
         if (encryptedChartName.contains(ENCRYPTED_W1)) {
             return CAPITAL_TIME_W1;
         }
-        return CAPITAL_TIME_H1;
+        return CAPITAL_TIME_H4;
     }
 
     public static String getChartNameCapital(String TIME) {

@@ -2972,9 +2972,9 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, dto_d1.getTrend_line(), EPIC, dto_h1, dto_d1), 45);
 
         if (Objects.equals(Utils.TREND_LONG, trend_d1)) {
-            log += "E:" + type + "(h4): " + Utils.appendLeft(Utils.removeLastZero(dto_h4.getBody_low()), 10);
+            log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_low()), 10);
         } else {
-            log += "E:" + type + "(h4): " + Utils.appendLeft(Utils.removeLastZero(dto_h4.getBody_hig()), 10);
+            log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_hig()), 10);
         }
 
         log += "          ";
@@ -2992,10 +2992,10 @@ public class BinanceServiceImpl implements BinanceService {
                     : Objects.equals(Utils.TREND_SHOT, reverse_trend) ? "S" : "?";
 
             if (Objects.equals(Utils.TREND_LONG, reverse_trend)) {
-                log += "E:" + type + "(h4): " + Utils.appendLeft(Utils.removeLastZero(dto_h4.getBody_low()), 10)
+                log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_low()), 10)
                         + "   ";
             } else {
-                log += "E:" + type + "(h4): " + Utils.appendLeft(Utils.removeLastZero(dto_h4.getBody_hig()), 10)
+                log += "E:" + type + "(h1): " + Utils.appendLeft(Utils.removeLastZero(dto_h1.getBody_hig()), 10)
                         + "   ";
             }
         }
@@ -3886,6 +3886,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             String find_trend = (trade.getType().toUpperCase().contains(Utils.TREND_LONG)) ? Utils.TREND_LONG
                     : (trade.getType().toUpperCase().contains(Utils.TREND_SHOT)) ? Utils.TREND_SHOT : "_";
+            String timeframe = Utils.getDeEncryptedChartNameCapital(comment);
 
             List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_sl, find_trend);
             BigDecimal sl = sl1_tp2.get(0);
@@ -3894,7 +3895,6 @@ public class BinanceServiceImpl implements BinanceService {
             Mt5OpenTradeEntity entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
             if (Objects.isNull(entity)) {
 
-                String timeframe = Utils.getDeEncryptedChartNameCapital(comment);
                 entity = new Mt5OpenTradeEntity();
                 entity.setTicket(trade.getTicket());
                 entity.setSymbol(EPIC);
@@ -3902,7 +3902,7 @@ public class BinanceServiceImpl implements BinanceService {
                 entity.setStopLoss(sl);
                 entity.setTakeProfit(tp);
                 entity.setComment(comment);
-                entity.setTimeframe(timeframe);
+
             } else {
                 if (Utils.getBigDecimal(trade.getStopLoss()).compareTo(BigDecimal.ZERO) > 0) {
                     entity.setStopLoss(trade.getStopLoss());
@@ -3924,9 +3924,8 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isBlank(entity.getOpenTime())) {
                 entity.setOpenTime(date_time);
             }
-
-            // if (entity.getStopLoss().compareTo(BigDecimal.ZERO) == 0)
-            {
+            entity.setTimeframe(timeframe);
+            if (entity.getStopLoss().compareTo(BigDecimal.ZERO) == 0) {
                 entity.setStopLoss(sl);
                 entity.setTakeProfit(tp);
             }
@@ -4297,9 +4296,6 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------
             boolean is_hit_sl = false;
             if (PROFIT.add(Utils.RISK_0_10_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
-                is_hit_sl = true;
-            }
-            if (Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND) && Utils.isCloseTradeWeekEnd()) {
                 is_hit_sl = true;
             }
             if (Objects.equals(dto_d1.getTrend_line(), REVERSE_TRADE_TREND)

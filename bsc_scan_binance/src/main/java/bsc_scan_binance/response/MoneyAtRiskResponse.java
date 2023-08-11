@@ -88,10 +88,10 @@ public class MoneyAtRiskResponse {
         }
 
         if (Utils.EPICS_STOCKS.contains(EPIC)) {
-            volume = BigDecimal.valueOf(volume.intValue());
+            return BigDecimal.valueOf(volume.intValue());
         }
         if ("_ADAUSD_DOGEUSD_DOTUSD_LTCUSD_XRPUSD_".contains("_" + EPIC + "_")) {
-            volume = BigDecimal.valueOf(volume.intValue());
+            return BigDecimal.valueOf(volume.intValue());
         }
 
         if (volume.compareTo(BigDecimal.valueOf(1)) < 0) {
@@ -100,6 +100,17 @@ public class MoneyAtRiskResponse {
                 BigDecimal next_vol = progression.multiply(BigDecimal.valueOf(index));
                 if (volume.compareTo(next_vol) <= 0) {
                     return next_vol;
+                }
+            }
+        }
+
+        if (volume.compareTo(BigDecimal.valueOf(1)) > 0) {
+            BigDecimal progression = BigDecimal.valueOf(0.25);
+            for (int index = 1; index <= 50; index++) {
+                BigDecimal low = progression.multiply(BigDecimal.valueOf(3 + index));
+                BigDecimal hig = progression.multiply(BigDecimal.valueOf(3 + index + 1));
+                if ((volume.compareTo(low) >= 0) && (hig.compareTo(volume) >= 0)) {
+                    return low;
                 }
             }
         }
