@@ -3980,11 +3980,11 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        BigDecimal bread;
+        BigDecimal bread = BigDecimal.ZERO;
         if (AVG_BREAD_D1_DICT.containsKey(EPIC)) {
             bread = AVG_BREAD_D1_DICT.get(EPIC);
         } else {
-            bread = Utils.calcAvgBread(heiken_list);
+            bread = Utils.calcMaxBread(heiken_list);
         }
 
         BigDecimal curr_price = list.get(0).getCurrPrice();
