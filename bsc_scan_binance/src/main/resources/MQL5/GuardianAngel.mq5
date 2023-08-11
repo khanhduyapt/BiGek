@@ -288,7 +288,7 @@ void openTrade(string line)
 
       if(type== "buy_limit")
         {
-         if(!m_trade.BuyLimit(volume, price, trade_symbol, 0.0, 0.0, ORDER_TIME_GTC, expiration, comment))
+         if(!m_trade.BuyLimit(volume, price, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment))
             Alert("Duydk: BUY LIMIT: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
         }
 
@@ -301,7 +301,7 @@ void openTrade(string line)
 
       if(type== "sell_limit")
         {
-         if(!m_trade.SellLimit(volume, price, trade_symbol, 0.0, 0.0, ORDER_TIME_GTC, expiration, comment))
+         if(!m_trade.SellLimit(volume, price, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment))
             Alert("Duydk: SELL LIMIT: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
         }
 

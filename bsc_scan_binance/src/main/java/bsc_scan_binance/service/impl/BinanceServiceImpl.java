@@ -4103,11 +4103,12 @@ public class BinanceServiceImpl implements BinanceService {
                 String append = type_d1 + Utils.TEXT_PASS;
 
                 trade_dto = Utils.calc_Lot_En_SL_TP(Utils.RISK_0_10_PERCENT, EPIC, trend_d1, dto_15,
-                        dto_d1, append, is_trade_now, Utils.CAPITAL_TIME_D1);
+                        dto_d1, append, false, Utils.CAPITAL_TIME_D1);
 
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
             }
+
             // ---------------------------------------------------------------------------------------------
             if (Objects.nonNull(trade_dto)) {
                 String msg = "";
