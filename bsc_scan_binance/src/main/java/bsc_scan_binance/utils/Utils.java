@@ -168,7 +168,7 @@ public class Utils {
     public static final String CAPITAL_TIME_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_H1 = "HOUR_01";
     public static final String CAPITAL_TIME_H4 = "HOUR_04";
-    //public static final String CAPITAL_TIME_H12 = "HOUR_12";
+    // public static final String CAPITAL_TIME_H12 = "HOUR_12";
     public static final String CAPITAL_TIME_D1 = "DAY";
     public static final String CAPITAL_TIME_W1 = "WEEK";
     public static final String CAPITAL_TIME_MO = "MONTH";
@@ -786,9 +786,9 @@ public class Utils {
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H4)) {
             return PREFIX_H4_;
         }
-        //        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H12)) {
-        //            return PREFIX_H12;
-        //        }
+        // if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H12)) {
+        // return PREFIX_H12;
+        // }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_D1)) {
             return PREFIX_D1_;
         }
@@ -812,9 +812,9 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
             return ENCRYPTED_H4;
         }
-        //        if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
-        //            return ENCRYPTED_H12;
-        //        }
+        // if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
+        // return ENCRYPTED_H12;
+        // }
         if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
             return ENCRYPTED_D1;
         }
@@ -834,9 +834,9 @@ public class Utils {
         if (encryptedChartName.contains(ENCRYPTED_H4)) {
             return CAPITAL_TIME_H4;
         }
-        //        if (encryptedChartName.contains(ENCRYPTED_H12)) {
-        //            return CAPITAL_TIME_H12;
-        //        }
+        // if (encryptedChartName.contains(ENCRYPTED_H12)) {
+        // return CAPITAL_TIME_H12;
+        // }
         if (encryptedChartName.contains(ENCRYPTED_D1)) {
             return CAPITAL_TIME_D1;
         }
@@ -859,9 +859,9 @@ public class Utils {
         if (TIME.contains(CAPITAL_TIME_H4) || TIME.contains(PREFIX_H4_)) {
             return "(H4)";
         }
-        //        if (TIME.contains(CAPITAL_TIME_H12) || TIME.contains(PREFIX_H12)) {
-        //            return "(H12)";
-        //        }
+        // if (TIME.contains(CAPITAL_TIME_H12) || TIME.contains(PREFIX_H12)) {
+        // return "(H12)";
+        // }
         if (TIME.contains(CAPITAL_TIME_D1) || TIME.contains(PREFIX_D1_)) {
             return "(D1)";
         }
@@ -1717,7 +1717,8 @@ public class Utils {
         DayOfWeek day = DayOfWeek.of(today.get(ChronoField.DAY_OF_WEEK));
 
         // Calendar calendar = Calendar.getInstance();
-        // String name = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.US);
+        // String name = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT,
+        // Locale.US);
 
         String name = "";
         if (day == DayOfWeek.MONDAY) {
@@ -2628,8 +2629,9 @@ public class Utils {
                 result = "(H1)";
             } else if (dto_id.contains(CAPITAL_TIME_H4) || dto_id.contains(PREFIX_H4_)) {
                 result = "(H4)";
-                //            } else if (dto_id.contains(CAPITAL_TIME_H12) || dto_id.contains(PREFIX_H12)) {
-                //                result = "(H12)";
+                // } else if (dto_id.contains(CAPITAL_TIME_H12) || dto_id.contains(PREFIX_H12))
+                // {
+                // result = "(H12)";
             } else if (dto_id.contains(CAPITAL_TIME_D1) || dto_id.contains(PREFIX_D1_)) {
                 result = "(D1)";
             } else if (dto_id.contains(CAPITAL_TIME_W1) || dto_id.contains(PREFIX_W1_)) {
@@ -3455,7 +3457,7 @@ public class Utils {
     }
 
     public static String switchTrendByMa1vs20(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 18, 25, TEXT_SWITCH_TREND_Ma_1vs20);
+        return switchTrendByMa1(heiken_list, 21, 25, TEXT_SWITCH_TREND_Ma_1vs20);
     }
 
     public static String switchTrendByMa1(List<BtcFutures> heiken_list, int ma_form, int ma_to,
@@ -3710,7 +3712,7 @@ public class Utils {
         String EPIC = id;
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_W1, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_D1, "");
-        //        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H12, "");
+        // EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H12, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H4, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H1, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_15, "");
@@ -4244,57 +4246,66 @@ public class Utils {
         return type;
     }
 
-    //String type = Objects.equals(trend_line, Utils.TREND_LONG) ? "_b" : "_s";
-    //BigDecimal ma01 = Utils.calcMA(list, 1, 1);
-    //BigDecimal ma06 = Utils.calcMA(list, 6, 1);
-    //BigDecimal ma10 = Utils.calcMA(list, 10, 1);
-    //BigDecimal ma50 = Utils.calcMA(list, 50, 1);
+    // String type = Objects.equals(trend_line, Utils.TREND_LONG) ? "_b" : "_s";
+    // BigDecimal ma01 = Utils.calcMA(list, 1, 1);
+    // BigDecimal ma06 = Utils.calcMA(list, 6, 1);
+    // BigDecimal ma10 = Utils.calcMA(list, 10, 1);
+    // BigDecimal ma50 = Utils.calcMA(list, 50, 1);
     //
     //// ma10 dốc theo xu hướng;
     //// (Buy ): Giá > ma10 > ma50;
     //// (Sell): Giá < ma10 < ma50;
-    //boolean ma1_10_50 = false;
+    // boolean ma1_10_50 = false;
     //
     //// ma10 dốc theo xu hướng;
     //// (Buy ): ma6 cắt lên ma10 phía trên ma50;
     //// (Sell): ma6 cắt xuống ma10 phía dưới ma50;
-    //boolean ma6_10_50 = false;
+    // boolean ma6_10_50 = false;
     //
-    //if (Objects.equals(trend_line, Utils.TREND_LONG)) {
-    //    boolean is_ma_up = (Utils.isUptrendByMa(list, 10, 0, 1) && Utils.isUptrendByMa(list, 10, 1, 2))
-    //            || (Utils.isUptrendByMa(list, 8, 0, 1) && Utils.isUptrendByMa(list, 8, 1, 2));
+    // if (Objects.equals(trend_line, Utils.TREND_LONG)) {
+    // boolean is_ma_up = (Utils.isUptrendByMa(list, 10, 0, 1) &&
+    // Utils.isUptrendByMa(list, 10, 1, 2))
+    // || (Utils.isUptrendByMa(list, 8, 0, 1) && Utils.isUptrendByMa(list, 8, 1,
+    // 2));
     //
-    //    if (is_ma_up && (ma01.compareTo(ma10) > 0) && (ma10.compareTo(ma50) > 0)
-    //            && Objects.equals(Utils.TREND_LONG, Utils.switchTrendBy_MaX_vs_MaY(list, 1, 10))) {
-    //        ma1_10_50 = true;
-    //        switch_trend = "1o10o50" + type;
+    // if (is_ma_up && (ma01.compareTo(ma10) > 0) && (ma10.compareTo(ma50) > 0)
+    // && Objects.equals(Utils.TREND_LONG, Utils.switchTrendBy_MaX_vs_MaY(list, 1,
+    // 10))) {
+    // ma1_10_50 = true;
+    // switch_trend = "1o10o50" + type;
     //
-    //    } else if (is_ma_up && Objects.equals(Utils.TREND_LONG, Utils.switchTrendBy_MaX_vs_MaY(list, 6, 10))
-    //            && (ma06.compareTo(ma10) > 0) && (ma10.compareTo(ma50) > 0)) {
-    //        ma6_10_50 = true;
-    //        switch_trend = "6o10o50" + type;
-    //    }
-    //}
+    // } else if (is_ma_up && Objects.equals(Utils.TREND_LONG,
+    // Utils.switchTrendBy_MaX_vs_MaY(list, 6, 10))
+    // && (ma06.compareTo(ma10) > 0) && (ma10.compareTo(ma50) > 0)) {
+    // ma6_10_50 = true;
+    // switch_trend = "6o10o50" + type;
+    // }
+    // }
     //
-    //if (Objects.equals(trend_line, Utils.TREND_SHOT)) {
-    //    boolean is_ma_dn = (!Utils.isUptrendByMa(list, 10, 0, 1) && !Utils.isUptrendByMa(list, 10, 1, 2))
-    //            || (!Utils.isUptrendByMa(list, 8, 0, 1) && !Utils.isUptrendByMa(list, 8, 1, 2));
+    // if (Objects.equals(trend_line, Utils.TREND_SHOT)) {
+    // boolean is_ma_dn = (!Utils.isUptrendByMa(list, 10, 0, 1) &&
+    // !Utils.isUptrendByMa(list, 10, 1, 2))
+    // || (!Utils.isUptrendByMa(list, 8, 0, 1) && !Utils.isUptrendByMa(list, 8, 1,
+    // 2));
     //
-    //    if (is_ma_dn && (ma01.compareTo(ma10) < 0) && (ma10.compareTo(ma50) < 0)
-    //            && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 1, 10))) {
-    //        ma1_10_50 = true;
-    //        switch_trend = "1o10o50" + type;
+    // if (is_ma_dn && (ma01.compareTo(ma10) < 0) && (ma10.compareTo(ma50) < 0)
+    // && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 1,
+    // 10))) {
+    // ma1_10_50 = true;
+    // switch_trend = "1o10o50" + type;
     //
-    //    } else if (is_ma_dn && (ma06.compareTo(ma10) < 0) && (ma10.compareTo(ma50) < 0)
-    //            && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 6, 10))) {
-    //        ma6_10_50 = true;
-    //        switch_trend = "6o10o50" + type;
-    //    }
-    //}
+    // } else if (is_ma_dn && (ma06.compareTo(ma10) < 0) && (ma10.compareTo(ma50) <
+    // 0)
+    // && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 6,
+    // 10))) {
+    // ma6_10_50 = true;
+    // switch_trend = "6o10o50" + type;
+    // }
+    // }
     //
-    //if (ma1_10_50 || ma6_10_50) {
-    //    allow_trade_by_ma1_6_10_50 = true;
-    //}
+    // if (ma1_10_50 || ma6_10_50) {
+    // allow_trade_by_ma1_6_10_50 = true;
+    // }
 
     // [1W=1D=12H 8H=4H=2H=30] {D1~H12~H8~H4~H2~30}
     public static String getPrefix_FollowTrackingTrend(String EPIC, int index,
