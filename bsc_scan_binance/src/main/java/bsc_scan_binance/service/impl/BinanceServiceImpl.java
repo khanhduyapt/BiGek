@@ -4257,15 +4257,16 @@ public class BinanceServiceImpl implements BinanceService {
             if ((PROFIT.compareTo(BigDecimal.ZERO) > 0) && Utils.isCloseTradeWeekEnd()) {
                 take_profit = true;
             }
+            if (is_reverse_h4 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
+                take_profit = true;
+            }
             if (PROFIT.compareTo(Utils.RISK_0_10_PERCENT) > 0) {
                 if (Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND)
                         && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)) {
                     take_profit = true;
                 }
             }
-            if (is_reverse_h4 && (PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
-                take_profit = true;
-            }
+
             // ---------------------------------------------------------------------------------
             boolean is_hit_sl = false;
             if (PROFIT.add(Utils.RISK_0_10_PERCENT).compareTo(BigDecimal.ZERO) < 0) {

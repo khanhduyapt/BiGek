@@ -2654,7 +2654,7 @@ public class Utils {
             return result;
         }
 
-        BigDecimal multi = BigDecimal.valueOf(1.5);
+        BigDecimal multi = BigDecimal.valueOf(2);
 
         BigDecimal sl = BigDecimal.ZERO;
         BigDecimal tp = BigDecimal.ZERO;
@@ -3451,7 +3451,7 @@ public class Utils {
     }
 
     public static String switchTrendByMa1vs10(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 10, 15, TEXT_SWITCH_TREND_Ma_1vs10);
+        return switchTrendByMa1(heiken_list, 8, 15, TEXT_SWITCH_TREND_Ma_1vs10);
     }
 
     public static String switchTrendByMa1(List<BtcFutures> heiken_list, int ma_form, int ma_to,
@@ -3459,12 +3459,11 @@ public class Utils {
 
         String trend = "_";
 
-        // Đánh trên D nên bắt buộc phải là ngày hiện tại.
-        BigDecimal ma1_0 = calcMA(heiken_list, 1, 0); // Không được sửa dòng này.
-        BigDecimal ma1_2 = calcMA(heiken_list, 1, 1);
+        BigDecimal ma1_0 = calcMA(heiken_list, 1, 1);
+        BigDecimal ma1_2 = calcMA(heiken_list, 1, 2);
 
         for (int ma_index = ma_form; ma_index <= ma_to; ma_index++) {
-            BigDecimal maX_0 = calcMA(heiken_list, ma_index, 0);
+            BigDecimal maX_0 = calcMA(heiken_list, ma_index, 1);
             BigDecimal maX_2 = calcMA(heiken_list, ma_index, 2);
 
             String cutUp = Utils.checkXCutUpY(ma1_0, ma1_2, maX_0, maX_2);
