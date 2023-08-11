@@ -133,8 +133,6 @@ public class Utils {
 
     public static final String TEXT_SWITCH_TREND_Ma_3_2_1 = "Ma3.2.1";
     public static final String TEXT_SWITCH_TREND_Ma_1vs3456 = "(Ma1.3456)";
-    public static final String TEXT_SWITCH_TREND_Ma_1vs1010 = "(Ma1.1010)";
-    public static final String TEXT_SWITCH_TREND_Ma_1vs1020 = "(Ma1.1020)";
 
     public static final String TEXT_SWITCH_TREND_Ma_1vs10 = "(Ma1.10)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs20 = "(Ma1.20)";
@@ -2971,7 +2969,7 @@ public class Utils {
     }
 
     public static List<BigDecimal> getBuySellArea(List<BtcFutures> heiken_list) {
-        int section = 3;
+        int section = 4;
         List<BigDecimal> LoHi = Utils.getLowHighCandle(heiken_list);
         BigDecimal high = LoHi.get(1).subtract(LoHi.get(0));
         BigDecimal quarter = high.divide(BigDecimal.valueOf(section), 10, RoundingMode.CEILING);
@@ -3449,16 +3447,8 @@ public class Utils {
         return "";
     }
 
-    public static String switchTrendByMa1vs56(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 5, 6, TEXT_SWITCH_TREND_Ma_1vs3456);
-    }
-
     public static String switchTrendByMa1vs10(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 10, 10, TEXT_SWITCH_TREND_Ma_1vs1010);
-    }
-
-    public static String switchTrendByMa1vs1020(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 10, 20, TEXT_SWITCH_TREND_Ma_1vs1020);
+        return switchTrendByMa1(heiken_list, 10, 11, TEXT_SWITCH_TREND_Ma_1vs10);
     }
 
     public static String switchTrendByMa1(List<BtcFutures> heiken_list, int ma_form, int ma_to,
@@ -4248,6 +4238,58 @@ public class Utils {
 
         return type;
     }
+
+    //String type = Objects.equals(trend_line, Utils.TREND_LONG) ? "_b" : "_s";
+    //BigDecimal ma01 = Utils.calcMA(list, 1, 1);
+    //BigDecimal ma06 = Utils.calcMA(list, 6, 1);
+    //BigDecimal ma10 = Utils.calcMA(list, 10, 1);
+    //BigDecimal ma50 = Utils.calcMA(list, 50, 1);
+    //
+    //// ma10 dốc theo xu hướng;
+    //// (Buy ): Giá > ma10 > ma50;
+    //// (Sell): Giá < ma10 < ma50;
+    //boolean ma1_10_50 = false;
+    //
+    //// ma10 dốc theo xu hướng;
+    //// (Buy ): ma6 cắt lên ma10 phía trên ma50;
+    //// (Sell): ma6 cắt xuống ma10 phía dưới ma50;
+    //boolean ma6_10_50 = false;
+    //
+    //if (Objects.equals(trend_line, Utils.TREND_LONG)) {
+    //    boolean is_ma_up = (Utils.isUptrendByMa(list, 10, 0, 1) && Utils.isUptrendByMa(list, 10, 1, 2))
+    //            || (Utils.isUptrendByMa(list, 8, 0, 1) && Utils.isUptrendByMa(list, 8, 1, 2));
+    //
+    //    if (is_ma_up && (ma01.compareTo(ma10) > 0) && (ma10.compareTo(ma50) > 0)
+    //            && Objects.equals(Utils.TREND_LONG, Utils.switchTrendBy_MaX_vs_MaY(list, 1, 10))) {
+    //        ma1_10_50 = true;
+    //        switch_trend = "1o10o50" + type;
+    //
+    //    } else if (is_ma_up && Objects.equals(Utils.TREND_LONG, Utils.switchTrendBy_MaX_vs_MaY(list, 6, 10))
+    //            && (ma06.compareTo(ma10) > 0) && (ma10.compareTo(ma50) > 0)) {
+    //        ma6_10_50 = true;
+    //        switch_trend = "6o10o50" + type;
+    //    }
+    //}
+    //
+    //if (Objects.equals(trend_line, Utils.TREND_SHOT)) {
+    //    boolean is_ma_dn = (!Utils.isUptrendByMa(list, 10, 0, 1) && !Utils.isUptrendByMa(list, 10, 1, 2))
+    //            || (!Utils.isUptrendByMa(list, 8, 0, 1) && !Utils.isUptrendByMa(list, 8, 1, 2));
+    //
+    //    if (is_ma_dn && (ma01.compareTo(ma10) < 0) && (ma10.compareTo(ma50) < 0)
+    //            && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 1, 10))) {
+    //        ma1_10_50 = true;
+    //        switch_trend = "1o10o50" + type;
+    //
+    //    } else if (is_ma_dn && (ma06.compareTo(ma10) < 0) && (ma10.compareTo(ma50) < 0)
+    //            && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 6, 10))) {
+    //        ma6_10_50 = true;
+    //        switch_trend = "6o10o50" + type;
+    //    }
+    //}
+    //
+    //if (ma1_10_50 || ma6_10_50) {
+    //    allow_trade_by_ma1_6_10_50 = true;
+    //}
 
     // [1W=1D=12H 8H=4H=2H=30] {D1~H12~H8~H4~H2~30}
     public static String getPrefix_FollowTrackingTrend(String EPIC, int index,
