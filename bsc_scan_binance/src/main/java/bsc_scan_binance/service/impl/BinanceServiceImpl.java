@@ -4290,7 +4290,8 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------
             boolean is_reverse_h1 = false;
             if (Objects.equals(dto_h1.getTrend_line(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h1.getTrend_by_ma10(), REVERSE_TRADE_TREND)) {
+                    && Objects.equals(dto_h1.getTrend_by_ma10(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h4.getTrend_line(), REVERSE_TRADE_TREND)) {
                 is_reverse_h1 = true;
             }
             boolean is_reverse_h4 = false;
