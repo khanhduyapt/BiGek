@@ -168,7 +168,7 @@ public class Utils {
     public static final String CAPITAL_TIME_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_H1 = "HOUR_01";
     public static final String CAPITAL_TIME_H4 = "HOUR_04";
-    public static final String CAPITAL_TIME_H12 = "HOUR_12";
+    //public static final String CAPITAL_TIME_H12 = "HOUR_12";
     public static final String CAPITAL_TIME_D1 = "DAY";
     public static final String CAPITAL_TIME_W1 = "WEEK";
     public static final String CAPITAL_TIME_MO = "MONTH";
@@ -786,9 +786,9 @@ public class Utils {
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H4)) {
             return PREFIX_H4_;
         }
-        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H12)) {
-            return PREFIX_H12;
-        }
+        //        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H12)) {
+        //            return PREFIX_H12;
+        //        }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_D1)) {
             return PREFIX_D1_;
         }
@@ -812,9 +812,9 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
             return ENCRYPTED_H4;
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
-            return ENCRYPTED_H12;
-        }
+        //        if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
+        //            return ENCRYPTED_H12;
+        //        }
         if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
             return ENCRYPTED_D1;
         }
@@ -834,9 +834,9 @@ public class Utils {
         if (encryptedChartName.contains(ENCRYPTED_H4)) {
             return CAPITAL_TIME_H4;
         }
-        if (encryptedChartName.contains(ENCRYPTED_H12)) {
-            return CAPITAL_TIME_H12;
-        }
+        //        if (encryptedChartName.contains(ENCRYPTED_H12)) {
+        //            return CAPITAL_TIME_H12;
+        //        }
         if (encryptedChartName.contains(ENCRYPTED_D1)) {
             return CAPITAL_TIME_D1;
         }
@@ -859,9 +859,9 @@ public class Utils {
         if (TIME.contains(CAPITAL_TIME_H4) || TIME.contains(PREFIX_H4_)) {
             return "(H4)";
         }
-        if (TIME.contains(CAPITAL_TIME_H12) || TIME.contains(PREFIX_H12)) {
-            return "(H12)";
-        }
+        //        if (TIME.contains(CAPITAL_TIME_H12) || TIME.contains(PREFIX_H12)) {
+        //            return "(H12)";
+        //        }
         if (TIME.contains(CAPITAL_TIME_D1) || TIME.contains(PREFIX_D1_)) {
             return "(D1)";
         }
@@ -2628,8 +2628,8 @@ public class Utils {
                 result = "(H1)";
             } else if (dto_id.contains(CAPITAL_TIME_H4) || dto_id.contains(PREFIX_H4_)) {
                 result = "(H4)";
-            } else if (dto_id.contains(CAPITAL_TIME_H12) || dto_id.contains(PREFIX_H12)) {
-                result = "(H12)";
+                //            } else if (dto_id.contains(CAPITAL_TIME_H12) || dto_id.contains(PREFIX_H12)) {
+                //                result = "(H12)";
             } else if (dto_id.contains(CAPITAL_TIME_D1) || dto_id.contains(PREFIX_D1_)) {
                 result = "(D1)";
             } else if (dto_id.contains(CAPITAL_TIME_W1) || dto_id.contains(PREFIX_W1_)) {
@@ -3451,7 +3451,7 @@ public class Utils {
     }
 
     public static String switchTrendByMa1vs10(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 10, 13, TEXT_SWITCH_TREND_Ma_1vs10);
+        return switchTrendByMa1(heiken_list, 10, 15, TEXT_SWITCH_TREND_Ma_1vs10);
     }
 
     public static String switchTrendByMa1(List<BtcFutures> heiken_list, int ma_form, int ma_to,
@@ -3708,7 +3708,7 @@ public class Utils {
         String EPIC = id;
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_W1, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_D1, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H12, "");
+        //        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H12, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H4, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H1, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_15, "");

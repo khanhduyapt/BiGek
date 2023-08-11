@@ -143,7 +143,7 @@ void OnTimer(void)
                FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_D1");
               }
             //---------------------------------------------
-
+            /*
             MqlRates rates_h12[];
             ArraySetAsSeries(rates_h12,true);
             copied=CopyRates(symbol, PERIOD_H12, 0, 55, rates_h12);
@@ -159,6 +159,7 @@ void OnTimer(void)
               {
                FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_H12");
               }
+              */
             //---------------------------------------------
             MqlRates rates_h4[];
             ArraySetAsSeries(rates_h4,true);
