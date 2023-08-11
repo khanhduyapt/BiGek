@@ -2664,7 +2664,7 @@ public class Utils {
             high = high.multiply(multi);
             tp = dto_sl.getCurrent_price().add(high);
 
-            // tp = dto_sl.getBody_hig();
+            tp = dto_sl.getBody_hig();
         }
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
             sl = dto_sl.getHigh_price();
@@ -2672,7 +2672,7 @@ public class Utils {
             high = high.multiply(multi);
             tp = dto_sl.getCurrent_price().subtract(high);
 
-            // tp = dto_sl.getBody_low();
+            tp = dto_sl.getBody_low();
         }
 
         result.add(sl);
