@@ -2599,11 +2599,15 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     @Transactional
-    private void createOrders(String SYMBOL, String orderId, String switch_trend, String trend, List<BtcFutures> list) {
+    private void createOrders(String SYMBOL, String orderId, String switch_trend, String trend,
+            List<BtcFutures> heiken_list) {
         String date_time = LocalDateTime.now().toString();
 
-        List<BigDecimal> body = Utils.getBodyCandle(list);
-        List<BigDecimal> low_high = Utils.getLowHighCandle(list);
+        List<BigDecimal> body = Utils.getBodyCandle(heiken_list);
+        List<BigDecimal> low_high = Utils.getLowHighCandle(heiken_list);
+
+        String ma50 = Utils.isAboveMALine(heiken_list, 50) ? "(Ma50)  " : "        ";
+        String trend_by_ma10 = Utils.isAboveMALine(heiken_list, 10) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
         String note = "                ";
         if (CRYPTO_LIST_BUYING.contains(SYMBOL)) {
@@ -2615,18 +2619,16 @@ public class BinanceServiceImpl implements BinanceService {
         } else if (Utils.LIST_WAITING.contains(SYMBOL)) {
             note = "   WATCH_LIST   ";
         }
-        note += switch_trend;
+        note += ma50 + "   " + switch_trend;
 
-        String zone = Utils.getZone(list);
+        String zone = Utils.getZone(heiken_list);
         boolean tradable_zone = false;
         if (zone.contains(trend)) {
             tradable_zone = true;
         }
 
-        String trend_by_ma10 = Utils.isAboveMALine(list, 10) ? Utils.TREND_LONG : Utils.TREND_SHOT;
-
-        Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
-                low_high.get(0), low_high.get(1), note, false, trend_by_ma10, tradable_zone);
+        Orders entity = new Orders(orderId, date_time, trend, heiken_list.get(0).getCurrPrice(), body.get(0),
+                body.get(1), low_high.get(0), low_high.get(1), note, false, trend_by_ma10, tradable_zone);
 
         ordersRepository.save(entity);
     }
