@@ -3457,7 +3457,10 @@ public class Utils {
         String sw_0 = switchTrendByMa1(heiken_list, 0, 8, 10, TEXT_SWITCH_TREND_Ma_1vs10);
 
         if (Utils.isNotBlank(sw_1) && Utils.isNotBlank(sw_0)) {
-            if (!Objects.equals(sw_1, sw_0)) {
+            String trend_1 = sw_1.contains(TREND_LONG) ? TREND_LONG : TREND_SHOT;
+            String trend_0 = sw_1.contains(TREND_LONG) ? TREND_LONG : TREND_SHOT;
+
+            if (!Objects.equals(trend_1, trend_0)) {
                 return sw_0;
             }
         }
@@ -3469,7 +3472,10 @@ public class Utils {
         String sw_0 = switchTrendByMa1(heiken_list, 0, 18, 20, TEXT_SWITCH_TREND_Ma_1vs20);
 
         if (Utils.isNotBlank(sw_1) && Utils.isNotBlank(sw_0)) {
-            if (!Objects.equals(sw_1, sw_0)) {
+            String trend_1 = sw_1.contains(TREND_LONG) ? TREND_LONG : TREND_SHOT;
+            String trend_0 = sw_1.contains(TREND_LONG) ? TREND_LONG : TREND_SHOT;
+
+            if (!Objects.equals(trend_1, trend_0)) {
                 return sw_0;
             }
         }
@@ -3478,7 +3484,7 @@ public class Utils {
 
     public static String switchTrendByMa1(List<BtcFutures> heiken_list, int candle_no, int ma_form, int ma_to,
             String id_switch_trend) {
-        String trend = "_";
+        String trend = "";
 
         BigDecimal ma1_0 = calcMA(heiken_list, 1, candle_no); // Đóng nến
         BigDecimal ma1_2 = calcMA(heiken_list, 1, candle_no + 1); // Đóng nến
@@ -3491,10 +3497,10 @@ public class Utils {
             String cutDw = Utils.checkXCutDnY(ma1_0, ma1_2, maX_0, maX_2);
 
             if (Utils.isNotBlank(cutUp)) {
-                trend += ma_index + ":" + cutUp + "_";
+                trend += ma_index + ":" + cutUp + ";";
             }
             if (Utils.isNotBlank(cutDw)) {
-                trend += ma_index + ":" + cutDw + "_";
+                trend += ma_index + ":" + cutDw + ";";
             }
         }
 
@@ -3507,12 +3513,6 @@ public class Utils {
         }
 
         if (trend.contains(Utils.TREND_LONG) || trend.contains(Utils.TREND_SHOT)) {
-            if (trend.contains(Utils.TREND_LONG)) {
-                trend = Utils.TREND_LONG;
-            }
-            if (trend.contains(Utils.TREND_SHOT)) {
-                trend = Utils.TREND_SHOT;
-            }
             String chart_name = getChartName(heiken_list).trim();
             String switch_trend = chart_name + id_switch_trend + ":" + Utils.appendSpace(trend, 4);
 

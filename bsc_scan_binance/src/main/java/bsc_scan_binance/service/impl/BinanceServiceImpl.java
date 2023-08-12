@@ -3025,10 +3025,6 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String sendMsgKillLongShort(String SYMBOL) {
-        if (!Utils.isPcCongTy()) {
-            return Utils.CRYPTO_TIME_D1;
-        }
-
         if (!BTC_ETH_BNB.contains(SYMBOL)) {
             return Utils.CRYPTO_TIME_H1;
         }
@@ -3036,27 +3032,37 @@ public class BinanceServiceImpl implements BinanceService {
             return Utils.CRYPTO_TIME_H1;
         }
 
-        List<BtcFutures> list = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_D1, 15);
-        if (CollectionUtils.isEmpty(list)) {
+        List<BtcFutures> list_h4 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_H4, 15);
+        if (CollectionUtils.isEmpty(list_h4)) {
+            return Utils.CRYPTO_TIME_H1;
+        }
+        List<BtcFutures> heken_list_h4 = Utils.getHeikenList(list_h4);
+        String switch_trend_h4 = Utils.switchTrendByMa1vs10(heken_list_h4);
+        if (Utils.isBlank(switch_trend_h4)) {
             return Utils.CRYPTO_TIME_H1;
         }
 
-        List<BtcFutures> heken_list = Utils.getHeikenList(list);
-        String trend = Utils.getTrendByHekenAshiList(heken_list);
-        String switch_trend = Utils.switchTrendByHeken_12(heken_list);
+        List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_D1, 15);
+        if (CollectionUtils.isEmpty(list_d1)) {
+            return Utils.CRYPTO_TIME_H1;
+        }
+        List<BtcFutures> heken_list_d1 = Utils.getHeikenList(list_d1);
 
-        if (Utils.isNotBlank(switch_trend)) {
+        String trend_d1 = Utils.getTrendByHekenAshiList(heken_list_d1);
+        String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
+
+        if (Objects.equals(trend_d1, trend_h4) && Utils.isNotBlank(switch_trend_h4)) {
             // TODO: sendMsgKillLongShort
             String msg = "";
 
-            if (Objects.equals(Utils.TREND_LONG, trend)) {
+            if (Objects.equals(Utils.TREND_LONG, trend_d1)) {
                 msg = " 💹 (D1)" + SYMBOL + "_kill_Short 💔 ";
-            } else if (Objects.equals(Utils.TREND_SHOT, trend)) {
+            } else if (Objects.equals(Utils.TREND_SHOT, trend_d1)) {
                 msg = " 🔻 (D1)" + SYMBOL + "_kill_Long 💔 ";
             } else {
                 return Utils.CRYPTO_TIME_H1;
             }
-            msg += "(" + Utils.appendSpace(Utils.removeLastZero(list.get(0).getCurrPrice()), 5) + ")";
+            msg += "(" + Utils.appendSpace(Utils.removeLastZero(list_d1.get(0).getCurrPrice()), 5) + ")";
 
             String EVENT_ID = "MSG_PER_HOUR" + SYMBOL + Utils.getCurrentYyyyMmDd_Blog4h();
             sendMsgPerHour_ToAll(EVENT_ID, msg);
