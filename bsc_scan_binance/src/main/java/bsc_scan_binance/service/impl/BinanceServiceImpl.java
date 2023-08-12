@@ -2445,6 +2445,7 @@ public class BinanceServiceImpl implements BinanceService {
             fundingHistoryRepository.deleteAll(list);
         }
 
+        // List<Orders> orders1 = ordersRepository.findAll();
         List<Orders> orders = ordersRepository.getForexList();
         if (!CollectionUtils.isEmpty(orders)) {
             ordersRepository.deleteAll(orders);
@@ -3436,6 +3437,7 @@ public class BinanceServiceImpl implements BinanceService {
         String msg_switch_trend_d1 = "";
         List<String> list_crypto_log = new ArrayList<String>();
 
+        int count = 1;
         for (Orders dto : crypto_list) {
             if (Objects.isNull(dto)) {
                 continue;
@@ -3454,8 +3456,10 @@ public class BinanceServiceImpl implements BinanceService {
                 msg_switch_trend_d1 += symbol + "; ";
             }
 
-            String log = Utils.createLineCrypto(dto, symbol, type);
+            String log = "   " + Utils.appendLeft(String.valueOf(count), 3, "0") + "   "
+                    + Utils.createLineCrypto(dto, symbol, type);
             list_crypto_log.add(log);
+            count += 1;
         }
 
         if (Utils.isNotBlank(msg_switch_trend_d1)) {
@@ -3493,7 +3497,7 @@ public class BinanceServiceImpl implements BinanceService {
     @Override
     @Transactional
     public String initCryptoTrend(String SYMBOL) {
-        List<BtcFutures> heiken_list_d = Utils.getHeikenList(Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_D1, 20));
+        List<BtcFutures> heiken_list_d = Utils.getHeikenList(Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_D1, 55));
         if (CollectionUtils.isEmpty(heiken_list_d)) {
             Utils.logWritelnDraft("[initCryptoTrend] Not found: " + SYMBOL);
             return Utils.CRYPTO_TIME_H4;
@@ -3506,7 +3510,8 @@ public class BinanceServiceImpl implements BinanceService {
         if (switch_d1.contains(Utils.TREND_LONG)) {
             createOrders(SYMBOL, orderId_d1, switch_d1, trend_d, heiken_list_d);
 
-        } else if (Utils.isAboveMALine(heiken_list_d, 10) && Objects.equals(Utils.TREND_LONG, trend_d)) {
+        } else if (Objects.equals(Utils.TREND_LONG, trend_d) && Utils.isAboveMALine(heiken_list_d, 10)
+                && Utils.isAboveMALine(heiken_list_d, 50)) {
             createOrders(SYMBOL, orderId_d1, "", trend_d, heiken_list_d);
 
         } else {
@@ -3935,7 +3940,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_eq_h4_h1_15_05 = Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_15)
                     && Objects.equals(trend_h4, trend_05);
 
-            boolean is_auto_tradable = dto_d1.isTradable_zone() && dto_h4.isTradable_zone() && dto_h1.isTradable_zone();
+            boolean allow_auto_trade = dto_d1.isTradable_zone() && dto_h4.isTradable_zone() && dto_h1.isTradable_zone();
             // ---------------------------------------------------------------------------------------------
 
             boolean is_allow_trade_d1 = Utils.isNotBlank(switch_d1) && dto_d1.isTradable_zone();
@@ -3944,7 +3949,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String key = EPIC + Utils.CAPITAL_TIME_D1;
                 String type_d1 = Objects.equals(trend_d1, Utils.TREND_LONG) ? "_b" : "_s";
 
-                if (is_eq_w_d_h4 && is_auto_tradable) {
+                if (is_eq_w_d_h4 && allow_auto_trade) {
                     append = type_d1 + Utils.TEXT_PASS;
                 } else {
                     append = type_d1 + Utils.TEXT_NOTICE_ONLY;
@@ -3965,7 +3970,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String key = EPIC + Utils.CAPITAL_TIME_H4;
                 String type_h4 = Objects.equals(trend_h4, Utils.TREND_LONG) ? "_b" : "_s";
 
-                if (is_eq_w_d_h4 && is_auto_tradable) {
+                if (is_eq_w_d_h4 && allow_auto_trade) {
                     append = type_h4 + Utils.TEXT_PASS;
                 } else {
                     append = type_h4 + Utils.TEXT_NOTICE_ONLY;

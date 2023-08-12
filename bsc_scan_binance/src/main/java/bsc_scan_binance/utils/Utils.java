@@ -4151,7 +4151,7 @@ public class Utils {
     public static String createLineCrypto(Orders entity, String symbol, String type) {
         String chart = entity.getId().replace("CRYPTO_" + symbol, "").replace("_", "").toUpperCase();
 
-        String tmp_msg = type + Utils.appendSpace(chart, 8) + Utils.appendSpace(entity.getTrend_heiken(), 15)
+        String tmp_msg = type + Utils.appendSpace(chart, 8) + Utils.appendSpace(entity.getTrend_heiken(), 10)
                 + Utils.appendSpace(symbol, 10);
 
         String price = Utils.appendSpace(Utils.removeLastZero(entity.getCurrent_price()), 10);
