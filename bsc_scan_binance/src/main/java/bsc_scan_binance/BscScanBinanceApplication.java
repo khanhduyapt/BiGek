@@ -115,7 +115,7 @@ public class BscScanBinanceApplication {
                 int round_crypto = 0;
                 Date start_time = Calendar.getInstance().getTime();
 
-                File log = new File(Utils.getForexLogFile());
+                File log = new File(Utils.getReportFilePath());
                 System.out.println(log.getAbsolutePath());
 
                 log = new File(Utils.getDraftLogFile());
@@ -180,11 +180,11 @@ public class BscScanBinanceApplication {
                             binance_service.sendMsgKillLongShort("BNB");
                         }
 
-                        // String SYMBOL = Utils.COINS.get(index_crypto).toUpperCase();
-                        // if (isReloadAfter(getWattingTime(SYMBOL), "CHECK_CRYPTO_" + SYMBOL)) {
-                        // String crypto_time = binance_service.initCryptoTrend(SYMBOL);
-                        // setWattingTime(SYMBOL, crypto_time);
-                        // }
+                        String SYMBOL = Utils.COINS.get(index_crypto).toUpperCase();
+                        if (isReloadAfter(getWattingTime(SYMBOL), "CHECK_CRYPTO_" + SYMBOL)) {
+                            String crypto_time = binance_service.initCryptoTrend(SYMBOL);
+                            setWattingTime(SYMBOL, crypto_time);
+                        }
 
                         // ---------------------------------------------------------
                         if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "CREATE_REPORT")) {
@@ -239,7 +239,7 @@ public class BscScanBinanceApplication {
         // --------------------------------------------------------------------------
         File myScap = new File(Utils.getDraftLogFile());
         myScap.delete();
-        File myObj = new File(Utils.getForexLogFile());
+        File myObj = new File(Utils.getReportFilePath());
         myObj.delete();
         EPICS_OUTPUTED_LOG = "";
         // --------------------------------------------------------------------------
@@ -315,6 +315,9 @@ public class BscScanBinanceApplication {
     }
 
     public static void alertMsgKillZone(BinanceService binance_service) {
+        if (!Utils.isWeekday()) {
+            return;
+        }
         LocalTime kill_zone_ld = LocalTime.parse("13:45:00"); // to: 14:15
         LocalTime kill_zone_ny = LocalTime.parse("18:45:00"); // to: 19:15
         LocalTime cur_time = LocalTime.now();

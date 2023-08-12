@@ -1193,7 +1193,7 @@ public class Utils {
         return PATH + fileName;
     }
 
-    public static String getForexLogFile() {
+    public static String getReportFilePath() {
         String PATH = "crypto_forex_result/";
         String fileName = "Report.log"; // getToday_YyyyMMdd() +
 
@@ -1294,7 +1294,7 @@ public class Utils {
 
     public static void logWritelnReport(String text) {
         try {
-            String logFilePath = getForexLogFile();
+            String logFilePath = getReportFilePath();
             String msg = text.trim();
 
             if (Objects.equals(text, "...")) {
@@ -1314,7 +1314,7 @@ public class Utils {
 
     public static void logWritelnWithTime(String text, boolean isCrypto) {
         try {
-            String logFilePath = getForexLogFile();
+            String logFilePath = getReportFilePath();
 
             FileWriter fw = new FileWriter(logFilePath, true);
             fw.write(BscScanBinanceApplication.hostname + Utils.getTimeHHmm() + " "
@@ -1327,7 +1327,7 @@ public class Utils {
 
     public static void logForexWriteln(String text, boolean isNewline) {
         try {
-            FileWriter fw = new FileWriter(getForexLogFile(), true);
+            FileWriter fw = new FileWriter(getReportFilePath(), true);
             fw.write(BscScanBinanceApplication.hostname + text.replace(Utils.new_line_from_service, " ")
                     + (isNewline ? "\n" : ""));
             fw.close();
@@ -1338,7 +1338,7 @@ public class Utils {
 
     public static void logWriteln(String text, boolean isNewline) {
         try {
-            FileWriter fw = new FileWriter(getForexLogFile(), true);
+            FileWriter fw = new FileWriter(getReportFilePath(), true);
             fw.write(BscScanBinanceApplication.hostname + text.replace(Utils.new_line_from_service, " ")
                     + (isNewline ? "\n" : ""));
             fw.close();
@@ -1349,7 +1349,7 @@ public class Utils {
 
     public static void writelnLogFooter_Forex() {
         try {
-            FileWriter fw = new FileWriter(getForexLogFile(), true);
+            FileWriter fw = new FileWriter(getReportFilePath(), true);
             fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("-", 151, "-") + "\n");
             fw.close();
         } catch (IOException ioe) {
@@ -1359,7 +1359,7 @@ public class Utils {
 
     public static void writelnLogFooter() {
         try {
-            FileWriter fw = new FileWriter(getForexLogFile(), true);
+            FileWriter fw = new FileWriter(getReportFilePath(), true);
             fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("", 151, "-") + "\n");
             fw.close();
         } catch (IOException ioe) {
@@ -4150,21 +4150,12 @@ public class Utils {
     public static String createLineCrypto(Orders entity, String symbol, String type) {
         String chart = entity.getId().replace("CRYPTO_" + symbol, "").replace("_", "").toUpperCase();
 
-        String sl = " (Entry:";
-        if (Objects.equals(Utils.TREND_LONG, entity.getTrend_heiken())) {
-            sl += Utils.appendLeft(Utils.removeLastZero(entity.getBody_low()), 10);
-            sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getLow_price()), 10);
-        } else if (Objects.equals(Utils.TREND_SHOT, entity.getTrend_heiken())) {
-            sl += Utils.appendLeft(Utils.removeLastZero(entity.getBody_hig()), 10);
-            sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getHigh_price()), 10);
-        }
-        sl += ")  ";
-
         String tmp_msg = type + Utils.appendSpace(chart, 8) + Utils.appendSpace(entity.getTrend_heiken(), 15)
                 + Utils.appendSpace(symbol, 10);
 
         String price = Utils.appendSpace(Utils.removeLastZero(entity.getCurrent_price()), 10);
-        String url = Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70) + price + sl + entity.getSwitch_trend();
+        String url = Utils.appendSpace(Utils.getCryptoLink_Spot(symbol), 70) + price
+                + Utils.appendSpace(entity.getSwitch_trend(), 60);
 
         return tmp_msg + url;
     }
