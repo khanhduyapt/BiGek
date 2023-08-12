@@ -2445,7 +2445,10 @@ public class BinanceServiceImpl implements BinanceService {
             fundingHistoryRepository.deleteAll(list);
         }
 
-        ordersRepository.deleteAll();
+        List<Orders> orders = ordersRepository.getForexList();
+        if (!CollectionUtils.isEmpty(orders)) {
+            ordersRepository.deleteAll(orders);
+        }
 
         mt5DataCandleRepository.deleteAll();
 
@@ -2601,19 +2604,17 @@ public class BinanceServiceImpl implements BinanceService {
         List<BigDecimal> body = Utils.getBodyCandle(list);
         List<BigDecimal> low_high = Utils.getLowHighCandle(list);
 
-        String note = "";
+        String note = "                ";
         if (CRYPTO_LIST_BUYING.contains(SYMBOL)) {
-            note = "   **BUYING** ";
+            note = "   **BUYING**    ";
 
         } else if (Utils.COINS_NEW_LISTING.contains(SYMBOL)) {
-            note = "   NEW_LISTING";
+            note = "   NEW_LISTING   ";
 
         } else if (Utils.LIST_WAITING.contains(SYMBOL)) {
-            note = "   WATCH_LIST";
-
-        } else {
-            note = switch_trend;
+            note = "   WATCH_LIST   ";
         }
+        note += switch_trend;
 
         String zone = Utils.getZone(list);
         boolean tradable_zone = false;
@@ -2624,7 +2625,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_by_ma10 = Utils.isAboveMALine(list, 10) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
         Orders entity = new Orders(orderId, date_time, trend, list.get(0).getCurrPrice(), body.get(0), body.get(1),
-                low_high.get(0), low_high.get(1), switch_trend, false, trend_by_ma10, tradable_zone);
+                low_high.get(0), low_high.get(1), note, false, trend_by_ma10, tradable_zone);
 
         ordersRepository.save(entity);
     }
@@ -3494,6 +3495,7 @@ public class BinanceServiceImpl implements BinanceService {
     public String initCryptoTrend(String SYMBOL) {
         List<BtcFutures> heiken_list_d = Utils.getHeikenList(Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_D1, 20));
         if (CollectionUtils.isEmpty(heiken_list_d)) {
+            Utils.logWritelnDraft("[initCryptoTrend] Not found: " + SYMBOL);
             return Utils.CRYPTO_TIME_H4;
         }
 

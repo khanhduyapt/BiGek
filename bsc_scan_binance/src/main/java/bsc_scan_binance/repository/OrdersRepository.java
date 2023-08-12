@@ -155,6 +155,9 @@ public interface OrdersRepository extends JpaRepository<Orders, String> {
             + "  ORDER BY det.trend asc, det.gecko_id asc ", nativeQuery = true)
     public List<Orders> getCrypto_H4();
 
+    @Query(value = "  SELECT * FROM orders det   WHERE (det.gecko_id not like '%CRYPTO_%') ", nativeQuery = true)
+    public List<Orders> getForexList();
+
     // =======================================================================
     // delete:
     @Query(value = " SELECT * FROM orders det "

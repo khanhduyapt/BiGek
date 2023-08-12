@@ -110,9 +110,9 @@ public class BscScanBinanceApplication {
             CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_ALL);
 
             if (app_flag != Utils.const_app_flag_webonly) {
-                int total = Utils.COINS.size();
                 int index_crypto = 0;
                 int round_crypto = 0;
+                int total = Utils.ALL_COINS_BINANCE.size();
                 Date start_time = Calendar.getInstance().getTime();
 
                 File log = new File(Utils.getReportFilePath());
@@ -180,7 +180,7 @@ public class BscScanBinanceApplication {
                             binance_service.sendMsgKillLongShort("BNB");
                         }
 
-                        String SYMBOL = Utils.COINS.get(index_crypto).toUpperCase();
+                        String SYMBOL = Utils.ALL_COINS_BINANCE.get(index_crypto).toUpperCase();
                         if (isReloadAfter(getWattingTime(SYMBOL), "CHECK_CRYPTO_" + SYMBOL)) {
                             String crypto_time = binance_service.initCryptoTrend(SYMBOL);
                             setWattingTime(SYMBOL, crypto_time);
