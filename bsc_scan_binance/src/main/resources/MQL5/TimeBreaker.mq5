@@ -104,15 +104,10 @@ void OnTimer(void)
             MqlRates rates_w1[];
             ArraySetAsSeries(rates_w1,true);
 
-            if(StringFind(indexs_cfd, symbol, 0) >= 0)
-              {
-               copied=CopyRates(symbol, PERIOD_MN1, 0, 15, rates_w1);
-              }
-            else
-              {
-               copied=CopyRates(symbol, PERIOD_W1, 0, 15, rates_w1);
-              }
+            if(StringFind(indexs_cfd, symbol, 0) >= 0) {}
+            else {}
 
+            copied=CopyRates(symbol, PERIOD_W1, 0, 15, rates_w1);
 
             if(copied>0)
               {

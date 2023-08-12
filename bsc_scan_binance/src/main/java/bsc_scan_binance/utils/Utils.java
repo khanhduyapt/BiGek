@@ -3453,23 +3453,39 @@ public class Utils {
     }
 
     public static String switchTrendByMa1vs10(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 8, 13, TEXT_SWITCH_TREND_Ma_1vs10);
+        String sw_1 = switchTrendByMa1(heiken_list, 1, 8, 10, TEXT_SWITCH_TREND_Ma_1vs10);
+        String sw_0 = switchTrendByMa1(heiken_list, 0, 8, 10, TEXT_SWITCH_TREND_Ma_1vs10);
+
+        if (Utils.isNotBlank(sw_1) && Utils.isNotBlank(sw_0)) {
+            if (!Objects.equals(sw_1, sw_0)) {
+                return sw_0;
+            }
+        }
+        return sw_1;
     }
 
     public static String switchTrendByMa1vs20(List<BtcFutures> heiken_list) {
-        return switchTrendByMa1(heiken_list, 8, 20, TEXT_SWITCH_TREND_Ma_1vs20);
+        String sw_1 = switchTrendByMa1(heiken_list, 1, 18, 20, TEXT_SWITCH_TREND_Ma_1vs20);
+        String sw_0 = switchTrendByMa1(heiken_list, 0, 18, 20, TEXT_SWITCH_TREND_Ma_1vs20);
+
+        if (Utils.isNotBlank(sw_1) && Utils.isNotBlank(sw_0)) {
+            if (!Objects.equals(sw_1, sw_0)) {
+                return sw_0;
+            }
+        }
+        return sw_1;
     }
 
-    public static String switchTrendByMa1(List<BtcFutures> heiken_list, int ma_form, int ma_to,
+    public static String switchTrendByMa1(List<BtcFutures> heiken_list, int candle_no, int ma_form, int ma_to,
             String id_switch_trend) {
         String trend = "_";
 
-        BigDecimal ma1_0 = calcMA(heiken_list, 1, 1); // Đóng nến
-        BigDecimal ma1_2 = calcMA(heiken_list, 1, 2); // Đóng nến
+        BigDecimal ma1_0 = calcMA(heiken_list, 1, candle_no); // Đóng nến
+        BigDecimal ma1_2 = calcMA(heiken_list, 1, candle_no + 1); // Đóng nến
 
         for (int ma_index = ma_form; ma_index <= ma_to; ma_index++) {
-            BigDecimal maX_0 = calcMA(heiken_list, ma_index, 1);
-            BigDecimal maX_2 = calcMA(heiken_list, ma_index, 2);
+            BigDecimal maX_0 = calcMA(heiken_list, ma_index, candle_no);
+            BigDecimal maX_2 = calcMA(heiken_list, ma_index, candle_no + 1);
 
             String cutUp = Utils.checkXCutUpY(ma1_0, ma1_2, maX_0, maX_2);
             String cutDw = Utils.checkXCutDnY(ma1_0, ma1_2, maX_0, maX_2);
@@ -4124,7 +4140,7 @@ public class Utils {
 
         String header = "";
         header += Utils.appendSpace(append, 8);
-        header += chart_name + ":" + Utils.appendSpace(dto_entry.getTrend_line(), 8);
+        header += chart_name + ":" + Utils.appendSpace(dto_entry.getTrend_heiken(), 8);
         header += Utils.appendSpace(EPIC, 12) + getTypeOfEpic(EPIC);
         header += Utils.appendSpace(Utils.getCapitalLink(EPIC), 68);
 
@@ -4135,16 +4151,16 @@ public class Utils {
         String chart = entity.getId().replace("CRYPTO_" + symbol, "").replace("_", "").toUpperCase();
 
         String sl = " (Entry:";
-        if (Objects.equals(Utils.TREND_LONG, entity.getTrend_line())) {
+        if (Objects.equals(Utils.TREND_LONG, entity.getTrend_heiken())) {
             sl += Utils.appendLeft(Utils.removeLastZero(entity.getBody_low()), 10);
             sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getLow_price()), 10);
-        } else if (Objects.equals(Utils.TREND_SHOT, entity.getTrend_line())) {
+        } else if (Objects.equals(Utils.TREND_SHOT, entity.getTrend_heiken())) {
             sl += Utils.appendLeft(Utils.removeLastZero(entity.getBody_hig()), 10);
             sl += "   SL:" + Utils.appendLeft(Utils.removeLastZero(entity.getHigh_price()), 10);
         }
         sl += ")  ";
 
-        String tmp_msg = type + Utils.appendSpace(chart, 8) + Utils.appendSpace(entity.getTrend_line(), 15)
+        String tmp_msg = type + Utils.appendSpace(chart, 8) + Utils.appendSpace(entity.getTrend_heiken(), 15)
                 + Utils.appendSpace(symbol, 10);
 
         String price = Utils.appendSpace(Utils.removeLastZero(entity.getCurrent_price()), 10);
@@ -4308,11 +4324,11 @@ public class Utils {
     // }
 
     // [1W=1D=12H 8H=4H=2H=30] {D1~H12~H8~H4~H2~30}
-    public static String getPrefix_FollowTrackingTrend(String EPIC, int index,
+    public static String getPrefix_FollowTrackingTrend(String EPIC, int count,
 
-            String trend_mo, String trend_w1, String trend_d1, String trend_h12, String trend_h4, String trend_h1,
+            String trend_mo, String trend_w1, String trend_d1, String trend_h4, String trend_h1,
 
-            String switch_mo, String switch_w1, String switch_d1, String switch_h12, String switch_h4,
+            String switch_mo, String switch_w1, String switch_d1, String switch_h4, String switch_h1,
 
             String tracking_trend) {
         // --------------------------------------------
@@ -4324,20 +4340,19 @@ public class Utils {
         // } else {
         // week = " ";
         // }
-        String No = Utils.appendLeft(String.valueOf(index), 2, "0") + ". ";
+
+        String No = Utils.appendLeft(String.valueOf(count), 2, "0") + ". ";
+        boolean is_eq_d_h4_h1 = Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1);
         // --------------------------------------------
         String prefix_trend = "[MO-W1-D1-H4-H1]";
         if (!EPICS_STOCKS.contains(EPIC)) {
-            prefix_trend = "[W1-D1-H12-H4]      ";
+            prefix_trend = "[W1-D1-H4-H1]      ";
         }
         if (!Objects.equals(trend_d1, trend_mo)) {
             prefix_trend = prefix_trend.replace("MO", "--");
         }
         if (!Objects.equals(trend_d1, trend_w1)) {
             prefix_trend = prefix_trend.replace("W1", "--");
-        }
-        if (!Objects.equals(trend_d1, trend_h12)) {
-            prefix_trend = prefix_trend.replace("H12", "---");
         }
         if (!Objects.equals(trend_d1, trend_h4)) {
             prefix_trend = prefix_trend.replace("H4", "--");
@@ -4351,32 +4366,38 @@ public class Utils {
         String switch_trend = "{";
 
         if (EPICS_STOCKS.contains(EPIC)) {
-            if (switch_mo.contains(trend_mo)) {
+            if (Objects.equals(switch_mo, trend_w1) && Objects.equals(switch_mo, trend_d1)
+                    && switch_mo.contains(trend_mo)) {
                 switch_trend += getTrendPrefix("MO", switch_mo, " ");
             } else {
                 switch_trend += getTrendPrefix("MO", "", " ");
             }
 
-            if (switch_w1.contains(trend_w1)) {
+            if (Objects.equals(trend_w1, trend_d1) && switch_w1.contains(trend_w1)) {
                 switch_trend += getTrendPrefix("W1", switch_w1, " ");
             } else {
                 switch_trend += getTrendPrefix("W1", "", " ");
             }
         }
 
-        if (switch_d1.contains(trend_d1) || switch_h12.contains(trend_h12)) {
+        if (Objects.equals(trend_d1, trend_h4) && switch_d1.contains(trend_d1)) {
             switch_trend += getTrendPrefix("D1", switch_d1, " ");
         } else {
             switch_trend += getTrendPrefix("D1", "", " ");
         }
 
-        switch_trend += "   ";
-
-        if (switch_h4.contains(trend_h4)) {
-            switch_trend += getTrendPrefix("H4", switch_h4, "");
+        if (Objects.equals(trend_d1, trend_h4) && switch_h4.contains(trend_h4)) {
+            switch_trend += getTrendPrefix("H4", switch_h4, " ");
         } else {
-            switch_trend += getTrendPrefix("H4", "", "");
+            switch_trend += getTrendPrefix("H4", "", " ");
         }
+
+        if (is_eq_d_h4_h1 && switch_h1.contains(trend_h1)) {
+            switch_trend += getTrendPrefix("H1", switch_h1, "");
+        } else {
+            switch_trend += getTrendPrefix("H1", "", "");
+        }
+
         switch_trend += "}  ";
         // --------------------------------------------
         String w_d = "       ";
