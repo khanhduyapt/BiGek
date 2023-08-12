@@ -3028,7 +3028,20 @@ public class BinanceServiceImpl implements BinanceService {
         if (!BTC_ETH_BNB.contains(SYMBOL)) {
             return Utils.CRYPTO_TIME_H1;
         }
+        if (!Utils.isWeekday()) {
+            return Utils.CRYPTO_TIME_H1;
+        }
         if (!Utils.isOpenTradeTime_6h_to_1h()) {
+            return Utils.CRYPTO_TIME_H1;
+        }
+        List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_D1, 15);
+
+        if (CollectionUtils.isEmpty(list_d1)) {
+            return Utils.CRYPTO_TIME_H1;
+        }
+        List<BtcFutures> heken_list_d1 = Utils.getHeikenList(list_d1);
+        String switch_trend_d1 = Utils.switchTrendByMa1vs10(heken_list_d1);
+        if (Utils.isBlank(switch_trend_d1)) {
             return Utils.CRYPTO_TIME_H1;
         }
 
@@ -3037,28 +3050,22 @@ public class BinanceServiceImpl implements BinanceService {
             return Utils.CRYPTO_TIME_H1;
         }
         List<BtcFutures> heken_list_h4 = Utils.getHeikenList(list_h4);
-        String switch_trend_h4 = Utils.switchTrendByMa1vs10(heken_list_h4);
-        if (Utils.isBlank(switch_trend_h4)) {
-            return Utils.CRYPTO_TIME_H1;
-        }
-
-        List<BtcFutures> list_d1 = Utils.loadData(SYMBOL, Utils.CRYPTO_TIME_D1, 15);
-        if (CollectionUtils.isEmpty(list_d1)) {
-            return Utils.CRYPTO_TIME_H1;
-        }
-        List<BtcFutures> heken_list_d1 = Utils.getHeikenList(list_d1);
-
-        String trend_d1 = Utils.getTrendByHekenAshiList(heken_list_d1);
         String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
+        String trend_d1 = Utils.getTrendByHekenAshiList(heken_list_d1);
 
-        if (Objects.equals(trend_d1, trend_h4) && Utils.isNotBlank(switch_trend_h4)) {
+        String chart_name = "";
+        if (Utils.isNotBlank(switch_trend_d1)) {
+            chart_name = "(D1)";
+        }
+
+        if (Objects.equals(trend_d1, trend_h4) && Utils.isNotBlank(chart_name)) {
             // TODO: sendMsgKillLongShort
             String msg = "";
 
             if (Objects.equals(Utils.TREND_LONG, trend_d1)) {
-                msg = " 💹 (D1)" + SYMBOL + "_kill_Short 💔 ";
+                msg = " 💹 " + chart_name + SYMBOL + "_kill_Short 💔 ";
             } else if (Objects.equals(Utils.TREND_SHOT, trend_d1)) {
-                msg = " 🔻 (D1)" + SYMBOL + "_kill_Long 💔 ";
+                msg = " 🔻 " + chart_name + SYMBOL + "_kill_Long 💔 ";
             } else {
                 return Utils.CRYPTO_TIME_H1;
             }
