@@ -3624,8 +3624,8 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean debug = true;
             }
 
-            boolean is_allow_trade_d1 = Objects.equals(trend_w1, trend_d1)
-                    && dto_d1.toString().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10);
+            boolean is_allow_trade_d1 = Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)
+                    && (dto_d1.getSwitch_trend() + dto_h4.getSwitch_trend()).contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10);
 
             // TODO: scapStocks
             if (is_opening_trade(EPIC, "")) {
@@ -4024,7 +4024,7 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------------------
             boolean is_tradable_h1 = Utils.isNotBlank(switch_h1) && dto_h1.isTradable_zone();
 
-            if (is_tradable_h1 && is_eq_w_d_h4 && is_eq_h4_h1_15_05 && allow_auto_trade) {
+            if (is_tradable_h1 && is_eq_d_h4_h1 && is_eq_h4_h1_15_05 && allow_auto_trade) {
                 String key = EPIC + Utils.CAPITAL_TIME_H1;
                 String type_h1 = Objects.equals(trend_h1, Utils.TREND_LONG) ? "_b" : "_s";
                 append = type_h1 + Utils.TEXT_PASS;
@@ -4193,7 +4193,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(dto_h1.getTrend_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND)
-                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
+                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_8H)) {
                 is_reverse_h4 = true;
             }
             // ---------------------------------------------------------------------------------
@@ -4225,7 +4225,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_h1.getTrend_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_by_ma10(), REVERSE_TRADE_TREND)
 
-                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_1D)) {
+                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_2D)) {
                 is_hit_sl = true;
             }
 

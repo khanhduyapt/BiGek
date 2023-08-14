@@ -2695,8 +2695,8 @@ public class Utils {
         }
 
         if (list.size() < length) {
-            Utils.logWritelnDraft(
-                    "(isAboveMALine) " + list.get(0).getId() + " list.size()<" + length + ")" + list.size());
+            // Utils.logWritelnDraft(
+            //         "(isAboveMALine) " + list.get(0).getId() + " list.size()<" + length + ")" + list.size());
             return false;
         }
 
@@ -2716,8 +2716,8 @@ public class Utils {
             return false;
         }
         if (list.size() < length) {
-            Utils.logWritelnDraft(
-                    "(isBelowMALine) " + list.get(0).getId() + " list.size()<" + length + ")" + list.size());
+            // Utils.logWritelnDraft(
+            //         "(isBelowMALine) " + list.get(0).getId() + " list.size()<" + length + ")" + list.size());
             return false;
         }
 
