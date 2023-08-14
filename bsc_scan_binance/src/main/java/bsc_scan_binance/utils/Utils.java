@@ -364,6 +364,187 @@ public class Utils {
             "SXP", "THETA", "TLM", "TOMO", "TRB", "TRU", "TRX", "UNFI", "UNI", "VET", "WAVES", "XEM", "XLM", "XMR",
             "XRP", "XTZ", "YFI", "ZEC", "ZEN", "ZIL", "ZRX", "WOO", "RPL", "PEPE");
 
+    public static BigDecimal get_standard_volume(String EPIC) {
+        switch (EPIC.toUpperCase()) {
+        case "DX":
+            return BigDecimal.valueOf(1);
+
+        case "AAPL":
+            return BigDecimal.valueOf(45);
+
+        case "ETHUSD":
+            return BigDecimal.valueOf(5);
+
+        case "ADAUSD":
+            return BigDecimal.valueOf(100);
+
+        case "AMZN":
+            return BigDecimal.valueOf(30);
+
+        case "AUDCAD":
+            return BigDecimal.valueOf(0.5);
+
+        case "AUDCHF":
+            return BigDecimal.valueOf(0.25);
+
+        case "AUDJPY":
+            return BigDecimal.valueOf(0.25);
+
+        case "AUDNZD":
+            return BigDecimal.valueOf(0.35);
+
+        case "AUDUSD":
+            return BigDecimal.valueOf(0.35);
+
+        case "AUS200":
+            return BigDecimal.valueOf(2.5);
+
+        case "BABA":
+            return BigDecimal.valueOf(30);
+
+        case "BAC":
+            return BigDecimal.valueOf(60);
+
+        case "BAYGN":
+            return BigDecimal.valueOf(50);
+
+        case "BTCUSD":
+            return BigDecimal.valueOf(0.25);
+
+        case "CADJPY":
+            return BigDecimal.valueOf(0.25);
+
+        case "CADCHF":
+            return BigDecimal.valueOf(0.35);
+
+        case "CHFJPY":
+            return BigDecimal.valueOf(0.25);
+
+        case "DBKGN":
+            return BigDecimal.valueOf(150);
+
+        case "DOGEUSD":
+            return BigDecimal.valueOf(25);
+
+        case "EU50":
+            return BigDecimal.valueOf(2.5);
+
+        case "EURAUD":
+            return BigDecimal.valueOf(0.15);
+
+        case "EURCAD":
+            return BigDecimal.valueOf(0.5);
+
+        case "EURCHF":
+            return BigDecimal.valueOf(0.5);
+
+        case "EURGBP":
+            return BigDecimal.valueOf(0.25);
+
+        case "EURJPY":
+            return BigDecimal.valueOf(0.15);
+
+        case "EURNZD":
+            return BigDecimal.valueOf(0.25);
+
+        case "EURUSD":
+            return BigDecimal.valueOf(0.25);
+
+        case "FRA40":
+            return BigDecimal.valueOf(1.5);
+
+        case "GBPAUD":
+            return BigDecimal.valueOf(0.25);
+
+        case "GBPCAD":
+            return BigDecimal.valueOf(0.25);
+
+        case "GBPCHF":
+            return BigDecimal.valueOf(0.25);
+
+        case "GBPJPY":
+            return BigDecimal.valueOf(0.25);
+
+        case "GBPNZD":
+            return BigDecimal.valueOf(0.15);
+
+        case "GBPUSD":
+            return BigDecimal.valueOf(0.25);
+
+        case "GER40":
+            return BigDecimal.valueOf(1);
+
+        case "GOOG":
+            return BigDecimal.valueOf(35);
+
+        case "LVMH":
+            return BigDecimal.valueOf(8);
+
+        case "META":
+            return BigDecimal.valueOf(15);
+
+        case "MSFT":
+            return BigDecimal.valueOf(15);
+
+        case "NVDA":
+            return BigDecimal.valueOf(8);
+
+        case "NFLX":
+            return BigDecimal.valueOf(10);
+
+        case "NATGAS":
+            return BigDecimal.valueOf(1);
+
+        case "NZDCAD":
+            return BigDecimal.valueOf(0.35);
+
+        case "NZDCHF":
+            return BigDecimal.valueOf(0.35);
+
+        case "NZDJPY":
+            return BigDecimal.valueOf(0.25);
+
+        case "NZDUSD":
+            return BigDecimal.valueOf(0.25);
+
+        case "USDCAD":
+            return BigDecimal.valueOf(0.25);
+
+        case "PFE":
+            return BigDecimal.valueOf(100);
+
+        case "RACE":
+            return BigDecimal.valueOf(20);
+
+        case "TSLA":
+            return BigDecimal.valueOf(10);
+
+        case "SPN35":
+            return BigDecimal.valueOf(1);
+
+        case "UK100":
+            return BigDecimal.valueOf(1);
+
+        case "US100":
+            return BigDecimal.valueOf(0.5);
+
+        case "US30":
+            return BigDecimal.valueOf(0.25);
+
+        case "USOIL":
+            return BigDecimal.valueOf(1);
+
+        case "XAGUSD":
+            return BigDecimal.valueOf(0.1);
+
+        case "XAUUSD":
+            return BigDecimal.valueOf(0.1);
+
+        default:
+            return BigDecimal.ZERO;
+        }
+    }
+
     public static String sql_CryptoHistoryResponse = " "
             + "   SELECT DISTINCT ON (tmp.symbol_or_epic)                                                 \n"
             + "     tmp.geckoid_or_epic,                                                                  \n"

@@ -88,10 +88,10 @@ public class MoneyAtRiskResponse {
         }
 
         if (Utils.EPICS_STOCKS.contains(EPIC)) {
-            return BigDecimal.valueOf(volume.intValue());
+            return getStandard_vol(volume);
         }
         if ("_ADAUSD_DOGEUSD_DOTUSD_LTCUSD_XRPUSD_".contains("_" + EPIC + "_")) {
-            return BigDecimal.valueOf(volume.intValue());
+            return getStandard_vol(volume);
         }
 
         if (volume.compareTo(BigDecimal.valueOf(1)) < 0) {
@@ -99,7 +99,7 @@ public class MoneyAtRiskResponse {
             for (int index = 1; index <= 20; index++) {
                 BigDecimal next_vol = progression.multiply(BigDecimal.valueOf(index));
                 if (volume.compareTo(next_vol) <= 0) {
-                    return next_vol;
+                    return getStandard_vol(next_vol);
                 }
             }
         }
@@ -110,12 +110,34 @@ public class MoneyAtRiskResponse {
                 BigDecimal low = progression.multiply(BigDecimal.valueOf(3 + index));
                 BigDecimal hig = progression.multiply(BigDecimal.valueOf(3 + index + 1));
                 if ((volume.compareTo(low) >= 0) && (hig.compareTo(volume) >= 0)) {
-                    return low;
+                    return getStandard_vol(low);
                 }
             }
         }
 
-        return volume;
+        return getStandard_vol(volume);
+    }
+
+    private BigDecimal getStandard_vol(BigDecimal volume) {
+        BigDecimal result = volume;
+        BigDecimal standard_vol = Utils.get_standard_volume(EPIC);
+
+        if (standard_vol.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal low_vol = standard_vol.multiply(BigDecimal.valueOf(0.75));
+            BigDecimal hig_vol = standard_vol.multiply(BigDecimal.valueOf(1.25));
+            if ((low_vol.compareTo(volume) <= 0) && (volume.compareTo(hig_vol) <= 0)) {
+                result = standard_vol;
+            }
+        }
+
+        if (Utils.EPICS_STOCKS.contains(EPIC)) {
+            return BigDecimal.valueOf(result.intValue());
+        }
+        if ("_ADAUSD_DOGEUSD_DOTUSD_LTCUSD_XRPUSD_".contains("_" + EPIC + "_")) {
+            return BigDecimal.valueOf(result.intValue());
+        }
+
+        return result;
     }
 
     public List<BigDecimal> getStandard_lot(String EPIC) {
