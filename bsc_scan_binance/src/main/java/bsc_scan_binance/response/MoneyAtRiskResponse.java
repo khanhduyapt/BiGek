@@ -5,6 +5,8 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Objects;
+
 import bsc_scan_binance.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -119,6 +121,9 @@ public class MoneyAtRiskResponse {
     }
 
     private BigDecimal getStandard_vol(BigDecimal volume) {
+        if (Objects.equal(Utils.getStringValue(EPIC).toUpperCase(), "DBKGN")) {
+            boolean debug = true;
+        }
         BigDecimal result = volume;
         BigDecimal standard_vol = Utils.get_standard_volume(EPIC);
 
@@ -127,6 +132,14 @@ public class MoneyAtRiskResponse {
             BigDecimal hig_vol = standard_vol.multiply(BigDecimal.valueOf(1.25));
             if ((low_vol.compareTo(volume) <= 0) && (volume.compareTo(hig_vol) <= 0)) {
                 result = standard_vol;
+            }
+
+            if (volume.compareTo(standard_vol.multiply(BigDecimal.valueOf(2))) >= 0) {
+                result = standard_vol.multiply(BigDecimal.valueOf(2));
+            }
+
+            if (volume.compareTo(standard_vol.multiply(BigDecimal.valueOf(0.5))) <= 0) {
+                result = standard_vol.multiply(BigDecimal.valueOf(0.5));
             }
         }
 

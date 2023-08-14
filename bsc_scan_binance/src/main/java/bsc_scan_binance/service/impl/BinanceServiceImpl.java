@@ -3627,6 +3627,8 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_allow_trade_d1 = Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)
                     && (dto_d1.getSwitch_trend() + dto_h4.getSwitch_trend()).contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10);
 
+            boolean allow_auto_trade = dto_d1.isTradable_zone() && dto_h4.isTradable_zone() && dto_h1.isTradable_zone();
+
             // TODO: scapStocks
             if (is_opening_trade(EPIC, "")) {
 
@@ -3644,7 +3646,7 @@ public class BinanceServiceImpl implements BinanceService {
                     is_w_d_h4_h1 = true;
                 }
 
-                if (is_w_d_h4_h1 && is_allow_trade_d1) {
+                if (is_w_d_h4_h1 && is_allow_trade_d1 && allow_auto_trade) {
 
                     if (((Utils.EPICS_STOCKS_EUR.contains(EPIC) && Utils.is_london_session())
                             || (Utils.EPICS_STOCKS_USA.contains(EPIC) && Utils.is_newyork_session()))) {
@@ -4001,12 +4003,12 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------------------
             boolean is_tradable_h4 = Utils.isNotBlank(switch_h4) && dto_h4.isTradable_zone();
 
-            if (is_tradable_h4 && is_eq_d_h4_h1 && is_eq_h4_h1_15_05) {
+            if (is_tradable_h4 && is_eq_w_d_h4 && is_eq_d_h4_h1 && is_eq_h4_h1_15_05) {
                 boolean is_trade_now = false;
                 String key = EPIC + Utils.CAPITAL_TIME_H4;
                 String type_h4 = Objects.equals(trend_h4, Utils.TREND_LONG) ? "_b" : "_s";
 
-                if (is_eq_w_d_h4 && allow_auto_trade) {
+                if (allow_auto_trade) {
                     is_trade_now = true;
                     append = type_h4 + Utils.TEXT_PASS;
                 } else {
