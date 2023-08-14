@@ -2828,23 +2828,23 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
                 String EPIC = dto.getEpic().toUpperCase();
-
-                if ("_DX.f_NATGAS_ERBN__".toUpperCase().contains(EPIC)) {
-                    continue;
-                }
                 boolean is_openning = is_opening_trade(EPIC, dto.getOrder_type());
+                boolean is_notice_only = "_DX.f_NATGAS_ERBN_GBPCHF_EURGBP__".toUpperCase().contains(EPIC)
+                        || Utils.EPICS_CRYPTO_CFD.contains(EPIC);
 
                 String prefix = "Open_Trade: ";
                 if (is_openning) {
                     prefix = "Opened:     ";
-                } else if (dto.getComment().contains(Utils.TEXT_NOTICE_ONLY)) {
-                    prefix = "Notice(H4): ";
+                } else if (dto.getComment().contains(Utils.TEXT_NOTICE_ONLY) || is_notice_only) {
+                    prefix = "Notice"
+                            + Utils.getChartName(Utils.getDeEncryptedChartNameCapital(dto.getComment().toLowerCase()))
+                            + ": ";
                 }
 
                 String msg = Utils.createOpenTradeMsg(dto, prefix);
                 Utils.logWritelnDraft(msg + " " + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62));
 
-                if (Utils.EPICS_CRYPTO_CFD.contains(EPIC)) {
+                if (is_notice_only) {
                     continue;
                 }
 
@@ -3586,16 +3586,28 @@ public class BinanceServiceImpl implements BinanceService {
 
             String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "(B)"
                     : Objects.equals(Utils.TREND_SHOT, trend_d1) ? "(S)" : "(?)";
-            String eoz = "         ";
-            if (!dto_d1.isTradable_zone()) {
-                eoz = "EOZ:D1" + type;
+
+            String eoz = "";
+            if (!(dto_d1.isTradable_zone() && dto_h4.isTradable_zone() && dto_h1.isTradable_zone())) {
+                eoz = type + "EOZ:";
+                if (!dto_d1.isTradable_zone()) {
+                    eoz += "D1.";
+                }
+                if (!dto_h4.isTradable_zone()) {
+                    eoz += "H4.";
+                }
+                if (!dto_h1.isTradable_zone()) {
+                    eoz += "H1.";
+                }
             }
+            eoz = Utils.appendSpace(eoz, 20);
 
             if (EPIC.contains("GOOG")) {
                 boolean debug = true;
             }
 
-            boolean is_allow_trade_d1 = dto_d1.toString().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10);
+            boolean is_allow_trade_d1 = Objects.equals(trend_w1, trend_d1)
+                    && dto_d1.toString().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10);
 
             // TODO: scapStocks
             if (is_opening_trade(EPIC, "")) {
@@ -3609,10 +3621,11 @@ public class BinanceServiceImpl implements BinanceService {
                 analysis_profit(prefix, EPIC, eoz, trend_w1);
 
                 boolean is_w_d_h4_h1 = false;
-                if (Objects.equals(trend_d1, trend_w1) && Objects.equals(trend_d1, trend_h4)
+                if (Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)
                         && Objects.equals(trend_d1, trend_h1)) {
                     is_w_d_h4_h1 = true;
                 }
+
                 if (is_w_d_h4_h1 && is_allow_trade_d1) {
 
                     if (((Utils.EPICS_STOCKS_EUR.contains(EPIC) && Utils.is_london_session())
@@ -4021,10 +4034,20 @@ public class BinanceServiceImpl implements BinanceService {
                 String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "(B)"
                         : Objects.equals(Utils.TREND_SHOT, trend_d1) ? "(S)" : "(?)";
 
-                String eoz = "         ";
-                if (!dto_d1.isTradable_zone()) {
-                    eoz = "EOZ:D1" + type;
+                String eoz = "";
+                if (!(dto_d1.isTradable_zone() && dto_h4.isTradable_zone() && dto_h1.isTradable_zone())) {
+                    eoz = type + "EOZ:";
+                    if (!dto_d1.isTradable_zone()) {
+                        eoz += "D1.";
+                    }
+                    if (!dto_h4.isTradable_zone()) {
+                        eoz += "H4.";
+                    }
+                    if (!dto_h1.isTradable_zone()) {
+                        eoz += "H1.";
+                    }
                 }
+                eoz = Utils.appendSpace(eoz, 20);
 
                 analysis_profit(prefix, EPIC, eoz, trend_d1);
             }
@@ -4055,7 +4078,8 @@ public class BinanceServiceImpl implements BinanceService {
                 BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
                 TOTAL_PROFIT = TOTAL_PROFIT.add(PROFIT);
 
-                if (PROFIT.compareTo(Utils.RISK_0_10_PERCENT) > 0) {
+                if ((PROFIT.compareTo(Utils.RISK_0_10_PERCENT) > 0)
+                        && (trade.getPriceOpen().compareTo(trade.getStopLoss()) != 0)) {
                     StringBuilder sb = new StringBuilder();
                     sb.append(trade.getTicket());
                     sb.append('\t');
