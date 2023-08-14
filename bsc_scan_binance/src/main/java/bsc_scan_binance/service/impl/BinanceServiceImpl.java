@@ -3229,7 +3229,7 @@ public class BinanceServiceImpl implements BinanceService {
                     long elapsedMinutes = duration.toMinutes();
 
                     int days = Integer.valueOf(String.valueOf(elapsedMinutes)) / 1440;
-                    int hours = Integer.valueOf(String.valueOf(elapsedMinutes)) / 60;
+                    int hours = Integer.valueOf(Integer.valueOf(String.valueOf(elapsedMinutes)) % 1440) / 60;
                     int minutes = Integer.valueOf(String.valueOf(elapsedMinutes)) % 60;
 
                     time = Utils.appendLeft(String.valueOf(minutes), 2, "0") + "m";
@@ -3956,6 +3956,7 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_d1 = dto_d1.getSwitch_trend().trim();
             String switch_h4 = dto_h4.getSwitch_trend().trim();
             String switch_h1 = dto_h4.getSwitch_trend().trim();
+            boolean is_opening = is_opening_trade(EPIC, "");
 
             if (Objects.equals(EPIC, "EURCHF")) {
                 boolean debug = true;
@@ -3963,7 +3964,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // TODO: 3. controlMt5
             // Không đánh ngược trend_d1
-            if (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, trend_h4)) {
+            if (!is_opening && Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_d1, trend_h4)) {
                 continue;
             }
 
@@ -4060,7 +4061,7 @@ public class BinanceServiceImpl implements BinanceService {
                 is_display = true;
             }
 
-            if (is_display || is_opening_trade(EPIC, "")) {
+            if (is_display || is_opening) {
                 count += 1;
 
                 String prefix = Utils.getPrefix_FollowTrackingTrend(EPIC, count, "", trend_w1, trend_d1, trend_h4,
