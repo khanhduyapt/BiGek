@@ -555,7 +555,7 @@ public class Utils {
             return BigDecimal.valueOf(1);
 
         case "XAGUSD":
-            return BigDecimal.valueOf(0.1);
+            return BigDecimal.valueOf(0.05);
 
         case "XAUUSD":
             return BigDecimal.valueOf(0.1);
