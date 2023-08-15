@@ -3804,10 +3804,6 @@ public class BinanceServiceImpl implements BinanceService {
         // EPIC = "GBPNZD";
         // CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
         // ----------------------------TREND------------------------
-        // TODO: 1. initForexTrend
-        if (Objects.equals(EPIC, "AUDNZD")) {
-            boolean debug = true;
-        }
 
         // List<BtcFutures> list = getCapitalData(EPIC, CAPITAL_TIME_XX);
         List<BtcFutures> heiken_list = Utils.getHeikenList(getCapitalData(EPIC, CAPITAL_TIME_XX));
@@ -3837,7 +3833,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         } else if (CAPITAL_TIME_XX.contains("MINUTE_") || CAPITAL_TIME_XX.contains("HOUR_")) {
 
-            switch_trend = Utils.switchTrendByMa1vs1520(heiken_list);
+            switch_trend = Utils.switchTrendByMa1vs1025(heiken_list);
             allow_trade = allow_trade && Utils.is_allow_trade_by_ma50(heiken_list);
         }
 
