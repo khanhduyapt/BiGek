@@ -542,6 +542,24 @@ public class Utils {
         case "SPN35":
             return BigDecimal.valueOf(1);
 
+        case "AIRF":
+            return BigDecimal.valueOf(10);
+
+        case "VOWG_P":
+            return BigDecimal.valueOf(60);
+
+        case "WMT":
+            return BigDecimal.valueOf(80);
+
+        case "T":
+            return BigDecimal.valueOf(150);
+
+        case "V":
+            return BigDecimal.valueOf(40);
+
+        case "ZM":
+            return BigDecimal.valueOf(90);
+
         case "UK100":
             return BigDecimal.valueOf(1);
 
