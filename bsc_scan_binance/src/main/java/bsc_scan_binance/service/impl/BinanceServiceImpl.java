@@ -2724,9 +2724,9 @@ public class BinanceServiceImpl implements BinanceService {
             t_profit = t_profit.add(Utils.getBigDecimal(trade.getProfit()));
         }
 
-        String append = prifix.trim() + "   " + append2
+        String append = prifix.trim() + " " + append2.trim()
                 + Utils.appendSpace(tradeList.size() > 0
-                        ? " (" + type + ")_Profit:" + Utils.appendLeft(String.valueOf(t_profit.intValue()), 6) + "$"
+                        ? "  (" + type + ")" + Utils.appendLeft(String.valueOf(t_profit.intValue()), 5) + "$"
                         : "", 15);
 
         outputLog(EPIC, append, find_trend);
