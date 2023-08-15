@@ -3833,7 +3833,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         } else if (CAPITAL_TIME_XX.contains("MINUTE_") || CAPITAL_TIME_XX.contains("HOUR_")) {
 
-            switch_trend = Utils.switchTrendByMa1vs1025(heiken_list);
+            switch_trend = Utils.switchTrendByMa1vs1026(heiken_list);
             allow_trade = allow_trade && Utils.is_allow_trade_by_ma50(heiken_list);
         }
 

@@ -3735,9 +3735,9 @@ public class Utils {
         return sw_1;
     }
 
-    public static String switchTrendByMa1vs1025(List<BtcFutures> heiken_list) {
-        String sw_1 = switchTrendByMa1(heiken_list, 1, 10, 25, TEXT_SWITCH_TREND_Ma_1vs20);
-        String sw_0 = switchTrendByMa1(heiken_list, 0, 10, 25, TEXT_SWITCH_TREND_Ma_1vs20);
+    public static String switchTrendByMa1vs1026(List<BtcFutures> heiken_list) {
+        String sw_1 = switchTrendByMa1(heiken_list, 1, 10, 26, TEXT_SWITCH_TREND_Ma_1vs20);
+        String sw_0 = switchTrendByMa1(heiken_list, 0, 10, 26, TEXT_SWITCH_TREND_Ma_1vs20);
 
         if (Utils.isNotBlank(sw_1) && Utils.isNotBlank(sw_0)) {
             String trend_1 = sw_1.contains(TREND_LONG) ? TREND_LONG : TREND_SHOT;
