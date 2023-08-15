@@ -125,7 +125,7 @@ public class MoneyAtRiskResponse {
             boolean debug = true;
         }
         BigDecimal result = volume;
-        BigDecimal standard_vol = Utils.get_standard_volume(EPIC);
+        BigDecimal standard_vol = Utils.get_standard_vol_per_100usd(EPIC);
 
         if (standard_vol.compareTo(BigDecimal.ZERO) > 0) {
             BigDecimal low_vol = standard_vol.multiply(BigDecimal.valueOf(0.75));

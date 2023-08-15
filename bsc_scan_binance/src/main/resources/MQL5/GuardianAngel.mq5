@@ -388,8 +388,8 @@ void OnTimer()
       // Alert("Loss more than 2000$. Stop trading today!");
      }
 //------------------------------------------------------------
-   double Loss_In_Money = -200;     // loss in money $
-   double Profit_In_Money = 500;    // profit in money $
+   double Loss_In_Money = -150;     // loss in money $
+   double Profit_In_Money = 450;    // profit in money $
 
    for(int i=PositionsTotal()-1; i>=0; i--) // returns the number of current positions
      {

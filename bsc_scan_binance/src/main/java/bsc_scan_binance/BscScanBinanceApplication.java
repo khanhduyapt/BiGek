@@ -143,13 +143,15 @@ public class BscScanBinanceApplication {
 
                                 for (String EPIC : CAPITAL_LIST) {
                                     // binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MO);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_W1);
+                                    // binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_W1);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_D1);
                                     // binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H12);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H4);
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H2);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
+                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_30);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_15);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_05);
+                                    // binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_05);
                                 }
 
                                 for (String EPIC : Utils.EPICS_STOCKS) {

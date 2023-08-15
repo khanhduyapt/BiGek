@@ -75,7 +75,7 @@ public class Utils {
     public static final BigDecimal RISK_0_05_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
 
     // Trend W != D (200$ / 1trade)
-    public static final BigDecimal RISK_0_10_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
+    private static final BigDecimal RISK_0_10_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
 
     // Trend W == D (300$ / 1trade)
     private static final BigDecimal RISK_0_15_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
@@ -164,10 +164,13 @@ public class Utils {
     public static String CST = "";
     public static String X_SECURITY_TOKEN = "";
     // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
-    public static final String CAPITAL_TIME_05 = "MINUTE_5";
+    private static final String CAPITAL_TIME_05 = "MINUTE_5";
     public static final String CAPITAL_TIME_15 = "MINUTE_15";
+    public static final String CAPITAL_TIME_30 = "MINUTE_30";
     public static final String CAPITAL_TIME_H1 = "HOUR_01";
+    public static final String CAPITAL_TIME_H2 = "HOUR_02";
     public static final String CAPITAL_TIME_H4 = "HOUR_04";
+
     // public static final String CAPITAL_TIME_H12 = "HOUR_12";
     public static final String CAPITAL_TIME_D1 = "DAY";
     public static final String CAPITAL_TIME_W1 = "WEEK";
@@ -185,7 +188,9 @@ public class Utils {
 
     public static final String PREFIX_05_ = "_5m_";
     public static final String PREFIX_15_ = "_15m_";
+    public static final String PREFIX_30_ = "_30m_";
     public static final String PREFIX_H1_ = "_1h_";
+    public static final String PREFIX_H2_ = "_1h_";
     public static final String PREFIX_H4_ = "_4h_";
     public static final String PREFIX_H12 = "_12h_";
     public static final String PREFIX_D1_ = "_1d_";
@@ -364,7 +369,7 @@ public class Utils {
             "SXP", "THETA", "TLM", "TOMO", "TRB", "TRU", "TRX", "UNFI", "UNI", "VET", "WAVES", "XEM", "XLM", "XMR",
             "XRP", "XTZ", "YFI", "ZEC", "ZEN", "ZIL", "ZRX", "WOO", "RPL", "PEPE");
 
-    public static BigDecimal get_standard_volume(String EPIC) {
+    public static BigDecimal get_standard_vol_per_100usd(String EPIC) {
         switch (EPIC.toUpperCase()) {
         case "DX":
             return BigDecimal.valueOf(1);
@@ -376,25 +381,34 @@ public class Utils {
             return BigDecimal.valueOf(5);
 
         case "ADAUSD":
-            return BigDecimal.valueOf(100);
+            return BigDecimal.valueOf(150);
+
+        case "DOTUSD":
+            return BigDecimal.valueOf(150);
+
+        case "LTCUSD":
+            return BigDecimal.valueOf(50);
+
+        case "XRPUSD":
+            return BigDecimal.valueOf(60);
 
         case "AMZN":
             return BigDecimal.valueOf(30);
 
         case "AUDCAD":
-            return BigDecimal.valueOf(0.5);
+            return BigDecimal.valueOf(0.25);
 
         case "AUDCHF":
             return BigDecimal.valueOf(0.25);
 
         case "AUDJPY":
-            return BigDecimal.valueOf(0.25);
+            return BigDecimal.valueOf(0.2);
 
         case "AUDNZD":
             return BigDecimal.valueOf(0.35);
 
         case "AUDUSD":
-            return BigDecimal.valueOf(0.35);
+            return BigDecimal.valueOf(0.25);
 
         case "AUS200":
             return BigDecimal.valueOf(2.5);
@@ -418,7 +432,7 @@ public class Utils {
             return BigDecimal.valueOf(0.35);
 
         case "CHFJPY":
-            return BigDecimal.valueOf(0.25);
+            return BigDecimal.valueOf(0.15);
 
         case "DBKGN":
             return BigDecimal.valueOf(150);
@@ -433,10 +447,10 @@ public class Utils {
             return BigDecimal.valueOf(0.15);
 
         case "EURCAD":
-            return BigDecimal.valueOf(0.5);
+            return BigDecimal.valueOf(0.25);
 
         case "EURCHF":
-            return BigDecimal.valueOf(0.5);
+            return BigDecimal.valueOf(0.25);
 
         case "EURGBP":
             return BigDecimal.valueOf(0.25);
@@ -445,25 +459,25 @@ public class Utils {
             return BigDecimal.valueOf(0.15);
 
         case "EURNZD":
-            return BigDecimal.valueOf(0.25);
+            return BigDecimal.valueOf(0.2);
 
         case "EURUSD":
-            return BigDecimal.valueOf(0.25);
+            return BigDecimal.valueOf(0.2);
 
         case "FRA40":
             return BigDecimal.valueOf(1.5);
 
         case "GBPAUD":
-            return BigDecimal.valueOf(0.25);
+            return BigDecimal.valueOf(0.2);
 
         case "GBPCAD":
-            return BigDecimal.valueOf(0.25);
+            return BigDecimal.valueOf(0.15);
 
         case "GBPCHF":
-            return BigDecimal.valueOf(0.25);
+            return BigDecimal.valueOf(0.15);
 
         case "GBPJPY":
-            return BigDecimal.valueOf(0.25);
+            return BigDecimal.valueOf(0.15);
 
         case "GBPNZD":
             return BigDecimal.valueOf(0.15);
@@ -496,18 +510,24 @@ public class Utils {
             return BigDecimal.valueOf(1);
 
         case "NZDCAD":
-            return BigDecimal.valueOf(0.35);
+            return BigDecimal.valueOf(0.25);
 
         case "NZDCHF":
-            return BigDecimal.valueOf(0.35);
+            return BigDecimal.valueOf(0.25);
 
         case "NZDJPY":
-            return BigDecimal.valueOf(0.25);
+            return BigDecimal.valueOf(0.2);
 
         case "NZDUSD":
-            return BigDecimal.valueOf(0.25);
+            return BigDecimal.valueOf(0.2);
 
         case "USDCAD":
+            return BigDecimal.valueOf(0.25);
+
+        case "USDJPY":
+            return BigDecimal.valueOf(0.15);
+
+        case "USDCHF":
             return BigDecimal.valueOf(0.25);
 
         case "PFE":
@@ -529,7 +549,7 @@ public class Utils {
             return BigDecimal.valueOf(0.5);
 
         case "US30":
-            return BigDecimal.valueOf(0.25);
+            return BigDecimal.valueOf(0.35);
 
         case "USOIL":
             return BigDecimal.valueOf(1);
@@ -962,8 +982,14 @@ public class Utils {
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_15)) {
             return PREFIX_15_;
         }
+        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_30)) {
+            return PREFIX_30_;
+        }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H1)) {
             return PREFIX_H1_;
+        }
+        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H2)) {
+            return PREFIX_H2_;
         }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H4)) {
             return PREFIX_H4_;
@@ -986,9 +1012,15 @@ public class Utils {
 
     public static String getEncryptedChartNameCapital(String TIME) {
         if (Objects.equals(TIME, CAPITAL_TIME_15)) {
-            return ENCRYPTED_15;
+            return ENCRYPTED_H1;
+        }
+        if (Objects.equals(TIME, CAPITAL_TIME_30)) {
+            return ENCRYPTED_H1;
         }
         if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
+            return ENCRYPTED_H1;
+        }
+        if (Objects.equals(TIME, CAPITAL_TIME_H2)) {
             return ENCRYPTED_H1;
         }
         if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
@@ -1003,29 +1035,24 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_W1)) {
             return ENCRYPTED_W1;
         }
-        return ENCRYPTED_H4;
+        return ENCRYPTED_H1;
     }
 
     public static String getDeEncryptedChartNameCapital(String encryptedChartName) {
-        if (encryptedChartName.contains(ENCRYPTED_15)) {
-            return CAPITAL_TIME_15;
-        }
         if (encryptedChartName.contains(ENCRYPTED_H1)) {
             return CAPITAL_TIME_H1;
         }
         if (encryptedChartName.contains(ENCRYPTED_H4)) {
             return CAPITAL_TIME_H4;
         }
-        // if (encryptedChartName.contains(ENCRYPTED_H12)) {
-        // return CAPITAL_TIME_H12;
-        // }
         if (encryptedChartName.contains(ENCRYPTED_D1)) {
             return CAPITAL_TIME_D1;
         }
         if (encryptedChartName.contains(ENCRYPTED_W1)) {
             return CAPITAL_TIME_W1;
         }
-        return CAPITAL_TIME_H4;
+
+        return CAPITAL_TIME_H1;
     }
 
     public static String getChartNameCapital(String TIME) {
@@ -1035,8 +1062,14 @@ public class Utils {
         if (TIME.contains(CAPITAL_TIME_15) || TIME.contains(PREFIX_15_)) {
             return "(15)";
         }
+        if (TIME.contains(CAPITAL_TIME_30) || TIME.contains(PREFIX_30_)) {
+            return "(30)";
+        }
         if (TIME.contains(CAPITAL_TIME_H1) || TIME.contains(PREFIX_H1_)) {
             return "(H1)";
+        }
+        if (TIME.contains(CAPITAL_TIME_H2) || TIME.contains(PREFIX_H2_)) {
+            return "(H2)";
         }
         if (TIME.contains(CAPITAL_TIME_H4) || TIME.contains(PREFIX_H4_)) {
             return "(H4)";
@@ -2807,13 +2840,14 @@ public class Utils {
                 result = "(05)";
             } else if (dto_id.contains(CAPITAL_TIME_15) || dto_id.contains(PREFIX_15_)) {
                 result = "(15)";
+            } else if (dto_id.contains(CAPITAL_TIME_30) || dto_id.contains(PREFIX_30_)) {
+                result = "(30)";
             } else if (dto_id.contains(CAPITAL_TIME_H1) || dto_id.contains(PREFIX_H1_)) {
                 result = "(H1)";
+            } else if (dto_id.contains(CAPITAL_TIME_H2) || dto_id.contains(PREFIX_H2_)) {
+                result = "(H2)";
             } else if (dto_id.contains(CAPITAL_TIME_H4) || dto_id.contains(PREFIX_H4_)) {
                 result = "(H4)";
-                // } else if (dto_id.contains(CAPITAL_TIME_H12) || dto_id.contains(PREFIX_H12))
-                // {
-                // result = "(H12)";
             } else if (dto_id.contains(CAPITAL_TIME_D1) || dto_id.contains(PREFIX_D1_)) {
                 result = "(D1)";
             } else if (dto_id.contains(CAPITAL_TIME_W1) || dto_id.contains(PREFIX_W1_)) {
@@ -3256,6 +3290,13 @@ public class Utils {
         return avg_bread;
     }
 
+    public static String getType(String trend) {
+        String type = Objects.equals(Utils.TREND_LONG, trend) ? "(B)"
+                : Objects.equals(Utils.TREND_SHOT, trend) ? "(S)" : "(?)";
+
+        return type.toLowerCase();
+    }
+
     public static String getTypeLongOrShort(List<BtcFutures> list) {
         String result = "0:Sideway";
 
@@ -3634,9 +3675,52 @@ public class Utils {
         return "";
     }
 
+    public static boolean is_allow_trade_by_ma10(List<BtcFutures> heiken_list) {
+        boolean allow_trade = false;
+
+        if (heiken_list.size() > 10) {
+            if (Utils.isNotBlank(Utils.switchTrendByMa1vs10(heiken_list))) {
+                return true;
+            }
+
+            String trend_heiken = Utils.getTrendByHekenAshiList(heiken_list);
+            boolean is_above_ma10 = Utils.isAboveMALine(heiken_list, 10);
+            boolean is_below_ma10 = !is_above_ma10;
+            if (is_above_ma10 && Objects.equals(Utils.TREND_LONG, trend_heiken)) {
+                allow_trade = true;
+            }
+            if (is_below_ma10 && Objects.equals(Utils.TREND_SHOT, trend_heiken)) {
+                allow_trade = true;
+            }
+        }
+
+        return allow_trade;
+    }
+
+    public static boolean is_allow_trade_by_ma50(List<BtcFutures> heiken_list) {
+        boolean allow_trade = false;
+
+        if (heiken_list.size() > 30) {
+            if (Utils.isNotBlank(Utils.switchTrendByMa1vs50(heiken_list))) {
+                return true;
+            }
+
+            String trend_heiken = Utils.getTrendByHekenAshiList(heiken_list);
+            boolean is_above_ma50 = Utils.isAboveMALine(heiken_list, 50);
+            if (is_above_ma50 && Objects.equals(Utils.TREND_SHOT, trend_heiken)) {
+                allow_trade = true;
+            }
+            if (!is_above_ma50 && Objects.equals(Utils.TREND_LONG, trend_heiken)) {
+                allow_trade = true;
+            }
+        }
+
+        return allow_trade;
+    }
+
     public static String switchTrendByMa1vs10(List<BtcFutures> heiken_list) {
-        String sw_1 = switchTrendByMa1(heiken_list, 1, 8, 10, TEXT_SWITCH_TREND_Ma_1vs10);
-        String sw_0 = switchTrendByMa1(heiken_list, 0, 8, 10, TEXT_SWITCH_TREND_Ma_1vs10);
+        String sw_1 = switchTrendByMa1(heiken_list, 1, 10, 12, TEXT_SWITCH_TREND_Ma_1vs10);
+        String sw_0 = switchTrendByMa1(heiken_list, 0, 10, 12, TEXT_SWITCH_TREND_Ma_1vs10);
 
         if (Utils.isNotBlank(sw_1) && Utils.isNotBlank(sw_0)) {
             String trend_1 = sw_1.contains(TREND_LONG) ? TREND_LONG : TREND_SHOT;
@@ -3649,9 +3733,24 @@ public class Utils {
         return sw_1;
     }
 
-    public static String switchTrendByMa1vs20(List<BtcFutures> heiken_list) {
-        String sw_1 = switchTrendByMa1(heiken_list, 1, 18, 20, TEXT_SWITCH_TREND_Ma_1vs20);
-        String sw_0 = switchTrendByMa1(heiken_list, 0, 18, 20, TEXT_SWITCH_TREND_Ma_1vs20);
+    public static String switchTrendByMa1vs1520(List<BtcFutures> heiken_list) {
+        String sw_1 = switchTrendByMa1(heiken_list, 1, 15, 20, TEXT_SWITCH_TREND_Ma_1vs20);
+        String sw_0 = switchTrendByMa1(heiken_list, 0, 15, 20, TEXT_SWITCH_TREND_Ma_1vs20);
+
+        if (Utils.isNotBlank(sw_1) && Utils.isNotBlank(sw_0)) {
+            String trend_1 = sw_1.contains(TREND_LONG) ? TREND_LONG : TREND_SHOT;
+            String trend_0 = sw_1.contains(TREND_LONG) ? TREND_LONG : TREND_SHOT;
+
+            if (!Objects.equals(trend_1, trend_0)) {
+                return sw_0;
+            }
+        }
+        return sw_1;
+    }
+
+    public static String switchTrendByMa1vs50(List<BtcFutures> heiken_list) {
+        String sw_1 = switchTrendByMa1(heiken_list, 1, 48, 50, TEXT_SWITCH_TREND_Ma_1vs20);
+        String sw_0 = switchTrendByMa1(heiken_list, 0, 48, 50, TEXT_SWITCH_TREND_Ma_1vs20);
 
         if (Utils.isNotBlank(sw_1) && Utils.isNotBlank(sw_0)) {
             String trend_1 = sw_1.contains(TREND_LONG) ? TREND_LONG : TREND_SHOT;
@@ -3910,9 +4009,10 @@ public class Utils {
         String EPIC = id;
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_W1, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_D1, "");
-        // EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H12, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H4, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H2, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H1, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_30, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_15, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_05, "");
 
@@ -4342,8 +4442,9 @@ public class Utils {
         return tmp_msg + url;
     }
 
-    public static Mt5OpenTrade calc_Lot_En_SL_TP(BigDecimal risk, String EPIC, String trend, Orders dto_en,
+    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_en,
             Orders dto_sl, String append, boolean isTradeNow, String CAPITAL_TIME_XX) {
+
         BigDecimal entry = BigDecimal.ZERO;
         String timeframe = getEncryptedChartNameCapital(CAPITAL_TIME_XX);
 
@@ -4356,13 +4457,19 @@ public class Utils {
         List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_sl, trend);
         BigDecimal sl_d1 = sl1_tp2.get(0);
         BigDecimal tp_d1 = sl1_tp2.get(1);
-        MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, risk, dto_en.getCurrent_price(), sl_d1, tp_d1);
+
+        BigDecimal risk = Utils.RISK_0_05_PERCENT; // 100$
+        BigDecimal vol = Utils.get_standard_vol_per_100usd(EPIC);
+        if (vol.compareTo(BigDecimal.ZERO) <= 0) {
+            MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, risk, dto_en.getCurrent_price(), sl_d1, tp_d1);
+            vol = money.calcLot();
+        }
 
         Mt5OpenTrade dto = new Mt5OpenTrade();
         dto.setEpic(EPIC);
         dto.setOrder_type(trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
         dto.setCur_price(dto_en.getCurrent_price());
-        dto.setLots(money.calcLot());
+        dto.setLots(vol);
         dto.setEntry(entry);
         dto.setStop_loss(sl_d1);
         dto.setTake_profit(tp_d1);
