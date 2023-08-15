@@ -3824,9 +3824,15 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // TODO: 1. initForexTrend
-        // Trên Ma chỉ LONG, dưới Ma chỉ SHORT
         String switch_trend = "";
-        String trend_heiken = Utils.getTrendByHekenAshiList(heiken_list);
+        String trend_heiken = "";
+        if (Objects.equals(Utils.CAPITAL_TIME_H2, CAPITAL_TIME_XX)) {
+            trend_heiken = Utils.getTrendByHekenAshiList(heiken_list, 1);
+        } else {
+            trend_heiken = Utils.getTrendByHekenAshiList(heiken_list);
+        }
+
+        // Trên Ma chỉ LONG, dưới Ma chỉ SHORT
         String trend_by_ma10 = Utils.isAboveMALine(heiken_list, 10) ? Utils.TREND_LONG : Utils.TREND_SHOT;
         // ----------------------------TREND------------------------
 

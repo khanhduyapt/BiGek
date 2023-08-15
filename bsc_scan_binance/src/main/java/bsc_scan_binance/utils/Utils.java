@@ -408,7 +408,7 @@ public class Utils {
             return BigDecimal.valueOf(0.35);
 
         case "AUDUSD":
-            return BigDecimal.valueOf(0.25);
+            return BigDecimal.valueOf(0.2);
 
         case "AUS200":
             return BigDecimal.valueOf(2.5);
@@ -425,14 +425,8 @@ public class Utils {
         case "BTCUSD":
             return BigDecimal.valueOf(0.25);
 
-        case "CADJPY":
-            return BigDecimal.valueOf(0.25);
-
         case "CADCHF":
-            return BigDecimal.valueOf(0.35);
-
-        case "CHFJPY":
-            return BigDecimal.valueOf(0.15);
+            return BigDecimal.valueOf(0.25);
 
         case "DBKGN":
             return BigDecimal.valueOf(150);
@@ -447,7 +441,7 @@ public class Utils {
             return BigDecimal.valueOf(0.15);
 
         case "EURCAD":
-            return BigDecimal.valueOf(0.25);
+            return BigDecimal.valueOf(0.2);
 
         case "EURCHF":
             return BigDecimal.valueOf(0.25);
@@ -462,7 +456,7 @@ public class Utils {
             return BigDecimal.valueOf(0.2);
 
         case "EURUSD":
-            return BigDecimal.valueOf(0.2);
+            return BigDecimal.valueOf(0.15);
 
         case "FRA40":
             return BigDecimal.valueOf(1.5);
@@ -483,7 +477,7 @@ public class Utils {
             return BigDecimal.valueOf(0.15);
 
         case "GBPUSD":
-            return BigDecimal.valueOf(0.25);
+            return BigDecimal.valueOf(0.15);
 
         case "GER40":
             return BigDecimal.valueOf(1);
@@ -515,6 +509,12 @@ public class Utils {
         case "NZDCHF":
             return BigDecimal.valueOf(0.25);
 
+        case "CADJPY":
+            return BigDecimal.valueOf(0.15);
+
+        case "CHFJPY":
+            return BigDecimal.valueOf(0.15);
+
         case "NZDJPY":
             return BigDecimal.valueOf(0.2);
 
@@ -528,7 +528,7 @@ public class Utils {
             return BigDecimal.valueOf(0.15);
 
         case "USDCHF":
-            return BigDecimal.valueOf(0.25);
+            return BigDecimal.valueOf(0.2);
 
         case "PFE":
             return BigDecimal.valueOf(100);
@@ -2729,7 +2729,8 @@ public class Utils {
 
         if (list.size() < length) {
             // Utils.logWritelnDraft(
-            //         "(isAboveMALine) " + list.get(0).getId() + " list.size()<" + length + ")" + list.size());
+            // "(isAboveMALine) " + list.get(0).getId() + " list.size()<" + length + ")" +
+            // list.size());
             return false;
         }
 
@@ -2750,7 +2751,8 @@ public class Utils {
         }
         if (list.size() < length) {
             // Utils.logWritelnDraft(
-            //         "(isBelowMALine) " + list.get(0).getId() + " list.size()<" + length + ")" + list.size());
+            // "(isBelowMALine) " + list.get(0).getId() + " list.size()<" + length + ")" +
+            // list.size());
             return false;
         }
 
@@ -4442,8 +4444,8 @@ public class Utils {
         return tmp_msg + url;
     }
 
-    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_en,
-            Orders dto_sl, String append, boolean isTradeNow, String CAPITAL_TIME_XX) {
+    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_en, Orders dto_sl, String append,
+            boolean isTradeNow, String CAPITAL_TIME_XX) {
 
         BigDecimal entry = BigDecimal.ZERO;
         String timeframe = getEncryptedChartNameCapital(CAPITAL_TIME_XX);
