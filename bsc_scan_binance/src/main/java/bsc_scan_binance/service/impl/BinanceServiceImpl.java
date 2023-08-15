@@ -3597,10 +3597,7 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean debug = true;
             }
 
-            boolean is_allow_trade_d1 = Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_d1, trend_h4)
-                    && (dto_d1.getSwitch_trend() + dto_h4.getSwitch_trend()).contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10);
-
-            boolean allow_auto_trade = dto_d1.isTradable_zone() && dto_h4.isTradable_zone() && dto_h1.isTradable_zone();
+            boolean is_allow_trade = dto_h1.isAllow_trade() && Utils.isNotBlank(dto_h1.getSwitch_trend());
 
             // TODO: scapStocks
             if (is_opening_trade(EPIC, "")) {
@@ -3608,7 +3605,7 @@ public class BinanceServiceImpl implements BinanceService {
                 index += 1;
                 analysis_profit(prefix, EPIC, eoz, trend_w1);
 
-            } else if (is_allow_trade_d1) {
+            } else {
 
                 index += 1;
                 analysis_profit(prefix, EPIC, eoz, trend_w1);
@@ -3619,7 +3616,7 @@ public class BinanceServiceImpl implements BinanceService {
                     is_w_d_h4_h1 = true;
                 }
 
-                if (is_w_d_h4_h1 && is_allow_trade_d1 && allow_auto_trade) {
+                if (is_w_d_h4_h1 && is_allow_trade) {
 
                     if (((Utils.EPICS_STOCKS_EUR.contains(EPIC) && Utils.is_london_session())
                             || (Utils.EPICS_STOCKS_USA.contains(EPIC) && Utils.is_newyork_session()))) {
@@ -3967,12 +3964,11 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_tradable_h1 = (Utils.isNotBlank(switch_h1) && dto_h1.isAllow_trade())
                     || (Utils.isNotBlank(switch_30) && dto_30.isAllow_trade());
 
-            if (dto_d1.isAllow_trade() && is_tradable_h1 && is_eq_d10_h4 && is_eq_h4_h2_h1_30_15) {
+            if (is_tradable_h1 && is_eq_h4_h2_h1_30_15) {
                 String key = EPIC + Utils.CAPITAL_TIME_H1;
                 String type_h1 = Objects.equals(trend_h1, Utils.TREND_LONG) ? "_b" : "_s";
 
                 append = type_h1 + Utils.TEXT_PASS;
-                // append = type_h1 + Utils.TEXT_NOTICE_ONLY;
 
                 trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_15, dto_h1, append, true,
                         Utils.CAPITAL_TIME_H1);

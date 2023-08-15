@@ -99,7 +99,7 @@ void OnTimer(void)
                 FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_MN1");
                }
 
-               */
+
             //---------------------------------------------
             MqlRates rates_w1[];
             ArraySetAsSeries(rates_w1,true);
@@ -121,6 +121,7 @@ void OnTimer(void)
               {
                FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_W1");
               }
+              */
             //---------------------------------------------
             MqlRates rates_d1[];
             ArraySetAsSeries(rates_d1,true);
@@ -172,6 +173,22 @@ void OnTimer(void)
                FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_H4");
               }
             //---------------------------------------------
+            MqlRates rates_h2[];
+            ArraySetAsSeries(rates_h2,true);
+            copied=CopyRates(symbol, PERIOD_H2, 0, 55, rates_h2);
+            if(copied>0)
+              {
+               int size=fmin(copied, 55);
+               for(int i=0; i<size; i++)
+                 {
+                  FileWrite(nfile_handle, symbol, "HOUR_02", rates_h2[i].time, rates_h2[i].open, rates_h2[i].high, rates_h2[i].low, rates_h2[i].close, current_price);
+                 }
+              }
+            else
+              {
+               FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_H2");
+              }
+            //---------------------------------------------
             MqlRates rates_h1[];
             ArraySetAsSeries(rates_h1,true);
             copied=CopyRates(symbol, PERIOD_H1, 0, 55, rates_h1);
@@ -188,7 +205,22 @@ void OnTimer(void)
                FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_H1");
               }
             //---------------------------------------------
-
+            MqlRates rates_30[];
+            ArraySetAsSeries(rates_30,true);
+            copied=CopyRates(symbol, PERIOD_M30, 0, 55, rates_30);
+            if(copied>0)
+              {
+               int size=fmin(copied, 55);
+               for(int i=0; i<size; i++)
+                 {
+                  FileWrite(nfile_handle, symbol, "MINUTE_30", rates_30[i].time, rates_30[i].open, rates_30[i].high, rates_30[i].low, rates_30[i].close, current_price);
+                 }
+              }
+            else
+              {
+               FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M30");
+              }
+            //---------------------------------------------
             MqlRates rates_15[];
             ArraySetAsSeries(rates_15,true);
             copied=CopyRates(symbol, PERIOD_M15, 0, 55, rates_15);
@@ -205,7 +237,7 @@ void OnTimer(void)
                FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M15");
               }
             //---------------------------------------------
-
+            /*
             MqlRates rates_05[];
             ArraySetAsSeries(rates_05,true);
             copied=CopyRates(symbol, PERIOD_M5, 0, 55, rates_05);
@@ -221,7 +253,7 @@ void OnTimer(void)
               {
                FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M5");
               }
-
+            */
 
            } //mod5
 

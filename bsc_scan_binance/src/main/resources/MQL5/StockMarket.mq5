@@ -65,6 +65,7 @@ void OnTimer(void)
          double current_ask = SymbolInfoDouble(symbol, SYMBOL_ASK);
          double current_price = (current_bid + current_ask) / 2;
          //---------------------------------------------
+         /*
          MqlRates rates_month[];
          ArraySetAsSeries(rates_month,true);
          stocks_copied=CopyRates(symbol, PERIOD_MN1, 0, 10, rates_month);
@@ -80,6 +81,7 @@ void OnTimer(void)
            {
             FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_MN1");
            }
+           */
          //---------------------------------------------
          MqlRates rates_w1[];
          ArraySetAsSeries(rates_w1,true);
@@ -115,7 +117,7 @@ void OnTimer(void)
          //---------------------------------------------
          MqlRates rates_h4[];
          ArraySetAsSeries(rates_h4,true);
-         stocks_copied=CopyRates(symbol, PERIOD_H4, 0, 15, rates_h4);
+         stocks_copied=CopyRates(symbol, PERIOD_H4, 0, 55, rates_h4);
          if(stocks_copied>0)
            {
             int size=fmin(stocks_copied, 55);
@@ -129,9 +131,25 @@ void OnTimer(void)
             FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_H4");
            }
          //---------------------------------------------
+         MqlRates rates_h2[];
+         ArraySetAsSeries(rates_h2,true);
+         stocks_copied=CopyRates(symbol, PERIOD_H2, 0, 55, rates_h2);
+         if(stocks_copied>0)
+           {
+            int size=fmin(stocks_copied, 55);
+            for(int i=0; i<size; i++)
+              {
+               FileWrite(nfile_handle, symbol, "HOUR_02", rates_h2[i].time, rates_h2[i].open, rates_h2[i].high, rates_h2[i].low, rates_h2[i].close, current_price);
+              }
+           }
+         else
+           {
+            FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_H2");
+           }
+         //---------------------------------------------
          MqlRates rates_h1[];
          ArraySetAsSeries(rates_h1,true);
-         stocks_copied=CopyRates(symbol, PERIOD_H1, 0, 15, rates_h1);
+         stocks_copied=CopyRates(symbol, PERIOD_H1, 0, 55, rates_h1);
          if(stocks_copied>0)
            {
             int size=fmin(stocks_copied, 55);
