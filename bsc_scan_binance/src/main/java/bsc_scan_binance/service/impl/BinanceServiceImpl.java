@@ -3988,14 +3988,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ---------------------------------------------------------------------------------------------
             if (Objects.nonNull(trade_dto)) {
-                String msg = "";
                 if (is_must_close_reverse_trade(trade_dto)) {
-                    msg += "must_CLOSE(" + EPIC + ")because_reverse_trade_opening)";
-                }
-
-                if (Utils.isNotBlank(msg)) {
-                    String EVENT_ID = "MSG_PER_HOUR" + "_CONTROL_MT5_" + EPIC + Utils.getCurrentYyyyMmDd_HH();
-                    sendMsgPerHour_OnlyMe(EVENT_ID, msg);
+                    Utils.logWritelnDraft("MUST_CLOSE(" + EPIC + ") because_reverse_trade_opening)");
                 }
             }
 
