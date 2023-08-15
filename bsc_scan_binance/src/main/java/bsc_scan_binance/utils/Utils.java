@@ -4359,12 +4359,13 @@ public class Utils {
         int str = candle_no;
         int end = candle_no + 1;
         String id = heiken_list.get(0).getId();
-        boolean isUptrend_0 = heiken_list.get(0).isUptrend();
+
+        boolean isUptrend_0 = heiken_list.get(str).isUptrend();
         if (id.contains(PREFIX_MO_) || id.contains(PREFIX_W1_)) {
             return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
         }
 
-        boolean isUptrend_1 = heiken_list.get(1).isUptrend();
+        boolean isUptrend_1 = heiken_list.get(end).isUptrend();
         boolean isUptrend_2 = isUptrendByMa(heiken_list, 2, str, end);
         boolean isUptrend_3 = isUptrendByMa(heiken_list, 3, str, end);
         boolean isUptrend_3_12 = isUptrendByMa(heiken_list, 3, 1, 2);
@@ -4626,12 +4627,9 @@ public class Utils {
         String No = Utils.appendLeft(String.valueOf(count), 2, "0") + ". ";
         boolean is_eq_d_h4_h1 = Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1);
         // --------------------------------------------
-        String prefix_trend = "[MO-W1-D1-H4-H1]";
+        String prefix_trend = "[W1-D1-H4-H1]";
         if (!EPICS_STOCKS.contains(EPIC)) {
             prefix_trend = "[W1-D1-H4-H1]      ";
-        }
-        if (!Objects.equals(trend_d1, trend_mo)) {
-            prefix_trend = prefix_trend.replace("MO", "--");
         }
         if (!Objects.equals(trend_d1, trend_w1)) {
             prefix_trend = prefix_trend.replace("W1", "--");
