@@ -3586,7 +3586,7 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean debug = true;
             }
 
-            boolean is_allow_trade = dto_h4.isTradable_zone() && dto_h1.isTradable_zone() && dto_h1.isAllow_trade()
+            boolean is_allow_trade = dto_h4.isTradable_zone() && dto_h1.isTradable_zone()
                     && Utils.isNotBlank(dto_h1.getSwitch_trend());
 
             // TODO: scapStocks
