@@ -3970,7 +3970,8 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(trend_h4, trend_30) && Objects.equals(trend_h4, trend_15);
 
             // ---------------------------------------------------------------------------------------------
-            boolean is_tradable_h1 = (Utils.isNotBlank(switch_h1) && dto_h1.isAllow_trade())
+            boolean is_tradable_h1 = dto_h1.isTradable_zone() && dto_h4.isTradable_zone()
+                    && (Utils.isNotBlank(switch_h1) && dto_h1.isAllow_trade())
                     || (Utils.isNotBlank(switch_30) && dto_30.isAllow_trade());
 
             if (is_tradable_h1 && is_eq_h4_h2_h1_30_15) {
@@ -3979,7 +3980,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 append = type_h1 + Utils.TEXT_PASS;
 
-                trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_15, dto_h1, append, false,
+                trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_h1, dto_h1, append, false,
                         Utils.CAPITAL_TIME_H1);
 
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
@@ -4005,20 +4006,10 @@ public class BinanceServiceImpl implements BinanceService {
                     "", switch_d1, switch_h4, switch_h1, trend_d1);
 
             String eoz = "";
-            // if (!(dto_d1.isTradable_zone() && dto_h4.isTradable_zone() &&
-            // dto_h1.isTradable_zone())) {
-            // eoz = type + "EOZ:";
-            // if (!dto_d1.isTradable_zone()) {
-            // eoz += "D1.";
-            // }
-            // if (!dto_h4.isTradable_zone()) {
-            // eoz += "H4.";
-            // }
-            // if (!dto_h1.isTradable_zone()) {
-            // eoz += "H1.";
-            // }
-            // }
-            // eoz = Utils.appendSpace(eoz, 20);
+            eoz = "EOZ:";
+            eoz += !dto_h4.isTradable_zone() ? "H4" + Utils.getType(trend_h4) : "     ";
+            eoz += !dto_h1.isTradable_zone() ? "H1" + Utils.getType(trend_h1) : "     ";
+            eoz += "   ";
 
             String allow_trade = "[ALLOW:";
             allow_trade += dto_d1.isAllow_trade() ? "D1" + Utils.getType(trend_d1) : "     ";
