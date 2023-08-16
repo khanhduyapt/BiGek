@@ -3872,7 +3872,9 @@ public class BinanceServiceImpl implements BinanceService {
                 String key = EPIC + Utils.CAPITAL_TIME_H1;
                 String type_h1 = Objects.equals(trend_h1, Utils.TREND_LONG) ? "_b" : "_s";
 
+                boolean is_trade_now = false;
                 if (follow_trend_d1_ma10 && follow_trend_h4_ma10 && is_tradable_zone) {
+                    is_trade_now = true;
                     append = type_h1 + Utils.TEXT_PASS + "_d";
                 } else if (follow_trend_h4_ma10) {
                     append = type_h1 + Utils.TEXT_PASS + "_h";
@@ -3880,7 +3882,7 @@ public class BinanceServiceImpl implements BinanceService {
                     append = type_h1 + Utils.TEXT_NOTICE_ONLY + " " + eoz;
                 }
 
-                trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_h1, dto_h1, append, false,
+                trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_h1, dto_h1, append, is_trade_now,
                         Utils.CAPITAL_TIME_H1);
 
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
