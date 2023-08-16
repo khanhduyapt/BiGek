@@ -3921,8 +3921,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Objects.isNull(trade_dto) && is_tradable_h1 && follow_trend_h4_ma10 && follow_trend_h1_ma10
-                    && is_eq_h4_h2_h1_30_15
-                    && is_tradable_zone) {
+                    && is_eq_h4_h2_h1_30_15 && is_tradable_zone) {
                 String key = EPIC + Utils.CAPITAL_TIME_H1;
                 String type_h1 = Objects.equals(trend_h1, Utils.TREND_LONG) ? "_b" : "_s";
 
