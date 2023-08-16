@@ -3721,10 +3721,6 @@ public class Utils {
         boolean allow_trade = false;
 
         if (heiken_list.size() > 30) {
-            if (Utils.isNotBlank(Utils.switchTrendByMa1vs50(heiken_list))) {
-                return true;
-            }
-
             String trend_heiken = Utils.getTrendByHekenAshiList(heiken_list);
             boolean is_above_ma50 = Utils.isAboveMALine(heiken_list, 50);
             if (is_above_ma50 && Objects.equals(Utils.TREND_SHOT, trend_heiken)) {

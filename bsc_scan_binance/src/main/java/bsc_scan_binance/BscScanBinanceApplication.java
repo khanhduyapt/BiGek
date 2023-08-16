@@ -108,6 +108,7 @@ public class BscScanBinanceApplication {
             CAPITAL_LIST.addAll(Utils.EPICS_CRYPTO_CFD);
             CAPITAL_LIST.addAll(Utils.EPICS_INDEXS_CFD);
             CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_ALL);
+            CAPITAL_LIST.addAll(Utils.EPICS_STOCKS);
 
             if (app_flag != Utils.const_app_flag_webonly) {
                 int index_crypto = 0;
@@ -142,26 +143,15 @@ public class BscScanBinanceApplication {
                                 binance_service.saveMt5Data("Stocks.csv", Utils.MINUTES_OF_1H);
 
                                 for (String EPIC : CAPITAL_LIST) {
-                                    // binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MO);
-                                    // binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_W1);
+                                    if (Utils.EPICS_STOCKS.contains(EPIC)) {
+                                        binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_W1);
+                                    }
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_D1);
-                                    // binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H12);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H4);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H2);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_30);
                                     binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_15);
-                                    // binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_05);
-                                }
-
-                                for (String EPIC : Utils.EPICS_STOCKS) {
-                                    // binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_MO);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_W1);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_D1);
-
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H4);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H2);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
                                 }
 
                                 binance_service.initTradeList();
@@ -288,10 +278,11 @@ public class BscScanBinanceApplication {
         result = binance_service.controlMt5(Utils.EPICS_CRYPTO_CFD);
         if (result > 0)
             Utils.logWritelnReport("...");
+
         // --------------------------------------------------------------------------
 
         Utils.logWritelnDraftFooter();
-        binance_service.scapStocks();
+        result = binance_service.controlMt5(Utils.EPICS_STOCKS);
         Utils.logWritelnDraftFooter();
         // --------------------------------------------------------------------------
         String cur_epics = EPICS_OUTPUT_MSG;

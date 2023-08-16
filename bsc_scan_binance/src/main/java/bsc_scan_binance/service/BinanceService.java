@@ -53,8 +53,6 @@ public interface BinanceService {
 
     public int controlMt5(List<String> CAPITAL_LIST);
 
-    public void scapStocks();
-
     public void deleteConnectTimeOutException();
 
     public void saveMt5Data(String filename, Integer MINUTES_OF_XX);
