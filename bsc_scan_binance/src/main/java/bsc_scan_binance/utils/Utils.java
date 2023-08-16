@@ -4783,13 +4783,13 @@ public class Utils {
 
         // --------------------------------------------
         String switch_trend = "{";
-        if (Objects.equals(trend_d1, trend_h4) && switch_d1.contains(trend_d1)) {
+        if (switch_d1.contains(trend_d1)) {
             switch_trend += getTrendPrefix("D1", switch_d1, " ");
         } else {
             switch_trend += getTrendPrefix("D1", "", " ");
         }
 
-        if (Objects.equals(trend_d1, trend_h4) && switch_h4.contains(trend_h4)) {
+        if (switch_h4.contains(trend_h4)) {
             switch_trend += getTrendPrefix("H4", switch_h4, " ");
         } else {
             switch_trend += getTrendPrefix("H4", "", " ");

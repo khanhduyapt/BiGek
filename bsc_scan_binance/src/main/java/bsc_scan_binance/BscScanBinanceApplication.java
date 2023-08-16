@@ -280,7 +280,8 @@ public class BscScanBinanceApplication {
             Utils.logWritelnReport("...");
 
         // --------------------------------------------------------------------------
-
+        Utils.logWritelnDraftFooter();
+        Utils.logWritelnDraftFooter();
         Utils.logWritelnDraftFooter();
         result = binance_service.controlMt5(Utils.EPICS_STOCKS);
         Utils.logWritelnDraftFooter();
