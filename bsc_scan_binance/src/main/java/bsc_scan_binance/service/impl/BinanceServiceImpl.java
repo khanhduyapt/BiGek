@@ -3628,17 +3628,11 @@ public class BinanceServiceImpl implements BinanceService {
             String comment = Utils.isNotBlank(trade.getComment()) ? trade.getComment()
                     : Utils.getStringValue(BscScanBinanceApplication.dic_comment.get(EPIC));
             // ----------------------------------------------------------------------------------
-            Orders dto_sl = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-            if (Objects.isNull(dto_sl)) {
-                continue;
-            }
             String find_trend = (trade.getType().toUpperCase().contains(Utils.TREND_LONG)) ? Utils.TREND_LONG
                     : (trade.getType().toUpperCase().contains(Utils.TREND_SHOT)) ? Utils.TREND_SHOT : "_";
+
             String timeframe = Utils.getDeEncryptedChartNameCapital(comment);
 
-            List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_sl, find_trend);
-            BigDecimal sl = sl1_tp2.get(0);
-            BigDecimal tp = sl1_tp2.get(1);
             // ----------------------------------------------------------------------------------
             Mt5OpenTradeEntity entity = mt5OpenTradeRepository.findById(trade.getTicket()).orElse(null);
             if (Objects.isNull(entity)) {
@@ -3647,8 +3641,6 @@ public class BinanceServiceImpl implements BinanceService {
                 entity.setTicket(trade.getTicket());
                 entity.setSymbol(EPIC);
                 entity.setPriceOpen(trade.getPriceOpen());
-                entity.setStopLoss(sl);
-                entity.setTakeProfit(tp);
                 entity.setComment(comment);
 
             } else {
@@ -3667,20 +3659,20 @@ public class BinanceServiceImpl implements BinanceService {
             entity.setProfit(trade.getProfit());
             entity.setType(trade.getType());
             entity.setVolume(trade.getVolume());
+            entity.setStopLoss(trade.getStopLoss());
+            entity.setTakeProfit(trade.getTakeProfit());
             entity.setCurrprice(trade.getCurrPrice());
             entity.setCompany(trade.getCompany());
+
             if (Utils.isBlank(entity.getOpenTime())) {
                 entity.setOpenTime(date_time);
             }
             entity.setTimeframe(timeframe);
 
-            if (entity.getStopLoss().compareTo(BigDecimal.ZERO) == 0) {
-                // entity.setStopLoss(sl);
-                // entity.setTakeProfit(tp);
+            if (Utils.isBlank(entity.getComment())) {
+                entity.setComment(Utils.create_trade_comment(EPIC, timeframe,
+                        Objects.equals(find_trend, Utils.TREND_LONG) ? "_b" : "_s"));
             }
-
-            entity.setStopLoss(trade.getStopLoss());
-            entity.setTakeProfit(trade.getTakeProfit());
 
             mt5OpenTradeRepository.save(entity);
         }
@@ -4063,20 +4055,27 @@ public class BinanceServiceImpl implements BinanceService {
             boolean no_stop_loss = (trade.getStopLoss().compareTo(BigDecimal.ZERO) == 0);
             boolean enough_a_meal = (PROFIT.compareTo(BigDecimal.valueOf(20)) > 0);
             boolean lose_a_meal = (PROFIT.add(BigDecimal.valueOf(20)).compareTo(BigDecimal.ZERO) < 0);
+            boolean profit_1R = (PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0);
             // ---------------------------------------------------------------------------------
-            boolean is_reverse_h1 = false;
-            if (Objects.equals(dto_h4.getTrend_heiken(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h2.getTrend_heiken(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h2.getTrend_by_ma10(), REVERSE_TRADE_TREND)
-
-                    && Objects.equals(dto_h1.getTrend_heiken(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h1.getTrend_by_ma10(), REVERSE_TRADE_TREND)
+            boolean is_reverse_30 = false;
+            if (Objects.equals(dto_h1.getTrend_heiken(), REVERSE_TRADE_TREND)
 
                     && Objects.equals(dto_30.getTrend_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_30.getTrend_by_ma10(), REVERSE_TRADE_TREND)
 
                     && Objects.equals(dto_15.getTrend_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_by_ma10(), REVERSE_TRADE_TREND)) {
+                is_reverse_30 = true;
+            }
+
+            boolean is_reverse_h1 = false;
+            if (is_reverse_30
+                    && Objects.equals(dto_h4.getTrend_heiken(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h2.getTrend_heiken(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h2.getTrend_by_ma10(), REVERSE_TRADE_TREND)
+
+                    && Objects.equals(dto_h1.getTrend_heiken(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h1.getTrend_by_ma10(), REVERSE_TRADE_TREND)) {
                 is_reverse_h1 = true;
             }
 
@@ -4108,6 +4107,9 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------
             String timeframe = trade.getTimeframe();
             if (Objects.equals(timeframe, Utils.CAPITAL_TIME_H1)) {
+                if (profit_1R && is_reverse_30) {
+                    take_profit = true;
+                }
                 if (is_reverse_h1 && enough_a_meal) {
                     take_profit = true;
                 }

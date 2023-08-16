@@ -4489,7 +4489,6 @@ public class Utils {
             boolean isTradeNow, String CAPITAL_TIME_XX) {
 
         BigDecimal entry = BigDecimal.ZERO;
-        String timeframe = getEncryptedChartNameCapital(CAPITAL_TIME_XX);
 
         if (Objects.equals(Utils.TREND_LONG, trend)) {
             entry = Utils.getBigDecimal(dto_en.getBody_low());
@@ -4516,10 +4515,17 @@ public class Utils {
         dto.setEntry(entry);
         dto.setStop_loss(sl_d1);
         dto.setTake_profit(tp_d1);
-        dto.setComment(getTypeOfEpic(EPIC).trim() + "_" + getTime_day24Hmm() + "_" + timeframe
-                + append.trim().replace(Utils.TEXT_PASS, ""));
+        dto.setComment(create_trade_comment(EPIC, CAPITAL_TIME_XX, append));
 
         return dto;
+    }
+
+    public static String create_trade_comment(String EPIC, String CAPITAL_TIME_XX, String append) {
+        String timeframe = getEncryptedChartNameCapital(CAPITAL_TIME_XX);
+        String comment = getTypeOfEpic(EPIC).trim() + "_" + getTime_day24Hmm() + "_" + timeframe
+                + append.trim().replace(Utils.TEXT_PASS, "");
+
+        return comment;
     }
 
     public static String calc_BUF_LO_HI_BUF_Forex(BigDecimal risk, boolean onlyWait, String trend, String EPIC,
