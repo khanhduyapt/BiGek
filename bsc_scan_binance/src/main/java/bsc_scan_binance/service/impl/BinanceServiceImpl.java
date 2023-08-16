@@ -3221,7 +3221,6 @@ public class BinanceServiceImpl implements BinanceService {
                         + Utils.appendSpace(Utils.get_duration_trade_time(trade) + "   " + trade.getComment(), 55);
 
                 result += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62);
-                result += "---" + Utils.appendSpace(trade.getComment(), 35, "-");
 
                 total = total.add(PROFIT);
                 msg += result + Utils.new_line_from_service;
@@ -3704,16 +3703,25 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // TODO: 1. initForexTrend
+        // Trên Ma chỉ LONG, dưới Ma chỉ SHORT
+        String trend_by_ma10 = Utils.getTrendByMaXx(heiken_list, 10);
+
         String switch_trend = "";
-        String trend_heiken = "";
-        if (Objects.equals(Utils.CAPITAL_TIME_H2, CAPITAL_TIME_XX)) {
-            trend_heiken = Utils.getTrendByHekenAshiList(heiken_list, 1);
-        } else {
-            trend_heiken = Utils.getTrendByHekenAshiList(heiken_list);
+        String trend_heiken = Utils.getTrendByHekenAshiList(heiken_list);
+        if (CAPITAL_TIME_XX.contains("MINUTE_") || CAPITAL_TIME_XX.contains("HOUR_")) {
+            String trend_heiken_1 = Utils.getTrendByHekenAshiList(heiken_list, 1);
+
+            if (Objects.equals(trend_heiken_1, trend_heiken)) {
+                trend_heiken = trend_heiken_1;
+
+            } else if (Objects.equals(trend_heiken_1, trend_by_ma10)) {
+                trend_heiken = trend_heiken_1;
+
+            } else {
+                trend_heiken = Utils.getChartNameCapital(CAPITAL_TIME_XX) + Utils.TREND_UNSURE;
+            }
         }
 
-        // Trên Ma chỉ LONG, dưới Ma chỉ SHORT
-        String trend_by_ma10 = Utils.isAboveMALine(heiken_list, 10) ? Utils.TREND_LONG : Utils.TREND_SHOT;
         // ----------------------------TREND------------------------
 
         boolean allow_trade = Utils.is_allow_trade_by_ma10(heiken_list);
@@ -3849,7 +3857,7 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_15 = dto_15.getSwitch_trend().trim();
 
             String eoz = "";
-            eoz = "EOZ:";
+            eoz += "  EOZ:";
             eoz += !dto_h4.isTradable_zone() ? "H4" + Utils.getType(trend_h4) : "     ";
             eoz += !dto_h1.isTradable_zone() ? "H1" + Utils.getType(trend_h1) : "     ";
             eoz += "   ";
@@ -4110,7 +4118,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ---------------------------------------------------------------------------------
             // TODO: 5. closeTrade_by_SL_TP
-            if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_1H)) {
+            if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
                 if (take_profit || is_hit_sl) {
                     String reason = "";
 
@@ -4143,10 +4151,6 @@ public class BinanceServiceImpl implements BinanceService {
                         msg += Utils.getStringValue(trade.getProfit().intValue()) + "$:" + reason
                                 + Utils.new_line_from_service;
                     }
-                } else if (is_reverse_h1 && allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
-
-                    String log = Utils.createCloseTradeMsg(trade, "Must Close: ", "reverse_h1");
-                    Utils.logWritelnDraft(log);
 
                 }
             }

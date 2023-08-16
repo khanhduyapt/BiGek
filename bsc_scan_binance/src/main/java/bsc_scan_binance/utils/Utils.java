@@ -1092,9 +1092,6 @@ public class Utils {
         if (TIME.contains(CAPITAL_TIME_H4) || TIME.contains(PREFIX_H4_)) {
             return "(H4)";
         }
-        // if (TIME.contains(CAPITAL_TIME_H12) || TIME.contains(PREFIX_H12)) {
-        // return "(H12)";
-        // }
         if (TIME.contains(CAPITAL_TIME_D1) || TIME.contains(PREFIX_D1_)) {
             return "(D1)";
         }
@@ -4671,9 +4668,6 @@ public class Utils {
         boolean is_eq_d_h4_h1 = Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1);
         // --------------------------------------------
         String prefix_trend = "[W1-D1-H4-H1]";
-        if (!EPICS_STOCKS.contains(EPIC)) {
-            prefix_trend = "[W1-D1-H4-H1]      ";
-        }
         if (!Objects.equals(trend_d1, trend_w1)) {
             prefix_trend = prefix_trend.replace("W1", "--");
         }
@@ -4687,20 +4681,10 @@ public class Utils {
 
         // --------------------------------------------
         String switch_trend = "{";
-
-        if (EPICS_STOCKS.contains(EPIC)) {
-            if (Objects.equals(switch_mo, trend_w1) && Objects.equals(switch_mo, trend_d1)
-                    && switch_mo.contains(trend_mo)) {
-                switch_trend += getTrendPrefix("MO", switch_mo, " ");
-            } else {
-                switch_trend += getTrendPrefix("MO", "", " ");
-            }
-
-            if (Objects.equals(trend_w1, trend_d1) && switch_w1.contains(trend_w1)) {
-                switch_trend += getTrendPrefix("W1", switch_w1, " ");
-            } else {
-                switch_trend += getTrendPrefix("W1", "", " ");
-            }
+        if (Objects.equals(trend_w1, trend_d1) && switch_w1.contains(trend_w1)) {
+            switch_trend += getTrendPrefix("W1", switch_w1, " ");
+        } else {
+            switch_trend += getTrendPrefix("W1", "", " ");
         }
 
         if (Objects.equals(trend_d1, trend_h4) && switch_d1.contains(trend_d1)) {
@@ -4721,14 +4705,9 @@ public class Utils {
             switch_trend += getTrendPrefix("H1", "", "");
         }
 
-        switch_trend += "}  ";
+        switch_trend += "}     ";
         // --------------------------------------------
-        String w_d = "       ";
-        if (prefix_trend.contains("W1-D1")) {
-            w_d = "(W=D)  ";
-        }
-        // --------------------------------------------
-        String result = No + w_d + prefix_trend + switch_trend;
+        String result = No + prefix_trend + switch_trend;
 
         return result;
     }
