@@ -2866,7 +2866,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // ----------------------------------------------------------------------------------
-                if (!is_openning && (trade_count < MAX_TRADE)) {
+                if ((!is_openning || allow_padding_trade_after_1day(EPIC)) && (trade_count < MAX_TRADE)) {
                     String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type()
                             + Utils.getCurrentYyyyMmDd_Blog4h()
                             + Utils.getDeEncryptedChartNameCapital(dto.getComment());
@@ -3055,7 +3055,7 @@ public class BinanceServiceImpl implements BinanceService {
     private boolean allow_padding_trade_after_1day(String EPIC) {
         List<Mt5OpenTradeEntity> list = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
         if (CollectionUtils.isEmpty(list)) {
-            return true;
+            return false;
         }
 
         int count = 0;
@@ -3856,19 +3856,20 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------------------
             boolean follow_trend_d1_ma10 = Objects.equals(dto_d1.getTrend_by_ma10(), trend_h4);
             boolean follow_trend_h4_ma10 = Objects.equals(dto_h4.getTrend_by_ma10(), trend_h4);
+            boolean follow_trend_h1_ma10 = Objects.equals(dto_h1.getTrend_by_ma10(), trend_h1);
 
             boolean is_eq_h4_h2_h1_30_15 = Objects.equals(trend_h4, trend_h2)
                     && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_30)
                     && Objects.equals(trend_h4, trend_15);
 
             // ---------------------------------------------------------------------------------------------
-            boolean is_tradable_zone = dto_h1.isTradable_zone() && dto_h4.isTradable_zone();
-            boolean is_tradable_h1 = Objects.equals(dto_h1.getTrend_heiken(), dto_h1.getTrend_by_ma10())
-                    && (Utils.isNotBlank(switch_h1) && dto_h1.isAllow_trade())
+            boolean is_tradable_zone = dto_h1.isTradable_zone() || dto_h4.isTradable_zone() || dto_d1.isTradable_zone();
+
+            boolean is_tradable_h1 = (Utils.isNotBlank(switch_h1) && dto_h1.isAllow_trade())
                     || (Utils.isNotBlank(switch_30) && dto_30.isAllow_trade())
                     || (Utils.isNotBlank(switch_15) && dto_15.isAllow_trade());
 
-            if (is_tradable_h1 && is_eq_h4_h2_h1_30_15) {
+            if (is_tradable_h1 && follow_trend_h1_ma10 && is_eq_h4_h2_h1_30_15) {
                 String key = EPIC + Utils.CAPITAL_TIME_H1;
                 String type_h1 = Objects.equals(trend_h1, Utils.TREND_LONG) ? "_b" : "_s";
 
@@ -3876,11 +3877,18 @@ public class BinanceServiceImpl implements BinanceService {
                 if (follow_trend_d1_ma10 && follow_trend_h4_ma10 && is_tradable_zone) {
                     is_trade_now = true;
                     append = type_h1 + Utils.TEXT_PASS + "_d";
-                } else if (follow_trend_d1_ma10 || follow_trend_h4_ma10) {
+
+                } else if (follow_trend_h4_ma10 && is_tradable_zone) {
                     is_trade_now = true;
                     append = type_h1 + Utils.TEXT_PASS + "_h";
+
+                } else if (is_tradable_zone) {
+                    is_trade_now = true;
+                    append = type_h1 + Utils.TEXT_PASS + "_m";
+
                 } else {
                     append = type_h1 + Utils.TEXT_NOTICE_ONLY + " " + eoz;
+
                 }
 
                 trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_h1, dto_h1, append, is_trade_now,
@@ -3947,26 +3955,33 @@ public class BinanceServiceImpl implements BinanceService {
                 BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
                 TOTAL_PROFIT = TOTAL_PROFIT.add(PROFIT);
 
-                if ((PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0)
-                        && (trade.getPriceOpen().compareTo(trade.getStopLoss()) != 0)) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(trade.getTicket());
-                    sb.append('\t');
-                    sb.append(trade.getPriceOpen());
-                    sb.append('\t');
-                    sb.append(trade.getTakeProfit());
-                    sb.append('\n');
+                String TRADE_TREND = Objects.equals(trade.getType().toUpperCase(), Utils.TREND_LONG) ? Utils.TREND_LONG
+                        : Objects.equals(trade.getType().toUpperCase(), Utils.TREND_SHOT) ? Utils.TREND_SHOT
+                                : Utils.TREND_UNSURE;
 
-                    writer.write(sb.toString());
-                } else {
-                    // StringBuilder sb = new StringBuilder();
-                    // sb.append(trade.getTicket());
-                    // sb.append('\t');
-                    // sb.append(trade.getStopLoss());
-                    // sb.append('\t');
-                    // sb.append(trade.getTakeProfit());
-                    // sb.append('\n');
-                    // writer.write(sb.toString());
+                if ((PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0)) {
+                    boolean allow_traning_stop = false;
+
+                    if ((Objects.equals(TRADE_TREND, Utils.TREND_LONG)
+                            && trade.getPriceOpen().compareTo(trade.getStopLoss()) > 0)) {
+                        allow_traning_stop = true;
+                    }
+                    if ((Objects.equals(TRADE_TREND, Utils.TREND_SHOT)
+                            && trade.getPriceOpen().compareTo(trade.getStopLoss()) < 0)) {
+                        allow_traning_stop = true;
+                    }
+
+                    if (allow_traning_stop) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(trade.getTicket());
+                        sb.append('\t');
+                        sb.append(trade.getPriceOpen());
+                        sb.append('\t');
+                        sb.append(trade.getTakeProfit());
+                        sb.append('\n');
+
+                        writer.write(sb.toString());
+                    }
                 }
             }
             writer.close();
@@ -4089,11 +4104,11 @@ public class BinanceServiceImpl implements BinanceService {
                     String reason = "";
 
                     if (is_reverse_h4) {
-                        reason = "reverse_h4";
+                        reason = "reverse_h4." + trade.getComment();
                     } else if (is_hit_sl) {
-                        reason = "stoploss";
+                        reason = "stoploss." + trade.getComment();
                     } else if (take_profit) {
-                        reason = "profit";
+                        reason = "profit." + trade.getComment();
                     }
 
                     if (!"__HOLDING__XAUUSD__".contains("_" + EPIC + "_")) {
