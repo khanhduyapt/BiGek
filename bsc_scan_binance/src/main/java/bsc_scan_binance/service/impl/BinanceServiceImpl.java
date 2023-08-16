@@ -4018,6 +4018,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
+
+            boolean no_stop_loss = (trade.getStopLoss().compareTo(BigDecimal.ZERO) == 0);
             boolean enough_a_meal = (PROFIT.compareTo(BigDecimal.valueOf(20)) > 0);
             boolean lose_a_meal = (PROFIT.add(BigDecimal.valueOf(20)).compareTo(BigDecimal.ZERO) < 0);
             // ---------------------------------------------------------------------------------
@@ -4048,16 +4050,9 @@ public class BinanceServiceImpl implements BinanceService {
             if (is_reverse_h4 && enough_a_meal) {
                 take_profit = true;
             }
-            if (PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0) {
-                if (Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND)
-                        && Objects.equals(dto_h4.getTrend_heiken(), REVERSE_TRADE_TREND)) {
-                    take_profit = true;
-                }
-            }
             // ---------------------------------------------------------------------------------
             boolean is_hit_sl = false;
-            if ((trade.getStopLoss().compareTo(BigDecimal.ZERO) == 0)
-                    && PROFIT.add(Utils.RISK_0_05_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
+            if (no_stop_loss && PROFIT.add(Utils.RISK_0_05_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
                 is_hit_sl = true;
             }
             if (is_reverse_h4 && lose_a_meal) {
