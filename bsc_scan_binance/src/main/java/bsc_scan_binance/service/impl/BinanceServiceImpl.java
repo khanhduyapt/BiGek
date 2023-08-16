@@ -3024,11 +3024,15 @@ public class BinanceServiceImpl implements BinanceService {
             return Utils.CRYPTO_TIME_H1;
         }
         List<BtcFutures> heken_list_h4 = Utils.getHeikenList(list_h4);
+        String trend_h4_ma10 = Utils.getTrendByMaXx(heken_list_h4, 10);
+        String switch_trend_h4 = Utils.switchTrendByMa1vs1026(heken_list_h4);
+
         String trend_h4 = Utils.getTrendByHekenAshiList(heken_list_h4);
         String trend_d1 = Utils.getTrendByHekenAshiList(heken_list_d1);
 
         String chart_name = "";
-        if (Utils.isNotBlank(switch_trend_d1)) {
+        if (Utils.isNotBlank(switch_trend_d1)
+                || (Objects.equals(trend_h4, trend_h4_ma10) && Utils.isNotBlank(switch_trend_h4))) {
             chart_name = "(D1)";
         }
 
@@ -3098,8 +3102,9 @@ public class BinanceServiceImpl implements BinanceService {
         return false;
     }
 
-    private boolean is_must_close_reverse_trade(Mt5OpenTrade dto) {
+    private boolean close_reverse_trade(Mt5OpenTrade dto) {
         boolean is_must_close = false;
+
         String REVERSE_TRADE_TREND = dto.getOrder_type().toUpperCase().contains(Utils.TREND_LONG) ? Utils.TREND_SHOT
                 : dto.getOrder_type().toUpperCase().contains(Utils.TREND_SHOT) ? Utils.TREND_LONG : Utils.TREND_UNSURE;
 
@@ -3109,6 +3114,8 @@ public class BinanceServiceImpl implements BinanceService {
         for (Mt5OpenTradeEntity trade : opening_list) {
             String log = Utils.createCloseTradeMsg(trade, "MUST_CLOSE_TRADE: ", "reverse_trade_opening");
             Utils.logWritelnDraft(log);
+
+            BscScanBinanceApplication.mt5_close_ticket_dict.put(trade.getTicket(), "reverse_trade_opening");
 
             is_must_close = true;
         }
@@ -3698,7 +3705,12 @@ public class BinanceServiceImpl implements BinanceService {
 
         // TODO: 1. initForexTrend
         String switch_trend = "";
-        String trend_heiken = Utils.getTrendByHekenAshiList(heiken_list);
+        String trend_heiken = "";
+        if (Objects.equals(Utils.CAPITAL_TIME_H2, CAPITAL_TIME_XX)) {
+            trend_heiken = Utils.getTrendByHekenAshiList(heiken_list, 1);
+        } else {
+            trend_heiken = Utils.getTrendByHekenAshiList(heiken_list);
+        }
 
         // Trên Ma chỉ LONG, dưới Ma chỉ SHORT
         String trend_by_ma10 = Utils.isAboveMALine(heiken_list, 10) ? Utils.TREND_LONG : Utils.TREND_SHOT;
@@ -3866,32 +3878,33 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_tradable_zone = dto_h1.isTradable_zone() || dto_h4.isTradable_zone() || dto_d1.isTradable_zone();
 
             boolean is_tradable_h1 = (Utils.isNotBlank(switch_h1) && dto_h1.isAllow_trade())
-                    || (Utils.isNotBlank(switch_30) && dto_30.isAllow_trade())
-                    || (Utils.isNotBlank(switch_15) && dto_15.isAllow_trade());
 
-            if (is_tradable_h1 && follow_trend_h1_ma10 && is_eq_h4_h2_h1_30_15) {
+                    || (Utils.isNotBlank(switch_30) && dto_30.isAllow_trade())
+
+                    || (Utils.isNotBlank(switch_15) && dto_15.isAllow_trade())
+
+                    || (dto_h1.isTradable_zone() && Objects.equals(trend_h1, trend_h4)
+                            && Objects.equals(trend_h1, trend_30) && Objects.equals(trend_h1, trend_15)
+                            && Objects.equals(dto_h1.getTrend_by_ma10(), dto_h1.getTrend_heiken())
+                            && Objects.equals(dto_30.getTrend_by_ma10(), dto_30.getTrend_heiken())
+                            && Objects.equals(dto_15.getTrend_by_ma10(), dto_15.getTrend_heiken()))
+
+                    || (follow_trend_d1_ma10 && follow_trend_h4_ma10 && follow_trend_h1_ma10
+                            && Utils.isNotBlank(switch_h1));
+
+            if (is_tradable_h1 && follow_trend_h1_ma10 && is_eq_h4_h2_h1_30_15 && is_tradable_zone) {
                 String key = EPIC + Utils.CAPITAL_TIME_H1;
                 String type_h1 = Objects.equals(trend_h1, Utils.TREND_LONG) ? "_b" : "_s";
 
-                boolean is_trade_now = false;
-                if (follow_trend_d1_ma10 && follow_trend_h4_ma10 && is_tradable_zone) {
-                    is_trade_now = true;
+                if (follow_trend_d1_ma10 && follow_trend_h4_ma10) {
                     append = type_h1 + Utils.TEXT_PASS + "_d";
-
-                } else if (follow_trend_h4_ma10 && is_tradable_zone) {
-                    is_trade_now = true;
+                } else if (follow_trend_h4_ma10) {
                     append = type_h1 + Utils.TEXT_PASS + "_h";
-
-                } else if (is_tradable_zone) {
-                    is_trade_now = true;
-                    append = type_h1 + Utils.TEXT_PASS + "_m";
-
                 } else {
-                    append = type_h1 + Utils.TEXT_NOTICE_ONLY + " " + eoz;
-
+                    append = type_h1 + Utils.TEXT_PASS + "_m";
                 }
 
-                trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_h1, dto_h1, append, is_trade_now,
+                trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_h1, dto_h1, append, true,
                         Utils.CAPITAL_TIME_H1);
 
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
@@ -3900,9 +3913,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ---------------------------------------------------------------------------------------------
             if (Objects.nonNull(trade_dto)) {
-                if (is_must_close_reverse_trade(trade_dto)) {
-                    Utils.logWritelnDraft("MUST_CLOSE(" + EPIC + ") because_reverse_trade_opening)");
-                }
+                close_reverse_trade(trade_dto);
             }
 
             // ---------------------------------------------------------------------------------------------
@@ -4049,6 +4060,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_reverse_h1 = false;
             if (Objects.equals(dto_h4.getTrend_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h2.getTrend_heiken(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h2.getTrend_by_ma10(), REVERSE_TRADE_TREND)
 
                     && Objects.equals(dto_h1.getTrend_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_by_ma10(), REVERSE_TRADE_TREND)

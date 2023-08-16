@@ -4384,8 +4384,11 @@ public class Utils {
         return isUptrendByMa(list, 1, 1, 2) ? TREND_LONG : TREND_SHOT;
     }
 
-    public static String getTrendByMaXx(List<BtcFutures> list, int maIndex) {
-        return isUptrendByMa(list, maIndex, 0, 1) ? TREND_LONG : TREND_SHOT;
+    public static String getTrendByMaXx(List<BtcFutures> heiken_list, int maIndex) {
+
+        return Utils.isAboveMALine(heiken_list, 10) ? Utils.TREND_LONG : Utils.TREND_SHOT;
+
+        // return isUptrendByMa(list, maIndex, 0, 1) ? TREND_LONG : TREND_SHOT;
     }
 
     public static String getTrendByHekenAshiList(List<BtcFutures> heiken_list) {
