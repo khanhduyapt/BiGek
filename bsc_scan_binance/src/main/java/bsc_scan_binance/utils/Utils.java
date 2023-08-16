@@ -3893,14 +3893,14 @@ public class Utils {
         String trend = "";
 
         BigDecimal ma1_0 = calcMA(heiken_list, 1, candle_no); // Đóng nến
-        BigDecimal ma1_2 = calcMA(heiken_list, 1, candle_no + 1); // Đóng nến
+        BigDecimal ma1_1 = calcMA(heiken_list, 1, candle_no + 1); // Đóng nến
 
         for (int ma_index = ma_form; ma_index <= ma_to; ma_index++) {
             BigDecimal maX_0 = calcMA(heiken_list, ma_index, candle_no);
-            BigDecimal maX_2 = calcMA(heiken_list, ma_index, candle_no + 1);
+            BigDecimal maX_1 = calcMA(heiken_list, ma_index, candle_no + 1);
 
-            String cutUp = Utils.checkXCutUpY(ma1_0, ma1_2, maX_0, maX_2);
-            String cutDw = Utils.checkXCutDnY(ma1_0, ma1_2, maX_0, maX_2);
+            String cutUp = Utils.checkXCutUpY(ma1_0, ma1_1, maX_0, maX_1);
+            String cutDw = Utils.checkXCutDnY(ma1_0, ma1_1, maX_0, maX_1);
 
             if (Utils.isNotBlank(cutUp)) {
                 trend += ma_index + ":" + cutUp + ";";
@@ -4183,7 +4183,7 @@ public class Utils {
         msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10);
         msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 10) + "(lot)   ";
 
-        return msg;
+        return msg.replace(TEXT_NOTICE_ONLY, "");
     }
 
     public static String createCloseTradeMsg(Mt5OpenTradeEntity trade, String prefix, String reason) {
@@ -4768,7 +4768,6 @@ public class Utils {
         // }
 
         String No = Utils.appendLeft(String.valueOf(count), 2, "0") + ". ";
-        boolean is_eq_d_h4_h1 = Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1);
         // --------------------------------------------
         String prefix_trend = "[W1-D1-H4-H1]";
         if (!Objects.equals(trend_d1, trend_w1)) {
@@ -4784,12 +4783,6 @@ public class Utils {
 
         // --------------------------------------------
         String switch_trend = "{";
-        if (Objects.equals(trend_w1, trend_d1) && switch_w1.contains(trend_w1)) {
-            switch_trend += getTrendPrefix("W1", switch_w1, " ");
-        } else {
-            switch_trend += getTrendPrefix("W1", "", " ");
-        }
-
         if (Objects.equals(trend_d1, trend_h4) && switch_d1.contains(trend_d1)) {
             switch_trend += getTrendPrefix("D1", switch_d1, " ");
         } else {
@@ -4801,13 +4794,6 @@ public class Utils {
         } else {
             switch_trend += getTrendPrefix("H4", "", " ");
         }
-
-        if (is_eq_d_h4_h1 && switch_h1.contains(trend_h1)) {
-            switch_trend += getTrendPrefix("H1", switch_h1, "");
-        } else {
-            switch_trend += getTrendPrefix("H1", "", "");
-        }
-
         switch_trend += "}     ";
         // --------------------------------------------
         String result = No + prefix_trend + switch_trend;
