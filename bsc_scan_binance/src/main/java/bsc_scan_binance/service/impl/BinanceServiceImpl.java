@@ -3860,8 +3860,8 @@ public class BinanceServiceImpl implements BinanceService {
             String append = "";
             Mt5OpenTrade trade_dto = null;
             // ---------------------------------------------------------------------------------------------
-            boolean follow_trend_d1_ma10 = Objects.equals(dto_d1.getTrend_by_ma10(), trend_h4);
-            boolean follow_trend_h4_ma10 = Objects.equals(dto_h4.getTrend_by_ma10(), trend_h4);
+            boolean follow_trend_d1_ma10 = Objects.equals(dto_d1.getTrend_by_ma10(), trend_h1);
+            boolean follow_trend_h4_ma10 = Objects.equals(dto_h4.getTrend_by_ma10(), trend_h1);
             boolean follow_trend_h1_ma10 = Objects.equals(dto_h1.getTrend_by_ma10(), trend_h1);
 
             boolean is_eq_h2_h1_30_15 = Objects.equals(trend_h1, trend_h2) &&
@@ -3914,7 +3914,8 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
             }
 
-            if (Objects.isNull(trade_dto) && is_tradable_zone && follow_trend_h1_ma10 && is_eq_h2_h1_30_15) {
+            if (Objects.isNull(trade_dto) && is_tradable_zone && follow_trend_d1_ma10 && follow_trend_h1_ma10
+                    && is_eq_h2_h1_30_15) {
                 if ((dto_h1.getSwitch_trend() + dto_30.getSwitch_trend())
                         .contains(Utils.TEXT_SWITCH_TREND_SEQUENTIAL_1020)) {
 
@@ -3932,6 +3933,12 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ---------------------------------------------------------------------------------------------
             if (Objects.nonNull(trade_dto)) {
+                close_reverse_trade(trade_dto);
+            }
+            if (is_eq_h2_h1_30_15 && (dto_h4.getSwitch_trend() + dto_h2.getSwitch_trend() + dto_h1.getSwitch_trend()
+                    + dto_30.getSwitch_trend()).contains(Utils.TEXT_SWITCH_TREND_SEQUENTIAL_1020)) {
+                trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_h1, dto_h1, append, true,
+                        Utils.CAPITAL_TIME_H1);
                 close_reverse_trade(trade_dto);
             }
 
