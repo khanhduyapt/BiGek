@@ -2724,9 +2724,10 @@ public class BinanceServiceImpl implements BinanceService {
             t_profit = t_profit.add(Utils.getBigDecimal(trade.getProfit()));
         }
 
-        String append = prifix.trim() + " " + append2.trim()
+        String append = prifix.trim() + " " + append2
                 + Utils.appendSpace(tradeList.size() > 0
-                        ? "  (" + type + ")" + Utils.appendLeft(String.valueOf(t_profit.intValue()), 5) + "$"
+                        ? "       t_profit(" + type + "): " + Utils.appendLeft(String.valueOf(t_profit.intValue()), 5)
+                                + "$"
                         : "", 15);
 
         outputLog(EPIC, append, find_trend);
@@ -3216,9 +3217,8 @@ public class BinanceServiceImpl implements BinanceService {
                 result += "   Vol:" + Utils.appendLeft(Utils.removeLastZero(trade.getVolume()), 6);
                 result += "   (Profit):" + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 6) + "$";
 
-                result += "    "
+                result += "   "
                         + Utils.appendSpace(Utils.get_duration_trade_time(trade) + "   " + trade.getComment(), 55);
-                // result += " " + Utils.appendSpace(multi_timeframes, 55);
 
                 result += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62);
                 result += "---" + Utils.appendSpace(trade.getComment(), 35, "-");
@@ -3927,16 +3927,15 @@ public class BinanceServiceImpl implements BinanceService {
             String prefix = Utils.getPrefix_FollowTrackingTrend(EPIC, count, "", trend_w1, dto_d1.getTrend_heiken(),
                     trend_h4, trend_h1, "", switch_w1, switch_d1, switch_h4, switch_h1, dto_d1.getTrend_heiken());
 
-            String allow_trade = "[ALLOW:";
-            allow_trade += dto_d1.isAllow_trade() ? "D1" + Utils.getType(dto_d1.getTrend_heiken()) : "     ";
-            allow_trade += dto_h4.isAllow_trade() ? "H4" + Utils.getType(trend_h4) : "     ";
-            allow_trade += dto_h2.isAllow_trade() ? "H2" + Utils.getType(trend_h2) : "     ";
-            allow_trade += dto_h1.isAllow_trade() ? "H1" + Utils.getType(trend_h1) : "     ";
-            allow_trade += dto_30.isAllow_trade() ? "30" + Utils.getType(trend_30) : "     ";
-            allow_trade += dto_15.isAllow_trade() ? "15" + Utils.getType(trend_15) : "     ";
-            allow_trade += "]    ";
-
-            eoz += allow_trade;
+            //String allow_trade = "[ALLOW:";
+            //allow_trade += dto_d1.isAllow_trade() ? "D1" + Utils.getType(dto_d1.getTrend_heiken()) : "     ";
+            //allow_trade += dto_h4.isAllow_trade() ? "H4" + Utils.getType(trend_h4) : "     ";
+            //allow_trade += dto_h2.isAllow_trade() ? "H2" + Utils.getType(trend_h2) : "     ";
+            //allow_trade += dto_h1.isAllow_trade() ? "H1" + Utils.getType(trend_h1) : "     ";
+            //allow_trade += dto_30.isAllow_trade() ? "30" + Utils.getType(trend_30) : "     ";
+            //allow_trade += dto_15.isAllow_trade() ? "15" + Utils.getType(trend_15) : "     ";
+            //allow_trade += "]    ";
+            //eoz += allow_trade;
 
             analysis_profit(prefix, EPIC, eoz, dto_d1.getTrend_heiken());
         }
