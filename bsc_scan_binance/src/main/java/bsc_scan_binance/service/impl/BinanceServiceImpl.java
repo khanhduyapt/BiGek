@@ -3871,6 +3871,38 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(trend_h4, trend_h1) && Objects.equals(trend_h4, trend_30)
                     && Objects.equals(trend_h4, trend_15);
 
+            if (Objects.isNull(trade_dto) && dto_h2.isTradable_zone() && follow_trend_h4_ma10 && follow_trend_h1_ma10
+                    && is_eq_h4_h2_h1_30_15
+                    && dto_h2.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_SEQUENTIAL_1020)) {
+
+                String key = EPIC + Utils.CAPITAL_TIME_H1;
+                String type_h1 = Objects.equals(trend_h4, Utils.TREND_LONG) ? "_b" : "_s";
+                append = type_h1 + Utils.TEXT_PASS + "_sh2";
+
+                trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_h1, dto_h1, append, true,
+                        Utils.CAPITAL_TIME_H1);
+
+                BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
+                BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
+            }
+
+            if (Objects.isNull(trade_dto) && dto_h1.isTradable_zone() && follow_trend_h4_ma10 && follow_trend_h1_ma10
+                    && is_eq_h2_h1_30_15) {
+                if ((dto_h1.getSwitch_trend() + dto_30.getSwitch_trend())
+                        .contains(Utils.TEXT_SWITCH_TREND_SEQUENTIAL_1020)) {
+
+                    String key = EPIC + Utils.CAPITAL_TIME_H1;
+                    String type_h1 = Objects.equals(trend_h1, Utils.TREND_LONG) ? "_b" : "_s";
+                    append = type_h1 + Utils.TEXT_PASS + "_sh1";
+
+                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_h1, dto_h1, append, true,
+                            Utils.CAPITAL_TIME_H1);
+
+                    BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
+                    BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
+                }
+            }
+
             // ---------------------------------------------------------------------------------------------
             boolean is_tradable_zone = dto_h4.isTradable_zone() || dto_d1.isTradable_zone();
 
@@ -3880,12 +3912,6 @@ public class BinanceServiceImpl implements BinanceService {
 
                     || (Utils.isNotBlank(switch_15) && dto_15.isAllow_trade())
 
-                    || (dto_h1.isTradable_zone() && Objects.equals(trend_h1, trend_h4)
-                            && Objects.equals(trend_h1, trend_30) && Objects.equals(trend_h1, trend_15)
-                            && Objects.equals(dto_h1.getTrend_by_ma10(), dto_h1.getTrend_heiken())
-                            && Objects.equals(dto_30.getTrend_by_ma10(), dto_30.getTrend_heiken())
-                            && Objects.equals(dto_15.getTrend_by_ma10(), dto_15.getTrend_heiken()))
-
                     || (follow_trend_d1_ma10 && follow_trend_h4_ma10 && follow_trend_h1_ma10
                             && Utils.isNotBlank(switch_h1));
 
@@ -3894,7 +3920,8 @@ public class BinanceServiceImpl implements BinanceService {
                         && Utils.isNotBlank(dto_d1.getSwitch_trend() + dto_h4.getSwitch_trend());
             }
 
-            if (is_tradable_h1 && follow_trend_h4_ma10 && follow_trend_h1_ma10 && is_eq_h4_h2_h1_30_15
+            if (Objects.isNull(trade_dto) && is_tradable_h1 && follow_trend_h4_ma10 && follow_trend_h1_ma10
+                    && is_eq_h4_h2_h1_30_15
                     && is_tradable_zone) {
                 String key = EPIC + Utils.CAPITAL_TIME_H1;
                 String type_h1 = Objects.equals(trend_h1, Utils.TREND_LONG) ? "_b" : "_s";
@@ -3912,23 +3939,6 @@ public class BinanceServiceImpl implements BinanceService {
 
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
-            }
-
-            if (Objects.isNull(trade_dto) && is_tradable_zone && follow_trend_d1_ma10 && follow_trend_h1_ma10
-                    && is_eq_h2_h1_30_15) {
-                if ((dto_h1.getSwitch_trend() + dto_30.getSwitch_trend())
-                        .contains(Utils.TEXT_SWITCH_TREND_SEQUENTIAL_1020)) {
-
-                    String key = EPIC + Utils.CAPITAL_TIME_H1;
-                    String type_h1 = Objects.equals(trend_h1, Utils.TREND_LONG) ? "_b" : "_s";
-                    append = type_h1 + Utils.TEXT_PASS + "_seq";
-
-                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4, dto_h1, dto_h1, append, true,
-                            Utils.CAPITAL_TIME_H1);
-
-                    BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
-                    BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
-                }
             }
 
             // ---------------------------------------------------------------------------------------------
