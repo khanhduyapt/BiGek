@@ -3873,7 +3873,9 @@ public class BinanceServiceImpl implements BinanceService {
                 String type_h1 = Objects.equals(trend_h1, Utils.TREND_LONG) ? "_b" : "_s";
 
                 if (follow_trend_d1_ma10 && follow_trend_h4_ma10 && is_tradable_zone) {
-                    append = type_h1 + Utils.TEXT_PASS;
+                    append = type_h1 + Utils.TEXT_PASS + "_d";
+                } else if (follow_trend_h4_ma10) {
+                    append = type_h1 + Utils.TEXT_PASS + "_h";
                 } else {
                     append = type_h1 + Utils.TEXT_NOTICE_ONLY + " " + eoz;
                 }
