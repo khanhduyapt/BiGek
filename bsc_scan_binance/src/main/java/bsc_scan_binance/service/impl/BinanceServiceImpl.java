@@ -3698,13 +3698,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         // TODO: 1. initForexTrend
         String switch_trend = "";
-        String trend_heiken = "";
-        if (CAPITAL_TIME_XX.contains("MINUTE_") || CAPITAL_TIME_XX.contains("HOUR_01")
-                || CAPITAL_TIME_XX.contains("HOUR_02")) {
-            trend_heiken = Utils.getTrendByHekenAshiList(heiken_list, 1);
-        } else {
-            trend_heiken = Utils.getTrendByHekenAshiList(heiken_list);
-        }
+        String trend_heiken = Utils.getTrendByHekenAshiList(heiken_list);
 
         // Trên Ma chỉ LONG, dưới Ma chỉ SHORT
         String trend_by_ma10 = Utils.isAboveMALine(heiken_list, 10) ? Utils.TREND_LONG : Utils.TREND_SHOT;
@@ -4029,16 +4023,19 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(dto_h4.getTrend_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_by_ma10(), REVERSE_TRADE_TREND)
+
                     && Objects.equals(dto_30.getTrend_heiken(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_15.getTrend_heiken(), REVERSE_TRADE_TREND)) {
+                    && Objects.equals(dto_30.getTrend_by_ma10(), REVERSE_TRADE_TREND)
+
+                    && Objects.equals(dto_15.getTrend_heiken(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_15.getTrend_by_ma10(), REVERSE_TRADE_TREND)) {
                 is_reverse_h1 = true;
             }
 
             boolean is_reverse_h4 = false;
             if (is_reverse_h1
                     && Objects.equals(dto_h4.getTrend_heiken(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND)
-                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_8H)) {
+                    && Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND)) {
                 is_reverse_h4 = true;
             }
             // ---------------------------------------------------------------------------------
