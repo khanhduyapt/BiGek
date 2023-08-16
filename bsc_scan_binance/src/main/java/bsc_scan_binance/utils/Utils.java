@@ -138,6 +138,8 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_Ma_1vs20 = "(Ma1.20)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs50 = "(Ma1.50)";
 
+    public static final String TEXT_SWITCH_TREND_SEQUENTIAL_1020 = "(SEQ1020)";
+
     public static final String TEXT_SWITCH_TREND_50 = "(~50~)";
     public static final String TEXT_SWITCH_TREND_HEIKEN = "(Heiken)";
 
@@ -224,6 +226,8 @@ public class Utils {
     // "ENG", "BFP", "E8F", "AUDA", "FTUK"
     // public static String MT5_COMPANY_NEXT = "608AB61EFF9C7B3585EC08B8CF6800E3";
     // // FundedNext
+
+    // 5 quỹ PAYOUT tốt nhất hiện nay : FTMO / 5er / TFT / CTI / TFF
     public static String MT5_COMPANY_FTMO_PC = "65FD2FDEC48B475B974F37EDB7D542A5"; // FTMO (PC)
     public static String MT5_COMPANY_FTMO_DE = "49CDDEAA95A409ED22BD2287BB67CB9C"; // FTMO (DESTOP)
 
@@ -3756,6 +3760,79 @@ public class Utils {
         return allow_trade;
     }
 
+    public static String switch_trend_sequential_10_20_50(List<BtcFutures> heiken_list) {
+        String result = "";
+        if (heiken_list.size() < 50) {
+            return result;
+        }
+
+        String switch_trend = switchTrendByMa1(heiken_list, 1, 10, 50, "(Ma1vs10to50)");
+        if (Utils.isNotBlank(switch_trend)) {
+            List<BigDecimal> lohi = getLowHighCandle(heiken_list.subList(1, 2));
+            BigDecimal low = lohi.get(0);
+            BigDecimal hig = lohi.get(1);
+
+            BigDecimal ma01_0 = calcMA(heiken_list, 01, 1);
+            BigDecimal ma10_0 = calcMA(heiken_list, 10, 1);
+            BigDecimal ma20_0 = calcMA(heiken_list, 20, 1);
+
+            boolean is_ma_10_20_inside_lohi = (ma01_0.compareTo(low) > 0) && (ma10_0.compareTo(low) > 0)
+                    && (ma20_0.compareTo(low) > 0)
+                    && (hig.compareTo(ma01_0) > 0) && (hig.compareTo(ma10_0) > 0) && (hig.compareTo(ma20_0) > 0);
+
+            if (switch_trend.contains(Utils.TREND_LONG) && is_ma_10_20_inside_lohi) {
+                if ((ma01_0.compareTo(ma10_0) > 0) && (ma10_0.compareTo(ma20_0) > 0)) {
+                    result = Utils.TREND_LONG;
+                }
+            }
+            if (switch_trend.contains(Utils.TREND_SHOT) && is_ma_10_20_inside_lohi) {
+                if ((ma01_0.compareTo(ma10_0) < 0) && (ma10_0.compareTo(ma20_0) < 0)) {
+                    result = Utils.TREND_SHOT;
+                }
+            }
+
+            // -------------------------------------------------------------------------------------
+
+            if (Utils.isBlank(result)) {
+                lohi = getLowHighCandle(heiken_list.subList(0, 2));
+                low = lohi.get(0);
+                hig = lohi.get(1);
+
+                BigDecimal ma10_1 = calcMA(heiken_list, 10, 2);
+                BigDecimal ma20_1 = calcMA(heiken_list, 20, 2);
+
+                BigDecimal ma50_1 = calcMA(heiken_list, 50, 1);
+
+                is_ma_10_20_inside_lohi = (ma10_0.compareTo(low) > 0) && (ma10_1.compareTo(low) > 0)
+                        && (ma20_0.compareTo(low) > 0) && (ma20_1.compareTo(low) > 0)
+                        && (hig.compareTo(ma10_0) > 0) && (hig.compareTo(ma10_1) > 0) && (hig.compareTo(ma20_0) > 0)
+                        && (hig.compareTo(ma20_1) > 0);
+
+                if (switch_trend.contains(Utils.TREND_LONG) && is_ma_10_20_inside_lohi) {
+                    if ((ma01_0.compareTo(ma10_0) > 0) && (ma01_0.compareTo(ma10_1) > 0)
+                            && (ma01_0.compareTo(ma20_0) > 0) && (ma01_0.compareTo(ma20_1) > 0)
+                            && (ma01_0.compareTo(ma50_1) > 0)) {
+                        result = Utils.TREND_LONG;
+                    }
+                }
+                if (switch_trend.contains(Utils.TREND_SHOT) && is_ma_10_20_inside_lohi) {
+                    if ((ma01_0.compareTo(ma10_0) < 0) && (ma01_0.compareTo(ma10_1) < 0)
+                            && (ma01_0.compareTo(ma20_0) < 0) && (ma01_0.compareTo(ma20_1) < 0)
+                            && (ma01_0.compareTo(ma50_1) < 0)) {
+                        result = Utils.TREND_SHOT;
+                    }
+                }
+            }
+        }
+
+        if (isNotBlank(result)) {
+            String chart_name = getChartName(heiken_list).trim();
+            result = chart_name + TEXT_SWITCH_TREND_SEQUENTIAL_1020 + ":" + Utils.appendSpace(result, 4);
+        }
+
+        return result;
+    }
+
     public static String switchTrendByMa1vs10(List<BtcFutures> heiken_list) {
         String sw_1 = switchTrendByMa1(heiken_list, 1, 10, 12, TEXT_SWITCH_TREND_Ma_1vs10);
         String sw_0 = switchTrendByMa1(heiken_list, 0, 10, 12, TEXT_SWITCH_TREND_Ma_1vs10);
@@ -4651,6 +4728,13 @@ public class Utils {
     // if (ma1_10_50 || ma6_10_50) {
     // allow_trade_by_ma1_6_10_50 = true;
     // }
+
+    public static String get_seq_chart(Orders dto_xx) {
+        return dto_xx.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_SEQUENTIAL_1020)
+                ? getChartName(dto_xx.getId()).toLowerCase().replace("(", "").replace(")", "").trim()
+                        + Utils.getType(dto_xx.getTrend_heiken())
+                : "     ";
+    }
 
     // [1W=1D=12H 8H=4H=2H=30] {D1~H12~H8~H4~H2~30}
     public static String getPrefix_FollowTrackingTrend(String EPIC, int count,
