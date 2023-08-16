@@ -3809,8 +3809,8 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------------------
 
             String switch_d1 = dto_d1.getSwitch_trend().trim();
-            String switch_h4 = dto_h4.getSwitch_trend().trim();
-            String switch_h1 = dto_h1.getSwitch_trend().trim();
+            String switch_h4 = Objects.equals(dto_d1.getTrend_by_ma10(), trend_h4) ? dto_h4.getSwitch_trend() : "";
+            String switch_h1 = Objects.equals(dto_d1.getTrend_by_ma10(), trend_h1) ? dto_h1.getSwitch_trend() : "";
 
             String eoz = "";
             eoz += "  EOZ:";
@@ -3884,10 +3884,10 @@ public class BinanceServiceImpl implements BinanceService {
                     trend_h4, trend_h1, "", switch_w1, switch_d1, switch_h4, switch_h1, dto_d1.getTrend_heiken());
 
             String seq = "[SEQ:";
-            seq += Utils.get_seq_chart(dto_d1);
-            seq += Utils.get_seq_chart(dto_h4);
-            seq += Utils.get_seq_chart(dto_h2);
-            seq += Utils.get_seq_chart(dto_h1);
+            seq += Objects.equals(trend_d1, dto_d1.getTrend_by_ma10()) ? Utils.get_seq_chart(dto_d1) : "     ";
+            seq += Objects.equals(trend_h4, dto_d1.getTrend_by_ma10()) ? Utils.get_seq_chart(dto_h4) : "     ";
+            seq += Objects.equals(trend_h2, dto_d1.getTrend_by_ma10()) ? Utils.get_seq_chart(dto_h2) : "     ";
+            seq += Objects.equals(trend_h1, dto_d1.getTrend_by_ma10()) ? Utils.get_seq_chart(dto_h1) : "     ";
             seq += "]  ";
 
             eoz += seq;
