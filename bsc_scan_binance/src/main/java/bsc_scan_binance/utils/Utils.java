@@ -1867,6 +1867,31 @@ public class Utils {
 
     }
 
+    public static String get_duration_trade_time(Mt5OpenTradeEntity trade) {
+        String time = "";
+        String insert_time = Utils.getStringValue(trade.getOpenTime());
+        if (Utils.isNotBlank(insert_time)) {
+            LocalDateTime pre_time = LocalDateTime.parse(insert_time);
+            Duration duration = Duration.between(pre_time, LocalDateTime.now());
+            long elapsedMinutes = duration.toMinutes();
+
+            int days = Integer.valueOf(String.valueOf(elapsedMinutes)) / 1440;
+            int hours = Integer.valueOf(Integer.valueOf(String.valueOf(elapsedMinutes)) % 1440) / 60;
+            int minutes = Integer.valueOf(String.valueOf(elapsedMinutes)) % 60;
+
+            time = Utils.appendLeft(String.valueOf(minutes), 2, "0") + "m";
+            time = Utils.appendLeft(String.valueOf(hours), 2, "0") + "h:" + time;
+
+            if (days > 0) {
+                time = Utils.appendLeft(String.valueOf(days), 2) + "d:" + time;
+            } else {
+                time = "    " + time;
+            }
+        }
+
+        return time;
+    }
+
     public static String toMillions(Object value) {
         BigDecimal val = getBigDecimal(value);
         val = val.divide(BigDecimal.valueOf(1000000), 2, RoundingMode.CEILING);
@@ -4077,17 +4102,18 @@ public class Utils {
         return msg;
     }
 
-    public static String createCloseTradeMsg(Mt5OpenTradeEntity dto, String prefix, String reason) {
+    public static String createCloseTradeMsg(Mt5OpenTradeEntity trade, String prefix, String reason) {
         String msg = Utils.appendSpace("", 10) + "(CloseMsg)   " + prefix;
-        msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getType(), 4, "_") + ")", 15);
-        msg += Utils.appendSpace(dto.getSymbol(), 10) + new_line_from_service + " ";
-        msg += Utils.appendSpace(reason, 30);
-        msg += " :Ticket: " + Utils.appendSpace(dto.getTicket(), 15);
-        msg += " Profit:" + Utils.appendLeft(Utils.getStringValue(dto.getProfit().intValue()), 6) + "   ";
-        msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStopLoss()), 10);
-        msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getVolume()), 10) + "(lot)   ";
-        msg += Utils.appendSpace(Utils.getCapitalLink(dto.getSymbol()), 62);
-        msg += Utils.appendSpace(dto.getComment(), 35);
+        msg += Utils.appendSpace("(" + Utils.appendSpace(trade.getType(), 4, "_") + ")", 15);
+        msg += Utils.appendSpace(trade.getSymbol(), 10) + new_line_from_service + " ";
+        msg += Utils.appendSpace(reason + " " + Utils.get_duration_trade_time(trade), 30);
+
+        msg += " :Ticket: " + Utils.appendSpace(trade.getTicket(), 15);
+        msg += " Profit:" + Utils.appendLeft(Utils.getStringValue(trade.getProfit().intValue()), 6) + "   ";
+        msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(trade.getStopLoss()), 10);
+        msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(trade.getVolume()), 10) + "(lot)   ";
+        msg += Utils.appendSpace(Utils.getCapitalLink(trade.getSymbol()), 62);
+        msg += Utils.appendSpace(trade.getComment(), 35);
 
         return msg;
     }

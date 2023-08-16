@@ -3197,30 +3197,7 @@ public class BinanceServiceImpl implements BinanceService {
                 BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
                 String TRADE_TREND = trade.getType().toUpperCase();
                 // --------------------------------------------------------------------------
-                String time = "";
-                String insert_time = Utils.getStringValue(trade.getOpenTime());
-                if (Utils.isNotBlank(insert_time)) {
-                    LocalDateTime pre_time = LocalDateTime.parse(insert_time);
-                    Duration duration = Duration.between(pre_time, LocalDateTime.now());
-                    long elapsedMinutes = duration.toMinutes();
 
-                    int days = Integer.valueOf(String.valueOf(elapsedMinutes)) / 1440;
-                    int hours = Integer.valueOf(Integer.valueOf(String.valueOf(elapsedMinutes)) % 1440) / 60;
-                    int minutes = Integer.valueOf(String.valueOf(elapsedMinutes)) % 60;
-
-                    time = Utils.appendLeft(String.valueOf(minutes), 2, "0") + "m";
-                    if (hours > 0) {
-                        time = Utils.appendLeft(String.valueOf(hours), 2, "0") + "h:" + time;
-                    } else {
-                        time = "    " + time;
-                    }
-
-                    if (days > 0) {
-                        time = Utils.appendLeft(String.valueOf(days), 2) + "d:" + time;
-                    } else {
-                        time = "    " + time;
-                    }
-                }
                 // --------------------------------------------------------------------------
                 String result = "";
                 result += Utils.appendLeft("Trade:" + Utils.appendLeft(String.valueOf(count), 3), 15) + ". ";
@@ -3232,7 +3209,8 @@ public class BinanceServiceImpl implements BinanceService {
                 result += "   Vol:" + Utils.appendLeft(Utils.removeLastZero(trade.getVolume()), 6);
                 result += "   (Profit):" + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 6) + "$";
 
-                result += "    " + Utils.appendSpace(time + "   " + trade.getComment(), 55);
+                result += "    "
+                        + Utils.appendSpace(Utils.get_duration_trade_time(trade) + "   " + trade.getComment(), 55);
                 // result += " " + Utils.appendSpace(multi_timeframes, 55);
 
                 result += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62);
@@ -3900,7 +3878,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String key = EPIC + Utils.CAPITAL_TIME_H1;
                 String type_h1 = Objects.equals(trend_h1, Utils.TREND_LONG) ? "_b" : "_s";
 
-                if ((follow_trend_d1_ma10 || follow_trend_h4_ma10) && is_tradable_zone) {
+                if (follow_trend_d1_ma10 && follow_trend_h4_ma10 && is_tradable_zone) {
                     append = type_h1 + Utils.TEXT_PASS;
                 } else {
                     append = type_h1 + Utils.TEXT_NOTICE_ONLY + " " + eoz;
@@ -4025,8 +4003,11 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
+            Orders dto_30 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
+            Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
 
-            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
+            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_30)
+                    || Objects.isNull(dto_15)) {
                 String d1 = "D1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
                 String h4 = "H4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
                 String h1 = "H1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
@@ -4041,16 +4022,20 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
-            boolean enough_one_meal = (PROFIT.compareTo(BigDecimal.valueOf(20)) > 0);
+            boolean enough_a_meal = (PROFIT.compareTo(BigDecimal.valueOf(20)) > 0);
+            boolean lose_a_meal = (PROFIT.add(BigDecimal.valueOf(20)).compareTo(BigDecimal.ZERO) < 0);
             // ---------------------------------------------------------------------------------
             boolean is_reverse_h1 = false;
-            if (Objects.equals(dto_h1.getTrend_heiken(), REVERSE_TRADE_TREND)
+            if (Objects.equals(dto_h4.getTrend_heiken(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h1.getTrend_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_by_ma10(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h4.getTrend_heiken(), REVERSE_TRADE_TREND)) {
+                    && Objects.equals(dto_30.getTrend_heiken(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_15.getTrend_heiken(), REVERSE_TRADE_TREND)) {
                 is_reverse_h1 = true;
             }
+
             boolean is_reverse_h4 = false;
-            if (Objects.equals(dto_h1.getTrend_heiken(), REVERSE_TRADE_TREND)
+            if (is_reverse_h1
                     && Objects.equals(dto_h4.getTrend_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND)
                     && allow_close_trade_after(TICKET, Utils.MINUTES_OF_8H)) {
@@ -4058,10 +4043,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ---------------------------------------------------------------------------------
             boolean take_profit = false;
-            if (is_reverse_h1 && enough_one_meal && Utils.isCloseTradeWeekEnd()) {
+            if (is_reverse_h1 && enough_a_meal && Utils.isCloseTradeWeekEnd()) {
                 take_profit = true;
             }
-            if (is_reverse_h4 && enough_one_meal) {
+            if (is_reverse_h4 && enough_a_meal) {
                 take_profit = true;
             }
             if (PROFIT.compareTo(Utils.RISK_0_05_PERCENT) > 0) {
@@ -4070,26 +4055,23 @@ public class BinanceServiceImpl implements BinanceService {
                     take_profit = true;
                 }
             }
-
             // ---------------------------------------------------------------------------------
             boolean is_hit_sl = false;
             if ((trade.getStopLoss().compareTo(BigDecimal.ZERO) == 0)
                     && PROFIT.add(Utils.RISK_0_05_PERCENT).compareTo(BigDecimal.ZERO) < 0) {
                 is_hit_sl = true;
             }
-
+            if (is_reverse_h4 && lose_a_meal) {
+                is_hit_sl = true;
+            }
             // ---------------------------------------------------------------------------------
             String timeframe = trade.getTimeframe();
             if (Objects.equals(timeframe, Utils.CAPITAL_TIME_H1)) {
-                is_reverse_h1 = false;
-
-                if (Objects.equals(dto_h4.getTrend_heiken(), REVERSE_TRADE_TREND)
-                        && Objects.equals(dto_h1.getTrend_heiken(), REVERSE_TRADE_TREND)
-                        && Objects.equals(dto_h1.getTrend_by_ma10(), REVERSE_TRADE_TREND)) {
-                    is_reverse_h1 = true;
-                }
-                if (is_reverse_h1 && enough_one_meal) {
+                if (is_reverse_h1 && enough_a_meal) {
                     take_profit = true;
+                }
+                if (is_reverse_h1 && lose_a_meal) {
+                    is_hit_sl = true;
                 }
             }
 
@@ -4128,7 +4110,7 @@ public class BinanceServiceImpl implements BinanceService {
                         msg += Utils.getStringValue(trade.getProfit().intValue()) + "$:" + reason
                                 + Utils.new_line_from_service;
                     }
-                } else if (is_reverse_h1) {
+                } else if (is_reverse_h1 && allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
 
                     String log = Utils.createCloseTradeMsg(trade, "Must Close: ", "reverse_h1");
                     Utils.logWritelnDraft(log);
