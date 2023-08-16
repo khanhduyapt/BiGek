@@ -4000,6 +4000,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+            Orders dto_h2 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H2).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_30 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_30).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
@@ -4008,9 +4009,13 @@ public class BinanceServiceImpl implements BinanceService {
                     || Objects.isNull(dto_15)) {
                 String d1 = "D1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
                 String h4 = "H4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
+                String h2 = "H2:" + (Objects.isNull(dto_h2) ? "null" : "    ");
                 String h1 = "H1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
+                String m30 = "30:" + (Objects.isNull(dto_30) ? "null" : "    ");
+                String m15 = "15:" + (Objects.isNull(dto_15) ? "null" : "    ");
                 Utils.logWritelnDraft(
-                        String.format("[controlMt5] dto (%s):  %s, %s, %s.", Utils.appendSpace(EPIC, 10), d1, h4, h1));
+                        String.format("[controlMt5] dto (%s):  %s, %s, %s, %s, %s, %s.", Utils.appendSpace(EPIC, 10),
+                                d1, h4, h2, h1, m30, m15));
 
                 continue;
             }
@@ -4027,6 +4032,8 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------
             boolean is_reverse_h1 = false;
             if (Objects.equals(dto_h4.getTrend_heiken(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h2.getTrend_heiken(), REVERSE_TRADE_TREND)
+
                     && Objects.equals(dto_h1.getTrend_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_by_ma10(), REVERSE_TRADE_TREND)
 
@@ -4040,6 +4047,9 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean is_reverse_h4 = false;
             if (is_reverse_h1
+                    && Objects.equals(dto_h2.getTrend_heiken(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h2.getTrend_by_ma10(), REVERSE_TRADE_TREND)
+
                     && Objects.equals(dto_h4.getTrend_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_by_ma10(), REVERSE_TRADE_TREND)) {
                 is_reverse_h4 = true;

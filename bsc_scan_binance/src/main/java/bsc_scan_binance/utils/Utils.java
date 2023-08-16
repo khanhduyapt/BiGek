@@ -2778,7 +2778,7 @@ public class Utils {
         }
 
         BigDecimal ma = calcMA(list, length, 1);
-        BigDecimal price = list.get(0).getPrice_close_candle();
+        BigDecimal price = list.get(1).getPrice_close_candle();
 
         if ((price.compareTo(ma) > 0)) {
             return true;
@@ -2800,7 +2800,7 @@ public class Utils {
         }
 
         BigDecimal ma = calcMA(list, length, 1);
-        BigDecimal price = list.get(0).getPrice_close_candle();
+        BigDecimal price = list.get(1).getPrice_close_candle();
 
         if ((price.compareTo(ma) < 0)) {
             return true;
