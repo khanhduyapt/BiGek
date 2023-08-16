@@ -51,7 +51,7 @@ void OnTimer(void)
 
       Comment("-----------------------------StockMarket: (Symbol):" + Symbol());
 
-      int stocks_copied;
+      int copied;
       int stocks_size = ArraySize(arr_stocks);
       for(int index=0; index < stocks_size; index++)
         {
@@ -68,10 +68,10 @@ void OnTimer(void)
          /*
          MqlRates rates_month[];
          ArraySetAsSeries(rates_month,true);
-         stocks_copied=CopyRates(symbol, PERIOD_MN1, 0, 10, rates_month);
-         if(stocks_copied>0)
+         copied=CopyRates(symbol, PERIOD_MN1, 0, 10, rates_month);
+         if(copied>0)
            {
-            int size=fmin(stocks_copied, 10);
+            int size=fmin(copied, 10);
             for(int i=0; i<size; i++)
               {
                FileWrite(nfile_handle, symbol, "MONTH", rates_month[i].time, rates_month[i].open, rates_month[i].high, rates_month[i].low, rates_month[i].close, current_price);
@@ -85,10 +85,10 @@ void OnTimer(void)
          //---------------------------------------------
          MqlRates rates_w1[];
          ArraySetAsSeries(rates_w1,true);
-         stocks_copied=CopyRates(symbol, PERIOD_W1, 0, 10, rates_w1);
-         if(stocks_copied>0)
+         copied=CopyRates(symbol, PERIOD_W1, 0, 10, rates_w1);
+         if(copied>0)
            {
-            int size=fmin(stocks_copied, 10);
+            int size=fmin(copied, 10);
             for(int i=0; i<size; i++)
               {
                FileWrite(nfile_handle, symbol, "WEEK", rates_w1[i].time, rates_w1[i].open, rates_w1[i].high, rates_w1[i].low, rates_w1[i].close, current_price);
@@ -101,10 +101,10 @@ void OnTimer(void)
          //---------------------------------------------
          MqlRates rates_d1[];
          ArraySetAsSeries(rates_d1,true);
-         stocks_copied=CopyRates(symbol, PERIOD_D1, 0, 15, rates_d1);
-         if(stocks_copied>0)
+         copied=CopyRates(symbol, PERIOD_D1, 0, 55, rates_d1);
+         if(copied>0)
            {
-            int size=fmin(stocks_copied, 55);
+            int size=fmin(copied, 55);
             for(int i=0; i<size; i++)
               {
                FileWrite(nfile_handle, symbol, "DAY", rates_d1[i].time, rates_d1[i].open, rates_d1[i].high, rates_d1[i].low, rates_d1[i].close, current_price);
@@ -117,10 +117,10 @@ void OnTimer(void)
          //---------------------------------------------
          MqlRates rates_h4[];
          ArraySetAsSeries(rates_h4,true);
-         stocks_copied=CopyRates(symbol, PERIOD_H4, 0, 55, rates_h4);
-         if(stocks_copied>0)
+         copied=CopyRates(symbol, PERIOD_H4, 0, 55, rates_h4);
+         if(copied>0)
            {
-            int size=fmin(stocks_copied, 55);
+            int size=fmin(copied, 55);
             for(int i=0; i<size; i++)
               {
                FileWrite(nfile_handle, symbol, "HOUR_04", rates_h4[i].time, rates_h4[i].open, rates_h4[i].high, rates_h4[i].low, rates_h4[i].close, current_price);
@@ -133,10 +133,10 @@ void OnTimer(void)
          //---------------------------------------------
          MqlRates rates_h2[];
          ArraySetAsSeries(rates_h2,true);
-         stocks_copied=CopyRates(symbol, PERIOD_H2, 0, 55, rates_h2);
-         if(stocks_copied>0)
+         copied=CopyRates(symbol, PERIOD_H2, 0, 55, rates_h2);
+         if(copied>0)
            {
-            int size=fmin(stocks_copied, 55);
+            int size=fmin(copied, 55);
             for(int i=0; i<size; i++)
               {
                FileWrite(nfile_handle, symbol, "HOUR_02", rates_h2[i].time, rates_h2[i].open, rates_h2[i].high, rates_h2[i].low, rates_h2[i].close, current_price);
@@ -149,10 +149,10 @@ void OnTimer(void)
          //---------------------------------------------
          MqlRates rates_h1[];
          ArraySetAsSeries(rates_h1,true);
-         stocks_copied=CopyRates(symbol, PERIOD_H1, 0, 55, rates_h1);
-         if(stocks_copied>0)
+         copied=CopyRates(symbol, PERIOD_H1, 0, 55, rates_h1);
+         if(copied>0)
            {
-            int size=fmin(stocks_copied, 55);
+            int size=fmin(copied, 55);
             for(int i=0; i<size; i++)
               {
                FileWrite(nfile_handle, symbol, "HOUR_01", rates_h1[i].time, rates_h1[i].open, rates_h1[i].high, rates_h1[i].low, rates_h1[i].close, current_price);
@@ -163,13 +163,28 @@ void OnTimer(void)
             FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_H1");
            }
          //---------------------------------------------
-         /*
+         MqlRates rates_30[];
+         ArraySetAsSeries(rates_30,true);
+         copied=CopyRates(symbol, PERIOD_M30, 0, 55, rates_30);
+         if(copied>0)
+           {
+            int size=fmin(copied, 55);
+            for(int i=0; i<size; i++)
+              {
+               FileWrite(nfile_handle, symbol, "MINUTE_30", rates_30[i].time, rates_30[i].open, rates_30[i].high, rates_30[i].low, rates_30[i].close, current_price);
+              }
+           }
+         else
+           {
+            FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M30");
+           }
+         //---------------------------------------------
          MqlRates rates_15[];
          ArraySetAsSeries(rates_15,true);
-         stocks_copied=CopyRates(symbol, PERIOD_M15, 0, 55, rates_15);
-         if(stocks_copied>0)
+         copied=CopyRates(symbol, PERIOD_M15, 0, 55, rates_15);
+         if(copied>0)
            {
-            int size=fmin(stocks_copied, 55);
+            int size=fmin(copied, 55);
             for(int i=0; i<size; i++)
               {
                FileWrite(nfile_handle, symbol, "MINUTE_15", rates_15[i].time, rates_15[i].open, rates_15[i].high, rates_15[i].low, rates_15[i].close, current_price);
@@ -179,7 +194,6 @@ void OnTimer(void)
            {
             FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M15");
            }
-           */
          //---------------------------------------------
 
         } //for
