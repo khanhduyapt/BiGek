@@ -3876,7 +3876,8 @@ public class BinanceServiceImpl implements BinanceService {
                 if (follow_trend_d1_ma10 && follow_trend_h4_ma10 && is_tradable_zone) {
                     is_trade_now = true;
                     append = type_h1 + Utils.TEXT_PASS + "_d";
-                } else if (follow_trend_h4_ma10) {
+                } else if (follow_trend_d1_ma10 || follow_trend_h4_ma10) {
+                    is_trade_now = true;
                     append = type_h1 + Utils.TEXT_PASS + "_h";
                 } else {
                     append = type_h1 + Utils.TEXT_NOTICE_ONLY + " " + eoz;
