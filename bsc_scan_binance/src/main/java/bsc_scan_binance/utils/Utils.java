@@ -188,7 +188,7 @@ public class Utils {
     public static final String CRYPTO_TIME_W1 = "1w";
     public static final String CRYPTO_TIME_MO = "1M";
 
-    public static final String PREFIX_05_ = "_5m_";
+    public static final String PREFIX_05_ = "_05m_";
     public static final String PREFIX_15_ = "_15m_";
     public static final String PREFIX_30_ = "_30m_";
     public static final String PREFIX_H1_ = "_1h_";
@@ -1493,18 +1493,28 @@ public class Utils {
 
     public static void logWritelnDraft(String text) {
         try {
+            String prifix = BscScanBinanceApplication.hostname + Utils.getMmDD_TimeHHmm() + " ";
+
             String logFilePath = getDraftLogFile();
             String msg = text.trim();
             if (Utils.isNotBlank(msg)) {
                 if (Objects.equals(text, "...")) {
+
                     msg = Utils.appendSpace("", 363, "_");
+
                 } else if (text.length() > 10 && isBlank(text.substring(0, 10))) {
-                    msg = Utils.appendLeft("",
-                            (BscScanBinanceApplication.hostname + Utils.getMmDD_TimeHHmm() + " ").length())
+
+                    msg = Utils.appendLeft("", prifix.length())
                             + text.replace(Utils.new_line_from_service, "  ");
+
+                } else if (text.contains(">")) {
+
+                    msg = Utils.appendLeft("", prifix.length(), ">")
+                            + text.replace(Utils.new_line_from_service, "  ");
+
                 } else {
-                    msg = BscScanBinanceApplication.hostname + Utils.getMmDD_TimeHHmm() + " "
-                            + text.replace(Utils.new_line_from_service, "  ");
+
+                    msg = prifix + text.replace(Utils.new_line_from_service, "  ");
                 }
             }
 
@@ -2778,11 +2788,11 @@ public class Utils {
             return false;
         }
 
-        int candle_no = 1;
+        int candle_no = 0;
         String id = list.get(0).getId();
         if (id.contains("MINUTE_") || id.contains("HOUR_01") || id.contains("HOUR_02")
                 || id.contains("m_") || id.contains("_1h_") || id.contains("_2h_")) {
-            candle_no = 0;
+            // candle_no = 1;
         }
 
         BigDecimal ma = calcMA(list, length, candle_no);
@@ -4476,7 +4486,6 @@ public class Utils {
     }
 
     public static String getTrendByMaXx(List<BtcFutures> heiken_list, int maIndex) {
-
         return isAboveMALine(heiken_list, maIndex) ? Utils.TREND_LONG : Utils.TREND_SHOT;
     }
 
@@ -4747,11 +4756,22 @@ public class Utils {
     // allow_trade_by_ma1_6_10_50 = true;
     // }
 
-    public static String get_seq_chart(Orders dto_xx) {
-        return dto_xx.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_SEQ_1020)
-                ? getChartName(dto_xx.getId()).toLowerCase().replace("(", "").replace(")", "").trim()
-                        + Utils.getType(dto_xx.getTrend_heiken())
-                : "     ";
+    public static String get_seq_chart(Orders dto_xx, String find_trend) {
+        String result = "";
+
+        if (Objects.equals(dto_xx.getTrend_heiken(), find_trend)) {
+            String type = Utils.getType(dto_xx.getTrend_heiken()).replace("(", "_").replace(")", "_").toUpperCase();
+            String chart_name = getChartName(dto_xx.getId()).toLowerCase().replace("(", "").replace(")", "").trim();
+
+            if (dto_xx.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_SEQ_1020)) {
+                result = chart_name + type + "se";
+
+            } else if (dto_xx.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10)) {
+                result = chart_name + type + "ma";
+            }
+        }
+
+        return Utils.appendSpace(result, 8);
     }
 
     // [1W=1D=12H 8H=4H=2H=30] {D1~H12~H8~H4~H2~30}
@@ -4784,37 +4804,11 @@ public class Utils {
         if (!Objects.equals(trend_d1_ma10, trend_h1)) {
             prefix_trend = prefix_trend.replace("H1]", "--]");
         }
-        prefix_trend = prefix_trend + "   D10:" + appendSpace(trend_d1_ma10, 5);
 
         // --------------------------------------------
-        String switch_trend = "{";
-        if (switch_d1.contains(trend_d1_ma10)) {
-            switch_trend += getTrendPrefix("D1", switch_d1, " ");
-        } else {
-            switch_trend += getTrendPrefix("D1", "", " ");
-        }
 
-        if (switch_h4.contains(trend_h4)) {
-            switch_trend += getTrendPrefix("H4", switch_h4, " ");
-        } else {
-            switch_trend += getTrendPrefix("H4", "", " ");
-        }
-
-        if (switch_h2.contains(trend_d1_ma10)) {
-            switch_trend += getTrendPrefix("H2", switch_h2, " ");
-        } else {
-            switch_trend += getTrendPrefix("H2", "", " ");
-        }
-
-        if (switch_h1.contains(trend_d1_ma10)) {
-            switch_trend += getTrendPrefix("H1", switch_h1, " ");
-        } else {
-            switch_trend += getTrendPrefix("H1", "", " ");
-        }
-
-        switch_trend += "}     ";
         // --------------------------------------------
-        String result = No + prefix_trend + switch_trend;
+        String result = No + prefix_trend;
 
         return result;
     }
