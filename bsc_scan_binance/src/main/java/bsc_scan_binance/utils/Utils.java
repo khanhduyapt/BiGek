@@ -139,6 +139,7 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_Ma_1vs50 = "(Ma1.50)";
 
     public static final String TEXT_SWITCH_TREND_SEQ_1020 = "(SEQ1020)";
+    public static final String TEXT_SWITCH_TREND_SEQ_1050 = "(SEQ1050)";
 
     public static final String TEXT_SWITCH_TREND_50 = "(~50~)";
     public static final String TEXT_SWITCH_TREND_HEIKEN = "(Heiken)";
@@ -188,16 +189,16 @@ public class Utils {
     public static final String CRYPTO_TIME_W1 = "1w";
     public static final String CRYPTO_TIME_MO = "1M";
 
-    public static final String PREFIX_05_ = "_05m_";
-    public static final String PREFIX_15_ = "_15m_";
-    public static final String PREFIX_30_ = "_30m_";
-    public static final String PREFIX_H1_ = "_01h_";
-    public static final String PREFIX_H2_ = "_02h_";
-    public static final String PREFIX_H4_ = "_04h_";
-    public static final String PREFIX_H12 = "_12h_";
-    public static final String PREFIX_D1_ = "_01d_";
-    public static final String PREFIX_W1_ = "_01w_";
-    public static final String PREFIX_MO_ = "_1mo_";
+    public static final String PREFIX_05_ = "_05m";
+    public static final String PREFIX_15_ = "_15m";
+    public static final String PREFIX_30_ = "_30m";
+    public static final String PREFIX_H1_ = "_01h";
+    public static final String PREFIX_H2_ = "_02h";
+    public static final String PREFIX_H4_ = "_04h";
+    public static final String PREFIX_H12 = "_12h";
+    public static final String PREFIX_D1_ = "_01d";
+    public static final String PREFIX_W1_ = "_01w";
+    public static final String PREFIX_MO_ = "_1mo";
 
     public static final String ENCRYPTED_05 = "naph";
     public static final String ENCRYPTED_15 = "mnph";
@@ -3778,7 +3779,7 @@ public class Utils {
         return allow_trade;
     }
 
-    public static String switch_trend_sequential_10_20_50(List<BtcFutures> heiken_list) {
+    public static String switch_trend_seq_10_20(List<BtcFutures> heiken_list) {
         String result = "";
         if (heiken_list.size() < 20) {
             return result;
@@ -3820,43 +3821,67 @@ public class Utils {
                     result = Utils.TREND_SHOT;
                 }
             }
+        }
 
-            // -------------------------------------------------------------------------------------
+        if (isNotBlank(result)) {
+            String chart_name = getChartName(heiken_list).trim();
+            result = chart_name + TEXT_SWITCH_TREND_SEQ_1020 + ":" + Utils.appendSpace(result, 4);
+        }
 
-            if (Utils.isBlank(result + "NEXT")) {
-                lohi = getLowHighCandle(heiken_list.subList(0, 2));
-                low = lohi.get(0);
-                hig = lohi.get(1);
+        return result;
+    }
 
-                BigDecimal ma10_1 = calcMA(heiken_list, 10, 2);
-                BigDecimal ma20_1 = calcMA(heiken_list, 20, 2);
+    public static String switch_trend_seq_10_20_50(List<BtcFutures> heiken_list) {
+        String result = "";
+        if (heiken_list.size() < 20) {
+            return result;
+        }
 
-                BigDecimal ma50_1 = calcMA(heiken_list, 50, 1);
+        String heiken_0 = getTrendByHekenAshiList(heiken_list, 0);
+        String heiken_1 = getTrendByHekenAshiList(heiken_list, 1);
+        if (!Objects.equals(heiken_0, heiken_1)) {
+            return "";
+        }
 
-                inside_lohi = (ma10_0.compareTo(low) > 0) && (ma10_1.compareTo(low) > 0) && (ma20_0.compareTo(low) > 0)
-                        && (ma20_1.compareTo(low) > 0) && (hig.compareTo(ma10_0) > 0) && (hig.compareTo(ma10_1) > 0)
-                        && (hig.compareTo(ma20_0) > 0) && (hig.compareTo(ma20_1) > 0);
+        String switch_trend = switchTrendByMa1(heiken_list, 1, 10, heiken_list.size(), "(Ma1vs10to50)");
+        if (Utils.isNotBlank(switch_trend)) {
+            List<BigDecimal> lohi = getLowHighCandle(heiken_list.subList(0, 2));
+            BigDecimal low = lohi.get(0);
+            BigDecimal hig = lohi.get(1);
 
-                if (switch_trend.contains(Utils.TREND_LONG) && inside_lohi) {
-                    if ((ma01_0.compareTo(ma10_0) > 0) && (ma01_0.compareTo(ma10_1) > 0)
-                            && (ma01_0.compareTo(ma20_0) > 0) && (ma01_0.compareTo(ma20_1) > 0)
-                            && (ma01_0.compareTo(ma50_1) > 0)) {
-                        result = Utils.TREND_LONG;
-                    }
+            BigDecimal ma01_0 = calcMA(heiken_list, 01, 1);
+            BigDecimal ma10_0 = calcMA(heiken_list, 10, 1);
+            BigDecimal ma10_1 = calcMA(heiken_list, 10, 2);
+
+            BigDecimal ma20_0 = calcMA(heiken_list, 20, 1);
+            BigDecimal ma20_1 = calcMA(heiken_list, 20, 2);
+
+            BigDecimal ma50_1 = calcMA(heiken_list, 50, 1);
+
+            boolean inside_lohi = true;
+            inside_lohi &= (ma10_0.compareTo(low) > 0) && (ma10_1.compareTo(low) > 0) && (ma20_0.compareTo(low) > 0)
+                    && (ma20_1.compareTo(low) > 0);
+            inside_lohi &= (hig.compareTo(ma10_0) > 0) && (hig.compareTo(ma10_1) > 0) && (hig.compareTo(ma20_0) > 0)
+                    && (hig.compareTo(ma20_1) > 0);
+
+            if (switch_trend.contains(Utils.TREND_LONG) && inside_lohi) {
+                if ((ma01_0.compareTo(ma10_0) > 0) && (ma01_0.compareTo(ma10_1) > 0) && (ma01_0.compareTo(ma20_0) > 0)
+                        && (ma01_0.compareTo(ma20_1) > 0) && (ma01_0.compareTo(ma50_1) > 0)) {
+                    result = Utils.TREND_LONG;
                 }
-                if (switch_trend.contains(Utils.TREND_SHOT) && inside_lohi) {
-                    if ((ma01_0.compareTo(ma10_0) < 0) && (ma01_0.compareTo(ma10_1) < 0)
-                            && (ma01_0.compareTo(ma20_0) < 0) && (ma01_0.compareTo(ma20_1) < 0)
-                            && (ma01_0.compareTo(ma50_1) < 0)) {
-                        result = Utils.TREND_SHOT;
-                    }
+            }
+
+            if (switch_trend.contains(Utils.TREND_SHOT) && inside_lohi) {
+                if ((ma01_0.compareTo(ma10_0) < 0) && (ma01_0.compareTo(ma10_1) < 0) && (ma01_0.compareTo(ma20_0) < 0)
+                        && (ma01_0.compareTo(ma20_1) < 0) && (ma01_0.compareTo(ma50_1) < 0)) {
+                    result = Utils.TREND_SHOT;
                 }
             }
         }
 
         if (isNotBlank(result)) {
             String chart_name = getChartName(heiken_list).trim();
-            result = chart_name + TEXT_SWITCH_TREND_SEQ_1020 + ":" + Utils.appendSpace(result, 4);
+            result = chart_name + TEXT_SWITCH_TREND_SEQ_1050 + ":" + Utils.appendSpace(result, 4);
         }
 
         return result;
@@ -4196,11 +4221,12 @@ public class Utils {
         String msg = Utils.appendSpace("", 10) + "(Open Msg)   " + prefix;
         msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type().toUpperCase(), 4, "_") + ")", 15);
         msg += Utils.appendSpace(dto.getEpic(), 10) + new_line_from_service + " ";
-        msg += Utils.appendSpace(dto.getComment(), 45) + "  ";
-        msg += " Entry: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()), 10);
-        msg += "      ";
+        msg += Utils.appendSpace(dto.getComment(), 30) + "  ";
+        // msg += " Entry: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()),
+        // 10);
+        // msg += " ";
         msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10);
-        msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 10) + "(lot)   ";
+        msg += "   Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 6) + "(lot)   ";
 
         return msg.replace(TEXT_NOTICE_ONLY, "");
     }
@@ -4603,7 +4629,7 @@ public class Utils {
         BigDecimal sl = sl1_tp2.get(0);
         BigDecimal tp = sl1_tp2.get(1);
 
-        BigDecimal risk = Utils.RISK_0_10_PERCENT; // 100$
+        BigDecimal risk = Utils.RISK_0_10_PERCENT; // 200$
         // BigDecimal volume = Utils.get_standard_vol_per_100usd(EPIC);
         MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, risk, dto_en.getCurrent_price(), sl, tp);
         BigDecimal volume = money.calcLot();

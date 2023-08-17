@@ -2756,6 +2756,9 @@ public class BinanceServiceImpl implements BinanceService {
             msg = Utils.appendSpace("", 91, ">") + msg;
 
             Utils.logWritelnDraft(msg);
+            if (tradeList.size() == 0) {
+                Utils.logWritelnDraft("");
+            }
         }
 
         for (Mt5OpenTradeEntity trade : tradeList) {
@@ -3728,7 +3731,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         // TODO: 1. initForexTrend
         String switch_trend = Utils.switchTrendByMa1vs10(heiken_list);
-        switch_trend += Utils.switch_trend_sequential_10_20_50(heiken_list);
+        switch_trend += Utils.switch_trend_seq_10_20(heiken_list);
+        switch_trend += Utils.switch_trend_seq_10_20_50(heiken_list);
 
         // -----------------------------DATABASE---------------------------
         String orderId = EPIC + "_" + CAPITAL_TIME_XX;
@@ -4182,37 +4186,39 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            String trend_h4_ma10 = dto_h4.getTrend_by_ma10();
-            boolean same_trend_ma10 = Objects.equals(dto_d1.getTrend_by_ma10(), dto_h4.getTrend_by_ma10())
-                    && Objects.equals(dto_d1.getTrend_by_ma10(), dto_h1.getTrend_by_ma10())
-                    && Objects.equals(dto_d1.getTrend_by_ma10(), dto_15.getTrend_by_ma10());
+            String switch_trend = (dto_15.getSwitch_trend());
+            boolean is_seq = switch_trend.contains("SEQ");
 
-            same_trend_ma10 |= Objects.equals(dto_d1.getTrend_heiken(), dto_h4.getTrend_heiken())
-                    && Objects.equals(dto_d1.getTrend_heiken(), dto_h1.getTrend_heiken())
-                    && Objects.equals(dto_d1.getTrend_heiken(), dto_15.getTrend_heiken());
-
-            if (same_trend_ma10 && (dto_h1.getSwitch_trend() + dto_30.getSwitch_trend() + dto_15.getSwitch_trend())
-                    .contains(Utils.TEXT_SWITCH_TREND_SEQ_1020)) {
+            if (is_seq && Objects.equals(dto_d1.getTrend_by_ma10(), dto_h4.getTrend_by_ma10())
+                    && Objects.equals(dto_d1.getTrend_by_ma10(), dto_h1.getTrend_by_ma10())) {
 
                 String chart_name = "";
 
-                if (dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_SEQ_1020)) {
+                if (Objects.equals(dto_h1.getTrend_by_ma10(), dto_h4.getTrend_by_ma10())
+                        && dto_h1.getSwitch_trend().contains("SEQ")) {
+
                     chart_name = Utils.getChartPrefix(Utils.CAPITAL_TIME_H1);
 
-                } else if (dto_30.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_SEQ_1020)) {
+                } else if (Objects.equals(dto_30.getTrend_by_ma10(), dto_h4.getTrend_by_ma10())
+                        && dto_30.getSwitch_trend().contains("SEQ")) {
+
                     chart_name = Utils.getChartPrefix(Utils.CAPITAL_TIME_30);
 
-                } else {
+                } else if (Objects.equals(dto_15.getTrend_by_ma10(), dto_h4.getTrend_by_ma10())
+                        && dto_15.getSwitch_trend().contains("SEQ")) {
+
                     chart_name = Utils.getChartPrefix(Utils.CAPITAL_TIME_15);
                 }
 
-                Mt5OpenTrade trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4_ma10, dto_15, dto_15, chart_name, false,
-                        Utils.CAPITAL_TIME_H1);
+                if (Utils.isNotBlank(chart_name)) {
+                    Mt5OpenTrade trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, dto_h4.getTrend_by_ma10(), dto_15, dto_15,
+                            chart_name, false, Utils.CAPITAL_TIME_15);
+                    String prefix = Utils.appendSpace("Check" + chart_name, 10) + ": ";
+                    String log = Utils.createOpenTradeMsg(trade_dto, prefix);
+                    log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
 
-                String log = Utils.createOpenTradeMsg(trade_dto, Utils.appendSpace("Check" + chart_name, 10) + ": ");
-                log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
-
-                Utils.logWritelnDraft(log);
+                    Utils.logWritelnDraft(log);
+                }
             }
         }
 
