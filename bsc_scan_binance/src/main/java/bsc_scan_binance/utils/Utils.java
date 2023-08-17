@@ -191,13 +191,13 @@ public class Utils {
     public static final String PREFIX_05_ = "_05m_";
     public static final String PREFIX_15_ = "_15m_";
     public static final String PREFIX_30_ = "_30m_";
-    public static final String PREFIX_H1_ = "_1h_";
-    public static final String PREFIX_H2_ = "_2h_";
-    public static final String PREFIX_H4_ = "_4h_";
+    public static final String PREFIX_H1_ = "_01h_";
+    public static final String PREFIX_H2_ = "_02h_";
+    public static final String PREFIX_H4_ = "_04h_";
     public static final String PREFIX_H12 = "_12h_";
-    public static final String PREFIX_D1_ = "_1d_";
-    public static final String PREFIX_W1_ = "_1w_";
-    public static final String PREFIX_MO_ = "_mo_";
+    public static final String PREFIX_D1_ = "_01d_";
+    public static final String PREFIX_W1_ = "_01w_";
+    public static final String PREFIX_MO_ = "_1mo_";
 
     public static final String ENCRYPTED_05 = "naph";
     public static final String ENCRYPTED_15 = "mnph";
@@ -1504,18 +1504,15 @@ public class Utils {
 
                 } else if (text.length() > 10 && isBlank(text.substring(0, 10))) {
 
-                    msg = Utils.appendLeft("", prifix.length())
-                            + text.replace(Utils.new_line_from_service, "  ");
+                    msg = Utils.appendLeft("", prifix.length()) + text.replace(Utils.new_line_from_service, "  ");
 
                 } else if (text.contains(">>>")) {
 
-                    msg = Utils.appendLeft("", prifix.length(), ">")
-                            + text.replace(Utils.new_line_from_service, "  ");
+                    msg = Utils.appendLeft("", prifix.length(), ">") + text.replace(Utils.new_line_from_service, "  ");
 
                 } else if ((text + "      ").substring(0, 5).contains("---")) {
 
-                    msg = Utils.appendLeft("", prifix.length(), "-")
-                            + text.replace(Utils.new_line_from_service, "  ");
+                    msg = Utils.appendLeft("", prifix.length(), "-") + text.replace(Utils.new_line_from_service, "  ");
 
                 } else {
 
@@ -2795,8 +2792,8 @@ public class Utils {
 
         int candle_no = 0;
         String id = list.get(0).getId();
-        if (id.contains("MINUTE_") || id.contains("HOUR_01") || id.contains("HOUR_02")
-                || id.contains("m_") || id.contains("_1h_") || id.contains("_2h_")) {
+        if (id.contains("MINUTE_") || id.contains("HOUR_01") || id.contains("HOUR_02") || id.contains("m_")
+                || id.contains("_1h_") || id.contains("_2h_")) {
             // candle_no = 1;
         }
 

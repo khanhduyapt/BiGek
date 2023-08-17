@@ -2709,8 +2709,8 @@ public class BinanceServiceImpl implements BinanceService {
         return summary;
     }
 
-    private String analysis_profit(String prifix, String EPIC, String append2, String find_trend,
-            boolean allow_notice, Orders dto_d1, Orders dto_h4) {
+    private String analysis_profit(String prifix, String EPIC, String append2, String find_trend, boolean allow_notice,
+            Orders dto_d1, Orders dto_h4) {
 
         String type = "";
         BigDecimal t_profit = BigDecimal.ZERO;
@@ -2866,8 +2866,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (is_notice_only) {
                     continue;
                 }
-                if (Utils.EPICS_STOCKS.contains(EPIC)
-                        && dto.getOrder_type().toUpperCase().contains(Utils.TREND_SHOT)) {
+                if (Utils.EPICS_STOCKS.contains(EPIC) && dto.getOrder_type().toUpperCase().contains(Utils.TREND_SHOT)) {
                     continue;
                 }
                 if (Utils.EPICS_STOCKS_EUR.contains(EPIC) && !Utils.is_london_session()) {
@@ -3117,7 +3116,7 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnDraft(log);
 
             // BscScanBinanceApplication.mt5_close_ticket_dict.put(trade.getTicket(),
-            //        "reverse_trade:" + trade.getProfit().intValue() + "$");
+            // "reverse_trade:" + trade.getProfit().intValue() + "$");
 
             if (isReloadAfter(Utils.MINUTES_OF_1H, trade.getTicket())) {
                 key += String.valueOf(trade.getTicket()) + "_";
@@ -3891,12 +3890,10 @@ public class BinanceServiceImpl implements BinanceService {
 
             String append = "";
             Mt5OpenTrade trade_dto = null;
-            boolean log_notice = dto_h4.isTradable_zone()
-                    && (Utils.isNotBlank(switch_d1)
-                            || switch_h4.contains(trend_d1_ma10) || switch_h4.contains(dto_d1.getTrend_heiken()));
+            boolean log_notice = dto_h4.isTradable_zone() && (Utils.isNotBlank(switch_d1)
+                    || switch_h4.contains(trend_d1_ma10) || switch_h4.contains(dto_d1.getTrend_heiken()));
             // ---------------------------------------------------------------------------------------------
-            if (Objects.isNull(trade_dto) && dto_d1.isTradable_zone()
-                    && switch_d1.contains(trend_d1_ma10)
+            if (Objects.isNull(trade_dto) && dto_d1.isTradable_zone() && switch_d1.contains(trend_d1_ma10)
                     && (switch_d1.contains(Utils.TEXT_SWITCH_TREND_SEQ_1020)
                             || switch_d1.contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10))) {
 
@@ -4102,8 +4099,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean is_reverse_h4 = false;
-            if (is_reverse_30 && is_reverse_h1
-                    && Objects.equals(dto_h2.getTrend_heiken(), REVERSE_TRADE_TREND)
+            if (is_reverse_30 && is_reverse_h1 && Objects.equals(dto_h2.getTrend_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h2.getTrend_by_ma10(), REVERSE_TRADE_TREND)
 
                     && Objects.equals(dto_h4.getTrend_heiken(), REVERSE_TRADE_TREND)
@@ -4213,7 +4209,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Mt5OpenTrade trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4_ma10, dto_15, dto_15, chart_name, false,
                         Utils.CAPITAL_TIME_H1);
 
-                String log = Utils.createOpenTradeMsg(trade_dto, "Check" + chart_name + ": ");
+                String log = Utils.createOpenTradeMsg(trade_dto, Utils.appendSpace("Check" + chart_name, 10) + ": ");
                 log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
 
                 Utils.logWritelnDraft(log);
