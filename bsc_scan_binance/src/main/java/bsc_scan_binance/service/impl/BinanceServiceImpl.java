@@ -4115,10 +4115,10 @@ public class BinanceServiceImpl implements BinanceService {
             if ((is_reverse_30 || is_reverse_h1) && profit_1R) {
                 take_profit = true;
             }
-            if (is_reverse_h4 && enough_a_meal) {
+            if (is_reverse_h4 && profit_1R) {
                 take_profit = true;
             }
-            if (reverse_seq_1020 && enough_a_meal) {
+            if (reverse_seq_1020 && profit_1R) {
                 take_profit = true;
             }
             // ---------------------------------------------------------------------------------
