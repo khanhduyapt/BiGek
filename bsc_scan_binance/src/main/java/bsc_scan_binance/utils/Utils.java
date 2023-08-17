@@ -1507,9 +1507,14 @@ public class Utils {
                     msg = Utils.appendLeft("", prifix.length())
                             + text.replace(Utils.new_line_from_service, "  ");
 
-                } else if (text.contains(">")) {
+                } else if (text.contains(">>>")) {
 
                     msg = Utils.appendLeft("", prifix.length(), ">")
+                            + text.replace(Utils.new_line_from_service, "  ");
+
+                } else if ((text + "      ").substring(0, 5).contains("---")) {
+
+                    msg = Utils.appendLeft("", prifix.length(), "-")
                             + text.replace(Utils.new_line_from_service, "  ");
 
                 } else {
@@ -4772,45 +4777,6 @@ public class Utils {
         }
 
         return Utils.appendSpace(result, 8);
-    }
-
-    // [1W=1D=12H 8H=4H=2H=30] {D1~H12~H8~H4~H2~30}
-    public static String getPrefix_FollowTrackingTrend(String EPIC, int count,
-
-            String trend_mo, String trend_w1, String trend_d1_ma10, String trend_h4, String trend_h1,
-
-            String switch_mo, String switch_w1, String switch_d1, String switch_h4, String switch_h2,
-
-            String switch_h1) {
-        // --------------------------------------------
-        // String week = "";
-        // String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "B"
-        // : Objects.equals(Utils.TREND_SHOT, trend_d1) ? "S" : "?";
-        // if (switch_w1.contains(trend_w1)) {
-        // week = " (W~" + type + ") ";
-        // } else {
-        // week = " ";
-        // }
-
-        String No = Utils.appendLeft(String.valueOf(count), 2, "0") + ". ";
-        // --------------------------------------------
-        String prefix_trend = "[W1-D1-H4-H1]";
-        if (!Objects.equals(trend_d1_ma10, trend_w1)) {
-            prefix_trend = prefix_trend.replace("W1", "--");
-        }
-        if (!Objects.equals(trend_d1_ma10, trend_h4)) {
-            prefix_trend = prefix_trend.replace("H4", "--");
-        }
-        if (!Objects.equals(trend_d1_ma10, trend_h1)) {
-            prefix_trend = prefix_trend.replace("H1]", "--]");
-        }
-
-        // --------------------------------------------
-
-        // --------------------------------------------
-        String result = No + prefix_trend;
-
-        return result;
     }
 
     public static String calc_BUF_Long_Forex(boolean onlyWait, BigDecimal risk_x1, String EPIC, BigDecimal cur_price,

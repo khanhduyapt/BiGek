@@ -2759,7 +2759,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         for (Mt5OpenTradeEntity trade : tradeList) {
-            String ea = " Opening   : ";
+            String ea = "Opening   : ";
             ea += Utils.appendSpace(trade.getType(), 11);
             ea += Utils.appendSpace(trade.getCompany(), 9) + " ";
             ea += "     Profit:"
@@ -2771,7 +2771,7 @@ public class BinanceServiceImpl implements BinanceService {
             ea += " TP" + Utils.appendLeft(Utils.removeLastZero(trade.getTakeProfit()), 10);
             ea += "    " + trade.getComment();
 
-            ea = Utils.appendLeft("", 91, ">") + Utils.appendSpace(ea, 60);
+            ea = Utils.appendLeft("", 92, "-") + Utils.appendSpace(ea, 60);
 
             Utils.logWritelnDraft(ea);
         }
@@ -3944,8 +3944,19 @@ public class BinanceServiceImpl implements BinanceService {
 
             count += 1;
 
-            String prefix = Utils.getPrefix_FollowTrackingTrend(EPIC, count, "", trend_w1, trend_d1_ma10,
-                    trend_h4, trend_h1, "", switch_w1, switch_d1, switch_h4, switch_h2, switch_h1);
+            String No = Utils.appendLeft(String.valueOf(count), 2, "0") + ". ";
+            // --------------------------------------------
+            String prefix_trend = "[W1-D1-H4-H1]";
+            if (!Objects.equals(trend_d1_ma10, trend_w1)) {
+                prefix_trend = prefix_trend.replace("W1", "--");
+            }
+            if (!Objects.equals(trend_d1_ma10, dto_h4.getTrend_by_ma10())) {
+                prefix_trend = prefix_trend.replace("H4", "--");
+            }
+            if (!Objects.equals(trend_d1_ma10, dto_h1.getTrend_by_ma10())) {
+                prefix_trend = prefix_trend.replace("H1]", "--]");
+            }
+            String prefix = No + prefix_trend;
 
             if (Objects.nonNull(trade_dto)) {
                 close_reverse_trade(trade_dto);
