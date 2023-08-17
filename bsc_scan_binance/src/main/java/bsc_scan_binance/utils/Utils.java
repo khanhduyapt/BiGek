@@ -192,7 +192,7 @@ public class Utils {
     public static final String PREFIX_15_ = "_15m_";
     public static final String PREFIX_30_ = "_30m_";
     public static final String PREFIX_H1_ = "_1h_";
-    public static final String PREFIX_H2_ = "_1h_";
+    public static final String PREFIX_H2_ = "_2h_";
     public static final String PREFIX_H4_ = "_4h_";
     public static final String PREFIX_H12 = "_12h_";
     public static final String PREFIX_D1_ = "_1d_";
@@ -2778,8 +2778,15 @@ public class Utils {
             return false;
         }
 
-        BigDecimal ma = calcMA(list, length, 1);
-        BigDecimal price = list.get(1).getPrice_close_candle();
+        int candle_no = 1;
+        String id = list.get(0).getId();
+        if (id.contains("MINUTE_") || id.contains("HOUR_01") || id.contains("HOUR_02")
+                || id.contains("m_") || id.contains("_1h_") || id.contains("_2h_")) {
+            candle_no = 0;
+        }
+
+        BigDecimal ma = calcMA(list, length, candle_no);
+        BigDecimal price = list.get(candle_no).getPrice_close_candle();
 
         if ((price.compareTo(ma) > 0)) {
             return true;
@@ -4470,9 +4477,7 @@ public class Utils {
 
     public static String getTrendByMaXx(List<BtcFutures> heiken_list, int maIndex) {
 
-        return Utils.isAboveMALine(heiken_list, 10) ? Utils.TREND_LONG : Utils.TREND_SHOT;
-
-        // return isUptrendByMa(list, maIndex, 0, 1) ? TREND_LONG : TREND_SHOT;
+        return isAboveMALine(heiken_list, maIndex) ? Utils.TREND_LONG : Utils.TREND_SHOT;
     }
 
     public static String getTrendByHekenAshiList(List<BtcFutures> heiken_list) {
@@ -4752,11 +4757,11 @@ public class Utils {
     // [1W=1D=12H 8H=4H=2H=30] {D1~H12~H8~H4~H2~30}
     public static String getPrefix_FollowTrackingTrend(String EPIC, int count,
 
-            String trend_mo, String trend_w1, String trend_d1, String trend_h4, String trend_h1,
+            String trend_mo, String trend_w1, String trend_d1_ma10, String trend_h4, String trend_h1,
 
-            String switch_mo, String switch_w1, String switch_d1, String switch_h4, String switch_h1,
+            String switch_mo, String switch_w1, String switch_d1, String switch_h4, String switch_h2,
 
-            String tracking_trend) {
+            String switch_h1) {
         // --------------------------------------------
         // String week = "";
         // String type = Objects.equals(Utils.TREND_LONG, trend_d1) ? "B"
@@ -4770,20 +4775,20 @@ public class Utils {
         String No = Utils.appendLeft(String.valueOf(count), 2, "0") + ". ";
         // --------------------------------------------
         String prefix_trend = "[W1-D1-H4-H1]";
-        if (!Objects.equals(trend_d1, trend_w1)) {
+        if (!Objects.equals(trend_d1_ma10, trend_w1)) {
             prefix_trend = prefix_trend.replace("W1", "--");
         }
-        if (!Objects.equals(trend_d1, trend_h4)) {
+        if (!Objects.equals(trend_d1_ma10, trend_h4)) {
             prefix_trend = prefix_trend.replace("H4", "--");
         }
-        if (!Objects.equals(trend_d1, trend_h1)) {
+        if (!Objects.equals(trend_d1_ma10, trend_h1)) {
             prefix_trend = prefix_trend.replace("H1]", "--]");
         }
-        prefix_trend = prefix_trend + "   D:" + appendSpace(trend_d1, 5);
+        prefix_trend = prefix_trend + "   D10:" + appendSpace(trend_d1_ma10, 5);
 
         // --------------------------------------------
         String switch_trend = "{";
-        if (switch_d1.contains(trend_d1)) {
+        if (switch_d1.contains(trend_d1_ma10)) {
             switch_trend += getTrendPrefix("D1", switch_d1, " ");
         } else {
             switch_trend += getTrendPrefix("D1", "", " ");
@@ -4794,6 +4799,19 @@ public class Utils {
         } else {
             switch_trend += getTrendPrefix("H4", "", " ");
         }
+
+        if (switch_h2.contains(trend_d1_ma10)) {
+            switch_trend += getTrendPrefix("H2", switch_h2, " ");
+        } else {
+            switch_trend += getTrendPrefix("H2", "", " ");
+        }
+
+        if (switch_h1.contains(trend_d1_ma10)) {
+            switch_trend += getTrendPrefix("H1", switch_h1, " ");
+        } else {
+            switch_trend += getTrendPrefix("H1", "", " ");
+        }
+
         switch_trend += "}     ";
         // --------------------------------------------
         String result = No + prefix_trend + switch_trend;
