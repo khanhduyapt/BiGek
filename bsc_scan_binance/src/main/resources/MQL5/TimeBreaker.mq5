@@ -18,8 +18,9 @@ int count = 1;
 //+------------------------------------------------------------------+
 int OnInit(void)
   {
-//   OnTimer();
-//   EventSetTimer(300); //1800=30minutes; 900=15minutes; 300=5minutes; 180=3minutes; 60=1minute;
+   OnTimer();
+   
+   EventSetTimer(900); //1800=30minutes; 900=15minutes; 300=5minutes; 180=3minutes; 60=1minute;
 
    return(INIT_SUCCEEDED);
   }
@@ -44,8 +45,8 @@ void OnTimer(void)
    int cur_minu = (int)dt_struct.min;
    double mod5 = MathMod(cur_minu, 2);
 
-   FileDelete("Data//ForexM.csv");
-   int nfile_handle = FileOpen("Data//ForexM.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
+   FileDelete("Data//TimeBreaker.csv");
+   int nfile_handle = FileOpen("Data//TimeBreaker.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
 
    if(nfile_handle != INVALID_HANDLE)
      {
@@ -162,24 +163,6 @@ void OnTimer(void)
          //-------------------------------------------------------------------------------------------------------------------------------
          //-------------------------------------------------------------------------------------------------------------------------------
 
-         //---------------------------------------------
-         MqlRates rates_15[];
-         ArraySetAsSeries(rates_15,true);
-         copied=CopyRates(symbol, PERIOD_M15, 0, 55, rates_15);
-         if(copied>0)
-           {
-            int size=fmin(copied, 55);
-            for(int i=0; i<size; i++)
-              {
-               FileWrite(nfile_handle, symbol, "MINUTE_15", rates_15[i].time, rates_15[i].open, rates_15[i].high, rates_15[i].low, rates_15[i].close, current_price);
-              }
-           }
-         else
-           {
-            FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M15");
-           }
-         //---------------------------------------------
-
         } //for
       //--------------------------------------------------------------------------------------------------------------------
       //--------------------------------------------------------------------------------------------------------------------
@@ -187,7 +170,7 @@ void OnTimer(void)
      }
    else
      {
-      Print("(Data2Csv) Failed to get history data.");
+      Print("(TimeBreaker) Failed to get history data.");
      }
 
 

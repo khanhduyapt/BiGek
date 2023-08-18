@@ -32,9 +32,13 @@ import lombok.NoArgsConstructor;
 //    high_price numeric(30,5) DEFAULT 0,
 //    note character varying(500) COLLATE pg_catalog."default",
 //    created_at timestamp without time zone DEFAULT now(),
-//    allow_trade_by_ma50 boolean DEFAULT false,
 //    trend_candle_1 character varying(255) COLLATE pg_catalog."default",
 //    trend_zone character varying(255) COLLATE pg_catalog."default",
+//    colume_01 character varying(255) COLLATE pg_catalog."default",
+//    colume_02 character varying(255) COLLATE pg_catalog."default",
+//    colume_03 character varying(255) COLLATE pg_catalog."default",
+//    colume_04 character varying(255) COLLATE pg_catalog."default",
+//    colume_05 character varying(255) COLLATE pg_catalog."default",
 //    CONSTRAINT orders_pkey PRIMARY KEY (gecko_id)
 //)
 
@@ -73,13 +77,25 @@ public class Orders {
     @Column(name = "note")
     private String switch_trend;
 
-    @Column(name = "allow_trade_by_ma50")
-    private boolean allow_trade;
-
     @Column(name = "trend_candle_1")
-    private String trend_by_ma10;
+    private String trend_by_ma;
 
     @Column(name = "trend_zone")
-    private boolean tradable_zone;
+    private String tradable_zone;
+
+    @Column(name = "colume_01")
+    private String trend_heiken_1;
+
+    @Column(name = "colume_02")
+    private String colume_02;
+
+    @Column(name = "colume_03")
+    private String colume_03;
+
+    @Column(name = "colume_04")
+    private String colume_04;
+
+    @Column(name = "colume_05")
+    private String colume_05;
 
 }
