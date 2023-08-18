@@ -1673,10 +1673,6 @@ public class Utils {
     public static boolean isCloseTradeToday() {
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
 
-        if ((16 <= hh) && (hh < 19)) {
-            return true;
-        }
-
         if ((hh > 22) || (hh < 4)) {
             return true;
         }
