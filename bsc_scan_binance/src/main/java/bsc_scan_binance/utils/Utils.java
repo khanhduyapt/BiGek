@@ -69,16 +69,18 @@ public class Utils {
     // đến 0,15%
 
     // (50$)
-    private static final BigDecimal RISK_0_02_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.00025));
+    // private static final BigDecimal RISK_0_02_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.00025));
 
     // (100$ / 1 Tp)
-    private static final BigDecimal RISK_0_05_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
+    public static final BigDecimal RISK_0_05_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
 
     // Trend W != D (200$ / 1trade)
-    public static final BigDecimal RISK_0_10_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
+    // private static final BigDecimal RISK_0_10_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
 
     // Trend W == D (300$ / 1trade)
-    private static final BigDecimal RISK_0_15_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
+    // private static final BigDecimal RISK_0_15_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
+
+    public static final BigDecimal RISK_PER_TRADE = RISK_0_05_PERCENT;
 
     //// Step2: Khi tài khoản tăng trưởng 2% (500$ / 1trade)
     // public static final BigDecimal RISK_0_25_PERCENT =
@@ -294,7 +296,7 @@ public class Utils {
     public static final List<String> EPICS_FOREXS_ALL = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
             "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD",
             "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD",
-            "USDCHF", "USDJPY", "CADCHF", "XAUUSD");
+            "USDCHF", "USDJPY", "CADCHF", "XAUUSD", "USOIL");
 
     public static final List<String> EPICS_FOREXS_JPY = Arrays.asList("AUDJPY", "CADJPY", "CHFJPY", "EURJPY", "GBPJPY",
             "NZDJPY", "USDJPY", "USDCAD", "USDCHF", "CADCHF");
@@ -2813,37 +2815,14 @@ public class Utils {
 
         int candle_no = 0;
         String id = list.get(0).getId();
-        if (id.contains("MINUTE_") || id.contains("HOUR_01") || id.contains("HOUR_02") || id.contains("m_")
-                || id.contains("_1h_") || id.contains("_2h_")) {
-            // candle_no = 1;
+        if (id.contains("MINUTE_") || id.contains("m_")) {
+            candle_no = 1;
         }
 
         BigDecimal ma = calcMA(list, length, candle_no);
         BigDecimal price = list.get(candle_no).getPrice_close_candle();
 
         if ((price.compareTo(ma) > 0)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static boolean isBelowMALine(List<BtcFutures> list, int length) {
-        if (CollectionUtils.isEmpty(list) || (list.size() < 1)) {
-            // Utils.logWritelnDraft("(isBelowMALine)list Empty");
-            return false;
-        }
-        if (list.size() < length) {
-            // Utils.logWritelnDraft(
-            // "(isBelowMALine) " + list.get(0).getId() + " list.size()<" + length + ")" +
-            // list.size());
-            return false;
-        }
-
-        BigDecimal ma = calcMA(list, length, 1);
-        BigDecimal price = list.get(1).getPrice_close_candle();
-
-        if ((price.compareTo(ma) < 0)) {
             return true;
         }
 
@@ -4274,9 +4253,11 @@ public class Utils {
         // msg += " Entry: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()),
         // 10);
         // msg += " ";
-        msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10);
-        msg += "   Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 6) + "(lot)   ";
-
+        msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10) + "   ";
+        msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 6) + "(lot)   ";
+        msg += " Standard:"
+                + Utils.appendLeft(Utils.removeLastZero(Utils.get_standard_vol_per_100usd(dto.getEpic())), 6)
+                + "(lot)    ";
         return msg.replace(TEXT_NOTICE_ONLY, "");
     }
 
@@ -4678,9 +4659,7 @@ public class Utils {
         BigDecimal sl = sl1_tp2.get(0);
         BigDecimal tp = sl1_tp2.get(1);
 
-        BigDecimal risk = Utils.RISK_0_10_PERCENT; // 200$
-        // BigDecimal volume = Utils.get_standard_vol_per_100usd(EPIC);
-        MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, risk, dto_en.getCurrent_price(), sl, tp);
+        MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, RISK_PER_TRADE, dto_en.getCurrent_price(), sl, tp);
         BigDecimal volume = money.calcLot();
 
         if (volume.compareTo(BigDecimal.ZERO) <= 0) {

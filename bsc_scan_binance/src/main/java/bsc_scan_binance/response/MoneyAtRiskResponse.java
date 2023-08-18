@@ -90,10 +90,10 @@ public class MoneyAtRiskResponse {
         }
 
         if (Utils.EPICS_STOCKS.contains(EPIC)) {
-            return getStandard_vol(volume);
+            return getStandard_vol(BigDecimal.valueOf(volume.intValue()));
         }
         if ("_ADAUSD_DOGEUSD_DOTUSD_LTCUSD_XRPUSD_".contains("_" + EPIC + "_")) {
-            return getStandard_vol(volume);
+            return getStandard_vol(BigDecimal.valueOf(volume.intValue()));
         }
 
         if (volume.compareTo(BigDecimal.valueOf(1)) < 0) {
@@ -121,8 +121,13 @@ public class MoneyAtRiskResponse {
     }
 
     private BigDecimal getStandard_vol(BigDecimal volume) {
+        boolean debug = true;
+        if (debug) {
+            return volume;
+        }
+
         if (Objects.equal(Utils.getStringValue(EPIC).toUpperCase(), "DBKGN")) {
-            boolean debug = true;
+            debug = true;
         }
         BigDecimal result = volume;
         BigDecimal standard_vol = Utils.get_standard_vol_per_100usd(EPIC);
