@@ -3933,6 +3933,8 @@ public class BinanceServiceImpl implements BinanceService {
             if (no_stop_loss && PROFIT.add(Utils.RISK_PER_TRADE).compareTo(BigDecimal.ZERO) < 0) {
                 is_hit_sl = true;
             }
+
+            // Đóng tất cả các lệnh ngược chiều H4 & H4.Ma20
             if (Objects.equals(dto_h4.getTrend_by_ma_20(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_heiken(), REVERSE_TRADE_TREND)) {
                 is_hit_sl = true;
@@ -4022,8 +4024,8 @@ public class BinanceServiceImpl implements BinanceService {
             String chart_name = Utils.getChartPrefix(Utils.CAPITAL_TIME_15);
             String append = switch_trend.contains(Utils.TEXT_SWITCH_TREND_SEQ_1050) ? "_seq50" : "_seq20";
 
-            if (is_eq_ma10 && is_switch_seq && dto_h4.getTradable_zone().contains(trend_15_ma)) {
-                if (is_eq_h4ma_vs_15ma) {
+            if (is_eq_ma10 && is_switch_seq) {
+                if (is_eq_h4ma_vs_15ma && dto_h4.getTradable_zone().contains(trend_15_ma)) {
 
                     String key = EPIC + Utils.CAPITAL_TIME_15;
                     append += Utils.TEXT_PASS;
