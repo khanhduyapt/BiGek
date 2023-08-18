@@ -4011,8 +4011,9 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean is_switch_seq = switch_trend.contains("SEQ");
 
-            // Đánh theo đỡ giá của Ma20 của H4
-            boolean is_eq_h4ma_vs_15ma = Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_20());
+            // Đánh theo đỡ giá của Ma10 của H4
+            boolean is_eq_h4ma_vs_15ma = Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_20())
+                    || Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_10());
 
             boolean is_eq_ma10 = Objects.equals(trend_15_ma, dto_15.getTrend_heiken())
                     && Objects.equals(trend_15_ma, dto_12.getTrend_heiken())
