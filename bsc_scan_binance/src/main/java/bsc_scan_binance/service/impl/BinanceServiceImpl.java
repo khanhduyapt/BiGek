@@ -4027,7 +4027,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String key = EPIC + Utils.CAPITAL_TIME_15;
                     append += Utils.TEXT_PASS;
-                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_15_ma, dto_15, dto_15, append, true,
+
+                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_15_ma, dto_15, dto_15, append, false,
                             Utils.CAPITAL_TIME_15);
 
                     close_reverse_trade(trade_dto);
