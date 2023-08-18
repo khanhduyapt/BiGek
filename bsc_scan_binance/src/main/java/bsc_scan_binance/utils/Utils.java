@@ -2813,7 +2813,7 @@ public class Utils {
             return false;
         }
 
-        int candle_no = 0;
+        int candle_no = 1; // Giá đóng cửa của cây nến trước đó.
         String id = list.get(0).getId();
         if (id.contains("MINUTE_") || id.contains("m_")) {
             candle_no = 1;
@@ -3800,17 +3800,26 @@ public class Utils {
         String switch_trend = switchTrendByMa1(heiken_list, 1, 20, heiken_list.size(), "(Ma1vs20to50)");
         if (Utils.isNotBlank(switch_trend)) {
 
-            List<BigDecimal> lohi = getLowHighCandle(heiken_list.subList(1, 3));
+            List<BtcFutures> sub_list = heiken_list.subList(0, 2);
+            BigDecimal candle_hig = calcMaxCandleHigh(sub_list);
+
+            List<BigDecimal> lohi = getLowHighCandle(sub_list);
             BigDecimal low = lohi.get(0);
+            low = low.subtract(candle_hig);
+
             BigDecimal hig = lohi.get(1);
+            hig = hig.add(candle_hig);
 
             BigDecimal ma01_0 = calcMA(heiken_list, 01, 1);
             BigDecimal ma10_0 = calcMA(heiken_list, 10, 1);
             BigDecimal ma20_0 = calcMA(heiken_list, 20, 1);
+            BigDecimal ma50_0 = calcMA(heiken_list, 50, 1);
 
             boolean inside_lohi = true;
-            inside_lohi &= (ma01_0.compareTo(low) > 0) && (ma10_0.compareTo(low) > 0) && (ma20_0.compareTo(low) > 0);
-            inside_lohi &= (ma01_0.compareTo(hig) < 0) && (ma10_0.compareTo(hig) < 0) && (ma20_0.compareTo(hig) < 0);
+            inside_lohi &= (ma01_0.compareTo(low) > 0) && (ma10_0.compareTo(low) > 0) && (ma20_0.compareTo(low) > 0)
+                    && (ma50_0.compareTo(low) > 0);
+            inside_lohi &= (ma01_0.compareTo(hig) < 0) && (ma10_0.compareTo(hig) < 0) && (ma20_0.compareTo(hig) < 0)
+                    && (ma50_0.compareTo(hig) < 0);
 
             boolean ma6_1_2_up = isUptrendByMa(heiken_list, 6, 1, 2);
 

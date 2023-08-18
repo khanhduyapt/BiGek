@@ -78,7 +78,7 @@ public class Orders {
     private String switch_trend;
 
     @Column(name = "trend_candle_1")
-    private String trend_by_ma;
+    private String trend_by_ma_10;
 
     @Column(name = "trend_zone")
     private String tradable_zone;
@@ -87,7 +87,7 @@ public class Orders {
     private String trend_heiken_1;
 
     @Column(name = "colume_02")
-    private String colume_02;
+    private String trend_by_ma_20;
 
     @Column(name = "colume_03")
     private String colume_03;
