@@ -69,16 +69,19 @@ public class Utils {
     // đến 0,15%
 
     // (50$)
-    // private static final BigDecimal RISK_0_02_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.00025));
+    // private static final BigDecimal RISK_0_02_PERCENT =
+    // ACCOUNT.multiply(BigDecimal.valueOf(0.00025));
 
     // (100$ / 1 Tp)
     public static final BigDecimal RISK_0_05_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
 
     // Trend W != D (200$ / 1trade)
-    // private static final BigDecimal RISK_0_10_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
+    // private static final BigDecimal RISK_0_10_PERCENT =
+    // ACCOUNT.multiply(BigDecimal.valueOf(0.001));
 
     // Trend W == D (300$ / 1trade)
-    // private static final BigDecimal RISK_0_15_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
+    // private static final BigDecimal RISK_0_15_PERCENT =
+    // ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
 
     public static final BigDecimal RISK_PER_TRADE = RISK_0_05_PERCENT;
 
@@ -169,7 +172,7 @@ public class Utils {
     public static String CST = "";
     public static String X_SECURITY_TOKEN = "";
 
-    //Binance: Fixed
+    // Binance: Fixed
     public static final String CRYPTO_TIME_05 = "5m";
     public static final String CRYPTO_TIME_15 = "15m";
     public static final String CRYPTO_TIME_H1 = "1h";
@@ -328,26 +331,26 @@ public class Utils {
             "ANKR", "ANT", "APE", "API3", "APT", "AR", "ARDR", "ARK", "ARPA", "ASR", "ASTR", "ATA", "ATM", "ATOM",
             "AUCTION", "AUDIO", "AUTO", "AVA", "AVAX", "AXS", "BADGER", "BAKE", "BAL", "BAND", "BAR", "BAT", "BCH",
             "BEL", "BETA", "BETH", "BICO", "BIFI", "BLZ", "BNB", "BNT", "BNX", "BOND", "BSW", "BTC", "BTS", "BURGER",
-            "C98", "CAKE", "CELO", "CELR", "CFX", "CHESS", "CHR", "CHZ", "CITY", "CKB", "CLV", "COMP", "COS",
-            "COTI", "CREAM", "CRV", "CTK", "CTSI", "CTXC", "CVP", "CVX", "DAR", "DASH", "DATA", "DCR", "DGB", "DIA",
-            "DOCK", "DODO", "DOGE", "DOT", "DREP", "DUSK", "DYDX", "EDU", "ELF", "ENJ", "ENS", "EOS", "EPX", "ERN",
-            "ETC", "ETH", "FARM", "FET", "FIDA", "FIL", "FIO", "FIRO", "FIS", "FLM", "FLOW", "FLUX", "FOR", "FORTH",
-            "FRONT", "FTM", "FTT", "FUN", "FXS", "GAL", "GALA", "GAS", "GFT", "GHST", "GLM", "GLMR", "GMT", "GMX",
-            "GNS", "GRT", "GTC", "HARD", "HBAR", "HFT", "HIFI", "HIGH", "HIVE", "HOOK", "HOT", "ID", "ICX", "IDEX",
-            "ILV", "IMX", "INJ", "IOST", "IOTA", "IOTX", "IRIS", "JASMY", "JOE", "JST", "JUV", "KAVA", "KDA", "KEY",
-            "KLAY", "KMD", "KNC", "KP3R", "KSM", "LAZIO", "LEVER", "LINA", "LINK", "LIT", "LOKA", "LOOM", "LPT", "LQTY",
-            "LRC", "LSK", "LTC", "LTO", "LUNA", "LUNC", "MAGIC", "MANA", "MASK", "MATIC", "MBOX", "MC", "MDT", "MDX",
-            "MINA", "MKR", "MLN", "MOB", "MOVR", "MTL", "MULTI", "NEAR", "NEO", "NEXO", "NKN", "NMR", "NULS", "OCEAN",
-            "OG", "OGN", "OMG", "ONE", "ONG", "ONT", "OOKI", "OP", "ORN", "OSMO", "OXT", "PEOPLE", "PERL", "PERP",
-            "PHA", "PHB", "PLA", "PNT", "POLS", "POLYX", "POND", "PORTO", "POWR", "PROM", "PROS", "PSG", "PUNDIX",
-            "PYR", "QI", "QKC", "QNT", "QTUM", "QUICK", "RDNT", "RARE", "RAY", "REEF", "REI", "REN", "REQ", "RIF",
-            "RLC", "RNDR", "ROSE", "RPL", "RSR", "RUNE", "RVN", "SAND", "SANTOS", "SC", "SCRT", "SFP", "SHIB", "SKL",
-            "SLP", "SNM", "SNT", "SNX", "SOL", "SPELL", "SRM", "SSV", "STEEM", "STG", "STMX", "STORJ", "STPT", "STRAX",
-            "STX", "SUI", "SUN", "SUPER", "SUSHI", "SXP", "SYN", "SYS", "THETA", "TKO", "TLM", "TOMO", "TORN", "TRB",
-            "TROY", "TRU", "TRX", "TVK", "TWT", "UFT", "UNFI", "UNI", "UTK", "VGX", "VIB", "VIDT", "VITE", "VOXEL",
-            "VTHO", "WAN", "WAVES", "WAXP", "WIN", "WING", "WNXM", "WOO", "WRX", "WTC", "XEC", "XLM", "XMR", "XNO",
-            "XRP", "XTZ", "XVG", "XVS", "YFI", "YFII", "YGG", "ZEC", "ZEN", "ZIL", "ZRX", "FLOKI", "COMBO", "MAV",
-            "PENDLE", "ARKM", "WLD", "FDUSD");
+            "C98", "CAKE", "CELO", "CELR", "CFX", "CHESS", "CHR", "CHZ", "CITY", "CKB", "CLV", "COMP", "COS", "COTI",
+            "CREAM", "CRV", "CTK", "CTSI", "CTXC", "CVP", "CVX", "DAR", "DASH", "DATA", "DCR", "DGB", "DIA", "DOCK",
+            "DODO", "DOGE", "DOT", "DREP", "DUSK", "DYDX", "EDU", "ELF", "ENJ", "ENS", "EOS", "EPX", "ERN", "ETC",
+            "ETH", "FARM", "FET", "FIDA", "FIL", "FIO", "FIRO", "FIS", "FLM", "FLOW", "FLUX", "FOR", "FORTH", "FRONT",
+            "FTM", "FTT", "FUN", "FXS", "GAL", "GALA", "GAS", "GFT", "GHST", "GLM", "GLMR", "GMT", "GMX", "GNS", "GRT",
+            "GTC", "HARD", "HBAR", "HFT", "HIFI", "HIGH", "HIVE", "HOOK", "HOT", "ID", "ICX", "IDEX", "ILV", "IMX",
+            "INJ", "IOST", "IOTA", "IOTX", "IRIS", "JASMY", "JOE", "JST", "JUV", "KAVA", "KDA", "KEY", "KLAY", "KMD",
+            "KNC", "KP3R", "KSM", "LAZIO", "LEVER", "LINA", "LINK", "LIT", "LOKA", "LOOM", "LPT", "LQTY", "LRC", "LSK",
+            "LTC", "LTO", "LUNA", "LUNC", "MAGIC", "MANA", "MASK", "MATIC", "MBOX", "MC", "MDT", "MDX", "MINA", "MKR",
+            "MLN", "MOB", "MOVR", "MTL", "MULTI", "NEAR", "NEO", "NEXO", "NKN", "NMR", "NULS", "OCEAN", "OG", "OGN",
+            "OMG", "ONE", "ONG", "ONT", "OOKI", "OP", "ORN", "OSMO", "OXT", "PEOPLE", "PERL", "PERP", "PHA", "PHB",
+            "PLA", "PNT", "POLS", "POLYX", "POND", "PORTO", "POWR", "PROM", "PROS", "PSG", "PUNDIX", "PYR", "QI", "QKC",
+            "QNT", "QTUM", "QUICK", "RDNT", "RARE", "RAY", "REEF", "REI", "REN", "REQ", "RIF", "RLC", "RNDR", "ROSE",
+            "RPL", "RSR", "RUNE", "RVN", "SAND", "SANTOS", "SC", "SCRT", "SFP", "SHIB", "SKL", "SLP", "SNM", "SNT",
+            "SNX", "SOL", "SPELL", "SRM", "SSV", "STEEM", "STG", "STMX", "STORJ", "STPT", "STRAX", "STX", "SUI", "SUN",
+            "SUPER", "SUSHI", "SXP", "SYN", "SYS", "THETA", "TKO", "TLM", "TOMO", "TORN", "TRB", "TROY", "TRU", "TRX",
+            "TVK", "TWT", "UFT", "UNFI", "UNI", "UTK", "VGX", "VIB", "VIDT", "VITE", "VOXEL", "VTHO", "WAN", "WAVES",
+            "WAXP", "WIN", "WING", "WNXM", "WOO", "WRX", "WTC", "XEC", "XLM", "XMR", "XNO", "XRP", "XTZ", "XVG", "XVS",
+            "YFI", "YFII", "YGG", "ZEC", "ZEN", "ZIL", "ZRX", "FLOKI", "COMBO", "MAV", "PENDLE", "ARKM", "WLD",
+            "FDUSD");
 
     public static final List<String> COINS_NEW_LISTING = Arrays.asList("EDU", "RDNT", "AMB", "ARB", "ID", "LQTY", "SYN",
             "GNS", "RPL", "MAGIC", "HOOK", "HFT", "SUI", "FLOKI", "COMBO", "MAV", "PENDLE", "ARKM", "WLD", "FDUSD");
@@ -366,16 +369,16 @@ public class Utils {
     public static final List<String> COINS_FUTURES = Arrays.asList("1INCH", "AAVE", "ACH", "ADA", "AGIX", "ALGO",
             "ALICE", "ALPHA", "AMB", "ANKR", "ANT", "APE", "API3", "APT", "AR", "ARB", "ARPA", "ASTR", "ATA", "ATOM",
             "AUDIO", "AVAX", "AXS", "BAKE", "BAL", "BAND", "BAT", "BCH", "BEL", "BLZ", "BNB", "BNT", "BNX", "BTC",
-            "BTC", "C98", "CELO", "CELR", "CFX", "CHR", "CHZ", "CKB", "COMP", "COTI", "CRV", "CTK", "CTSI",
-            "CVX", "DAR", "DASH", "DENT", "DGB", "DODO", "DOGE", "DOT", "DUSK", "DYDX", "EDU", "EGLD", "ENJ", "ENS",
-            "EOS", "ETC", "ETH", "FET", "FIL", "FLM", "FLOW", "FTM", "FXS", "GAL", "GALA", "GMT", "GMX", "GRT", "GTC",
-            "HBAR", "HIGH", "HOOK", "HOT", "HFT", "ICP", "ICX", "ID", "IMX", "INJ", "IOST", "IOTA", "IOTX", "JASMY",
-            "JOE", "KAVA", "KLAY", "KNC", "KSM", "LDO", "LEVER", "LINA", "LINK", "LIT", "LPT", "LQTY", "LRC", "LTC",
-            "MAGIC", "MANA", "MASK", "MATIC", "MINA", "MKR", "MTL", "NEAR", "NEO", "NKN", "OCEAN", "OGN", "ONE", "ONT",
-            "OP", "PEOPLE", "PERP", "PHB", "QNT", "QTUM", "RDNT", "REEF", "REN", "RLC", "RNDR", "ROSE", "RSR", "RUNE",
-            "RVN", "SAND", "SFP", "SKL", "SNX", "SOL", "SPELL", "SSV", "STG", "STMX", "STORJ", "STX", "SUI", "SUSHI",
-            "SXP", "THETA", "TLM", "TOMO", "TRB", "TRU", "TRX", "UNFI", "UNI", "VET", "WAVES", "XEM", "XLM", "XMR",
-            "XRP", "XTZ", "YFI", "ZEC", "ZEN", "ZIL", "ZRX", "WOO", "RPL", "PEPE");
+            "BTC", "C98", "CELO", "CELR", "CFX", "CHR", "CHZ", "CKB", "COMP", "COTI", "CRV", "CTK", "CTSI", "CVX",
+            "DAR", "DASH", "DENT", "DGB", "DODO", "DOGE", "DOT", "DUSK", "DYDX", "EDU", "EGLD", "ENJ", "ENS", "EOS",
+            "ETC", "ETH", "FET", "FIL", "FLM", "FLOW", "FTM", "FXS", "GAL", "GALA", "GMT", "GMX", "GRT", "GTC", "HBAR",
+            "HIGH", "HOOK", "HOT", "HFT", "ICP", "ICX", "ID", "IMX", "INJ", "IOST", "IOTA", "IOTX", "JASMY", "JOE",
+            "KAVA", "KLAY", "KNC", "KSM", "LDO", "LEVER", "LINA", "LINK", "LIT", "LPT", "LQTY", "LRC", "LTC", "MAGIC",
+            "MANA", "MASK", "MATIC", "MINA", "MKR", "MTL", "NEAR", "NEO", "NKN", "OCEAN", "OGN", "ONE", "ONT", "OP",
+            "PEOPLE", "PERP", "PHB", "QNT", "QTUM", "RDNT", "REEF", "REN", "RLC", "RNDR", "ROSE", "RSR", "RUNE", "RVN",
+            "SAND", "SFP", "SKL", "SNX", "SOL", "SPELL", "SSV", "STG", "STMX", "STORJ", "STX", "SUI", "SUSHI", "SXP",
+            "THETA", "TLM", "TOMO", "TRB", "TRU", "TRX", "UNFI", "UNI", "VET", "WAVES", "XEM", "XLM", "XMR", "XRP",
+            "XTZ", "YFI", "ZEC", "ZEN", "ZIL", "ZRX", "WOO", "RPL", "PEPE");
 
     public static BigDecimal get_standard_vol_per_100usd(String EPIC) {
         switch (EPIC.toUpperCase()) {
@@ -1793,8 +1796,14 @@ public class Utils {
 
     // https://www.calculator.net/time-duration-calculator.html
     public static boolean isNewsAt_19_20_21h() {
+        List<Integer> times = Arrays.asList(19, 20);
+
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         Integer mm = Utils.getIntValue(Utils.convertDateToString("mm", Calendar.getInstance().getTime()));
+
+        if (times.contains(hh)) {
+            return true;
+        }
 
         if (Arrays.asList(19).contains(hh)) {
             // 19:15
@@ -1826,8 +1835,7 @@ public class Utils {
     }
 
     public static boolean isOpenTradeTime_6h_to_1h() {
-        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2,
-                3);
+        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 21, 22, 23);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
