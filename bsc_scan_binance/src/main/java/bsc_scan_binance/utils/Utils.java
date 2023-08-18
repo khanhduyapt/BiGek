@@ -72,15 +72,15 @@ public class Utils {
     // private static final BigDecimal RISK_0_02_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.00025));
 
     // (100$ / 1 Tp)
-    public static final BigDecimal RISK_0_05_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
+    private static final BigDecimal RISK_0_05_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
 
     // Trend W != D (200$ / 1trade)
-    // private static final BigDecimal RISK_0_10_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
+    private static final BigDecimal RISK_0_10_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
 
     // Trend W == D (300$ / 1trade)
     // private static final BigDecimal RISK_0_15_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
 
-    public static final BigDecimal RISK_PER_TRADE = RISK_0_05_PERCENT;
+    public static final BigDecimal RISK_PER_TRADE = RISK_0_10_PERCENT;
 
     //// Step2: Khi tài khoản tăng trưởng 2% (500$ / 1trade)
     // public static final BigDecimal RISK_0_25_PERCENT =

@@ -4007,10 +4007,10 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_switch_seq = switch_trend.contains("SEQ");
 
             // Đánh theo đỡ giá của Ma10 của H4
-            boolean is_eq_h4ma_vs_15ma = Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_20())
-                    || Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_10())
-                    || (Objects.equals(trend_15_ma, dto_h1.getTrend_by_ma_10())
-                            && Objects.equals(trend_15_ma, dto_h1.getTrend_by_ma_20()));
+            boolean is_eq_h4ma_vs_15ma = Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_20());
+            //                    || Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_10())
+            //                    || (Objects.equals(trend_15_ma, dto_h1.getTrend_by_ma_10())
+            //                            && Objects.equals(trend_15_ma, dto_h1.getTrend_by_ma_20()));
 
             boolean is_eq_ma10 = Objects.equals(trend_15_ma, dto_15.getTrend_heiken())
                     && Objects.equals(trend_15_ma, dto_12.getTrend_heiken())
@@ -4028,7 +4028,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String key = EPIC + Utils.CAPITAL_TIME_15;
                     append += Utils.TEXT_PASS;
 
-                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_15_ma, dto_15, dto_15, append, false,
+                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_15_ma, dto_15, dto_h4, append, false,
                             Utils.CAPITAL_TIME_15);
 
                     close_reverse_trade(trade_dto);
