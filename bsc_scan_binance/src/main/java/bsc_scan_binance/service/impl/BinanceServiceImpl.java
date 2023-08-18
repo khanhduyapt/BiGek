@@ -3023,7 +3023,7 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnDraft(log);
 
             BscScanBinanceApplication.mt5_close_ticket_dict.put(trade.getTicket(),
-                    "reverse_trade:" + trade.getProfit().intValue() + "$");
+                    "reverse_trade:" + trade.getProfit().intValue() + "$.");
 
             if (isReloadAfter(Utils.MINUTES_OF_1H, trade.getTicket())) {
                 key += String.valueOf(trade.getTicket()) + "_";
@@ -3941,9 +3941,9 @@ public class BinanceServiceImpl implements BinanceService {
                 String reason = "";
 
                 if (is_hit_sl) {
-                    reason = "stoploss:" + PROFIT.intValue() + trade.getComment();
+                    reason = "stoploss:" + PROFIT.intValue() + "$." + trade.getComment();
                 } else if (reverse_trend) {
-                    reason = "profit:" + PROFIT.intValue() + trade.getComment();
+                    reason = "profit:" + PROFIT.intValue() + "$." + trade.getComment();
                 }
 
                 if (!"__HOLDING____".contains("_" + EPIC + "_")) {
