@@ -3920,7 +3920,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(dto_10.getTrend_by_ma_20(), REVERSE_TRADE_TREND)
                     || Objects.equals(dto_12.getTrend_by_ma_20(), REVERSE_TRADE_TREND)
                     || Objects.equals(dto_15.getTrend_by_ma_20(), REVERSE_TRADE_TREND)) {
-                if (has_profit) {
+                if (has_profit || Utils.isCloseTradeToday()) {
                     reverse_trend = true;
                 }
             }
