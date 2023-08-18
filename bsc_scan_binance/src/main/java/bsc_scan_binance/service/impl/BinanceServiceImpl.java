@@ -3920,7 +3920,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.equals(dto_10.getTrend_by_ma_20(), REVERSE_TRADE_TREND)
                     || Objects.equals(dto_12.getTrend_by_ma_20(), REVERSE_TRADE_TREND)
                     || Objects.equals(dto_15.getTrend_by_ma_20(), REVERSE_TRADE_TREND)) {
-                if (has_profit || Utils.isCloseTradeToday()) {
+                if (has_profit) {
                     reverse_trend = true;
                 }
             }
@@ -3980,23 +3980,23 @@ public class BinanceServiceImpl implements BinanceService {
         CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_ALL);
 
         for (String EPIC : CAPITAL_LIST) {
+            Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
 
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
             Orders dto_12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_12).orElse(null);
             Orders dto_10 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_10).orElse(null);
 
-            if (Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_10) || Objects.isNull(dto_12)
+            if (Objects.isNull(dto_h4) || Objects.isNull(dto_d1) || Objects.isNull(dto_10) || Objects.isNull(dto_12)
                     || Objects.isNull(dto_15)) {
+                String d01 = "d1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
                 String h04 = "h4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
-                String h01 = "h1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
                 String m10 = "15:" + (Objects.isNull(dto_15) ? "null" : "    ");
                 String m12 = "12:" + (Objects.isNull(dto_12) ? "null" : "    ");
                 String m15 = "10:" + (Objects.isNull(dto_10) ? "null" : "    ");
 
                 Utils.logWritelnDraft(String.format("[closetrade_by_sl_tp_control_mt5] dto (%s) :  %s, %s, %s, %s, %s.",
-                        Utils.appendSpace(EPIC, 10), h04, h01, m10, m12, m15));
+                        Utils.appendSpace(EPIC, 10), d01, h04, m10, m12, m15));
 
                 continue;
             }
@@ -4008,9 +4008,10 @@ public class BinanceServiceImpl implements BinanceService {
 
             // Đánh theo đỡ giá của Ma10 của H4
             boolean is_eq_h4ma_vs_15ma = Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_20())
-                    || Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_10())
-                    || (Objects.equals(trend_15_ma, dto_h1.getTrend_by_ma_10())
-                            && Objects.equals(trend_15_ma, dto_h1.getTrend_by_ma_20()));
+                    && Objects.equals(trend_15_ma, dto_d1.getTrend_by_ma_10());
+            //                    || Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_10())
+            //                    || (Objects.equals(trend_15_ma, dto_h1.getTrend_by_ma_10())
+            //                            && Objects.equals(trend_15_ma, dto_h1.getTrend_by_ma_20()));
 
             boolean is_eq_ma10 = Objects.equals(trend_15_ma, dto_15.getTrend_heiken())
                     && Objects.equals(trend_15_ma, dto_12.getTrend_heiken())
@@ -4023,12 +4024,13 @@ public class BinanceServiceImpl implements BinanceService {
             String append = switch_trend.contains(Utils.TEXT_SWITCH_TREND_SEQ_1050) ? "_seq50" : "_seq20";
 
             if (is_eq_ma10 && is_switch_seq) {
-                if (is_eq_h4ma_vs_15ma && dto_h4.getTradable_zone().contains(trend_15_ma)) {
+                if (is_eq_h4ma_vs_15ma && dto_h4.getTradable_zone().contains(trend_15_ma)
+                        && dto_d1.getTradable_zone().contains(trend_15_ma)) {
 
                     String key = EPIC + Utils.CAPITAL_TIME_15;
                     append += Utils.TEXT_PASS;
 
-                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_15_ma, dto_15, dto_15, append, false,
+                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_15_ma, dto_15, dto_h4, append, false,
                             Utils.CAPITAL_TIME_15);
 
                     close_reverse_trade(trade_dto);
@@ -4041,7 +4043,7 @@ public class BinanceServiceImpl implements BinanceService {
                     log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
                     Utils.logWritelnDraft(log);
 
-                } else if (Objects.equals(trend_15_ma, dto_h1.getTrend_by_ma_20())) {
+                } else if (Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_10())) {
                     trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_15_ma, dto_15, dto_15, append, true,
                             Utils.CAPITAL_TIME_15);
 

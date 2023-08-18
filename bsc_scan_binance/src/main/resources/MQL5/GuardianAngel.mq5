@@ -345,10 +345,10 @@ void trailingSL(string line)
          if(my_key != cur_key)
            {
             Alert("TrailingSL: ticket=" + (string)my_ticket + " sl:" + (string)cur_sl + "->" + (string)my_sl + "    tp:" + (string)cur_tp + "->" + (string)my_tp);
-            
+
             m_trade.PositionModify(my_ticket, my_sl, my_tp);
-            
-            
+
+
             Comment("----------------------------- TrailingSL: ticket=" + (string)my_ticket + " sl:" + (string)cur_sl + "->" + (string)my_sl + "    tp:" + (string)cur_tp + "->" + (string)my_tp);
            }
 
@@ -363,6 +363,30 @@ void trailingSL(string line)
 //+------------------------------------------------------------------+
 void OnTimer()
   {
+//------------------------------------------------------------
+   double Loss_In_Money = -150;     // loss in money $
+   double Profit_In_Money = 1000;    // profit in money $
+
+   for(int i=PositionsTotal()-1; i>=0; i--) // returns the number of current positions
+     {
+      if(m_position.SelectByIndex(i)) // selects the position by index for further access to its properties
+        {
+         double profit = m_position.Commission() + m_position.Swap() + m_position.Profit();
+
+         if(profit < Loss_In_Money)
+           {
+            m_trade.PositionClose(m_position.Ticket());
+            Alert("PositionClose=" + (string) m_position.Ticket() + " Loss_In_Money="+ (string)profit);
+           }
+
+         if(profit > Profit_In_Money)
+           {
+            m_trade.PositionClose(m_position.Ticket());
+            Alert("PositionClose=" + (string) m_position.Ticket() + " Profit_In_Money="+ (string)profit);
+           }
+
+        }
+     }
 //------------------------------------------------------------
    int n_close_trade_file_handle = FileOpen("Data//CloseSymbols.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
    if(n_close_trade_file_handle != INVALID_HANDLE)
@@ -388,28 +412,23 @@ void OnTimer()
       // Alert("Loss more than 2000$. Stop trading today!");
      }
 //------------------------------------------------------------
-   double Loss_In_Money = -150;     // loss in money $
-   double Profit_In_Money = 450;    // profit in money $
-
-   for(int i=PositionsTotal()-1; i>=0; i--) // returns the number of current positions
+   int n_trailing_sl_file_handle = FileOpen("Data//TrailingStoploss.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\n', CP_UTF8);
+   if(n_trailing_sl_file_handle != INVALID_HANDLE)
      {
-      if(m_position.SelectByIndex(i)) // selects the position by index for further access to its properties
+      for(int Count=0; Count<99; Count++)
         {
-         double profit = m_position.Commission() + m_position.Swap() + m_position.Profit();
+         if(FileIsEnding(n_trailing_sl_file_handle))
+            break;
 
-         if(profit < Loss_In_Money)
-           {
-            m_trade.PositionClose(m_position.Ticket());
-            Alert("PositionClose=" + (string) m_position.Ticket() + " Loss_In_Money="+ (string)profit);
-           }
-
-         if(profit > Profit_In_Money)
-           {
-            m_trade.PositionClose(m_position.Ticket());
-            Alert("PositionClose=" + (string) m_position.Ticket() + " Profit_In_Money="+ (string)profit);
-           }
-
+         string DataItem = FileReadString(n_trailing_sl_file_handle,0);
+         trailingSL(DataItem);
         }
+
+      FileClose(n_trailing_sl_file_handle);
+     }
+   else
+     {
+      // Alert("n_trailing_sl_file_handle Error " + (string) GetLastError());
      }
 //------------------------------------------------------------
    int n_open_trade_file_handle = FileOpen("Data//OpenTrade.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\n', CP_UTF8);
@@ -429,25 +448,6 @@ void OnTimer()
    else
      {
       // Alert("n_open_trade_file_handle Error " + (string) GetLastError());
-     }
-//------------------------------------------------------------
-   int n_trailing_sl_file_handle = FileOpen("Data//TrailingStoploss.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\n', CP_UTF8);
-   if(n_trailing_sl_file_handle != INVALID_HANDLE)
-     {
-      for(int Count=0; Count<99; Count++)
-        {
-         if(FileIsEnding(n_trailing_sl_file_handle))
-            break;
-
-         string DataItem = FileReadString(n_trailing_sl_file_handle,0);
-         trailingSL(DataItem);
-        }
-
-      FileClose(n_trailing_sl_file_handle);
-     }
-   else
-     {
-      // Alert("n_trailing_sl_file_handle Error " + (string) GetLastError());
      }
 //+------------------------------------------------------------------+
   }
