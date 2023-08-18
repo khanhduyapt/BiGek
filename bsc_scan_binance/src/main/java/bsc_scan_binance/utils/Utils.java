@@ -2813,7 +2813,7 @@ public class Utils {
             return false;
         }
 
-        int candle_no = 1; // Giá đóng cửa của cây nến trước đó.
+        int candle_no = 0; // Giá đóng cửa của cây nến trước đó.
         String id = list.get(0).getId();
         if (id.contains("MINUTE_") || id.contains("m_")) {
             candle_no = 1;

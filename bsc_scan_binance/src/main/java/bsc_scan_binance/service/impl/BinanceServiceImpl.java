@@ -2800,9 +2800,6 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Utils.EPICS_STOCKS_USA.contains(EPIC) && !Utils.is_newyork_session()) {
                     continue;
                 }
-                if (!dto.getComment().contains(Utils.TEXT_PASS)) {
-                    continue;
-                }
                 // ----------------------------------------------------------------------------------
                 if ((!is_openning || allow_padding_trade_after_1day(EPIC)) && (trade_count < MAX_TRADE)) {
                     String EVENT_ID = "OPEN_TRADE" + dto.getEpic() + dto.getOrder_type()
@@ -3876,9 +3873,10 @@ public class BinanceServiceImpl implements BinanceService {
         for (Mt5OpenTradeEntity trade : mt5Openlist) {
             String EPIC = trade.getSymbol();
             String TICKET = trade.getTicket();
+            BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
 
             if (Objects.equals(EPIC, "VOWG")) {
-                boolean debug = true;
+                // boolean debug = true;
             }
             if (Objects.equals(EPIC, "DX.F")) {
                 EPIC = "DX";
@@ -3917,14 +3915,12 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ----------------------------------------------------------------------------------------------
 
-            BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
-
             boolean reverse_trend = false;
+            boolean has_profit = PROFIT.compareTo(BigDecimal.ZERO) > 0;
             if (Objects.equals(dto_10.getTrend_by_ma_20(), REVERSE_TRADE_TREND)
                     || Objects.equals(dto_12.getTrend_by_ma_20(), REVERSE_TRADE_TREND)
                     || Objects.equals(dto_15.getTrend_by_ma_20(), REVERSE_TRADE_TREND)) {
-
-                if (allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
+                if (has_profit) {
                     reverse_trend = true;
                 }
             }
@@ -3937,9 +3933,8 @@ public class BinanceServiceImpl implements BinanceService {
             // Đóng tất cả các lệnh ngược chiều H4 & H4.Ma20
             if (Objects.equals(dto_h4.getTrend_by_ma_20(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_heiken(), REVERSE_TRADE_TREND)) {
-                is_hit_sl = true;
+                // is_hit_sl = true;
             }
-
             // ---------------------------------------------------------------------------------
             // ---------------------------------------------------------------------------------
             if ((reverse_trend || is_hit_sl) && allow_close_trade_after(TICKET, Utils.MINUTES_OF_1H)) {
@@ -4013,7 +4008,9 @@ public class BinanceServiceImpl implements BinanceService {
 
             // Đánh theo đỡ giá của Ma10 của H4
             boolean is_eq_h4ma_vs_15ma = Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_20())
-                    || Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_10());
+                    || Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_10())
+                    || (Objects.equals(trend_15_ma, dto_h1.getTrend_by_ma_10())
+                            && Objects.equals(trend_15_ma, dto_h1.getTrend_by_ma_20()));
 
             boolean is_eq_ma10 = Objects.equals(trend_15_ma, dto_15.getTrend_heiken())
                     && Objects.equals(trend_15_ma, dto_12.getTrend_heiken())
