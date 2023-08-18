@@ -139,19 +139,40 @@ public class BscScanBinanceApplication {
                         if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
 
                             if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
-                                binance_service.saveMt5Data("ForexM.csv", Utils.MINUTES_RELOAD_CSV_DATA);
-                                binance_service.saveMt5Data("Stocks.csv", Utils.MINUTES_OF_1H);
+                                binance_service.saveMt5Data("AureliusIronheart.csv", Utils.MINUTES_RELOAD_CSV_DATA);
+
+                                if (isReloadAfter(Utils.MINUTES_OF_30, "MT5_DATA_TIMEBREAKER")) {
+                                    binance_service.saveMt5Data("TimeBreaker.csv", Utils.MINUTES_RELOAD_CSV_DATA);
+                                }
+
+                                if (isReloadAfter(Utils.MINUTES_OF_1H, "MT5_DATA_STOCKS")) {
+                                    binance_service.saveMt5Data("Stocks.csv", Utils.MINUTES_OF_1H);
+                                }
 
                                 for (String EPIC : CAPITAL_LIST) {
                                     if (Utils.EPICS_STOCKS.contains(EPIC)) {
-                                        binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_W1);
+                                        if (isReloadAfter(Utils.MINUTES_OF_1H, "MT5_DATA_STOCKS_" + EPIC)) {
+                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_W1);
+                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_D1);
+                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H4);
+                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H2);
+                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
+                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_30);
+                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_15);
+                                        }
+                                    } else {
+                                        if (isReloadAfter(Utils.MINUTES_OF_1H, "MT5_DATA_TIMEBREAKER_" + EPIC)) {
+                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_D1);
+                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H4);
+                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H2);
+                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
+                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_30);
+                                        }
+
+                                        binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_10);
+                                        binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_12);
+                                        binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_15);
                                     }
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_D1);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H4);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H2);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_30);
-                                    binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_15);
                                 }
 
                                 binance_service.initTradeList();
@@ -160,14 +181,14 @@ public class BscScanBinanceApplication {
                             }
                         }
 
-                        if (isReloadAfter(5, "MT5_SL_TP")) {
+                        if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_SL_TP")) {
                             binance_service.initTradeList();
                             binance_service.closeTrade_by_SL_TP();
                             binance_service.CloseTickets();
                         }
 
                         // ---------------------------------------------------------
-                        if (isReloadAfter((Utils.MINUTES_OF_15M), "INIT_CRYPTO")) {
+                        if (isReloadAfter((Utils.MINUTES_OF_15), "INIT_CRYPTO")) {
                             binance_service.sendMsgKillLongShort("BTC");
                             binance_service.sendMsgKillLongShort("ETH");
                             binance_service.sendMsgKillLongShort("BNB");
@@ -355,7 +376,7 @@ public class BscScanBinanceApplication {
     }
 
     public static Integer getWattingTime(String SYMBOL) {
-        Integer time = Utils.MINUTES_OF_5M;
+        Integer time = Utils.MINUTES_OF_05;
         if (watting_dict.containsKey(SYMBOL)) {
             time = watting_dict.get(SYMBOL);
         }
@@ -364,13 +385,13 @@ public class BscScanBinanceApplication {
     }
 
     public static void setWattingTime(String SYMBOL, String CRYPTO_TIME_xx) {
-        Integer time = Utils.MINUTES_OF_15M;
+        Integer time = Utils.MINUTES_OF_15;
         switch (CRYPTO_TIME_xx) {
         case Utils.CRYPTO_TIME_05:
-            time = Utils.MINUTES_OF_15M;
+            time = Utils.MINUTES_OF_15;
             break;
         case Utils.CRYPTO_TIME_15:
-            time = Utils.MINUTES_OF_15M;
+            time = Utils.MINUTES_OF_15;
             break;
         case Utils.CRYPTO_TIME_H1:
             time = Utils.MINUTES_OF_1H;

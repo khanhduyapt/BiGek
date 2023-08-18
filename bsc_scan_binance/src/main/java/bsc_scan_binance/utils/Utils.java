@@ -166,60 +166,61 @@ public class Utils {
 
     public static String CST = "";
     public static String X_SECURITY_TOKEN = "";
-    // MINUTE, MINUTE_5, MINUTE_15, MINUTE_30, HOUR, HOUR_4, DAY, WEEK
-    private static final String CAPITAL_TIME_05 = "MINUTE_5";
-    public static final String CAPITAL_TIME_15 = "MINUTE_15";
-    public static final String CAPITAL_TIME_30 = "MINUTE_30";
-    public static final String CAPITAL_TIME_H1 = "HOUR_01";
-    public static final String CAPITAL_TIME_H2 = "HOUR_02";
-    public static final String CAPITAL_TIME_H4 = "HOUR_04";
 
-    // public static final String CAPITAL_TIME_H12 = "HOUR_12";
-    public static final String CAPITAL_TIME_D1 = "DAY";
-    public static final String CAPITAL_TIME_W1 = "WEEK";
-    public static final String CAPITAL_TIME_MO = "MONTH";
-
+    //Binance: Fixed
     public static final String CRYPTO_TIME_05 = "5m";
     public static final String CRYPTO_TIME_15 = "15m";
     public static final String CRYPTO_TIME_H1 = "1h";
     public static final String CRYPTO_TIME_H4 = "4h";
-    public static final String CRYPTO_TIME_H12 = "12h";
     public static final String CRYPTO_TIME_D1 = "1d";
     public static final String CRYPTO_TIME_D3 = "3d";
     public static final String CRYPTO_TIME_W1 = "1w";
     public static final String CRYPTO_TIME_MO = "1M";
 
-    public static final String PREFIX_05_ = "_05m";
-    public static final String PREFIX_15_ = "_15m";
-    public static final String PREFIX_30_ = "_30m";
-    public static final String PREFIX_H1_ = "_01h";
-    public static final String PREFIX_H2_ = "_02h";
-    public static final String PREFIX_H4_ = "_04h";
+    public static final String CAPITAL_TIME_05 = "MINUTE_05";
+    public static final String CAPITAL_TIME_10 = "MINUTE_10";
+    public static final String CAPITAL_TIME_12 = "MINUTE_12";
+    public static final String CAPITAL_TIME_15 = "MINUTE_15";
+
+    public static final String CAPITAL_TIME_30 = "MINUTE_30";
+    public static final String CAPITAL_TIME_H1 = "HOUR_01";
+    public static final String CAPITAL_TIME_H2 = "HOUR_02";
+    public static final String CAPITAL_TIME_H4 = "HOUR_04";
+    public static final String CAPITAL_TIME_D1 = "DAY";
+    public static final String CAPITAL_TIME_W1 = "WEEK";
+    public static final String CAPITAL_TIME_MO = "MONTH";
+
+    public static final String PREFIX_05m = "_05m";
+    public static final String PREFIX_10m = "_10m";
+    public static final String PREFIX_12m = "_12m";
+    public static final String PREFIX_15m = "_15m";
+    public static final String PREFIX_30m = "_30m";
+    public static final String PREFIX_H01 = "_01h";
+    public static final String PREFIX_H02 = "_02h";
+    public static final String PREFIX_H04 = "_04h";
     public static final String PREFIX_H12 = "_12h";
-    public static final String PREFIX_D1_ = "_01d";
-    public static final String PREFIX_W1_ = "_01w";
-    public static final String PREFIX_MO_ = "_1mo";
+    public static final String PREFIX_D01 = "_01d";
+    public static final String PREFIX_W01 = "_01w";
+    public static final String PREFIX_MO1 = "_1mo";
 
     public static final String ENCRYPTED_05 = "naph";
     public static final String ENCRYPTED_15 = "mnph";
     public static final String ENCRYPTED_H1 = "motg";
     public static final String ENCRYPTED_H4 = "bong";
-    public static final String ENCRYPTED_H12 = "mhai";
     public static final String ENCRYPTED_D1 = "mngy";
     public static final String ENCRYPTED_W1 = "mtun";
 
     public static final Integer MINUTES_OF_2D = 2880;
     public static final Integer MINUTES_OF_1D = 1440;
-    public static final Integer MINUTES_OF_12H = 720;
     public static final Integer MINUTES_OF_8H = 480;
     public static final Integer MINUTES_OF_4H = 240;
     public static final Integer MINUTES_OF_2H = 120;
     public static final Integer MINUTES_OF_1H = 60;
-    public static final Integer MINUTES_OF_30M = 30;
-    public static final Integer MINUTES_OF_15M = 15;
-    public static final Integer MINUTES_OF_5M = 5;
+    public static final Integer MINUTES_OF_30 = 30;
+    public static final Integer MINUTES_OF_15 = 15;
+    public static final Integer MINUTES_OF_05 = 5;
 
-    public static final Integer MINUTES_RELOAD_CSV_DATA = 5;
+    public static final Integer MINUTES_RELOAD_CSV_DATA = 3;
 
     public static final List<String> COMPANIES = Arrays.asList("FTMO");
 
@@ -325,7 +326,7 @@ public class Utils {
             "ANKR", "ANT", "APE", "API3", "APT", "AR", "ARDR", "ARK", "ARPA", "ASR", "ASTR", "ATA", "ATM", "ATOM",
             "AUCTION", "AUDIO", "AUTO", "AVA", "AVAX", "AXS", "BADGER", "BAKE", "BAL", "BAND", "BAR", "BAT", "BCH",
             "BEL", "BETA", "BETH", "BICO", "BIFI", "BLZ", "BNB", "BNT", "BNX", "BOND", "BSW", "BTC", "BTS", "BURGER",
-            "C98", "CAKE", "CELO", "CELR", "CFX", "CHESS", "CHR", "CHZ", "CITY", "CKB", "CLV", "COCOS", "COMP", "COS",
+            "C98", "CAKE", "CELO", "CELR", "CFX", "CHESS", "CHR", "CHZ", "CITY", "CKB", "CLV", "COMP", "COS",
             "COTI", "CREAM", "CRV", "CTK", "CTSI", "CTXC", "CVP", "CVX", "DAR", "DASH", "DATA", "DCR", "DGB", "DIA",
             "DOCK", "DODO", "DOGE", "DOT", "DREP", "DUSK", "DYDX", "EDU", "ELF", "ENJ", "ENS", "EOS", "EPX", "ERN",
             "ETC", "ETH", "FARM", "FET", "FIDA", "FIL", "FIO", "FIRO", "FIS", "FLM", "FLOW", "FLUX", "FOR", "FORTH",
@@ -363,7 +364,7 @@ public class Utils {
     public static final List<String> COINS_FUTURES = Arrays.asList("1INCH", "AAVE", "ACH", "ADA", "AGIX", "ALGO",
             "ALICE", "ALPHA", "AMB", "ANKR", "ANT", "APE", "API3", "APT", "AR", "ARB", "ARPA", "ASTR", "ATA", "ATOM",
             "AUDIO", "AVAX", "AXS", "BAKE", "BAL", "BAND", "BAT", "BCH", "BEL", "BLZ", "BNB", "BNT", "BNX", "BTC",
-            "BTC", "C98", "CELO", "CELR", "CFX", "CHR", "CHZ", "CKB", "COCOS", "COMP", "COTI", "CRV", "CTK", "CTSI",
+            "BTC", "C98", "CELO", "CELR", "CFX", "CHR", "CHZ", "CKB", "COMP", "COTI", "CRV", "CTK", "CTSI",
             "CVX", "DAR", "DASH", "DENT", "DGB", "DODO", "DOGE", "DOT", "DUSK", "DYDX", "EDU", "EGLD", "ENJ", "ENS",
             "EOS", "ETC", "ETH", "FET", "FIL", "FLM", "FLOW", "FTM", "FXS", "GAL", "GALA", "GMT", "GMX", "GRT", "GTC",
             "HBAR", "HIGH", "HOOK", "HOT", "HFT", "ICP", "ICX", "ID", "IMX", "INJ", "IOST", "IOTA", "IOTX", "JASMY",
@@ -1000,43 +1001,56 @@ public class Utils {
 
     public static String getChartPrefix(String CAPITAL_TIME_XX) {
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_05)) {
-            return PREFIX_05_;
+            return PREFIX_05m;
+        }
+
+        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_10)) {
+            return PREFIX_10m;
+        }
+        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_12)) {
+            return PREFIX_12m;
         }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_15)) {
-            return PREFIX_15_;
+            return PREFIX_15m;
         }
+
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_30)) {
-            return PREFIX_30_;
+            return PREFIX_30m;
         }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H1)) {
-            return PREFIX_H1_;
+            return PREFIX_H01;
         }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H2)) {
-            return PREFIX_H2_;
+            return PREFIX_H02;
         }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H4)) {
-            return PREFIX_H4_;
+            return PREFIX_H04;
         }
-        // if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H12)) {
-        // return PREFIX_H12;
-        // }
+
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_D1)) {
-            return PREFIX_D1_;
+            return PREFIX_D01;
         }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_W1)) {
-            return PREFIX_W1_;
+            return PREFIX_W01;
         }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_MO)) {
-            return PREFIX_MO_;
+            return PREFIX_MO1;
         }
 
         return "not_found_chart_prefix";
     }
 
     public static String getEncryptedChartNameCapital(String TIME) {
-        if (Objects.equals(TIME, CAPITAL_TIME_15)) {
-            return ENCRYPTED_H1;
+        if (Objects.equals(TIME, CAPITAL_TIME_10)) {
+            return ENCRYPTED_15;
         }
+        if (Objects.equals(TIME, CAPITAL_TIME_12)) {
+            return ENCRYPTED_15;
+        }
+        if (Objects.equals(TIME, CAPITAL_TIME_15)) {
+            return ENCRYPTED_15;
+        }
+
         if (Objects.equals(TIME, CAPITAL_TIME_30)) {
             return ENCRYPTED_H1;
         }
@@ -1049,9 +1063,7 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
             return ENCRYPTED_H4;
         }
-        // if (Objects.equals(TIME, CAPITAL_TIME_H12)) {
-        // return ENCRYPTED_H12;
-        // }
+
         if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
             return ENCRYPTED_D1;
         }
@@ -1079,31 +1091,39 @@ public class Utils {
     }
 
     public static String getChartNameCapital(String TIME) {
-        if (TIME.contains(CAPITAL_TIME_05) || TIME.contains(PREFIX_05_)) {
+        if (TIME.contains(CAPITAL_TIME_05) || TIME.contains(PREFIX_05m)) {
             return "(05)";
         }
-        if (TIME.contains(CAPITAL_TIME_15) || TIME.contains(PREFIX_15_)) {
+
+        if (TIME.contains(CAPITAL_TIME_10) || TIME.contains(PREFIX_10m)) {
             return "(15)";
         }
-        if (TIME.contains(CAPITAL_TIME_30) || TIME.contains(PREFIX_30_)) {
+        if (TIME.contains(CAPITAL_TIME_12) || TIME.contains(PREFIX_12m)) {
+            return "(15)";
+        }
+        if (TIME.contains(CAPITAL_TIME_15) || TIME.contains(PREFIX_15m)) {
+            return "(15)";
+        }
+
+        if (TIME.contains(CAPITAL_TIME_30) || TIME.contains(PREFIX_30m)) {
             return "(30)";
         }
-        if (TIME.contains(CAPITAL_TIME_H1) || TIME.contains(PREFIX_H1_)) {
+        if (TIME.contains(CAPITAL_TIME_H1) || TIME.contains(PREFIX_H01)) {
             return "(H1)";
         }
-        if (TIME.contains(CAPITAL_TIME_H2) || TIME.contains(PREFIX_H2_)) {
+        if (TIME.contains(CAPITAL_TIME_H2) || TIME.contains(PREFIX_H02)) {
             return "(H2)";
         }
-        if (TIME.contains(CAPITAL_TIME_H4) || TIME.contains(PREFIX_H4_)) {
+        if (TIME.contains(CAPITAL_TIME_H4) || TIME.contains(PREFIX_H04)) {
             return "(H4)";
         }
-        if (TIME.contains(CAPITAL_TIME_D1) || TIME.contains(PREFIX_D1_)) {
+        if (TIME.contains(CAPITAL_TIME_D1) || TIME.contains(PREFIX_D01)) {
             return "(D1)";
         }
-        if (TIME.contains(CAPITAL_TIME_W1) || TIME.contains(PREFIX_W1_)) {
+        if (TIME.contains(CAPITAL_TIME_W1) || TIME.contains(PREFIX_W01)) {
             return "(W1)";
         }
-        if (TIME.contains(CAPITAL_TIME_MO) || TIME.contains(PREFIX_MO_)) {
+        if (TIME.contains(CAPITAL_TIME_MO) || TIME.contains(PREFIX_MO1)) {
             return "(MO)";
         }
 
@@ -2076,15 +2096,15 @@ public class Utils {
     public static String getCurrentYyyyMmDdHHByChart(String id) {
         String result = getCurrentYyyyMmDd_HH_Blog15m() + "_";
 
-        if (id.contains(PREFIX_H4_) || id.contains(CAPITAL_TIME_H4)) {
+        if (id.contains(PREFIX_H04) || id.contains(CAPITAL_TIME_H4)) {
             return getCurrentYyyyMmDd_Blog4h() + "_";
         }
 
-        if (id.contains(PREFIX_H1_) || id.contains(CAPITAL_TIME_H1)) {
+        if (id.contains(PREFIX_H01) || id.contains(CAPITAL_TIME_H1)) {
             return getCurrentYyyyMmDd_HH() + "_";
         }
 
-        if (id.contains(PREFIX_D1_) || id.contains(CAPITAL_TIME_D1)) {
+        if (id.contains(PREFIX_D01) || id.contains(CAPITAL_TIME_D1)) {
             return getYyyyMmDdHH_ChangeDailyChart() + "_";
         }
 
@@ -2832,13 +2852,13 @@ public class Utils {
 
     public static int getSlowIndex(List<BtcFutures> list) {
         String symbol = list.get(0).getId().toLowerCase();
-        if (symbol.contains(PREFIX_H4_)) {
+        if (symbol.contains(PREFIX_H04)) {
             return 50;
         }
-        if (symbol.contains(PREFIX_D1_)) {
+        if (symbol.contains(PREFIX_D01)) {
             return 8;
         }
-        if (symbol.contains(PREFIX_W1_)) {
+        if (symbol.contains(PREFIX_W01)) {
             return 8;
         }
 
@@ -2872,21 +2892,21 @@ public class Utils {
 
             String symbol = list.get(0).getId().toLowerCase();
 
-            if (symbol.contains(PREFIX_05_)) {
+            if (symbol.contains(PREFIX_05m)) {
                 result = "(05)";
-            } else if (symbol.contains(PREFIX_15_)) {
+            } else if (symbol.contains(PREFIX_15m)) {
                 result = "(15)";
-            } else if (symbol.contains(PREFIX_H1_)) {
+            } else if (symbol.contains(PREFIX_H01)) {
                 result = "(H1)";
-            } else if (symbol.contains(PREFIX_H4_)) {
+            } else if (symbol.contains(PREFIX_H04)) {
                 result = "(H4)";
             } else if (symbol.contains(PREFIX_H12)) {
                 result = "(H12)";
-            } else if (symbol.contains(PREFIX_D1_)) {
+            } else if (symbol.contains(PREFIX_D01)) {
                 result = "(D1)";
-            } else if (symbol.contains(PREFIX_W1_)) {
+            } else if (symbol.contains(PREFIX_W01)) {
                 result = "(W1)";
-            } else if (symbol.contains(PREFIX_MO_)) {
+            } else if (symbol.contains(PREFIX_MO1)) {
                 result = "(MO)";
             } else {
                 result = "(" + symbol.replace("_00", "") + ")";
@@ -2902,23 +2922,30 @@ public class Utils {
         String result = "";
 
         try {
-            if (dto_id.contains(CAPITAL_TIME_05) || dto_id.contains(PREFIX_05_)) {
+            if (dto_id.contains(CAPITAL_TIME_05) || dto_id.contains(PREFIX_05m)) {
                 result = "(05)";
-            } else if (dto_id.contains(CAPITAL_TIME_15) || dto_id.contains(PREFIX_15_)) {
+
+            } else if (dto_id.contains(CAPITAL_TIME_10) || dto_id.contains(PREFIX_10m)) {
                 result = "(15)";
-            } else if (dto_id.contains(CAPITAL_TIME_30) || dto_id.contains(PREFIX_30_)) {
+            } else if (dto_id.contains(CAPITAL_TIME_12) || dto_id.contains(PREFIX_12m)) {
+                result = "(15)";
+            } else if (dto_id.contains(CAPITAL_TIME_15) || dto_id.contains(PREFIX_15m)) {
+                result = "(15)";
+
+            } else if (dto_id.contains(CAPITAL_TIME_30) || dto_id.contains(PREFIX_30m)) {
                 result = "(30)";
-            } else if (dto_id.contains(CAPITAL_TIME_H1) || dto_id.contains(PREFIX_H1_)) {
+            } else if (dto_id.contains(CAPITAL_TIME_H1) || dto_id.contains(PREFIX_H01)) {
                 result = "(H1)";
-            } else if (dto_id.contains(CAPITAL_TIME_H2) || dto_id.contains(PREFIX_H2_)) {
+            } else if (dto_id.contains(CAPITAL_TIME_H2) || dto_id.contains(PREFIX_H02)) {
                 result = "(H2)";
-            } else if (dto_id.contains(CAPITAL_TIME_H4) || dto_id.contains(PREFIX_H4_)) {
+            } else if (dto_id.contains(CAPITAL_TIME_H4) || dto_id.contains(PREFIX_H04)) {
                 result = "(H4)";
-            } else if (dto_id.contains(CAPITAL_TIME_D1) || dto_id.contains(PREFIX_D1_)) {
+
+            } else if (dto_id.contains(CAPITAL_TIME_D1) || dto_id.contains(PREFIX_D01)) {
                 result = "(D1)";
-            } else if (dto_id.contains(CAPITAL_TIME_W1) || dto_id.contains(PREFIX_W1_)) {
+            } else if (dto_id.contains(CAPITAL_TIME_W1) || dto_id.contains(PREFIX_W01)) {
                 result = "(W1)";
-            } else if (dto_id.contains(CAPITAL_TIME_MO) || dto_id.contains(PREFIX_MO_)) {
+            } else if (dto_id.contains(CAPITAL_TIME_MO) || dto_id.contains(PREFIX_MO1)) {
                 result = "(MO)";
             } else {
                 result = "(" + dto_id + ")";
@@ -3008,7 +3035,7 @@ public class Utils {
 
     public static String analysisVolume(List<BtcFutures> list) {
         String symbol = list.get(0).getId();
-        if (!symbol.contains("_1d_")) {
+        if (!symbol.contains("_01d")) {
             return "";
         }
 
@@ -3843,13 +3870,28 @@ public class Utils {
             return "";
         }
 
+        boolean ma6_1_2_up = isUptrendByMa(heiken_list, 6, 1, 2);
+        if (ma6_1_2_up && Objects.equals(heiken_1, TREND_SHOT)) {
+            return "";
+        }
+        if (!ma6_1_2_up && Objects.equals(heiken_1, TREND_LONG)) {
+            return "";
+        }
+
         String switch_trend = switchTrendByMa1(heiken_list, 1, 10, heiken_list.size(), "(Ma1vs10to50)");
         if (Utils.isNotBlank(switch_trend)) {
-            List<BigDecimal> lohi = getLowHighCandle(heiken_list.subList(0, 2));
+            List<BtcFutures> sub_list = heiken_list.subList(0, 2);
+            BigDecimal candle_hig = calcMaxCandleHigh(sub_list);
+
+            List<BigDecimal> lohi = getLowHighCandle(sub_list);
             BigDecimal low = lohi.get(0);
+            low = low.subtract(candle_hig);
+
             BigDecimal hig = lohi.get(1);
+            hig = hig.add(candle_hig);
 
             BigDecimal ma01_0 = calcMA(heiken_list, 01, 1);
+
             BigDecimal ma10_0 = calcMA(heiken_list, 10, 1);
             BigDecimal ma10_1 = calcMA(heiken_list, 10, 2);
 
@@ -3860,18 +3902,19 @@ public class Utils {
 
             boolean inside_lohi = true;
             inside_lohi &= (ma10_0.compareTo(low) > 0) && (ma10_1.compareTo(low) > 0) && (ma20_0.compareTo(low) > 0)
-                    && (ma20_1.compareTo(low) > 0);
-            inside_lohi &= (hig.compareTo(ma10_0) > 0) && (hig.compareTo(ma10_1) > 0) && (hig.compareTo(ma20_0) > 0)
-                    && (hig.compareTo(ma20_1) > 0);
+                    && (ma20_1.compareTo(low) > 0) && (ma50_1.compareTo(low) > 0);
 
-            if (switch_trend.contains(Utils.TREND_LONG) && inside_lohi) {
+            inside_lohi &= (hig.compareTo(ma10_0) > 0) && (hig.compareTo(ma10_1) > 0) && (hig.compareTo(ma20_0) > 0)
+                    && (hig.compareTo(ma20_1) > 0) && (hig.compareTo(ma50_1) > 0);
+
+            if (inside_lohi && switch_trend.contains(Utils.TREND_LONG)) {
                 if ((ma01_0.compareTo(ma10_0) > 0) && (ma01_0.compareTo(ma10_1) > 0) && (ma01_0.compareTo(ma20_0) > 0)
                         && (ma01_0.compareTo(ma20_1) > 0) && (ma01_0.compareTo(ma50_1) > 0)) {
                     result = Utils.TREND_LONG;
                 }
             }
 
-            if (switch_trend.contains(Utils.TREND_SHOT) && inside_lohi) {
+            if (inside_lohi && switch_trend.contains(Utils.TREND_SHOT) && inside_lohi) {
                 if ((ma01_0.compareTo(ma10_0) < 0) && (ma01_0.compareTo(ma10_1) < 0) && (ma01_0.compareTo(ma20_0) < 0)
                         && (ma01_0.compareTo(ma20_1) < 0) && (ma01_0.compareTo(ma50_1) < 0)) {
                     result = Utils.TREND_SHOT;
@@ -4135,9 +4178,9 @@ public class Utils {
         BigDecimal ma;
         BigDecimal pre_close_price = list.get(1).getPrice_close_candle();
 
-        if (symbol.contains(PREFIX_D1_)) {
+        if (symbol.contains(PREFIX_D01)) {
             ma = calcMA(list, MA_INDEX_D1_START_LONG, cur);
-        } else if (symbol.contains(PREFIX_H4_)) {
+        } else if (symbol.contains(PREFIX_H04)) {
             ma = calcMA(list, MA_INDEX_H4_START_LONG, cur);
         } else {
             ma = calcMA(list, 50, cur);
@@ -4182,7 +4225,11 @@ public class Utils {
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H2, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H1, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_30, "");
+
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_15, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_12, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_10, "");
+
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_05, "");
 
         EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_05, "");
@@ -4203,6 +4250,8 @@ public class Utils {
         switch (CAPITAL_TIME_XX) {
 
         case CAPITAL_TIME_05:
+        case CAPITAL_TIME_10:
+        case CAPITAL_TIME_12:
         case CAPITAL_TIME_15:
             return MINUTES_OF_1H;
 
@@ -4210,10 +4259,10 @@ public class Utils {
             return MINUTES_OF_4H;
 
         case CAPITAL_TIME_H4:
-            return MINUTES_OF_12H;
+            return MINUTES_OF_4H;
 
         default:
-            return MINUTES_OF_12H;
+            return MINUTES_OF_4H;
         }
     }
 
@@ -4446,7 +4495,7 @@ public class Utils {
         boolean ma3_2_uptrend = true;
 
         String id = heiken_list.get(0).getId();
-        if (id.contains(PREFIX_MO_) || id.contains(PREFIX_W1_) || id.contains(PREFIX_D1_)) {
+        if (id.contains(PREFIX_MO1) || id.contains(PREFIX_W01) || id.contains(PREFIX_D01)) {
             ma3_1_uptrend = isUptrendByMa(heiken_list, 3, 0, 1);
             ma3_2_uptrend = isUptrendByMa(heiken_list, 3, 1, 2);
         } else {
@@ -4478,7 +4527,7 @@ public class Utils {
         // -------------------------------------------------------------------------
         String id = heiken_list.get(0).getId();
 
-        if (id.contains(PREFIX_05_) || id.contains(PREFIX_15_) || id.contains(PREFIX_H1_)) {
+        if (id.contains(PREFIX_05m) || id.contains(PREFIX_15m) || id.contains(PREFIX_H01)) {
             // Dựa vào nến đóng khung H1 trở xuống:
             if (Objects.equals(trend, Utils.TREND_LONG) && heiken_list.get(1).isUptrend() && heiken_list.get(2).isDown()
                     && heiken_list.get(3).isDown()) {
@@ -4530,7 +4579,7 @@ public class Utils {
         String id = heiken_list.get(0).getId();
 
         boolean isUptrend_0 = heiken_list.get(str).isUptrend();
-        if (id.contains(PREFIX_MO_) || id.contains(PREFIX_W1_)) {
+        if (id.contains(PREFIX_MO1) || id.contains(PREFIX_W01)) {
             return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
         }
 
