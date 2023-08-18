@@ -3797,7 +3797,7 @@ public class Utils {
             return "";
         }
 
-        String switch_trend = switchTrendByMa1(heiken_list, 1, 10, heiken_list.size(), "(Ma1vs10to50)");
+        String switch_trend = switchTrendByMa1(heiken_list, 1, 20, heiken_list.size(), "(Ma1vs20to50)");
         if (Utils.isNotBlank(switch_trend)) {
 
             List<BigDecimal> lohi = getLowHighCandle(heiken_list.subList(1, 3));
@@ -3857,7 +3857,7 @@ public class Utils {
             return "";
         }
 
-        String switch_trend = switchTrendByMa1(heiken_list, 1, 10, heiken_list.size(), "(Ma1vs10to50)");
+        String switch_trend = switchTrendByMa1(heiken_list, 1, 20, heiken_list.size(), "(Ma1vs20to50)");
         if (Utils.isNotBlank(switch_trend)) {
             List<BtcFutures> sub_list = heiken_list.subList(0, 2);
             BigDecimal candle_hig = calcMaxCandleHigh(sub_list);
@@ -4246,7 +4246,7 @@ public class Utils {
     }
 
     public static String createOpenTradeMsg(Mt5OpenTrade dto, String prefix) {
-        String msg = Utils.appendSpace("", 10) + "(Open Msg)   " + prefix;
+        String msg = Utils.appendSpace("", 10) + getTimeHHmm() + prefix;
         msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type().toUpperCase(), 4, "_") + ")", 15);
         msg += Utils.appendSpace(dto.getEpic(), 10) + new_line_from_service + " ";
         msg += Utils.appendSpace(dto.getComment(), 30) + "  ";
