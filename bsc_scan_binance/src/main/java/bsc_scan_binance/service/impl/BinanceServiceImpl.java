@@ -3821,8 +3821,9 @@ public class BinanceServiceImpl implements BinanceService {
         if (BscScanBinanceApplication.mt5_open_trade_List.size() > 0) {
             Utils.logWritelnDraft("");
         }
-
-        // ----------------------------------------Trailing--------------------------------------
+        // ----------------------------------------------------------------------------------------------
+        // ----------------------------------------Trailing----------------------------------------------
+        // ----------------------------------------------------------------------------------------------
         List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAll();
         BigDecimal TOTAL_PROFIT = BigDecimal.ZERO;
 
@@ -3867,7 +3868,9 @@ public class BinanceServiceImpl implements BinanceService {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        // ----------------------------------------PROFIT--------------------------------------
+        // ----------------------------------------------------------------------------------------------
+        // ---------------------------------------close_trade--------------------------------------------
+        // ----------------------------------------------------------------------------------------------
         String msg = "";
         String keys = "";
         for (Mt5OpenTradeEntity trade : mt5Openlist) {
@@ -3959,16 +3962,15 @@ public class BinanceServiceImpl implements BinanceService {
                 // --------------------------------------------------------------------------
             }
         }
-
         // TODO: 5. closeTrade_by_SL_TP
         if (Utils.isNotBlank(msg)) {
             String EVENT_ID = "CLOSE_TRADE" + Utils.getCurrentYyyyMmDd_HH() + keys;
             sendMsgPerHour_OnlyMe(EVENT_ID, Utils.new_line_from_service + msg);
         }
-        // ----------------------------------------------------------------------------------------------
-        // ----------------------------------------------------------------------------------------------
-        // ----------------------------------------------------------------------------------------------
 
+        // ----------------------------------------------------------------------------------------------
+        // ----------------------------------------open_trade--------------------------------------------
+        // ----------------------------------------------------------------------------------------------
         List<String> CAPITAL_LIST = new ArrayList<String>();
         CAPITAL_LIST.addAll(Utils.EPICS_INDEXS_CFD);
         CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_ALL);
@@ -4001,8 +4003,8 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_switch_seq = switch_trend.contains("SEQ");
 
             // Đánh theo đỡ giá của Ma20 của H4
-            boolean is_eq_h4ma_vs_15ma = Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_20())
-                    || Objects.equals(trend_15_ma, dto_h1.getTrend_by_ma_20());
+            boolean is_eq_h4ma_vs_15ma = Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_20());
+            boolean is_eq_h1ma_vs_15ma = Objects.equals(trend_15_ma, dto_h1.getTrend_by_ma_20());
 
             boolean is_eq_ma10 = Objects.equals(trend_15_ma, dto_15.getTrend_heiken())
                     && Objects.equals(trend_15_ma, dto_12.getTrend_heiken())
@@ -4010,15 +4012,16 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(trend_15_ma, dto_10.getTrend_heiken())
                     && Objects.equals(trend_15_ma, dto_10.getTrend_by_ma_20());
 
-            if (is_switch_seq && is_eq_ma10 && dto_h4.getTradable_zone().contains(trend_15_ma)) {
-                String chart_name = Utils.getChartPrefix(Utils.CAPITAL_TIME_15);
+            Mt5OpenTrade trade_dto = null;
+            String chart_name = Utils.getChartPrefix(Utils.CAPITAL_TIME_15);
+            String append = switch_trend.contains(Utils.TEXT_SWITCH_TREND_SEQ_1050) ? "_seq50" : "_seq20";
 
-                String key = EPIC + Utils.CAPITAL_TIME_15;
-                String append = switch_trend.contains(Utils.TEXT_SWITCH_TREND_SEQ_1050) ? "_seq50" : "_seq20";
-
+            if (is_eq_ma10 && is_switch_seq && dto_h4.getTradable_zone().contains(trend_15_ma)) {
                 if (is_eq_h4ma_vs_15ma) {
+
+                    String key = EPIC + Utils.CAPITAL_TIME_15;
                     append += Utils.TEXT_PASS;
-                    Mt5OpenTrade trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_15_ma, dto_15, dto_15, append, true,
+                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_15_ma, dto_15, dto_15, append, true,
                             Utils.CAPITAL_TIME_15);
 
                     close_reverse_trade(trade_dto);
@@ -4030,8 +4033,9 @@ public class BinanceServiceImpl implements BinanceService {
                     String log = Utils.createOpenTradeMsg(trade_dto, prefix);
                     log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
                     Utils.logWritelnDraft(log);
-                } else {
-                    Mt5OpenTrade trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_15_ma, dto_15, dto_15, append, true,
+
+                } else if (is_eq_h1ma_vs_15ma) {
+                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_15_ma, dto_15, dto_15, append, true,
                             Utils.CAPITAL_TIME_15);
 
                     String prefix = Utils.appendSpace("DANGER(#H4ma20) " + chart_name, 20) + ": ";
@@ -4039,8 +4043,8 @@ public class BinanceServiceImpl implements BinanceService {
                     log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
                     Utils.logWritelnDraft(log);
                 }
-
             }
+
         }
 
         // ----------------------------------------------------------------------------------------------
