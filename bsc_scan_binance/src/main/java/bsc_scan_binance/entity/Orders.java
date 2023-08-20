@@ -39,6 +39,16 @@ import lombok.NoArgsConstructor;
 //    colume_03 character varying(255) COLLATE pg_catalog."default",
 //    colume_04 character varying(255) COLLATE pg_catalog."default",
 //    colume_05 character varying(255) COLLATE pg_catalog."default",
+//    price_01 numeric(30,5) DEFAULT 0,
+//    price_02 numeric(30,5) DEFAULT 0,
+//    price_03 numeric(30,5) DEFAULT 0,
+//    price_04 numeric(30,5) DEFAULT 0,
+//    price_05 numeric(30,5) DEFAULT 0,
+//    price_06 numeric(30,5) DEFAULT 0,
+//    price_07 numeric(30,5) DEFAULT 0,
+//    price_08 numeric(30,5) DEFAULT 0,
+//    price_09 numeric(30,5) DEFAULT 0,
+//    price_10 numeric(30,5) DEFAULT 0,
 //    CONSTRAINT orders_pkey PRIMARY KEY (gecko_id)
 //)
 
@@ -98,4 +108,41 @@ public class Orders {
     @Column(name = "colume_05")
     private String colume_05;
 
+//    short zone
+//    long region
+//    amplitude 1 part 15
+//    ma200
+//    ma50
+//    ma20
+//    ma10
+//    ma01
+    @Column(name = "price_01")
+    private BigDecimal price_01 = BigDecimal.ZERO;
+
+    @Column(name = "price_02")
+    private BigDecimal price_02 = BigDecimal.ZERO;
+
+    @Column(name = "price_03")
+    private BigDecimal price_03 = BigDecimal.ZERO;
+
+    @Column(name = "price_04")
+    private BigDecimal price_04 = BigDecimal.ZERO;
+
+    @Column(name = "price_05")
+    private BigDecimal price_05 = BigDecimal.ZERO;
+
+    @Column(name = "price_06")
+    private BigDecimal price_06 = BigDecimal.ZERO;
+
+    @Column(name = "price_07")
+    private BigDecimal price_07 = BigDecimal.ZERO;
+
+    @Column(name = "price_08")
+    private BigDecimal price_08 = BigDecimal.ZERO;
+
+    @Column(name = "price_09")
+    private BigDecimal price_09 = BigDecimal.ZERO;
+
+    @Column(name = "price_10")
+    private BigDecimal price_10 = BigDecimal.ZERO;
 }

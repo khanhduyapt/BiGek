@@ -97,8 +97,8 @@ public class BinanceServiceImpl implements BinanceService {
 
     private static Hashtable<String, BigDecimal> BREAD_DICT = new Hashtable<String, BigDecimal>();
 
-    private String str_long_suggest = "";
-    private String str_shot_suggest = "";
+    private static Hashtable<String, BigDecimal> amplitude_of_15_min_wave = new Hashtable<String, BigDecimal>();
+
 
     @PersistenceContext
     private final EntityManager entityManager;
@@ -2626,7 +2626,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         Orders entity = new Orders(orderId, date_time, trend, heiken_list.get(0).getCurrPrice(), body.get(0),
                 body.get(1), low_high.get(0), low_high.get(1), note, trend_by_ma10, tradable_zone, trend_heiken_1, "",
-                "", "", "");
+                "", "", "", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+                BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
 
         ordersRepository.save(entity);
     }
@@ -3151,9 +3152,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                 result += " Profit: " + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 6) + "$";
 
-                result += "   "
-                        + Utils.appendSpace(
-                                Utils.get_duration_trade_time(trade) + "   " + trade.getComment() + trend_reverse, 60);
+                result += "   " + Utils.appendSpace(
+                        Utils.get_duration_trade_time(trade) + "   " + trade.getComment() + trend_reverse, 60);
 
                 result += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62);
 
@@ -3351,8 +3351,8 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
             String symbol = dto.getId().replace("CRYPTO_", "").replace(Utils.PREFIX_W01, "")
-                    .replace(Utils.PREFIX_D01, "").replace(Utils.PREFIX_H12, "")
-                    .replace(Utils.PREFIX_H04, "").replace(Utils.PREFIX_H01, "");
+                    .replace(Utils.PREFIX_D01, "").replace(Utils.PREFIX_H12, "").replace(Utils.PREFIX_H04, "")
+                    .replace(Utils.PREFIX_H01, "");
 
             String type = "";
             if (Utils.COINS_FUTURES.contains(symbol)) {
@@ -3702,7 +3702,7 @@ public class BinanceServiceImpl implements BinanceService {
             String eoz = "";
             eoz += "  EOZ:";
             eoz += !dto_h4.getTradable_zone().contains(trend_h4_ma20) ? "H4" + Utils.getType(trend_h4_ma20) : "     ";
-            // eoz += !dto_h1.isTradable_zone() ? "H1" + Utils.getType(trend_h1) : "     ";
+            // eoz += !dto_h1.isTradable_zone() ? "H1" + Utils.getType(trend_h1) : " ";
             eoz += "   ";
 
             if (!Objects.equals(EPIC, "BTCUSD")) {
@@ -3803,7 +3803,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         Orders entity = new Orders(orderId, date_time, trend_heiken, heiken_list.get(0).getCurrPrice(), str_body,
                 end_body, sl_long, sl_shot, switch_trend, trend_by_ma_10, tradable_zone, trend_heiken_1, trend_by_ma_20,
-                "", "", "");
+                "", "", "", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+                BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
 
         ordersRepository.save(entity);
 
@@ -3818,6 +3819,10 @@ public class BinanceServiceImpl implements BinanceService {
         if (BscScanBinanceApplication.mt5_open_trade_List.size() > 0) {
             Utils.logWritelnDraft("");
         }
+        amplitude_of_15_min_wave.put("AUDUSD", BigDecimal.valueOf(48));
+        amplitude_of_15_min_wave.put("AUDNZD", BigDecimal.valueOf(55));
+        amplitude_of_15_min_wave.put("AUDJPY", BigDecimal.valueOf(65));
+
         // ----------------------------------------------------------------------------------------------
         // ----------------------------------------Trailing----------------------------------------------
         // ----------------------------------------------------------------------------------------------
@@ -3966,6 +3971,7 @@ public class BinanceServiceImpl implements BinanceService {
                 // --------------------------------------------------------------------------
             }
         }
+
         // TODO: 5. closeTrade_by_SL_TP
         if (Utils.isNotBlank(msg)) {
             String EVENT_ID = "CLOSE_TRADE" + Utils.getCurrentYyyyMmDd_HH() + keys;
@@ -4009,9 +4015,9 @@ public class BinanceServiceImpl implements BinanceService {
             // Đánh theo đỡ giá của Ma10 của H4
             boolean is_eq_h4ma_vs_15ma = Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_20())
                     && Objects.equals(trend_15_ma, dto_d1.getTrend_by_ma_10());
-            //                    || Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_10())
-            //                    || (Objects.equals(trend_15_ma, dto_h1.getTrend_by_ma_10())
-            //                            && Objects.equals(trend_15_ma, dto_h1.getTrend_by_ma_20()));
+            // || Objects.equals(trend_15_ma, dto_h4.getTrend_by_ma_10())
+            // || (Objects.equals(trend_15_ma, dto_h1.getTrend_by_ma_10())
+            // && Objects.equals(trend_15_ma, dto_h1.getTrend_by_ma_20()));
 
             boolean is_eq_ma10 = Objects.equals(trend_15_ma, dto_15.getTrend_heiken())
                     && Objects.equals(trend_15_ma, dto_12.getTrend_heiken())
