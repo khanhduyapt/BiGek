@@ -378,6 +378,220 @@ public class Utils {
             "THETA", "TLM", "TOMO", "TRB", "TRU", "TRX", "UNFI", "UNI", "VET", "WAVES", "XEM", "XLM", "XMR", "XRP",
             "XTZ", "YFI", "ZEC", "ZEN", "ZIL", "ZRX", "WOO", "RPL", "PEPE");
 
+    public static BigDecimal get_amplitude_of_15_min_wave(String EPIC) {
+        switch (EPIC.toUpperCase()) {
+        case "DX":
+            return BigDecimal.valueOf(40);
+
+        case "AAPL":
+            return BigDecimal.valueOf(4.85);
+
+        case "ETHUSD":
+            return BigDecimal.valueOf(40);
+
+        case "ADAUSD":
+            return BigDecimal.valueOf(1.385);
+
+        case "DOTUSD":
+            return BigDecimal.valueOf(0.135);
+
+        case "LTCUSD":
+            return BigDecimal.valueOf(4.45);
+
+        case "XRPUSD":
+            return BigDecimal.valueOf(2.55);
+
+        case "AMZN":
+            return BigDecimal.valueOf(4.5);
+
+        case "AUDCAD":
+            return BigDecimal.valueOf(0.00575);
+
+        case "AUDCHF":
+            return BigDecimal.valueOf(0.00338);
+
+        case "AUDJPY":
+            return BigDecimal.valueOf(0.6);
+
+        case "AUDNZD":
+            return BigDecimal.valueOf(0.0035);
+
+//        case "AUDUSD":
+//            return BigDecimal.valueOf();
+//
+//        case "AUS200":
+//            return BigDecimal.valueOf();
+//
+//        case "BABA":
+//            return BigDecimal.valueOf();
+//
+//        case "BAC":
+//            return BigDecimal.valueOf();
+//
+//        case "BAYGN":
+//            return BigDecimal.valueOf();
+//
+//        case "BTCUSD":
+//            return BigDecimal.valueOf();
+//
+//        case "CADCHF":
+//            return BigDecimal.valueOf();
+//
+//        case "DBKGN":
+//            return BigDecimal.valueOf();
+//
+//        case "DOGEUSD":
+//            return BigDecimal.valueOf();
+//
+//        case "EU50":
+//            return BigDecimal.valueOf(80);
+//
+//        case "EURAUD":
+//            return BigDecimal.valueOf();
+//
+//        case "EURCAD":
+//            return BigDecimal.valueOf();
+//
+//        case "EURCHF":
+//            return BigDecimal.valueOf();
+//
+//        case "EURGBP":
+//            return BigDecimal.valueOf();
+//
+//        case "EURJPY":
+//            return BigDecimal.valueOf();
+//
+//        case "EURNZD":
+//            return BigDecimal.valueOf();
+//
+//        case "EURUSD":
+//            return BigDecimal.valueOf();
+//
+//        case "FRA40":
+//            return BigDecimal.valueOf();
+//
+//        case "GBPAUD":
+//            return BigDecimal.valueOf();
+//
+//        case "GBPCAD":
+//            return BigDecimal.valueOf();
+//
+//        case "GBPCHF":
+//            return BigDecimal.valueOf();
+//
+//        case "GBPJPY":
+//            return BigDecimal.valueOf();
+//
+//        case "GBPNZD":
+//            return BigDecimal.valueOf();
+//
+//        case "GBPUSD":
+//            return BigDecimal.valueOf();
+//
+//        case "GER40":
+//            return BigDecimal.valueOf();
+//
+//        case "GOOG":
+//            return BigDecimal.valueOf();
+//
+//        case "LVMH":
+//            return BigDecimal.valueOf();
+//
+//        case "META":
+//            return BigDecimal.valueOf();
+//
+//        case "MSFT":
+//            return BigDecimal.valueOf();
+//
+//        case "NVDA":
+//            return BigDecimal.valueOf();
+//
+//        case "NFLX":
+//            return BigDecimal.valueOf();
+//
+//        case "NATGAS":
+//            return BigDecimal.valueOf();
+//
+//        case "NZDCAD":
+//            return BigDecimal.valueOf();
+//
+//        case "NZDCHF":
+//            return BigDecimal.valueOf();
+//
+//        case "CADJPY":
+//            return BigDecimal.valueOf(40);
+//
+//        case "CHFJPY":
+//            return BigDecimal.valueOf();
+//
+//        case "NZDJPY":
+//            return BigDecimal.valueOf();
+//
+//        case "NZDUSD":
+//            return BigDecimal.valueOf();
+//
+//        case "USDCAD":
+//            return BigDecimal.valueOf();
+//
+//        case "USDJPY":
+//            return BigDecimal.valueOf();
+//
+//        case "USDCHF":
+//            return BigDecimal.valueOf();
+//
+//        case "PFE":
+//            return BigDecimal.valueOf();
+//
+//        case "RACE":
+//            return BigDecimal.valueOf();
+//
+//        case "TSLA":
+//            return BigDecimal.valueOf();
+//
+//        case "SPN35":
+//            return BigDecimal.valueOf();
+//
+//        case "AIRF":
+//            return BigDecimal.valueOf();
+//
+//        case "VOWG_P":
+//            return BigDecimal.valueOf();
+//
+//        case "WMT":
+//            return BigDecimal.valueOf();
+//
+//        case "T":
+//            return BigDecimal.valueOf();
+//
+//        case "V":
+//            return BigDecimal.valueOf();
+//
+//        case "ZM":
+//            return BigDecimal.valueOf();
+//
+//        case "UK100":
+//            return BigDecimal.valueOf();
+//
+//        case "US100":
+//            return BigDecimal.valueOf();
+//
+//        case "US30":
+//            return BigDecimal.valueOf();
+//
+//        case "USOIL":
+//            return BigDecimal.valueOf();
+//
+//        case "XAGUSD":
+//            return BigDecimal.valueOf();
+//
+//        case "XAUUSD":
+//            return BigDecimal.valueOf();
+
+        default:
+            return BigDecimal.ZERO;
+        }
+    }
+
     public static BigDecimal get_standard_vol_per_100usd(String EPIC) {
         switch (EPIC.toUpperCase()) {
         case "DX":
@@ -2946,22 +3160,16 @@ public class Utils {
             return result;
         }
 
-        BigDecimal multi = BigDecimal.valueOf(2);
-
         BigDecimal sl = BigDecimal.ZERO;
         BigDecimal tp = BigDecimal.ZERO;
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            sl = dto_sl.getLow_price();
-            BigDecimal high = dto_sl.getCurrent_price().subtract(dto_sl.getLow_price());
-            high = high.multiply(multi);
-            tp = dto_sl.getCurrent_price().add(high);
+            sl = dto_sl.getSl_long();
+            tp = dto_sl.getTp_long();
         }
 
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            sl = dto_sl.getHigh_price();
-            BigDecimal high = dto_sl.getHigh_price().subtract(dto_sl.getCurrent_price());
-            high = high.multiply(multi);
-            tp = dto_sl.getCurrent_price().subtract(high);
+            sl = dto_sl.getSl_shot();
+            tp = dto_sl.getTp_shot();
         }
 
         result.add(sl);
@@ -4658,13 +4866,7 @@ public class Utils {
     public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_en, Orders dto_sl, String append,
             boolean isTradeNow, String CAPITAL_TIME_XX) {
 
-        BigDecimal entry = BigDecimal.ZERO;
-
-        if (Objects.equals(Utils.TREND_LONG, trend)) {
-            entry = Utils.getBigDecimal(dto_en.getBody_low());
-        } else if (Objects.equals(Utils.TREND_SHOT, trend)) {
-            entry = Utils.getBigDecimal(dto_en.getBody_hig());
-        }
+        BigDecimal entry = dto_en.getMa010();
 
         List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_sl, trend);
         BigDecimal sl = sl1_tp2.get(0);
@@ -4703,16 +4905,16 @@ public class Utils {
             Orders dto_entry, Orders dto_sl) {
         String result = "";
 
-        BigDecimal sl_long = Utils.getBigDecimal(dto_sl.getLow_price());
-        BigDecimal sl_shot = Utils.getBigDecimal(dto_sl.getHigh_price());
+        BigDecimal sl_long = Utils.getBigDecimal(dto_sl.getSl_long());
+        BigDecimal sl_shot = Utils.getBigDecimal(dto_sl.getSl_shot());
 
-        BigDecimal en_long = Utils.getBigDecimal(dto_entry.getBody_low());
-        BigDecimal en_shot = Utils.getBigDecimal(dto_entry.getBody_hig());
+        BigDecimal en_long = Utils.getBigDecimal(dto_entry.getMa010());
+        BigDecimal en_shot = Utils.getBigDecimal(dto_entry.getMa010());
         en_long = dto_entry.getCurrent_price();
         en_shot = dto_entry.getCurrent_price();
 
-        BigDecimal tp_long = Utils.getBigDecimal(dto_entry.getBody_hig());
-        BigDecimal tp_shot = Utils.getBigDecimal(dto_entry.getBody_low());
+        BigDecimal tp_long = Utils.getBigDecimal(dto_entry.getTp_long());
+        BigDecimal tp_shot = Utils.getBigDecimal(dto_entry.getTp_shot());
 
         String str_long = calc_BUF_Long_Forex(onlyWait, risk, EPIC, dto_entry.getCurrent_price(), en_long, sl_long,
                 tp_long, getChartNameCapital(dto_entry.getId()).trim(), getChartNameCapital(dto_sl.getId()).trim());

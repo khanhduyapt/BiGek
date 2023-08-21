@@ -73,16 +73,16 @@ public class Orders {
     private BigDecimal current_price = BigDecimal.ZERO;
 
     @Column(name = "str_body_price")
-    private BigDecimal body_low = BigDecimal.ZERO;
+    private BigDecimal tp_long = BigDecimal.ZERO;
 
     @Column(name = "end_body_price")
-    private BigDecimal body_hig = BigDecimal.ZERO;
+    private BigDecimal tp_shot = BigDecimal.ZERO;
 
     @Column(name = "low_price")
-    private BigDecimal low_price = BigDecimal.ZERO;
+    private BigDecimal sl_long = BigDecimal.ZERO;
 
     @Column(name = "high_price")
-    private BigDecimal high_price = BigDecimal.ZERO;
+    private BigDecimal sl_shot = BigDecimal.ZERO;
 
     @Column(name = "note")
     private String switch_trend;
@@ -100,49 +100,41 @@ public class Orders {
     private String trend_by_ma_20;
 
     @Column(name = "colume_03")
-    private String colume_03;
+    private String trend_by_ma_50;
 
     @Column(name = "colume_04")
-    private String colume_04;
+    private String trend_by_ma_200;
 
     @Column(name = "colume_05")
     private String colume_05;
 
-//    short zone
-//    long region
-//    amplitude 1 part 15
-//    ma200
-//    ma50
-//    ma20
-//    ma10
-//    ma01
     @Column(name = "price_01")
-    private BigDecimal price_01 = BigDecimal.ZERO;
+    private BigDecimal short_zone = BigDecimal.ZERO;
 
     @Column(name = "price_02")
-    private BigDecimal price_02 = BigDecimal.ZERO;
+    private BigDecimal long_zone = BigDecimal.ZERO;
 
     @Column(name = "price_03")
-    private BigDecimal price_03 = BigDecimal.ZERO;
+    private BigDecimal amplitude_1_part_10 = BigDecimal.ZERO;
 
     @Column(name = "price_04")
-    private BigDecimal price_04 = BigDecimal.ZERO;
+    private BigDecimal ma200 = BigDecimal.ZERO;
 
     @Column(name = "price_05")
-    private BigDecimal price_05 = BigDecimal.ZERO;
+    private BigDecimal ma050 = BigDecimal.ZERO;
 
     @Column(name = "price_06")
-    private BigDecimal price_06 = BigDecimal.ZERO;
+    private BigDecimal ma020 = BigDecimal.ZERO;
 
     @Column(name = "price_07")
-    private BigDecimal price_07 = BigDecimal.ZERO;
+    private BigDecimal ma010 = BigDecimal.ZERO;
 
     @Column(name = "price_08")
-    private BigDecimal price_08 = BigDecimal.ZERO;
+    private BigDecimal ma001 = BigDecimal.ZERO;
 
     @Column(name = "price_09")
-    private BigDecimal price_09 = BigDecimal.ZERO;
+    private BigDecimal low = BigDecimal.ZERO;
 
     @Column(name = "price_10")
-    private BigDecimal price_10 = BigDecimal.ZERO;
+    private BigDecimal hig = BigDecimal.ZERO;
 }
