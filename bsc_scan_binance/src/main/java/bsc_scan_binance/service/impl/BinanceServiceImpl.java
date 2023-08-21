@@ -4032,13 +4032,13 @@ public class BinanceServiceImpl implements BinanceService {
             // && Objects.equals(trend_ma20, dto_h4.getTrend_by_ma_10())
             // && Objects.equals(trend_ma20, dto_h1.getTrend_by_ma_10());
 
-            boolean is_eq_ma200 = dto_h4.getTradable_zone().contains(trend_ma200)
+            boolean is_eq_ma200 = dto_d1.getTradable_zone().contains(trend_ma200)
                     && Objects.equals(trend_ma200, dto_10.getTrend_heiken())
                     && Objects.equals(trend_ma200, dto_10.getTrend_by_ma_10())
                     && Objects.equals(trend_ma200, dto_10.getTrend_by_ma_20())
                     && Objects.equals(trend_ma200, dto_10.getTrend_by_ma_50());
 
-            boolean is_eq_ma50 = dto_h4.getTradable_zone().contains(trend_ma20)
+            boolean is_eq_ma50 = dto_d1.getTradable_zone().contains(trend_ma20)
                     && Objects.equals(trend_ma20, dto_10.getTrend_heiken())
                     && Objects.equals(trend_ma20, dto_10.getTrend_by_ma_10())
                     && Objects.equals(trend_ma20, dto_10.getTrend_by_ma_50());
