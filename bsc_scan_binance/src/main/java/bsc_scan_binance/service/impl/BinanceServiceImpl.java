@@ -4064,7 +4064,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             } else if (is_eq_ma50 && is_switch_seq) {
                 String key = EPIC + Utils.CAPITAL_TIME_15;
-                append += "_050" + Utils.TEXT_NOTICE_ONLY;
+                append += "_050" + Utils.TEXT_PASS;
 
                 trade_dto = Utils
                         .calc_Lot_En_SL_TP(EPIC, trend_ma20, dto_10, dto_10, append, true,
