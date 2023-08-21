@@ -4004,15 +4004,17 @@ public class BinanceServiceImpl implements BinanceService {
         for (String EPIC : CAPITAL_LIST) {
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
+            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_10 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_10).orElse(null);
 
-            if (Objects.isNull(dto_h4) || Objects.isNull(dto_d1) || Objects.isNull(dto_10)) {
+            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_10)) {
                 String d01 = "d1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
                 String h04 = "h4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
+                String h01 = "h1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
                 String m10 = "10:" + (Objects.isNull(dto_10) ? "null" : "    ");
 
-                Utils.logWritelnDraft(String.format("[closetrade_by_sl_tp_control_mt5] dto (%s) :  %s, %s, %s.",
-                        Utils.appendSpace(EPIC, 10), d01, h04, m10));
+                Utils.logWritelnDraft(String.format("[closetrade_by_sl_tp_control_mt5] dto (%s) :  %s, %s, %s, %s.",
+                        Utils.appendSpace(EPIC, 10), d01, h04, h01, m10));
 
                 continue;
             }
@@ -4026,9 +4028,9 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_switch_seq = dto_10.getSwitch_trend().contains("SEQ")
                     && dto_10.getSwitch_trend().contains(dto_10.getTrend_by_ma_10())
                     && dto_10.getZone_by_ma_200().contains(dto_10.getTrend_by_ma_20())
-                    && (dto_d1.getTrend_by_ma_10().contains(trend_ma20)
-                            || (Objects.equals(trend_ma20, dto_h4.getTrend_by_ma_10())
-                                    && Objects.equals(trend_ma20, dto_h4.getTrend_by_ma_20())));
+                    && Objects.equals(trend_ma20, dto_d1.getTrend_by_ma_10())
+                    && Objects.equals(trend_ma20, dto_h4.getTrend_by_ma_10())
+                    && Objects.equals(trend_ma20, dto_h1.getTrend_by_ma_10());
 
             boolean is_eq_ma200 = dto_h4.getTradable_zone().contains(trend_ma200)
                     && Objects.equals(trend_ma200, dto_10.getTrend_heiken())
@@ -4036,10 +4038,10 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(trend_ma200, dto_10.getTrend_by_ma_20())
                     && Objects.equals(trend_ma200, dto_10.getTrend_by_ma_50());
 
-            boolean is_eq_ma50 = dto_h4.getTradable_zone().contains(dto_10.getTrend_by_ma_20())
-                    && Objects.equals(dto_10.getTrend_by_ma_20(), dto_10.getTrend_heiken())
-                    && Objects.equals(dto_10.getTrend_by_ma_20(), dto_10.getTrend_by_ma_10())
-                    && Objects.equals(dto_10.getTrend_by_ma_20(), dto_10.getTrend_by_ma_50());
+            boolean is_eq_ma50 = dto_h4.getTradable_zone().contains(trend_ma20)
+                    && Objects.equals(trend_ma20, dto_10.getTrend_heiken())
+                    && Objects.equals(trend_ma20, dto_10.getTrend_by_ma_10())
+                    && Objects.equals(trend_ma20, dto_10.getTrend_by_ma_50());
 
             Mt5OpenTrade trade_dto = null;
             String chart_name = Utils.getChartPrefix(Utils.CAPITAL_TIME_15);
