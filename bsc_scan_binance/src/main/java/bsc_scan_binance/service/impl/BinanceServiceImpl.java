@@ -3144,15 +3144,13 @@ public class BinanceServiceImpl implements BinanceService {
 
                 result += "   TP(10m): " + Utils.appendLeft(
                         Utils.getStringValue(
-                                TRADE_TREND.contains(Utils.TREND_LONG) ? Utils.getBigDecimal(dto_10.getTp_long())
-                                        : Utils.getBigDecimal(dto_10.getTp_shot())),
+                                TRADE_TREND.contains(Utils.TREND_LONG) ? dto_10.getTp_long() : dto_10.getTp_shot()),
                         10);
 
                 if (Objects.nonNull(dto_10)) {
                     result += "   TP(h4): " + Utils.appendLeft(
                             Utils.getStringValue(
-                                    TRADE_TREND.contains(Utils.TREND_LONG) ? Utils.getBigDecimal(dto_h4.getTp_long())
-                                            : Utils.getBigDecimal(dto_h4.getTp_shot())),
+                                    TRADE_TREND.contains(Utils.TREND_LONG) ? dto_h4.getTp_long() : dto_h4.getTp_shot()),
                             10);
                 }
 
@@ -3706,8 +3704,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String eoz = "";
             eoz += "  EOZ:";
-            eoz += !dto_h4.getTradable_zone().contains(trend_h4_ma20) ? "H4" + Utils.getType(trend_h4_ma20) : "     ";
-            // eoz += !dto_h1.isTradable_zone() ? "H1" + Utils.getType(trend_h1) : " ";
+            eoz += !dto_d1.getTradable_zone().contains(trend_d1_ma10) ? "D1" + Utils.getType(trend_d1_ma10) : "     ";
             eoz += "   ";
 
             if (!Objects.equals(EPIC, "BTCUSD")) {
@@ -3801,8 +3798,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         String tradable_zone = Utils.getZone(heiken_list);
 
-        BigDecimal short_zone = hig.subtract((amplitude_1_part_10.multiply(BigDecimal.valueOf(3))));
         BigDecimal long_zone = low.add((amplitude_1_part_10.multiply(BigDecimal.valueOf(3))));
+        BigDecimal short_zone = hig.subtract((amplitude_1_part_10.multiply(BigDecimal.valueOf(3))));
 
         BigDecimal ma200 = BigDecimal.ZERO;
         BigDecimal ma050 = BigDecimal.ZERO;
