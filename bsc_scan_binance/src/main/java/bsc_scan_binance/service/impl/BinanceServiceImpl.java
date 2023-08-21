@@ -2831,7 +2831,7 @@ public class BinanceServiceImpl implements BinanceService {
                         sb.append('\t');
                         sb.append(BigDecimal.ZERO); // dto.getStop_loss()
                         sb.append('\t');
-                        sb.append(BigDecimal.ZERO); // dto.getTake_profit()
+                        sb.append(dto.getTake_profit()); //
                         sb.append('\t');
                         sb.append(dto.getComment().trim());
                         sb.append('\n');
@@ -3692,7 +3692,7 @@ public class BinanceServiceImpl implements BinanceService {
             seq += Utils.get_seq_chart(dto_h4, trend_h4_ma20);
             seq += Utils.get_seq_chart(dto_h2, trend_d1_ma10);
             seq += Utils.get_seq_chart(dto_h1, trend_d1_ma10);
-            seq += Utils.get_seq_chart(dto_10, trend_d1_ma10);
+            seq += Utils.get_seq_chart(dto_10, dto_10.getTrend_by_ma_200());
             seq += "]  ";
 
             String eoz = "";
@@ -3779,7 +3779,11 @@ public class BinanceServiceImpl implements BinanceService {
             bread = amplitude_1_part_10;
         }
 
-        List<BigDecimal> lohi_10 = Utils.getLowHighCandle(heiken_list.subList(0, 10));
+        int sub_size = 10;
+        if (CAPITAL_TIME_XX.contains("MINUTE_")) {
+            sub_size = 50;
+        }
+        List<BigDecimal> lohi_10 = Utils.getLowHighCandle(heiken_list.subList(0, sub_size));
         BigDecimal sl_long = lohi_10.get(0).subtract(bread);
         BigDecimal sl_shot = lohi_10.get(1).add(bread);
 
@@ -3798,6 +3802,13 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal ma001 = Utils.calcMA(heiken_list, 1, 1);
         BigDecimal current_price = heiken_list.get(0).getCurrPrice();
 
+        String zone_by_ma_200 = Utils.TREND_LONG + "_" + Utils.TREND_SHOT;
+        if (current_price.compareTo(long_zone) < 0) {
+            zone_by_ma_200 = Utils.TREND_LONG;
+        } else if (current_price.compareTo(short_zone) > 0) {
+            zone_by_ma_200 = Utils.TREND_SHOT;
+        }
+
         String trend_by_ma_50 = "";
         String trend_by_ma_200 = "";
         if (size > 200) {
@@ -3814,7 +3825,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         Orders entity = new Orders(orderId, date_time, trend_heiken, current_price, tp_long, tp_shot, sl_long, sl_shot,
                 switch_trend, trend_by_ma_10, tradable_zone, trend_heiken_1, trend_by_ma_20, trend_by_ma_50,
-                trend_by_ma_200, "", short_zone, long_zone, amplitude_1_part_10, ma200, ma050, ma020, ma010,
+                trend_by_ma_200, zone_by_ma_200, short_zone, long_zone, amplitude_1_part_10, ma200, ma050, ma020, ma010,
                 ma001, low, hig);
 
         ordersRepository.save(entity);
@@ -3928,7 +3939,6 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
             // ----------------------------------------------------------------------------------------------
-
             boolean reverse_trend = false;
             boolean has_profit = PROFIT.compareTo(Utils.RISK_PER_TRADE) > 0;
             if (Objects.equals(dto_10.getTrend_by_ma_20(), REVERSE_TRADE_TREND)) {
@@ -4005,18 +4015,19 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_ma200 = dto_10.getTrend_by_ma_200();
 
             boolean is_switch_seq = dto_10.getSwitch_trend().contains("SEQ")
-                    && dto_10.getSwitch_trend().contains(dto_10.getTrend_by_ma_20());
+                    && dto_10.getSwitch_trend().contains(dto_10.getTrend_by_ma_10())
+                    && dto_10.getZone_by_ma_200().contains(dto_10.getTrend_by_ma_20());
 
-            boolean is_eq_ma200 = dto_h4.getTradable_zone().contains(dto_10.getTrend_by_ma_20())
+            boolean is_eq_ma200 = dto_h4.getTradable_zone().contains(trend_ma200)
                     && Objects.equals(trend_ma200, dto_10.getTrend_heiken())
                     && Objects.equals(trend_ma200, dto_10.getTrend_by_ma_10())
                     && Objects.equals(trend_ma200, dto_10.getTrend_by_ma_20())
                     && Objects.equals(trend_ma200, dto_10.getTrend_by_ma_50());
 
             boolean is_eq_ma50 = dto_h4.getTradable_zone().contains(dto_10.getTrend_by_ma_20())
-                    && Objects.equals(dto_10.getTrend_by_ma_50(), dto_10.getTrend_heiken())
-                    && Objects.equals(dto_10.getTrend_by_ma_50(), dto_10.getTrend_by_ma_10())
-                    && Objects.equals(dto_10.getTrend_by_ma_50(), dto_10.getTrend_by_ma_20());
+                    && Objects.equals(dto_10.getTrend_by_ma_20(), dto_10.getTrend_heiken())
+                    && Objects.equals(dto_10.getTrend_by_ma_20(), dto_10.getTrend_by_ma_10())
+                    && Objects.equals(dto_10.getTrend_by_ma_20(), dto_10.getTrend_by_ma_50());
 
             Mt5OpenTrade trade_dto = null;
             String chart_name = Utils.getChartPrefix(Utils.CAPITAL_TIME_15);
@@ -4024,7 +4035,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (is_eq_ma200 && is_switch_seq) {
                 String key = EPIC + Utils.CAPITAL_TIME_15;
-                append += "_200" + Utils.TEXT_NOTICE_ONLY;
+                append += "_200" + Utils.TEXT_PASS;
 
                 trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_ma200, dto_10, dto_10, append, true,
                         Utils.CAPITAL_TIME_15);
@@ -4050,7 +4061,7 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
 
-                String prefix = Utils.appendSpace("Check" + chart_name, 20) + ": ";
+                String prefix = Utils.appendSpace("Notice" + chart_name, 20) + ": ";
                 String log = Utils.createOpenTradeMsg(trade_dto, prefix);
                 log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
                 Utils.logWritelnDraft(log);
