@@ -2673,7 +2673,7 @@ public class BinanceServiceImpl implements BinanceService {
             String msg = " Notice" + Utils.getChartName(CAPITAL_TIME_XX);
             msg += ": " + Utils.appendSpace(trend, 11) + comment;
 
-            msg = Utils.appendSpace("", 91, ">") + msg;
+            msg = Utils.appendSpace("", 99, ">") + msg;
 
             Utils.logWritelnDraft(msg);
             if (tradeList.size() == 0) {
@@ -2694,7 +2694,7 @@ public class BinanceServiceImpl implements BinanceService {
             ea += " TP" + Utils.appendLeft(Utils.removeLastZero(trade.getTakeProfit()), 10);
             ea += "    " + trade.getComment();
 
-            ea = Utils.appendLeft("", 92, "-") + Utils.appendSpace(ea, 60);
+            ea = Utils.appendLeft("", 100, "-") + Utils.appendSpace(ea, 60);
 
             Utils.logWritelnDraft(ea);
         }
@@ -3021,7 +3021,7 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnDraft(log);
 
             // BscScanBinanceApplication.mt5_close_ticket_dict.put(trade.getTicket(),
-            //        "reverse_trade:" + trade.getProfit().intValue() + "$.");
+            // "reverse_trade:" + trade.getProfit().intValue() + "$.");
 
             if (isReloadAfter(Utils.MINUTES_OF_1H, trade.getTicket())) {
                 key += String.valueOf(trade.getTicket()) + "_";
@@ -3142,16 +3142,16 @@ public class BinanceServiceImpl implements BinanceService {
                         + Utils.appendLeft(Utils.removeLastZero(Utils.get_standard_vol_per_100usd(EPIC)), 6)
                         + "(lot)    ";
 
-                result += "   TP(10m): " + Utils
-                        .appendLeft(Utils.getStringValue(TRADE_TREND.contains(Utils.TREND_LONG) ? dto_10.getTp_long()
-                                : dto_10.getTp_shot()), 10);
+                result += "   TP(10m): " + Utils.appendLeft(
+                        Utils.getStringValue(
+                                TRADE_TREND.contains(Utils.TREND_LONG) ? dto_10.getTp_long() : dto_10.getTp_shot()),
+                        10);
 
                 if (Objects.nonNull(dto_10)) {
-                    result += "   TP(h4): " + Utils
-                            .appendLeft(
-                                    Utils.getStringValue(TRADE_TREND.contains(Utils.TREND_LONG) ? dto_h4.getTp_long()
-                                            : dto_h4.getTp_shot()),
-                                    10);
+                    result += "   TP(h4): " + Utils.appendLeft(
+                            Utils.getStringValue(
+                                    TRADE_TREND.contains(Utils.TREND_LONG) ? dto_h4.getTp_long() : dto_h4.getTp_shot()),
+                            10);
                 }
 
                 result += "   Profit: " + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 6) + "$";
@@ -4028,9 +4028,9 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_switch_seq = dto_10.getSwitch_trend().contains("SEQ")
                     && dto_10.getSwitch_trend().contains(dto_10.getTrend_by_ma_10())
                     && dto_10.getZone_by_ma_200().contains(dto_10.getTrend_by_ma_20())
-                    && Objects.equals(trend_ma20, dto_d1.getTrend_by_ma_10())
-                    && Objects.equals(trend_ma20, dto_h4.getTrend_by_ma_10())
-                    && Objects.equals(trend_ma20, dto_h1.getTrend_by_ma_10());
+                    && Objects.equals(trend_ma20, dto_d1.getTrend_by_ma_10());
+            // && Objects.equals(trend_ma20, dto_h4.getTrend_by_ma_10())
+            // && Objects.equals(trend_ma20, dto_h1.getTrend_by_ma_10());
 
             boolean is_eq_ma200 = dto_h4.getTradable_zone().contains(trend_ma200)
                     && Objects.equals(trend_ma200, dto_10.getTrend_heiken())
@@ -4068,9 +4068,8 @@ public class BinanceServiceImpl implements BinanceService {
                 String key = EPIC + Utils.CAPITAL_TIME_15;
                 append += "_050" + Utils.TEXT_PASS;
 
-                trade_dto = Utils
-                        .calc_Lot_En_SL_TP(EPIC, trend_ma20, dto_10, dto_10, append, true,
-                                Utils.CAPITAL_TIME_15);
+                trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_ma20, dto_10, dto_10, append, true,
+                        Utils.CAPITAL_TIME_15);
 
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
