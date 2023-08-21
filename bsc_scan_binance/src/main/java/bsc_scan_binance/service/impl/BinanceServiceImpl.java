@@ -4030,11 +4030,9 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_ma200 = dto_10.getTrend_by_ma_200();
 
             boolean is_switch_seq = dto_10.getSwitch_trend().contains("SEQ")
+                    && Objects.equals(dto_d1.getTrend_by_ma_10(), trend_ma20)
                     && dto_10.getSwitch_trend().contains(dto_10.getTrend_by_ma_10())
-                    && dto_10.getZone_by_ma_200().contains(dto_10.getTrend_by_ma_20())
-                    && Objects.equals(trend_ma20, dto_d1.getTrend_by_ma_10());
-            // && Objects.equals(trend_ma20, dto_h4.getTrend_by_ma_10())
-            // && Objects.equals(trend_ma20, dto_h1.getTrend_by_ma_10());
+                    && dto_10.getZone_by_ma_200().contains(dto_10.getTrend_by_ma_20());
 
             boolean is_eq_ma200 = dto_d1.getTradable_zone().contains(trend_ma200)
                     && Objects.equals(trend_ma200, dto_10.getTrend_heiken())
