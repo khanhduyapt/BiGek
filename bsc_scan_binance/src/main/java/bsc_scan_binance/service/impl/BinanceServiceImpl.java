@@ -5,8 +5,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -3230,7 +3230,10 @@ public class BinanceServiceImpl implements BinanceService {
             List<String> epics_time = new ArrayList<String>();
             List<Mt5DataCandle> list = new ArrayList<Mt5DataCandle>();
             List<Mt5DataCandle> list_delete = new ArrayList<Mt5DataCandle>();
-            Reader reader = new InputStreamReader(new FileInputStream(mt5_data_file), "UTF-8");
+
+            InputStream inputStream = new FileInputStream(mt5_data_file);
+            InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8");
+
             BufferedReader fin = new BufferedReader(reader);
             while ((line = fin.readLine()) != null) {
                 total_line += 1;
@@ -3266,7 +3269,7 @@ public class BinanceServiceImpl implements BinanceService {
             // will automatically call close on its underlying stream
             fin.close();
             reader.close();
-
+            inputStream.close();
             // ------------------------------------------------------------------------
 
             List<Mt5DataCandle> nottodaylist = mt5DataCandleRepository.findAllByCreateddateNot(Utils.getYYYYMMDD(0));
@@ -3497,8 +3500,9 @@ public class BinanceServiceImpl implements BinanceService {
             boolean has_open_trade = false;
             try {
                 String line;
+                InputStream inputStream = new FileInputStream(mt5_data_file);
+                InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8");
 
-                Reader reader = new InputStreamReader(new FileInputStream(mt5_data_file), "UTF-8");
                 BufferedReader fin = new BufferedReader(reader);
                 while ((line = fin.readLine()) != null) {
                     row_count += 1;
@@ -3529,6 +3533,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 fin.close();
                 reader.close();
+                inputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
