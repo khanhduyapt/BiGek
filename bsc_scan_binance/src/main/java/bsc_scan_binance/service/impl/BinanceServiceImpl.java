@@ -3144,13 +3144,15 @@ public class BinanceServiceImpl implements BinanceService {
 
                 result += "   TP(10m): " + Utils.appendLeft(
                         Utils.getStringValue(
-                                TRADE_TREND.contains(Utils.TREND_LONG) ? dto_10.getTp_long() : dto_10.getTp_shot()),
+                                TRADE_TREND.contains(Utils.TREND_LONG) ? Utils.getBigDecimal(dto_10.getTp_long())
+                                        : Utils.getBigDecimal(dto_10.getTp_shot())),
                         10);
 
                 if (Objects.nonNull(dto_10)) {
                     result += "   TP(h4): " + Utils.appendLeft(
                             Utils.getStringValue(
-                                    TRADE_TREND.contains(Utils.TREND_LONG) ? dto_h4.getTp_long() : dto_h4.getTp_shot()),
+                                    TRADE_TREND.contains(Utils.TREND_LONG) ? Utils.getBigDecimal(dto_h4.getTp_long())
+                                            : Utils.getBigDecimal(dto_h4.getTp_shot())),
                             10);
                 }
 
