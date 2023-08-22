@@ -4052,10 +4052,9 @@ public class BinanceServiceImpl implements BinanceService {
 
             is_d1_allow_trade |= !dto_d1.getTradable_zone().contains(trend_h1)
                     && Objects.equals(dto_h1.getTrend_heiken_1(), trend_h1)
+                    && dto_h1.getTradable_zone().contains(trend_h1)
                     && dto_h4.getTradable_zone().contains(trend_h1)
-                    && (dto_h4.getTrend_heiken_1() + dto_h4.getTrend_by_ma_10()).contains(trend_h1)
-                    && (dto_h1.getTradable_zone() + dto_h1.getZone_by_ma_200() + dto_10.getZone_by_ma_200())
-                            .contains(trend_h1);
+                    && (dto_h4.getTrend_heiken_1() + dto_h4.getTrend_by_ma_10()).contains(trend_h1);
 
             String switch_trend = dto_10.getSwitch_trend() + dto_12.getSwitch_trend()
                     + dto_15.getSwitch_trend() + dto_30.getSwitch_trend() + dto_h1.getSwitch_trend();
