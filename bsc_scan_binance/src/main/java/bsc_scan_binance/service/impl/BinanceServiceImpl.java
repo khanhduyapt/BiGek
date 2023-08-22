@@ -2442,7 +2442,7 @@ public class BinanceServiceImpl implements BinanceService {
             fundingHistoryRepository.deleteAll(list);
         }
 
-        // List<Orders> orders = ordersRepository.findAll();
+        //  List<Orders> orders = ordersRepository.findAll();
         List<Orders> orders = ordersRepository.getForexList();
         if (!CollectionUtils.isEmpty(orders)) {
             ordersRepository.deleteAll(orders);
@@ -2690,7 +2690,7 @@ public class BinanceServiceImpl implements BinanceService {
                     + "$    ";
             ea += Utils.appendLeft(Utils.getStringValue(Utils.formatPrice(trade.getVolume(), 2)), 18) + "(lot)";
             ea += Utils.appendSpace("", 20);
-            ea += " E " + Utils.appendLeft(Utils.removeLastZero(trade.getOpenTime()), 10) + "   ";
+            ea += " Open " + Utils.appendLeft(Utils.removeLastZero(trade.getPriceOpen()), 10) + "   ";
             ea += " SL " + Utils.appendLeft(Utils.removeLastZero(trade.getStopLoss()), 10) + "   ";
             ea += " TP " + Utils.appendLeft(Utils.removeLastZero(trade.getTakeProfit()), 10);
             ea += "    " + trade.getComment();
@@ -2883,7 +2883,8 @@ public class BinanceServiceImpl implements BinanceService {
         log += Utils.appendSpace(append.trim(), 120) + " ";
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
 
-        log += "Unit:" + Utils.appendLeft(String.valueOf(Utils.get_standard_vol_per_100usd(EPIC)), 5) + "(lot)     ";
+        log += "Unit:" + Utils.appendLeft(String.valueOf(Utils.get_standard_vol_per_100usd(EPIC)), 5)
+                + "(lot)     ";
 
         log += text_risk + Utils
                 .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, Utils.TREND_LONG, EPIC, dto_10, dto_h1), 45);
@@ -3143,7 +3144,7 @@ public class BinanceServiceImpl implements BinanceService {
                         + Utils.appendLeft(Utils.removeLastZero(Utils.get_standard_vol_per_100usd(EPIC)), 6)
                         + "(lot)    ";
 
-                result += "   E: " + Utils.appendLeft(Utils.getStringValue(trade.getPriceOpen()), 10);
+                result += "   Open: " + Utils.appendLeft(Utils.getStringValue(trade.getPriceOpen()), 10);
 
                 result += "   TP(10m): " + Utils.appendLeft(
                         Utils.getStringValue(
@@ -3158,10 +3159,8 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 result += "   Profit: " + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 6) + "$";
-
-                result += "   " + Utils.appendSpace(
-                        Utils.get_duration_trade_time(trade) + "   " + trade.getComment() + trend_reverse, 60);
-
+                result += Utils.appendSpace(trend_reverse, 20);
+                result += Utils.appendSpace(Utils.get_duration_trade_time(trade) + "   " + trade.getComment(), 60);
                 result += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62);
 
                 total = total.add(PROFIT);
@@ -4052,8 +4051,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (dto_10.getSwitch_trend().contains("SEQ")
                     && dto_10.getSwitch_trend().contains(dto_10.getTrend_by_ma_10())
-                    && dto_10.getZone_by_ma_200().contains(dto_10.getTrend_by_ma_20())
-                    && Objects.equals(dto_h1.getTrend_by_ma_10(), trend_10_ma20)) {
+                    && dto_10.getZone_by_ma_200().contains(dto_10.getTrend_by_ma_20())) {
                 is_switch_seq = true;
                 switch_trend = dto_10.getSwitch_trend();
                 chart_name = Utils.getChartPrefix(Utils.CAPITAL_TIME_15);
@@ -4092,7 +4090,7 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                     BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
 
-                    String prefix = Utils.appendSpace("Check" + chart_name, 20) + ": ";
+                    String prefix = Utils.appendSpace("Open" + chart_name, 20) + ": ";
                     String log = Utils.createOpenTradeMsg(trade_dto, prefix);
                     log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
                     Utils.logWritelnDraft(log);
@@ -4107,7 +4105,7 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                     BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
 
-                    String prefix = Utils.appendSpace("Notice" + chart_name, 20) + ": ";
+                    String prefix = Utils.appendSpace("Open" + chart_name, 20) + ": ";
                     String log = Utils.createOpenTradeMsg(trade_dto, prefix);
                     log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
                     Utils.logWritelnDraft(log);
@@ -4122,7 +4120,7 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                     BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
 
-                    String prefix = Utils.appendSpace("Notice" + chart_name, 20) + ": ";
+                    String prefix = Utils.appendSpace("Open" + chart_name, 20) + ": ";
                     String log = Utils.createOpenTradeMsg(trade_dto, prefix);
                     log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
                     Utils.logWritelnDraft(log);
