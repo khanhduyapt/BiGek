@@ -4095,11 +4095,11 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_10.getTrend_by_ma_10(), REVERSE_D1_MA10)
                     && Objects.equals(dto_15.getTrend_by_ma_10(), REVERSE_D1_MA10)
                     && Objects.equals(dto_h1.getTrend_heiken_0(), REVERSE_D1_MA10)
-                    && Objects.equals(dto_h1.getTrend_heiken_0(), REVERSE_D1_MA10)
+                    && Objects.equals(dto_h1.getTrend_heiken_1(), REVERSE_D1_MA10)
                     && Objects.equals(dto_h4.getTrend_heiken_0(), REVERSE_D1_MA10)
+                    && Objects.equals(dto_h4.getTrend_heiken_1(), REVERSE_D1_MA10)
                     && Objects.equals(dto_h1.getTrend_by_ma_10(), REVERSE_D1_MA10)
-                    && Objects.equals(dto_h4.getTrend_by_ma_10(), REVERSE_D1_MA10)
-                    && Objects.equals(dto_d1.getTrend_heiken_0(), REVERSE_D1_MA10);
+                    && Objects.equals(dto_h4.getTrend_by_ma_10(), REVERSE_D1_MA10);
 
             boolean is_switch_seq = switch_trend.contains("SEQ") && switch_trend.contains(trend_h1_ma10)
                     && dto_10.getZone_by_ma_200().contains(trend_h1_ma10);
