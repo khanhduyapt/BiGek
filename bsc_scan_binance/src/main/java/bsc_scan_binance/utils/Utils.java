@@ -3078,39 +3078,12 @@ public class Utils {
     }
 
     public static String getChartName(List<BtcFutures> list) {
-        String result = "";
-
-        try {
-            if (CollectionUtils.isEmpty(list)) {
-                return "";
-            }
-
-            String symbol = list.get(0).getId().toLowerCase();
-
-            if (symbol.contains(PREFIX_05m)) {
-                result = "(05)";
-            } else if (symbol.contains(PREFIX_15m)) {
-                result = "(15)";
-            } else if (symbol.contains(PREFIX_H01)) {
-                result = "(H1)";
-            } else if (symbol.contains(PREFIX_H04)) {
-                result = "(H4)";
-            } else if (symbol.contains(PREFIX_H12)) {
-                result = "(H12)";
-            } else if (symbol.contains(PREFIX_D01)) {
-                result = "(D1)";
-            } else if (symbol.contains(PREFIX_W01)) {
-                result = "(W1)";
-            } else if (symbol.contains(PREFIX_MO1)) {
-                result = "(MO)";
-            } else {
-                result = "(" + symbol.replace("_00", "") + ")";
-            }
-        } catch (Exception e) {
-            return list.get(0).getId();
+        if (CollectionUtils.isEmpty(list)) {
+            return "";
         }
 
-        return result.trim();
+        String id = list.get(0).getId().toLowerCase();
+        return getChartName(id);
     }
 
     public static String getChartName(String dto_id) {
@@ -3121,9 +3094,9 @@ public class Utils {
                 result = "(05)";
 
             } else if (dto_id.contains(CAPITAL_TIME_10) || dto_id.contains(PREFIX_10m)) {
-                result = "(15)";
+                result = "(10)";
             } else if (dto_id.contains(CAPITAL_TIME_12) || dto_id.contains(PREFIX_12m)) {
-                result = "(15)";
+                result = "(12)";
             } else if (dto_id.contains(CAPITAL_TIME_15) || dto_id.contains(PREFIX_15m)) {
                 result = "(15)";
 

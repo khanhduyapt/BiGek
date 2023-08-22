@@ -3106,7 +3106,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         // -----------------------------------
-        // TODO: 6. monitorProfit
+
         Utils.logWritelnDraft("");
         for (String company : Utils.COMPANIES) {
             try {
@@ -3193,6 +3193,22 @@ public class BinanceServiceImpl implements BinanceService {
         for (String msg : BscScanBinanceApplication.msg_open_trade_stocks) {
             Utils.logWritelnDraft(msg);
         }
+        // TODO: 6. monitorProfit
+        // ----------------------------------------------------------------------------------------------
+        // ----------------------------------------SEQ_15m-----------------------------------------------
+        // ----------------------------------------------------------------------------------------------
+        // List<Orders> list_seq = ordersRepository.getMinusSeq1050List();
+        // List<String> epics = new ArrayList<String>();
+        // for (Orders dto : list_seq) {
+        // String EPIC = Utils.getEpicFromId(dto.getId());
+        // if (!epics.contains(EPIC)) {
+        // epics.add(EPIC);
+        //
+        // String append = Utils.appendSpace("SEQ_15m " + dto.getSwitch_trend(), 120,
+        // "-");
+        // outputLog(EPIC, append, "");
+        // }
+        // }
     }
 
     private String check_mt5_data_file(String mt5_data_file_path, Integer MINUTES_OF_XX) {
@@ -3363,6 +3379,7 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO: createReport
         File myObj = new File(Utils.getReportFilePath());
         myObj.delete();
+
         // ==================================================================================
         List<Orders> crypto_list = new ArrayList<Orders>();
         crypto_list.addAll(ordersRepository.getCrypto_D1());
