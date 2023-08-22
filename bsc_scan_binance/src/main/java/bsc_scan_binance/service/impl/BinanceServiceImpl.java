@@ -3025,8 +3025,8 @@ public class BinanceServiceImpl implements BinanceService {
             String log = Utils.createCloseTradeMsg(trade, "MUST_CLOSE_TRADE: ", "reverse_trade_opening");
             Utils.logWritelnDraft(log);
 
-            BscScanBinanceApplication.mt5_close_ticket_dict.put(trade.getTicket(),
-                    "reverse_trade:" + trade.getProfit().intValue() + "$.");
+            // BscScanBinanceApplication.mt5_close_ticket_dict.put(trade.getTicket(),
+            //       "reverse_trade:" + trade.getProfit().intValue() + "$.");
 
             if (isReloadAfter(Utils.MINUTES_OF_1H, trade.getTicket())) {
                 key += String.valueOf(trade.getTicket()) + "_";
@@ -4045,6 +4045,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1 = dto_h1.getTrend_by_ma_10();
             String reverse_d1 = dto_d1.getTrend_by_ma_10().contains(Utils.TREND_LONG) ? Utils.TREND_SHOT
                     : Utils.TREND_LONG;
+
             String switch_trend = dto_10.getSwitch_trend() + dto_12.getSwitch_trend()
                     + dto_15.getSwitch_trend() + dto_30.getSwitch_trend() + dto_h1.getSwitch_trend();
 
@@ -4053,10 +4054,15 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean is_d1_allow_trade = dto_d1.getTradable_zone().contains(trend_h1)
                     && Objects.equals(dto_d1.getTrend_by_ma_10(), trend_h1);
+
             is_d1_allow_trade |= !dto_d1.getTradable_zone().contains(trend_h1)
                     && Objects.equals(reverse_d1, trend_h1)
                     && dto_h4.getTradable_zone().contains(trend_h1)
                     && (dto_h4.getTrend_heiken_1() + dto_h4.getTrend_by_ma_10()).contains(trend_h1);
+
+            is_d1_allow_trade |= Objects.equals(dto_d1.getTrend_heiken(), trend_h1)
+                    && Objects.equals(dto_h4.getTrend_heiken(), trend_h1)
+                    && Objects.equals(dto_h1.getTrend_heiken(), trend_h1);
 
             boolean is_switch_seq = switch_trend.contains("SEQ")
                     && switch_trend.contains(trend_h1)
@@ -4069,7 +4075,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String key = EPIC + Utils.CAPITAL_TIME_H1;
                 append += Utils.TEXT_PASS;
 
-                trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1, dto_10, dto_h1, append, false,
+                trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1, dto_10, dto_h1, append, true,
                         Utils.CAPITAL_TIME_H1);
 
                 close_reverse_trade(trade_dto);
