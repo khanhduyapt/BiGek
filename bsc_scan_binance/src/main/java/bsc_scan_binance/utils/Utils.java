@@ -416,176 +416,176 @@ public class Utils {
         case "AUDNZD":
             return BigDecimal.valueOf(0.0035);
 
-//        case "AUDUSD":
-//            return BigDecimal.valueOf();
-//
-//        case "AUS200":
-//            return BigDecimal.valueOf();
-//
-//        case "BABA":
-//            return BigDecimal.valueOf();
-//
-//        case "BAC":
-//            return BigDecimal.valueOf();
-//
-//        case "BAYGN":
-//            return BigDecimal.valueOf();
-//
-//        case "BTCUSD":
-//            return BigDecimal.valueOf();
-//
-//        case "CADCHF":
-//            return BigDecimal.valueOf();
-//
-//        case "DBKGN":
-//            return BigDecimal.valueOf();
-//
-//        case "DOGEUSD":
-//            return BigDecimal.valueOf();
-//
-//        case "EU50":
-//            return BigDecimal.valueOf(80);
-//
-//        case "EURAUD":
-//            return BigDecimal.valueOf();
-//
-//        case "EURCAD":
-//            return BigDecimal.valueOf();
-//
-//        case "EURCHF":
-//            return BigDecimal.valueOf();
-//
-//        case "EURGBP":
-//            return BigDecimal.valueOf();
-//
-//        case "EURJPY":
-//            return BigDecimal.valueOf();
-//
-//        case "EURNZD":
-//            return BigDecimal.valueOf();
-//
-//        case "EURUSD":
-//            return BigDecimal.valueOf();
-//
-//        case "FRA40":
-//            return BigDecimal.valueOf();
-//
-//        case "GBPAUD":
-//            return BigDecimal.valueOf();
-//
-//        case "GBPCAD":
-//            return BigDecimal.valueOf();
-//
-//        case "GBPCHF":
-//            return BigDecimal.valueOf();
-//
-//        case "GBPJPY":
-//            return BigDecimal.valueOf();
-//
-//        case "GBPNZD":
-//            return BigDecimal.valueOf();
-//
-//        case "GBPUSD":
-//            return BigDecimal.valueOf();
-//
-//        case "GER40":
-//            return BigDecimal.valueOf();
-//
-//        case "GOOG":
-//            return BigDecimal.valueOf();
-//
-//        case "LVMH":
-//            return BigDecimal.valueOf();
-//
-//        case "META":
-//            return BigDecimal.valueOf();
-//
-//        case "MSFT":
-//            return BigDecimal.valueOf();
-//
-//        case "NVDA":
-//            return BigDecimal.valueOf();
-//
-//        case "NFLX":
-//            return BigDecimal.valueOf();
-//
-//        case "NATGAS":
-//            return BigDecimal.valueOf();
-//
-//        case "NZDCAD":
-//            return BigDecimal.valueOf();
-//
-//        case "NZDCHF":
-//            return BigDecimal.valueOf();
-//
-//        case "CADJPY":
-//            return BigDecimal.valueOf(40);
-//
-//        case "CHFJPY":
-//            return BigDecimal.valueOf();
-//
-//        case "NZDJPY":
-//            return BigDecimal.valueOf();
-//
-//        case "NZDUSD":
-//            return BigDecimal.valueOf();
-//
-//        case "USDCAD":
-//            return BigDecimal.valueOf();
-//
-//        case "USDJPY":
-//            return BigDecimal.valueOf();
-//
-//        case "USDCHF":
-//            return BigDecimal.valueOf();
-//
-//        case "PFE":
-//            return BigDecimal.valueOf();
-//
-//        case "RACE":
-//            return BigDecimal.valueOf();
-//
-//        case "TSLA":
-//            return BigDecimal.valueOf();
-//
-//        case "SPN35":
-//            return BigDecimal.valueOf();
-//
-//        case "AIRF":
-//            return BigDecimal.valueOf();
-//
-//        case "VOWG_P":
-//            return BigDecimal.valueOf();
-//
-//        case "WMT":
-//            return BigDecimal.valueOf();
-//
-//        case "T":
-//            return BigDecimal.valueOf();
-//
-//        case "V":
-//            return BigDecimal.valueOf();
-//
-//        case "ZM":
-//            return BigDecimal.valueOf();
-//
-//        case "UK100":
-//            return BigDecimal.valueOf();
-//
-//        case "US100":
-//            return BigDecimal.valueOf();
-//
-//        case "US30":
-//            return BigDecimal.valueOf();
-//
-//        case "USOIL":
-//            return BigDecimal.valueOf();
-//
-//        case "XAGUSD":
-//            return BigDecimal.valueOf();
-//
-//        case "XAUUSD":
-//            return BigDecimal.valueOf();
+        //        case "AUDUSD":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "AUS200":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "BABA":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "BAC":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "BAYGN":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "BTCUSD":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "CADCHF":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "DBKGN":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "DOGEUSD":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "EU50":
+        //            return BigDecimal.valueOf(80);
+        //
+        //        case "EURAUD":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "EURCAD":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "EURCHF":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "EURGBP":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "EURJPY":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "EURNZD":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "EURUSD":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "FRA40":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "GBPAUD":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "GBPCAD":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "GBPCHF":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "GBPJPY":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "GBPNZD":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "GBPUSD":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "GER40":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "GOOG":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "LVMH":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "META":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "MSFT":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "NVDA":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "NFLX":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "NATGAS":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "NZDCAD":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "NZDCHF":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "CADJPY":
+        //            return BigDecimal.valueOf(40);
+        //
+        //        case "CHFJPY":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "NZDJPY":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "NZDUSD":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "USDCAD":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "USDJPY":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "USDCHF":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "PFE":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "RACE":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "TSLA":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "SPN35":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "AIRF":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "VOWG_P":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "WMT":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "T":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "V":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "ZM":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "UK100":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "US100":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "US30":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "USOIL":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "XAGUSD":
+        //            return BigDecimal.valueOf();
+        //
+        //        case "XAUUSD":
+        //            return BigDecimal.valueOf();
 
         default:
             return BigDecimal.ZERO;

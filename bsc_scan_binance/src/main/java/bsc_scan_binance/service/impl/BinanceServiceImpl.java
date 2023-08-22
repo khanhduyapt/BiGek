@@ -2806,7 +2806,8 @@ public class BinanceServiceImpl implements BinanceService {
                 } else if (dto.getComment().contains(Utils.TEXT_NOTICE_ONLY) || is_notice_only) {
                     prefix = "Notice";
                 }
-                String chart_name = Utils.getDeEncryptedChartNameCapital(dto.getComment().toLowerCase());
+                String chart_name = Utils
+                        .getChartPrefix(Utils.getDeEncryptedChartNameCapital(dto.getComment().toLowerCase()));
 
                 prefix = Utils.appendSpace(prefix, 10) + Utils.appendSpace(chart_name, 10) + ": ";
                 String log = Utils.createOpenTradeMsg(dto, prefix);
@@ -4050,9 +4051,9 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_d1.getTrend_by_ma_10(), trend_h1);
 
             is_d1_allow_trade |= !dto_d1.getTradable_zone().contains(trend_h1)
-                    && Objects.equals(dto_h1.getTrend_by_ma_10(), trend_h1)
-                    && Objects.equals(dto_h4.getTrend_by_ma_10(), trend_h1)
+                    && Objects.equals(dto_h1.getTrend_heiken_1(), trend_h1)
                     && dto_h4.getTradable_zone().contains(trend_h1)
+                    && (dto_h4.getTrend_heiken_1() + dto_h4.getTrend_by_ma_10()).contains(trend_h1)
                     && (dto_h1.getTradable_zone() + dto_h1.getZone_by_ma_200() + dto_10.getZone_by_ma_200())
                             .contains(trend_h1);
 
