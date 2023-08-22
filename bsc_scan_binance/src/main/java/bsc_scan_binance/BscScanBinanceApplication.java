@@ -181,7 +181,7 @@ public class BscScanBinanceApplication {
                             }
                         }
 
-                        if (isReloadAfter(1, "MT5_SL_TP")) {
+                        if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_SL_TP")) {
                             binance_service.initTradeList();
                             binance_service.closeTrade_by_SL_TP();
                             binance_service.CloseTickets();

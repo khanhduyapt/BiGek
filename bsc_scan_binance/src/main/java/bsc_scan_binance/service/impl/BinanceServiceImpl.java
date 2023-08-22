@@ -3151,18 +3151,18 @@ public class BinanceServiceImpl implements BinanceService {
                         + Utils.appendLeft(Utils.removeLastZero(Utils.get_standard_vol_per_100usd(EPIC)), 6)
                         + "(lot)    ";
 
-                result += "   Open: " + Utils.appendLeft(Utils.getStringValue(trade.getPriceOpen()), 10);
+                result += "   Open: " + Utils.appendLeft(Utils.getStringValue(trade.getPriceOpen()), 12);
 
                 result += "   TP(10m): " + Utils.appendLeft(
                         Utils.getStringValue(
                                 TRADE_TREND.contains(Utils.TREND_LONG) ? dto_10.getTp_long() : dto_10.getTp_shot()),
-                        10);
+                        12);
 
                 if (Objects.nonNull(dto_h1)) {
                     result += "   TP(h1): " + Utils.appendLeft(
                             Utils.getStringValue(
                                     TRADE_TREND.contains(Utils.TREND_LONG) ? dto_h1.getTp_long() : dto_h1.getTp_shot()),
-                            10);
+                            12);
                 }
 
                 result += "   Profit: " + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 6) + "$";
@@ -4069,7 +4069,7 @@ public class BinanceServiceImpl implements BinanceService {
                 String key = EPIC + Utils.CAPITAL_TIME_H1;
                 append += Utils.TEXT_PASS;
 
-                trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1, dto_10, dto_h1, append, true,
+                trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1, dto_10, dto_h1, append, false,
                         Utils.CAPITAL_TIME_H1);
 
                 close_reverse_trade(trade_dto);

@@ -267,7 +267,7 @@ void openTrade(string line)
    if(not_found)
      {
       // Alert(type + " " + trade_symbol + " ADDED ORDER.");
-      int    digits = (int)SymbolInfoInteger(trade_symbol,SYMBOL_DIGITS);    // number of decimal places
+      int    digits = (int)SymbolInfoInteger(trade_symbol,SYMBOL_DIGITS);     // number of decimal places
       double point  = SymbolInfoDouble(trade_symbol,SYMBOL_POINT);            // point
 
       price     = NormalizeDouble(price,digits);                                 // normalizing open price
@@ -323,24 +323,26 @@ void trailingSL(string line)
      }
 
    ulong  my_ticket = (ulong)(result[0]);
-   double my_sl     = StringToDouble(result[1]);
-   double my_tp     = StringToDouble(result[2]);
-
 
    for(int i = PositionsTotal() - 1; i >= 0; i--)
      {
-      ulong  cur_ticket = PositionGetTicket(i);
-      double cur_sl     = PositionGetDouble(POSITION_SL);  // Stop Loss of the position
-      double cur_tp     = PositionGetDouble(POSITION_TP);  // Take Profit of the position
+      string trade_symbol = PositionGetSymbol(i);
+      int    digits = (int)SymbolInfoInteger(trade_symbol,SYMBOL_DIGITS);     // number of decimal places
 
+      ulong  cur_ticket = PositionGetTicket(i);
 
       // Alert("TrailingSL: my_ticket=" + (string)my_ticket + "  cur_ticket=" + (string)cur_ticket + " cur_sl=" + (string)cur_sl + " cur_tp=" + (string)cur_tp);
 
       if(my_ticket == cur_ticket)
         {
-         string my_key    = (string)my_ticket + "_" + (string)my_sl + "_" + (string)my_tp;
-         string cur_key    = (string)cur_ticket + "_" + (string)cur_sl + "_" + (string)cur_tp;
+         double my_sl     = NormalizeDouble(StringToDouble(result[1]),digits);
+         double my_tp     = NormalizeDouble(StringToDouble(result[2]),digits);
 
+         double cur_sl    = NormalizeDouble(PositionGetDouble(POSITION_SL),digits);   // Stop Loss of the position
+         double cur_tp    = NormalizeDouble(PositionGetDouble(POSITION_TP),digits);   // Take Profit of the position
+
+         string my_key    = (string) my_ticket + "_" + (string) my_sl + "_" + (string) my_tp;
+         string cur_key   = (string)cur_ticket + "_" + (string)cur_sl + "_" + (string)cur_tp;
 
          if(my_key != cur_key)
            {
@@ -364,7 +366,7 @@ void trailingSL(string line)
 void OnTimer()
   {
 //------------------------------------------------------------
-   double Loss_In_Money = -150;     // loss in money $
+   double Loss_In_Money = -200;     // loss in money $
    double Profit_In_Money = 1000;    // profit in money $
 
    for(int i=PositionsTotal()-1; i>=0; i--) // returns the number of current positions
