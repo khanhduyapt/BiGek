@@ -3024,20 +3024,20 @@ public class BinanceServiceImpl implements BinanceService {
             String log = Utils.createCloseTradeMsg(trade, "MUST_CLOSE_TRADE: ", "reverse_trade_opening");
             Utils.logWritelnDraft(log);
 
-            // BscScanBinanceApplication.mt5_close_ticket_dict.put(trade.getTicket(),
-            // "reverse_trade:" + trade.getProfit().intValue() + "$.");
+            BscScanBinanceApplication.mt5_close_ticket_dict.put(trade.getTicket(),
+                    "reverse_trade:" + trade.getProfit().intValue() + "$.");
 
             if (isReloadAfter(Utils.MINUTES_OF_1H, trade.getTicket())) {
                 key += String.valueOf(trade.getTicket()) + "_";
-                msg += "(" + trade.getCompany() + ") " + "CloseTrade: " + trade.getSymbol() + ":";
+                msg += "(" + trade.getCompany() + ") " + "MustCloseTrade: " + trade.getSymbol() + ":";
                 msg += Utils.getStringValue(trade.getProfit().intValue()) + "$:reverse_trade" + dto.getComment()
                         + Utils.new_line_from_service;
             }
         }
 
         if (Utils.isNotBlank(msg)) {
-            // String EVENT_ID = "CLOSE_TRADE" + Utils.getCurrentYyyyMmDd_HH() + key;
-            // sendMsgPerHour_OnlyMe(EVENT_ID, Utils.new_line_from_service + msg);
+            String EVENT_ID = "CLOSE_TRADE" + Utils.getCurrentYyyyMmDd_HH() + key;
+            sendMsgPerHour_OnlyMe(EVENT_ID, Utils.new_line_from_service + msg);
         }
     }
 
@@ -4071,6 +4071,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                 trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1, dto_10, dto_h1, append, true,
                         Utils.CAPITAL_TIME_H1);
+
+                close_reverse_trade(trade_dto);
 
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
