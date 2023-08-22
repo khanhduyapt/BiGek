@@ -67,7 +67,7 @@ public class Orders {
     private String insertTime;
 
     @Column(name = "trend")
-    private String trend_heiken;
+    private String trend_heiken_0;
 
     @Column(name = "current_price")
     private BigDecimal current_price = BigDecimal.ZERO;
@@ -127,10 +127,10 @@ public class Orders {
     private BigDecimal ma020 = BigDecimal.ZERO;
 
     @Column(name = "price_07")
-    private BigDecimal ma010 = BigDecimal.ZERO;
+    private BigDecimal low_50candle = BigDecimal.ZERO;
 
     @Column(name = "price_08")
-    private BigDecimal ma001 = BigDecimal.ZERO;
+    private BigDecimal hig_50candle = BigDecimal.ZERO;
 
     @Column(name = "price_09")
     private BigDecimal low = BigDecimal.ZERO;

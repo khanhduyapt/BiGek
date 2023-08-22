@@ -297,7 +297,7 @@ public class Utils {
     public static final List<String> EPICS_FOREXS_ALL = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
             "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD",
             "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD",
-            "USDCHF", "USDJPY", "CADCHF", "XAUUSD", "USOIL");
+            "USDCHF", "USDJPY", "CADCHF", "XAUUSD", "XAGUSD", "USOIL");
 
     public static final List<String> EPICS_FOREXS_JPY = Arrays.asList("AUDJPY", "CADJPY", "CHFJPY", "EURJPY", "GBPJPY",
             "NZDJPY", "USDJPY", "USDCAD", "USDCHF", "CADCHF");
@@ -416,176 +416,176 @@ public class Utils {
         case "AUDNZD":
             return BigDecimal.valueOf(0.0035);
 
-        //        case "AUDUSD":
-        //            return BigDecimal.valueOf();
+        // case "AUDUSD":
+        // return BigDecimal.valueOf();
         //
-        //        case "AUS200":
-        //            return BigDecimal.valueOf();
+        // case "AUS200":
+        // return BigDecimal.valueOf();
         //
-        //        case "BABA":
-        //            return BigDecimal.valueOf();
+        // case "BABA":
+        // return BigDecimal.valueOf();
         //
-        //        case "BAC":
-        //            return BigDecimal.valueOf();
+        // case "BAC":
+        // return BigDecimal.valueOf();
         //
-        //        case "BAYGN":
-        //            return BigDecimal.valueOf();
+        // case "BAYGN":
+        // return BigDecimal.valueOf();
         //
-        //        case "BTCUSD":
-        //            return BigDecimal.valueOf();
+        // case "BTCUSD":
+        // return BigDecimal.valueOf();
         //
-        //        case "CADCHF":
-        //            return BigDecimal.valueOf();
+        // case "CADCHF":
+        // return BigDecimal.valueOf();
         //
-        //        case "DBKGN":
-        //            return BigDecimal.valueOf();
+        // case "DBKGN":
+        // return BigDecimal.valueOf();
         //
-        //        case "DOGEUSD":
-        //            return BigDecimal.valueOf();
+        // case "DOGEUSD":
+        // return BigDecimal.valueOf();
         //
-        //        case "EU50":
-        //            return BigDecimal.valueOf(80);
+        // case "EU50":
+        // return BigDecimal.valueOf(80);
         //
-        //        case "EURAUD":
-        //            return BigDecimal.valueOf();
+        // case "EURAUD":
+        // return BigDecimal.valueOf();
         //
-        //        case "EURCAD":
-        //            return BigDecimal.valueOf();
+        // case "EURCAD":
+        // return BigDecimal.valueOf();
         //
-        //        case "EURCHF":
-        //            return BigDecimal.valueOf();
+        // case "EURCHF":
+        // return BigDecimal.valueOf();
         //
-        //        case "EURGBP":
-        //            return BigDecimal.valueOf();
+        // case "EURGBP":
+        // return BigDecimal.valueOf();
         //
-        //        case "EURJPY":
-        //            return BigDecimal.valueOf();
+        // case "EURJPY":
+        // return BigDecimal.valueOf();
         //
-        //        case "EURNZD":
-        //            return BigDecimal.valueOf();
+        // case "EURNZD":
+        // return BigDecimal.valueOf();
         //
-        //        case "EURUSD":
-        //            return BigDecimal.valueOf();
+        // case "EURUSD":
+        // return BigDecimal.valueOf();
         //
-        //        case "FRA40":
-        //            return BigDecimal.valueOf();
+        // case "FRA40":
+        // return BigDecimal.valueOf();
         //
-        //        case "GBPAUD":
-        //            return BigDecimal.valueOf();
+        // case "GBPAUD":
+        // return BigDecimal.valueOf();
         //
-        //        case "GBPCAD":
-        //            return BigDecimal.valueOf();
+        // case "GBPCAD":
+        // return BigDecimal.valueOf();
         //
-        //        case "GBPCHF":
-        //            return BigDecimal.valueOf();
+        // case "GBPCHF":
+        // return BigDecimal.valueOf();
         //
-        //        case "GBPJPY":
-        //            return BigDecimal.valueOf();
+        // case "GBPJPY":
+        // return BigDecimal.valueOf();
         //
-        //        case "GBPNZD":
-        //            return BigDecimal.valueOf();
+        // case "GBPNZD":
+        // return BigDecimal.valueOf();
         //
-        //        case "GBPUSD":
-        //            return BigDecimal.valueOf();
+        // case "GBPUSD":
+        // return BigDecimal.valueOf();
         //
-        //        case "GER40":
-        //            return BigDecimal.valueOf();
+        // case "GER40":
+        // return BigDecimal.valueOf();
         //
-        //        case "GOOG":
-        //            return BigDecimal.valueOf();
+        // case "GOOG":
+        // return BigDecimal.valueOf();
         //
-        //        case "LVMH":
-        //            return BigDecimal.valueOf();
+        // case "LVMH":
+        // return BigDecimal.valueOf();
         //
-        //        case "META":
-        //            return BigDecimal.valueOf();
+        // case "META":
+        // return BigDecimal.valueOf();
         //
-        //        case "MSFT":
-        //            return BigDecimal.valueOf();
+        // case "MSFT":
+        // return BigDecimal.valueOf();
         //
-        //        case "NVDA":
-        //            return BigDecimal.valueOf();
+        // case "NVDA":
+        // return BigDecimal.valueOf();
         //
-        //        case "NFLX":
-        //            return BigDecimal.valueOf();
+        // case "NFLX":
+        // return BigDecimal.valueOf();
         //
-        //        case "NATGAS":
-        //            return BigDecimal.valueOf();
+        // case "NATGAS":
+        // return BigDecimal.valueOf();
         //
-        //        case "NZDCAD":
-        //            return BigDecimal.valueOf();
+        // case "NZDCAD":
+        // return BigDecimal.valueOf();
         //
-        //        case "NZDCHF":
-        //            return BigDecimal.valueOf();
+        // case "NZDCHF":
+        // return BigDecimal.valueOf();
         //
-        //        case "CADJPY":
-        //            return BigDecimal.valueOf(40);
+        // case "CADJPY":
+        // return BigDecimal.valueOf(40);
         //
-        //        case "CHFJPY":
-        //            return BigDecimal.valueOf();
+        // case "CHFJPY":
+        // return BigDecimal.valueOf();
         //
-        //        case "NZDJPY":
-        //            return BigDecimal.valueOf();
+        // case "NZDJPY":
+        // return BigDecimal.valueOf();
         //
-        //        case "NZDUSD":
-        //            return BigDecimal.valueOf();
+        // case "NZDUSD":
+        // return BigDecimal.valueOf();
         //
-        //        case "USDCAD":
-        //            return BigDecimal.valueOf();
+        // case "USDCAD":
+        // return BigDecimal.valueOf();
         //
-        //        case "USDJPY":
-        //            return BigDecimal.valueOf();
+        // case "USDJPY":
+        // return BigDecimal.valueOf();
         //
-        //        case "USDCHF":
-        //            return BigDecimal.valueOf();
+        // case "USDCHF":
+        // return BigDecimal.valueOf();
         //
-        //        case "PFE":
-        //            return BigDecimal.valueOf();
+        // case "PFE":
+        // return BigDecimal.valueOf();
         //
-        //        case "RACE":
-        //            return BigDecimal.valueOf();
+        // case "RACE":
+        // return BigDecimal.valueOf();
         //
-        //        case "TSLA":
-        //            return BigDecimal.valueOf();
+        // case "TSLA":
+        // return BigDecimal.valueOf();
         //
-        //        case "SPN35":
-        //            return BigDecimal.valueOf();
+        // case "SPN35":
+        // return BigDecimal.valueOf();
         //
-        //        case "AIRF":
-        //            return BigDecimal.valueOf();
+        // case "AIRF":
+        // return BigDecimal.valueOf();
         //
-        //        case "VOWG_P":
-        //            return BigDecimal.valueOf();
+        // case "VOWG_P":
+        // return BigDecimal.valueOf();
         //
-        //        case "WMT":
-        //            return BigDecimal.valueOf();
+        // case "WMT":
+        // return BigDecimal.valueOf();
         //
-        //        case "T":
-        //            return BigDecimal.valueOf();
+        // case "T":
+        // return BigDecimal.valueOf();
         //
-        //        case "V":
-        //            return BigDecimal.valueOf();
+        // case "V":
+        // return BigDecimal.valueOf();
         //
-        //        case "ZM":
-        //            return BigDecimal.valueOf();
+        // case "ZM":
+        // return BigDecimal.valueOf();
         //
-        //        case "UK100":
-        //            return BigDecimal.valueOf();
+        // case "UK100":
+        // return BigDecimal.valueOf();
         //
-        //        case "US100":
-        //            return BigDecimal.valueOf();
+        // case "US100":
+        // return BigDecimal.valueOf();
         //
-        //        case "US30":
-        //            return BigDecimal.valueOf();
+        // case "US30":
+        // return BigDecimal.valueOf();
         //
-        //        case "USOIL":
-        //            return BigDecimal.valueOf();
+        // case "USOIL":
+        // return BigDecimal.valueOf();
         //
-        //        case "XAGUSD":
-        //            return BigDecimal.valueOf();
+        // case "XAGUSD":
+        // return BigDecimal.valueOf();
         //
-        //        case "XAUUSD":
-        //            return BigDecimal.valueOf();
+        // case "XAUUSD":
+        // return BigDecimal.valueOf();
 
         default:
             return BigDecimal.ZERO;
@@ -2047,7 +2047,7 @@ public class Utils {
     }
 
     public static boolean isOpenTradeTime_6h_to_1h() {
-        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 21, 22, 23);
+        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 22, 23, 24, 0, 1, 2, 3);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -3471,61 +3471,6 @@ public class Utils {
         return TREND_UNSURE;
     }
 
-    public static List<BigDecimal> getBuySellArea(List<BtcFutures> heiken_list) {
-        int section = 3;
-        List<BigDecimal> LoHi = Utils.getLowHighCandle(heiken_list);
-        BigDecimal high = LoHi.get(1).subtract(LoHi.get(0));
-        BigDecimal quarter = high.divide(BigDecimal.valueOf(section), 10, RoundingMode.CEILING);
-        BigDecimal bread = Utils.calcMaxBread(heiken_list);
-        if (bread.compareTo(quarter) > 0) {
-            quarter = bread;
-        }
-
-        BigDecimal buy_boundary = LoHi.get(0).add(quarter);
-        BigDecimal sal_boundary = LoHi.get(1).subtract(quarter);
-
-        List<BigDecimal> result = new ArrayList<BigDecimal>();
-        result.add(buy_boundary);
-        result.add(sal_boundary);
-
-        return result;
-    }
-
-    public static List<BigDecimal> getLowHighCandle(List<BtcFutures> list) {
-        List<BigDecimal> result = new ArrayList<BigDecimal>();
-
-        BigDecimal min_low = BigDecimal.valueOf(1000000);
-        BigDecimal max_Hig = BigDecimal.ZERO;
-
-        for (BtcFutures dto : list) {
-            if (min_low.compareTo(dto.getLow_price()) > 0) {
-                min_low = dto.getLow_price();
-            }
-
-            if (max_Hig.compareTo(dto.getHight_price()) < 0) {
-                max_Hig = dto.getHight_price();
-            }
-        }
-
-        result.add(min_low);
-        result.add(max_Hig);
-
-        return result;
-    }
-
-    public static BigDecimal calcMaxCandleHigh(List<BtcFutures> list) {
-        BigDecimal max_high = BigDecimal.ZERO;
-
-        for (BtcFutures dto : list) {
-            BigDecimal high = (dto.getHight_price().subtract(dto.getLow_price())).abs();
-            if (max_high.compareTo(high) < 0) {
-                max_high = high;
-            }
-        }
-
-        return max_high;
-    }
-
     public static BigDecimal calcMaxBread(List<BtcFutures> list) {
         BigDecimal max_bread = BigDecimal.ZERO;
 
@@ -3570,6 +3515,61 @@ public class Utils {
             avg_bread = total_bread.divide(BigDecimal.valueOf(count), 10, RoundingMode.CEILING);
         }
         return avg_bread;
+    }
+
+    public static List<BigDecimal> getBuySellArea(List<BtcFutures> heiken_list) {
+        int section = 3;
+        List<BigDecimal> LoHi = Utils.getLowHighCandle(heiken_list);
+        BigDecimal high = LoHi.get(1).subtract(LoHi.get(0));
+        BigDecimal quarter = high.divide(BigDecimal.valueOf(section), 10, RoundingMode.CEILING);
+        BigDecimal bread = Utils.calcMaxBread(heiken_list);
+        if (bread.compareTo(quarter) > 0) {
+            quarter = bread;
+        }
+
+        BigDecimal buy_boundary = LoHi.get(0).add(quarter);
+        BigDecimal sal_boundary = LoHi.get(1).subtract(quarter);
+
+        List<BigDecimal> result = new ArrayList<BigDecimal>();
+        result.add(buy_boundary);
+        result.add(sal_boundary);
+
+        return result;
+    }
+
+    public static List<BigDecimal> getLowHighCandle(List<BtcFutures> list) {
+        List<BigDecimal> result = new ArrayList<BigDecimal>();
+
+        BigDecimal min_low = BigDecimal.valueOf(1000000);
+        BigDecimal max_hig = BigDecimal.ZERO;
+
+        for (BtcFutures dto : list) {
+            if (min_low.compareTo(dto.getLow_price()) > 0) {
+                min_low = dto.getLow_price();
+            }
+
+            if (max_hig.compareTo(dto.getHight_price()) < 0) {
+                max_hig = dto.getHight_price();
+            }
+        }
+
+        result.add(min_low);
+        result.add(max_hig);
+
+        return result;
+    }
+
+    public static BigDecimal calcMaxCandleHigh(List<BtcFutures> list) {
+        BigDecimal max_high = BigDecimal.ZERO;
+
+        for (BtcFutures dto : list) {
+            BigDecimal high = (dto.getHight_price().subtract(dto.getLow_price())).abs();
+            if (max_high.compareTo(high) < 0) {
+                max_high = high;
+            }
+        }
+
+        return max_high;
     }
 
     public static String getType(String trend) {
@@ -4469,9 +4469,8 @@ public class Utils {
         msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type().toUpperCase(), 4, "_") + ")", 15);
         msg += Utils.appendSpace(dto.getEpic(), 10) + new_line_from_service + " ";
         msg += Utils.appendSpace(dto.getComment(), 30) + "  ";
-        // msg += " Entry: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()),
-        // 10);
-        // msg += " ";
+        msg += " Entry: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()), 10);
+        msg += " ";
         msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10) + "   ";
         msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 6) + "(lot)   ";
         msg += " Standard:"
@@ -4843,7 +4842,7 @@ public class Utils {
 
         String header = "";
         header += Utils.appendSpace(append, 8);
-        header += chart_name + ":" + Utils.appendSpace(dto_entry.getTrend_heiken(), 8);
+        header += chart_name + ":" + Utils.appendSpace(dto_entry.getTrend_heiken_0(), 8);
         header += Utils.appendSpace(EPIC, 12) + getTypeOfEpic(EPIC);
         header += Utils.appendSpace(Utils.getCapitalLink(EPIC), 68);
 
@@ -4853,7 +4852,7 @@ public class Utils {
     public static String createLineCrypto(Orders entity, String symbol, String type) {
         String chart = entity.getId().replace("CRYPTO_" + symbol, "").replace("_", "").toUpperCase();
 
-        String tmp_msg = type + Utils.appendSpace(chart, 8) + Utils.appendSpace(entity.getTrend_heiken(), 10)
+        String tmp_msg = type + Utils.appendSpace(chart, 8) + Utils.appendSpace(entity.getTrend_heiken_0(), 10)
                 + Utils.appendSpace(symbol, 10);
 
         String price = Utils.appendSpace(Utils.removeLastZero(entity.getCurrent_price()), 10);
@@ -4866,7 +4865,12 @@ public class Utils {
     public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_en, Orders dto_sl, String append,
             boolean isTradeNow, String CAPITAL_TIME_XX) {
 
-        BigDecimal entry = dto_en.getMa010();
+        BigDecimal entry = dto_en.getCurrent_price();
+        if (Objects.equals(trend, Utils.TREND_LONG)) {
+            entry = dto_en.getLow_50candle();
+        } else if (Objects.equals(trend, Utils.TREND_SHOT)) {
+            entry = dto_en.getHig_50candle();
+        }
 
         List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_sl, trend);
         BigDecimal sl = sl1_tp2.get(0);
@@ -4908,10 +4912,8 @@ public class Utils {
         BigDecimal sl_long = Utils.getBigDecimal(dto_sl.getSl_long());
         BigDecimal sl_shot = Utils.getBigDecimal(dto_sl.getSl_shot());
 
-        BigDecimal en_long = Utils.getBigDecimal(dto_entry.getMa010());
-        BigDecimal en_shot = Utils.getBigDecimal(dto_entry.getMa010());
-        en_long = dto_entry.getCurrent_price();
-        en_shot = dto_entry.getCurrent_price();
+        BigDecimal en_long = Utils.getBigDecimal(dto_entry.getLow_50candle());
+        BigDecimal en_shot = Utils.getBigDecimal(dto_entry.getHig_50candle());
 
         BigDecimal tp_long = Utils.getBigDecimal(dto_entry.getTp_long());
         BigDecimal tp_shot = Utils.getBigDecimal(dto_entry.getTp_shot());
@@ -5028,8 +5030,8 @@ public class Utils {
     public static String get_seq_chart(Orders dto_xx, String find_trend) {
         String result = "";
 
-        if (Objects.equals(dto_xx.getTrend_heiken(), find_trend)) {
-            String type = Utils.getType(dto_xx.getTrend_heiken()).replace("(", "_").replace(")", "_").toUpperCase();
+        if (Objects.equals(dto_xx.getTrend_heiken_0(), find_trend)) {
+            String type = Utils.getType(dto_xx.getTrend_heiken_0()).replace("(", "_").replace(")", "_").toUpperCase();
             String chart_name = getChartName(dto_xx.getId()).toLowerCase().replace("(", "").replace(")", "").trim();
 
             if (dto_xx.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_SEQ_1020)) {
