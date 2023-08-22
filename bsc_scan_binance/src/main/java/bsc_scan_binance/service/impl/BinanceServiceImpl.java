@@ -4043,23 +4043,23 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String trend_h1 = dto_h1.getTrend_by_ma_10();
+            String reverse_d1 = dto_d1.getTrend_by_ma_10().contains(Utils.TREND_LONG) ? Utils.TREND_SHOT
+                    : Utils.TREND_LONG;
+            String switch_trend = dto_10.getSwitch_trend() + dto_12.getSwitch_trend()
+                    + dto_15.getSwitch_trend() + dto_30.getSwitch_trend() + dto_h1.getSwitch_trend();
 
             boolean is_h1_allow_trade = dto_h1.getTradable_zone().contains(trend_h1)
                     && Objects.equals(dto_h1.getTrend_heiken(), trend_h1);
 
             boolean is_d1_allow_trade = dto_d1.getTradable_zone().contains(trend_h1)
                     && Objects.equals(dto_d1.getTrend_by_ma_10(), trend_h1);
-
             is_d1_allow_trade |= !dto_d1.getTradable_zone().contains(trend_h1)
-                    && Objects.equals(dto_h1.getTrend_heiken_1(), trend_h1)
-                    && dto_h1.getTradable_zone().contains(trend_h1)
+                    && Objects.equals(reverse_d1, trend_h1)
                     && dto_h4.getTradable_zone().contains(trend_h1)
                     && (dto_h4.getTrend_heiken_1() + dto_h4.getTrend_by_ma_10()).contains(trend_h1);
 
-            String switch_trend = dto_10.getSwitch_trend() + dto_12.getSwitch_trend()
-                    + dto_15.getSwitch_trend() + dto_30.getSwitch_trend() + dto_h1.getSwitch_trend();
-
             boolean is_switch_seq = switch_trend.contains("SEQ")
+                    && switch_trend.contains(trend_h1)
                     && dto_10.getZone_by_ma_200().contains(trend_h1);
 
             Mt5OpenTrade trade_dto = null;
