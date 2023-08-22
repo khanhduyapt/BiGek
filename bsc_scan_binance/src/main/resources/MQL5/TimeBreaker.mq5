@@ -86,7 +86,7 @@ void OnTimer(void)
          copied=CopyRates(symbol, PERIOD_D1, 0, 55, rates_d1);
          if(copied>0)
            {
-            int size=fmin(copied, 15);
+            int size=fmin(copied, 55);
             for(int i=0; i<size; i++)
               {
                FileWrite(nfile_handle, symbol, "DAY", rates_d1[i].time, rates_d1[i].open, rates_d1[i].high, rates_d1[i].low, rates_d1[i].close, current_price);
