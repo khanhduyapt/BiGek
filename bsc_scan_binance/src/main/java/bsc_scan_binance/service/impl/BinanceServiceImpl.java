@@ -4087,18 +4087,20 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_12.getTrend_by_ma_10(), trend_d1_ma10)
                     && Objects.equals(dto_15.getTrend_by_ma_10(), trend_d1_ma10)
                     && Objects.equals(dto_h1.getTrend_heiken_0(), trend_d1_ma10)
-                    && Objects.equals(dto_h1.getTrend_heiken_1(), trend_d1_ma10)
-                    && Objects.equals(dto_d1.getTrend_heiken_0(), trend_d1_ma10);
+                    && Objects.equals(dto_h1.getTrend_heiken_1(), trend_d1_ma10);
 
             is_d1_allow_trade |= dto_d1.getTradable_zone().contains(REVERSE_D1_MA10)
                     && dto_h4.getTradable_zone().contains(REVERSE_D1_MA10)
                     && Objects.equals(dto_10.getTrend_by_ma_10(), REVERSE_D1_MA10)
+                    && Objects.equals(dto_12.getTrend_by_ma_10(), REVERSE_D1_MA10)
                     && Objects.equals(dto_15.getTrend_by_ma_10(), REVERSE_D1_MA10)
+
                     && Objects.equals(dto_h1.getTrend_heiken_0(), REVERSE_D1_MA10)
                     && Objects.equals(dto_h1.getTrend_heiken_1(), REVERSE_D1_MA10)
+                    && Objects.equals(dto_h1.getTrend_by_ma_10(), REVERSE_D1_MA10)
+
                     && Objects.equals(dto_h4.getTrend_heiken_0(), REVERSE_D1_MA10)
                     && Objects.equals(dto_h4.getTrend_heiken_1(), REVERSE_D1_MA10)
-                    && Objects.equals(dto_h1.getTrend_by_ma_10(), REVERSE_D1_MA10)
                     && Objects.equals(dto_h4.getTrend_by_ma_10(), REVERSE_D1_MA10);
 
             boolean is_switch_seq = switch_trend.contains("SEQ") && switch_trend.contains(trend_h1_ma10)
