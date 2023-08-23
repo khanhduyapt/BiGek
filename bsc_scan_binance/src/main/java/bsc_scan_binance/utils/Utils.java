@@ -4804,8 +4804,8 @@ public class Utils {
         return tmp_msg + url;
     }
 
-    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_en, Orders dto_sl, String append,
-            boolean isTradeNow, String CAPITAL_TIME_XX) {
+    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_en, Orders dto_sl, Orders dto_tp,
+            String append, boolean isTradeNow, String CAPITAL_TIME_XX) {
 
         BigDecimal entry = dto_en.getCurrent_price();
         if (Objects.equals(trend, Utils.TREND_LONG)) {
@@ -4814,9 +4814,11 @@ public class Utils {
             entry = dto_en.getHig_50candle();
         }
 
-        List<BigDecimal> sl1_tp2 = Utils.calc_SL1_TP2(dto_sl, trend);
-        BigDecimal sl = sl1_tp2.get(0);
-        BigDecimal tp = sl1_tp2.get(1);
+        List<BigDecimal> sl1 = Utils.calc_SL1_TP2(dto_sl, trend);
+        BigDecimal sl = sl1.get(0);
+
+        List<BigDecimal> tp2 = Utils.calc_SL1_TP2(dto_tp, trend);
+        BigDecimal tp = tp2.get(1);
 
         MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, RISK_PER_TRADE, dto_en.getCurrent_price(), sl, tp);
         BigDecimal volume = money.calcLot();
