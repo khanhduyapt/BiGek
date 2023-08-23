@@ -3998,67 +3998,6 @@ public class Utils {
         return allow_trade;
     }
 
-    public static String switch_trend_seq_10_20(List<BtcFutures> heiken_list) {
-        String result = "";
-        if (heiken_list.size() < 20) {
-            return result;
-        }
-
-        String heiken_0 = getTrendByHekenAshiList(heiken_list, 0);
-        String heiken_1 = getTrendByHekenAshiList(heiken_list, 1);
-        if (!Objects.equals(heiken_0, heiken_1)) {
-            return "";
-        }
-
-        String switch_trend = switchTrendByMa1(heiken_list, 1, 20, heiken_list.size(), "(Ma1vs20to50)");
-        if (Utils.isNotBlank(switch_trend)) {
-
-            List<BtcFutures> sub_list = heiken_list.subList(0, 2);
-            BigDecimal candle_hig = calcMaxCandleHigh(sub_list);
-
-            List<BigDecimal> lohi = getLowHighCandle(sub_list);
-            BigDecimal low = lohi.get(0);
-            low = low.subtract(candle_hig);
-
-            BigDecimal hig = lohi.get(1);
-            hig = hig.add(candle_hig);
-
-            BigDecimal ma01_0 = calcMA(heiken_list, 01, 1);
-            BigDecimal ma10_0 = calcMA(heiken_list, 10, 1);
-            BigDecimal ma20_0 = calcMA(heiken_list, 20, 1);
-            BigDecimal ma50_0 = calcMA(heiken_list, 50, 1);
-
-            boolean inside_lohi = true;
-            inside_lohi &= (ma01_0.compareTo(low) > 0) && (ma10_0.compareTo(low) > 0) && (ma20_0.compareTo(low) > 0)
-                    && (ma50_0.compareTo(low) > 0);
-            inside_lohi &= (ma01_0.compareTo(hig) < 0) && (ma10_0.compareTo(hig) < 0) && (ma20_0.compareTo(hig) < 0)
-                    && (ma50_0.compareTo(hig) < 0);
-
-            boolean ma6_1_2_up = isUptrendByMa(heiken_list, 6, 1, 2);
-
-            if (ma6_1_2_up && Objects.equals(heiken_1, TREND_LONG) && switch_trend.contains(Utils.TREND_LONG)
-                    && inside_lohi) {
-                if ((ma01_0.compareTo(ma10_0) > 0) && (ma01_0.compareTo(ma20_0) > 0)) {
-                    result = Utils.TREND_LONG;
-                }
-            }
-
-            if (!ma6_1_2_up && Objects.equals(heiken_1, TREND_SHOT) && switch_trend.contains(Utils.TREND_SHOT)
-                    && inside_lohi) {
-                if ((ma01_0.compareTo(ma10_0) < 0) && (ma01_0.compareTo(ma20_0) < 0)) {
-                    result = Utils.TREND_SHOT;
-                }
-            }
-        }
-
-        if (isNotBlank(result)) {
-            String chart_name = getChartName(heiken_list).trim();
-            result = chart_name + TEXT_SWITCH_TREND_SEQ_1020 + ":" + Utils.appendSpace(result, 4);
-        }
-
-        return result;
-    }
-
     public static String switch_trend_seq_10_20_50(List<BtcFutures> heiken_list) {
         String result = "";
         if (heiken_list.size() < 20) {
@@ -4079,7 +4018,7 @@ public class Utils {
             return "";
         }
 
-        String switch_trend = switchTrendByMa1(heiken_list, 1, 20, heiken_list.size(), "(Ma1vs20to50)");
+        String switch_trend = switchTrendByMa1(heiken_list, 1, 10, heiken_list.size(), "(Ma1vs20to50)");
         if (Utils.isNotBlank(switch_trend)) {
             List<BtcFutures> sub_list = heiken_list.subList(0, 2);
             BigDecimal candle_hig = calcMaxCandleHigh(sub_list);

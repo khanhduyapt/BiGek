@@ -341,14 +341,14 @@ void trailingSL(string line)
          double cur_sl    = NormalizeDouble(PositionGetDouble(POSITION_SL),digits);   // Stop Loss of the position
          double cur_tp    = NormalizeDouble(PositionGetDouble(POSITION_TP),digits);   // Take Profit of the position
 
-         string my_key    = (string) my_ticket + "_" + (string) my_sl + "_" + (string) my_tp;
+         string my_key    = (string) my_ticket + "_" + (string) my_sl + "_" + (string)cur_tp;
          string cur_key   = (string)cur_ticket + "_" + (string)cur_sl + "_" + (string)cur_tp;
 
          if(my_key != cur_key)
            {
             Alert("TrailingSL: ticket=" + (string)my_ticket + "   " + trade_symbol + " SL:" + (string)cur_sl + "->" + (string)my_sl + "    TP:" + (string)cur_tp + "->" + (string)my_tp);
 
-            m_trade.PositionModify(my_ticket, my_sl, my_tp);
+            m_trade.PositionModify(my_ticket, my_sl, cur_tp);
 
 
             Comment("----------------------------- TrailingSL: ticket=" + (string)my_ticket + "   " + trade_symbol + " SL:" + (string)cur_sl + "->" + (string)my_sl + "    TP:" + (string)cur_tp + "->" + (string)my_tp);
