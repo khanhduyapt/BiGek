@@ -113,6 +113,7 @@ void OnTimer(void)
             FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_H4");
            }
          //---------------------------------------------
+         /*
          MqlRates rates_h2[];
          ArraySetAsSeries(rates_h2,true);
          copied=CopyRates(symbol, PERIOD_H2, 0, 55, rates_h2);
@@ -128,6 +129,7 @@ void OnTimer(void)
            {
             FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_H2");
            }
+           */
          //---------------------------------------------
          MqlRates rates_h1[];
          ArraySetAsSeries(rates_h1,true);
@@ -145,6 +147,7 @@ void OnTimer(void)
             FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_H1");
            }
          //---------------------------------------------
+         /*
          MqlRates rates_30[];
          ArraySetAsSeries(rates_30,true);
          copied=CopyRates(symbol, PERIOD_M30, 0, 55, rates_30);
@@ -160,6 +163,7 @@ void OnTimer(void)
            {
             FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M30");
            }
+           */
          //---------------------------------------------
          MqlRates rates_15[];
          ArraySetAsSeries(rates_15,true);
@@ -214,6 +218,8 @@ int OnCalculate(const int rates_total,
 //--- return value of prev_calculated for next call
    return(0);
   }
+
+//+------------------------------------------------------------------+
 
 //+------------------------------------------------------------------+
 

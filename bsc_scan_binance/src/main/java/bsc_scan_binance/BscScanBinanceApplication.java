@@ -155,18 +155,14 @@ public class BscScanBinanceApplication {
                                             binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_W1);
                                             binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_D1);
                                             binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H4);
-                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H2);
                                             binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
-                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_30);
                                             binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_15);
                                         }
                                     } else {
                                         if (isReloadAfter(Utils.MINUTES_OF_1H, "MT5_DATA_TIMEBREAKER_" + EPIC)) {
                                             binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_D1);
                                             binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H4);
-                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H2);
                                             binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
-                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_30);
                                         }
 
                                         binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_10);

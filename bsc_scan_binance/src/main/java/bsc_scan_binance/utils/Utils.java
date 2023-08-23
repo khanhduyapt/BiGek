@@ -180,14 +180,14 @@ public class Utils {
     public static final String CRYPTO_TIME_W1 = "1w";
     public static final String CRYPTO_TIME_MO = "1M";
 
-    public static final String CAPITAL_TIME_05 = "MINUTE_05";
+    public static final String CAPITAL_TIME_05 = "MINUTE_03";
     public static final String CAPITAL_TIME_10 = "MINUTE_10";
     public static final String CAPITAL_TIME_12 = "MINUTE_12";
     public static final String CAPITAL_TIME_15 = "MINUTE_15";
 
-    public static final String CAPITAL_TIME_30 = "MINUTE_30";
+    private static final String CAPITAL_TIME_30 = "MINUTE_30";
     public static final String CAPITAL_TIME_H1 = "HOUR_01";
-    public static final String CAPITAL_TIME_H2 = "HOUR_02";
+    private static final String CAPITAL_TIME_H2 = "HOUR_02";
     public static final String CAPITAL_TIME_H4 = "HOUR_04";
     public static final String CAPITAL_TIME_D1 = "DAY";
     public static final String CAPITAL_TIME_W1 = "WEEK";
@@ -215,7 +215,7 @@ public class Utils {
 
     public static final Integer MINUTES_OF_2D = 2880;
     public static final Integer MINUTES_OF_1D = 1440;
-    public static final Integer MINUTES_OF_8H = 480;
+    public static final Integer MINUTES_OF_12H = 720;
     public static final Integer MINUTES_OF_4H = 240;
     public static final Integer MINUTES_OF_2H = 120;
     public static final Integer MINUTES_OF_1H = 60;
@@ -3029,7 +3029,8 @@ public class Utils {
             return false;
         }
 
-        int candle_no = 0; // Giá đóng cửa của cây nến trước đó.
+        // Giá đóng cửa của cây nến trước đó.
+        int candle_no = 1;
         String id = list.get(0).getId();
         if (id.contains("MINUTE_") || id.contains("m_")) {
             candle_no = 1;
@@ -3543,6 +3544,35 @@ public class Utils {
         }
 
         return max_high;
+    }
+
+    public static boolean is_increase_decrease_rhythmic(List<BtcFutures> heiken_list) {
+        int size = heiken_list.size();
+        if (size > 15) {
+            size = 15;
+        }
+
+        boolean is_uptrend = isUptrendByMa(heiken_list, 1, 0, 1);
+
+        BigDecimal total_high = BigDecimal.ZERO;
+        BigDecimal max_high = BigDecimal.ZERO;
+        for (int index = 0; index < size; index++) {
+            BtcFutures dto = heiken_list.get(index);
+            BigDecimal high = (dto.getHight_price().subtract(dto.getLow_price())).abs();
+
+            total_high = total_high.add(high);
+            if ((dto.isUptrend() == is_uptrend) && (index < 5) && (high.compareTo(max_high) > 0)) {
+                max_high = high;
+            }
+        }
+
+        BigDecimal avg_high = total_high.multiply(BigDecimal.valueOf(0.0666666));
+
+        if (max_high.compareTo(avg_high.multiply(BigDecimal.valueOf(3))) > 0) {
+            return false;
+        }
+
+        return true;
     }
 
     public static String getType(String trend) {

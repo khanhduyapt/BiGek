@@ -14,7 +14,7 @@ int OnInit()
   {
    OnTimer();
 
-   EventSetTimer(300); //1800=30minutes; 900=15minutes; 300=5minutes; 180=3minutes; 60=1minute;
+   EventSetTimer(180); //1800=30minutes; 900=15minutes; 300=5minutes; 180=3minutes; 60=1minute;
 
    return(INIT_SUCCEEDED);
   }
@@ -68,6 +68,25 @@ void OnTimer(void)
          //-------------------------------------------------------------------------------------------------------------------------------
          //-------------------------------------------------------------------------------------------------------------------------------
          //-------------------------------------------------------------------------------------------------------------------------------
+         MqlRates rates_03[];
+         ArraySetAsSeries(rates_03,true);
+         copied=CopyRates(symbol, PERIOD_M3, 0, 55, rates_03);
+         if(copied>0)
+           {
+            int size=fmin(copied, 55);
+            for(int i=0; i<size; i++)
+              {
+               FileWrite(nfile_handle, symbol, "MINUTE_03", rates_03[i].time, rates_03[i].open, rates_03[i].high, rates_03[i].low, rates_03[i].close, current_price);
+              }
+           }
+         else
+           {
+            FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M3");
+           }
+         //-------------------------------------------------------------------------------------------------------------------------------
+         //-------------------------------------------------------------------------------------------------------------------------------
+         //-------------------------------------------------------------------------------------------------------------------------------
+
          MqlRates rates_10[];
          ArraySetAsSeries(rates_10,true);
          copied=CopyRates(symbol, PERIOD_M10, 0, 255, rates_10);
