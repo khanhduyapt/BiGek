@@ -2047,7 +2047,7 @@ public class Utils {
     }
 
     public static boolean isOpenTradeTime_6h_to_1h() {
-        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 22, 23, 24, 0, 1, 2, 3);
+        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 21, 22, 23, 24, 0, 1, 2, 3);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
