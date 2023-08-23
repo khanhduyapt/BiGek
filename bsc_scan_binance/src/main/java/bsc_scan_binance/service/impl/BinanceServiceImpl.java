@@ -3992,7 +3992,9 @@ public class BinanceServiceImpl implements BinanceService {
             String find_trend = dto_h4.getTrend_by_ma_20();
             String switch_trend = dto_10.getSwitch_trend() + dto_12.getSwitch_trend() + dto_15.getSwitch_trend();
 
-            boolean is_allow_trade = dto_h4.getTradable_zone().contains(find_trend)
+            boolean h4_allow_trade = dto_h4.getTradable_zone().contains(find_trend);
+
+            boolean is_allow_trade = switch_trend.contains("SEQ")
                     && Objects.equals(dto_10.getTrend_heiken_0(), find_trend)
                     && Objects.equals(dto_12.getTrend_heiken_0(), find_trend)
                     && Objects.equals(dto_15.getTrend_heiken_0(), find_trend)
@@ -4003,8 +4005,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     && Objects.equals(dto_10.getTrend_by_ma_10(), find_trend)
                     && Objects.equals(dto_12.getTrend_by_ma_10(), find_trend)
-                    && Objects.equals(dto_15.getTrend_by_ma_10(), find_trend)
-                    && dto_10.getZone_by_ma_200().contains(find_trend) && switch_trend.contains("SEQ");
+                    && Objects.equals(dto_15.getTrend_by_ma_10(), find_trend);
 
             boolean append_trade_by_ma200 = false;
             if (Utils.isNotBlank(dto_10.getSwitch_trend())) {
@@ -4048,7 +4049,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             append += switch_trend.contains(Utils.TEXT_SWITCH_TREND_SEQ_1050) ? "_sq50" : "_sq20";
 
-            if (is_allow_trade || append_trade_by_ma200 || append_trade_by_05m) {
+            if (h4_allow_trade && (is_allow_trade || append_trade_by_ma200 || append_trade_by_05m)) {
                 String key = EPIC + Utils.CAPITAL_TIME_H1;
 
                 if (NOTICE_LIST.contains(EPIC)) {
