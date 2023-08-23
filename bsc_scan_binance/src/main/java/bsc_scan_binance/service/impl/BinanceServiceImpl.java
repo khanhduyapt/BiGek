@@ -3693,8 +3693,7 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_12).orElse(dto_h1);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(dto_h1);
 
-            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
-                    || Objects.isNull(dto_10)) {
+            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_10)) {
 
                 String d1 = "D1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
                 String h4 = "H4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
@@ -4016,8 +4015,7 @@ public class BinanceServiceImpl implements BinanceService {
             List<Mt5OpenTradeEntity> entities = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
             if (!CollectionUtils.isEmpty(entities)) {
                 for (Mt5OpenTradeEntity entity : entities) {
-                    TRADED_TREND = entity.getType().contains(Utils.TREND_LONG) ? Utils.TREND_LONG
-                            : Utils.TREND_SHOT;
+                    TRADED_TREND = entity.getType().contains(Utils.TREND_LONG) ? Utils.TREND_LONG : Utils.TREND_SHOT;
                 }
             }
 
@@ -4042,8 +4040,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_15.getTrend_by_ma_10(), trend_D1_ma10)
 
                     && Objects.equals(dto_h4.getTrend_by_ma_10(), trend_D1_ma10)
-                    && Objects.equals(dto_h4.getTrend_by_ma_20(), trend_D1_ma10)
-                    && dto_h4.getTradable_zone().contains(trend_D1_ma10);
+                    && Objects.equals(dto_h4.getTrend_by_ma_20(), trend_D1_ma10);
 
             is_d1_allow_trade |= !dto_d1.getTradable_zone().contains(trend_D1_ma10)
                     && Objects.equals(dto_10.getTrend_heiken_0(), REVERSE_D1_MA10)
@@ -4059,8 +4056,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_15.getTrend_by_ma_10(), REVERSE_D1_MA10)
 
                     && Objects.equals(dto_h4.getTrend_by_ma_10(), REVERSE_D1_MA10)
-                    && Objects.equals(dto_h4.getTrend_by_ma_20(), REVERSE_D1_MA10)
-                    && dto_h4.getTradable_zone().contains(REVERSE_D1_MA10);
+                    && Objects.equals(dto_h4.getTrend_by_ma_20(), REVERSE_D1_MA10);
 
             boolean is_switch_seq = switch_trend.contains("SEQ") && switch_trend.contains(dto_10.getTrend_by_ma_10())
                     && dto_10.getZone_by_ma_200().contains(dto_10.getTrend_by_ma_10());
