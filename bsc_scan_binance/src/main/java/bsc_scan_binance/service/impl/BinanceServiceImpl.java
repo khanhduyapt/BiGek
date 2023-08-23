@@ -3983,16 +3983,21 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
+            String find_trend_by_h4_ma20 = dto_h4.getTrend_by_ma_20();
+            String switch_trend = dto_10.getSwitch_trend() + dto_12.getSwitch_trend() + dto_15.getSwitch_trend();
+
             String TRADED_TREND = "NOT_FOUND";
             List<Mt5OpenTradeEntity> entities = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
             if (!CollectionUtils.isEmpty(entities)) {
                 for (Mt5OpenTradeEntity entity : entities) {
                     TRADED_TREND = entity.getType().contains(Utils.TREND_LONG) ? Utils.TREND_LONG : Utils.TREND_SHOT;
+
+                    if (switch_trend.contains("SEQ") && !switch_trend.contains(TRADED_TREND)) {
+                        String log = Utils.createCloseTradeMsg(entity, "FOUND_TREND_REVERSE", switch_trend);
+                        Utils.logWritelnDraft(log);
+                    }
                 }
             }
-
-            String find_trend_by_h4_ma20 = dto_h4.getTrend_by_ma_20();
-            String switch_trend = dto_10.getSwitch_trend() + dto_12.getSwitch_trend() + dto_15.getSwitch_trend();
 
             boolean h4_allow_trade = dto_h4.getTradable_zone().contains(find_trend_by_h4_ma20);
 
