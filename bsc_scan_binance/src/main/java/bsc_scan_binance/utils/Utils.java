@@ -4823,9 +4823,14 @@ public class Utils {
         MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, RISK_PER_TRADE, dto_en.getCurrent_price(), sl, tp);
         BigDecimal volume = money.calcLot();
 
-        if (volume.compareTo(BigDecimal.ZERO) <= 0) {
-
+        BigDecimal standard_vol = get_standard_vol_per_100usd(EPIC);
+        if (volume.compareTo(standard_vol) < 0) {
+            volume = standard_vol;
         }
+        if (volume.compareTo(standard_vol.multiply(BigDecimal.valueOf(2))) > 0) {
+            volume = standard_vol.multiply(BigDecimal.valueOf(2));
+        }
+
         String type = Objects.equals(trend, Utils.TREND_LONG) ? "_b" : "_s";
 
         Mt5OpenTrade dto = new Mt5OpenTrade();
