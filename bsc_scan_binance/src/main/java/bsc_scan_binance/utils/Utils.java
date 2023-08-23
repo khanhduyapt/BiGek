@@ -4018,6 +4018,23 @@ public class Utils {
             return "";
         }
 
+        BigDecimal ma03_1 = calcMA(heiken_list, 3, 1);
+        BigDecimal ma06_1 = calcMA(heiken_list, 6, 1);
+        BigDecimal ma09_1 = calcMA(heiken_list, 9, 1);
+        boolean allow_next = false;
+        if (Objects.equals(heiken_1, TREND_LONG) && (ma03_1.compareTo(ma06_1) >= 0)
+                && (ma06_1.compareTo(ma09_1) >= 0)) {
+            allow_next = true;
+        }
+        if (Objects.equals(heiken_1, TREND_SHOT) && (ma03_1.compareTo(ma06_1) <= 0)
+                && (ma06_1.compareTo(ma09_1) <= 0)) {
+            allow_next = true;
+        }
+
+        if (!allow_next) {
+            return "";
+        }
+
         String switch_trend = switchTrendByMa1(heiken_list, 1, 10, heiken_list.size(), "(Ma1vs20to50)");
         if (Utils.isNotBlank(switch_trend)) {
             List<BtcFutures> sub_list = heiken_list.subList(0, 2);
