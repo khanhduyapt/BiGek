@@ -4030,13 +4030,12 @@ public class Utils {
                 && (ma06_1.compareTo(ma09_1) <= 0)) {
             allow_next = true;
         }
-
         if (!allow_next) {
             return "";
         }
 
         String switch_trend = switchTrendByMa1(heiken_list, 1, 10, heiken_list.size(), "(Ma1vs20to50)");
-        if (Utils.isNotBlank(switch_trend)) {
+        if (Utils.isNotBlank(switch_trend) && switch_trend.contains(heiken_1)) {
             List<BtcFutures> sub_list = heiken_list.subList(0, 2);
             BigDecimal candle_hig = calcMaxCandleHigh(sub_list);
 
@@ -4058,24 +4057,24 @@ public class Utils {
             BigDecimal ma50_1 = calcMA(heiken_list, 50, 1);
 
             boolean inside_lohi = true;
-            inside_lohi &= (ma10_0.compareTo(low) > 0) && (ma10_1.compareTo(low) > 0) && (ma20_0.compareTo(low) > 0)
-                    && (ma20_1.compareTo(low) > 0) && (ma50_1.compareTo(low) > 0);
+            inside_lohi &= (ma10_0.compareTo(low) >= 0) && (ma10_1.compareTo(low) >= 0) && (ma20_0.compareTo(low) >= 0)
+                    && (ma20_1.compareTo(low) >= 0) && (ma50_1.compareTo(low) >= 0);
 
-            inside_lohi &= (hig.compareTo(ma10_0) > 0) && (hig.compareTo(ma10_1) > 0) && (hig.compareTo(ma20_0) > 0)
-                    && (hig.compareTo(ma20_1) > 0) && (hig.compareTo(ma50_1) > 0);
+            inside_lohi &= (hig.compareTo(ma10_0) >= 0) && (hig.compareTo(ma10_1) >= 0) && (hig.compareTo(ma20_0) >= 0)
+                    && (hig.compareTo(ma20_1) >= 0) && (hig.compareTo(ma50_1) >= 0);
 
             if (inside_lohi && switch_trend.contains(Utils.TREND_LONG)) {
-                if ((ma01_0.compareTo(ma10_0) > 0) && (ma01_0.compareTo(ma10_1) > 0) && (ma01_0.compareTo(ma20_0) > 0)
-                        && (ma01_0.compareTo(ma20_1) > 0) && (ma01_0.compareTo(ma50_1) > 0)
-                        && (ma10_1.compareTo(ma50_1) > 0)) {
+                if ((ma01_0.compareTo(ma10_0) >= 0) && (ma01_0.compareTo(ma10_1) >= 0)
+                        && (ma01_0.compareTo(ma20_0) >= 0) && (ma01_0.compareTo(ma20_1) >= 0)
+                        && (ma01_0.compareTo(ma50_1) >= 0) && (ma10_1.compareTo(ma50_1) >= 0)) {
                     result = Utils.TREND_LONG;
                 }
             }
 
             if (inside_lohi && switch_trend.contains(Utils.TREND_SHOT) && inside_lohi) {
-                if ((ma01_0.compareTo(ma10_0) < 0) && (ma01_0.compareTo(ma10_1) < 0) && (ma01_0.compareTo(ma20_0) < 0)
-                        && (ma01_0.compareTo(ma20_1) < 0) && (ma01_0.compareTo(ma50_1) < 0)
-                        && (ma10_1.compareTo(ma50_1) < 0)) {
+                if ((ma01_0.compareTo(ma10_0) <= 0) && (ma01_0.compareTo(ma10_1) <= 0)
+                        && (ma01_0.compareTo(ma20_0) <= 0) && (ma01_0.compareTo(ma20_1) <= 0)
+                        && (ma01_0.compareTo(ma50_1) <= 0) && (ma10_1.compareTo(ma50_1) <= 0)) {
                     result = Utils.TREND_SHOT;
                 }
             }
