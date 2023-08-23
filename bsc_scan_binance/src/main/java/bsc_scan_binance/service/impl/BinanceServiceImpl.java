@@ -2785,7 +2785,7 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                boolean is_notice_only = "_DX.f_NATGAS_ERBN_GBPCHF_EURGBP__".toUpperCase().contains(EPIC)
+                boolean is_notice_only = "_DX.f_NATGAS_ERBN_GBPCHF_EURGBP_AUDNZD_".toUpperCase().contains(EPIC)
                         || Utils.EPICS_CRYPTO_CFD.contains(EPIC) || dto.getComment().contains(Utils.TEXT_NOTICE_ONLY);
 
                 if (is_notice_only) {
