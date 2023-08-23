@@ -4104,15 +4104,17 @@ public class BinanceServiceImpl implements BinanceService {
 
             String REVERSE_TRADE_TREND = TRADE_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_SHOT : Utils.TREND_LONG;
 
+            Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
 
-            if (Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
+            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
+                String d1 = "d1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
                 String h4 = "h4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
                 String h1 = "h1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
 
-                Utils.logWritelnDraft(String.format("[closetrade_by_sl_tp_take_profit] dto (%s) :  %s, %s.",
-                        Utils.appendSpace(EPIC, 10), h4, h1));
+                Utils.logWritelnDraft(String.format("[closetrade_by_sl_tp_take_profit] dto (%s) :  %s, %s, %s.",
+                        Utils.appendSpace(EPIC, 10), d1, h4, h1));
 
                 continue;
             }
@@ -4120,7 +4122,8 @@ public class BinanceServiceImpl implements BinanceService {
             boolean take_profit = false;
             boolean has_profit = PROFIT.compareTo(BigDecimal.ZERO) > 0;
             if (has_profit && Objects.equals(dto_h4.getTrend_by_ma_20(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h4.getTrend_heiken_1(), REVERSE_TRADE_TREND)) {
+                    && Objects.equals(dto_h4.getTrend_heiken_1(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_d1.getTrend_heiken_0(), REVERSE_TRADE_TREND)) {
                 take_profit = true;
             }
 
