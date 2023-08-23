@@ -4128,9 +4128,12 @@ public class BinanceServiceImpl implements BinanceService {
             if ((take_profit || is_hit_sl) && allow_close_trade_after(TICKET, Utils.MINUTES_OF_1H)) {
                 String reason = "";
 
+                String prifix = "CloseTrade: ";
+
                 if (is_hit_sl) {
                     reason = "stoploss:" + PROFIT.intValue() + "$" + trade.getComment();
                 } else if (take_profit) {
+                    prifix = "Take_Profit: ";
                     reason = "take_profit:" + PROFIT.intValue() + "$(H4_MA20_REVERSE)";
                 }
 
@@ -4140,7 +4143,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
                 // --------------------------------------------------------------------------
-                String prifix = "CloseTrade: ";
+
                 String key = trade.getSymbol() + "_" + trade.getType() + trade.getTimeframe();
                 if (isReloadAfter(Utils.MINUTES_OF_1H, key)) {
                     keys += key;
