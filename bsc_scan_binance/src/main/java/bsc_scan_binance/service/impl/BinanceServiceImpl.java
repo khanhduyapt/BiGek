@@ -4150,7 +4150,7 @@ public class BinanceServiceImpl implements BinanceService {
                     prifix = "Take_Profit: ";
 
                     reason = "take_profit:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5)
-                            + "$(H4_MA20_REVERSE)";
+                            + "$   (H4_MA20_REVERSE)";
                 }
 
                 if (!"__HOLDING____".contains("_" + EPIC + "_")) {
