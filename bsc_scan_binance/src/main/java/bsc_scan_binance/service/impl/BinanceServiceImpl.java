@@ -4140,12 +4140,14 @@ public class BinanceServiceImpl implements BinanceService {
                 String reason = "";
 
                 String prifix = "CloseTrade: ";
-
                 if (is_hit_sl) {
-                    reason = "stoploss:" + PROFIT.intValue() + "$" + trade.getComment();
+                    reason = "stoploss:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5) + "$"
+                            + trade.getComment();
                 } else if (take_profit) {
                     prifix = "Take_Profit: ";
-                    reason = "take_profit:" + PROFIT.intValue() + "$(H4_MA20_REVERSE)";
+
+                    reason = "take_profit:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5)
+                            + "$(H4_MA20_REVERSE)";
                 }
 
                 if (!"__HOLDING____".contains("_" + EPIC + "_")) {
