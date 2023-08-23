@@ -4004,12 +4004,7 @@ public class Utils {
             return result;
         }
 
-        String heiken_0 = getTrendByHekenAshiList(heiken_list, 0);
         String heiken_1 = getTrendByHekenAshiList(heiken_list, 1);
-        if (!Objects.equals(heiken_0, heiken_1)) {
-            return "";
-        }
-
         boolean ma6_1_2_up = isUptrendByMa(heiken_list, 6, 1, 2);
         if (ma6_1_2_up && Objects.equals(heiken_1, TREND_SHOT)) {
             return "";

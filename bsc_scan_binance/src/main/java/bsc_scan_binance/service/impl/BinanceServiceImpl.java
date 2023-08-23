@@ -3997,10 +3997,6 @@ public class BinanceServiceImpl implements BinanceService {
             boolean h4_allow_trade = dto_h4.getTradable_zone().contains(find_trend);
 
             boolean is_allow_trade = switch_trend.contains("SEQ")
-                    && Objects.equals(dto_10.getTrend_heiken_0(), find_trend)
-                    && Objects.equals(dto_12.getTrend_heiken_0(), find_trend)
-                    && Objects.equals(dto_15.getTrend_heiken_0(), find_trend)
-
                     && Objects.equals(dto_10.getTrend_heiken_1(), find_trend)
                     && Objects.equals(dto_12.getTrend_heiken_1(), find_trend)
                     && Objects.equals(dto_15.getTrend_heiken_1(), find_trend)
@@ -4012,7 +4008,6 @@ public class BinanceServiceImpl implements BinanceService {
             boolean append_trade_by_ma200 = false;
             if (Utils.isNotBlank(dto_10.getSwitch_trend())) {
                 append_trade_by_ma200 = Objects.equals(find_trend, TRADED_TREND)
-                        && Objects.equals(dto_10.getTrend_heiken_0(), TRADED_TREND)
                         && Objects.equals(dto_10.getTrend_heiken_1(), TRADED_TREND)
                         && Objects.equals(dto_10.getTrend_by_ma_10(), TRADED_TREND)
                         && Objects.equals(dto_10.getZone_by_ma_200(), TRADED_TREND);
@@ -4020,15 +4015,10 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean append_trade_by_05m = false;
             if (Objects.nonNull(dto_05) && dto_05.getSwitch_trend().contains("SEQ")) {
-                if (Objects.equals(dto_10.getTrend_heiken_0(), find_trend)
-                        && Objects.equals(dto_12.getTrend_heiken_0(), find_trend)
-                        && Objects.equals(dto_15.getTrend_heiken_0(), find_trend)
-
-                        && Objects.equals(dto_10.getTrend_heiken_1(), find_trend)
+                if (Objects.equals(dto_10.getTrend_heiken_1(), find_trend)
                         && Objects.equals(dto_12.getTrend_heiken_1(), find_trend)
                         && Objects.equals(dto_15.getTrend_heiken_1(), find_trend)
 
-                        && Objects.equals(dto_05.getTrend_heiken_0(), find_trend)
                         && Objects.equals(dto_05.getTrend_heiken_1(), find_trend)
                         && Objects.equals(dto_05.getTrend_by_ma_10(), find_trend)
                         && Objects.equals(dto_05.getTrend_by_ma_20(), find_trend)
