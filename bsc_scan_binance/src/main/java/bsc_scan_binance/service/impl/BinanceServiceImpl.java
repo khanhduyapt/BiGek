@@ -19,6 +19,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -3703,6 +3704,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         int count = 0;
+        Collections.sort(CAPITAL_LIST);
         for (String EPIC : CAPITAL_LIST) {
             if (BscScanBinanceApplication.EPICS_OUTPUTED_LOG.contains(EPIC)) {
                 continue;
@@ -3955,6 +3957,7 @@ public class BinanceServiceImpl implements BinanceService {
         CAPITAL_LIST.addAll(NOTICE_LIST);
 
         // TODO: 5. closeTrade_by_SL_TP
+        Collections.sort(CAPITAL_LIST);
         for (String EPIC : CAPITAL_LIST) {
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
@@ -4076,7 +4079,7 @@ public class BinanceServiceImpl implements BinanceService {
         // ----------------------------------------------------------------------------------------------
         String msg = "";
         String keys = "";
-        List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAll();
+        List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByOrderByCompanyAscSymbolAsc();
         for (Mt5OpenTradeEntity trade : mt5Openlist) {
             String EPIC = trade.getSymbol();
             String TICKET = trade.getTicket();
