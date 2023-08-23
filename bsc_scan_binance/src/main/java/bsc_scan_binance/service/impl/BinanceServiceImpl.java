@@ -4050,13 +4050,13 @@ public class BinanceServiceImpl implements BinanceService {
                     append += Utils.TEXT_PASS;
                 }
                 if (append_trade_by_ma200) {
-                    append += "_200c";
+                    append += "_200";
                 }
                 if (is_allow_trade) {
-                    append += "_sq15";
+                    append += "_a1x";
                 }
                 if (append_trade_by_05m) {
-                    append += "_sq05";
+                    append += "_a0x";
                 }
 
                 trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, find_trend_by_h4_ma20, dto_10, dto_h1, dto_h4, append, true,
