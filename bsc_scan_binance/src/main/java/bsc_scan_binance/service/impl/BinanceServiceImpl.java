@@ -4111,7 +4111,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // ----------------------------------------------------------------------------------------------
             boolean take_profit = false;
-            boolean has_profit = PROFIT.compareTo(Utils.RISK_PER_TRADE) > 0;
+            boolean has_profit = PROFIT.compareTo(BigDecimal.ZERO) > 0;
             if (has_profit && Objects.equals(dto_h4.getTrend_by_ma_20(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_heiken_1(), REVERSE_TRADE_TREND)) {
                 take_profit = true;
@@ -4135,7 +4135,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (!"__HOLDING____".contains("_" + EPIC + "_")) {
-                    if (is_hit_sl) {
+                    if (is_hit_sl || take_profit) {
                         BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
                     }
                 }
