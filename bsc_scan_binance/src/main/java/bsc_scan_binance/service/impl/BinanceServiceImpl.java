@@ -4135,7 +4135,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (!"__HOLDING____".contains("_" + EPIC + "_")) {
-                    if (is_hit_sl || take_profit) {
+                    if (is_hit_sl) {
                         BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
                     }
                 }
