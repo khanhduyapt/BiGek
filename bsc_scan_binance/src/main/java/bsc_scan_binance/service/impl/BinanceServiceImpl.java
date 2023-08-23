@@ -4071,7 +4071,6 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
             }
         }
-
         // ----------------------------------------------------------------------------------------------
         // ---------------------------------------close_trade--------------------------------------------
         // ----------------------------------------------------------------------------------------------
@@ -4126,6 +4125,10 @@ public class BinanceServiceImpl implements BinanceService {
             boolean no_stop_loss = (trade.getStopLoss().compareTo(BigDecimal.ZERO) == 0);
             if (no_stop_loss && PROFIT.add(Utils.RISK_PER_TRADE.multiply(BigDecimal.valueOf(2)))
                     .compareTo(BigDecimal.ZERO) < 0) {
+                is_hit_sl = true;
+            }
+            BigDecimal standard_vol = Utils.get_standard_vol_per_100usd(EPIC);
+            if (trade.getVolume().compareTo(standard_vol.multiply(BigDecimal.valueOf(3))) > 0) {
                 is_hit_sl = true;
             }
             // ---------------------------------------------------------------------------------
