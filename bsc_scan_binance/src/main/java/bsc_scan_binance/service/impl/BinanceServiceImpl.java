@@ -3705,13 +3705,7 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            String find_trend = dto_d1.getTrend_by_ma_10();
-            if (!dto_d1.getTradable_zone().contains(dto_d1.getTrend_by_ma_10())) {
-                find_trend = dto_d1.getTrend_heiken_0();
-            }
-            if (Objects.equals(dto_h4.getTrend_by_ma_10(), dto_h4.getTrend_by_ma_20())) {
-                find_trend = dto_h4.getTrend_by_ma_20();
-            }
+            String find_trend = dto_h4.getTrend_by_ma_20();
             // ---------------------------------------------------------------------------------------------
             if (Utils.EPICS_CRYPTO_CFD.contains(EPIC) && !Objects.equals(EPIC, "BTCUSD")) {
                 Orders dto_btc_d1 = ordersRepository.findById("BTCUSD" + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
@@ -3727,9 +3721,7 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_d1 = dto_d1.getSwitch_trend().trim();
             String switch_h4 = dto_h4.getSwitch_trend().trim();
 
-            String seq = "   D10:" + Utils.appendSpace(dto_d1.getTrend_by_ma_10(), 5);
-            seq += "   D0:" + Utils.appendSpace(dto_d1.getTrend_heiken_0(), 5);
-            seq += "   H4:" + Utils.appendSpace(
+            String seq = "   H4(ma20):" + Utils.appendSpace(
                     Objects.equals(dto_h4.getTrend_by_ma_10(), dto_h4.getTrend_by_ma_20()) ? dto_h4.getTrend_by_ma_20()
                             : "",
                     5);
@@ -3754,7 +3746,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String eoz = "";
             eoz += "  ";
-            eoz += !dto_d1.getTradable_zone().contains(find_trend) ? "EOZ:D1" + Utils.getType(find_trend) : "     ";
+            eoz += !dto_h4.getTradable_zone().contains(find_trend) ? "EOZ:H4" + Utils.getType(find_trend) : "     ";
             eoz += "   ";
 
             if (!Objects.equals(EPIC, "BTCUSD")) {
@@ -3899,9 +3891,6 @@ public class BinanceServiceImpl implements BinanceService {
             // return;
         }
 
-        if (Utils.isNewsAt_19_20_21h()) {
-            return;
-        }
         if (BscScanBinanceApplication.mt5_open_trade_List.size() > 0) {
             Utils.logWritelnDraft("");
         }
@@ -4003,8 +3992,6 @@ public class BinanceServiceImpl implements BinanceService {
             String find_trend = dto_h4.getTrend_by_ma_20();
             String switch_trend = dto_10.getSwitch_trend() + dto_12.getSwitch_trend() + dto_15.getSwitch_trend();
 
-            boolean h4_allow_trade = dto_h4.getTradable_zone().contains(find_trend);
-
             boolean is_allow_trade = dto_h4.getTradable_zone().contains(find_trend)
                     && Objects.equals(dto_10.getTrend_heiken_0(), find_trend)
                     && Objects.equals(dto_12.getTrend_heiken_0(), find_trend)
@@ -4061,7 +4048,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             append += switch_trend.contains(Utils.TEXT_SWITCH_TREND_SEQ_1050) ? "_sq50" : "_sq20";
 
-            if (h4_allow_trade && (is_allow_trade || append_trade_by_ma200 || append_trade_by_05m)) {
+            if (is_allow_trade || append_trade_by_ma200 || append_trade_by_05m) {
                 String key = EPIC + Utils.CAPITAL_TIME_H1;
 
                 if (NOTICE_LIST.contains(EPIC)) {
