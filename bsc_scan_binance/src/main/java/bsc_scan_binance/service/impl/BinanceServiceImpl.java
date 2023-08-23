@@ -4028,21 +4028,38 @@ public class BinanceServiceImpl implements BinanceService {
             String switch_trend = dto_10.getSwitch_trend() + dto_12.getSwitch_trend() + dto_15.getSwitch_trend();
 
             boolean is_d1_allow_trade = dto_d1.getTradable_zone().contains(trend_D1_ma10)
+                    && Objects.equals(dto_10.getTrend_heiken_0(), trend_D1_ma10)
+                    && Objects.equals(dto_12.getTrend_heiken_0(), trend_D1_ma10)
+                    && Objects.equals(dto_15.getTrend_heiken_0(), trend_D1_ma10)
+
+                    && Objects.equals(dto_10.getTrend_heiken_1(), trend_D1_ma10)
+                    && Objects.equals(dto_12.getTrend_heiken_1(), trend_D1_ma10)
+                    && Objects.equals(dto_15.getTrend_heiken_1(), trend_D1_ma10)
+
                     && Objects.equals(dto_10.getTrend_by_ma_10(), trend_D1_ma10)
                     && Objects.equals(dto_12.getTrend_by_ma_10(), trend_D1_ma10)
                     && Objects.equals(dto_15.getTrend_by_ma_10(), trend_D1_ma10)
 
                     && Objects.equals(dto_h4.getTrend_by_ma_10(), trend_D1_ma10)
-                    && Objects.equals(dto_h4.getTrend_by_ma_20(), trend_D1_ma10);
+                    && Objects.equals(dto_h4.getTrend_by_ma_20(), trend_D1_ma10)
+                    && dto_h4.getTradable_zone().contains(trend_D1_ma10);
 
             is_d1_allow_trade |= !dto_d1.getTradable_zone().contains(trend_D1_ma10)
+                    && Objects.equals(dto_10.getTrend_heiken_0(), REVERSE_D1_MA10)
+                    && Objects.equals(dto_12.getTrend_heiken_0(), REVERSE_D1_MA10)
+                    && Objects.equals(dto_15.getTrend_heiken_0(), REVERSE_D1_MA10)
+
+                    && Objects.equals(dto_10.getTrend_heiken_1(), REVERSE_D1_MA10)
+                    && Objects.equals(dto_12.getTrend_heiken_1(), REVERSE_D1_MA10)
+                    && Objects.equals(dto_15.getTrend_heiken_1(), REVERSE_D1_MA10)
+
                     && Objects.equals(dto_10.getTrend_by_ma_10(), REVERSE_D1_MA10)
                     && Objects.equals(dto_12.getTrend_by_ma_10(), REVERSE_D1_MA10)
                     && Objects.equals(dto_15.getTrend_by_ma_10(), REVERSE_D1_MA10)
 
-                    && dto_h4.getTradable_zone().contains(REVERSE_D1_MA10)
                     && Objects.equals(dto_h4.getTrend_by_ma_10(), REVERSE_D1_MA10)
-                    && Objects.equals(dto_h4.getTrend_by_ma_20(), REVERSE_D1_MA10);
+                    && Objects.equals(dto_h4.getTrend_by_ma_20(), REVERSE_D1_MA10)
+                    && dto_h4.getTradable_zone().contains(REVERSE_D1_MA10);
 
             boolean is_switch_seq = switch_trend.contains("SEQ") && switch_trend.contains(dto_10.getTrend_by_ma_10())
                     && dto_10.getZone_by_ma_200().contains(dto_10.getTrend_by_ma_10());
@@ -4058,6 +4075,17 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.nonNull(dto_05) && dto_05.getSwitch_trend().contains("SEQ")) {
                 String trend_05_ma10 = dto_05.getTrend_by_ma_10();
                 if (dto_10.getZone_by_ma_200().contains(trend_05_ma10)
+                        && Objects.equals(dto_05.getTrend_heiken_0(), trend_05_ma10)
+                        && Objects.equals(dto_05.getTrend_heiken_1(), trend_05_ma10)
+
+                        && Objects.equals(dto_10.getTrend_heiken_0(), trend_05_ma10)
+                        && Objects.equals(dto_12.getTrend_heiken_0(), trend_05_ma10)
+                        && Objects.equals(dto_15.getTrend_heiken_0(), trend_05_ma10)
+
+                        && Objects.equals(dto_10.getTrend_heiken_1(), trend_05_ma10)
+                        && Objects.equals(dto_12.getTrend_heiken_1(), trend_05_ma10)
+                        && Objects.equals(dto_15.getTrend_heiken_1(), trend_05_ma10)
+
                         && Objects.equals(dto_h1.getTrend_by_ma_20(), trend_05_ma10)
                         && Objects.equals(dto_h4.getTrend_by_ma_10(), trend_05_ma10)
                         && Objects.equals(dto_h4.getTrend_by_ma_20(), trend_05_ma10)) {
