@@ -4061,7 +4061,7 @@ public class Utils {
             if (inside_lohi && switch_trend.contains(Utils.TREND_LONG)) {
                 if ((ma01_0.compareTo(ma10_0) >= 0) && (ma01_0.compareTo(ma10_1) >= 0)
                         && (ma01_0.compareTo(ma20_0) >= 0) && (ma01_0.compareTo(ma20_1) >= 0)
-                        && (ma01_0.compareTo(ma50_1) >= 0) && (ma10_1.compareTo(ma50_1) >= 0)) {
+                        && (ma01_0.compareTo(ma50_1) >= 0) && (ma10_1.compareTo(ma20_1) >= 0)) {
                     result = Utils.TREND_LONG;
                 }
             }
@@ -4069,7 +4069,7 @@ public class Utils {
             if (inside_lohi && switch_trend.contains(Utils.TREND_SHOT) && inside_lohi) {
                 if ((ma01_0.compareTo(ma10_0) <= 0) && (ma01_0.compareTo(ma10_1) <= 0)
                         && (ma01_0.compareTo(ma20_0) <= 0) && (ma01_0.compareTo(ma20_1) <= 0)
-                        && (ma01_0.compareTo(ma50_1) <= 0) && (ma10_1.compareTo(ma50_1) <= 0)) {
+                        && (ma01_0.compareTo(ma50_1) <= 0) && (ma10_1.compareTo(ma20_1) <= 0)) {
                     result = Utils.TREND_SHOT;
                 }
             }
