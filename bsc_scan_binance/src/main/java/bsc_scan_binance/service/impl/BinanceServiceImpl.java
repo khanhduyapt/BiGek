@@ -4123,7 +4123,9 @@ public class BinanceServiceImpl implements BinanceService {
             if (has_profit && Objects.equals(dto_h4.getTrend_by_ma_20(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_heiken_1(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_d1.getTrend_heiken_0(), REVERSE_TRADE_TREND)) {
-                take_profit = true;
+                if (!Objects.equals(dto_d1.getTradable_zone(), TRADE_TREND)) {
+                    take_profit = true;
+                }
             }
 
             boolean is_hit_sl = false;
