@@ -193,18 +193,18 @@ public class Utils {
     public static final String CAPITAL_TIME_W1 = "WEEK";
     public static final String CAPITAL_TIME_MO = "MONTH";
 
-    public static final String PREFIX_05m = "_05m";
-    public static final String PREFIX_10m = "_10m";
-    public static final String PREFIX_12m = "_12m";
-    public static final String PREFIX_15m = "_15m";
-    public static final String PREFIX_30m = "_30m";
-    public static final String PREFIX_H01 = "_01h";
-    public static final String PREFIX_H02 = "_02h";
-    public static final String PREFIX_H04 = "_04h";
-    public static final String PREFIX_H12 = "_12h";
-    public static final String PREFIX_D01 = "_01d";
-    public static final String PREFIX_W01 = "_01w";
-    public static final String PREFIX_MO1 = "_1mo";
+    public static final String PREFIX_05m = "_m05";
+    public static final String PREFIX_10m = "_m10";
+    public static final String PREFIX_12m = "_m12";
+    public static final String PREFIX_15m = "_m15";
+    public static final String PREFIX_30m = "_m30";
+    public static final String PREFIX_H01 = "_h01";
+    public static final String PREFIX_H02 = "_h02";
+    public static final String PREFIX_H04 = "_h04";
+    public static final String PREFIX_H12 = "_h12";
+    public static final String PREFIX_D01 = "_d01";
+    public static final String PREFIX_W01 = "_d07";
+    public static final String PREFIX_MO1 = "_d30";
 
     public static final String ENCRYPTED_05 = "naph";
     public static final String ENCRYPTED_15 = "mnph";
@@ -279,7 +279,7 @@ public class Utils {
     public static final String EPICS_INDEXS = "_US30_SP500_GER30_GER40_UK100_FRA40_SPN35_EU50_US100_AUS200_";
 
     public static final List<String> EPICS_METALS = Arrays.asList("DX", "XAUUSD", "XAGUSD", "USOIL", "BTCUSD",
-            "NATGAS");
+            "USDJPY");
 
     public static final List<String> EPICS_CRYPTO_CFD = Arrays.asList("BTCUSD", "ETHUSD", "ADAUSD", "DOGEUSD", "DOTUSD",
             "LTCUSD", "XRPUSD");
@@ -292,12 +292,12 @@ public class Utils {
 
     public static final List<String> EPICS_MAIN_FX = Arrays.asList("USDCAD", "EURJPY", "EURUSD", "EURCHF", "USDCHF",
             "GBPUSD", "AUDCAD", "NZDUSD", "GBPCHF", "AUDUSD", "GBPJPY", "USDJPY", "CHFJPY", "EURCAD", "AUDJPY",
-            "EURAUD", "AUDNZD", "XAUUSD");
+            "EURAUD", "AUDNZD", "XAUUSD", "XAGUSD", "USOIL");
 
     public static final List<String> EPICS_FOREXS_ALL = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
             "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD",
             "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD",
-            "USDCHF", "USDJPY", "CADCHF", "XAUUSD", "XAGUSD", "USOIL");
+            "USDCHF", "USDJPY", "CADCHF");
 
     public static final List<String> EPICS_FOREXS_JPY = Arrays.asList("AUDJPY", "CADJPY", "CHFJPY", "EURJPY", "GBPJPY",
             "NZDJPY", "USDJPY", "USDCAD", "USDCHF", "CADCHF");
@@ -4098,9 +4098,9 @@ public class Utils {
         return sw_1;
     }
 
-    public static String switchTrendByMa1vs1026(List<BtcFutures> heiken_list) {
-        String sw_1 = switchTrendByMa1(heiken_list, 1, 10, 26, TEXT_SWITCH_TREND_Ma_1vs20);
-        String sw_0 = switchTrendByMa1(heiken_list, 0, 10, 26, TEXT_SWITCH_TREND_Ma_1vs20);
+    public static String switchTrendByMa1vs0526(List<BtcFutures> heiken_list) {
+        String sw_1 = switchTrendByMa1(heiken_list, 1, 5, 26, TEXT_SWITCH_TREND_Ma_1vs20);
+        String sw_0 = switchTrendByMa1(heiken_list, 0, 5, 26, TEXT_SWITCH_TREND_Ma_1vs20);
 
         if (Utils.isNotBlank(sw_1) && Utils.isNotBlank(sw_0)) {
             String trend_1 = sw_1.contains(TREND_LONG) ? TREND_LONG : TREND_SHOT;
@@ -4681,8 +4681,8 @@ public class Utils {
         // -------------------------------------------------------------------------
         String id = heiken_list.get(0).getId();
 
-        if (id.contains(PREFIX_05m) || id.contains(PREFIX_15m) || id.contains(PREFIX_H01)) {
-            // Dựa vào nến đóng khung H1 trở xuống:
+        // Dựa vào nến đóng khung H1 trở xuống:
+        if (id.contains("_m") || id.contains(PREFIX_H01)) {
             if (Objects.equals(trend, Utils.TREND_LONG) && heiken_list.get(1).isUptrend() && heiken_list.get(2).isDown()
                     && heiken_list.get(3).isDown()) {
                 return chart_name + Utils.appendSpace(trend, 4) + Utils.TEXT_SWITCH_TREND_HEIKEN;
@@ -4860,8 +4860,7 @@ public class Utils {
     }
 
     public static String create_trade_comment(String EPIC, String CAPITAL_TIME_XX, String append) {
-        String timeframe = getEncryptedChartNameCapital(CAPITAL_TIME_XX);
-        String comment = getTypeOfEpic(EPIC).trim() + "_" + getTime_day24Hmm() + "_" + timeframe
+        String comment = getTypeOfEpic(EPIC).trim() + "_" + getTime_day24Hmm()
                 + append.trim().replace(Utils.TEXT_PASS, "");
 
         return comment;

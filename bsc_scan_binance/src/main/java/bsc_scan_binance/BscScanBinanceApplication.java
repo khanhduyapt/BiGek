@@ -122,16 +122,13 @@ public class BscScanBinanceApplication {
                 log = new File(Utils.getDraftLogFile());
                 System.out.println(log.getAbsolutePath());
 
-                System.out.println(Utils.getMt5DataFolder() + "CloseSymbols.csv");
+                System.out.println(Utils.getMt5DataFolder());
                 System.out.println();
 
                 Utils.writelnLogFooter();
 
                 while (index_crypto < total) {
                     try {
-                        if (isReloadAfter(Utils.MINUTES_OF_4H, "clearTrash")) {
-                            binance_service.clearTrash();
-                        }
                         if (isReloadAfter(1, "MsgKillZone")) {
                             alertMsgKillZone(binance_service);
                         }
