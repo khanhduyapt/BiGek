@@ -3042,7 +3042,7 @@ public class BinanceServiceImpl implements BinanceService {
             Utils.logWritelnDraft(log);
 
             boolean is_open_by_algorithm = trade.getComment().contains(Utils.getTypeOfEpic(EPIC));
-            if (is_close_now || is_open_by_algorithm) {
+            if (is_close_now && is_open_by_algorithm) {
                 BscScanBinanceApplication.mt5_close_ticket_dict.put(trade.getTicket(), "reverse_trade_opening");
             }
 
@@ -4173,7 +4173,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (!"__HOLDING____".contains("_" + EPIC + "_")) {
-                    if (is_hit_sl || is_close_by_algorithm) {
+                    if (is_hit_sl) {
                         BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
                     }
                 }
