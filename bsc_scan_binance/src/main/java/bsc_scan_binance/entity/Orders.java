@@ -100,7 +100,7 @@ public class Orders {
     private String trend_by_ma_20;
 
     @Column(name = "colume_03")
-    private String trend_by_ma_50;
+    private String find_trend_by_ma_50;
 
     @Column(name = "colume_04")
     private String trend_by_ma_200;

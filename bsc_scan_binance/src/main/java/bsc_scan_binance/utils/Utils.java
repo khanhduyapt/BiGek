@@ -276,7 +276,7 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    public static final String EPICS_INDEXS = "_US30_SP500_GER30_GER40_UK100_FRA40_SPN35_EU50_US100_AUS200_";
+    private static final String EPICS_INDEXS = "_US30_SP500_GER30_GER40_UK100_FRA40_SPN35_EU50_US100_AUS200_";
 
     public static final List<String> EPICS_METALS = Arrays.asList("DX", "XAUUSD", "XAGUSD", "USOIL", "BTCUSD",
             "USDJPY");
@@ -3981,21 +3981,23 @@ public class Utils {
         return allow_trade;
     }
 
-    public static boolean is_allow_trade_by_ma50(List<BtcFutures> heiken_list) {
-        boolean allow_trade = false;
-
+    public static String find_trend_by_ma50(List<BtcFutures> heiken_list) {
+        String find_trend = "";
         if (heiken_list.size() > 30) {
-            String trend_heiken = Utils.getTrendByHekenAshiList(heiken_list);
-            boolean is_above_ma50 = Utils.isAboveMALine(heiken_list, 50);
-            if (is_above_ma50 && Objects.equals(Utils.TREND_SHOT, trend_heiken)) {
-                allow_trade = true;
+            String sw_1 = switchTrendByMa1vs50(heiken_list);
+            if (Utils.isNotBlank(sw_1) && (sw_1.contains(TREND_LONG) || sw_1.contains(TREND_SHOT))) {
+                return sw_1;
             }
-            if (!is_above_ma50 && Objects.equals(Utils.TREND_LONG, trend_heiken)) {
-                allow_trade = true;
+
+            boolean is_above_ma50 = Utils.isAboveMALine(heiken_list, 50);
+            if (is_above_ma50) {
+                find_trend = Utils.TREND_SHOT;
+            } else {
+                find_trend = Utils.TREND_LONG;
             }
         }
 
-        return allow_trade;
+        return find_trend;
     }
 
     public static String switch_trend_seq_10_20_50(List<BtcFutures> heiken_list) {
@@ -4061,7 +4063,7 @@ public class Utils {
             if (inside_lohi && switch_trend.contains(Utils.TREND_LONG)) {
                 if ((ma01_0.compareTo(ma10_0) >= 0) && (ma01_0.compareTo(ma10_1) >= 0)
                         && (ma01_0.compareTo(ma20_0) >= 0) && (ma01_0.compareTo(ma20_1) >= 0)
-                        && (ma01_0.compareTo(ma50_1) >= 0) && (ma10_1.compareTo(ma20_1) >= 0)) {
+                        && (ma01_0.compareTo(ma50_1) >= 0)) {
                     result = Utils.TREND_LONG;
                 }
             }
@@ -4069,7 +4071,7 @@ public class Utils {
             if (inside_lohi && switch_trend.contains(Utils.TREND_SHOT) && inside_lohi) {
                 if ((ma01_0.compareTo(ma10_0) <= 0) && (ma01_0.compareTo(ma10_1) <= 0)
                         && (ma01_0.compareTo(ma20_0) <= 0) && (ma01_0.compareTo(ma20_1) <= 0)
-                        && (ma01_0.compareTo(ma50_1) <= 0) && (ma10_1.compareTo(ma20_1) <= 0)) {
+                        && (ma01_0.compareTo(ma50_1) <= 0)) {
                     result = Utils.TREND_SHOT;
                 }
             }
