@@ -3995,12 +3995,13 @@ public class BinanceServiceImpl implements BinanceService {
             String find_trend = dto_h4.getTrend_heiken_1();
             String switch_trend_m1x = dto_10.getSwitch_trend() + dto_12.getSwitch_trend() + dto_15.getSwitch_trend();
 
-            boolean h1_allow_trade = (dto_h1.getFind_trend_by_ma_50().contains(find_trend)
-                    || dto_h4.getFind_trend_by_ma_50().contains(find_trend))
+            boolean h1_allow_trade = true && (dto_h1.getFind_trend_by_ma_50().contains(find_trend) || dto_h4.getFind_trend_by_ma_50().contains(find_trend))
                     && Objects.equals(dto_h1.getTrend_heiken_0(), find_trend)
                     && Objects.equals(dto_h1.getTrend_heiken_1(), find_trend)
                     && dto_h1.getTradable_zone().contains(find_trend)
-                    && dto_h4.getTradable_zone().contains(find_trend);
+                    && dto_h4.getTradable_zone().contains(find_trend)
+                    && Objects.equals(dto_d1.getTrend_by_ma_10(), find_trend)
+                    ;
 
             if (Utils.EPICS_INDEXS_CFD.contains(EPIC)) {
                 h1_allow_trade &= dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10);
