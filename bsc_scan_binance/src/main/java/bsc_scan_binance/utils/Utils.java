@@ -180,7 +180,7 @@ public class Utils {
     public static final String CRYPTO_TIME_W1 = "1w";
     public static final String CRYPTO_TIME_MO = "1M";
 
-    public static final String CAPITAL_TIME_05 = "MINUTE_03";
+    public static final String CAPITAL_TIME_05 = "MINUTE_05";
     public static final String CAPITAL_TIME_10 = "MINUTE_10";
     public static final String CAPITAL_TIME_12 = "MINUTE_12";
     public static final String CAPITAL_TIME_15 = "MINUTE_15";
@@ -3576,7 +3576,7 @@ public class Utils {
     }
 
     public static String getType(String trend) {
-        String type = trend.contains(Utils.TREND_LONG) ? "(B)" : trend.contains(Utils.TREND_SHOT) ? "(S)" : "(?)";
+        String type = trend.contains(Utils.TREND_LONG) ? "B" : trend.contains(Utils.TREND_SHOT) ? "S" : "";
 
         return type.toLowerCase();
     }
@@ -3998,6 +3998,97 @@ public class Utils {
         }
 
         return find_trend;
+    }
+
+    public static String trend_by_seq_ma_6_10_20(List<BtcFutures> heiken_list) {
+        String result = "";
+        if (heiken_list.size() < 20) {
+            return result;
+        }
+        String heiken_0 = getTrendByHekenAshiList(heiken_list, 0);
+        String heiken_1 = getTrendByHekenAshiList(heiken_list, 1);
+        if (!Objects.equals(heiken_0, heiken_1)) {
+            return "";
+        }
+
+        BigDecimal ma03_1 = calcMA(heiken_list, 3, 1);
+        BigDecimal ma06_1 = calcMA(heiken_list, 6, 1);
+        BigDecimal ma09_1 = calcMA(heiken_list, 9, 1);
+        boolean allow_next = false;
+        if (Objects.equals(heiken_1, TREND_LONG) && (ma03_1.compareTo(ma06_1) >= 0)
+                && (ma06_1.compareTo(ma09_1) >= 0)) {
+            allow_next = true;
+        }
+        if (Objects.equals(heiken_1, TREND_SHOT) && (ma03_1.compareTo(ma06_1) <= 0)
+                && (ma06_1.compareTo(ma09_1) <= 0)) {
+            allow_next = true;
+        }
+        if (!allow_next) {
+            return "";
+        }
+
+        BigDecimal ma01_1 = calcMA(heiken_list, 01, 1);
+        BigDecimal ma10_1 = calcMA(heiken_list, 10, 1);
+        BigDecimal ma10_2 = calcMA(heiken_list, 10, 2);
+        BigDecimal ma20_1 = calcMA(heiken_list, 20, 1);
+
+        if (heiken_1.contains(Utils.TREND_LONG) && (ma10_1.compareTo(ma10_2) >= 0)) {
+            if ((ma01_1.compareTo(ma06_1) >= 0) && (ma06_1.compareTo(ma10_1) >= 0) && (ma10_1.compareTo(ma20_1) >= 0)) {
+                result = Utils.TREND_LONG;
+            }
+        } else if (heiken_1.contains(Utils.TREND_SHOT) && (ma10_1.compareTo(ma10_2) <= 0)) {
+            if ((ma01_1.compareTo(ma06_1) <= 0) && (ma06_1.compareTo(ma10_1) <= 0) && (ma10_1.compareTo(ma20_1) <= 0)) {
+                result = Utils.TREND_SHOT;
+            }
+        }
+
+        return result;
+    }
+
+    public static String trend_by_seq_ma_1_10_20_50(List<BtcFutures> heiken_list) {
+        String result = "";
+        if (heiken_list.size() < 20) {
+            return result;
+        }
+        String heiken_0 = getTrendByHekenAshiList(heiken_list, 0);
+        String heiken_1 = getTrendByHekenAshiList(heiken_list, 1);
+        if (!Objects.equals(heiken_0, heiken_1)) {
+            return "";
+        }
+
+        BigDecimal ma03_1 = calcMA(heiken_list, 3, 1);
+        BigDecimal ma06_1 = calcMA(heiken_list, 6, 1);
+        BigDecimal ma09_1 = calcMA(heiken_list, 9, 1);
+        boolean allow_next = false;
+        if (Objects.equals(heiken_1, TREND_LONG) && (ma03_1.compareTo(ma06_1) >= 0)
+                && (ma06_1.compareTo(ma09_1) >= 0)) {
+            allow_next = true;
+        }
+        if (Objects.equals(heiken_1, TREND_SHOT) && (ma03_1.compareTo(ma06_1) <= 0)
+                && (ma06_1.compareTo(ma09_1) <= 0)) {
+            allow_next = true;
+        }
+        if (!allow_next) {
+            return "";
+        }
+
+        BigDecimal ma01_1 = calcMA(heiken_list, 01, 1);
+        BigDecimal ma10_1 = calcMA(heiken_list, 10, 1);
+        BigDecimal ma10_2 = calcMA(heiken_list, 10, 2);
+        BigDecimal ma20_1 = calcMA(heiken_list, 20, 1);
+        BigDecimal ma50_1 = calcMA(heiken_list, 50, 1);
+
+        if (heiken_1.contains(Utils.TREND_LONG) && (ma10_1.compareTo(ma10_2) >= 0)) {
+            if ((ma01_1.compareTo(ma10_1) >= 0) && (ma01_1.compareTo(ma20_1) >= 0) && (ma01_1.compareTo(ma50_1) >= 0)) {
+                result = Utils.TREND_LONG;
+            }
+        } else if (heiken_1.contains(Utils.TREND_SHOT) && (ma10_1.compareTo(ma10_2) <= 0)) {
+            if ((ma01_1.compareTo(ma10_1) <= 0) && (ma01_1.compareTo(ma20_1) <= 0) && (ma01_1.compareTo(ma50_1) <= 0)) {
+                result = Utils.TREND_SHOT;
+            }
+        }
+
+        return result;
     }
 
     public static String switch_trend_seq_10_20_50(List<BtcFutures> heiken_list) {
@@ -4994,12 +5085,12 @@ public class Utils {
         String result = "";
 
         if (Objects.equals(dto_xx.getTrend_heiken_0(), find_trend)) {
-            String type = Utils.getType(dto_xx.getTrend_heiken_0()).replace("(", "_").replace(")", "_").toUpperCase();
+            String type = "_" + Utils.getType(dto_xx.getTrend_heiken_0()) + "_";
+
             String chart_name = getChartName(dto_xx.getId()).toLowerCase().replace("(", "").replace(")", "").trim();
 
             if (dto_xx.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_SEQ_1020)) {
                 result = chart_name + type + "se";
-
             } else if (dto_xx.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10)) {
                 result = chart_name + type + "ma";
             }
