@@ -2679,7 +2679,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         if (Utils.isNotBlank(msg_notice)) {
-            Utils.logWritelnDraft(Utils.appendSpace("", 370) + " \n");
+            //Utils.logWritelnDraft(Utils.appendSpace("", 370) + " \n");
         }
 
         outputLog(EPIC, append, find_trend);
@@ -2895,7 +2895,7 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.logWritelnDraft("");
     }
 
-    private void outputLog(String EPIC, String append, String trend_fi) {
+    private void outputLog(String EPIC, String append, String find_trend) {
         Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
         Orders dto_10 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_10).orElse(dto_h1);
         if (Objects.isNull(dto_h1) || Objects.isNull(dto_10)) {
@@ -2905,6 +2905,14 @@ public class BinanceServiceImpl implements BinanceService {
         String text_risk = "0.05% ";
         BigDecimal risk = Utils.RISK_PER_TRADE;
 
+        String log_long = text_risk + Utils
+                .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, Utils.TREND_LONG, EPIC, dto_10, dto_h1), 45);
+        log_long += "E:b(10): " + Utils.appendLeft(Utils.removeLastZero(dto_10.getLow_50candle()), 10);
+
+        String log_shot = text_risk + Utils
+                .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, Utils.TREND_SHOT, EPIC, dto_10, dto_h1), 45);
+        log_shot += "E:s(10): " + Utils.appendLeft(Utils.removeLastZero(dto_10.getHig_50candle()), 10) + "   ";
+
         // TODO: outputLog
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_h1.getCurrent_price(), 5)), 11);
@@ -2913,15 +2921,25 @@ public class BinanceServiceImpl implements BinanceService {
 
         log += "Unit:" + Utils.appendLeft(String.valueOf(Utils.get_standard_vol_per_100usd(EPIC)), 5) + "(lot)     ";
 
-        log += text_risk + Utils
-                .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, Utils.TREND_LONG, EPIC, dto_10, dto_h1), 45);
-        log += "E:b(10): " + Utils.appendLeft(Utils.removeLastZero(dto_10.getLow_50candle()), 10);
+        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
+            log += log_long;
+        }
+        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
+            log += log_shot;
+        }
+        if (Utils.isBlank(find_trend)) {
+            Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
+            if (Objects.nonNull(dto_d1)) {
+                find_trend = dto_d1.getTrend_of_heiken3();
 
-        log += "          ";
-
-        log += text_risk + Utils
-                .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, Utils.TREND_SHOT, EPIC, dto_10, dto_h1), 45);
-        log += "E:s(10): " + Utils.appendLeft(Utils.removeLastZero(dto_10.getHig_50candle()), 10) + "   ";
+                if (Objects.equals(find_trend, Utils.TREND_LONG)) {
+                    log += log_long.trim() + "   (byD3)";
+                }
+                if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
+                    log += log_shot.trim() + "   (byD3)";
+                }
+            }
+        }
 
         Utils.logWritelnDraft(log.trim());
     }
@@ -3973,11 +3991,24 @@ public class BinanceServiceImpl implements BinanceService {
                 prefix_trend = prefix_trend.replace("H1]", "--]");
             }
             String prefix = No + prefix_trend;
-            String trend_d3 = "   D3:" + Utils.appendSpace(dto_d1.getTrend_of_heiken3(), 5);
+            String trend_d3 = dto_d1.getTrend_of_heiken3();
+            String str_trend_d3 = "   D3:" + Utils.appendSpace(trend_d3, 5);
 
             boolean allow_notice = Objects.equals(dto_h1.getTrend_of_heiken3(), dto_h4.getTrend_of_heiken3());
+            String log_trend = Objects.equals(trend_d3, find_trend_by_seq) ? find_trend_by_seq : "";
 
-            analysis_profit(prefix, EPIC, trend_d3 + seq + eoz, find_trend_by_seq, allow_notice, dto_h1, dto_h4);
+            String append = str_trend_d3 + seq + eoz;
+
+            if (Utils.EPICS_STOCKS.contains(EPIC)) {
+                String trend_d10 = dto_d1.getTrend_by_ma_10();
+                if (!Objects.equals(trend_d10, find_trend_by_seq) || !Objects.equals(trend_d10, trend_d3)) {
+
+                    allow_notice = false;
+                    append = Utils.appendSpace("", append.length());
+                }
+            }
+
+            analysis_profit(prefix, EPIC, append, log_trend, allow_notice, dto_h1, dto_h4);
         }
 
         return count;
@@ -4057,6 +4088,8 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_h4.getTrend_of_heiken3(), find_trend_by_seq)
                     && (dto_h1.getTrend_by_seq_ma().contains(find_trend_by_seq)
                             || dto_h4.getTrend_by_seq_ma().contains(find_trend_by_seq));
+            // || (dto_d1.getTradable_zone().contains(find_trend_by_seq)
+            //         && Objects.equals(dto_d1.getTrend_of_heiken3(), find_trend_by_seq))
 
             if (!Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
                 h_allow_trade &= dto_d1.getTradable_zone().contains(find_trend_by_seq)
@@ -4179,7 +4212,9 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean is_close_by_algorithm = false;
             boolean is_open_by_algorithm = trade.getComment().contains(Utils.getTypeOfEpic(EPIC));
-            if (is_open_by_algorithm && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)) {
+            if (is_open_by_algorithm
+                    && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h1.getTrend_by_ma_10(), REVERSE_TRADE_TREND)) {
                 is_close_by_algorithm = true;
             }
             if (is_close_by_algorithm && has_profit) {

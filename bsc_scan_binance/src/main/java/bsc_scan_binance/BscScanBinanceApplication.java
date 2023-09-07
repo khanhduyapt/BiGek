@@ -298,7 +298,8 @@ public class BscScanBinanceApplication {
         Utils.logWritelnDraftFooter();
         Utils.logWritelnDraftFooter();
         Utils.logWritelnDraftFooter();
-        result = binance_service.controlMt5(Utils.EPICS_STOCKS);
+        binance_service.controlMt5(Utils.EPICS_STOCKS_EUR);
+        binance_service.controlMt5(Utils.EPICS_STOCKS);
         Utils.logWritelnDraftFooter();
         // --------------------------------------------------------------------------
         String cur_epics = EPICS_OUTPUT_MSG;

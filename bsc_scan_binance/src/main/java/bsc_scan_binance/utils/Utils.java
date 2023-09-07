@@ -319,8 +319,7 @@ public class Utils {
             "GOOG", "LVMH", "META", "MSFT", "NFLX", "NVDA", "PFE", "RACE", "TSLA", "VOWG_p", "WMT", "BABA", "T", "V",
             "ZM");
 
-    public static final List<String> EPICS_STOCKS_EUR = Arrays.asList("AIRF", "LVMH", "ALVG", "BAYGn", "VOWG_p",
-            "DBKGn", "IBE");
+    public static final List<String> EPICS_STOCKS_EUR = Arrays.asList("AIRF", "LVMH", "BAYGn", "VOWG_p", "DBKGn");
 
     public static final List<String> EPICS_STOCKS_USA = Arrays.asList("AAPL", "AMZN", "BAC", "GOOG", "META", "MSFT",
             "NFLX", "NVDA", "PFE", "RACE", "TSLA", "WMT", "BABA", "T", "V", "ZM");
