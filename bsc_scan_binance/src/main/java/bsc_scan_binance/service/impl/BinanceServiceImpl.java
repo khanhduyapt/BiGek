@@ -2653,7 +2653,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend = "";
             String CAPITAL_TIME_XX = "";
             type = Objects.equals(trend, Utils.TREND_LONG) ? "_b" : "_s";
-            append = type + "_ma";
+            String msg_append = type + "_ma";
 
             if (dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs20)
                     && dto_h1.getSwitch_trend().contains(dto_h1.getTrend_of_heiken3())) {
@@ -2666,8 +2666,11 @@ public class BinanceServiceImpl implements BinanceService {
                 CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
             }
 
-            if (Utils.isNotBlank(CAPITAL_TIME_XX)) {
-                String comment = Utils.create_trade_comment(EPIC, CAPITAL_TIME_XX, append);
+            if (Utils.isNotBlank(CAPITAL_TIME_XX)
+                    && (dto_h1.getTrend_by_seq_ma() + dto_h4.getTrend_by_seq_ma()).contains(trend)
+                    && dto_h4.getTradable_zone().contains(trend)) {
+
+                String comment = Utils.create_trade_comment(EPIC, CAPITAL_TIME_XX, msg_append);
                 msg_notice = " Notice" + Utils.getChartName(CAPITAL_TIME_XX);
                 msg_notice += ": " + Utils.appendSpace(trend, 11) + comment;
 
