@@ -3594,9 +3594,15 @@ public class Utils {
     }
 
     public static String getType(String trend) {
-        String type = trend.contains(Utils.TREND_LONG) ? "B" : trend.contains(Utils.TREND_SHOT) ? "S" : "";
+        if (trend.contains(Utils.TREND_LONG)) {
+            return "b";
+        }
 
-        return type.toLowerCase();
+        if (trend.contains(Utils.TREND_SHOT)) {
+            return "s";
+        }
+
+        return "";
     }
 
     public static String getTypeLongOrShort(List<BtcFutures> list) {
