@@ -4209,7 +4209,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ----------------------------------------------------------------------------------------------
             boolean take_profit = false;
-            boolean has_profit = PROFIT.compareTo(BigDecimal.valueOf(20)) > 0;
+            boolean has_profit = PROFIT.compareTo(BigDecimal.valueOf(50)) > 0;
             if (has_profit
 
                     && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
