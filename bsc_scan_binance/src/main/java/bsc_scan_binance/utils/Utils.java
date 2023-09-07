@@ -4243,9 +4243,9 @@ public class Utils {
         return sw_1;
     }
 
-    public static String switchTrendByMa1vs0526(List<BtcFutures> heiken_list) {
-        String sw_1 = switchTrendByMa1(heiken_list, 1, 3, 26, TEXT_SWITCH_TREND_Ma_1vs20);
-        String sw_0 = switchTrendByMa1(heiken_list, 0, 3, 26, TEXT_SWITCH_TREND_Ma_1vs20);
+    public static String switchTrendByMa1vs2025(List<BtcFutures> heiken_list) {
+        String sw_1 = switchTrendByMa1(heiken_list, 1, 20, 25, TEXT_SWITCH_TREND_Ma_1vs20);
+        String sw_0 = switchTrendByMa1(heiken_list, 0, 20, 25, TEXT_SWITCH_TREND_Ma_1vs20);
 
         if (Utils.isNotBlank(sw_1) && Utils.isNotBlank(sw_0)) {
             String trend_1 = sw_1.contains(TREND_LONG) ? TREND_LONG : TREND_SHOT;
@@ -5138,14 +5138,16 @@ public class Utils {
             boolean is_h4 = false;
             String chart_name = getChartName(dto_xx.getId()).toLowerCase().replace("(", "").replace(")", "").trim();
             if (chart_name.contains("h4") || chart_name.contains("d1")) {
-                if (dto_xx.getTradable_zone().contains(dto_xx.getTrend_of_heiken3())) {
-                    is_h4 = true;
-                }
+                is_h4 = true;
+            }
+            if (chart_name.contains("h1") && dto_xx.getSwitch_trend().contains(TEXT_SWITCH_TREND_Ma_1vs20)) {
+                is_h4 = true;
             }
 
-            if (dto_xx.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_SEQ_1020)) {
+            if (dto_xx.getSwitch_trend().contains("SEQ")) {
                 result = chart_name + type + "se";
-            } else if (is_h4 && dto_xx.getSwitch_trend().contains(dto_xx.getTrend_of_heiken3())) {
+            } else if (is_h4 && dto_xx.getSwitch_trend().contains(dto_xx.getTrend_of_heiken3())
+                    && find_trend.contains(dto_xx.getTrend_of_heiken3())) {
                 if (dto_xx.getSwitch_trend().contains("SEQ")) {
                     result = chart_name + type + "se";
                 } else if (dto_xx.getSwitch_trend().contains("(Ma")) {
