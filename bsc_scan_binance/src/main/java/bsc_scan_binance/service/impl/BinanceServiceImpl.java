@@ -2631,8 +2631,7 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private String analysis_profit(String prifix, String EPIC, String append2, String find_trend,
-            boolean allow_notice,
-            Orders dto_h1, Orders dto_h4) {
+            boolean allow_notice, Orders dto_h1, Orders dto_h4) {
 
         String type = "";
         BigDecimal t_profit = BigDecimal.ZERO;
@@ -2692,12 +2691,30 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         for (Mt5OpenTradeEntity trade : tradeList) {
+            String TRADE_TREND = trade.getType().toUpperCase();
+            if (TRADE_TREND.contains("LIMIT")) {
+                continue;
+            }
+
+            String REVERSE_TRADE_TREND = TRADE_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_SHOT : Utils.TREND_LONG;
+            String trend_reverse = "";
+            Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
+            if (Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1) && Objects.nonNull(dto_15)
+                    && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h4.getTrend_of_heiken3(), REVERSE_TRADE_TREND)) {
+                trend_reverse = "h4_h1_15_reverse";
+            }
+
             String ea = "Opening   : ";
             ea += Utils.appendSpace(trade.getType(), 11);
             ea += Utils.appendSpace(trade.getCompany(), 9) + " ";
             ea += "     Profit:"
                     + Utils.appendLeft(Utils.getStringValue(Utils.getBigDecimal(trade.getProfit()).intValue()), 6)
                     + "$    ";
+
+            ea += Utils.appendSpace(trend_reverse, 25);
+
             ea += Utils.appendLeft(Utils.getStringValue(Utils.formatPrice(trade.getVolume(), 2)), 18) + "(lot)";
             ea += Utils.appendSpace("", 20);
             ea += " Open " + Utils.appendLeft(Utils.getStringValue(trade.getPriceOpen()), 10) + "   ";
@@ -3167,19 +3184,21 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
                 // --------------------------------------------------------------------------
-                String trend_h1_reverse = "                 ";
+                String trend_reverse = "                 ";
                 String REVERSE_TRADE_TREND = TRADE_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_SHOT
                         : Utils.TREND_LONG;
 
                 Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-                Orders dto_10 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_10).orElse(null);
-
-                if (Objects.isNull(dto_h4) || Objects.isNull(dto_10)) {
+                Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
+                Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
+                if (Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)) {
                     continue;
                 }
-
-                if (Objects.nonNull(dto_h4) && Objects.equals(dto_h4.getTrend_by_ma_20(), REVERSE_TRADE_TREND)) {
-                    trend_h1_reverse = "    h4_ma20_reverse";
+                if (Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1) && Objects.nonNull(dto_15)
+                        && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
+                        && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
+                        && Objects.equals(dto_h4.getTrend_of_heiken3(), REVERSE_TRADE_TREND)) {
+                    trend_reverse = "    h4_h1_15_reverse";
                 }
 
                 // --------------------------------------------------------------------------
@@ -3197,9 +3216,9 @@ public class BinanceServiceImpl implements BinanceService {
 
                 result += "   Open: " + Utils.appendLeft(Utils.getStringValue(trade.getPriceOpen()), 12);
 
-                result += "   TP(10m): " + Utils.appendLeft(
+                result += "   TP(h1): " + Utils.appendLeft(
                         Utils.getStringValue(
-                                TRADE_TREND.contains(Utils.TREND_LONG) ? dto_10.getTp_long() : dto_10.getTp_shot()),
+                                TRADE_TREND.contains(Utils.TREND_LONG) ? dto_h1.getTp_long() : dto_h1.getTp_shot()),
                         12);
 
                 if (Objects.nonNull(dto_h4)) {
@@ -3210,7 +3229,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 result += "   Profit: " + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 6) + "$";
-                result += Utils.appendSpace(trend_h1_reverse, 20);
+                result += Utils.appendSpace(trend_reverse, 20);
                 result += Utils.appendSpace(Utils.get_duration_trade_time(trade) + "   " + trade.getComment(), 60);
                 result += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62);
 
@@ -4190,7 +4209,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ----------------------------------------------------------------------------------------------
             boolean take_profit = false;
-            boolean has_profit = PROFIT.compareTo(BigDecimal.ZERO) > 0;
+            boolean has_profit = PROFIT.compareTo(BigDecimal.valueOf(20)) > 0;
             if (has_profit
 
                     && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
