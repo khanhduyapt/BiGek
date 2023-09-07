@@ -206,8 +206,10 @@ public class Utils {
     public static final String PREFIX_W01 = "_d07";
     public static final String PREFIX_MO1 = "_d30";
 
-    public static final String ENCRYPTED_05 = "naph";
-    public static final String ENCRYPTED_15 = "mnph";
+    public static final String ENCRYPTED_05 = "_05p";
+    public static final String ENCRYPTED_10 = "_10p";
+    public static final String ENCRYPTED_12 = "_12p";
+    public static final String ENCRYPTED_15 = "_15p";
     public static final String ENCRYPTED_H1 = "motg";
     public static final String ENCRYPTED_H4 = "bong";
     public static final String ENCRYPTED_D1 = "mngy";
@@ -1258,11 +1260,14 @@ public class Utils {
     }
 
     public static String getEncryptedChartNameCapital(String TIME) {
+        if (Objects.equals(TIME, CAPITAL_TIME_05)) {
+            return ENCRYPTED_05;
+        }
         if (Objects.equals(TIME, CAPITAL_TIME_10)) {
-            return ENCRYPTED_15;
+            return ENCRYPTED_10;
         }
         if (Objects.equals(TIME, CAPITAL_TIME_12)) {
-            return ENCRYPTED_15;
+            return ENCRYPTED_12;
         }
         if (Objects.equals(TIME, CAPITAL_TIME_15)) {
             return ENCRYPTED_15;
@@ -1291,6 +1296,19 @@ public class Utils {
     }
 
     public static String getDeEncryptedChartNameCapital(String encryptedChartName) {
+        if (encryptedChartName.contains(ENCRYPTED_05)) {
+            return CAPITAL_TIME_05;
+        }
+        if (encryptedChartName.contains(ENCRYPTED_10)) {
+            return CAPITAL_TIME_10;
+        }
+        if (encryptedChartName.contains(ENCRYPTED_12)) {
+            return CAPITAL_TIME_12;
+        }
+        if (encryptedChartName.contains(ENCRYPTED_15)) {
+            return CAPITAL_TIME_15;
+        }
+
         if (encryptedChartName.contains(ENCRYPTED_H1)) {
             return CAPITAL_TIME_H1;
         }
@@ -3110,7 +3128,7 @@ public class Utils {
             } else if (dto_id.contains(CAPITAL_TIME_H4) || dto_id.contains(PREFIX_H04)) {
                 result = "(H4)";
 
-            } else if (dto_id.contains(CAPITAL_TIME_D1) || dto_id.contains(PREFIX_D01)) {
+            } else if (dto_id.contains(CAPITAL_TIME_D1) || dto_id.contains(PREFIX_D01) || dto_id.contains("_1d")) {
                 result = "(D1)";
             } else if (dto_id.contains(CAPITAL_TIME_W1) || dto_id.contains(PREFIX_W01)) {
                 result = "(W1)";
@@ -4000,6 +4018,34 @@ public class Utils {
         return find_trend;
     }
 
+    public static String trend_by_seq_ma_10_20_50(List<BtcFutures> heiken_list) {
+        String result = "";
+        if (heiken_list.size() < 20) {
+            return result;
+        }
+
+        BigDecimal ma10_0 = calcMA(heiken_list, 10, 0);
+        BigDecimal ma10_1 = calcMA(heiken_list, 10, 1);
+        BigDecimal ma20_0 = calcMA(heiken_list, 20, 0);
+        BigDecimal ma20_1 = calcMA(heiken_list, 20, 1);
+        BigDecimal ma50_0 = calcMA(heiken_list, 50, 0);
+        BigDecimal ma50_1 = calcMA(heiken_list, 50, 1);
+
+        if ((ma10_0.compareTo(ma20_0) >= 0) && (ma20_0.compareTo(ma50_0) >= 0)) {
+            if ((ma10_1.compareTo(ma20_1) >= 0) && (ma20_1.compareTo(ma50_1) >= 0)) {
+                result = Utils.TREND_LONG;
+            }
+        }
+
+        if ((ma10_0.compareTo(ma20_0) <= 0) && (ma20_0.compareTo(ma50_0) <= 0)) {
+            if ((ma10_1.compareTo(ma20_1) <= 0) && (ma20_1.compareTo(ma50_1) <= 0)) {
+                result = Utils.TREND_SHOT;
+            }
+        }
+
+        return result;
+    }
+
     public static String trend_by_seq_ma_6_10_20(List<BtcFutures> heiken_list) {
         String result = "";
         if (heiken_list.size() < 20) {
@@ -4486,10 +4532,26 @@ public class Utils {
         EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_W1, "");
         EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_MO, "");
 
+        EPIC = EPIC.replace(Utils.PREFIX_05m, "");
+        EPIC = EPIC.replace(Utils.PREFIX_10m, "");
+        EPIC = EPIC.replace(Utils.PREFIX_12m, "");
+        EPIC = EPIC.replace(Utils.PREFIX_15m, "");
+        EPIC = EPIC.replace(Utils.PREFIX_30m, "");
+        EPIC = EPIC.replace(Utils.PREFIX_H01, "");
+        EPIC = EPIC.replace(Utils.PREFIX_H02, "");
+        EPIC = EPIC.replace(Utils.PREFIX_H04, "");
+        EPIC = EPIC.replace(Utils.PREFIX_H12, "");
+        EPIC = EPIC.replace(Utils.PREFIX_D01, "");
+        EPIC = EPIC.replace(Utils.PREFIX_W01, "");
+        EPIC = EPIC.replace(Utils.PREFIX_MO1, "");
+
+        EPIC = EPIC.replace("_01d", "");
+        EPIC = EPIC.replace("CRYPTO_", "");
+
         EPIC = EPIC.replace("_00", "");
         EPIC = EPIC.replace("_", "");
 
-        return EPIC;
+        return EPIC.toUpperCase();
     }
 
     public static int capitalTimeToWaitingMimutes(String CAPITAL_TIME_XX) {
@@ -4520,6 +4582,7 @@ public class Utils {
         msg += " Entry: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()), 10);
         msg += " ";
         msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10) + "   ";
+        msg += " TP: " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit()), 10) + "   ";
         msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 6) + "(lot)   ";
         msg += " Standard:"
                 + Utils.appendLeft(Utils.removeLastZero(Utils.get_standard_vol_per_100usd(dto.getEpic())), 6)
@@ -4536,6 +4599,7 @@ public class Utils {
         msg += " :Ticket: " + Utils.appendSpace(trade.getTicket(), 15);
         msg += " Profit:" + Utils.appendLeft(Utils.getStringValue(trade.getProfit().intValue()), 6) + "   ";
         msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(trade.getStopLoss()), 10);
+        msg += " TP: " + Utils.appendLeft(Utils.removeLastZero(trade.getTakeProfit()), 10) + "   ";
         msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(trade.getVolume()), 10) + "(lot)   ";
         msg += Utils.appendSpace(Utils.getCapitalLink(trade.getSymbol()), 62);
         msg += Utils.appendSpace(trade.getComment(), 35);
@@ -4814,44 +4878,22 @@ public class Utils {
     }
 
     public static String getTrendByHekenAshiList(List<BtcFutures> heiken_list) {
-        return getTrendByHekenAshiList(heiken_list, 0);
+        return getTrendByHekenAshiList(heiken_list, 3);
     }
 
-    public static String getTrendByHekenAshiList(List<BtcFutures> heiken_list, int candle_no) {
+    public static String getTrendByHekenAshiList(List<BtcFutures> heiken_list, int ma) {
         if (CollectionUtils.isEmpty(heiken_list)) {
             return "";
         }
-        int str = candle_no;
-        int end = candle_no + 1;
-        String id = heiken_list.get(0).getId();
 
-        boolean isUptrend_0 = heiken_list.get(str).isUptrend();
-        if (id.contains(PREFIX_MO1) || id.contains(PREFIX_W01)) {
-            return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        boolean isUptrend_3_01 = isUptrendByMa(heiken_list, ma, 0, 1);
+        boolean isUptrend_3_12 = isUptrendByMa(heiken_list, ma, 1, 2);
+
+        if ((isUptrend_3_01 == isUptrend_3_12)) {
+            return isUptrend_3_01 ? Utils.TREND_LONG : Utils.TREND_SHOT;
         }
 
-        boolean isUptrend_1 = heiken_list.get(end).isUptrend();
-        boolean isUptrend_2 = isUptrendByMa(heiken_list, 2, str, end);
-        boolean isUptrend_3 = isUptrendByMa(heiken_list, 3, str, end);
-        boolean isUptrend_3_12 = isUptrendByMa(heiken_list, 3, 1, 2);
-
-        if ((isUptrend_0 == isUptrend_1) && (isUptrend_0 == isUptrend_2) && (isUptrend_0 == isUptrend_3)) {
-            return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
-        }
-
-        if ((isUptrend_0 == isUptrend_2) && (isUptrend_0 == isUptrend_3)) {
-            return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
-        }
-
-        if ((isUptrend_0 == isUptrend_3) || (isUptrend_3 == isUptrend_3_12)) {
-            return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
-        }
-
-        if ((isUptrend_0 == isUptrend_1)) {
-            return isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
-        }
-
-        String result = isUptrend_0 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        String result = isUptrend_3_01 ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
         return result;
     }
@@ -4890,7 +4932,7 @@ public class Utils {
 
         String header = "";
         header += Utils.appendSpace(append, 8);
-        header += chart_name + ":" + Utils.appendSpace(dto_entry.getTrend_heiken_0(), 8);
+        header += chart_name + ":" + Utils.appendSpace(dto_entry.getTrend_of_heiken3(), 8);
         header += Utils.appendSpace(EPIC, 12) + getTypeOfEpic(EPIC);
         header += Utils.appendSpace(Utils.getCapitalLink(EPIC), 68);
 
@@ -4900,7 +4942,7 @@ public class Utils {
     public static String createLineCrypto(Orders entity, String symbol, String type) {
         String chart = entity.getId().replace("CRYPTO_" + symbol, "").replace("_", "").toUpperCase();
 
-        String tmp_msg = type + Utils.appendSpace(chart, 8) + Utils.appendSpace(entity.getTrend_heiken_0(), 10)
+        String tmp_msg = type + Utils.appendSpace(chart, 8) + Utils.appendSpace(entity.getTrend_of_heiken3(), 10)
                 + Utils.appendSpace(symbol, 10);
 
         String price = Utils.appendSpace(Utils.removeLastZero(entity.getCurrent_price()), 10);
@@ -5084,15 +5126,29 @@ public class Utils {
     public static String get_seq_chart(Orders dto_xx, String find_trend) {
         String result = "";
 
-        if (Objects.equals(dto_xx.getTrend_heiken_0(), find_trend)) {
-            String type = "_" + Utils.getType(dto_xx.getTrend_heiken_0()) + "_";
+        if (Objects.equals(dto_xx.getTrend_of_heiken3(), find_trend)) {
+            String type = "_" + Utils.getType(dto_xx.getTrend_of_heiken3()) + "_";
 
+            boolean is_h4 = false;
             String chart_name = getChartName(dto_xx.getId()).toLowerCase().replace("(", "").replace(")", "").trim();
+            if (chart_name.contains("h4") || chart_name.contains("d1")) {
+                if (dto_xx.getTradable_zone().contains(dto_xx.getTrend_of_heiken3())) {
+                    is_h4 = true;
+                }
+            }
 
             if (dto_xx.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_SEQ_1020)) {
                 result = chart_name + type + "se";
-            } else if (dto_xx.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10)) {
-                result = chart_name + type + "ma";
+            } else if (is_h4 && dto_xx.getSwitch_trend().contains(dto_xx.getTrend_of_heiken3())) {
+                if (dto_xx.getSwitch_trend().contains("SEQ")) {
+                    result = chart_name + type + "se";
+                } else if (dto_xx.getSwitch_trend().contains("(Ma")) {
+                    result = chart_name + type + "ma";
+                } else if (dto_xx.getSwitch_trend().contains("Heiken")) {
+                    result = chart_name + type + "hk";
+                } else {
+                    result = chart_name + type + "..";
+                }
             }
         }
 

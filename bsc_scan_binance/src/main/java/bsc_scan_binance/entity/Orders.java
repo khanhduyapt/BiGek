@@ -67,7 +67,7 @@ public class Orders {
     private String insertTime;
 
     @Column(name = "trend")
-    private String trend_heiken_0;
+    private String trend_of_heiken3;
 
     @Column(name = "current_price")
     private BigDecimal current_price = BigDecimal.ZERO;
@@ -94,7 +94,7 @@ public class Orders {
     private String tradable_zone;
 
     @Column(name = "colume_01")
-    private String trend_heiken_1;
+    private String colume_01;
 
     @Column(name = "colume_02")
     private String trend_by_ma_20;
@@ -103,7 +103,7 @@ public class Orders {
     private String find_trend_by_ma_50;
 
     @Column(name = "colume_04")
-    private String trend_by_seq_ma_1_10_20_50;
+    private String trend_by_seq_ma;
 
     @Column(name = "colume_05")
     private String zone_by_ma_200;
@@ -115,7 +115,7 @@ public class Orders {
     private BigDecimal long_zone = BigDecimal.ZERO;
 
     @Column(name = "price_03")
-    private BigDecimal amplitude_1_part_10 = BigDecimal.ZERO;
+    private BigDecimal amplitude_1_part_15 = BigDecimal.ZERO;
 
     @Column(name = "price_04")
     private BigDecimal ma200 = BigDecimal.ZERO;
