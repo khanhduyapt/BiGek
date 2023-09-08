@@ -106,7 +106,7 @@ public class Orders {
     private String trend_by_seq_ma;
 
     @Column(name = "colume_05")
-    private String zone_by_ma_200;
+    private String trend_by_bread_area;
 
     @Column(name = "price_01")
     private BigDecimal short_zone = BigDecimal.ZERO;

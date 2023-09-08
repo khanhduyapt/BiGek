@@ -141,8 +141,9 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_Ma_1vs20 = "(Ma1.20)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs50 = "(Ma1.50)";
 
-    public static final String TEXT_SWITCH_TREND_SEQ_1020 = "(SEQ1020)";
-    public static final String TEXT_SWITCH_TREND_SEQ_1050 = "(SEQ1050)";
+    public static final String TEXT_SWITCH_TREND_SEQ_6_10_20 = "(SEQ.6.10.20)";
+    public static final String TEXT_SWITCH_TREND_SEQ_1_10_20_50 = "(SEQ.1.10.20.50)";
+    public static final String TEXT_SWITCH_TREND_SEQ___10_20_50 = "(SEQ.10.20.50)";
 
     public static final String TEXT_SWITCH_TREND_50 = "(~50~)";
     public static final String TEXT_SWITCH_TREND_HEIKEN = "(Heiken)";
@@ -210,10 +211,10 @@ public class Utils {
     public static final String ENCRYPTED_10 = "_10p";
     public static final String ENCRYPTED_12 = "_12p";
     public static final String ENCRYPTED_15 = "_15p";
-    public static final String ENCRYPTED_H1 = "motg";
-    public static final String ENCRYPTED_H4 = "bong";
-    public static final String ENCRYPTED_D1 = "mngy";
-    public static final String ENCRYPTED_W1 = "mtun";
+    public static final String ENCRYPTED_H1 = "_mgi";
+    public static final String ENCRYPTED_H4 = "_bng";
+    public static final String ENCRYPTED_D1 = "_mng";
+    public static final String ENCRYPTED_W1 = "_mtu";
 
     public static final Integer MINUTES_OF_2D = 2880;
     public static final Integer MINUTES_OF_1D = 1440;
@@ -278,10 +279,7 @@ public class Utils {
     public static final List<String> currencies = Arrays.asList("USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "NZD",
             "PLN", "SEK");
 
-    private static final String EPICS_INDEXS = "_US30_SP500_GER30_GER40_UK100_FRA40_SPN35_EU50_US100_AUS200_";
-
-    public static final List<String> EPICS_METALS = Arrays.asList("DX", "XAUUSD", "XAGUSD", "USOIL", "BTCUSD",
-            "USDJPY");
+    public static final List<String> EPICS_METALS = Arrays.asList("DX", "XAUUSD", "XAGUSD", "USOIL", "BTCUSD");
 
     public static final List<String> EPICS_CRYPTO_CFD = Arrays.asList("BTCUSD", "ETHUSD", "ADAUSD", "DOGEUSD", "DOTUSD",
             "LTCUSD", "XRPUSD");
@@ -1291,7 +1289,8 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_W1)) {
             return ENCRYPTED_W1;
         }
-        return ENCRYPTED_H1;
+
+        return "";
     }
 
     public static String getDeEncryptedChartNameCapital(String encryptedChartName) {
@@ -1321,7 +1320,7 @@ public class Utils {
             return CAPITAL_TIME_W1;
         }
 
-        return CAPITAL_TIME_H1;
+        return "";
     }
 
     public static String getChartNameCapital(String TIME) {
@@ -2271,9 +2270,7 @@ public class Utils {
         }
 
         String date = Utils.convertDateToString("dd", Calendar.getInstance().getTime());
-        String minus = Utils.convertDateToString("mm", Calendar.getInstance().getTime()).substring(0, 1);
-
-        return date + name + "_" + Utils.convertDateToString("HH", Calendar.getInstance().getTime()) + minus;
+        return date + name + Utils.convertDateToString("HH", Calendar.getInstance().getTime());
     }
 
     public static String getYyyyMmDd_HHmmss() {
@@ -3338,14 +3335,14 @@ public class Utils {
         BigDecimal max = BigDecimal.ZERO;
 
         for (int index = 0; index < list.size(); index++) {
-            BigDecimal ma10 = calcMA(list, 10, index);
+            BigDecimal ma = calcMA(list, 2, index);
 
-            if (min.compareTo(ma10) > 0) {
-                min = ma10;
+            if (min.compareTo(ma) > 0) {
+                min = ma;
             }
 
-            if (max.compareTo(ma10) < 0) {
-                max = ma10;
+            if (max.compareTo(ma) < 0) {
+                max = ma;
             }
         }
 
@@ -4023,6 +4020,31 @@ public class Utils {
         return find_trend;
     }
 
+    public static String find_trend_to_trade(Orders dto_d1, Orders dto_h4, Orders dto_h1) {
+        String find_trend_by_seq = "";
+
+        String trend_by_seq_ma = "(H1):" + dto_h1.getTrend_by_seq_ma() + "(H4):" + dto_h4.getTrend_by_seq_ma();
+        if (trend_by_seq_ma.contains(Utils.TREND_LONG) && trend_by_seq_ma.contains(Utils.TREND_SHOT)) {
+            trend_by_seq_ma = "(H1):" + dto_h1.getTrend_by_seq_ma();
+        }
+
+        if (trend_by_seq_ma.contains(Utils.TREND_LONG)) {
+            find_trend_by_seq = Utils.TREND_LONG;
+        }
+        if (trend_by_seq_ma.contains(Utils.TREND_SHOT)) {
+            find_trend_by_seq = Utils.TREND_SHOT;
+        }
+
+        if (Utils.isBlank(find_trend_by_seq)
+                && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_d1.getTrend_of_heiken3())
+                && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h4.getTrend_of_heiken3())
+                && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h1.getTrend_of_heiken3())) {
+            find_trend_by_seq = dto_d1.getTrend_of_heiken3();
+        }
+
+        return find_trend_by_seq;
+    }
+
     public static String trend_by_seq_ma_10_20_50(List<BtcFutures> heiken_list) {
         String result = "";
         if (heiken_list.size() < 20) {
@@ -4036,15 +4058,21 @@ public class Utils {
         BigDecimal ma50_0 = calcMA(heiken_list, 50, 0);
         BigDecimal ma50_1 = calcMA(heiken_list, 50, 1);
 
-        if ((ma10_0.compareTo(ma20_0) >= 0) && (ma20_0.compareTo(ma50_0) >= 0)) {
-            if ((ma10_1.compareTo(ma20_1) >= 0) && (ma20_1.compareTo(ma50_1) >= 0)) {
-                result = Utils.TREND_LONG;
+        String trend_of_heiken3 = Utils.getTrendByHekenAshiList(heiken_list, 3);
+
+        if (Objects.equals(Utils.TREND_LONG, trend_of_heiken3)) {
+            if ((ma10_0.compareTo(ma20_0) >= 0) && (ma20_0.compareTo(ma50_0) >= 0)) {
+                if ((ma10_1.compareTo(ma20_1) >= 0) && (ma20_1.compareTo(ma50_1) >= 0)) {
+                    result = Utils.TREND_LONG;
+                }
             }
         }
 
-        if ((ma10_0.compareTo(ma20_0) <= 0) && (ma20_0.compareTo(ma50_0) <= 0)) {
-            if ((ma10_1.compareTo(ma20_1) <= 0) && (ma20_1.compareTo(ma50_1) <= 0)) {
-                result = Utils.TREND_SHOT;
+        if (Objects.equals(Utils.TREND_SHOT, trend_of_heiken3)) {
+            if ((ma10_0.compareTo(ma20_0) <= 0) && (ma20_0.compareTo(ma50_0) <= 0)) {
+                if ((ma10_1.compareTo(ma20_1) <= 0) && (ma20_1.compareTo(ma50_1) <= 0)) {
+                    result = Utils.TREND_SHOT;
+                }
             }
         }
 
@@ -4085,11 +4113,15 @@ public class Utils {
 
         if (heiken_1.contains(Utils.TREND_LONG) && (ma10_1.compareTo(ma10_2) >= 0)) {
             if ((ma01_1.compareTo(ma06_1) >= 0) && (ma06_1.compareTo(ma10_1) >= 0) && (ma10_1.compareTo(ma20_1) >= 0)) {
-                result = Utils.TREND_LONG;
+                String chart_name = getChartName(heiken_list).trim();
+                result = chart_name + TEXT_SWITCH_TREND_SEQ_6_10_20 + ":" + Utils.TREND_LONG;
             }
-        } else if (heiken_1.contains(Utils.TREND_SHOT) && (ma10_1.compareTo(ma10_2) <= 0)) {
+        }
+
+        if (heiken_1.contains(Utils.TREND_SHOT) && (ma10_1.compareTo(ma10_2) <= 0)) {
             if ((ma01_1.compareTo(ma06_1) <= 0) && (ma06_1.compareTo(ma10_1) <= 0) && (ma10_1.compareTo(ma20_1) <= 0)) {
-                result = Utils.TREND_SHOT;
+                String chart_name = getChartName(heiken_list).trim();
+                result = chart_name + TEXT_SWITCH_TREND_SEQ_6_10_20 + ":" + Utils.TREND_SHOT;
             }
         }
 
@@ -4131,11 +4163,15 @@ public class Utils {
 
         if (heiken_1.contains(Utils.TREND_LONG) && (ma10_1.compareTo(ma10_2) >= 0)) {
             if ((ma01_1.compareTo(ma10_1) >= 0) && (ma01_1.compareTo(ma20_1) >= 0) && (ma01_1.compareTo(ma50_1) >= 0)) {
-                result = Utils.TREND_LONG;
+                String chart_name = getChartName(heiken_list).trim();
+                result = chart_name + TEXT_SWITCH_TREND_SEQ_1_10_20_50 + ":" + Utils.TREND_LONG;
             }
-        } else if (heiken_1.contains(Utils.TREND_SHOT) && (ma10_1.compareTo(ma10_2) <= 0)) {
+        }
+
+        if (heiken_1.contains(Utils.TREND_SHOT) && (ma10_1.compareTo(ma10_2) <= 0)) {
             if ((ma01_1.compareTo(ma10_1) <= 0) && (ma01_1.compareTo(ma20_1) <= 0) && (ma01_1.compareTo(ma50_1) <= 0)) {
-                result = Utils.TREND_SHOT;
+                String chart_name = getChartName(heiken_list).trim();
+                result = chart_name + TEXT_SWITCH_TREND_SEQ_1_10_20_50 + ":" + Utils.TREND_SHOT;
             }
         }
 
@@ -4176,14 +4212,15 @@ public class Utils {
         String switch_trend = switchTrendByMa1(heiken_list, 1, 10, heiken_list.size(), "(Ma1vs20to50)");
         if (Utils.isNotBlank(switch_trend) && switch_trend.contains(heiken_1)) {
             List<BtcFutures> sub_list = heiken_list.subList(0, 2);
-            BigDecimal candle_hig = calcMaxCandleHigh(sub_list);
+            //BigDecimal candle_hig = calcMaxCandleHigh(sub_list);
+            BigDecimal tolerance = calcMaxBread(sub_list);
 
             List<BigDecimal> lohi = getLowHighCandle(sub_list);
             BigDecimal low = lohi.get(0);
-            low = low.subtract(candle_hig);
+            low = low.subtract(tolerance);
 
             BigDecimal hig = lohi.get(1);
-            hig = hig.add(candle_hig);
+            hig = hig.add(tolerance);
 
             BigDecimal ma01_0 = calcMA(heiken_list, 01, 1);
 
@@ -4221,7 +4258,7 @@ public class Utils {
 
         if (isNotBlank(result)) {
             String chart_name = getChartName(heiken_list).trim();
-            result = chart_name + TEXT_SWITCH_TREND_SEQ_1050 + ":" + Utils.appendSpace(result, 4);
+            result = chart_name + TEXT_SWITCH_TREND_SEQ___10_20_50 + ":" + Utils.appendSpace(result, 4);
         }
 
         return result;
@@ -5144,11 +5181,10 @@ public class Utils {
             }
 
             if (dto_xx.getSwitch_trend().contains("SEQ")) {
-                result = chart_name + type + "se";
-            } else if (is_h4 && dto_xx.getSwitch_trend().contains(dto_xx.getTrend_of_heiken3())
-                    && find_trend.contains(dto_xx.getTrend_of_heiken3())) {
+                result = chart_name + type + "sq";
+            } else if (is_h4 && dto_xx.getSwitch_trend().contains(find_trend)) {
                 if (dto_xx.getSwitch_trend().contains("SEQ")) {
-                    result = chart_name + type + "se";
+                    result = chart_name + type + "sq";
                 } else if (dto_xx.getSwitch_trend().contains("(Ma")) {
                     result = chart_name + type + "ma";
                 } else if (dto_xx.getSwitch_trend().contains("Heiken")) {
