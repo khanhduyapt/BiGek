@@ -3085,8 +3085,11 @@ public class BinanceServiceImpl implements BinanceService {
             String log = Utils.createCloseTradeMsg(trade, "MUST_CLOSE_TRADE: ", "reverse_trade_opening");
             Utils.logWritelnDraft(log);
 
+            BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
+            boolean has_profit = PROFIT.compareTo(BigDecimal.valueOf(20)) > 0;
+
             boolean is_open_by_algorithm = trade.getComment().contains(Utils.getTypeOfEpic(EPIC));
-            if (is_close_now && is_open_by_algorithm) {
+            if ((is_close_now && is_open_by_algorithm) || has_profit) {
                 BscScanBinanceApplication.mt5_close_ticket_dict.put(trade.getTicket(), "reverse_trade_opening");
             }
 
