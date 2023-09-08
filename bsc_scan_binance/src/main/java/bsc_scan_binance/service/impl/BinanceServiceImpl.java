@@ -4116,11 +4116,11 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            String seq_minus = Utils.get_seq_minus(dto_h1, dto_15, dto_12, dto_10, dto_05);
             boolean is_position_trade = false;
             boolean h1_allow_trade = dto_h1.getTradable_zone().contains(dto_h1.getTrend_of_heiken3())
                     && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_h4.getTrend_of_heiken3());
 
+            String seq_minus = Utils.get_seq_minus(dto_h1, dto_15, dto_12, dto_10, dto_05);
             if (Utils.isNotBlank(seq_minus) && h1_allow_trade) {
                 append += "_tudo";
                 is_position_trade = true;
