@@ -4021,28 +4021,60 @@ public class Utils {
     }
 
     public static String find_trend_to_trade(Orders dto_d1, Orders dto_h4, Orders dto_h1) {
-        String find_trend_by_seq = "";
-
         String trend_by_seq_ma = "(H1):" + dto_h1.getTrend_by_seq_ma() + "(H4):" + dto_h4.getTrend_by_seq_ma();
+
         if (trend_by_seq_ma.contains(Utils.TREND_LONG) && trend_by_seq_ma.contains(Utils.TREND_SHOT)) {
             trend_by_seq_ma = "(H1):" + dto_h1.getTrend_by_seq_ma();
         }
 
         if (trend_by_seq_ma.contains(Utils.TREND_LONG)) {
-            find_trend_by_seq = Utils.TREND_LONG;
+            return Utils.TREND_LONG;
         }
+
         if (trend_by_seq_ma.contains(Utils.TREND_SHOT)) {
-            find_trend_by_seq = Utils.TREND_SHOT;
+            return Utils.TREND_SHOT;
         }
 
-        if (Utils.isBlank(find_trend_by_seq)
-                && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_d1.getTrend_of_heiken3())
-                && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h4.getTrend_of_heiken3())
-                && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h1.getTrend_of_heiken3())) {
-            find_trend_by_seq = dto_d1.getTrend_of_heiken3();
+        if (Objects.equals(dto_h1.getTrend_by_ma_50(), dto_h1.getTrend_of_heiken3())
+                && Objects.equals(dto_h1.getTrend_by_ma_50(), dto_h1.getTrend_by_ma_20())
+                && Objects.equals(dto_h1.getTrend_by_ma_50(), dto_h1.getTrend_by_ma_10())
+                && Objects.equals(dto_h1.getTrend_by_ma_50(), dto_h1.getTrend_by_ma_06())) {
+
+            return dto_h1.getTrend_by_ma_50();
         }
 
-        return find_trend_by_seq;
+        if (Objects.equals(dto_h4.getTrend_by_ma_50(), dto_h4.getTrend_of_heiken3())
+                && Objects.equals(dto_h4.getTrend_by_ma_50(), dto_h4.getTrend_by_ma_20())
+                && Objects.equals(dto_h4.getTrend_by_ma_50(), dto_h4.getTrend_by_ma_10())
+                && Objects.equals(dto_h4.getTrend_by_ma_50(), dto_h4.getTrend_by_ma_06())) {
+
+            return dto_h4.getTrend_by_ma_50();
+        }
+
+        if (Objects.equals(dto_d1.getTrend_of_heiken3(), dto_d1.getTrend_of_heiken3())
+
+                && (Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h4.getTrend_of_heiken3())
+
+                        || dto_h4.getTrend_by_seq_ma().contains(dto_d1.getTrend_of_heiken3())
+
+                        || (Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h4.getTrend_by_ma_10())
+                                && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h4.getTrend_by_ma_20())
+                                && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h4.getTrend_by_ma_50())))
+
+                && (Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h1.getTrend_of_heiken3())
+
+                        || dto_h1.getTrend_by_seq_ma().contains(dto_d1.getTrend_of_heiken3())
+
+                        || (Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h1.getTrend_by_ma_10())
+                                && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h1.getTrend_by_ma_20())
+                                && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h1.getTrend_by_ma_50())))
+
+        ) {
+
+            return dto_d1.getTrend_of_heiken3();
+        }
+
+        return "";
     }
 
     public static String trend_by_seq_ma_10_20_50(List<BtcFutures> heiken_list) {
@@ -5164,6 +5196,32 @@ public class Utils {
     // if (ma1_10_50 || ma6_10_50) {
     // allow_trade_by_ma1_6_10_50 = true;
     // }
+
+    public static String get_seq_minus(Orders dto_h1, Orders dto_15, Orders dto_12, Orders dto_10, Orders dto_05) {
+        String seq_minus = "";
+        String switch_trend_m1x = dto_05.getSwitch_trend() + dto_10.getSwitch_trend() + dto_12.getSwitch_trend()
+                + dto_15.getSwitch_trend();
+
+        boolean h1_allow_trade = switch_trend_m1x.contains("SEQ")
+                && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_15.getTrend_of_heiken3())
+                && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_12.getTrend_of_heiken3())
+                && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_10.getTrend_of_heiken3())
+                && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_05.getTrend_of_heiken3());
+
+        if (h1_allow_trade) {
+            if (dto_15.getSwitch_trend().contains("SEQ")) {
+                seq_minus = Utils.ENCRYPTED_15;
+            } else if (dto_12.getSwitch_trend().contains("SEQ")) {
+                seq_minus = Utils.ENCRYPTED_12;
+            } else if (dto_10.getSwitch_trend().contains("SEQ")) {
+                seq_minus = Utils.ENCRYPTED_10;
+            } else if (dto_05.getSwitch_trend().contains("SEQ")) {
+                seq_minus = Utils.ENCRYPTED_05;
+            }
+        }
+
+        return seq_minus;
+    }
 
     public static String get_seq_chart(Orders dto_xx, String find_trend) {
         String result = "";
