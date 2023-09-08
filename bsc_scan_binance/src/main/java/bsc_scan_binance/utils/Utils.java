@@ -141,9 +141,10 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_Ma_1vs20 = "(Ma1.20)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs50 = "(Ma1.50)";
 
-    public static final String TEXT_SWITCH_TREND_SEQ_6_10_20 = "(SEQ.6.10.20)";
-    public static final String TEXT_SWITCH_TREND_SEQ_1_10_20_50 = "(SEQ.1.10.20.50)";
-    public static final String TEXT_SWITCH_TREND_SEQ___10_20_50 = "(SEQ.10.20.50)";
+    public static final String TEXT_SEQ = "SEQ";
+    public static final String TEXT_SWITCH_TREND_SEQ_6_10_20 = "(" + TEXT_SEQ + ".6.10.20)";
+    public static final String TEXT_SWITCH_TREND_SEQ_1_10_20_50 = "(" + TEXT_SEQ + ".1.10.20.50)";
+    public static final String TEXT_SWITCH_TREND_SEQ___10_20_50 = "(" + TEXT_SEQ + ".10.20.50)";
 
     public static final String TEXT_SWITCH_TREND_50 = "(~50~)";
     public static final String TEXT_SWITCH_TREND_HEIKEN = "(Heiken)";
@@ -4205,6 +4206,88 @@ public class Utils {
                 String chart_name = getChartName(heiken_list).trim();
                 result = chart_name + TEXT_SWITCH_TREND_SEQ_1_10_20_50 + ":" + Utils.TREND_SHOT;
             }
+        }
+
+        return result;
+    }
+
+    public static String switch_trend_seq_6_10_20(List<BtcFutures> heiken_list) {
+        String result = "";
+        if (heiken_list.size() < 20) {
+            return result;
+        }
+
+        String heiken_1 = getTrendByHekenAshiList(heiken_list, 1);
+        boolean ma6_1_2_up = isUptrendByMa(heiken_list, 6, 1, 2);
+        if (ma6_1_2_up && Objects.equals(heiken_1, TREND_SHOT)) {
+            return "";
+        }
+        if (!ma6_1_2_up && Objects.equals(heiken_1, TREND_LONG)) {
+            return "";
+        }
+
+        BigDecimal ma03_1 = calcMA(heiken_list, 3, 1);
+        BigDecimal ma06_1 = calcMA(heiken_list, 6, 1);
+        BigDecimal ma09_1 = calcMA(heiken_list, 9, 1);
+        boolean allow_next = false;
+        if (Objects.equals(heiken_1, TREND_LONG) && (ma03_1.compareTo(ma06_1) >= 0)
+                && (ma06_1.compareTo(ma09_1) >= 0)) {
+            allow_next = true;
+        }
+        if (Objects.equals(heiken_1, TREND_SHOT) && (ma03_1.compareTo(ma06_1) <= 0)
+                && (ma06_1.compareTo(ma09_1) <= 0)) {
+            allow_next = true;
+        }
+        if (!allow_next) {
+            return "";
+        }
+
+        String switch_trend = switchTrendByMa1(heiken_list, 1, 10, heiken_list.size(), "(Ma1vs20to50)");
+        if (Utils.isNotBlank(switch_trend) && switch_trend.contains(heiken_1)) {
+            List<BtcFutures> sub_list = heiken_list.subList(0, 2);
+            //BigDecimal candle_hig = calcMaxCandleHigh(sub_list);
+            BigDecimal tolerance = calcMaxBread(sub_list);
+
+            List<BigDecimal> lohi = getLowHighCandle(sub_list);
+            BigDecimal low = lohi.get(0);
+            low = low.subtract(tolerance);
+
+            BigDecimal hig = lohi.get(1);
+            hig = hig.add(tolerance);
+
+            BigDecimal ma01_0 = calcMA(heiken_list, 01, 1);
+
+            BigDecimal ma10_0 = calcMA(heiken_list, 10, 1);
+            BigDecimal ma10_1 = calcMA(heiken_list, 10, 2);
+
+            BigDecimal ma20_0 = calcMA(heiken_list, 20, 1);
+            BigDecimal ma20_1 = calcMA(heiken_list, 20, 2);
+
+            boolean inside_lohi = true;
+            inside_lohi &= (ma10_0.compareTo(low) >= 0) && (ma10_1.compareTo(low) >= 0) && (ma20_0.compareTo(low) >= 0)
+                    && (ma20_1.compareTo(low) >= 0);
+
+            inside_lohi &= (hig.compareTo(ma10_0) >= 0) && (hig.compareTo(ma10_1) >= 0) && (hig.compareTo(ma20_0) >= 0)
+                    && (hig.compareTo(ma20_1) >= 0);
+
+            if (inside_lohi && switch_trend.contains(Utils.TREND_LONG)) {
+                if ((ma01_0.compareTo(ma10_0) >= 0) && (ma01_0.compareTo(ma10_1) >= 0)
+                        && (ma01_0.compareTo(ma20_0) >= 0) && (ma01_0.compareTo(ma20_1) >= 0)) {
+                    result = Utils.TREND_LONG;
+                }
+            }
+
+            if (inside_lohi && switch_trend.contains(Utils.TREND_SHOT) && inside_lohi) {
+                if ((ma01_0.compareTo(ma10_0) <= 0) && (ma01_0.compareTo(ma10_1) <= 0)
+                        && (ma01_0.compareTo(ma20_0) <= 0) && (ma01_0.compareTo(ma20_1) <= 0)) {
+                    result = Utils.TREND_SHOT;
+                }
+            }
+        }
+
+        if (isNotBlank(result)) {
+            String chart_name = getChartName(heiken_list).trim();
+            result = chart_name + TEXT_SWITCH_TREND_SEQ_6_10_20 + ":" + Utils.appendSpace(result, 4);
         }
 
         return result;
