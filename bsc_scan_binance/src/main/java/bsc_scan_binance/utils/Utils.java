@@ -1254,7 +1254,7 @@ public class Utils {
             return PREFIX_MO1;
         }
 
-        return "not_found_chart_prefix";
+        return "";
     }
 
     public static String getEncryptedChartNameCapital(String TIME) {

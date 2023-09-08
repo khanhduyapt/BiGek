@@ -4131,6 +4131,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean is_position_trade = false;
             boolean h1_allow_trade = dto_h1.getTradable_zone().contains(dto_h1.getTrend_of_heiken3())
+                    && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_15.getTrend_of_heiken3())
                     && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_h4.getTrend_of_heiken3());
 
             String seq_minus = Utils.get_seq_minus(dto_h1, dto_15, dto_12, dto_10, dto_05);
@@ -4139,12 +4140,14 @@ public class BinanceServiceImpl implements BinanceService {
                 is_position_trade = true;
             } else {
                 is_position_trade = has_seq_minus
+                        && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_15.getTrend_of_heiken3())
                         && dto_d1.getTrend_by_bread_area().contains(dto_15.getTrend_of_heiken3());
 
                 if (is_position_trade) {
                     append += "_vithe_d";
                 } else {
                     is_position_trade = has_seq_minus
+                            && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_15.getTrend_of_heiken3())
                             && dto_h4.getTrend_by_bread_area().contains(dto_15.getTrend_of_heiken3());
 
                     if (is_position_trade) {
@@ -4184,8 +4187,13 @@ public class BinanceServiceImpl implements BinanceService {
             if (is_position_trade || (h_allow_trade && m_allow_trade)) {
                 append += seq_minus + Utils.TEXT_PASS;
 
-                trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, find_trend_to_trade, dto_10, dto_h1, dto_h4, append, true,
-                        Utils.CAPITAL_TIME_15);
+                if (is_position_trade) {
+                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, dto_h1.getTrend_of_heiken3(), dto_10, dto_h1, dto_h4,
+                            append, true, Utils.CAPITAL_TIME_15);
+                } else {
+                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, find_trend_to_trade, dto_10, dto_h1, dto_h4, append, true,
+                            Utils.CAPITAL_TIME_15);
+                }
 
                 close_reverse_trade(EPIC, find_trend_to_trade, true);
 
