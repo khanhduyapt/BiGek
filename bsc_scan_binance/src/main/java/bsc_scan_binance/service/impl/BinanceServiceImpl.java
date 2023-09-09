@@ -3087,11 +3087,10 @@ public class BinanceServiceImpl implements BinanceService {
             String log = Utils.createCloseTradeMsg(trade, "MUST_CLOSE_TRADE: ", "reverse_trade_opening");
             Utils.logWritelnDraft(log);
 
-            BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
-            boolean has_profit = PROFIT.compareTo(BigDecimal.valueOf(20)) > 0;
-
+            // BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
+            // boolean has_profit = PROFIT.compareTo(BigDecimal.valueOf(20)) > 0;
             boolean is_open_by_algorithm = trade.getComment().contains(Utils.getTypeOfEpic(EPIC));
-            if ((is_close_now && is_open_by_algorithm) || has_profit) {
+            if (is_open_by_algorithm) {
                 BscScanBinanceApplication.mt5_close_ticket_dict.put(trade.getTicket(), "reverse_trade_opening");
             }
 
@@ -4164,8 +4163,7 @@ public class BinanceServiceImpl implements BinanceService {
                             || dto_d1.getTrend_by_seq_ma().contains(find_trend_to_trade));
 
             if (!Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
-                h1_allow_trade &= (Objects.equals(dto_d1.getTrend_of_heiken3(), find_trend_to_trade)
-                        || Objects.equals(dto_d1.getTrend_by_ma_10(), find_trend_to_trade));
+                h1_allow_trade &= Objects.equals(dto_d1.getTrend_of_heiken3(), find_trend_to_trade);
             }
 
             if (NOTICE_LIST.contains(EPIC)) {
