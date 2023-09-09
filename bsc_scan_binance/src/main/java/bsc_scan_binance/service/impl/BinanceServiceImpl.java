@@ -4271,9 +4271,7 @@ public class BinanceServiceImpl implements BinanceService {
                 is_hit_sl = true;
             }
 
-            boolean h1_reverse = Objects.equals(dto_h1.getTrend_by_ma_10(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h1.getTrend_by_ma_20(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
+            boolean h1_reverse = Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_05.getTrend_of_heiken3(), REVERSE_TRADE_TREND);
 
