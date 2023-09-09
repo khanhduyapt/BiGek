@@ -4163,12 +4163,10 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isNotBlank(find_trend_to_trade)) {
                 boolean m_allow_trade = Objects.equals(dto_15.getTrend_of_heiken3(), find_trend_to_trade);
 
-                boolean h1_allow_trade = dto_d1.getTradable_zone().contains(find_trend_to_trade)
-                        && dto_h4.getTradable_zone().contains(find_trend_to_trade)
+                boolean h1_allow_trade = Objects.equals(trend_h1, find_trend_to_trade)
 
-                        && (Objects.equals(trend_h1, find_trend_to_trade)
-                                || Objects.equals(dto_h1.getTrend_by_ma_10(), find_trend_to_trade)
-                                || dto_h1.getTrend_by_seq_ma().contains(find_trend_to_trade))
+                        && dto_d1.getTradable_zone().contains(find_trend_to_trade)
+                        && dto_h4.getTradable_zone().contains(find_trend_to_trade)
 
                         && (Objects.equals(trend_h4, find_trend_to_trade)
                                 || Objects.equals(dto_h4.getTrend_by_ma_10(), find_trend_to_trade)
