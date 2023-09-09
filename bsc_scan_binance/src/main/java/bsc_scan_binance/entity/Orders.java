@@ -118,7 +118,7 @@ public class Orders {
     private BigDecimal amplitude_1_part_15 = BigDecimal.ZERO;
 
     @Column(name = "price_04")
-    private BigDecimal ma200 = BigDecimal.ZERO;
+    private BigDecimal amplitude_avg_of_candles = BigDecimal.ZERO;
 
     @Column(name = "price_05")
     private BigDecimal ma050 = BigDecimal.ZERO;
@@ -133,8 +133,8 @@ public class Orders {
     private BigDecimal hig_50candle = BigDecimal.ZERO;
 
     @Column(name = "price_09")
-    private BigDecimal low = BigDecimal.ZERO;
+    private BigDecimal lowest_price_of_curr_candle = BigDecimal.ZERO;
 
     @Column(name = "price_10")
-    private BigDecimal hig = BigDecimal.ZERO;
+    private BigDecimal highest_price_of_curr_candle = BigDecimal.ZERO;
 }
