@@ -3522,17 +3522,13 @@ public class Utils {
     }
 
     public static List<BigDecimal> getBuySellArea(List<BtcFutures> heiken_list) {
-        int section = 3;
-        List<BigDecimal> LoHi = Utils.getLowHighCandle(heiken_list);
-        BigDecimal high = LoHi.get(1).subtract(LoHi.get(0));
-        BigDecimal quarter = high.divide(BigDecimal.valueOf(section), 10, RoundingMode.CEILING);
-        BigDecimal bread = Utils.calcMaxBread(heiken_list);
-        if (bread.compareTo(quarter) > 0) {
-            quarter = bread;
-        }
+        List<BigDecimal> body = Utils.getBodyCandle(heiken_list);
+        BigDecimal high = body.get(1).subtract(body.get(0));
 
-        BigDecimal buy_boundary = LoHi.get(0).add(quarter);
-        BigDecimal sal_boundary = LoHi.get(1).subtract(quarter);
+        BigDecimal quarter = high.divide(BigDecimal.valueOf(4), 10, RoundingMode.CEILING);
+
+        BigDecimal buy_boundary = body.get(0).add(quarter);
+        BigDecimal sal_boundary = body.get(1).subtract(quarter);
 
         List<BigDecimal> result = new ArrayList<BigDecimal>();
         result.add(buy_boundary);
@@ -4065,7 +4061,7 @@ public class Utils {
 
         String trend_by_seq_ma = "(H1):" + dto_h1.getTrend_by_seq_ma() + "(H4):" + dto_h4.getTrend_by_seq_ma();
 
-        if (trend_by_seq_ma.contains(trend_h1)) {
+        if (trend_by_seq_ma.contains(trend_d1)) {
             if (trend_by_seq_ma.contains(Utils.TREND_LONG)) {
                 return Utils.TREND_LONG;
             }
@@ -4082,7 +4078,7 @@ public class Utils {
                 && Objects.equals(dto_h1.getTrend_by_ma_50(), dto_h1.getTrend_by_ma_10())
                 && Objects.equals(dto_h1.getTrend_by_ma_50(), dto_h1.getTrend_by_ma_06())) {
 
-            return dto_h1.getTrend_by_ma_50();
+            return trend_d1;
         }
 
         if (Objects.equals(dto_h4.getTrend_by_ma_50(), trend_d1)
@@ -4092,9 +4088,14 @@ public class Utils {
                 && Objects.equals(dto_h4.getTrend_by_ma_50(), dto_h4.getTrend_by_ma_10())
                 && Objects.equals(dto_h4.getTrend_by_ma_50(), dto_h4.getTrend_by_ma_06())) {
 
-            return dto_h4.getTrend_by_ma_50();
+            return trend_d1;
         }
 
+        if (dto_d1.getTradable_zone().contains(trend_h1) && dto_h4.getTradable_zone().contains(trend_h1)) {
+            if (!Objects.equals(dto_d1.getTrend_of_heiken3(), dto_d1.getTrend_of_heiken3_1())) {
+                return "";
+            }
+        }
         if (Objects.equals(trend_d1, trend_d1)
                 && (Objects.equals(trend_d1, trend_h4)
                         || dto_h4.getTrend_by_seq_ma().contains(trend_d1)
@@ -4122,7 +4123,7 @@ public class Utils {
         BigDecimal ma50_0 = calcMA(heiken_list, 50, 0);
         BigDecimal ma50_1 = calcMA(heiken_list, 50, 1);
 
-        String trend_of_heiken3 = Utils.getTrendByHekenAshiList(heiken_list, 3);
+        String trend_of_heiken3 = Utils.getTrendByHekenAshiList(heiken_list);
 
         if (Objects.equals(Utils.TREND_LONG, trend_of_heiken3)) {
             if ((ma10_0.compareTo(ma20_0) >= 0) && (ma20_0.compareTo(ma50_0) >= 0)) {
@@ -4148,21 +4149,17 @@ public class Utils {
         if (heiken_list.size() < 20) {
             return result;
         }
-        String heiken_0 = getTrendByHekenAshiList(heiken_list, 0);
-        String heiken_1 = getTrendByHekenAshiList(heiken_list, 1);
-        if (!Objects.equals(heiken_0, heiken_1)) {
-            return "";
-        }
+        String trend = getTrendByHekenAshiList(heiken_list);
 
         BigDecimal ma03_1 = calcMA(heiken_list, 3, 1);
         BigDecimal ma06_1 = calcMA(heiken_list, 6, 1);
         BigDecimal ma09_1 = calcMA(heiken_list, 9, 1);
         boolean allow_next = false;
-        if (Objects.equals(heiken_1, TREND_LONG) && (ma03_1.compareTo(ma06_1) >= 0)
+        if (Objects.equals(trend, TREND_LONG) && (ma03_1.compareTo(ma06_1) >= 0)
                 && (ma06_1.compareTo(ma09_1) >= 0)) {
             allow_next = true;
         }
-        if (Objects.equals(heiken_1, TREND_SHOT) && (ma03_1.compareTo(ma06_1) <= 0)
+        if (Objects.equals(trend, TREND_SHOT) && (ma03_1.compareTo(ma06_1) <= 0)
                 && (ma06_1.compareTo(ma09_1) <= 0)) {
             allow_next = true;
         }
@@ -4175,14 +4172,14 @@ public class Utils {
         BigDecimal ma10_2 = calcMA(heiken_list, 10, 2);
         BigDecimal ma20_1 = calcMA(heiken_list, 20, 1);
 
-        if (heiken_1.contains(Utils.TREND_LONG) && (ma10_1.compareTo(ma10_2) >= 0)) {
+        if (trend.contains(Utils.TREND_LONG) && (ma10_1.compareTo(ma10_2) >= 0)) {
             if ((ma01_1.compareTo(ma06_1) >= 0) && (ma06_1.compareTo(ma10_1) >= 0) && (ma10_1.compareTo(ma20_1) >= 0)) {
                 String chart_name = getChartName(heiken_list).trim();
                 result = chart_name + TEXT_SWITCH_TREND_SEQ_6_10_20 + ":" + Utils.TREND_LONG;
             }
         }
 
-        if (heiken_1.contains(Utils.TREND_SHOT) && (ma10_1.compareTo(ma10_2) <= 0)) {
+        if (trend.contains(Utils.TREND_SHOT) && (ma10_1.compareTo(ma10_2) <= 0)) {
             if ((ma01_1.compareTo(ma06_1) <= 0) && (ma06_1.compareTo(ma10_1) <= 0) && (ma10_1.compareTo(ma20_1) <= 0)) {
                 String chart_name = getChartName(heiken_list).trim();
                 result = chart_name + TEXT_SWITCH_TREND_SEQ_6_10_20 + ":" + Utils.TREND_SHOT;
@@ -4197,11 +4194,7 @@ public class Utils {
         if (heiken_list.size() < 20) {
             return result;
         }
-        String heiken_0 = getTrendByHekenAshiList(heiken_list, 0);
-        String heiken_1 = getTrendByHekenAshiList(heiken_list, 1);
-        if (!Objects.equals(heiken_0, heiken_1)) {
-            return "";
-        }
+        String heiken_1 = getTrendByHekenAshiList(heiken_list);
 
         BigDecimal ma03_1 = calcMA(heiken_list, 3, 1);
         BigDecimal ma06_1 = calcMA(heiken_list, 6, 1);
@@ -4248,7 +4241,7 @@ public class Utils {
             return result;
         }
 
-        String heiken_1 = getTrendByHekenAshiList(heiken_list, 1);
+        String heiken_1 = getTrendByHekenAshiList(heiken_list);
         boolean ma6_1_2_up = isUptrendByMa(heiken_list, 6, 1, 2);
         if (ma6_1_2_up && Objects.equals(heiken_1, TREND_SHOT)) {
             return "";
@@ -4330,7 +4323,7 @@ public class Utils {
             return result;
         }
 
-        String heiken_1 = getTrendByHekenAshiList(heiken_list, 1);
+        String heiken_1 = getTrendByHekenAshiList(heiken_list);
         boolean ma6_1_2_up = isUptrendByMa(heiken_list, 6, 1, 2);
         if (ma6_1_2_up && Objects.equals(heiken_1, TREND_SHOT)) {
             return "";
@@ -5062,16 +5055,16 @@ public class Utils {
     }
 
     public static String getTrendByHekenAshiList(List<BtcFutures> heiken_list) {
-        return getTrendByHekenAshiList(heiken_list, 3);
+        return getTrendByHekenAshiList(heiken_list, 3, 0);
     }
 
-    public static String getTrendByHekenAshiList(List<BtcFutures> heiken_list, int ma) {
+    public static String getTrendByHekenAshiList(List<BtcFutures> heiken_list, int ma, int candle_no) {
         if (CollectionUtils.isEmpty(heiken_list)) {
             return "";
         }
 
-        boolean isUptrend_3_01 = isUptrendByMa(heiken_list, ma, 0, 1);
-        boolean isUptrend_3_12 = isUptrendByMa(heiken_list, ma, 1, 2);
+        boolean isUptrend_3_01 = isUptrendByMa(heiken_list, ma, candle_no + 0, 1);
+        boolean isUptrend_3_12 = isUptrendByMa(heiken_list, ma, candle_no + 1, 2);
 
         if ((isUptrend_3_01 == isUptrend_3_12)) {
             return isUptrend_3_01 ? Utils.TREND_LONG : Utils.TREND_SHOT;
@@ -5371,7 +5364,7 @@ public class Utils {
             seq = appendSpace("", seq.length());
         } else {
             if (!has_seq_h1 && has_seq_minus) {
-                seq = seq.replace("SEQ:{   ", "SEQ:{h1" + getType(trend_h1));
+                seq = seq.replace("SEQ:{   ", "SEQ:{" + getType(trend_h1) + "  ");
             }
         }
         return seq;

@@ -32,23 +32,24 @@ import lombok.NoArgsConstructor;
 //    high_price numeric(30,5) DEFAULT 0,
 //    note character varying(500) COLLATE pg_catalog."default",
 //    created_at timestamp without time zone DEFAULT now(),
-//    trend_candle_1 character varying(255) COLLATE pg_catalog."default",
-//    trend_zone character varying(255) COLLATE pg_catalog."default",
-//    colume_01 character varying(255) COLLATE pg_catalog."default",
-//    colume_02 character varying(255) COLLATE pg_catalog."default",
-//    colume_03 character varying(255) COLLATE pg_catalog."default",
-//    colume_04 character varying(255) COLLATE pg_catalog."default",
-//    colume_05 character varying(255) COLLATE pg_catalog."default",
-//    price_01 numeric(30,5) DEFAULT 0,
-//    price_02 numeric(30,5) DEFAULT 0,
-//    price_03 numeric(30,5) DEFAULT 0,
-//    price_04 numeric(30,5) DEFAULT 0,
-//    price_05 numeric(30,5) DEFAULT 0,
-//    price_06 numeric(30,5) DEFAULT 0,
-//    price_07 numeric(30,5) DEFAULT 0,
-//    price_08 numeric(30,5) DEFAULT 0,
-//    price_09 numeric(30,5) DEFAULT 0,
-//    price_10 numeric(30,5) DEFAULT 0,
+//    trend_by_ma_10 character varying(255) COLLATE pg_catalog."default",
+//    tradable_zone character varying(255) COLLATE pg_catalog."default",
+//    trend_by_ma_06 character varying(255) COLLATE pg_catalog."default",
+//    trend_by_ma_20 character varying(255) COLLATE pg_catalog."default",
+//    trend_by_ma_50 character varying(255) COLLATE pg_catalog."default",
+//    trend_by_seq_ma character varying(255) COLLATE pg_catalog."default",
+//    trend_by_bread_area character varying(255) COLLATE pg_catalog."default",
+//    short_zone numeric(30,5) DEFAULT 0,
+//    long_zone numeric(30,5) DEFAULT 0,
+//    amplitude_1_part_15 numeric(30,5) DEFAULT 0,
+//    amplitude_avg_of_candles numeric(30,5) DEFAULT 0,
+//    ma050 numeric(30,5) DEFAULT 0,
+//    ma020 numeric(30,5) DEFAULT 0,
+//    low_50candle numeric(30,5) DEFAULT 0,
+//    hig_50candle numeric(30,5) DEFAULT 0,
+//    lowest_price_of_curr_candle numeric(30,5) DEFAULT 0,
+//    highest_price_of_curr_candle numeric(30,5) DEFAULT 0,
+//    trend_of_heiken3_1 character varying(255) COLLATE pg_catalog."default",
 //    CONSTRAINT orders_pkey PRIMARY KEY (gecko_id)
 //)
 
@@ -87,54 +88,58 @@ public class Orders {
     @Column(name = "note")
     private String switch_trend;
 
-    @Column(name = "trend_candle_1")
+    @Column(name = "trend_by_ma_10")
     private String trend_by_ma_10;
 
-    @Column(name = "trend_zone")
+    @Column(name = "tradable_zone")
     private String tradable_zone;
 
-    @Column(name = "colume_01")
+    @Column(name = "trend_by_ma_06")
     private String trend_by_ma_06;
 
-    @Column(name = "colume_02")
+    @Column(name = "trend_by_ma_20")
     private String trend_by_ma_20;
 
-    @Column(name = "colume_03")
+    @Column(name = "trend_by_ma_50")
     private String trend_by_ma_50;
 
-    @Column(name = "colume_04")
+    @Column(name = "trend_by_seq_ma")
     private String trend_by_seq_ma;
 
-    @Column(name = "colume_05")
+    @Column(name = "trend_by_bread_area")
     private String trend_by_bread_area;
 
-    @Column(name = "price_01")
+    @Column(name = "short_zone")
     private BigDecimal short_zone = BigDecimal.ZERO;
 
-    @Column(name = "price_02")
+    @Column(name = "long_zone")
     private BigDecimal long_zone = BigDecimal.ZERO;
 
-    @Column(name = "price_03")
+    @Column(name = "amplitude_1_part_15")
     private BigDecimal amplitude_1_part_15 = BigDecimal.ZERO;
 
-    @Column(name = "price_04")
+    @Column(name = "amplitude_avg_of_candles")
     private BigDecimal amplitude_avg_of_candles = BigDecimal.ZERO;
 
-    @Column(name = "price_05")
+    @Column(name = "ma050")
     private BigDecimal ma050 = BigDecimal.ZERO;
 
-    @Column(name = "price_06")
+    @Column(name = "ma020")
     private BigDecimal ma020 = BigDecimal.ZERO;
 
-    @Column(name = "price_07")
+    @Column(name = "low_50candle")
     private BigDecimal low_50candle = BigDecimal.ZERO;
 
-    @Column(name = "price_08")
+    @Column(name = "hig_50candle")
     private BigDecimal hig_50candle = BigDecimal.ZERO;
 
-    @Column(name = "price_09")
+    @Column(name = "lowest_price_of_curr_candle")
     private BigDecimal lowest_price_of_curr_candle = BigDecimal.ZERO;
 
-    @Column(name = "price_10")
+    @Column(name = "highest_price_of_curr_candle")
     private BigDecimal highest_price_of_curr_candle = BigDecimal.ZERO;
+
+    @Column(name = "trend_of_heiken3_1")
+    private String trend_of_heiken3_1;
+
 }
