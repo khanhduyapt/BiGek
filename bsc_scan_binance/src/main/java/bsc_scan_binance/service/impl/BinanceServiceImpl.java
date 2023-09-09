@@ -4090,10 +4090,10 @@ public class BinanceServiceImpl implements BinanceService {
                 String d01 = "d1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
                 String h04 = "h4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
                 String h01 = "h1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
-                String m10 = "15:" + (Objects.isNull(dto_15) ? "null" : "    ");
+                String m15 = "15:" + (Objects.isNull(dto_15) ? "null" : "    ");
 
                 Utils.logWritelnDraft(String.format("[closetrade_by_sl_tp_control_mt5] dto (%s): %s, %s, %s, %s.",
-                        Utils.appendSpace(EPIC, 10), d01, h04, h01, m10));
+                        Utils.appendSpace(EPIC, 10), d01, h04, h01, m15));
                 continue;
             }
 
