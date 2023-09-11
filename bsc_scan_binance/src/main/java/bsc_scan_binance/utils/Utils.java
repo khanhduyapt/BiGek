@@ -5391,11 +5391,8 @@ public class Utils {
         String trend_h1 = dto_h1.getTrend_of_heiken3();
 
         String switch_trend_m1x = "";
-        switch_trend_m1x += dto_03.getSwitch_trend();
-        if (dto_03.getTrend_by_seq_ma().contains(dto_03.getTrend_of_heiken3())
-                || dto_03.getTrend_by_seq_ma().contains(dto_03.getTrend_of_heiken3_1())) {
-            switch_trend_m1x += dto_03.getTrend_by_seq_ma();
-        }
+        switch_trend_m1x += dto_15.getSwitch_trend();
+        switch_trend_m1x += dto_10.getSwitch_trend();
 
         switch_trend_m1x += dto_05.getSwitch_trend();
         if (dto_05.getTrend_by_seq_ma().contains(dto_05.getTrend_of_heiken3())
@@ -5403,10 +5400,15 @@ public class Utils {
             switch_trend_m1x += dto_05.getTrend_by_seq_ma();
         }
 
-        switch_trend_m1x += dto_10.getSwitch_trend();
-        switch_trend_m1x += dto_15.getSwitch_trend();
+        switch_trend_m1x += dto_03.getSwitch_trend();
+        if (dto_03.getTrend_by_seq_ma().contains(dto_03.getTrend_of_heiken3())
+                || dto_03.getTrend_by_seq_ma().contains(dto_03.getTrend_of_heiken3_1())) {
+            switch_trend_m1x += dto_03.getTrend_by_seq_ma();
+        }
 
         boolean h1_allow_trade = switch_trend_m1x.contains(Utils.TEXT_SEQ)
+                && Objects.equals(trend_h1, dto_03.getTrend_by_ma_06())
+                && Objects.equals(trend_h1, dto_05.getTrend_by_ma_06())
                 && Objects.equals(trend_h1, dto_10.getTrend_of_heiken3())
                 && Objects.equals(trend_h1, dto_15.getTrend_of_heiken3());
 

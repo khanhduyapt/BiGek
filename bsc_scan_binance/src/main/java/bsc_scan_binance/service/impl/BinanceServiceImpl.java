@@ -4104,20 +4104,30 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            String append = "";
-            Mt5OpenTrade trade_dto = null;
-
             String trend_d1 = dto_d1.getTrend_of_heiken3();
             String trend_h4 = dto_h4.getTrend_of_heiken3();
             String trend_h1 = dto_h1.getTrend_of_heiken3();
             String trend_15 = dto_15.getTrend_of_heiken3();
             String find_trend_to_trade = trend_h1;
 
+            boolean allow_trade = Objects.equals(trend_h1, trend_15)
+                    && Objects.equals(trend_h1, dto_10.getTrend_of_heiken3())
+                    && Objects.equals(trend_h1, dto_05.getTrend_by_ma_06())
+                    && Objects.equals(trend_h1, dto_03.getTrend_by_ma_06());
+            if (!allow_trade) {
+                continue;
+            }
+
+            String append = "";
+            Mt5OpenTrade trade_dto = null;
+
             if (NOTICE_LIST.contains(EPIC)) {
                 append += Utils.TEXT_NOTICE_ONLY;
             }
             // --------------------------------------------------------------------------------------------
-            boolean is_position_trade = Objects.equals(trend_h1, trend_h4) && Objects.equals(trend_h1, trend_15)
+            boolean is_position_trade = false;
+
+            is_position_trade = Objects.equals(trend_h1, trend_h4) && Objects.equals(trend_h1, trend_15)
                     && dto_d1.getTrend_by_bread_area().contains(trend_15);
 
             if (is_position_trade) {
@@ -4131,9 +4141,8 @@ public class BinanceServiceImpl implements BinanceService {
                 } else {
                     String seq_folow_h1 = Utils.get_seq(dto_h1, dto_15, dto_10, dto_05, dto_03);
                     if (Utils.isNotBlank(seq_folow_h1)
-                            && Objects.equals(trend_d1, trend_h1)
-                            && Objects.equals(trend_h4, trend_h1)
-
+                            && Objects.equals(trend_h1, trend_d1)
+                            && Objects.equals(trend_h1, trend_h4)
                             && dto_d1.getTradable_zone().contains(trend_h1)
                             && dto_h4.getTradable_zone().contains(trend_h1)
 
@@ -4143,6 +4152,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
             }
+
             // --------------------------------------------------------------------------------------------
             boolean is_allows_trend_trading = false;
             if (!is_position_trade) {
