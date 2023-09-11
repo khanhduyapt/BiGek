@@ -4191,6 +4191,8 @@ public class BinanceServiceImpl implements BinanceService {
                         } else {
                             append += "__";
                         }
+                    } else {
+                        append += "_dfdh41";
                     }
 
                     if (h1_allow_trade && m_allow_trade) {
