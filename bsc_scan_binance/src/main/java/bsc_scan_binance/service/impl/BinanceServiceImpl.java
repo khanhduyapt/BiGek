@@ -4295,6 +4295,11 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_05.getTrend_of_heiken3(), REVERSE_TRADE_TREND);
 
+            boolean m15_reverse = Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_15.getTrend_by_ma_06(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_05.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_05.getTrend_by_ma_06(), REVERSE_TRADE_TREND);
+
             boolean is_close_by_algorithm = false;
             boolean is_open_by_algorithm = trade.getComment().contains(Utils.getTypeOfEpic(EPIC));
 
@@ -4305,6 +4310,9 @@ public class BinanceServiceImpl implements BinanceService {
                 take_profit = true;
             }
             if (h1_reverse && has_profit) {
+                take_profit = true;
+            }
+            if (m15_reverse && has_profit) {
                 take_profit = true;
             }
             // ---------------------------------------------------------------------------------
