@@ -3537,17 +3537,32 @@ public class Utils {
         return result;
     }
 
-    public static BigDecimal calc_amplitude_average_of_candles(List<BtcFutures> list) {
+    public static List<BigDecimal> calc_amplitude_average_of_candles(List<BtcFutures> list) {
+        BigDecimal min = BigDecimal.valueOf(1000000);
+        BigDecimal max = BigDecimal.ZERO;
         BigDecimal total = BigDecimal.ZERO;
 
         for (BtcFutures dto : list) {
             BigDecimal high_candle = dto.getHight_price().subtract(dto.getLow_price());
             total = total.add(high_candle);
+
+            if (min.compareTo(high_candle) > 0) {
+                min = high_candle;
+            }
+
+            if (max.compareTo(high_candle) < 0) {
+                max = high_candle;
+            }
         }
 
         BigDecimal avg = total.divide(BigDecimal.valueOf(list.size()), 10, RoundingMode.CEILING);
 
-        return avg;
+        List<BigDecimal> amplitudies = new ArrayList<BigDecimal>();
+        amplitudies.add(min);
+        amplitudies.add(avg);
+        amplitudies.add(max);
+
+        return amplitudies;
     }
 
     public static List<BigDecimal> getLowHighCandle(List<BtcFutures> list) {
@@ -5373,6 +5388,8 @@ public class Utils {
     }
 
     public static String get_seq_minus(Orders dto_h1, Orders dto_15, Orders dto_10, Orders dto_05, Orders dto_03) {
+        String trend_h1 = dto_h1.getTrend_of_heiken3();
+
         String switch_trend_m1x = "";
         switch_trend_m1x += dto_03.getSwitch_trend();
         if (dto_03.getTrend_by_seq_ma().contains(dto_03.getTrend_of_heiken3())
@@ -5390,7 +5407,8 @@ public class Utils {
         switch_trend_m1x += dto_15.getSwitch_trend();
 
         boolean h1_allow_trade = switch_trend_m1x.contains(Utils.TEXT_SEQ)
-                && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_15.getTrend_of_heiken3());
+                && Objects.equals(trend_h1, dto_10.getTrend_of_heiken3())
+                && Objects.equals(trend_h1, dto_15.getTrend_of_heiken3());
 
         if (h1_allow_trade) {
             if (dto_15.getSwitch_trend().contains(Utils.TEXT_SEQ)) {
@@ -5398,21 +5416,20 @@ public class Utils {
             }
 
             if (dto_10.getSwitch_trend().contains(Utils.TEXT_SEQ)
-                    && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_10.getTrend_by_seq_ma())) {
+                    && Objects.equals(trend_h1, dto_10.getTrend_by_seq_ma())) {
                 return Utils.ENCRYPTED_10;
             }
 
             if ((dto_05.getSwitch_trend() + dto_05.getTrend_by_seq_ma()).contains(Utils.TEXT_SEQ)
-                    && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_05.getTrend_by_ma_06())) {
+                    && Objects.equals(trend_h1, dto_05.getTrend_by_ma_06())) {
                 return Utils.ENCRYPTED_05;
             }
 
             if ((dto_03.getSwitch_trend() + dto_03.getTrend_by_seq_ma()).contains(Utils.TEXT_SEQ)
-                    && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_03.getTrend_by_ma_06())) {
+                    && Objects.equals(trend_h1, dto_03.getTrend_by_ma_06())) {
                 return Utils.ENCRYPTED_03;
             }
         }
-
         return "";
     }
 

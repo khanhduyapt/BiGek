@@ -122,10 +122,10 @@ public class Orders {
     private BigDecimal amplitude_avg_of_candles = BigDecimal.ZERO;
 
     @Column(name = "ma050")
-    private BigDecimal ma050 = BigDecimal.ZERO;
+    private BigDecimal amplitude_min_of_candles = BigDecimal.ZERO;
 
     @Column(name = "ma020")
-    private BigDecimal ma020 = BigDecimal.ZERO;
+    private BigDecimal amplitude_max_of_candles = BigDecimal.ZERO;
 
     @Column(name = "low_50candle")
     private BigDecimal low_50candle = BigDecimal.ZERO;

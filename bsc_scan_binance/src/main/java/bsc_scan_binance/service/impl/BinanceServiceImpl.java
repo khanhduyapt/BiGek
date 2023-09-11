@@ -2704,7 +2704,7 @@ public class BinanceServiceImpl implements BinanceService {
                 trend_reverse = "h4_h1_15_reverse";
             }
 
-            String ea = "Opening   : ";
+            String ea = " Opening : ";
             ea += Utils.appendSpace(trade.getType(), 11);
             ea += Utils.appendSpace(trade.getCompany(), 9) + " ";
             ea += "     Profit:"
@@ -2720,7 +2720,7 @@ public class BinanceServiceImpl implements BinanceService {
             ea += " TP " + Utils.appendLeft(Utils.removeLastZero(trade.getTakeProfit()), 10);
             ea += "    " + trade.getComment();
 
-            ea = Utils.appendLeft("", 120, "-") + Utils.appendSpace(ea, 60);
+            ea = Utils.appendLeft("", 125, "-") + Utils.appendSpace(ea, 60);
 
             Utils.logWritelnDraft(ea);
         }
@@ -2952,10 +2952,10 @@ public class BinanceServiceImpl implements BinanceService {
             tp = "   TP(d1): " + Utils.appendLeft(Utils.getStringValue(tp_by_d1), 10);
 
             if (Objects.equals(dto_d1.getTrend_of_heiken3(), Utils.TREND_LONG)) {
-                log += log_long.trim() + tp + "   (byD3)";
+                log += log_long.trim() + tp + Utils.appendLeft("(byD3)", 10);
             }
             if (Objects.equals(dto_d1.getTrend_of_heiken3(), Utils.TREND_SHOT)) {
-                log += log_shot.trim() + tp + "   (byD3)";
+                log += log_shot.trim() + tp + Utils.appendLeft("(byD3)", 10);
             }
         }
 
@@ -3706,10 +3706,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             String date_time = LocalDateTime.now().toString();
             String comment = trade.getComment();
-            // ----------------------------------------------------------------------------------
-            String find_trend = (trade.getType().toUpperCase().contains(Utils.TREND_LONG)) ? Utils.TREND_LONG
-                    : (trade.getType().toUpperCase().contains(Utils.TREND_SHOT)) ? Utils.TREND_SHOT : "_";
-
             String timeframe = Utils.getDeEncryptedChartNameCapital(comment);
 
             // ----------------------------------------------------------------------------------
@@ -3760,13 +3756,10 @@ public class BinanceServiceImpl implements BinanceService {
         // CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
         // ----------------------------TREND------------------------
 
-        // List<BtcFutures> list = getCapitalData(EPIC, CAPITAL_TIME_XX);
-        List<BtcFutures> heiken_list = Utils.getHeikenList(getCapitalData(EPIC, CAPITAL_TIME_XX));
+        List<BtcFutures> list = getCapitalData(EPIC, CAPITAL_TIME_XX);
+        List<BtcFutures> heiken_list = Utils.getHeikenList(list);
         if (CollectionUtils.isEmpty(heiken_list)) {
             return "";
-        }
-        if (Objects.equals(EPIC, "US100")) {
-            boolean debug = true;
         }
 
         // Trên Ma chỉ LONG, dưới Ma chỉ SHORT
@@ -3823,7 +3816,6 @@ public class BinanceServiceImpl implements BinanceService {
         String id = EPIC + "_" + CAPITAL_TIME_XX;
         String insertTime = LocalDateTime.now().toString();
 
-        int size = heiken_list.size();
         List<BigDecimal> lohi = Utils.getLowHighCandle(heiken_list);
         BigDecimal low = lohi.get(0);
         BigDecimal hig = lohi.get(1);
@@ -3862,9 +3854,10 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal long_zone = low.add((amplitude_1_part_15.multiply(BigDecimal.valueOf(5))));
         BigDecimal short_zone = hig.subtract((amplitude_1_part_15.multiply(BigDecimal.valueOf(5))));
 
-        BigDecimal amplitude_avg_of_candles = Utils.calc_amplitude_average_of_candles(heiken_list);
-        BigDecimal ma050 = BigDecimal.ZERO;
-        BigDecimal ma020 = BigDecimal.ZERO;
+        List<BigDecimal> amplitutes = Utils.calc_amplitude_average_of_candles(list);
+        BigDecimal amplitude_min_of_candles = amplitutes.get(0);
+        BigDecimal amplitude_avg_of_candles = amplitutes.get(1);
+        BigDecimal amplitude_max_of_candles = amplitutes.get(2);
 
         sub_size = 50;
         if (heiken_list.size() < 50) {
@@ -3876,18 +3869,11 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal lowest_price_of_curr_candle = heiken_list.get(0).getLow_price();
         BigDecimal highest_price_of_curr_candle = heiken_list.get(0).getHight_price();
 
-        if (size > 50) {
-            ma050 = Utils.calcMA(heiken_list, 50, 1);
-        }
-        if (size > 20) {
-            ma020 = Utils.calcMA(heiken_list, 20, 1);
-        }
-
         Orders entity = new Orders(id, insertTime, trend_of_heiken3, current_price, tp_long, tp_shot, sl_long, sl_shot,
                 switch_trend, trend_by_ma_10, tradable_zone, trend_by_ma_06, trend_by_ma_20, trend_by_ma_50,
                 trend_by_seq_ma, trend_by_bread_area, short_zone, long_zone, amplitude_1_part_15,
-                amplitude_avg_of_candles, ma050, ma020, low_50candle, hig_50candle, lowest_price_of_curr_candle,
-                highest_price_of_curr_candle, trend_of_heiken3_1);
+                amplitude_avg_of_candles, amplitude_min_of_candles, amplitude_max_of_candles, low_50candle,
+                hig_50candle, lowest_price_of_curr_candle, highest_price_of_curr_candle, trend_of_heiken3_1);
 
         ordersRepository.save(entity);
 
