@@ -182,7 +182,7 @@ public class Utils {
     public static final String CRYPTO_TIME_W1 = "1w";
     public static final String CRYPTO_TIME_MO = "1M";
 
-    public static final String CAPITAL_TIME_03 = "MINUTE_12";
+    public static final String CAPITAL_TIME_03 = "MINUTE_03";
     public static final String CAPITAL_TIME_05 = "MINUTE_05";
     public static final String CAPITAL_TIME_10 = "MINUTE_10";
     public static final String CAPITAL_TIME_15 = "MINUTE_15";
@@ -4052,7 +4052,8 @@ public class Utils {
 
         boolean is_eq_d1_h1 = Objects.equals(trend_d1, trend_h1)
                 || dto_h1.getTrend_by_seq_ma().contains(trend_d1)
-                || (Objects.equals(trend_d1, dto_h1.getTrend_by_ma_10())
+                || (Objects.equals(trend_d1, dto_h1.getTrend_by_ma_06())
+                        && Objects.equals(trend_d1, dto_h1.getTrend_by_ma_10())
                         && Objects.equals(trend_d1, dto_h1.getTrend_by_ma_20())
                         && Objects.equals(trend_d1, dto_h1.getTrend_by_ma_50()));
         if (!is_eq_d1_h1) {
@@ -4116,6 +4117,7 @@ public class Utils {
             return result;
         }
 
+        BigDecimal ma06_0 = calcMA(heiken_list, 06, 0);
         BigDecimal ma10_0 = calcMA(heiken_list, 10, 0);
         BigDecimal ma10_1 = calcMA(heiken_list, 10, 1);
         BigDecimal ma20_0 = calcMA(heiken_list, 20, 0);
@@ -4126,7 +4128,7 @@ public class Utils {
         String trend_of_heiken3 = Utils.getTrendByHekenAshiList(heiken_list);
 
         if (Objects.equals(Utils.TREND_LONG, trend_of_heiken3)) {
-            if ((ma10_0.compareTo(ma20_0) >= 0) && (ma20_0.compareTo(ma50_0) >= 0)) {
+            if ((ma06_0.compareTo(ma10_0) >= 0) && (ma10_0.compareTo(ma20_0) >= 0) && (ma20_0.compareTo(ma50_0) >= 0)) {
                 if ((ma10_1.compareTo(ma20_1) >= 0) && (ma20_1.compareTo(ma50_1) >= 0)) {
                     result = Utils.TREND_LONG;
                 }
@@ -4134,7 +4136,7 @@ public class Utils {
         }
 
         if (Objects.equals(Utils.TREND_SHOT, trend_of_heiken3)) {
-            if ((ma10_0.compareTo(ma20_0) <= 0) && (ma20_0.compareTo(ma50_0) <= 0)) {
+            if ((ma06_0.compareTo(ma10_0) <= 0) && (ma10_0.compareTo(ma20_0) <= 0) && (ma20_0.compareTo(ma50_0) <= 0)) {
                 if ((ma10_1.compareTo(ma20_1) <= 0) && (ma20_1.compareTo(ma50_1) <= 0)) {
                     result = Utils.TREND_SHOT;
                 }
@@ -5373,7 +5375,17 @@ public class Utils {
     public static String get_seq_minus(Orders dto_h1, Orders dto_15, Orders dto_10, Orders dto_05, Orders dto_03) {
         String switch_trend_m1x = "";
         switch_trend_m1x += dto_03.getSwitch_trend();
+        if (dto_03.getTrend_by_seq_ma().contains(dto_03.getTrend_of_heiken3())
+                || dto_03.getTrend_by_seq_ma().contains(dto_03.getTrend_of_heiken3_1())) {
+            switch_trend_m1x += dto_03.getTrend_by_seq_ma();
+        }
+
         switch_trend_m1x += dto_05.getSwitch_trend();
+        if (dto_05.getTrend_by_seq_ma().contains(dto_05.getTrend_of_heiken3())
+                || dto_05.getTrend_by_seq_ma().contains(dto_05.getTrend_of_heiken3_1())) {
+            switch_trend_m1x += dto_05.getTrend_by_seq_ma();
+        }
+
         switch_trend_m1x += dto_10.getSwitch_trend();
         switch_trend_m1x += dto_15.getSwitch_trend();
 
@@ -5386,17 +5398,17 @@ public class Utils {
             }
 
             if (dto_10.getSwitch_trend().contains(Utils.TEXT_SEQ)
-                    && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_10.getTrend_by_ma_06())) {
+                    && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_10.getTrend_by_seq_ma())) {
                 return Utils.ENCRYPTED_10;
             }
 
-            if (dto_05.getSwitch_trend().contains(Utils.TEXT_SEQ)
-                    && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_05.getTrend_by_ma_10())) {
+            if ((dto_05.getSwitch_trend() + dto_05.getTrend_by_seq_ma()).contains(Utils.TEXT_SEQ)
+                    && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_05.getTrend_by_ma_06())) {
                 return Utils.ENCRYPTED_05;
             }
 
-            if (dto_03.getSwitch_trend().contains(Utils.TEXT_SEQ)
-                    && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_03.getTrend_by_ma_10())) {
+            if ((dto_03.getSwitch_trend() + dto_03.getTrend_by_seq_ma()).contains(Utils.TEXT_SEQ)
+                    && Objects.equals(dto_h1.getTrend_of_heiken3(), dto_03.getTrend_by_ma_06())) {
                 return Utils.ENCRYPTED_03;
             }
         }
