@@ -3565,6 +3565,28 @@ public class Utils {
         return amplitudies;
     }
 
+    public static String get_trend_by_amplitude_of_cur_candle(BtcFutures dto_xx, BigDecimal amplitude_avg_of_candles) {
+        String result = TREND_LONG + "_" + TREND_SHOT;
+
+        BigDecimal cur_price = dto_xx.getCurrPrice();
+        BigDecimal two_thirds_of_the_pie = amplitude_avg_of_candles.multiply(BigDecimal.valueOf(0.66666));
+
+        BigDecimal low = dto_xx.getLow_price();
+        BigDecimal eoz_long = low.add(two_thirds_of_the_pie);
+
+        if (cur_price.compareTo(eoz_long) > 0) {
+            return TREND_SHOT;
+        }
+
+        BigDecimal hig = dto_xx.getHight_price();
+        BigDecimal eoz_shot = hig.subtract(two_thirds_of_the_pie);
+        if (cur_price.compareTo(eoz_shot) < 0) {
+            return TREND_LONG;
+        }
+
+        return result;
+    }
+
     public static List<BigDecimal> getLowHighCandle(List<BtcFutures> list) {
         List<BigDecimal> result = new ArrayList<BigDecimal>();
 
@@ -4108,7 +4130,7 @@ public class Utils {
         }
 
         if (dto_d1.getTradable_zone().contains(trend_h1) && dto_h4.getTradable_zone().contains(trend_h1)) {
-            if (!Objects.equals(dto_d1.getTrend_of_heiken3(), dto_d1.getTrend_of_heiken3_1())) {
+            if (!Objects.equals(dto_d1.getTrend_of_heiken3(), dto_d1.getTrend_by_ma_06())) {
                 return "";
             }
         }
@@ -5396,13 +5418,13 @@ public class Utils {
 
         switch_trend_m1x += dto_05.getSwitch_trend();
         if (dto_05.getTrend_by_seq_ma().contains(dto_05.getTrend_of_heiken3())
-                || dto_05.getTrend_by_seq_ma().contains(dto_05.getTrend_of_heiken3_1())) {
+                || dto_05.getTrend_by_seq_ma().contains(dto_05.getTrend_by_ma_06())) {
             switch_trend_m1x += dto_05.getTrend_by_seq_ma();
         }
 
         switch_trend_m1x += dto_03.getSwitch_trend();
         if (dto_03.getTrend_by_seq_ma().contains(dto_03.getTrend_of_heiken3())
-                || dto_03.getTrend_by_seq_ma().contains(dto_03.getTrend_of_heiken3_1())) {
+                || dto_03.getTrend_by_seq_ma().contains(dto_03.getTrend_by_ma_06())) {
             switch_trend_m1x += dto_03.getTrend_by_seq_ma();
         }
 

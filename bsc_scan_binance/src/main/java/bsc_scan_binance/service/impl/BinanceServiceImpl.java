@@ -3771,7 +3771,6 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_by_ma_50 = Utils.getTrendByMaXx(heiken_list, 50);
 
         String trend_of_heiken3 = Utils.getTrendByHekenAshiList(heiken_list);
-        String trend_of_heiken3_1 = Utils.getTrendByHekenAshiList(heiken_list, 3, 1);
         // ----------------------------TREND------------------------
 
         // TODO: 1. initForexTrend
@@ -3859,6 +3858,9 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal amplitude_avg_of_candles = amplitutes.get(1);
         BigDecimal amplitude_max_of_candles = amplitutes.get(2);
 
+        String trend_by_amplitude_of_cur_candle = Utils.get_trend_by_amplitude_of_cur_candle(list.get(0),
+                amplitude_avg_of_candles);
+
         sub_size = 50;
         if (heiken_list.size() < 50) {
             sub_size = heiken_list.size();
@@ -3873,7 +3875,8 @@ public class BinanceServiceImpl implements BinanceService {
                 switch_trend, trend_by_ma_10, tradable_zone, trend_by_ma_06, trend_by_ma_20, trend_by_ma_50,
                 trend_by_seq_ma, trend_by_bread_area, short_zone, long_zone, amplitude_1_part_15,
                 amplitude_avg_of_candles, amplitude_min_of_candles, amplitude_max_of_candles, low_50candle,
-                hig_50candle, lowest_price_of_curr_candle, highest_price_of_curr_candle, trend_of_heiken3_1);
+                hig_50candle, lowest_price_of_curr_candle, highest_price_of_curr_candle,
+                trend_by_amplitude_of_cur_candle);
 
         ordersRepository.save(entity);
 
@@ -3924,6 +3927,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String trend_w1 = dto_d1.getTrend_by_ma_10();
             String trend_d1 = dto_d1.getTrend_of_heiken3();
+            String trend_h1 = dto_h1.getTrend_of_heiken3();
 
             if (Utils.EPICS_STOCKS.contains(EPIC)) {
                 Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
@@ -3991,6 +3995,9 @@ public class BinanceServiceImpl implements BinanceService {
             {
                 boolean h1_tradable_zone = dto_d1.getTradable_zone().contains(trend_d1)
                         && dto_h4.getTradable_zone().contains(trend_d1);
+
+                h1_tradable_zone |= dto_d1.getTradable_zone().contains(trend_d1)
+                        && !dto_d1.getTrend_by_amplitude_of_cur_candle().contains(trend_h1);
 
                 eoz += !dto_d1.getTradable_zone().contains(find_trend_to_trade)
                         ? "D_" + Utils.getType(find_trend_to_trade).toUpperCase()
@@ -4099,6 +4106,12 @@ public class BinanceServiceImpl implements BinanceService {
                 debug = true;
             }
 
+            boolean allow_trade_by_amplitude = dto_d1.getTrend_by_amplitude_of_cur_candle()
+                    .contains(dto_h1.getTrend_of_heiken3());
+            if (!allow_trade_by_amplitude) {
+                continue;
+            }
+
             String seq_minus = Utils.get_seq_minus(dto_h1, dto_15, dto_10, dto_05, dto_03);
             if (Utils.isBlank(seq_minus)) {
                 continue;
@@ -4145,6 +4158,7 @@ public class BinanceServiceImpl implements BinanceService {
                             && Objects.equals(trend_h1, trend_h4)
                             && dto_d1.getTradable_zone().contains(trend_h1)
                             && dto_h4.getTradable_zone().contains(trend_h1)
+                            && dto_h1.getTradable_zone().contains(trend_h1)
 
                             && !is_opening_trade(EPIC, trend_h1)) {
                         append += "_dagach";
