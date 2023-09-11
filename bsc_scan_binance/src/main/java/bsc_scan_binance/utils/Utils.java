@@ -3565,11 +3565,11 @@ public class Utils {
         return amplitudies;
     }
 
-    public static String get_trend_by_amplitude_of_cur_candle(BtcFutures dto_xx, BigDecimal amplitude_avg_of_candles) {
+    public static String get_trend_by_amplitude_of_cur_candle(BtcFutures dto_xx, BigDecimal amplitude_of_d1_candle) {
         String result = TREND_LONG + "_" + TREND_SHOT;
 
         BigDecimal cur_price = dto_xx.getCurrPrice();
-        BigDecimal two_thirds_of_the_pie = amplitude_avg_of_candles.multiply(BigDecimal.valueOf(0.68));
+        BigDecimal two_thirds_of_the_pie = amplitude_of_d1_candle.multiply(BigDecimal.valueOf(0.66666));
 
         BigDecimal low = dto_xx.getLow_price();
         BigDecimal eoz_long = low.add(two_thirds_of_the_pie);

@@ -3859,7 +3859,7 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal amplitude_max_of_candles = amplitutes.get(2);
 
         String trend_by_amplitude_of_cur_candle = Utils.get_trend_by_amplitude_of_cur_candle(list.get(0),
-                amplitude_avg_of_candles);
+                amplitude_min_of_candles);
 
         sub_size = 50;
         if (heiken_list.size() < 50) {
@@ -4115,7 +4115,9 @@ public class BinanceServiceImpl implements BinanceService {
             boolean allow_trade_by_trend_h1 = Objects.equals(trend_h1, trend_15)
                     && Objects.equals(trend_h1, dto_10.getTrend_of_heiken3())
                     && Objects.equals(trend_h1, dto_05.getTrend_by_ma_06())
-                    && Objects.equals(trend_h1, dto_03.getTrend_by_ma_06());
+                    && Objects.equals(trend_h1, dto_05.getTrend_of_heiken3())
+                    && Objects.equals(trend_h1, dto_03.getTrend_by_ma_06())
+                    && Objects.equals(trend_h1, dto_03.getTrend_of_heiken3());
             if (!allow_trade_by_trend_h1) {
                 continue;
             }
