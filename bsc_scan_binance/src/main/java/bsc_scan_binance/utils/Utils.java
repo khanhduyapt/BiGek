@@ -3569,7 +3569,7 @@ public class Utils {
         String result = TREND_LONG + "_" + TREND_SHOT;
 
         BigDecimal cur_price = dto_xx.getCurrPrice();
-        BigDecimal two_thirds_of_the_pie = amplitude_avg_of_candles.multiply(BigDecimal.valueOf(0.66666));
+        BigDecimal two_thirds_of_the_pie = amplitude_avg_of_candles.multiply(BigDecimal.valueOf(0.68));
 
         BigDecimal low = dto_xx.getLow_price();
         BigDecimal eoz_long = low.add(two_thirds_of_the_pie);

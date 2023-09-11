@@ -2704,7 +2704,7 @@ public class BinanceServiceImpl implements BinanceService {
                 trend_reverse = "h4_h1_15_reverse";
             }
 
-            String ea = " Opening : ";
+            String ea = "Opening : ";
             ea += Utils.appendSpace(trade.getType(), 11);
             ea += Utils.appendSpace(trade.getCompany(), 9) + " ";
             ea += "     Profit:"
@@ -2720,7 +2720,7 @@ public class BinanceServiceImpl implements BinanceService {
             ea += " TP " + Utils.appendLeft(Utils.removeLastZero(trade.getTakeProfit()), 10);
             ea += "    " + trade.getComment();
 
-            ea = Utils.appendLeft("", 125, "-") + Utils.appendSpace(ea, 60);
+            ea = Utils.appendLeft("", 180, " ") + Utils.appendSpace(ea, 60);
 
             Utils.logWritelnDraft(ea);
         }
@@ -3993,11 +3993,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String eoz = "EOZ:";
             {
-                boolean h1_tradable_zone = dto_d1.getTradable_zone().contains(trend_d1)
-                        && dto_h4.getTradable_zone().contains(trend_d1);
-
-                h1_tradable_zone |= dto_d1.getTradable_zone().contains(trend_d1)
-                        && !dto_d1.getTrend_by_amplitude_of_cur_candle().contains(trend_h1);
+                boolean h1_tradable_zone = dto_d1.getTrend_by_amplitude_of_cur_candle().contains(trend_h1);
 
                 eoz += !dto_d1.getTradable_zone().contains(find_trend_to_trade)
                         ? "D_" + Utils.getType(find_trend_to_trade).toUpperCase()
@@ -4112,27 +4108,26 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
+            String trend_d1 = dto_d1.getTrend_of_heiken3();
+            String trend_h4 = dto_h4.getTrend_of_heiken3();
+            String trend_h1 = dto_h1.getTrend_of_heiken3();
+            String trend_15 = dto_15.getTrend_of_heiken3();
+            boolean allow_trade_by_trend_h1 = Objects.equals(trend_h1, trend_15)
+                    && Objects.equals(trend_h1, dto_10.getTrend_of_heiken3())
+                    && Objects.equals(trend_h1, dto_05.getTrend_by_ma_06())
+                    && Objects.equals(trend_h1, dto_03.getTrend_by_ma_06());
+            if (!allow_trade_by_trend_h1) {
+                continue;
+            }
+
             String seq_minus = Utils.get_seq_minus(dto_h1, dto_15, dto_10, dto_05, dto_03);
             if (Utils.isBlank(seq_minus)) {
                 continue;
             }
 
-            String trend_d1 = dto_d1.getTrend_of_heiken3();
-            String trend_h4 = dto_h4.getTrend_of_heiken3();
-            String trend_h1 = dto_h1.getTrend_of_heiken3();
-            String trend_15 = dto_15.getTrend_of_heiken3();
-            String find_trend_to_trade = trend_h1;
-
-            boolean allow_trade = Objects.equals(trend_h1, trend_15)
-                    && Objects.equals(trend_h1, dto_10.getTrend_of_heiken3())
-                    && Objects.equals(trend_h1, dto_05.getTrend_by_ma_06())
-                    && Objects.equals(trend_h1, dto_03.getTrend_by_ma_06());
-            if (!allow_trade) {
-                continue;
-            }
-
             String append = "";
             Mt5OpenTrade trade_dto = null;
+            String find_trend_to_trade = trend_h1;
 
             if (NOTICE_LIST.contains(EPIC)) {
                 append += Utils.TEXT_NOTICE_ONLY;
