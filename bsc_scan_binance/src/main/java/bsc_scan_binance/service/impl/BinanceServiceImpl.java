@@ -4120,10 +4120,13 @@ public class BinanceServiceImpl implements BinanceService {
             boolean allow_trade_by_amplitude = dto_d1.getTrend_by_amplitude_of_cur_candle()
                     .contains(dto_h1.getTrend_of_heiken3());
             if (!allow_trade_by_amplitude) {
-                // continue;
+                continue;
             }
 
-            boolean allow_trade_by_trend_h1 = Objects.equals(trend_h1, trend_15)
+            boolean allow_trade_by_trend_h1 = dto_d1.getTradable_zone().contains(trend_h1)
+                    && dto_h4.getTradable_zone().contains(trend_h1)
+                    && dto_h1.getTradable_zone().contains(trend_h1)
+                    && Objects.equals(trend_h1, trend_15)
                     && Objects.equals(trend_h1, dto_10.getTrend_of_heiken3())
                     && Objects.equals(trend_h1, dto_05.getTrend_by_ma_06())
                     && Objects.equals(trend_h1, dto_05.getTrend_of_heiken3())
