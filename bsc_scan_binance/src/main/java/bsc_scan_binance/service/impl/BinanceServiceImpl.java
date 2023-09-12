@@ -3907,6 +3907,12 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean debug = true;
             }
 
+            if ((dto_d1.getTrend_by_seq_ma() + dto_d1.getSwitch_trend()).contains(Utils.TEXT_SEQ)
+                    && !(dto_d1.getTrend_by_seq_ma() + dto_d1.getSwitch_trend())
+                            .contains(dto_d1.getTrend_of_heiken3())) {
+                continue;
+            }
+
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(dto_h1);
             Orders dto_10 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_10).orElse(dto_15);
@@ -4309,7 +4315,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_05.getTrend_by_ma_06(), REVERSE_TRADE_TREND);
 
             boolean is_close_by_algorithm = false;
-            boolean is_open_by_algorithm = trade.getComment().contains(Utils.getTypeOfEpic(EPIC));
+            boolean is_open_by_algorithm = Utils.isNotBlank(trade.getComment());
 
             if (is_open_by_algorithm && h1_reverse) {
                 is_close_by_algorithm = true;
@@ -4337,7 +4343,8 @@ public class BinanceServiceImpl implements BinanceService {
                 is_hit_sl = true;
             }
 
-            if (Objects.equals(dto_d1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
+            if (is_open_by_algorithm
+                    && Objects.equals(dto_d1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
@@ -4369,30 +4376,18 @@ public class BinanceServiceImpl implements BinanceService {
                 if (!"__HOLDING____".contains("_" + EPIC + "_")) {
                     if (is_hit_sl || take_profit) {
                         BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
+
+                        String key = trade.getSymbol() + "_" + trade.getType() + trade.getTimeframe();
+                        if (isReloadAfter(Utils.MINUTES_OF_1H, key)) {
+                            keys += key;
+                            msg += "(" + trade.getCompany() + ") " + prifix + trade.getSymbol() + ":";
+                            msg += Utils.getStringValue(trade.getProfit().intValue()) + "$:" + reason
+                                    + Utils.new_line_from_service;
+                        }
                     }
                 }
                 // --------------------------------------------------------------------------
-
-                String key = trade.getSymbol() + "_" + trade.getType() + trade.getTimeframe();
-                if (isReloadAfter(Utils.MINUTES_OF_1H, key)) {
-                    keys += key;
-                    msg += "(" + trade.getCompany() + ") " + prifix + trade.getSymbol() + ":";
-                    msg += Utils.getStringValue(trade.getProfit().intValue()) + "$:" + reason
-                            + Utils.new_line_from_service;
-                }
                 String log = Utils.createCloseTradeMsg(trade, prifix, reason);
-                Utils.logWritelnDraft(log);
-
-            } else if (h1_reverse && has_profit) {
-                String key = trade.getSymbol() + "_" + trade.getType() + trade.getTimeframe();
-                if (isReloadAfter(Utils.MINUTES_OF_1H, key)) {
-                    keys += key;
-                    msg += "(" + trade.getCompany() + ") " + "Take_Profit: " + trade.getSymbol() + ":";
-                    msg += Utils.getStringValue(trade.getProfit().intValue()) + "$:" + "(h1_reverse)"
-                            + Utils.new_line_from_service;
-                }
-
-                String log = Utils.createCloseTradeMsg(trade, "Take_Profit: ", "(h1_reverse)");
                 Utils.logWritelnDraft(log);
             }
         }
