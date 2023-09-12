@@ -5021,14 +5021,8 @@ public class Utils {
         boolean ma3_1_uptrend = true;
         boolean ma3_2_uptrend = true;
 
-        String id = heiken_list.get(0).getId();
-        if (id.contains(PREFIX_MO1) || id.contains(PREFIX_W01) || id.contains(PREFIX_D01)) {
-            ma3_1_uptrend = isUptrendByMa(heiken_list, 3, 0, 1);
-            ma3_2_uptrend = isUptrendByMa(heiken_list, 3, 1, 2);
-        } else {
-            ma3_1_uptrend = isUptrendByMa(heiken_list, 3, 1, 2);
-            ma3_2_uptrend = isUptrendByMa(heiken_list, 3, 2, 3);
-        }
+        ma3_1_uptrend = isUptrendByMa(heiken_list, 3, 0, 1);
+        ma3_2_uptrend = isUptrendByMa(heiken_list, 3, 1, 2);
 
         if (ma3_1_uptrend != ma3_2_uptrend) {
             String chart_name = getChartName(heiken_list).replace(")", "").trim() + " ";
