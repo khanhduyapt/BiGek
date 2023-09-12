@@ -5347,16 +5347,16 @@ public class Utils {
         boolean has_seq_minus = false;
         String trend_h1 = dto_h1.getTrend_of_heiken3();
 
-        if (dto_h1.getSwitch_trend().contains(Utils.TEXT_SEQ)
-                && dto_15.getSwitch_trend().contains(dto_15.getTrend_of_heiken3())
-                && dto_h1.getSwitch_trend().contains(trend_h1)) {
-            has_seq = true;
-            has_seq_h1 = true;
-            seq += "h1" + getType(dto_h1.getTrend_by_ma_10());
-        } else {
-            seq += "   ";
-        }
-        seq += " ";
+        //if (dto_h1.getSwitch_trend().contains(Utils.TEXT_SEQ)
+        //        && dto_15.getSwitch_trend().contains(dto_15.getTrend_of_heiken3())
+        //        && dto_h1.getSwitch_trend().contains(trend_h1)) {
+        //    has_seq = true;
+        //    has_seq_h1 = true;
+        //    seq += "h1" + getType(dto_h1.getTrend_by_ma_10());
+        //} else {
+        //    seq += "   ";
+        //}
+        //seq += " ";
 
         if (dto_15.getTrend_by_seq_ma().contains(Utils.TEXT_SEQ)
                 && dto_15.getTrend_by_seq_ma().contains(trend_h1)
