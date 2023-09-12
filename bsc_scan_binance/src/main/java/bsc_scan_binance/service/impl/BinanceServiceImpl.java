@@ -4354,8 +4354,18 @@ public class BinanceServiceImpl implements BinanceService {
                 is_hit_sl = true;
             }
             // -------------------------------------------------------------------------------------
-            // ---------------------------------------------------------------------------------
-            if ((take_profit || is_hit_sl || is_close_by_algorithm)
+            // -------------------------------------------------------------------------------------
+            boolean is_append_trade = false;
+            boolean allow_append_trade = PROFIT.add(BigDecimal.valueOf(100)).compareTo(BigDecimal.ZERO) < 0;
+            if (allow_append_trade) {
+                String seq_minus = Utils.get_seq_minus(dto_h1, dto_15, dto_10, dto_05, dto_03);
+                if (Objects.equals(dto_h1.getTrend_of_heiken3(), TRADING_TREND) && Utils.isNotBlank(seq_minus)) {
+                    is_append_trade = true;
+                }
+            }
+            // -------------------------------------------------------------------------------------
+            // -------------------------------------------------------------------------------------
+            if ((take_profit || is_hit_sl || is_close_by_algorithm || is_append_trade)
                     && allow_close_trade_after(TICKET, Utils.MINUTES_OF_1H)) {
                 String reason = "";
 
@@ -4377,15 +4387,19 @@ public class BinanceServiceImpl implements BinanceService {
                     if (is_hit_sl || take_profit) {
                         BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
 
-                        String key = trade.getSymbol() + "_" + trade.getType() + trade.getTimeframe();
-                        if (isReloadAfter(Utils.MINUTES_OF_1H, key)) {
-                            keys += key;
-                            msg += "(" + trade.getCompany() + ") " + prifix + trade.getSymbol() + ":";
-                            msg += Utils.getStringValue(trade.getProfit().intValue()) + "$:" + reason
-                                    + Utils.new_line_from_service;
-                        }
                     }
                 }
+
+                if (is_append_trade) {
+                    String key = trade.getSymbol() + "_" + trade.getType() + trade.getTimeframe();
+                    if (isReloadAfter(Utils.MINUTES_OF_1H, key)) {
+                        keys += key;
+                        msg += "(" + trade.getCompany() + ") " + prifix + trade.getSymbol() + ":";
+                        msg += Utils.getStringValue(trade.getProfit().intValue()) + "$:" + reason
+                                + Utils.new_line_from_service;
+                    }
+                }
+
                 // --------------------------------------------------------------------------
                 String log = Utils.createCloseTradeMsg(trade, prifix, reason);
                 Utils.logWritelnDraft(log);
