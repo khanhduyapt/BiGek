@@ -3902,17 +3902,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
-
-            if (EPIC.contains("EURNZD")) {
-                boolean debug = true;
-            }
-
-            if ((dto_d1.getTrend_by_seq_ma() + dto_d1.getSwitch_trend()).contains(Utils.TEXT_SEQ)
-                    && !(dto_d1.getTrend_by_seq_ma() + dto_d1.getSwitch_trend())
-                            .contains(dto_d1.getTrend_of_heiken3())) {
-                continue;
-            }
-
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(dto_h1);
             Orders dto_10 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_10).orElse(dto_15);
@@ -3928,6 +3917,16 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnDraft(String.format("[controlMt5] dto (%s) :  %s, %s, %s, %s.",
                         Utils.appendSpace(EPIC, 10), d1, h4, h1, mi));
 
+                continue;
+            }
+
+            if (EPIC.contains("EURNZD")) {
+                boolean debug = true;
+            }
+
+            if ((dto_d1.getTrend_by_seq_ma() + dto_d1.getSwitch_trend()).contains(Utils.TEXT_SEQ)
+                    && !(dto_d1.getTrend_by_seq_ma() + dto_d1.getSwitch_trend())
+                            .contains(dto_d1.getTrend_of_heiken3())) {
                 continue;
             }
 
