@@ -4158,7 +4158,6 @@ public class BinanceServiceImpl implements BinanceService {
                     String seq_folow_h1 = Utils.get_seq(dto_h1, dto_15, dto_10, dto_05, dto_03);
                     if (Utils.isNotBlank(seq_folow_h1)
                             && Objects.equals(trend_h1, trend_w1)
-                            && Objects.equals(trend_h1, trend_d1)
                             && Objects.equals(trend_h1, trend_h4)
                             && dto_d1.getTradable_zone().contains(trend_h1)
                             && dto_h4.getTradable_zone().contains(trend_h1)
@@ -4181,7 +4180,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     boolean h1_allow_trade = Objects.equals(trend_h1, find_trend_to_trade)
                             && dto_d1.getTradable_zone().contains(find_trend_to_trade)
-                            // && dto_h4.getTradable_zone().contains(find_trend_to_trade)
+                            && dto_h4.getTradable_zone().contains(find_trend_to_trade)
 
                             && (Objects.equals(trend_h4, find_trend_to_trade)
                                     || Objects.equals(dto_h4.getTrend_by_ma_10(), find_trend_to_trade)
