@@ -2766,7 +2766,7 @@ public class BinanceServiceImpl implements BinanceService {
                     writer.write(sb.toString());
                 }
 
-                System.out.println("CloseTicket: " + TICKET + "    Resion: "
+                System.out.println("CloseTicket: " + TICKET + "    " + EPIC + "    Resion: "
                         + BscScanBinanceApplication.mt5_close_ticket_dict.get(TICKET));
             }
 
@@ -3897,9 +3897,7 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            // Orders dto_w1 = ordersRepository.findById(EPIC + "_" +
-            // Utils.CAPITAL_TIME_W1).orElse(null);
-
+            Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
@@ -3908,7 +3906,8 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(dto_15);
             Orders dto_03 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_03).orElse(dto_15);
 
-            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)) {
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
+                    || Objects.isNull(dto_15)) {
                 String d1 = "D1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
                 String h4 = "H4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
                 String h1 = "H1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
@@ -3930,21 +3929,9 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            String trend_w1 = dto_d1.getTrend_by_ma_10();
+            String trend_w1 = dto_w1.getTrend_of_heiken3();
             String trend_d1 = dto_d1.getTrend_of_heiken3();
             String trend_h1 = dto_h1.getTrend_of_heiken3();
-
-            if (Utils.EPICS_STOCKS.contains(EPIC)) {
-                Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
-                if (Objects.nonNull(dto_w1)) {
-                    trend_w1 = dto_w1.getTrend_of_heiken3();
-                } else {
-                    String w1 = "W1:" + (Objects.isNull(dto_w1) ? "null" : "    ");
-                    Utils.logWritelnDraft(
-                            String.format("[controlMt5] dto (%s) :  %s.", Utils.appendSpace(EPIC, 10), w1));
-                    continue;
-                }
-            }
 
             String find_trend_to_trade = Utils.find_trend_to_trade(dto_d1, dto_h4, dto_h1);
 
@@ -4083,6 +4070,7 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO: 5. closeTrade_by_SL_TP
         Collections.sort(CAPITAL_LIST);
         for (String EPIC : CAPITAL_LIST) {
+            Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
@@ -4092,14 +4080,17 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(dto_15);
             Orders dto_03 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_03).orElse(dto_15);
 
-            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)) {
-                String d01 = "d1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
-                String h04 = "h4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
-                String h01 = "h1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
-                String m15 = "15:" + (Objects.isNull(dto_15) ? "null" : "    ");
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
+                    || Objects.isNull(dto_15)) {
+                String str_null = "";
+                str_null += "w1:" + (Objects.isNull(dto_w1) ? "null" : "    ");
+                str_null += "d1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
+                str_null += "h4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
+                str_null += "h1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
+                str_null += "15:" + (Objects.isNull(dto_15) ? "null" : "    ");
 
-                Utils.logWritelnDraft(String.format("[closetrade_by_sl_tp_control_mt5] dto (%s): %s, %s, %s, %s.",
-                        Utils.appendSpace(EPIC, 10), d01, h04, h01, m15));
+                Utils.logWritelnDraft(String.format("[closetrade_by_sl_tp_control_mt5] dto (%s): %s.",
+                        Utils.appendSpace(EPIC, 10), str_null));
                 continue;
             }
 
@@ -4107,6 +4098,7 @@ public class BinanceServiceImpl implements BinanceService {
                 debug = true;
             }
 
+            String trend_w1 = dto_w1.getTrend_of_heiken3();
             String trend_d1 = dto_d1.getTrend_of_heiken3();
             String trend_h4 = dto_h4.getTrend_of_heiken3();
             String trend_h1 = dto_h1.getTrend_of_heiken3();
@@ -4165,6 +4157,7 @@ public class BinanceServiceImpl implements BinanceService {
                 } else {
                     String seq_folow_h1 = Utils.get_seq(dto_h1, dto_15, dto_10, dto_05, dto_03);
                     if (Utils.isNotBlank(seq_folow_h1)
+                            && Objects.equals(trend_h1, trend_w1)
                             && Objects.equals(trend_h1, trend_d1)
                             && Objects.equals(trend_h1, trend_h4)
                             && dto_d1.getTradable_zone().contains(trend_h1)
@@ -4180,7 +4173,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // --------------------------------------------------------------------------------------------
             boolean is_allows_trend_trading = false;
-            if (!is_position_trade) {
+            if (!is_position_trade && Objects.equals(trend_w1, trend_d1)) {
                 find_trend_to_trade = Utils.find_trend_to_trade(dto_d1, dto_h4, dto_h1);
 
                 if (Utils.isNotBlank(find_trend_to_trade)) {
