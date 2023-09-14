@@ -3837,11 +3837,7 @@ public class BinanceServiceImpl implements BinanceService {
             bread = amplitude_1_part_15;
         }
 
-        int sub_size = 10;
-        if (CAPITAL_TIME_XX.contains("MINUTE_")) {
-            sub_size = 25;
-        }
-        List<BigDecimal> lohi_10 = Utils.getLowHighCandle(heiken_list.subList(0, sub_size));
+        List<BigDecimal> lohi_10 = Utils.getLowHighCandle(heiken_list.subList(0, 10));
         BigDecimal sl_long = lohi_10.get(0).subtract(bread);
         BigDecimal sl_shot = lohi_10.get(1).add(bread);
 
@@ -3854,14 +3850,15 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal short_zone = hig.subtract((amplitude_1_part_15.multiply(BigDecimal.valueOf(5))));
 
         List<BigDecimal> amplitutes = Utils.calc_amplitude_average_of_candles(list);
-        BigDecimal amplitude_min_of_candles = amplitutes.get(0);
         BigDecimal amplitude_avg_of_candles = amplitutes.get(1);
-        BigDecimal amplitude_max_of_candles = amplitutes.get(2);
+
+        BigDecimal low_10candle = lohi_10.get(0);
+        BigDecimal hig_10candle = lohi_10.get(1);
 
         String trend_by_amplitude_of_cur_candle = Utils.get_trend_by_amplitude_of_cur_candle(list.get(0),
                 amplitude_avg_of_candles);
 
-        sub_size = 50;
+        int sub_size = 50;
         if (heiken_list.size() < 50) {
             sub_size = heiken_list.size();
         }
@@ -3874,8 +3871,8 @@ public class BinanceServiceImpl implements BinanceService {
         Orders entity = new Orders(id, insertTime, trend_of_heiken3, current_price, tp_long, tp_shot, sl_long, sl_shot,
                 switch_trend, trend_by_ma_10, tradable_zone, trend_by_ma_06, trend_by_ma_20, trend_by_ma_50,
                 trend_by_seq_ma, trend_by_bread_area, short_zone, long_zone, amplitude_1_part_15,
-                amplitude_avg_of_candles, amplitude_min_of_candles, amplitude_max_of_candles, low_50candle,
-                hig_50candle, lowest_price_of_curr_candle, highest_price_of_curr_candle,
+                amplitude_avg_of_candles, low_10candle, hig_10candle,
+                low_50candle, hig_50candle, lowest_price_of_curr_candle, highest_price_of_curr_candle,
                 trend_by_amplitude_of_cur_candle);
 
         ordersRepository.save(entity);
@@ -3974,7 +3971,7 @@ public class BinanceServiceImpl implements BinanceService {
                 seq += Utils.get_seq_chart(dto_h4, find_trend_to_trade);
                 seq += Utils.get_seq_chart(dto_h1, find_trend_to_trade);
 
-                String seq_minus = Utils.get_seq_minus(dto_h1, dto_15, dto_10, dto_05, dto_03);
+                String seq_minus = Utils.get_seq_minus(trend_h1, dto_15, dto_10, dto_05, dto_03);
                 if (Utils.isNotBlank(seq_minus)) {
                     seq_minus = Utils.TEXT_SEQ + seq_minus;
                     seq_minus += "_" + Utils.getType(dto_15.getTrend_of_heiken3());
@@ -4128,7 +4125,7 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            String seq_minus = Utils.get_seq_minus(dto_h1, dto_15, dto_10, dto_05, dto_03);
+            String seq_minus = Utils.get_seq_minus(trend_h1, dto_15, dto_10, dto_05, dto_03);
             if (Utils.isBlank(seq_minus)) {
                 continue;
             }
@@ -4141,10 +4138,25 @@ public class BinanceServiceImpl implements BinanceService {
                 append += Utils.TEXT_NOTICE_ONLY;
             }
             // --------------------------------------------------------------------------------------------
+            boolean is_a_specialepic = false;
+            if ("_EURUSD_AUDUSD_GBPNZD_XAUUSD_".contains(EPIC)) {
+                if (Objects.equals(trend_h1, trend_w1)
+                        && Objects.equals(trend_h1, trend_15)
+                        && Utils.isNotBlank(dto_h1.getSwitch_trend() + dto_15.getSwitch_trend())
+                        && dto_d1.getTradable_zone().contains(trend_h1)
+                        && dto_h4.getTradable_zone().contains(trend_h1)
+                        && dto_h1.getTradable_zone().contains(trend_h1)) {
+                    append += "_dacbie";
+                    is_a_specialepic = true;
+                }
+            }
+
+            // --------------------------------------------------------------------------------------------
             boolean is_position_trade = false;
 
-            is_position_trade = Objects.equals(trend_h1, trend_h4) && Objects.equals(trend_h1, trend_15)
-                    && dto_d1.getTrend_by_bread_area().contains(trend_15);
+            is_position_trade = dto_d1.getTrend_by_bread_area().contains(trend_h1)
+                    && Objects.equals(trend_h1, trend_h4)
+                    && Objects.equals(trend_h1, trend_15);
 
             if (is_position_trade) {
                 append += "_vithed";
@@ -4158,6 +4170,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String seq_folow_h1 = Utils.get_seq(dto_h1, dto_15, dto_10, dto_05, dto_03);
                     if (Utils.isNotBlank(seq_folow_h1)
                             && Objects.equals(trend_h1, trend_w1)
+                            && Objects.equals(trend_h1, trend_d1)
                             && Objects.equals(trend_h1, trend_h4)
                             && dto_d1.getTradable_zone().contains(trend_h1)
                             && dto_h4.getTradable_zone().contains(trend_h1)
@@ -4215,16 +4228,16 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // --------------------------------------------------------------------------------------------
-            if (is_position_trade || is_allows_trend_trading) {
+            if (is_position_trade || is_allows_trend_trading || is_a_specialepic) {
                 append += seq_minus + Utils.TEXT_PASS;
 
                 if (is_position_trade) {
                     find_trend_to_trade = trend_h1;
 
-                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, find_trend_to_trade, dto_10, dto_h1, dto_d1, append, true,
+                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, find_trend_to_trade, dto_15, dto_h1, dto_d1, append, true,
                             Utils.CAPITAL_TIME_15);
                 } else {
-                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, find_trend_to_trade, dto_10, dto_h1, dto_d1, append, true,
+                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, find_trend_to_trade, dto_15, dto_h1, dto_d1, append, true,
                             Utils.CAPITAL_TIME_15);
                 }
 
@@ -4234,7 +4247,6 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
             }
-
         }
         // ----------------------------------------------------------------------------------------------
         // ---------------------------------------close_trade--------------------------------------------
@@ -4288,6 +4300,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 continue;
             }
+            String trend_h1 = dto_h1.getTrend_of_heiken3();
             // -------------------------------------------------------------------------------------
             // ----------------------------------------------------------------------------------------------
             boolean take_profit = false;
@@ -4352,7 +4365,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_append_trade = false;
             boolean allow_append_trade = PROFIT.add(BigDecimal.valueOf(100)).compareTo(BigDecimal.ZERO) < 0;
             if (allow_append_trade) {
-                String seq_minus = Utils.get_seq_minus(dto_h1, dto_15, dto_10, dto_05, dto_03);
+                String seq_minus = Utils.get_seq_minus(trend_h1, dto_15, dto_10, dto_05, dto_03);
                 if (Objects.equals(dto_h1.getTrend_of_heiken3(), TRADING_TREND) && Utils.isNotBlank(seq_minus)) {
                     is_append_trade = true;
                 }

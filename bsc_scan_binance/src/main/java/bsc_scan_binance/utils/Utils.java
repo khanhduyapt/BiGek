@@ -632,7 +632,7 @@ public class Utils {
             return BigDecimal.valueOf(0.2);
 
         case "AUS200":
-            return BigDecimal.valueOf(2.5);
+            return BigDecimal.valueOf(2.0);
 
         case "BABA":
             return BigDecimal.valueOf(30);
@@ -656,7 +656,7 @@ public class Utils {
             return BigDecimal.valueOf(25);
 
         case "EU50":
-            return BigDecimal.valueOf(2.5);
+            return BigDecimal.valueOf(2.0);
 
         case "EURAUD":
             return BigDecimal.valueOf(0.15);
@@ -680,7 +680,7 @@ public class Utils {
             return BigDecimal.valueOf(0.15);
 
         case "FRA40":
-            return BigDecimal.valueOf(1.5);
+            return BigDecimal.valueOf(1.0);
 
         case "GBPAUD":
             return BigDecimal.valueOf(0.2);
@@ -3153,6 +3153,29 @@ public class Utils {
         return result;
     }
 
+    public static BigDecimal calc_tp_by_amplitude_of_h1(Orders dto_h1, Orders dto_15, String trend) {
+        BigDecimal tp = BigDecimal.ZERO;
+        if (Objects.equals(trend, Utils.TREND_LONG)) {
+            BigDecimal low = dto_15.getLow_10candle();
+            tp = low.add(dto_h1.getAmplitude_avg_of_candles());
+
+            if (tp.compareTo(dto_h1.getCurrent_price().add(dto_h1.getAmplitude_1_part_15())) < 0) {
+                tp = tp.add(dto_h1.getAmplitude_1_part_15());
+            }
+        }
+
+        if (Objects.equals(trend, Utils.TREND_SHOT)) {
+            BigDecimal hig = dto_15.getHig_10candle();
+            tp = hig.subtract(dto_h1.getAmplitude_avg_of_candles());
+
+            if (tp.compareTo(dto_h1.getCurrent_price().subtract(dto_h1.getAmplitude_1_part_15())) < 0) {
+                tp = tp.subtract(dto_h1.getAmplitude_1_part_15());
+            }
+        }
+
+        return tp;
+    }
+
     public static BigDecimal calc_tp_by_amplitude_of_d1(Orders dto_d1, String trend) {
         BigDecimal tp = BigDecimal.ZERO;
 
@@ -5162,24 +5185,26 @@ public class Utils {
         return tmp_msg + url;
     }
 
-    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_en, Orders dto_sl, Orders dto_d1,
+    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_15, Orders dto_h1, Orders dto_d1,
             String append, boolean isTradeNow, String CAPITAL_TIME_XX) {
 
-        BigDecimal entry = dto_en.getCurrent_price();
+        BigDecimal entry = dto_15.getCurrent_price();
         if (Objects.equals(trend, Utils.TREND_LONG)) {
-            entry = dto_en.getLow_50candle();
+            entry = dto_15.getLow_50candle();
         } else if (Objects.equals(trend, Utils.TREND_SHOT)) {
-            entry = dto_en.getHig_50candle();
+            entry = dto_15.getHig_50candle();
         } else {
             Utils.logWritelnDraft("(ERROR_LONG_OR_SHORT?) calc_Lot_En_SL_TP:trend=" + trend);
             return null;
         }
 
-        List<BigDecimal> sl1 = Utils.calc_sl1_tp2(dto_sl, trend);
+        List<BigDecimal> sl1 = Utils.calc_sl1_tp2(dto_h1, trend);
         BigDecimal sl = sl1.get(0);
-        BigDecimal tp = calc_tp_by_amplitude_of_d1(dto_d1, trend);
 
-        MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, RISK_PER_TRADE, dto_en.getCurrent_price(), sl, tp);
+        // BigDecimal tp = calc_tp_by_amplitude_of_d1(dto_d1, trend);
+        BigDecimal tp = calc_tp_by_amplitude_of_h1(dto_h1, dto_15, trend);
+
+        MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, RISK_PER_TRADE, dto_15.getCurrent_price(), sl, tp);
         BigDecimal volume = money.calcLot();
 
         BigDecimal standard_vol = get_standard_vol_per_100usd(EPIC);
@@ -5190,12 +5215,16 @@ public class Utils {
             volume = standard_vol.multiply(BigDecimal.valueOf(2));
         }
 
+        if (!EPICS_FOREXS_ALL.contains(EPIC) && volume.compareTo(standard_vol) > 0) {
+            volume = standard_vol;
+        }
+
         String type = Objects.equals(trend, Utils.TREND_LONG) ? "_b" : "_s";
 
         Mt5OpenTrade dto = new Mt5OpenTrade();
         dto.setEpic(EPIC);
         dto.setOrder_type(trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
-        dto.setCur_price(dto_en.getCurrent_price());
+        dto.setCur_price(dto_15.getCurrent_price());
         dto.setLots(volume);
         dto.setEntry(entry);
         dto.setStop_loss(sl);
@@ -5403,8 +5432,7 @@ public class Utils {
         return seq;
     }
 
-    public static String get_seq_minus(Orders dto_h1, Orders dto_15, Orders dto_10, Orders dto_05, Orders dto_03) {
-        String trend_h1 = dto_h1.getTrend_of_heiken3();
+    public static String get_seq_minus(String trend_h1, Orders dto_15, Orders dto_10, Orders dto_05, Orders dto_03) {
 
         String switch_trend_m1x = "";
         switch_trend_m1x += dto_15.getSwitch_trend();
