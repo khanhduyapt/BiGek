@@ -3153,14 +3153,14 @@ public class Utils {
         return result;
     }
 
-    public static BigDecimal calc_tp_by_amplitude_of_h1(Orders dto_h1, String trend) {
+    public static BigDecimal calc_tp_by_amplitude_of_candle(Orders dto_h4, String trend) {
         BigDecimal tp = BigDecimal.ZERO;
         if (Objects.equals(trend, Utils.TREND_LONG)) {
-            tp = dto_h1.getCurrent_price().add(dto_h1.getAmplitude_avg_of_candles());
+            tp = dto_h4.getCurrent_price().add(dto_h4.getAmplitude_avg_of_candles());
         }
 
         if (Objects.equals(trend, Utils.TREND_SHOT)) {
-            tp = dto_h1.getCurrent_price().subtract(dto_h1.getAmplitude_avg_of_candles());
+            tp = dto_h4.getCurrent_price().subtract(dto_h4.getAmplitude_avg_of_candles());
         }
 
         return tp;
@@ -3535,7 +3535,7 @@ public class Utils {
     }
 
     public static List<BigDecimal> getBuySellArea(List<BtcFutures> heiken_list) {
-        List<BigDecimal> body = Utils.getBodyCandle(heiken_list);
+        List<BigDecimal> body = Utils.getLowHighCandle(heiken_list);
         BigDecimal high = body.get(1).subtract(body.get(0));
 
         BigDecimal quarter = high.divide(BigDecimal.valueOf(4), 10, RoundingMode.CEILING);
@@ -5192,7 +5192,7 @@ public class Utils {
         BigDecimal sl = sl1.get(0);
 
         // BigDecimal tp = calc_tp_by_amplitude_of_d1(dto_d1, trend);
-        BigDecimal tp = calc_tp_by_amplitude_of_h1(dto_h4, trend);
+        BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_h4, trend);
 
         MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, RISK_PER_TRADE, dto_15.getCurrent_price(), sl, tp);
         BigDecimal volume = money.calcLot();
@@ -5352,6 +5352,30 @@ public class Utils {
     // if (ma1_10_50 || ma6_10_50) {
     // allow_trade_by_ma1_6_10_50 = true;
     // }
+
+    public static boolean is_possible_take_profit(Orders dto_w1, Orders dto_d1, Orders dto_h4, String trend_h1) {
+        if (Objects.equals(TREND_LONG, trend_h1)) {
+            BigDecimal maxValue = dto_w1.getHig_50candle().max(dto_d1.getHig_50candle()).max(dto_h4.getHig_50candle());
+            maxValue = maxValue.subtract(dto_h4.getAmplitude_avg_of_candles());
+
+            BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_h4, trend_h1);
+            if (maxValue.compareTo(tp) > 0) {
+                return true;
+            }
+        }
+
+        if (Objects.equals(TREND_SHOT, trend_h1)) {
+            BigDecimal minValue = dto_w1.getLow_50candle().min(dto_d1.getLow_50candle()).min(dto_h4.getLow_50candle());
+            minValue = minValue.add(dto_h4.getAmplitude_avg_of_candles());
+
+            BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_h4, trend_h1);
+            if (minValue.compareTo(tp) < 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public static String get_seq(Orders dto_h1, Orders dto_15, Orders dto_10, Orders dto_05, Orders dto_03) {
         String seq = "SEQ:{";

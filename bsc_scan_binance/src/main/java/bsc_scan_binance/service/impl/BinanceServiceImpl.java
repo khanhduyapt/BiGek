@@ -2924,7 +2924,7 @@ public class BinanceServiceImpl implements BinanceService {
         String text_risk = "0.05% ";
         BigDecimal risk = Utils.RISK_PER_TRADE;
 
-        BigDecimal tp_by_d1 = Utils.calc_tp_by_amplitude_of_h1(dto_d1, find_trend);
+        BigDecimal tp_by_d1 = Utils.calc_tp_by_amplitude_of_candle(dto_d1, find_trend);
         String tp = "   TP(d1): " + Utils.appendLeft(Utils.getStringValue(tp_by_d1), 10);
 
         String log_long = text_risk + Utils
@@ -2948,7 +2948,7 @@ public class BinanceServiceImpl implements BinanceService {
         } else if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
             log += log_shot.trim() + tp;
         } else {
-            tp_by_d1 = Utils.calc_tp_by_amplitude_of_h1(dto_h1, dto_d1.getTrend_of_heiken3());
+            tp_by_d1 = Utils.calc_tp_by_amplitude_of_candle(dto_h1, dto_d1.getTrend_of_heiken3());
             tp = "   TP(d1): " + Utils.appendLeft(Utils.getStringValue(tp_by_d1), 10);
 
             if (Objects.equals(dto_d1.getTrend_of_heiken3(), Utils.TREND_LONG)) {
@@ -3219,17 +3219,15 @@ public class BinanceServiceImpl implements BinanceService {
 
                 result += "   Open: " + Utils.appendLeft(Utils.getStringValue(trade.getPriceOpen()), 12);
 
-                result += "   TP(h1): " + Utils.appendLeft(
-                        Utils.getStringValue(
-                                TRADE_TREND.contains(Utils.TREND_LONG) ? dto_h1.getTp_long() : dto_h1.getTp_shot()),
-                        12);
+                result += "   TP(h1): "
+                        + Utils.appendLeft(Utils.getStringValue(Utils.calc_tp_by_amplitude_of_candle(dto_h1,
+                                TRADE_TREND)), 12);
+
                 result += "   Amp(h1):" + Utils.appendSpace(String.valueOf(dto_h1.getAmplitude_avg_of_candles()), 10);
 
                 if (Objects.nonNull(dto_h4)) {
                     result += "   TP(h4): " + Utils.appendLeft(
-                            Utils.getStringValue(
-                                    TRADE_TREND.contains(Utils.TREND_LONG) ? dto_h4.getTp_long() : dto_h4.getTp_shot()),
-                            12);
+                            Utils.getStringValue(Utils.calc_tp_by_amplitude_of_candle(dto_h4, TRADE_TREND)), 12);
 
                     result += "   Amp(h4):"
                             + Utils.appendSpace(String.valueOf(dto_h4.getAmplitude_avg_of_candles()), 10);
@@ -3988,9 +3986,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String eoz = "EOZ:";
             {
-                boolean h1_tradable_zone = dto_d1.getTradable_zone().contains(trend_h1)
-                        && dto_h4.getTradable_zone().contains(trend_h1)
-                        && dto_h1.getTradable_zone().contains(trend_h1);
+                boolean h1_tradable_zone = Utils.is_possible_take_profit(dto_w1, dto_d1, dto_h4, trend_h1);
 
                 eoz += !dto_d1.getTradable_zone().contains(find_trend_to_trade)
                         ? "D_" + Utils.getType(find_trend_to_trade).toUpperCase()
@@ -4109,9 +4105,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1 = dto_h1.getTrend_of_heiken3();
             String trend_15 = dto_15.getTrend_of_heiken3();
 
-            boolean h1_tradable_zone = dto_d1.getTradable_zone().contains(trend_h1)
-                    && dto_h4.getTradable_zone().contains(trend_h1)
-                    && dto_h1.getTradable_zone().contains(trend_h1);
+            boolean h1_tradable_zone = Utils.is_possible_take_profit(dto_w1, dto_d1, dto_h4, trend_h1);
             if (!h1_tradable_zone) {
                 continue;
             }
@@ -4123,10 +4117,7 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            boolean allow_trade_by_trend_h1 = dto_d1.getTradable_zone().contains(trend_h1)
-                    && dto_h4.getTradable_zone().contains(trend_h1)
-                    && dto_h1.getTradable_zone().contains(trend_h1)
-                    && Objects.equals(trend_h1, trend_15)
+            boolean allow_trade_by_trend_h1 = Objects.equals(trend_h1, trend_15)
                     && Objects.equals(trend_h1, dto_10.getTrend_of_heiken3())
                     && Objects.equals(trend_h1, dto_05.getTrend_by_ma_06())
                     && Objects.equals(trend_h1, dto_05.getTrend_of_heiken3())
