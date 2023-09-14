@@ -4164,7 +4164,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (is_position_trade) {
                     append += "_vithed";
                 } else {
-                    is_position_trade = dto_h4.getTrend_by_bread_area().contains(trend_15)
+                    is_position_trade = dto_h4.getTrend_by_bread_area().contains(trend_h1)
                             && Objects.equals(trend_h1, trend_h4) && Objects.equals(trend_h1, trend_15);
 
                     if (is_position_trade) {
@@ -4172,6 +4172,7 @@ public class BinanceServiceImpl implements BinanceService {
                     } else {
                         String seq_folow_h1 = Utils.get_seq(dto_h1, dto_15, dto_10, dto_05, dto_03);
                         if (Utils.isNotBlank(seq_folow_h1)
+                                && (dto_h1.getSwitch_trend() + dto_h4.getSwitch_trend()).contains(trend_h1)
                                 && Objects.equals(trend_h1, trend_w1)
                                 && Objects.equals(trend_h1, trend_d1)
                                 && Objects.equals(trend_h1, trend_h4)
