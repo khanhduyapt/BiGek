@@ -4307,6 +4307,9 @@ public class BinanceServiceImpl implements BinanceService {
             // ----------------------------------------------------------------------------------------------
             boolean take_profit = false;
             if (has_profit
+                    && Objects.equals(dto_h1.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h4.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
+
                     && Objects.equals(dto_05.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
@@ -4314,11 +4317,13 @@ public class BinanceServiceImpl implements BinanceService {
                 take_profit = true;
             }
 
-            boolean h1_reverse = Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
+            boolean h1_reverse = Objects.equals(dto_h1.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_05.getTrend_of_heiken3(), REVERSE_TRADE_TREND);
 
-            boolean m15_reverse = Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
+            boolean m15_reverse = Objects.equals(dto_15.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_by_ma_06(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_05.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_05.getTrend_by_ma_06(), REVERSE_TRADE_TREND);
@@ -4326,12 +4331,11 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_close_by_algorithm = false;
             boolean is_open_by_algorithm = Utils.isNotBlank(trade.getComment());
 
-            if (is_open_by_algorithm && h1_reverse) {
+            if (is_open_by_algorithm && m15_reverse && h1_reverse
+                    && Objects.equals(dto_h4.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)) {
                 is_close_by_algorithm = true;
             }
-            if (is_close_by_algorithm && has_profit) {
-                take_profit = true;
-            }
+
             if (h1_reverse && has_profit) {
                 take_profit = true;
             }
