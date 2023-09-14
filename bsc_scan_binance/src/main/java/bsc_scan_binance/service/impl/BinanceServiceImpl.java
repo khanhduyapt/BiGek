@@ -3904,19 +3904,20 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(dto_h1);
-            Orders dto_10 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_10).orElse(dto_15);
-            Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(dto_15);
-            Orders dto_03 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_03).orElse(dto_15);
+            Orders dto_10 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_10).orElse(dto_h1);
+            Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(dto_h1);
+            Orders dto_03 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_03).orElse(dto_h1);
 
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
-                    || Objects.isNull(dto_15)) {
-                String d1 = "D1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
-                String h4 = "H4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
-                String h1 = "H1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
-                String mi = "15:" + (Objects.isNull(dto_15) ? "null" : "    ");
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
+                String str_null = "";
+                str_null += "W1:" + (Objects.isNull(dto_w1) ? "null" : "    ");
+                str_null += "D1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
+                str_null += "H4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
+                str_null += "H1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
+                str_null += "15:" + (Objects.isNull(dto_15) ? "null" : "    ");
 
-                Utils.logWritelnDraft(String.format("[controlMt5] dto (%s) :  %s, %s, %s, %s.",
-                        Utils.appendSpace(EPIC, 10), d1, h4, h1, mi));
+                Utils.logWritelnDraft(String.format("[controlMt5] dto (%s): %s.",
+                        Utils.appendSpace(EPIC, 10), str_null));
 
                 continue;
             }
@@ -4283,6 +4284,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String REVERSE_TRADE_TREND = TRADING_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_SHOT : Utils.TREND_LONG;
 
+            Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
@@ -4292,17 +4294,21 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(dto_h1);
             Orders dto_03 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_03).orElse(dto_h1);
 
-            if (Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
-                String d1 = "d1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
-                String h4 = "h4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
-                String h1 = "h1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
+            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
+                String str_null = "";
+                str_null += "w1:" + (Objects.isNull(dto_w1) ? "null" : "    ");
+                str_null += "d1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
+                str_null += "h4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
+                str_null += "h1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
 
-                Utils.logWritelnDraft(String.format("[closetrade_by_sl_tp_take_profit] dto (%s) :  %s, %s, %s.",
-                        Utils.appendSpace(EPIC, 10), d1, h4, h1));
+                Utils.logWritelnDraft(String.format("[closetrade_by_sl_tp_take_profit] dto (%s): %s.",
+                        Utils.appendSpace(EPIC, 10), str_null));
 
                 continue;
             }
+
             String trend_h1 = dto_h1.getTrend_of_heiken3();
+            boolean is_open_by_algorithm = Utils.isNotBlank(trade.getComment());
             // -------------------------------------------------------------------------------------
             // ----------------------------------------------------------------------------------------------
             boolean take_profit = false;
@@ -4328,14 +4334,6 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_05.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_05.getTrend_by_ma_06(), REVERSE_TRADE_TREND);
 
-            boolean is_close_by_algorithm = false;
-            boolean is_open_by_algorithm = Utils.isNotBlank(trade.getComment());
-
-            if (is_open_by_algorithm && m15_reverse && h1_reverse
-                    && Objects.equals(dto_h4.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)) {
-                is_close_by_algorithm = true;
-            }
-
             if (h1_reverse && has_profit) {
                 take_profit = true;
             }
@@ -4357,13 +4355,11 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (is_open_by_algorithm
+                    && Objects.equals(dto_w1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_d1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_10.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_05.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_03.getTrend_of_heiken3(), REVERSE_TRADE_TREND)) {
+                    && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)) {
                 is_hit_sl = true;
             }
             // -------------------------------------------------------------------------------------
@@ -4378,7 +4374,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // -------------------------------------------------------------------------------------
             // -------------------------------------------------------------------------------------
-            if ((take_profit || is_hit_sl || is_close_by_algorithm || is_append_trade)
+            if ((take_profit || is_hit_sl || is_append_trade)
                     && allow_close_trade_after(TICKET, Utils.MINUTES_OF_1H)) {
                 String reason = "";
 
@@ -4391,9 +4387,6 @@ public class BinanceServiceImpl implements BinanceService {
 
                     reason = "take_profit:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5)
                             + "$   (H1_REVERSE)";
-                } else if (is_close_by_algorithm) {
-                    prifix = "Must_Close_By_Algorithm: ";
-                    reason = "Must_Close_By_Algorithm";
                 }
 
                 if (!"__HOLDING____".contains("_" + EPIC + "_")) {
