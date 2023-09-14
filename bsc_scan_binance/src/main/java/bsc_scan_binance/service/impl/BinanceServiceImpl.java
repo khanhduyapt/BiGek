@@ -3986,7 +3986,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String eoz = "EOZ:";
             {
-                boolean h1_tradable_zone = Utils.is_possible_take_profit(dto_w1, dto_d1, dto_h4, trend_h1);
+                boolean h1_tradable_zone = Utils.is_possible_take_profit(dto_d1, dto_d1, dto_h4, trend_h1);
 
                 eoz += !dto_d1.getTradable_zone().contains(find_trend_to_trade)
                         ? "D_" + Utils.getType(find_trend_to_trade).toUpperCase()
@@ -4105,7 +4105,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1 = dto_h1.getTrend_of_heiken3();
             String trend_15 = dto_15.getTrend_of_heiken3();
 
-            boolean h1_is_possible_tp = Utils.is_possible_take_profit(dto_w1, dto_d1, dto_h4, trend_h1);
+            boolean h1_is_possible_tp = Utils.is_possible_take_profit(dto_d1, dto_d1, dto_h4, trend_h1);
             if (!h1_is_possible_tp) {
                 continue;
             }
@@ -4172,7 +4172,7 @@ public class BinanceServiceImpl implements BinanceService {
                     } else {
                         String seq_folow_h1 = Utils.get_seq(dto_h1, dto_15, dto_10, dto_05, dto_03);
                         if (Utils.isNotBlank(seq_folow_h1)
-                                && (dto_h1.getSwitch_trend() + dto_h4.getSwitch_trend()).contains(trend_h1)
+                                && dto_h4.getSwitch_trend().contains(trend_h1)
                                 && Objects.equals(trend_h1, trend_w1)
                                 && Objects.equals(trend_h1, trend_d1)
                                 && Objects.equals(trend_h1, trend_h4)
@@ -4232,12 +4232,10 @@ public class BinanceServiceImpl implements BinanceService {
                 append += seq_minus + Utils.TEXT_PASS;
 
                 if (is_position_trade) {
-                    find_trend_to_trade = trend_h1;
-
-                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, find_trend_to_trade, dto_15, dto_h4, dto_d1, append, true,
+                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1, dto_15, dto_h4, dto_d1, append, true,
                             Utils.CAPITAL_TIME_15);
                 } else {
-                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, find_trend_to_trade, dto_15, dto_h4, dto_d1, append, true,
+                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1, dto_15, dto_h4, dto_d1, append, true,
                             Utils.CAPITAL_TIME_15);
                 }
 
