@@ -4105,8 +4105,8 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1 = dto_h1.getTrend_of_heiken3();
             String trend_15 = dto_15.getTrend_of_heiken3();
 
-            boolean h1_tradable_zone = Utils.is_possible_take_profit(dto_w1, dto_d1, dto_h4, trend_h1);
-            if (!h1_tradable_zone) {
+            boolean h1_is_possible_tp = Utils.is_possible_take_profit(dto_w1, dto_d1, dto_h4, trend_h1);
+            if (!h1_is_possible_tp) {
                 continue;
             }
 
@@ -4147,7 +4147,7 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_h1, trend_15)
                         && Utils.isNotBlank(dto_h1.getSwitch_trend() + dto_15.getSwitch_trend())) {
 
-                    if (!is_opening_trade(EPIC, trend_h1) && h1_tradable_zone) {
+                    if (!is_opening_trade(EPIC, trend_h1)) {
                         append += "_dacbie";
                         is_a_special_epic = true;
                     }
@@ -4171,7 +4171,7 @@ public class BinanceServiceImpl implements BinanceService {
                         append += "_vitheh";
                     } else {
                         String seq_folow_h1 = Utils.get_seq(dto_h1, dto_15, dto_10, dto_05, dto_03);
-                        if (Utils.isNotBlank(seq_folow_h1) && h1_tradable_zone
+                        if (Utils.isNotBlank(seq_folow_h1)
                                 && Objects.equals(trend_h1, trend_w1)
                                 && Objects.equals(trend_h1, trend_d1)
                                 && Objects.equals(trend_h1, trend_h4)
@@ -4185,7 +4185,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             // --------------------------------------------------------------------------------------------
             boolean is_allows_trend_trading = false;
-            if (!is_position_trade && !is_a_special_epic && h1_tradable_zone && Objects.equals(trend_w1, trend_d1)) {
+            if (!is_position_trade && !is_a_special_epic && h1_is_possible_tp && Objects.equals(trend_w1, trend_d1)
+                    && Objects.equals(trend_w1, trend_h4)) {
                 find_trend_to_trade = Utils.find_trend_to_trade(dto_d1, dto_h4, dto_h1);
 
                 if (Utils.isNotBlank(find_trend_to_trade)) {
