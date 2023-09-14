@@ -3153,56 +3153,46 @@ public class Utils {
         return result;
     }
 
-    public static BigDecimal calc_tp_by_amplitude_of_h1(Orders dto_h1, Orders dto_15, String trend) {
+    public static BigDecimal calc_tp_by_amplitude_of_h1(Orders dto_h1, String trend) {
         BigDecimal tp = BigDecimal.ZERO;
         if (Objects.equals(trend, Utils.TREND_LONG)) {
-            BigDecimal low = dto_15.getLow_10candle();
-            tp = low.add(dto_h1.getAmplitude_avg_of_candles());
-
-            if (tp.compareTo(dto_h1.getCurrent_price().add(dto_h1.getAmplitude_1_part_15())) < 0) {
-                tp = tp.add(dto_h1.getAmplitude_1_part_15());
-            }
+            tp = dto_h1.getCurrent_price().add(dto_h1.getAmplitude_avg_of_candles());
         }
 
         if (Objects.equals(trend, Utils.TREND_SHOT)) {
-            BigDecimal hig = dto_15.getHig_10candle();
-            tp = hig.subtract(dto_h1.getAmplitude_avg_of_candles());
-
-            if (tp.compareTo(dto_h1.getCurrent_price().subtract(dto_h1.getAmplitude_1_part_15())) < 0) {
-                tp = tp.subtract(dto_h1.getAmplitude_1_part_15());
-            }
+            tp = dto_h1.getCurrent_price().subtract(dto_h1.getAmplitude_avg_of_candles());
         }
 
         return tp;
     }
 
-    public static BigDecimal calc_tp_by_amplitude_of_d1(Orders dto_d1, String trend) {
-        BigDecimal tp = BigDecimal.ZERO;
-
-        if (Objects.equals(trend, Utils.TREND_LONG)) {
-            // tp = Giá thấp nhất của cây nến hiện tại + biên độ giao động avg của nến ngày.
-            BigDecimal lowest_curr_d = dto_d1.getLowest_price_of_curr_candle();
-            tp = lowest_curr_d.add(dto_d1.getAmplitude_avg_of_candles());
-
-            // TP nhỏ hơn Highest thì lấy Highest + biên độ 1/15 để đảm bảo validate.
-            if (tp.compareTo(dto_d1.getHighest_price_of_curr_candle()) < 0) {
-                tp = dto_d1.getHighest_price_of_curr_candle().add(dto_d1.getAmplitude_1_part_15());
-            }
-        }
-
-        if (Objects.equals(trend, Utils.TREND_SHOT)) {
-            // tp = Giá cao nhất của cây nến hiện tại - biên độ giao động avg của nến ngày.
-            BigDecimal higest_curr_d = dto_d1.getHighest_price_of_curr_candle();
-            tp = higest_curr_d.subtract(dto_d1.getAmplitude_avg_of_candles());
-
-            // TP lớn hơn Lowest thì lấy Lowest - biên độ 1/15 để đảm bảo validate.
-            if (tp.compareTo(dto_d1.getLowest_price_of_curr_candle()) > 0) {
-                tp = dto_d1.getLowest_price_of_curr_candle().subtract(dto_d1.getAmplitude_1_part_15());
-            }
-        }
-
-        return tp;
-    }
+    //public static BigDecimal calc_tp_by_amplitude_of_d1(Orders dto_d1, String trend) {
+    //    BigDecimal tp = BigDecimal.ZERO;
+    //
+    //    if (Objects.equals(trend, Utils.TREND_LONG)) {
+    //        // tp = Giá thấp nhất của cây nến hiện tại + biên độ giao động avg của nến ngày.
+    //        BigDecimal lowest_curr_d = dto_d1.getLowest_price_of_curr_candle();
+    //        tp = lowest_curr_d.add(dto_d1.getAmplitude_avg_of_candles());
+    //
+    //        // TP nhỏ hơn Highest thì lấy Highest + biên độ 1/15 để đảm bảo validate.
+    //        if (tp.compareTo(dto_d1.getHighest_price_of_curr_candle()) < 0) {
+    //            tp = dto_d1.getHighest_price_of_curr_candle().add(dto_d1.getAmplitude_1_part_15());
+    //        }
+    //    }
+    //
+    //    if (Objects.equals(trend, Utils.TREND_SHOT)) {
+    //        // tp = Giá cao nhất của cây nến hiện tại - biên độ giao động avg của nến ngày.
+    //        BigDecimal higest_curr_d = dto_d1.getHighest_price_of_curr_candle();
+    //        tp = higest_curr_d.subtract(dto_d1.getAmplitude_avg_of_candles());
+    //
+    //        // TP lớn hơn Lowest thì lấy Lowest - biên độ 1/15 để đảm bảo validate.
+    //        if (tp.compareTo(dto_d1.getLowest_price_of_curr_candle()) > 0) {
+    //            tp = dto_d1.getLowest_price_of_curr_candle().subtract(dto_d1.getAmplitude_1_part_15());
+    //        }
+    //    }
+    //
+    //    return tp;
+    //}
 
     public static BigDecimal calcFiboTP_1R(String trend, BigDecimal low_or_heigh, BigDecimal curr_price) {
         BigDecimal bread = curr_price.subtract(low_or_heigh);
@@ -5185,7 +5175,7 @@ public class Utils {
         return tmp_msg + url;
     }
 
-    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_15, Orders dto_h1, Orders dto_d1,
+    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_15, Orders dto_h4, Orders dto_d1,
             String append, boolean isTradeNow, String CAPITAL_TIME_XX) {
 
         BigDecimal entry = dto_15.getCurrent_price();
@@ -5198,11 +5188,11 @@ public class Utils {
             return null;
         }
 
-        List<BigDecimal> sl1 = Utils.calc_sl1_tp2(dto_h1, trend);
+        List<BigDecimal> sl1 = Utils.calc_sl1_tp2(dto_h4, trend);
         BigDecimal sl = sl1.get(0);
 
         // BigDecimal tp = calc_tp_by_amplitude_of_d1(dto_d1, trend);
-        BigDecimal tp = calc_tp_by_amplitude_of_h1(dto_h1, dto_15, trend);
+        BigDecimal tp = calc_tp_by_amplitude_of_h1(dto_h4, trend);
 
         MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, RISK_PER_TRADE, dto_15.getCurrent_price(), sl, tp);
         BigDecimal volume = money.calcLot();
