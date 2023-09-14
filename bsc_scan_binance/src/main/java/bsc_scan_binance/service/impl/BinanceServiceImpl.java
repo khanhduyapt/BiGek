@@ -4150,10 +4150,13 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // --------------------------------------------------------------------------------------------
             boolean is_a_special_epic = false;
-            if (!is_opening_trade(EPIC, trend_h1) && h1_tradable_zone) {
-                if ("_XAUUSD_".contains(EPIC) || Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
-                    if (Objects.equals(trend_h1, trend_w1) && Objects.equals(trend_h1, trend_15)
-                            && Utils.isNotBlank(dto_h1.getSwitch_trend() + dto_15.getSwitch_trend())) {
+            if ("_XAUUSD_".contains(EPIC) || Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
+
+                if (Objects.equals(trend_h1, trend_w1) && Objects.equals(trend_h1, trend_d1)
+                        && Objects.equals(trend_h1, trend_15)
+                        && Utils.isNotBlank(dto_h1.getSwitch_trend() + dto_15.getSwitch_trend())) {
+
+                    if (!is_opening_trade(EPIC, trend_h1) && h1_tradable_zone) {
                         append += "_dacbie";
                         is_a_special_epic = true;
                     }
@@ -4162,28 +4165,29 @@ public class BinanceServiceImpl implements BinanceService {
 
             // --------------------------------------------------------------------------------------------
             boolean is_position_trade = false;
-
-            is_position_trade = dto_d1.getTrend_by_bread_area().contains(trend_h1)
-                    && Objects.equals(trend_h1, trend_h4)
-                    && Objects.equals(trend_h1, trend_15);
-
-            if (is_position_trade) {
-                append += "_vithed";
-            } else {
-                is_position_trade = dto_h4.getTrend_by_bread_area().contains(trend_15)
-                        && Objects.equals(trend_h1, trend_h4) && Objects.equals(trend_h1, trend_15);
+            if (!is_a_special_epic) {
+                is_position_trade = dto_d1.getTrend_by_bread_area().contains(trend_h1)
+                        && Objects.equals(trend_h1, trend_h4)
+                        && Objects.equals(trend_h1, trend_15);
 
                 if (is_position_trade) {
-                    append += "_vitheh";
+                    append += "_vithed";
                 } else {
-                    String seq_folow_h1 = Utils.get_seq(dto_h1, dto_15, dto_10, dto_05, dto_03);
-                    if (Utils.isNotBlank(seq_folow_h1) && h1_tradable_zone
-                            && Objects.equals(trend_h1, trend_w1)
-                            && Objects.equals(trend_h1, trend_d1)
-                            && Objects.equals(trend_h1, trend_h4)
-                            && !is_opening_trade(EPIC, trend_h1)) {
-                        append += "_dagach";
-                        is_position_trade = true;
+                    is_position_trade = dto_h4.getTrend_by_bread_area().contains(trend_15)
+                            && Objects.equals(trend_h1, trend_h4) && Objects.equals(trend_h1, trend_15);
+
+                    if (is_position_trade) {
+                        append += "_vitheh";
+                    } else {
+                        String seq_folow_h1 = Utils.get_seq(dto_h1, dto_15, dto_10, dto_05, dto_03);
+                        if (Utils.isNotBlank(seq_folow_h1) && h1_tradable_zone
+                                && Objects.equals(trend_h1, trend_w1)
+                                && Objects.equals(trend_h1, trend_d1)
+                                && Objects.equals(trend_h1, trend_h4)
+                                && !is_opening_trade(EPIC, trend_h1)) {
+                            append += "_dagach";
+                            is_position_trade = true;
+                        }
                     }
                 }
             }
