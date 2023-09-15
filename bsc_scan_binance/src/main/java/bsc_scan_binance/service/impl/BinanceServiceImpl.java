@@ -3835,8 +3835,12 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal amplitude_1_part_15 = (hig.subtract(low)).multiply(BigDecimal.valueOf(0.0666666));
 
         List<BigDecimal> body = Utils.getBodyCandle(heiken_list.subList(1, heiken_list.size()));
-        BigDecimal body_end_50_candle = body.get(1).add(amplitude_1_part_15);
-        BigDecimal body_str_50_candle = body.get(0).subtract(amplitude_1_part_15);
+        BigDecimal avg_bread = Utils.calcAvgBread(heiken_list);
+        if (avg_bread.compareTo(amplitude_1_part_15) > 0) {
+            avg_bread = amplitude_1_part_15;
+        }
+        BigDecimal body_str_50_candle = body.get(0).add(avg_bread);
+        BigDecimal body_end_50_candle = body.get(1).subtract(avg_bread);
 
         String trend_by_bread_area = "";
         if (current_price.compareTo(body_str_50_candle) <= 0) {
@@ -4161,7 +4165,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             // --------------------------------------------------------------------------------------------
             boolean is_position_trade = false;
-            if (!is_a_special_epic) {
+            if (!is_a_special_epic && Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
+
                 is_position_trade = dto_d1.getTrend_by_bread_area().contains(trend_h1)
                         && Objects.equals(trend_h1, trend_15);
 
