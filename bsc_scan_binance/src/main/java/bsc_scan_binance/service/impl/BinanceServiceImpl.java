@@ -4096,7 +4096,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_15 = dto_15.getTrend_of_heiken3();
 
             boolean h1_is_possible_tp = Utils.is_possible_take_profit(dto_w1, dto_d1, dto_h4, trend_h1);
-            if (!h1_is_possible_tp || true) {
+            if (!h1_is_possible_tp) {
                 continue;
             }
 
