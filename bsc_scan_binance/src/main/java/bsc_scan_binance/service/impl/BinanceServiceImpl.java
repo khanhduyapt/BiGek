@@ -3824,14 +3824,14 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal amplitude_1_part_15 = (hig.subtract(low)).multiply(BigDecimal.valueOf(0.0666666));
 
         List<BigDecimal> body = Utils.getBodyCandle(heiken_list);
-        BigDecimal body_low = body.get(0);//.add(amplitude_1_part_15);
-        BigDecimal body_hig = body.get(1);//.subtract(amplitude_1_part_15);
+        BigDecimal body_end_50_candle = body.get(1).add(amplitude_1_part_15);
+        BigDecimal body_str_50_candle = body.get(0).subtract(amplitude_1_part_15);
 
         String trend_by_bread_area = "";
-        if (current_price.compareTo(body_low) <= 0) {
+        if (current_price.compareTo(body_str_50_candle) <= 0) {
             trend_by_bread_area = "(bread_area)" + Utils.TREND_LONG;
         }
-        if (current_price.compareTo(body_hig) >= 0) {
+        if (current_price.compareTo(body_end_50_candle) >= 0) {
             trend_by_bread_area = "(bread_area)" + Utils.TREND_SHOT;
         }
 
@@ -3848,12 +3848,6 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal tp_shot = low;
 
         String tradable_zone = Utils.getZone(heiken_list);
-
-        int body_size = (heiken_list.size() > 20) ? 20 : heiken_list.size();
-
-        List<BigDecimal> body_20_candle = Utils.getBodyCandle(heiken_list.subList(1, body_size));
-        BigDecimal body_end_20_candle = body_20_candle.get(1);
-        BigDecimal body_str_20_candle = body_20_candle.get(0);
 
         List<BigDecimal> amplitutes = Utils.calc_amplitude_average_of_candles(list);
         BigDecimal amplitude_avg_of_candles = amplitutes.get(1);
@@ -3873,7 +3867,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         Orders entity = new Orders(id, insertTime, trend_of_heiken3, current_price, tp_long, tp_shot, sl_long, sl_shot,
                 switch_trend, trend_by_ma_10, tradable_zone, trend_by_ma_06, trend_by_ma_20, trend_by_ma_50,
-                trend_by_seq_ma, trend_by_bread_area, body_end_20_candle, body_str_20_candle, amplitude_1_part_15,
+                trend_by_seq_ma, trend_by_bread_area, body_end_50_candle, body_str_50_candle, amplitude_1_part_15,
                 amplitude_avg_of_candles, low_10candle, hig_10candle,
                 low_50candle, hig_50candle, lowest_price_of_curr_candle, highest_price_of_curr_candle,
                 trend_of_heiken3_1);
@@ -3987,16 +3981,11 @@ public class BinanceServiceImpl implements BinanceService {
 
             String eoz = "EOZ:";
             {
-                boolean h1_tradable_zone = Utils.is_possible_take_profit(dto_d1, dto_d1, dto_h4, trend_h1);
+                boolean is_possible_take_profit = Utils.is_possible_take_profit(dto_w1, dto_d1, dto_h4, trend_h1);
 
-                eoz += !dto_d1.getTradable_zone().contains(find_trend_to_trade)
-                        ? "D_" + Utils.getType(find_trend_to_trade).toUpperCase()
-                        : "   ";
-                eoz += " ";
-                eoz += !h1_tradable_zone ? "H_" + Utils.getType(dto_h1.getTrend_of_heiken3()).toUpperCase()
-                        : "     ";
+                eoz += !is_possible_take_profit ? Utils.getType(dto_h1.getTrend_of_heiken3()).toUpperCase() : " ";
                 eoz += "   ";
-                if (eoz.contains("EOZ:       ")) {
+                if (eoz.contains("EOZ:   ")) {
                     eoz = Utils.appendSpace("", eoz.length());
                 }
             }
@@ -4106,8 +4095,8 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1 = dto_h1.getTrend_of_heiken3();
             String trend_15 = dto_15.getTrend_of_heiken3();
 
-            boolean h1_is_possible_tp = Utils.is_possible_take_profit(dto_d1, dto_d1, dto_h4, trend_h1);
-            if (!h1_is_possible_tp) {
+            boolean h1_is_possible_tp = Utils.is_possible_take_profit(dto_w1, dto_d1, dto_h4, trend_h1);
+            if (!h1_is_possible_tp || true) {
                 continue;
             }
 

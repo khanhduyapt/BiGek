@@ -110,10 +110,10 @@ public class Orders {
     private String trend_by_bread_area;
 
     @Column(name = "short_zone")
-    private BigDecimal body_end_20_candle = BigDecimal.ZERO;
+    private BigDecimal body_end_50_candle = BigDecimal.ZERO;
 
     @Column(name = "long_zone")
-    private BigDecimal body_str_20_candle = BigDecimal.ZERO;
+    private BigDecimal body_str_50_candle = BigDecimal.ZERO;
 
     @Column(name = "amplitude_1_part_15")
     private BigDecimal amplitude_1_part_15 = BigDecimal.ZERO;
