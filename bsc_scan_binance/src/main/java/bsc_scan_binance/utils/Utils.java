@@ -144,7 +144,6 @@ public class Utils {
     public static final String TEXT_SEQ = "SEQ";
     public static final String TEXT_SWITCH_TREND_SEQ_6_10_20 = "(" + TEXT_SEQ + ".6.10.20)";
     public static final String TEXT_SWITCH_TREND_SEQ_1_10_20_50 = "(" + TEXT_SEQ + ".1.10.20.50)";
-    public static final String TEXT_SWITCH_TREND_SEQ___10_20_50 = "(" + TEXT_SEQ + ".10.20.50)";
 
     public static final String TEXT_SWITCH_TREND_50 = "(~50~)";
     public static final String TEXT_SWITCH_TREND_HEIKEN = "(Heiken)";
@@ -4287,7 +4286,7 @@ public class Utils {
         return result;
     }
 
-    public static String switch_trend_seq_6_10_20(List<BtcFutures> heiken_list) {
+    public static String switch_trend_seq_1_6_10_20(List<BtcFutures> heiken_list) {
         String result = "";
         if (heiken_list.size() < 20) {
             return result;
@@ -4369,7 +4368,7 @@ public class Utils {
         return result;
     }
 
-    public static String switch_trend_seq_10_20_50(List<BtcFutures> heiken_list) {
+    public static String switch_trend_seq_1_10_20_50(List<BtcFutures> heiken_list) {
         String result = "";
         if (heiken_list.size() < 20) {
             return result;
@@ -4449,7 +4448,7 @@ public class Utils {
 
         if (isNotBlank(result)) {
             String chart_name = getChartName(heiken_list).trim();
-            result = chart_name + TEXT_SWITCH_TREND_SEQ___10_20_50 + ":" + Utils.appendSpace(result, 4);
+            result = chart_name + TEXT_SWITCH_TREND_SEQ_1_10_20_50 + ":" + Utils.appendSpace(result, 4);
         }
 
         return result;
@@ -5292,73 +5291,12 @@ public class Utils {
         return type;
     }
 
-    // String type = Objects.equals(trend_line, Utils.TREND_LONG) ? "_b" : "_s";
-    // BigDecimal ma01 = Utils.calcMA(list, 1, 1);
-    // BigDecimal ma06 = Utils.calcMA(list, 6, 1);
-    // BigDecimal ma10 = Utils.calcMA(list, 10, 1);
-    // BigDecimal ma50 = Utils.calcMA(list, 50, 1);
-    //
-    //// ma10 dốc theo xu hướng;
-    //// (Buy ): Giá > ma10 > ma50;
-    //// (Sell): Giá < ma10 < ma50;
-    // boolean ma1_10_50 = false;
-    //
-    //// ma10 dốc theo xu hướng;
-    //// (Buy ): ma6 cắt lên ma10 phía trên ma50;
-    //// (Sell): ma6 cắt xuống ma10 phía dưới ma50;
-    // boolean ma6_10_50 = false;
-    //
-    // if (Objects.equals(trend_line, Utils.TREND_LONG)) {
-    // boolean is_ma_up = (Utils.isUptrendByMa(list, 10, 0, 1) &&
-    // Utils.isUptrendByMa(list, 10, 1, 2))
-    // || (Utils.isUptrendByMa(list, 8, 0, 1) && Utils.isUptrendByMa(list, 8, 1,
-    // 2));
-    //
-    // if (is_ma_up && (ma01.compareTo(ma10) > 0) && (ma10.compareTo(ma50) > 0)
-    // && Objects.equals(Utils.TREND_LONG, Utils.switchTrendBy_MaX_vs_MaY(list, 1,
-    // 10))) {
-    // ma1_10_50 = true;
-    // switch_trend = "1o10o50" + type;
-    //
-    // } else if (is_ma_up && Objects.equals(Utils.TREND_LONG,
-    // Utils.switchTrendBy_MaX_vs_MaY(list, 6, 10))
-    // && (ma06.compareTo(ma10) > 0) && (ma10.compareTo(ma50) > 0)) {
-    // ma6_10_50 = true;
-    // switch_trend = "6o10o50" + type;
-    // }
-    // }
-    //
-    // if (Objects.equals(trend_line, Utils.TREND_SHOT)) {
-    // boolean is_ma_dn = (!Utils.isUptrendByMa(list, 10, 0, 1) &&
-    // !Utils.isUptrendByMa(list, 10, 1, 2))
-    // || (!Utils.isUptrendByMa(list, 8, 0, 1) && !Utils.isUptrendByMa(list, 8, 1,
-    // 2));
-    //
-    // if (is_ma_dn && (ma01.compareTo(ma10) < 0) && (ma10.compareTo(ma50) < 0)
-    // && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 1,
-    // 10))) {
-    // ma1_10_50 = true;
-    // switch_trend = "1o10o50" + type;
-    //
-    // } else if (is_ma_dn && (ma06.compareTo(ma10) < 0) && (ma10.compareTo(ma50) <
-    // 0)
-    // && Objects.equals(Utils.TREND_SHOT, Utils.switchTrendBy_MaX_vs_MaY(list, 6,
-    // 10))) {
-    // ma6_10_50 = true;
-    // switch_trend = "6o10o50" + type;
-    // }
-    // }
-    //
-    // if (ma1_10_50 || ma6_10_50) {
-    // allow_trade_by_ma1_6_10_50 = true;
-    // }
-
     public static boolean is_possible_take_profit(Orders dto_w1, Orders dto_d1, Orders dto_h4, String trend_h1) {
         BigDecimal avg_amplitude_h4 = dto_h4.getAmplitude_avg_of_candles().add(dto_h4.getAmplitude_1_part_15());
 
         if (Objects.equals(TREND_LONG, trend_h1)) {
 
-            // Hết biên độ để đạt TP
+            // Hết biên độ để đạt TP(H4)
             BigDecimal next_price = dto_d1.getCurrent_price().add(avg_amplitude_h4);
             {
                 if (next_price.compareTo(dto_d1.getBody_end_50_candle()) > 0) {
@@ -5380,7 +5318,7 @@ public class Utils {
 
         if (Objects.equals(TREND_SHOT, trend_h1)) {
 
-            // Hết biên độ để đạt TP
+            // Hết biên độ để đạt TP(H4)
             BigDecimal next_price = dto_d1.getCurrent_price().subtract(avg_amplitude_h4);
             {
                 if (next_price.compareTo(dto_d1.getBody_str_50_candle()) < 0) {

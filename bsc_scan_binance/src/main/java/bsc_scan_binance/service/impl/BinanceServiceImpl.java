@@ -3781,20 +3781,31 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_by_seq_ma = "";
 
         if (Utils.is_increase_decrease_rhythmic(heiken_list)) {
-            switch_trend += Utils.switchTrendByMa3_2_1(heiken_list);
-            switch_trend += Utils.switchTrendByHeken_12(heiken_list);
-            switch_trend += Utils.switchTrendByMa1vs10(heiken_list);
+            if (CAPITAL_TIME_XX.contains("HOUR_")) {
+                switch_trend += Utils.switchTrendByMa1vs10(heiken_list);
+                switch_trend += Utils.switchTrendByMa1vs10(list);
 
-            if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1)) {
-                switch_trend += Utils.switch_trend_seq_10_20_50(heiken_list);
-                if (!switch_trend.contains(Utils.TEXT_SEQ)) {
-                    switch_trend += Utils.switch_trend_seq_6_10_20(heiken_list);
-                }
                 switch_trend += Utils.switchTrendByMa1vs2025(heiken_list);
-            }
+                switch_trend += Utils.switchTrendByMa1vs2025(list);
 
-            if (CAPITAL_TIME_XX.contains("MINUTE_")) {
-                switch_trend += Utils.switch_trend_seq_10_20_50(heiken_list);
+                switch_trend += Utils.switch_trend_seq_1_10_20_50(heiken_list);
+                switch_trend += Utils.switch_trend_seq_1_10_20_50(list);
+
+                if (!switch_trend.contains(Utils.TEXT_SEQ)) {
+                    switch_trend += Utils.switch_trend_seq_1_6_10_20(heiken_list);
+                    switch_trend += Utils.switch_trend_seq_1_6_10_20(list);
+                }
+
+            } else if (CAPITAL_TIME_XX.contains("MINUTE_")) {
+                switch_trend += Utils.switch_trend_seq_1_10_20_50(heiken_list);
+                switch_trend += Utils.switch_trend_seq_1_10_20_50(list);
+
+            } else {
+                switch_trend += Utils.switchTrendByMa3_2_1(heiken_list);
+                switch_trend += Utils.switchTrendByHeken_12(heiken_list);
+
+                switch_trend += Utils.switchTrendByMa1vs10(heiken_list);
+                switch_trend += Utils.switchTrendByMa1vs10(list);
             }
 
             // ---------------------------------------------------------------------------
