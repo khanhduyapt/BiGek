@@ -4381,6 +4381,9 @@ public class BinanceServiceImpl implements BinanceService {
 
                     reason = "take_profit:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5)
                             + "$   (H1_REVERSE)";
+                } else if (is_append_trade) {
+                    prifix = "DCA trade:  ";
+                    reason = "DCA";
                 }
 
                 if (!"__HOLDING____".contains("_" + EPIC + "_")) {
