@@ -4333,48 +4333,38 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_05.getTrend_of_heiken3(), REVERSE_TRADE_TREND);
-
             boolean m15_reverse = Objects.equals(dto_15.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_by_ma_06(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_05.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_05.getTrend_by_ma_06(), REVERSE_TRADE_TREND);
-
-            if (h1_reverse && has_profit) {
-                take_profit = true;
-            }
-            if (m15_reverse && has_profit) {
+            if (h1_reverse && m15_reverse && has_profit) {
                 take_profit = true;
             }
             // -------------------------------------------------------------------------------------
             // -------------------------------------------------------------------------------------
             boolean is_hit_sl = false;
+            BigDecimal standard_vol = Utils.get_standard_vol_per_100usd(EPIC);
             boolean no_stop_loss = (trade.getStopLoss().compareTo(BigDecimal.ZERO) == 0);
             if (no_stop_loss && PROFIT.add(Utils.RISK_PER_TRADE.multiply(BigDecimal.valueOf(2)))
                     .compareTo(BigDecimal.ZERO) < 0) {
                 is_hit_sl = true;
             }
-
-            BigDecimal standard_vol = Utils.get_standard_vol_per_100usd(EPIC);
             if (trade.getVolume().compareTo(standard_vol.multiply(BigDecimal.valueOf(3))) > 0) {
                 is_hit_sl = true;
             }
             // -------------------------------------------------------------------------------------
             // -------------------------------------------------------------------------------------
             boolean is_append_trade = false;
-
             if (is_open_by_algorithm
                     && (PROFIT.add(BigDecimal.valueOf(150)).compareTo(BigDecimal.ZERO) < 0)
                     && Objects.equals(dto_15.getTrend_of_heiken3(), TRADING_TREND)) {
                 is_append_trade = true;
             }
-
             if (Objects.equals(trend_h1, TRADING_TREND)
-                    && PROFIT.add(BigDecimal.valueOf(100)).compareTo(BigDecimal.ZERO) < 0) {
-                String seq_minus = Utils.get_seq_minus(trend_h1, dto_15, dto_10, dto_05, dto_03);
-                if (Utils.isNotBlank(seq_minus)) {
-                    is_append_trade = true;
-                }
+                    && (PROFIT.add(BigDecimal.valueOf(100)).compareTo(BigDecimal.ZERO) < 0)
+                    && Utils.isNotBlank(Utils.get_seq_minus(trend_h1, dto_15, dto_10, dto_05, dto_03))) {
+                is_append_trade = true;
             }
             // -------------------------------------------------------------------------------------
             // -------------------------------------------------------------------------------------
