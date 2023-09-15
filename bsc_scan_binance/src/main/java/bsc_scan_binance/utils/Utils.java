@@ -5292,8 +5292,8 @@ public class Utils {
     }
 
     public static String possible_take_profit(Orders dto_w1, Orders dto_d1, Orders dto_h4, String trend_h1) {
-        BigDecimal avg_amplitude_h4 = dto_h4.getAmplitude_avg_of_candles().add(dto_h4.getAmplitude_1_part_15());
         String type = getType(trend_h1).toUpperCase();
+        BigDecimal avg_amplitude_h4 = dto_h4.getAmplitude_avg_of_candles().add(dto_h4.getAmplitude_1_part_15());
 
         if (Objects.equals(TREND_LONG, trend_h1)) {
             // Hết biên độ để đạt TP(H4)

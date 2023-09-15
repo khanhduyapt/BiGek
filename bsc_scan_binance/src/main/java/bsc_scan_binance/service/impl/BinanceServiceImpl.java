@@ -4112,7 +4112,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (!(dto_h1.getSwitch_trend() + dto_h4.getSwitch_trend())
                     .contains(Utils.TEXT_SWITCH_TREND_SEQ_1_10_20_50)) {
 
-                // Kiểm tra biên độ nếu H1/H4 không đảo chiều theo SEQ.
+                // Kiểm tra biên độ đủ đảm bảo TP 1 cây nến H4 không.
                 String possible_tp = Utils.possible_take_profit(dto_w1, dto_d1, dto_h4, trend_h1);
                 if (Utils.isNotBlank(possible_tp)) {
                     continue;
