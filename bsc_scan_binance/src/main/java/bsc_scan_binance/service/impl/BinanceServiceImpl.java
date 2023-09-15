@@ -3851,7 +3851,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         int body_size = (heiken_list.size() > 20) ? 20 : heiken_list.size();
 
-        List<BigDecimal> body_20_candle = Utils.getBodyCandle(heiken_list.subList(0, body_size));
+        List<BigDecimal> body_20_candle = Utils.getBodyCandle(heiken_list.subList(1, body_size));
         BigDecimal body_end_20_candle = body_20_candle.get(1);
         BigDecimal body_str_20_candle = body_20_candle.get(0);
 
@@ -3860,9 +3860,6 @@ public class BinanceServiceImpl implements BinanceService {
 
         BigDecimal low_10candle = lohi_10.get(0);
         BigDecimal hig_10candle = lohi_10.get(1);
-
-        //String trend_by_amplitude_of_cur_candle = Utils.get_trend_by_amplitude_of_cur_candle(list.get(0),
-        //        amplitude_avg_of_candles);
 
         int sub_size = 50;
         if (heiken_list.size() < 50) {
@@ -3933,7 +3930,7 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            String trend_w1 = dto_w1.getTrend_of_heiken3_1();
+            String trend_w1 = dto_w1.getTrend_of_heiken3();
             String trend_d1 = dto_d1.getTrend_of_heiken3();
             String trend_h1 = dto_h1.getTrend_of_heiken3();
 
@@ -4103,7 +4100,7 @@ public class BinanceServiceImpl implements BinanceService {
                 debug = true;
             }
 
-            String trend_w1 = dto_w1.getTrend_of_heiken3_1();
+            String trend_w1 = dto_w1.getTrend_of_heiken3();
             String trend_d1 = dto_d1.getTrend_of_heiken3();
             String trend_h4 = dto_h4.getTrend_of_heiken3();
             String trend_h1 = dto_h1.getTrend_of_heiken3();

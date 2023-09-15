@@ -5403,7 +5403,7 @@ public class Utils {
                 && dto_h1.getSwitch_trend().contains(trend_h1)) {
             has_seq = true;
             has_seq_h1 = true;
-            seq += "h1" + getType(dto_h1.getTrend_by_ma_10());
+            seq += "h1" + getType(trend_h1);
         } else {
             seq += "   ";
         }
