@@ -2264,7 +2264,7 @@ public class Utils {
         }
 
         String date = Utils.convertDateToString("dd", Calendar.getInstance().getTime());
-        return date + name + Utils.convertDateToString("HH", Calendar.getInstance().getTime());
+        return date + name + Utils.convertDateToString("HHmm", Calendar.getInstance().getTime());
     }
 
     public static String getYyyyMmDd_HHmmss() {
@@ -4806,7 +4806,7 @@ public class Utils {
         String msg = Utils.appendSpace("", 10) + getTimeHHmm() + prefix;
         msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type().toUpperCase(), 4, "_") + ")", 15);
         msg += Utils.appendSpace(dto.getEpic(), 10) + new_line_from_service + " ";
-        msg += Utils.appendSpace(dto.getComment(), 30) + "  ";
+        msg += Utils.appendSpace(dto.getComment().trim() + ".", 30) + "  ";
         msg += " Entry: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()), 10);
         msg += " ";
         msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10) + "   ";
@@ -5291,7 +5291,7 @@ public class Utils {
         return type;
     }
 
-    public static String possible_take_profit(Orders dto_w1, Orders dto_d1, Orders dto_h4, String trend_h1) {
+    public static String possible_take_profit(Orders dto_d1, Orders dto_h4, String trend_h1) {
         String type = getType(trend_h1).toUpperCase();
         BigDecimal avg_amplitude_h4 = dto_h4.getAmplitude_avg_of_candles().add(dto_h4.getAmplitude_1_part_15());
 
@@ -5307,7 +5307,7 @@ public class Utils {
                 }
             }
 
-            BigDecimal maxValue = dto_w1.getHig_50candle().max(dto_d1.getHig_50candle()).max(dto_h4.getHig_50candle());
+            BigDecimal maxValue = dto_d1.getHig_50candle().max(dto_h4.getHig_50candle());
             maxValue = maxValue.subtract(avg_amplitude_h4);
 
             BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_h4, trend_h1);
@@ -5330,7 +5330,7 @@ public class Utils {
                 }
             }
 
-            BigDecimal minValue = dto_w1.getLow_50candle().min(dto_d1.getLow_50candle()).min(dto_h4.getLow_50candle());
+            BigDecimal minValue = dto_d1.getLow_50candle().min(dto_h4.getLow_50candle());
             minValue = minValue.add(avg_amplitude_h4);
 
             BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_h4, trend_h1);
