@@ -275,13 +275,18 @@ void openTrade(string line)
       tp        = NormalizeDouble(tp, digits);                                      // normalizing TP
       // tp=0.0;
       // stop_loss=0.0;
-      datetime expiration=TimeTradeServer()+PeriodSeconds(PERIOD_D1);
-
+      datetime expiration=TimeTradeServer() + PeriodSeconds(PERIOD_D1);
 
 
       if(type== "buy")
         {
          //--- open position
+         if(StringFind(comment, "_vithed", 0) >= 0)
+           {
+            //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp, comment);
+            m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp, comment);
+           }
+
          if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp, comment))
             Alert("Duydk: BUY: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
         }
@@ -295,6 +300,12 @@ void openTrade(string line)
       if(type== "sell")
         {
          //--- open position
+         if(StringFind(comment, "_vithed", 0) >= 0)
+           {
+            //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, tp, comment);
+            m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, tp, comment);
+           }
+
          if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, tp, comment))
             Alert("Duydk: SELL: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
         }
@@ -341,7 +352,7 @@ void trailingSL(string line)
          double cur_sl    = NormalizeDouble(PositionGetDouble(POSITION_SL),digits);   // Stop Loss of the position
          double cur_tp    = NormalizeDouble(PositionGetDouble(POSITION_TP),digits);   // Take Profit of the position
 
-         string my_key    = (string) my_ticket + "_" + (string) my_sl + "_" + (string)cur_tp;
+         string my_key    = (string)cur_ticket + "_" + (string) my_sl + "_" + (string)cur_tp;
          string cur_key   = (string)cur_ticket + "_" + (string)cur_sl + "_" + (string)cur_tp;
 
          if(my_key != cur_key)

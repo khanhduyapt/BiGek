@@ -4156,6 +4156,7 @@ public class BinanceServiceImpl implements BinanceService {
             if ("_XAUUSD_".contains(EPIC) || Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
 
                 if (Objects.equals(trend_h1, trend_w1) && Objects.equals(trend_h1, trend_d1)
+                        && Objects.equals(trend_h1, dto_w1.getTrend_of_heiken3_1())
                         && Objects.equals(trend_h1, trend_15)
                         && Utils.isNotBlank(
                                 dto_15.getSwitch_trend() + dto_h1.getSwitch_trend() + dto_h4.getSwitch_trend())) {
@@ -4189,6 +4190,7 @@ public class BinanceServiceImpl implements BinanceService {
                         if (Utils.isNotBlank(seq_folow_h1)
                                 && (dto_h1.getSwitch_trend() + dto_15.getSwitch_trend()).contains(trend_h1)
                                 && Objects.equals(trend_h1, trend_w1)
+                                && Objects.equals(trend_h1, dto_w1.getTrend_of_heiken3_1())
                                 && Objects.equals(trend_h1, trend_d1)
                                 && Objects.equals(trend_h1, trend_h4)
                                 && Objects.equals(trend_h1, dto_h1.getTrend_by_ma_10())
@@ -4204,7 +4206,7 @@ public class BinanceServiceImpl implements BinanceService {
             // --------------------------------------------------------------------------------------------
             boolean is_allows_trend_trading = false;
             if (!is_position_trade && !is_a_special_epic && Objects.equals(trend_w1, trend_d1)
-                    && Objects.equals(trend_w1, trend_h1)) {
+                    && Objects.equals(trend_w1, trend_h1) && Objects.equals(dto_w1.getTrend_of_heiken3_1(), trend_h1)) {
                 find_trend_to_trade = Utils.find_trend_to_trade(dto_d1, dto_h4, dto_h1);
 
                 if (Utils.isNotBlank(find_trend_to_trade)) {
@@ -4382,7 +4384,7 @@ public class BinanceServiceImpl implements BinanceService {
                     reason = "take_profit:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5)
                             + "$   (H1_REVERSE)";
                 } else if (is_append_trade) {
-                    prifix = "DCA trade:  ";
+                    prifix = "(DCA)Trade:  ";
                     reason = "DCA";
                 }
 
