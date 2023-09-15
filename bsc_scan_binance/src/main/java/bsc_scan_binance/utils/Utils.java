@@ -5291,19 +5291,19 @@ public class Utils {
         return type;
     }
 
-    public static boolean is_possible_take_profit(Orders dto_w1, Orders dto_d1, Orders dto_h4, String trend_h1) {
+    public static String possible_take_profit(Orders dto_w1, Orders dto_d1, Orders dto_h4, String trend_h1) {
         BigDecimal avg_amplitude_h4 = dto_h4.getAmplitude_avg_of_candles().add(dto_h4.getAmplitude_1_part_15());
+        String type = getType(trend_h1).toUpperCase();
 
         if (Objects.equals(TREND_LONG, trend_h1)) {
-
             // Hết biên độ để đạt TP(H4)
             BigDecimal next_price = dto_d1.getCurrent_price().add(avg_amplitude_h4);
             {
                 if (next_price.compareTo(dto_d1.getBody_end_50_candle()) > 0) {
-                    return false;
+                    return "blocked_" + type + "_by_d1";
                 }
                 if (next_price.compareTo(dto_h4.getHig_50candle()) > 0) {
-                    return false;
+                    return "blocked_" + type + "_by_h4";
                 }
             }
 
@@ -5312,20 +5312,21 @@ public class Utils {
 
             BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_h4, trend_h1);
             if (maxValue.compareTo(tp) > 0) {
-                return true;
+                return "";
+            } else {
+                return "blocked_" + type + "_by_ha";
             }
         }
 
         if (Objects.equals(TREND_SHOT, trend_h1)) {
-
             // Hết biên độ để đạt TP(H4)
             BigDecimal next_price = dto_d1.getCurrent_price().subtract(avg_amplitude_h4);
             {
                 if (next_price.compareTo(dto_d1.getBody_str_50_candle()) < 0) {
-                    return false;
+                    return "blocked_" + type + "_by_d1";
                 }
                 if (next_price.compareTo(dto_h4.getLow_50candle()) < 0) {
-                    return false;
+                    return "blocked_" + type + "_by_h4";
                 }
             }
 
@@ -5334,11 +5335,13 @@ public class Utils {
 
             BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_h4, trend_h1);
             if (minValue.compareTo(tp) < 0) {
-                return true;
+                return "";
+            } else {
+                return "blocked_" + type + "_by_ha";
             }
         }
 
-        return false;
+        return "blocked_" + type;
     }
 
     public static String get_seq(Orders dto_h1, Orders dto_15, Orders dto_10, Orders dto_05, Orders dto_03) {
@@ -5398,17 +5401,17 @@ public class Utils {
         } else {
             seq += "   ";
         }
-        seq += "}   ";
+        seq += "}";
 
         if (!has_seq) {
-            seq = appendSpace("", seq.length());
+            seq = "{" + appendSpace("", seq.length() - 2) + "}";
         } else {
             if (!has_seq_h1 && has_seq_minus) {
                 seq = seq.replace("{   ", "{" + getType(trend_h1) + "  ");
             }
         }
 
-        return seq.trim();
+        return " " + seq.trim() + "   ";
     }
 
     public static String get_seq_minus(String trend_h1, Orders dto_15, Orders dto_10, Orders dto_05, Orders dto_03) {

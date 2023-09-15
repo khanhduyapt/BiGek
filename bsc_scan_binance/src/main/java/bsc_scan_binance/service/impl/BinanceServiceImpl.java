@@ -3834,7 +3834,7 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal hig = lohi.get(1);
         BigDecimal amplitude_1_part_15 = (hig.subtract(low)).multiply(BigDecimal.valueOf(0.0666666));
 
-        List<BigDecimal> body = Utils.getBodyCandle(heiken_list);
+        List<BigDecimal> body = Utils.getBodyCandle(heiken_list.subList(1, heiken_list.size()));
         BigDecimal body_end_50_candle = body.get(1).add(amplitude_1_part_15);
         BigDecimal body_str_50_candle = body.get(0).subtract(amplitude_1_part_15);
 
@@ -3943,13 +3943,13 @@ public class BinanceServiceImpl implements BinanceService {
 
             String seq_h1_h4 = "";
             if (dto_h1.getSwitch_trend().contains(Utils.TEXT_SEQ)) {
-                seq_h1_h4 += "h1" + Utils.getType(dto_h1.getTrend_by_seq_ma()) + "  ";
+                seq_h1_h4 += "h1" + Utils.getType(dto_h1.getTrend_by_ma_10()) + "  ";
             } else {
                 seq_h1_h4 += "     ";
             }
 
             if (dto_h4.getSwitch_trend().contains(Utils.TEXT_SEQ)) {
-                seq_h1_h4 += "h4" + Utils.getType(dto_h4.getTrend_by_seq_ma());
+                seq_h1_h4 += "h4" + Utils.getType(dto_h4.getTrend_by_ma_10());
             } else {
                 seq_h1_h4 += "   ";
             }
@@ -3992,10 +3992,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             String eoz = "EOZ:";
             {
-                boolean is_possible_take_profit = Utils.is_possible_take_profit(dto_w1, dto_d1, dto_h4, trend_h1);
-
-                eoz += !is_possible_take_profit ? Utils.getType(dto_h1.getTrend_of_heiken3()).toUpperCase() : " ";
-                eoz += "   ";
+                String blocked = Utils.appendSpace(Utils.possible_take_profit(dto_w1, dto_d1, dto_h4, trend_h1), 15);
+                eoz += blocked + "   ";
                 if (eoz.contains("EOZ:   ")) {
                     eoz = Utils.appendSpace("", eoz.length());
                 }
@@ -4106,8 +4104,8 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1 = dto_h1.getTrend_of_heiken3();
             String trend_15 = dto_15.getTrend_of_heiken3();
 
-            boolean h1_is_possible_tp = Utils.is_possible_take_profit(dto_w1, dto_d1, dto_h4, trend_h1);
-            if (!h1_is_possible_tp) {
+            String possible_tp = Utils.possible_take_profit(dto_w1, dto_d1, dto_h4, trend_h1);
+            if (Utils.isNotBlank(possible_tp)) {
                 continue;
             }
 
@@ -4187,7 +4185,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // --------------------------------------------------------------------------------------------
             boolean is_allows_trend_trading = false;
-            if (!is_position_trade && !is_a_special_epic && h1_is_possible_tp && Objects.equals(trend_w1, trend_d1)
+            if (!is_position_trade && !is_a_special_epic && Objects.equals(trend_w1, trend_d1)
                     && Objects.equals(trend_w1, trend_h4)) {
                 find_trend_to_trade = Utils.find_trend_to_trade(dto_d1, dto_h4, dto_h1);
 
