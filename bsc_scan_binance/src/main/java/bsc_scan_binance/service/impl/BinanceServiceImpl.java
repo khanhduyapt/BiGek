@@ -4183,6 +4183,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (is_position_trade) {
                         append += "_vitheh";
+
                     } else {
                         String seq_folow_h1 = Utils.get_seq(dto_h1, dto_15, dto_10, dto_05, dto_03);
                         if (Utils.isNotBlank(seq_folow_h1)
