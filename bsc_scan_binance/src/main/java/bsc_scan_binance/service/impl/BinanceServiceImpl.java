@@ -4104,7 +4104,11 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1 = dto_h1.getTrend_of_heiken3();
             String trend_15 = dto_15.getTrend_of_heiken3();
 
-            if (!dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_SEQ_1_10_20_50)) {
+            // Nếu đảo chiều theo SEQ thì bỏ qua biên độ.
+            if (!(dto_h1.getSwitch_trend() + dto_h4.getSwitch_trend())
+                    .contains(Utils.TEXT_SWITCH_TREND_SEQ_1_10_20_50)) {
+
+                // Kiểm tra biên độ nếu H1/H4 không đảo chiều theo SEQ.
                 String possible_tp = Utils.possible_take_profit(dto_w1, dto_d1, dto_h4, trend_h1);
                 if (Utils.isNotBlank(possible_tp)) {
                     continue;
