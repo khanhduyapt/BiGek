@@ -3849,8 +3849,11 @@ public class BinanceServiceImpl implements BinanceService {
 
         String tradable_zone = Utils.getZone(heiken_list);
 
-        BigDecimal long_zone = low.add((amplitude_1_part_15.multiply(BigDecimal.valueOf(5))));
-        BigDecimal short_zone = hig.subtract((amplitude_1_part_15.multiply(BigDecimal.valueOf(5))));
+        int body_size = (heiken_list.size() > 20) ? 20 : heiken_list.size();
+
+        List<BigDecimal> body_20_candle = Utils.getBodyCandle(heiken_list.subList(0, body_size));
+        BigDecimal body_end_20_candle = body_20_candle.get(1);
+        BigDecimal body_str_20_candle = body_20_candle.get(0);
 
         List<BigDecimal> amplitutes = Utils.calc_amplitude_average_of_candles(list);
         BigDecimal amplitude_avg_of_candles = amplitutes.get(1);
@@ -3873,7 +3876,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         Orders entity = new Orders(id, insertTime, trend_of_heiken3, current_price, tp_long, tp_shot, sl_long, sl_shot,
                 switch_trend, trend_by_ma_10, tradable_zone, trend_by_ma_06, trend_by_ma_20, trend_by_ma_50,
-                trend_by_seq_ma, trend_by_bread_area, short_zone, long_zone, amplitude_1_part_15,
+                trend_by_seq_ma, trend_by_bread_area, body_end_20_candle, body_str_20_candle, amplitude_1_part_15,
                 amplitude_avg_of_candles, low_10candle, hig_10candle,
                 low_50candle, hig_50candle, lowest_price_of_curr_candle, highest_price_of_curr_candle,
                 trend_of_heiken3_1);
@@ -4145,7 +4148,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (Objects.equals(trend_h1, trend_w1) && Objects.equals(trend_h1, trend_d1)
                         && Objects.equals(trend_h1, trend_15)
-                        && Utils.isNotBlank(dto_h1.getSwitch_trend() + dto_15.getSwitch_trend())) {
+                        && Utils.isNotBlank(dto_h1.getSwitch_trend())) {
 
                     if (!is_opening_trade(EPIC, trend_h1)) {
                         append += "_dacbie";
@@ -4172,7 +4175,7 @@ public class BinanceServiceImpl implements BinanceService {
                     } else {
                         String seq_folow_h1 = Utils.get_seq(dto_h1, dto_15, dto_10, dto_05, dto_03);
                         if (Utils.isNotBlank(seq_folow_h1)
-                                && dto_h4.getSwitch_trend().contains(trend_h1)
+                                && dto_h1.getSwitch_trend().contains(trend_h1)
                                 && Objects.equals(trend_h1, trend_w1)
                                 && Objects.equals(trend_h1, trend_d1)
                                 && Objects.equals(trend_h1, trend_h4)
