@@ -4397,9 +4397,10 @@ public class BinanceServiceImpl implements BinanceService {
                     String key = trade.getSymbol() + "_" + trade.getType() + trade.getTimeframe();
                     if (isReloadAfter(Utils.MINUTES_OF_1H, key)) {
                         keys += key;
-                        msg += "(" + trade.getCompany() + ") " + prifix + trade.getSymbol() + ":";
-                        msg += Utils.getStringValue(trade.getProfit().intValue()) + "$:" + reason
-                                + Utils.new_line_from_service;
+                        msg += "(" + trade.getCompany() + ") " + prifix + trade.getSymbol();
+                        msg += ".Vol:" + Utils.get_standard_vol_per_100usd(EPIC);
+                        msg += ".Profit:" + Utils.getStringValue(trade.getProfit().intValue()) + "$.";
+                        msg += reason + Utils.new_line_from_service;
                     }
                 }
 
