@@ -5392,22 +5392,22 @@ public class Utils {
     }
 
     public static String get_seq(Orders dto_h1, Orders dto_15, Orders dto_10, Orders dto_05, Orders dto_03) {
-        String seq = "SEQ:{";
+        String seq = "{";
         boolean has_seq = false;
         boolean has_seq_h1 = false;
         boolean has_seq_minus = false;
         String trend_h1 = dto_h1.getTrend_of_heiken3();
 
-        //if (dto_h1.getSwitch_trend().contains(Utils.TEXT_SEQ)
-        //        && dto_15.getSwitch_trend().contains(dto_15.getTrend_of_heiken3())
-        //        && dto_h1.getSwitch_trend().contains(trend_h1)) {
-        //    has_seq = true;
-        //    has_seq_h1 = true;
-        //    seq += "h1" + getType(dto_h1.getTrend_by_ma_10());
-        //} else {
-        //    seq += "   ";
-        //}
-        //seq += " ";
+        if (dto_h1.getSwitch_trend().contains(Utils.TEXT_SEQ)
+                && dto_15.getSwitch_trend().contains(dto_15.getTrend_of_heiken3())
+                && dto_h1.getSwitch_trend().contains(trend_h1)) {
+            has_seq = true;
+            has_seq_h1 = true;
+            seq += "h1" + getType(dto_h1.getTrend_by_ma_10());
+        } else {
+            seq += "   ";
+        }
+        seq += " ";
 
         if (dto_15.getTrend_by_seq_ma().contains(Utils.TEXT_SEQ)
                 && dto_15.getTrend_by_seq_ma().contains(trend_h1)
@@ -5454,7 +5454,7 @@ public class Utils {
             seq = appendSpace("", seq.length());
         } else {
             if (!has_seq_h1 && has_seq_minus) {
-                seq = seq.replace("SEQ:{   ", "SEQ:{" + getType(trend_h1) + "  ");
+                seq = seq.replace("{   ", "{" + getType(trend_h1) + "  ");
             }
         }
         return seq;
