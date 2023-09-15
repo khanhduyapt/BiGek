@@ -4178,27 +4178,18 @@ public class BinanceServiceImpl implements BinanceService {
                     append += "_vithed";
 
                 } else if (Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
-                    is_position_trade = dto_h4.getTrend_by_bread_area().contains(trend_h1)
+                    String seq_folow_h1 = Utils.get_seq(dto_h1, dto_15, dto_10, dto_05, dto_03);
+                    if (Utils.isNotBlank(seq_folow_h1)
+                            && (dto_h1.getSwitch_trend() + dto_15.getSwitch_trend()).contains(trend_h1)
+                            && Objects.equals(trend_h1, trend_w1)
+                            && Objects.equals(trend_h1, dto_w1.getTrend_of_heiken3_1())
+                            && Objects.equals(trend_h1, trend_d1)
                             && Objects.equals(trend_h1, trend_h4)
-                            && Objects.equals(trend_h1, trend_15);
+                            && Objects.equals(trend_h1, dto_h1.getTrend_by_ma_10())
 
-                    if (is_position_trade) {
-                        append += "_vitheh";
-
-                    } else {
-                        String seq_folow_h1 = Utils.get_seq(dto_h1, dto_15, dto_10, dto_05, dto_03);
-                        if (Utils.isNotBlank(seq_folow_h1)
-                                && (dto_h1.getSwitch_trend() + dto_15.getSwitch_trend()).contains(trend_h1)
-                                && Objects.equals(trend_h1, trend_w1)
-                                && Objects.equals(trend_h1, dto_w1.getTrend_of_heiken3_1())
-                                && Objects.equals(trend_h1, trend_d1)
-                                && Objects.equals(trend_h1, trend_h4)
-                                && Objects.equals(trend_h1, dto_h1.getTrend_by_ma_10())
-
-                                && !is_opening_trade(EPIC, trend_h1)) {
-                            append += "_vithem";
-                            is_position_trade = true;
-                        }
+                            && !is_opening_trade(EPIC, trend_h1)) {
+                        append += "_vithem";
+                        is_position_trade = true;
                     }
                 }
             }
