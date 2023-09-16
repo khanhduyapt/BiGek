@@ -4102,7 +4102,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // --------------------------------------------------------------------------------------------
-            if ("_US30_US100_".contains(EPIC) || Utils.EPICS_MAIN_FX.contains(EPIC)) {
+            if ("_US30_US100_".contains(EPIC) || Utils.EPICS_MAIN_FX.contains(EPIC)
+                    || Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
 
                 boolean allow_trade_by_trend_15 = Objects.equals(trend_15, dto_15.getTrend_by_ma_10())
 
