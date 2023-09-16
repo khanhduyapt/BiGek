@@ -4143,7 +4143,7 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                String append = "_khung15_sq" + seq_minus + Utils.TEXT_PASS;
+                String append = "_danhthu_sq" + seq_minus + Utils.TEXT_PASS;
 
                 Mt5OpenTrade trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, dto_15.getTrend_by_ma_10(), dto_15, dto_h4,
                         dto_d1, append, true, Utils.CAPITAL_TIME_15);
@@ -4187,42 +4187,29 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // --------------------------------------------------------------------------------------------
             boolean is_a_special_epic = false;
-            if ("_XAUUSD_".contains(EPIC) || Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
+            if (Objects.equals(dto_d1.getTrend_of_heiken3(), dto_d1.getTrend_of_heiken3_1())
+                    && Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_h1, trend_15)
 
-                if (Objects.equals(trend_h1, trend_w1) && Objects.equals(trend_h1, trend_d1)
-                        && Objects.equals(trend_h1, dto_w1.getTrend_of_heiken3_1())
-                        && Objects.equals(trend_h1, trend_15) && Utils.isNotBlank(
-                                dto_15.getSwitch_trend() + dto_h1.getSwitch_trend() + dto_h4.getSwitch_trend())) {
+                    && Objects.equals(dto_15.getTrend_by_ma_50(), dto_10.getTrend_by_ma_50())
+                    && Objects.equals(dto_15.getTrend_by_ma_50(), dto_05.getTrend_by_ma_50())
+                    && Objects.equals(dto_15.getTrend_by_ma_50(), dto_03.getTrend_by_ma_50())
 
-                    if (!is_opening_trade(EPIC, trend_h1)) {
-                        is_a_special_epic = true;
-                    }
+                    && (dto_10.getSwitch_trend() + dto_15.getSwitch_trend()).contains(Utils.TEXT_SEQ)) {
+
+                if (!is_opening_trade(EPIC, trend_h1)) {
+                    append += "_xuhuog";
+                    is_a_special_epic = true;
                 }
             }
 
             // --------------------------------------------------------------------------------------------
             boolean is_position_trade = false;
             if (!is_a_special_epic) {
-
                 is_position_trade = dto_d1.getTrend_by_bread_area().contains(trend_h1)
                         && dto_h4.getTrend_by_bread_area().contains(trend_h1) && Objects.equals(trend_h1, trend_15);
 
                 if (is_position_trade) {
                     append += "_vithed";
-
-                } else if (Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
-                    String seq_folow_h1 = Utils.get_seq(dto_h1, dto_15, dto_10, dto_05, dto_03);
-                    if (Utils.isNotBlank(seq_folow_h1)
-                            && (dto_h1.getSwitch_trend() + dto_15.getSwitch_trend()).contains(trend_h1)
-                            && Objects.equals(trend_h1, trend_w1)
-                            && Objects.equals(trend_h1, dto_w1.getTrend_of_heiken3_1())
-                            && Objects.equals(trend_h1, trend_d1) && Objects.equals(trend_h1, trend_h4)
-                            && Objects.equals(trend_h1, dto_h1.getTrend_by_ma_10())
-
-                            && !is_opening_trade(EPIC, trend_h1)) {
-                        append += "_vithem";
-                        is_position_trade = true;
-                    }
                 }
             }
 
@@ -4230,40 +4217,34 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_allows_trend_trading = false;
             if (!is_position_trade && !is_a_special_epic && Objects.equals(trend_w1, trend_d1)
                     && Objects.equals(trend_w1, trend_h1) && Objects.equals(dto_w1.getTrend_of_heiken3_1(), trend_h1)) {
+
                 find_trend_to_trade = Utils.find_trend_to_trade(dto_d1, dto_h4, dto_h1);
 
-                if (Utils.isNotBlank(find_trend_to_trade)) {
+                if (Utils.isNotBlank(find_trend_to_trade)
+                        && ((dto_h1.getTrend_by_seq_ma() + dto_h4.getTrend_by_seq_ma())
+                                .contains(find_trend_to_trade))) {
+
                     boolean m_allow_trade = Objects.equals(trend_15, find_trend_to_trade);
-
-                    boolean h1_allow_trade = Objects.equals(trend_h1, find_trend_to_trade)
-
+                    boolean h_allow_trade = Objects.equals(trend_h1, find_trend_to_trade)
                             && (Objects.equals(trend_h4, find_trend_to_trade)
                                     || Objects.equals(dto_h4.getTrend_by_ma_10(), find_trend_to_trade)
                                     || Objects.equals(trend_d1, find_trend_to_trade)
                                     || dto_h4.getTrend_by_seq_ma().contains(find_trend_to_trade)
                                     || dto_d1.getTrend_by_seq_ma().contains(find_trend_to_trade));
 
-                    if (!Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
-                        h1_allow_trade &= Objects.equals(trend_d1, find_trend_to_trade);
-                    }
-
-                    if ((dto_h1.getTrend_by_seq_ma() + dto_h4.getTrend_by_seq_ma()).contains(find_trend_to_trade)) {
-                        append += "_sq";
-                        if (dto_h1.getTrend_by_seq_ma().contains(find_trend_to_trade)) {
-                            append += "1g";
-                        } else {
-                            append += "__";
-                        }
-                        if (dto_h4.getTrend_by_seq_ma().contains(find_trend_to_trade)) {
-                            append += "4g";
-                        } else {
-                            append += "__";
-                        }
+                    append += "_sq";
+                    if (dto_h1.getTrend_by_seq_ma().contains(find_trend_to_trade)) {
+                        append += "1g";
                     } else {
-                        append += "_dfdh41";
+                        append += "__";
+                    }
+                    if (dto_h4.getTrend_by_seq_ma().contains(find_trend_to_trade)) {
+                        append += "4g";
+                    } else {
+                        append += "__";
                     }
 
-                    if (h1_allow_trade && m_allow_trade) {
+                    if (h_allow_trade && m_allow_trade) {
                         is_allows_trend_trading = true;
                     }
                 }
@@ -4283,6 +4264,7 @@ public class BinanceServiceImpl implements BinanceService {
                 close_reverse_trade(EPIC, trend_h1, true);
             }
         }
+
         // ----------------------------------------------------------------------------------------------
         // ---------------------------------------close_trade--------------------------------------------
         // ----------------------------------------------------------------------------------------------
