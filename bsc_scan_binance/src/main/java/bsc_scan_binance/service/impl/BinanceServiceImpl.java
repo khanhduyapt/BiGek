@@ -4102,14 +4102,9 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // --------------------------------------------------------------------------------------------
-            if ("_US30_US100_".contains(EPIC) || Utils.EPICS_MAIN_FX.contains(EPIC)) {
+            if ("_US30_US100_".contains(EPIC) || Utils.EPICS_7PAIRS_FX.contains(EPIC)) {
 
-                boolean allow_trade_by_trend_15 = Objects.equals(trend_15, trend_d1)
-                        && Objects.equals(trend_15, dto_d1.getTrend_of_heiken3_1())
-
-                        && Objects.equals(trend_15, dto_15.getTrend_by_ma_10())
-                        && Objects.equals(trend_15, dto_15.getTrend_of_heiken3())
-
+                boolean allow_trade_by_trend_15 = Objects.equals(trend_15, dto_15.getTrend_by_ma_10())
                         && Objects.equals(trend_15, dto_10.getTrend_by_ma_10())
                         && Objects.equals(trend_15, dto_10.getTrend_of_heiken3())
 
@@ -4118,6 +4113,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                         && Objects.equals(trend_15, dto_03.getTrend_by_ma_10())
                         && Objects.equals(trend_15, dto_03.getTrend_of_heiken3());
+
                 if (!allow_trade_by_trend_15) {
                     continue;
                 }
@@ -4133,6 +4129,8 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
+                close_reverse_trade(EPIC, dto_15.getTrend_by_ma_10(), true);
+
                 // Kiểm tra biên độ đủ đảm bảo TP 1 cây nến H4 không.
                 String possible_tp = Utils.possible_take_profit(dto_d1, dto_h4, dto_15.getTrend_by_ma_10());
                 if (Utils.isNotBlank(possible_tp)) {
@@ -4143,8 +4141,6 @@ public class BinanceServiceImpl implements BinanceService {
 
                 Mt5OpenTrade trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, dto_15.getTrend_by_ma_10(), dto_15, dto_h4,
                         dto_d1, append, true, Utils.CAPITAL_TIME_15);
-
-                close_reverse_trade(EPIC, dto_15.getTrend_by_ma_10(), true);
 
                 String key = EPIC + Utils.CAPITAL_TIME_15;
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
@@ -4274,11 +4270,11 @@ public class BinanceServiceImpl implements BinanceService {
                 trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1, dto_15, dto_h4, dto_d1, append, true,
                         Utils.CAPITAL_TIME_15);
 
-                close_reverse_trade(EPIC, find_trend_to_trade, true);
-
                 String key = EPIC + Utils.CAPITAL_TIME_15;
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
+
+                close_reverse_trade(EPIC, trend_h1, true);
             }
         }
         // ----------------------------------------------------------------------------------------------
