@@ -4338,6 +4338,7 @@ public class BinanceServiceImpl implements BinanceService {
             // -------------------------------------------------------------------------------------
             boolean take_profit = false;
             if (has_profit && Objects.equals(dto_h1.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h1.getTrend_by_ma_10(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
 
                     && Objects.equals(dto_05.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
@@ -4348,15 +4349,20 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean h1_reverse = Objects.equals(dto_h1.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h1.getTrend_by_ma_10(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
+
                     && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_05.getTrend_of_heiken3(), REVERSE_TRADE_TREND);
+
             boolean m15_reverse = Objects.equals(dto_15.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_15.getTrend_by_ma_10(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_15.getTrend_by_ma_20(), REVERSE_TRADE_TREND)
+
                     && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_15.getTrend_by_ma_06(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_05.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_05.getTrend_by_ma_06(), REVERSE_TRADE_TREND);
-            if (h1_reverse && m15_reverse && has_profit) {
+                    && Objects.equals(dto_15.getTrend_by_ma_06(), REVERSE_TRADE_TREND);
+
+            if ((h1_reverse || m15_reverse) && has_profit) {
                 take_profit = true;
             }
             // -------------------------------------------------------------------------------------
