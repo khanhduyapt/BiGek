@@ -4164,11 +4164,17 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean allow_trade_by_trend_h1 = Objects.equals(trend_h1, trend_15)
+
+                    && Objects.equals(dto_15.getTrend_by_ma_50(), dto_10.getTrend_by_ma_50())
+                    && Objects.equals(dto_15.getTrend_by_ma_50(), dto_05.getTrend_by_ma_50())
+                    && Objects.equals(dto_15.getTrend_by_ma_50(), dto_03.getTrend_by_ma_50())
+
                     && Objects.equals(trend_h1, dto_10.getTrend_of_heiken3())
                     && Objects.equals(trend_h1, dto_05.getTrend_by_ma_06())
                     && Objects.equals(trend_h1, dto_05.getTrend_of_heiken3())
                     && Objects.equals(trend_h1, dto_03.getTrend_by_ma_06())
                     && Objects.equals(trend_h1, dto_03.getTrend_of_heiken3());
+
             if (!allow_trade_by_trend_h1) {
                 continue;
             }
@@ -4189,11 +4195,6 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_a_special_epic = false;
             if (Objects.equals(dto_d1.getTrend_of_heiken3(), dto_d1.getTrend_of_heiken3_1())
                     && Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_h1, trend_15)
-
-                    && Objects.equals(dto_15.getTrend_by_ma_50(), dto_10.getTrend_by_ma_50())
-                    && Objects.equals(dto_15.getTrend_by_ma_50(), dto_05.getTrend_by_ma_50())
-                    && Objects.equals(dto_15.getTrend_by_ma_50(), dto_03.getTrend_by_ma_50())
-
                     && (dto_10.getSwitch_trend() + dto_15.getSwitch_trend()).contains(Utils.TEXT_SEQ)) {
 
                 if (!is_opening_trade(EPIC, trend_h1)) {
