@@ -4212,11 +4212,8 @@ public class Utils {
         String heiken_1 = getTrendByHekenAshiList(heiken_list);
 
         BigDecimal ma01_1 = calcMA(heiken_list, 01, 1);
-
         BigDecimal ma10_1 = calcMA(heiken_list, 10, 1);
-
         BigDecimal ma20_1 = calcMA(heiken_list, 20, 1);
-
         BigDecimal ma50_1 = calcMA(heiken_list, 50, 1);
 
         if (heiken_1.contains(Utils.TREND_LONG)) {
@@ -4359,34 +4356,24 @@ public class Utils {
             BigDecimal hig = lohi.get(1).add(amplitude_avg_of_candles);
 
             BigDecimal ma01_0 = calcMA(heiken_list, 01, 1);
-
             BigDecimal ma10_0 = calcMA(heiken_list, 10, 1);
-            BigDecimal ma10_1 = calcMA(heiken_list, 10, 2);
-
             BigDecimal ma20_0 = calcMA(heiken_list, 20, 1);
-            BigDecimal ma20_1 = calcMA(heiken_list, 20, 2);
-
             BigDecimal ma50_1 = calcMA(heiken_list, 50, 1);
 
             boolean inside_lohi = true;
-            inside_lohi &= (ma10_0.compareTo(low) >= 0) && (ma10_1.compareTo(low) >= 0) && (ma20_0.compareTo(low) >= 0)
-                    && (ma20_1.compareTo(low) >= 0) && (ma50_1.compareTo(low) >= 0);
-
-            inside_lohi &= (hig.compareTo(ma10_0) >= 0) && (hig.compareTo(ma10_1) >= 0) && (hig.compareTo(ma20_0) >= 0)
-                    && (hig.compareTo(ma20_1) >= 0) && (hig.compareTo(ma50_1) >= 0);
+            inside_lohi &= (ma10_0.compareTo(low) >= 0) && (ma20_0.compareTo(low) >= 0) && (ma50_1.compareTo(low) >= 0);
+            inside_lohi &= (hig.compareTo(ma10_0) >= 0) && (hig.compareTo(ma20_0) >= 0) && (hig.compareTo(ma50_1) >= 0);
 
             if (inside_lohi && switch_trend.contains(Utils.TREND_LONG)) {
-                if ((ma01_0.compareTo(ma10_0) >= 0) && (ma01_0.compareTo(ma10_1) >= 0)
-                        && (ma01_0.compareTo(ma20_0) >= 0) && (ma01_0.compareTo(ma20_1) >= 0)
-                        && (ma01_0.compareTo(ma50_1) >= 0)) {
+                if ((ma01_0.compareTo(ma10_0) >= 0) && (ma10_0.compareTo(ma50_1) >= 0)
+                        && (ma01_0.compareTo(ma20_0) >= 0) && (ma01_0.compareTo(ma50_1) >= 0)) {
                     result = Utils.TREND_LONG;
                 }
             }
 
             if (inside_lohi && switch_trend.contains(Utils.TREND_SHOT) && inside_lohi) {
-                if ((ma01_0.compareTo(ma10_0) <= 0) && (ma01_0.compareTo(ma10_1) <= 0)
-                        && (ma01_0.compareTo(ma20_0) <= 0) && (ma01_0.compareTo(ma20_1) <= 0)
-                        && (ma01_0.compareTo(ma50_1) <= 0)) {
+                if ((ma01_0.compareTo(ma10_0) <= 0) && (ma01_0.compareTo(ma50_1) <= 0)
+                        && (ma01_0.compareTo(ma20_0) <= 0) && (ma01_0.compareTo(ma50_1) <= 0)) {
                     result = Utils.TREND_SHOT;
                 }
             }
