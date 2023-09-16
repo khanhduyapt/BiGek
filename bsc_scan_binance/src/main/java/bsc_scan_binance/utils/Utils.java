@@ -5246,11 +5246,11 @@ public class Utils {
     public static String possible_take_profit(Orders dto_d1, Orders dto_h4, String trend_h1) {
         String type = getType(trend_h1).toUpperCase();
 
-        BigDecimal avg_amplitude = dto_d1.getAmplitude_avg_of_candles().add(dto_d1.getAmplitude_1_part_15());
+        BigDecimal amplitude = dto_h4.getAmplitude_avg_of_candles().multiply(BigDecimal.valueOf(2));
 
         if (Objects.equals(TREND_LONG, trend_h1)) {
             // Hết biên độ để đạt TP(H4)
-            BigDecimal next_price = dto_d1.getCurrent_price().add(avg_amplitude);
+            BigDecimal next_price = dto_d1.getCurrent_price().add(amplitude);
             {
                 if (next_price.compareTo(dto_d1.getBody_end_50_candle()) > 0) {
                     return type + "_by_d1";
@@ -5261,7 +5261,7 @@ public class Utils {
             }
 
             BigDecimal maxValue = dto_d1.getHig_50candle().max(dto_h4.getHig_50candle());
-            maxValue = maxValue.subtract(avg_amplitude);
+            maxValue = maxValue.subtract(amplitude);
 
             BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_h4, trend_h1);
             if (maxValue.compareTo(tp) > 0) {
@@ -5273,7 +5273,7 @@ public class Utils {
 
         if (Objects.equals(TREND_SHOT, trend_h1)) {
             // Hết biên độ để đạt TP(H4)
-            BigDecimal next_price = dto_d1.getCurrent_price().subtract(avg_amplitude);
+            BigDecimal next_price = dto_d1.getCurrent_price().subtract(amplitude);
             {
                 if (next_price.compareTo(dto_d1.getBody_str_50_candle()) < 0) {
                     return type + "_by_d1";
@@ -5284,7 +5284,7 @@ public class Utils {
             }
 
             BigDecimal minValue = dto_d1.getLow_50candle().min(dto_h4.getLow_50candle());
-            minValue = minValue.add(avg_amplitude);
+            minValue = minValue.add(amplitude);
 
             BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_h4, trend_h1);
             if (minValue.compareTo(tp) < 0) {

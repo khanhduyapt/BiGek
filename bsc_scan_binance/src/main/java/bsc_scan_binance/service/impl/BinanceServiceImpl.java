@@ -4102,9 +4102,14 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // --------------------------------------------------------------------------------------------
-            if ("_US30_US100_".contains(EPIC) || Utils.EPICS_7PAIRS_FX.contains(EPIC)) {
+            if ("_US30_US100_".contains(EPIC) || Utils.EPICS_MAIN_FX.contains(EPIC)) {
 
                 boolean allow_trade_by_trend_15 = Objects.equals(trend_15, dto_15.getTrend_by_ma_10())
+
+                        && Objects.equals(dto_15.getTrend_by_ma_50(), dto_10.getTrend_by_ma_50())
+                        && Objects.equals(dto_15.getTrend_by_ma_50(), dto_05.getTrend_by_ma_50())
+                        && Objects.equals(dto_15.getTrend_by_ma_50(), dto_03.getTrend_by_ma_50())
+
                         && Objects.equals(trend_15, dto_10.getTrend_by_ma_10())
                         && Objects.equals(trend_15, dto_10.getTrend_of_heiken3())
 
@@ -4117,6 +4122,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (!allow_trade_by_trend_15) {
                     continue;
                 }
+
                 String seq_minus = "";
                 if (dto_15.getSwitch_trend().contains(Utils.TEXT_SEQ)) {
                     seq_minus = Utils.ENCRYPTED_15;
@@ -4137,7 +4143,7 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                String append = "_tudo_sq" + seq_minus + Utils.TEXT_PASS;
+                String append = "_khung15_sq" + seq_minus + Utils.TEXT_PASS;
 
                 Mt5OpenTrade trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, dto_15.getTrend_by_ma_10(), dto_15, dto_h4,
                         dto_d1, append, true, Utils.CAPITAL_TIME_15);
