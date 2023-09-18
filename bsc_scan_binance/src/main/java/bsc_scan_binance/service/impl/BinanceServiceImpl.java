@@ -4090,7 +4090,7 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            if ("__NZDUSD___".contains(EPIC)) {
+            if ("__EURJPY___".contains(EPIC)) {
                 debug = true;
             }
 
@@ -4124,7 +4124,6 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean allow_trade_by_trend_15 = Objects.equals(trend_15, trend_h1)
                         && Objects.equals(trend_15, trend_h4)
                         && Objects.equals(trend_15, dto_15.getTrend_by_ma_10())
-                        && Objects.equals(dto_15.getTrend_by_ma_50(), dto_03.getTrend_by_ma_50())
 
                         && Objects.equals(trend_15, dto_10.getTrend_by_ma_10())
                         && Objects.equals(trend_15, dto_10.getTrend_of_heiken3())
@@ -4135,10 +4134,6 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_15, dto_03.getTrend_by_ma_10())
                         && Objects.equals(trend_15, dto_03.getTrend_of_heiken3());
 
-                if (!allow_trade_by_trend_15) {
-                    continue;
-                }
-
                 String seq_minus = "";
                 if (dto_15.getSwitch_trend().contains(Utils.TEXT_SEQ)) {
                     seq_minus = Utils.ENCRYPTED_15;
@@ -4147,29 +4142,26 @@ public class BinanceServiceImpl implements BinanceService {
                 } else if (dto_05.getSwitch_trend().contains(Utils.TEXT_SEQ)) {
                     seq_minus = Utils.ENCRYPTED_05;
                 }
-                if (Utils.isBlank(seq_minus)) {
-                    continue;
-                }
-
-                close_reverse_trade(EPIC, dto_15.getTrend_by_ma_10(), true);
 
                 // Kiểm tra biên độ đủ đảm bảo TP 1 cây nến H4 không.
                 String possible_tp = Utils.possible_take_profit(dto_d1, dto_h4.getAmplitude_avg_of_candles(),
                         dto_15.getTrend_by_ma_10());
-                if (Utils.isNotBlank(possible_tp)) {
-                    continue;
+
+                if (allow_trade_by_trend_15 && Utils.isNotBlank(seq_minus) && Utils.isBlank(possible_tp)) {
+
+                    close_reverse_trade(EPIC, dto_15.getTrend_by_ma_10(), true);
+
+                    String append = "_danhthu_sq" + seq_minus + Utils.TEXT_PASS;
+
+                    Mt5OpenTrade trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, dto_15.getTrend_by_ma_10(), dto_15, dto_h4,
+                            dto_d1, append, true, Utils.CAPITAL_TIME_15);
+
+                    String key = EPIC + Utils.CAPITAL_TIME_15;
+                    BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
+                    BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
+
+                    return;
                 }
-
-                String append = "_danhthu_sq" + seq_minus + Utils.TEXT_PASS;
-
-                Mt5OpenTrade trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, dto_15.getTrend_by_ma_10(), dto_15, dto_h4,
-                        dto_d1, append, true, Utils.CAPITAL_TIME_15);
-
-                String key = EPIC + Utils.CAPITAL_TIME_15;
-                BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
-                BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
-
-                return;
             }
             // --------------------------------------------------------------------------------------------
             // --------------------------------------------------------------------------------------------
@@ -4181,7 +4173,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean allow_trade_by_trend_h1 = Objects.equals(trend_h1, trend_15)
-                    && Objects.equals(dto_15.getTrend_by_ma_50(), dto_03.getTrend_by_ma_50())
                     && Objects.equals(trend_h1, dto_10.getTrend_of_heiken3())
                     && Objects.equals(trend_h1, dto_05.getTrend_by_ma_06())
                     && Objects.equals(trend_h1, dto_05.getTrend_of_heiken3())
