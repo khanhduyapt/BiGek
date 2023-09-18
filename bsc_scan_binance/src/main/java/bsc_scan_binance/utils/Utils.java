@@ -3152,14 +3152,15 @@ public class Utils {
         return result;
     }
 
-    public static BigDecimal calc_tp_by_amplitude_of_candle(Orders dto_h4, String trend) {
+    public static BigDecimal calc_tp_by_amplitude_of_candle(BigDecimal current_price,
+            BigDecimal amplitude_avg_of_candles, String trend) {
         BigDecimal tp = BigDecimal.ZERO;
         if (Objects.equals(trend, Utils.TREND_LONG)) {
-            tp = dto_h4.getCurrent_price().add(dto_h4.getAmplitude_avg_of_candles());
+            tp = current_price.add(amplitude_avg_of_candles);
         }
 
         if (Objects.equals(trend, Utils.TREND_SHOT)) {
-            tp = dto_h4.getCurrent_price().subtract(dto_h4.getAmplitude_avg_of_candles());
+            tp = current_price.subtract(amplitude_avg_of_candles);
         }
 
         return tp;
@@ -5145,7 +5146,8 @@ public class Utils {
         BigDecimal sl = sl1.get(0);
 
         // BigDecimal tp = calc_tp_by_amplitude_of_d1(dto_d1, trend);
-        BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_h4, trend);
+        BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_h4.getCurrent_price(), dto_h4.getAmplitude_avg_of_candles(),
+                trend);
 
         MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, RISK_PER_TRADE, dto_15.getCurrent_price(), sl, tp);
         BigDecimal volume = money.calcLot();
@@ -5245,10 +5247,13 @@ public class Utils {
         return type;
     }
 
-    public static String possible_take_profit(Orders dto_d1, Orders dto_h4, String trend_h1) {
+    public static String possible_take_profit(Orders dto_d1, BigDecimal amplitude_avg_of_candles, String trend_h1) {
         String type = getType(trend_h1).toUpperCase();
 
-        BigDecimal amplitude = dto_h4.getAmplitude_avg_of_candles().multiply(BigDecimal.valueOf(2));
+        BigDecimal amplitude = amplitude_avg_of_candles.multiply(BigDecimal.valueOf(2));
+        if (amplitude.compareTo(dto_d1.getAmplitude_avg_of_candles()) < 0) {
+            amplitude = dto_d1.getAmplitude_avg_of_candles();
+        }
 
         if (Objects.equals(TREND_LONG, trend_h1)) {
             // Hết biên độ để đạt TP(H4)
@@ -5257,15 +5262,13 @@ public class Utils {
                 if (next_price.compareTo(dto_d1.getBody_end_50_candle()) > 0) {
                     return type + "_by_d1";
                 }
-                if (next_price.compareTo(dto_h4.getHig_50candle()) > 0) {
-                    return type + "_by_h4";
-                }
             }
 
-            BigDecimal maxValue = dto_d1.getHig_50candle().max(dto_h4.getHig_50candle());
+            BigDecimal maxValue = dto_d1.getHig_50candle();
             maxValue = maxValue.subtract(amplitude);
 
-            BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_h4, trend_h1);
+            BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_d1.getCurrent_price(), amplitude_avg_of_candles,
+                    trend_h1);
             if (maxValue.compareTo(tp) > 0) {
                 return "";
             } else {
@@ -5280,15 +5283,13 @@ public class Utils {
                 if (next_price.compareTo(dto_d1.getBody_str_50_candle()) < 0) {
                     return type + "_by_d1";
                 }
-                if (next_price.compareTo(dto_h4.getLow_50candle()) < 0) {
-                    return type + "_by_h4";
-                }
             }
 
-            BigDecimal minValue = dto_d1.getLow_50candle().min(dto_h4.getLow_50candle());
+            BigDecimal minValue = dto_d1.getLow_50candle();
             minValue = minValue.add(amplitude);
 
-            BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_h4, trend_h1);
+            BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_d1.getCurrent_price(),
+                    amplitude_avg_of_candles, trend_h1);
             if (minValue.compareTo(tp) < 0) {
                 return "";
             } else {

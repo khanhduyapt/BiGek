@@ -2924,7 +2924,8 @@ public class BinanceServiceImpl implements BinanceService {
         String text_risk = "0.05% ";
         BigDecimal risk = Utils.RISK_PER_TRADE;
 
-        BigDecimal tp_by_d1 = Utils.calc_tp_by_amplitude_of_candle(dto_d1, find_trend);
+        BigDecimal tp_by_d1 = Utils.calc_tp_by_amplitude_of_candle(dto_d1.getCurrent_price(),
+                dto_d1.getAmplitude_avg_of_candles(), find_trend);
         String tp = "   TP(d1): " + Utils.appendLeft(Utils.getStringValue(tp_by_d1), 10);
 
         String log_long = text_risk + Utils
@@ -2948,7 +2949,8 @@ public class BinanceServiceImpl implements BinanceService {
         } else if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
             log += log_shot.trim() + tp;
         } else {
-            tp_by_d1 = Utils.calc_tp_by_amplitude_of_candle(dto_h1, dto_d1.getTrend_of_heiken3());
+            tp_by_d1 = Utils.calc_tp_by_amplitude_of_candle(dto_d1.getCurrent_price(),
+                    dto_d1.getAmplitude_avg_of_candles(), dto_d1.getTrend_of_heiken3());
             tp = "   TP(d1): " + Utils.appendLeft(Utils.getStringValue(tp_by_d1), 10);
 
             if (Objects.equals(dto_d1.getTrend_of_heiken3(), Utils.TREND_LONG)) {
@@ -3220,13 +3222,17 @@ public class BinanceServiceImpl implements BinanceService {
                 result += "   Open: " + Utils.appendLeft(Utils.getStringValue(trade.getPriceOpen()), 12);
 
                 result += "   TP(h1): " + Utils.appendLeft(
-                        Utils.getStringValue(Utils.calc_tp_by_amplitude_of_candle(dto_h1, TRADE_TREND)), 12);
+                        Utils.getStringValue(Utils.calc_tp_by_amplitude_of_candle(dto_h1.getCurrent_price(),
+                                dto_h1.getAmplitude_avg_of_candles(), TRADE_TREND)),
+                        12);
 
                 result += "   Amp(h1):" + Utils.appendSpace(String.valueOf(dto_h1.getAmplitude_avg_of_candles()), 10);
 
                 if (Objects.nonNull(dto_h4)) {
                     result += "   TP(h4): " + Utils.appendLeft(
-                            Utils.getStringValue(Utils.calc_tp_by_amplitude_of_candle(dto_h4, TRADE_TREND)), 12);
+                            Utils.getStringValue(Utils.calc_tp_by_amplitude_of_candle(dto_h4.getCurrent_price(),
+                                    dto_h4.getAmplitude_avg_of_candles(), TRADE_TREND)),
+                            12);
 
                     result += "   Amp(h4):"
                             + Utils.appendSpace(String.valueOf(dto_h4.getAmplitude_avg_of_candles()), 10);
@@ -3972,7 +3978,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             String eoz = "EOZ:";
             {
-                String blocked = Utils.appendSpace(Utils.possible_take_profit(dto_d1, dto_h4, trend_h1), 15);
+                String blocked = Utils.appendSpace(
+                        Utils.possible_take_profit(dto_d1, dto_h4.getAmplitude_avg_of_candles(), trend_h1), 15);
                 eoz += blocked + "   ";
                 if (eoz.contains("EOZ:   ")) {
                     eoz = Utils.appendSpace("", eoz.length());
@@ -4144,7 +4151,8 @@ public class BinanceServiceImpl implements BinanceService {
                 close_reverse_trade(EPIC, dto_15.getTrend_by_ma_10(), true);
 
                 // Kiểm tra biên độ đủ đảm bảo TP 1 cây nến H4 không.
-                String possible_tp = Utils.possible_take_profit(dto_d1, dto_h4, dto_15.getTrend_by_ma_10());
+                String possible_tp = Utils.possible_take_profit(dto_d1, dto_h4.getAmplitude_avg_of_candles(),
+                        dto_15.getTrend_by_ma_10());
                 if (Utils.isNotBlank(possible_tp)) {
                     continue;
                 }
@@ -4164,7 +4172,7 @@ public class BinanceServiceImpl implements BinanceService {
             // --------------------------------------------------------------------------------------------
             // --------------------------------------------------------------------------------------------
             // Kiểm tra biên độ đủ đảm bảo TP 1 cây nến H4 không.
-            String possible_tp = Utils.possible_take_profit(dto_d1, dto_h4, trend_h1);
+            String possible_tp = Utils.possible_take_profit(dto_d1, dto_h4.getAmplitude_avg_of_candles(), trend_h1);
             if (Utils.isNotBlank(possible_tp)) {
                 continue;
             }
