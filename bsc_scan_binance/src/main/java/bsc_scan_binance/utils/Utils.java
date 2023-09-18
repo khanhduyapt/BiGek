@@ -279,11 +279,11 @@ public class Utils {
 
     public static final List<String> EPICS_METALS = Arrays.asList("DX", "XAUUSD", "XAGUSD", "USOIL", "BTCUSD");
 
-    public static final List<String> EPICS_CRYPTO_CFD = Arrays.asList("BTCUSD", "ETHUSD", "ADAUSD", "DOGEUSD", "DOTUSD",
-            "LTCUSD", "XRPUSD");
+    // , "ETHUSD", "ADAUSD", "DOGEUSD", "DOTUSD", "LTCUSD", "XRPUSD"
+    public static final List<String> EPICS_CRYPTO_CFD = Arrays.asList("BTCUSD");
 
-    public static final List<String> EPICS_INDEXS_CFD = Arrays.asList("AUS200", "EU50", "FRA40", "GER40", "SPN35",
-            "UK100", "US100", "US30");
+    //"AUS200", "EU50", "FRA40", "GER40", "SPN35", "UK100",
+    public static final List<String> EPICS_INDEXS_CFD = Arrays.asList("US100", "US30");
 
     public static final List<String> EPICS_7PAIRS_FX = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD",
             "USDCAD", "NZDUSD");
@@ -5250,10 +5250,7 @@ public class Utils {
     public static String possible_take_profit(Orders dto_d1, BigDecimal amplitude_avg_of_candles, String trend_h1) {
         String type = getType(trend_h1).toUpperCase();
 
-        BigDecimal amplitude = amplitude_avg_of_candles.multiply(BigDecimal.valueOf(2));
-        if (amplitude.compareTo(dto_d1.getAmplitude_avg_of_candles()) < 0) {
-            amplitude = dto_d1.getAmplitude_avg_of_candles();
-        }
+        BigDecimal amplitude = amplitude_avg_of_candles.multiply(BigDecimal.valueOf(1.2));
 
         if (Objects.equals(TREND_LONG, trend_h1)) {
             // Hết biên độ để đạt TP(H4)

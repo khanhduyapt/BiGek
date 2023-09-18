@@ -3177,8 +3177,9 @@ public class BinanceServiceImpl implements BinanceService {
             String msg = "";
             BigDecimal total = BigDecimal.ZERO;
             String risk_0_15 = "     Risk: 0.05% : " + Utils.RISK_PER_TRADE.intValue() + "$ per trade";
-            List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository
-                    .findAllByCompanyOrderByCommentAscSymbolAsc(company);
+
+            List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByCompanyOrderBySymbolAsc(company);
+
             for (Mt5OpenTradeEntity trade : mt5Openlist) {
                 count += 1;
                 String EPIC = trade.getSymbol();
@@ -4015,8 +4016,15 @@ public class BinanceServiceImpl implements BinanceService {
             amp += "(h4):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dto_h4.getAmplitude_avg_of_candles()), 10);
             amp += "(d1):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dto_d1.getAmplitude_avg_of_candles()), 12);
 
-            String prefix = amp + No;// + " " + prefix_trend;
-            String str_trend_d3 = "D:" + Utils.appendSpace(trend_d1, 6);
+            String prefix = amp + No; // + " " + prefix_trend;
+
+            String str_trend_d3 = "";
+            if (!Objects.equals(trend_w1, trend_d1)) {
+                str_trend_d3 += "W#D  ";
+            } else {
+                str_trend_d3 += "     ";
+            }
+            str_trend_d3 += "D:" + Utils.appendSpace(trend_d1, 6);
 
             String append = str_trend_d3 + seq + eoz;
             String log_trend = Objects.equals(trend_d1, find_trend_to_trade) ? find_trend_to_trade : "";
@@ -4076,6 +4084,10 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(dto_15);
             Orders dto_03 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_03).orElse(dto_15);
 
+            if ("_EURJPY___".contains(EPIC)) {
+                debug = true;
+            }
+
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
                     || Objects.isNull(dto_15)) {
                 String str_null = "";
@@ -4090,23 +4102,13 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            if ("__EURJPY___".contains(EPIC)) {
-                debug = true;
-            }
-
             String trend_w1 = dto_w1.getTrend_of_heiken3();
             String trend_d1 = dto_d1.getTrend_of_heiken3();
             String trend_h4 = dto_h4.getTrend_of_heiken3();
             String trend_h1 = dto_h1.getTrend_of_heiken3();
             String trend_15 = dto_15.getTrend_of_heiken3();
 
-            if (!Utils.EPICS_FOREXS_ALL.contains(EPIC) && Objects.equals(trend_w1, trend_d1)
-                    && !Objects.equals(trend_w1, dto_15.getTrend_by_ma_10())) {
-                continue;
-            }
-
-            // TODO: 5. OpenTrade
-            if (Utils.EPICS_INDEXS_CFD.contains(EPIC) && Objects.equals(trend_h1, Utils.TREND_LONG)) {
+            if (!Objects.equals(trend_w1, trend_h1) || !Objects.equals(trend_w1, trend_d1)) {
                 continue;
             }
 
@@ -4117,12 +4119,12 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
+            // TODO: 5. OpenTrade
             // --------------------------------------------------------------------------------------------
             if (Utils.EPICS_INDEXS_CFD.contains(EPIC) || Utils.EPICS_MAIN_FX.contains(EPIC)
                     || Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
 
                 boolean allow_trade_by_trend_15 = Objects.equals(trend_15, trend_h1)
-                        && Objects.equals(trend_15, trend_h4)
                         && Objects.equals(trend_15, dto_15.getTrend_by_ma_10())
 
                         && Objects.equals(trend_15, dto_10.getTrend_by_ma_10())
@@ -4199,7 +4201,8 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_a_special_epic = false;
             if (Objects.equals(dto_d1.getTrend_of_heiken3(), dto_d1.getTrend_of_heiken3_1())
                     && Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_h1, trend_15)
-                    && (dto_10.getSwitch_trend() + dto_15.getSwitch_trend()).contains(Utils.TEXT_SEQ)) {
+                    && (dto_05.getSwitch_trend() + dto_10.getSwitch_trend() + dto_15.getSwitch_trend())
+                            .contains(Utils.TEXT_SEQ)) {
 
                 if (!is_opening_trade(EPIC, trend_h1)) {
                     append += "_xuhuog";
@@ -4211,7 +4214,9 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_position_trade = false;
             if (!is_a_special_epic) {
                 is_position_trade = dto_d1.getTrend_by_bread_area().contains(trend_h1)
-                        && dto_h4.getTrend_by_bread_area().contains(trend_h1) && Objects.equals(trend_h1, trend_15);
+                        && dto_h4.getTrend_by_bread_area().contains(trend_h1)
+                        && (Objects.equals(trend_h1, dto_h1.getTrend_by_ma_10()) || Objects.equals(trend_h1, trend_h4))
+                        && Objects.equals(trend_h1, trend_15);
 
                 if (is_position_trade) {
                     append += "_vithed";
@@ -4224,13 +4229,8 @@ public class BinanceServiceImpl implements BinanceService {
 
                 find_trend_to_trade = Utils.find_trend_to_trade(dto_d1, dto_h4, dto_h1);
 
-                if (Utils.isNotBlank(find_trend_to_trade)
-                        && ((dto_h1.getTrend_by_seq_ma() + dto_h4.getTrend_by_seq_ma())
-                                .contains(find_trend_to_trade))) {
-
-                    boolean m_allow_trade = Objects.equals(trend_15, find_trend_to_trade)
-                            && (dto_03.getSwitch_trend() + dto_05.getSwitch_trend()
-                                    + dto_10.getSwitch_trend() + dto_15.getSwitch_trend()).contains(Utils.TEXT_SEQ);
+                if (Utils.isNotBlank(find_trend_to_trade)) {
+                    boolean m_allow_trade = Objects.equals(trend_15, find_trend_to_trade);
 
                     boolean h_allow_trade = Objects.equals(trend_h1, find_trend_to_trade)
                             && Utils.isBlank(Utils.possible_take_profit(dto_d1, dto_h4.getAmplitude_avg_of_candles(),
