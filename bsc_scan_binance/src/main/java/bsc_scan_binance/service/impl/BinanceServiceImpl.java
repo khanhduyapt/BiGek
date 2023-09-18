@@ -3979,8 +3979,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String eoz = "EOZ:";
             {
-                String blocked = Utils.appendSpace(
-                        Utils.possible_take_profit(dto_d1, dto_h4.getAmplitude_avg_of_candles(), trend_h1), 15);
+                String blocked = Utils.appendSpace(Utils.possible_take_profit(dto_d1, dto_h4, trend_h1), 15);
                 eoz += blocked + "   ";
                 if (eoz.contains("EOZ:   ")) {
                     eoz = Utils.appendSpace("", eoz.length());
@@ -4146,8 +4145,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // Kiểm tra biên độ đủ đảm bảo TP 1 cây nến H4 không.
-                String possible_tp = Utils.possible_take_profit(dto_d1, dto_h4.getAmplitude_avg_of_candles(),
-                        dto_15.getTrend_by_ma_10());
+                String possible_tp = Utils.possible_take_profit(dto_d1, dto_h4, dto_15.getTrend_by_ma_10());
 
                 if (allow_trade_by_trend_15 && Utils.isNotBlank(seq_minus) && Utils.isBlank(possible_tp)) {
 
@@ -4169,7 +4167,7 @@ public class BinanceServiceImpl implements BinanceService {
             // --------------------------------------------------------------------------------------------
             // --------------------------------------------------------------------------------------------
             // Kiểm tra biên độ đủ đảm bảo TP 1 cây nến H4 không.
-            String possible_tp = Utils.possible_take_profit(dto_d1, dto_h4.getAmplitude_avg_of_candles(), trend_h1);
+            String possible_tp = Utils.possible_take_profit(dto_d1, dto_h4, trend_h1);
             if (Utils.isNotBlank(possible_tp)) {
                 continue;
             }
@@ -4233,8 +4231,7 @@ public class BinanceServiceImpl implements BinanceService {
                     boolean m_allow_trade = Objects.equals(trend_15, find_trend_to_trade);
 
                     boolean h_allow_trade = Objects.equals(trend_h1, find_trend_to_trade)
-                            && Utils.isBlank(Utils.possible_take_profit(dto_d1, dto_h4.getAmplitude_avg_of_candles(),
-                                    find_trend_to_trade));
+                            && Utils.isBlank(Utils.possible_take_profit(dto_d1, dto_h4, find_trend_to_trade));
 
                     append += "_sq";
                     if (dto_h1.getTrend_by_seq_ma().contains(find_trend_to_trade)) {

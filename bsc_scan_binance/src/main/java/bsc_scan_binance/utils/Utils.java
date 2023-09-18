@@ -5247,10 +5247,10 @@ public class Utils {
         return type;
     }
 
-    public static String possible_take_profit(Orders dto_d1, BigDecimal amplitude_avg_of_candles, String trend_h1) {
+    public static String possible_take_profit(Orders dto_d1, Orders dto_h4, String trend_h1) {
         String type = getType(trend_h1).toUpperCase();
 
-        BigDecimal amplitude = amplitude_avg_of_candles.multiply(BigDecimal.valueOf(1.2));
+        BigDecimal amplitude = dto_h4.getAmplitude_avg_of_candles().multiply(BigDecimal.valueOf(1.2));
 
         if (Objects.equals(TREND_LONG, trend_h1)) {
             // Hết biên độ để đạt TP(H4)
@@ -5259,13 +5259,17 @@ public class Utils {
                 if (next_price.compareTo(dto_d1.getBody_end_50_candle()) > 0) {
                     return type + "_by_d1";
                 }
+
+                if (next_price.compareTo(dto_h4.getBody_end_50_candle()) > 0) {
+                    return type + "_by_h4";
+                }
             }
 
             BigDecimal maxValue = dto_d1.getHig_50candle();
             maxValue = maxValue.subtract(amplitude);
 
-            BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_d1.getCurrent_price(), amplitude_avg_of_candles,
-                    trend_h1);
+            BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_d1.getCurrent_price(),
+                    dto_h4.getAmplitude_avg_of_candles(), trend_h1);
             if (maxValue.compareTo(tp) > 0) {
                 return "";
             } else {
@@ -5280,13 +5284,17 @@ public class Utils {
                 if (next_price.compareTo(dto_d1.getBody_str_50_candle()) < 0) {
                     return type + "_by_d1";
                 }
+
+                if (next_price.compareTo(dto_h4.getBody_end_50_candle()) < 0) {
+                    return type + "_by_h4";
+                }
             }
 
             BigDecimal minValue = dto_d1.getLow_50candle();
             minValue = minValue.add(amplitude);
 
             BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_d1.getCurrent_price(),
-                    amplitude_avg_of_candles, trend_h1);
+                    dto_h4.getAmplitude_avg_of_candles(), trend_h1);
             if (minValue.compareTo(tp) < 0) {
                 return "";
             } else {
