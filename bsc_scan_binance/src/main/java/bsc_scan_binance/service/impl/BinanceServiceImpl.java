@@ -4118,9 +4118,7 @@ public class BinanceServiceImpl implements BinanceService {
                     || Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
 
                 boolean allow_trade_by_trend_15 = Objects.equals(trend_15, dto_15.getTrend_by_ma_10())
-
                         && Objects.equals(dto_15.getTrend_by_ma_50(), dto_10.getTrend_by_ma_50())
-                        && Objects.equals(dto_15.getTrend_by_ma_50(), dto_05.getTrend_by_ma_50())
                         && Objects.equals(dto_15.getTrend_by_ma_50(), dto_03.getTrend_by_ma_50())
 
                         && Objects.equals(trend_15, dto_10.getTrend_by_ma_10())
@@ -4178,9 +4176,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean allow_trade_by_trend_h1 = Objects.equals(trend_h1, trend_15)
-
                     && Objects.equals(dto_15.getTrend_by_ma_50(), dto_10.getTrend_by_ma_50())
-                    && Objects.equals(dto_15.getTrend_by_ma_50(), dto_05.getTrend_by_ma_50())
                     && Objects.equals(dto_15.getTrend_by_ma_50(), dto_03.getTrend_by_ma_50())
 
                     && Objects.equals(trend_h1, dto_10.getTrend_of_heiken3())
