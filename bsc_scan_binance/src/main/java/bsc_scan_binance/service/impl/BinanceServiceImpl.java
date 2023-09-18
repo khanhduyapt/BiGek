@@ -4094,6 +4094,11 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1 = dto_h1.getTrend_of_heiken3();
             String trend_15 = dto_15.getTrend_of_heiken3();
 
+            if (!Utils.EPICS_FOREXS_ALL.contains(EPIC) && Objects.equals(trend_w1, trend_d1)
+                    && !Objects.equals(trend_w1, dto_15.getTrend_by_ma_10())) {
+                continue;
+            }
+
             boolean is_reversal_zone = Utils
                     .isNotBlank(dto_10.getSwitch_trend() + dto_15.getSwitch_trend() + dto_h1.getSwitch_trend()
                             + dto_h4.getSwitch_trend() + dto_h1.getTrend_by_seq_ma() + dto_h4.getTrend_by_seq_ma());
