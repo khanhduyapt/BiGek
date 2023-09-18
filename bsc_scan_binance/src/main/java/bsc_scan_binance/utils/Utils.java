@@ -4569,23 +4569,25 @@ public class Utils {
         return "";
     }
 
-    public static int calculatePoints(String EPIC, BigDecimal amplitude_avg_of_candles) {
+    public static String calculatePoints(String EPIC, BigDecimal amplitude_avg_of_candles) {
         int decimalPlaces = 4;
 
         if (EPIC.contains("JPY") || EPIC.contains("XAU")) {
-            decimalPlaces = 2;
+            decimalPlaces = 3;
         } else if (EPICS_FOREXS_ALL.contains(EPIC)) {
             decimalPlaces = 4;
         } else if (amplitude_avg_of_candles.compareTo(BigDecimal.valueOf(10)) > 0) {
             decimalPlaces = 2;
         } else if (amplitude_avg_of_candles.compareTo(BigDecimal.valueOf(1)) > 0) {
             decimalPlaces = 3;
+        } else if (EPIC.contains("USOIL")) {
+            decimalPlaces = 3;
         }
 
-        decimalPlaces = decimalPlaces + 1;
-        BigDecimal point = amplitude_avg_of_candles.multiply(BigDecimal.TEN.pow(decimalPlaces));
+        BigDecimal point = formatPrice(amplitude_avg_of_candles, decimalPlaces)
+                .multiply(BigDecimal.TEN.pow(decimalPlaces));
 
-        return point.intValue();
+        return String.valueOf(point.intValue());
     }
 
     public static String switchTrendByMaXX(List<BtcFutures> list, int fastIndex, int slowIndex) {

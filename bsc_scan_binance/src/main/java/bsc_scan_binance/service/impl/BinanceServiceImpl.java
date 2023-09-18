@@ -4004,9 +4004,9 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String amp = " Amp ";
-            amp += "(h1):" + Utils.appendSpace(String.valueOf(dto_h1.getAmplitude_avg_of_candles()), 10);
-            amp += "(h4):" + Utils.appendSpace(String.valueOf(dto_h4.getAmplitude_avg_of_candles()), 10);
-            amp += "(d1):" + Utils.appendSpace(String.valueOf(dto_d1.getAmplitude_avg_of_candles()), 12);
+            amp += "(h1):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dto_h1.getAmplitude_avg_of_candles()), 10);
+            amp += "(h4):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dto_h4.getAmplitude_avg_of_candles()), 10);
+            amp += "(d1):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dto_d1.getAmplitude_avg_of_candles()), 12);
 
             String prefix = amp + No;// + " " + prefix_trend;
             String str_trend_d3 = "D:" + Utils.appendSpace(trend_d1, 6);
