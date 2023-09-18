@@ -4223,8 +4223,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // --------------------------------------------------------------------------------------------
             boolean is_allows_trend_trading = false;
-            if (!is_position_trade && !is_a_special_epic && Objects.equals(trend_w1, trend_d1)
-                    && Objects.equals(trend_w1, trend_h1) && Objects.equals(dto_w1.getTrend_of_heiken3_1(), trend_h1)) {
+            if (!is_position_trade && !is_a_special_epic) {
 
                 find_trend_to_trade = Utils.find_trend_to_trade(dto_d1, dto_h4, dto_h1);
 
@@ -4232,13 +4231,13 @@ public class BinanceServiceImpl implements BinanceService {
                         && ((dto_h1.getTrend_by_seq_ma() + dto_h4.getTrend_by_seq_ma())
                                 .contains(find_trend_to_trade))) {
 
-                    boolean m_allow_trade = Objects.equals(trend_15, find_trend_to_trade);
+                    boolean m_allow_trade = Objects.equals(trend_15, find_trend_to_trade)
+                            && (dto_03.getSwitch_trend() + dto_05.getSwitch_trend()
+                                    + dto_10.getSwitch_trend() + dto_15.getSwitch_trend()).contains(Utils.TEXT_SEQ);
+
                     boolean h_allow_trade = Objects.equals(trend_h1, find_trend_to_trade)
-                            && (Objects.equals(trend_h4, find_trend_to_trade)
-                                    || Objects.equals(dto_h4.getTrend_by_ma_10(), find_trend_to_trade)
-                                    || Objects.equals(trend_d1, find_trend_to_trade)
-                                    || dto_h4.getTrend_by_seq_ma().contains(find_trend_to_trade)
-                                    || dto_d1.getTrend_by_seq_ma().contains(find_trend_to_trade));
+                            && Utils.isBlank(Utils.possible_take_profit(dto_d1, dto_h4.getAmplitude_avg_of_candles(),
+                                    find_trend_to_trade));
 
                     append += "_sq";
                     if (dto_h1.getTrend_by_seq_ma().contains(find_trend_to_trade)) {
