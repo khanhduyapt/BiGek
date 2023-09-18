@@ -4064,7 +4064,6 @@ public class BinanceServiceImpl implements BinanceService {
         NOTICE_LIST.addAll(Utils.EPICS_STOCKS);
         CAPITAL_LIST.addAll(NOTICE_LIST);
 
-        // TODO: 5. closeTrade_by_SL_TP
         Collections.sort(CAPITAL_LIST);
         for (String EPIC : CAPITAL_LIST) {
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
@@ -4106,6 +4105,11 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
+            // TODO: 5. OpenTrade
+            if (Utils.EPICS_INDEXS_CFD.contains(EPIC) && Objects.equals(trend_h1, Utils.TREND_LONG)) {
+                continue;
+            }
+
             boolean is_reversal_zone = Utils
                     .isNotBlank(dto_10.getSwitch_trend() + dto_15.getSwitch_trend() + dto_h1.getSwitch_trend()
                             + dto_h4.getSwitch_trend() + dto_h1.getTrend_by_seq_ma() + dto_h4.getTrend_by_seq_ma());
@@ -4114,10 +4118,12 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // --------------------------------------------------------------------------------------------
-            if ("_US30_US100_".contains(EPIC) || Utils.EPICS_MAIN_FX.contains(EPIC)
+            if (Utils.EPICS_INDEXS_CFD.contains(EPIC) || Utils.EPICS_MAIN_FX.contains(EPIC)
                     || Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
 
-                boolean allow_trade_by_trend_15 = Objects.equals(trend_15, dto_15.getTrend_by_ma_10())
+                boolean allow_trade_by_trend_15 = Objects.equals(trend_15, trend_h1)
+                        && Objects.equals(trend_15, trend_h4)
+                        && Objects.equals(trend_15, dto_15.getTrend_by_ma_10())
                         && Objects.equals(dto_15.getTrend_by_ma_50(), dto_03.getTrend_by_ma_50())
 
                         && Objects.equals(trend_15, dto_10.getTrend_by_ma_10())
@@ -4275,6 +4281,7 @@ public class BinanceServiceImpl implements BinanceService {
         // ----------------------------------------------------------------------------------------------
         // ---------------------------------------close_trade--------------------------------------------
         // ----------------------------------------------------------------------------------------------
+        // TODO: 5. closeTrade_by_SL_TP
         String msg = "";
         String keys = "";
         List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByOrderByCompanyAscSymbolAsc();
