@@ -4785,7 +4785,11 @@ public class Utils {
         msg += " Entry: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()), 10);
         msg += " ";
         msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10) + "   ";
-        msg += " TP: " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit()), 10) + "   ";
+
+        msg += " TP(h4): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_h4()), 10) + "   ";
+        msg += " TP(d1): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_d1()), 10) + "   ";
+        msg += " TP(w1): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_w1()), 10) + "   ";
+
         msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 6) + "(lot)   ";
         msg += " Standard:"
                 + Utils.appendLeft(Utils.removeLastZero(Utils.get_standard_vol_per_100usd(dto.getEpic())), 6)
@@ -5150,9 +5154,10 @@ public class Utils {
     }
 
     public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_15, Orders dto_h4, Orders dto_d1,
-            String append, boolean isTradeNow, String CAPITAL_TIME_XX) {
+            Orders dto_w1, String append, boolean isTradeNow, String CAPITAL_TIME_XX) {
+        BigDecimal curr_price = dto_15.getCurrent_price();
 
-        BigDecimal entry = dto_15.getCurrent_price();
+        BigDecimal entry = curr_price;
         if (Objects.equals(trend, Utils.TREND_LONG)) {
             entry = dto_15.getLow_50candle();
         } else if (Objects.equals(trend, Utils.TREND_SHOT)) {
@@ -5166,10 +5171,11 @@ public class Utils {
         BigDecimal sl = sl1.get(0);
 
         // BigDecimal tp = calc_tp_by_amplitude_of_d1(dto_d1, trend);
-        BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_h4.getCurrent_price(), dto_h4.getAmplitude_avg_of_candles(),
-                trend);
+        BigDecimal tp_h4 = calc_tp_by_amplitude_of_candle(curr_price, dto_h4.getAmplitude_avg_of_candles(), trend);
+        BigDecimal tp_d1 = calc_tp_by_amplitude_of_candle(curr_price, dto_d1.getAmplitude_avg_of_candles(), trend);
+        BigDecimal tp_w1 = calc_tp_by_amplitude_of_candle(curr_price, dto_w1.getAmplitude_avg_of_candles(), trend);
 
-        MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, RISK_PER_TRADE, dto_15.getCurrent_price(), sl, tp);
+        MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, RISK_PER_TRADE, dto_15.getCurrent_price(), sl, tp_h4);
         BigDecimal volume = money.calcLot();
 
         BigDecimal standard_vol = get_standard_vol_per_100usd(EPIC);
@@ -5193,8 +5199,10 @@ public class Utils {
         dto.setLots(volume);
         dto.setEntry(entry);
         dto.setStop_loss(sl);
-        dto.setTake_profit(tp);
+        dto.setTake_profit_h4(tp_h4);
         dto.setComment(create_trade_comment(EPIC, CAPITAL_TIME_XX, type + append));
+        dto.setTake_profit_d1(tp_d1);
+        dto.setTake_profit_w1(tp_w1);
 
         return dto;
     }

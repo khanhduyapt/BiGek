@@ -22,7 +22,11 @@ public class Mt5OpenTrade {
 
     private BigDecimal stop_loss = BigDecimal.ZERO;
 
-    private BigDecimal take_profit = BigDecimal.ZERO;
+    private BigDecimal take_profit_h4 = BigDecimal.ZERO;
 
     private String comment;
+
+    private BigDecimal take_profit_d1 = BigDecimal.ZERO;
+
+    private BigDecimal take_profit_w1 = BigDecimal.ZERO;
 }

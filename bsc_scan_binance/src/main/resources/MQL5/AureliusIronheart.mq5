@@ -70,7 +70,7 @@ void OnTimer(void)
          //-------------------------------------------------------------------------------------------------------------------------------
          MqlRates rates_3[];
          ArraySetAsSeries(rates_3,true);
-         copied=CopyRates(symbol, PERIOD_M3, 0, 55, rates_3);
+         copied=CopyRates(symbol, PERIOD_M6, 0, 55, rates_3);
          if(copied>0)
            {
             int size=fmin(copied, 55);
@@ -86,7 +86,7 @@ void OnTimer(void)
          //-------------------------------------------------------------------------------------------------------------------------------
          MqlRates rates_05[];
          ArraySetAsSeries(rates_05,true);
-         copied=CopyRates(symbol, PERIOD_M6, 0, 55, rates_05);
+         copied=CopyRates(symbol, PERIOD_M12, 0, 55, rates_05);
          if(copied>0)
            {
             int size=fmin(copied, 55);

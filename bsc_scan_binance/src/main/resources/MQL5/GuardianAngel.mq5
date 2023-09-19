@@ -196,7 +196,7 @@ void openTrade(string line)
 // Alert("openTrade: " + line);
    string result[];
    int k=StringSplit(line,'\t',result);
-   if(k != 7)
+   if(k != 9)
      {
       return ;
      }
@@ -208,8 +208,10 @@ void openTrade(string line)
    double volume = StringToDouble(result[2]);
    double price = StringToDouble(result[3]);
    double stop_loss = StringToDouble(result[4]);
-   double tp = StringToDouble(result[5]);
+   double tp_h4 = StringToDouble(result[5]);
    string comment = result[6];
+   double tp_d1 = StringToDouble(result[7]);
+   double tp_w1 = StringToDouble(result[8]);
 
    string trade_symbol = result[0];
    string lowcase_symbol = epic;
@@ -270,9 +272,12 @@ void openTrade(string line)
       int    digits = (int)SymbolInfoInteger(trade_symbol,SYMBOL_DIGITS);     // number of decimal places
       double point  = SymbolInfoDouble(trade_symbol,SYMBOL_POINT);            // point
 
-      price     = NormalizeDouble(price,digits);                                 // normalizing open price
-      stop_loss = NormalizeDouble(stop_loss, digits);                        // normalizing Stop Loss
-      tp        = NormalizeDouble(tp, digits);                                      // normalizing TP
+      price     = NormalizeDouble(price,digits);                              // normalizing open price
+      stop_loss = NormalizeDouble(stop_loss, digits);                         // normalizing Stop Loss
+      tp_h4     = NormalizeDouble(tp_h4, digits);                             // normalizing TP_h4
+      tp_d1     = NormalizeDouble(tp_d1, digits);                             // normalizing tp_d1
+      tp_w1     = NormalizeDouble(tp_w1, digits);                             // normalizing tp_w1
+
       // tp=0.0;
       // stop_loss=0.0;
       datetime expiration=TimeTradeServer() + PeriodSeconds(PERIOD_D1);
@@ -284,11 +289,14 @@ void openTrade(string line)
          if(StringFind(comment, "_vithed", 0) >= 0)
            {
             //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp, comment);
-            m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp, comment);
            }
 
-         if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp, comment))
+         if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp_h4, comment + "_h"))
             Alert("Duydk: BUY: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
+
+         m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp_d1, comment + "_d");
+         m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp_w1, comment + "_w");
+
         }
 
       if(type== "buy_limit")
@@ -303,11 +311,13 @@ void openTrade(string line)
          if(StringFind(comment, "_vithed", 0) >= 0)
            {
             //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, tp, comment);
-            m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, tp, comment);
            }
 
-         if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, tp, comment))
+         if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, tp_h4, comment + "_h"))
             Alert("Duydk: SELL: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
+
+         m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, tp_d1, comment + "_d");
+         m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, tp_w1, comment + "_w");
         }
 
       if(type== "sell_limit")
