@@ -4019,6 +4019,13 @@ public class Utils {
         return "";
     }
 
+    public static boolean isXCuttingY(BigDecimal candle_low, BigDecimal candle_hig, BigDecimal ma) {
+        if ((candle_low.compareTo(ma) <= 0) && (ma.compareTo(candle_hig) <= 0)) {
+            return true;
+        }
+        return false;
+    }
+
     public static String stopTrendByMa50(List<BtcFutures> list) {
         if (CollectionUtils.isEmpty(list)) {
             Utils.logWritelnDraft("(stopTrendByMa50)list Empty");
@@ -4436,23 +4443,36 @@ public class Utils {
     public static String switchTrendByMa1(List<BtcFutures> heiken_list, int candle_no, int ma_form, int ma_to,
             String id_switch_trend) {
         String trend = "";
+        String trend_heiken = getTrendByHekenAshiList(heiken_list);
 
         BigDecimal ma1_0 = calcMA(heiken_list, 1, candle_no); // Đóng nến
         BigDecimal ma1_1 = calcMA(heiken_list, 1, candle_no + 1); // Đóng nến
 
         for (int ma_index = ma_form; ma_index <= ma_to; ma_index++) {
+
             BigDecimal maX_0 = calcMA(heiken_list, ma_index, candle_no);
-            BigDecimal maX_1 = calcMA(heiken_list, ma_index, candle_no + 1);
 
-            String cutUp = Utils.checkXCutUpY(ma1_0, ma1_1, maX_0, maX_1);
-            String cutDw = Utils.checkXCutDnY(ma1_0, ma1_1, maX_0, maX_1);
+            BigDecimal candle_low = heiken_list.get(candle_no).getLow_price();
+            BigDecimal candle_hig = heiken_list.get(candle_no).getHight_price();
 
-            if (Utils.isNotBlank(cutUp)) {
-                trend += ma_index + ":" + cutUp + ";";
+            if (isXCuttingY(candle_low, candle_hig, maX_0)) {
+
+                trend += ma_index + ":" + trend_heiken + ";";
+
+            } else {
+                BigDecimal maX_1 = calcMA(heiken_list, ma_index, candle_no + 1);
+
+                String cutUp = Utils.checkXCutUpY(ma1_0, ma1_1, maX_0, maX_1);
+                String cutDw = Utils.checkXCutDnY(ma1_0, ma1_1, maX_0, maX_1);
+
+                if (Utils.isNotBlank(cutUp)) {
+                    trend += ma_index + ":" + cutUp + ";";
+                }
+                if (Utils.isNotBlank(cutDw)) {
+                    trend += ma_index + ":" + cutDw + ";";
+                }
             }
-            if (Utils.isNotBlank(cutDw)) {
-                trend += ma_index + ":" + cutDw + ";";
-            }
+
         }
 
         if (trend.contains(Utils.TREND_LONG) && trend.contains(Utils.TREND_SHOT)) {

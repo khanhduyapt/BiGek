@@ -3953,6 +3953,9 @@ public class BinanceServiceImpl implements BinanceService {
                 seq_h1_h4 += "   ";
             }
             seq_h1_h4 = "SEQ:(" + seq_h1_h4 + ")";
+            if (Utils.isBlank(seq_h1_h4)) {
+                seq_h1_h4 = Utils.appendSpace("", seq_h1_h4.length());
+            }
 
             // ---------------------------------------------------------------------------------------------
             if (Utils.EPICS_CRYPTO_CFD.contains(EPIC) && !Objects.equals(EPIC, "BTCUSD")) {
@@ -3967,7 +3970,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // ---------------------------------------------------------------------------------------------
-            String seq = "   Trade:";
+            String seq = "trade:";
             {
                 seq += Utils.appendSpace(find_trend_to_trade, 5) + Utils.appendSpace(seq_h1_h4, 12);
                 if (Utils.isBlank(find_trend_to_trade)) {
@@ -3977,11 +3980,11 @@ public class BinanceServiceImpl implements BinanceService {
                 seq += "   ";
             }
 
-            String eoz = "EOZ:";
+            String eoz = "eoz_";
             {
                 String blocked = Utils.appendSpace(Utils.possible_take_profit(dto_d1, dto_h4, trend_h1), 15);
                 eoz += blocked + "   ";
-                if (eoz.contains("EOZ:   ")) {
+                if (eoz.contains("eoz_   ")) {
                     eoz = Utils.appendSpace("", eoz.length());
                 }
             }
@@ -4011,19 +4014,25 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String amp = " Amp ";
-            amp += "(h1):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dto_h1.getAmplitude_avg_of_candles()), 10);
-            amp += "(h4):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dto_h4.getAmplitude_avg_of_candles()), 10);
-            amp += "(d1):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dto_d1.getAmplitude_avg_of_candles()), 12);
+            amp += "(h4):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dto_h4.getAmplitude_avg_of_candles()), 6);
+            amp += "(d1):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dto_d1.getAmplitude_avg_of_candles()), 8);
+            amp += "(w1):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dto_w1.getAmplitude_avg_of_candles()), 8);
 
             String prefix = amp + No; // + " " + prefix_trend;
 
             String str_trend_d3 = "";
             if (!Objects.equals(trend_w1, trend_d1)) {
-                str_trend_d3 += "W#D  ";
+                str_trend_d3 += "W#D";
             } else {
-                str_trend_d3 += "     ";
+                str_trend_d3 += "   ";
             }
-            str_trend_d3 += "D:" + Utils.appendSpace(trend_d1, 6);
+            str_trend_d3 += " D:" + Utils.appendSpace(trend_d1, 6);
+
+            if (dto_d1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs10)) {
+                str_trend_d3 += "ma1" + Utils.getType(trend_d1) + "10   ";
+            } else {
+                str_trend_d3 += "         ";
+            }
 
             String append = str_trend_d3 + seq + eoz;
             String log_trend = Objects.equals(trend_d1, find_trend_to_trade) ? find_trend_to_trade : "";
