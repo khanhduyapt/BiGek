@@ -4782,16 +4782,16 @@ public class Utils {
         msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type().toUpperCase(), 4, "_") + ")", 15);
         msg += Utils.appendSpace(dto.getEpic(), 10) + new_line_from_service + " ";
         msg += Utils.appendSpace(dto.getComment().trim() + ".", 30) + "  ";
-        msg += " Entry: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()), 10);
+        msg += " ,Entry: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()), 10);
         msg += " ";
-        msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10) + "   ";
+        msg += " ,SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10) + "   ";
 
-        msg += " TP(h4): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_h4()), 10) + "   ";
-        msg += " TP(d1): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_d1()), 10) + "   ";
-        msg += " TP(w1): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_w1()), 10) + "   ";
+        msg += " ,TP(h4): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_h4()), 10) + "   ";
+        msg += " ,TP(d1): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_d1()), 10) + "   ";
+        msg += " ,TP(w1): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_w1()), 10) + "   ";
 
-        msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 6) + "(lot)   ";
-        msg += " Standard:"
+        msg += " ,Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 6) + "(lot)   ";
+        msg += " ,Standard:"
                 + Utils.appendLeft(Utils.removeLastZero(Utils.get_standard_vol_per_100usd(dto.getEpic())), 6)
                 + "(lot)    ";
         return msg.replace(TEXT_NOTICE_ONLY, "");
@@ -4803,11 +4803,11 @@ public class Utils {
         msg += Utils.appendSpace(trade.getSymbol(), 10) + new_line_from_service + " ";
         msg += Utils.appendSpace(reason + " " + Utils.get_duration_trade_time(trade), 30);
 
-        msg += " :Ticket: " + Utils.appendSpace(trade.getTicket(), 15);
-        msg += " Profit:" + Utils.appendLeft(Utils.getStringValue(trade.getProfit().intValue()), 6) + "   ";
-        msg += " SL: " + Utils.appendLeft(Utils.removeLastZero(trade.getStopLoss()), 10);
-        msg += " TP: " + Utils.appendLeft(Utils.removeLastZero(trade.getTakeProfit()), 10) + "   ";
-        msg += " Vol: " + Utils.appendLeft(Utils.getStringValue(trade.getVolume()), 10) + "(lot)   ";
+        msg += " ,Ticket: " + Utils.appendSpace(trade.getTicket(), 15);
+        msg += " ,Profit:" + Utils.appendLeft(Utils.getStringValue(trade.getProfit().intValue()), 6) + "   ";
+        msg += " ,SL: " + Utils.appendLeft(Utils.removeLastZero(trade.getStopLoss()), 10);
+        msg += " ,TP: " + Utils.appendLeft(Utils.removeLastZero(trade.getTakeProfit()), 10) + "   ";
+        msg += " ,Vol: " + Utils.appendLeft(Utils.getStringValue(trade.getVolume()), 10) + "(lot)   ";
         msg += Utils.appendSpace(Utils.getCapitalLink(trade.getSymbol()), 62);
         msg += Utils.appendSpace(trade.getComment(), 35);
 
