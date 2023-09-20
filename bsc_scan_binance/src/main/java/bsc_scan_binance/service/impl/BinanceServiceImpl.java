@@ -4174,16 +4174,18 @@ public class BinanceServiceImpl implements BinanceService {
                     || Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
 
                 boolean allow_trade_by_trend_15 = Objects.equals(trend_w1, trend_d1)
+                        && Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())
                         && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)
                         && Objects.equals(trend_h1, trend_15);
 
                 if (allow_trade_by_trend_15) {
-                    append += "_xuhog1" + Utils.TEXT_PASS;
+                    append += "_xuhog1";
                     allow_open_trade = true;
                 }
             }
             // --------------------------------------------------------------------------------------------
             if (!allow_open_trade && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_d1.getTrend_of_heiken3_1())
+                    && Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())
                     && Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_h1, trend_15)
                     && (dto_05.getSwitch_trend() + dto_10.getSwitch_trend() + dto_15.getSwitch_trend())
                             .contains(Utils.TEXT_SEQ)) {
@@ -4195,9 +4197,26 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // --------------------------------------------------------------------------------------------
             if (!allow_open_trade) {
+                Boolean is_position_trade = Objects.equals(trend_w1, trend_d1)
+                        && Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())
+                        && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)
+                        && Objects.equals(trend_h1, trend_15)
+                        && (dto_15.getSwitch_trend() + dto_h1.getSwitch_trend()).contains(trend_h1)
+                        && (dto_05.getTrend_by_seq_ma() + dto_10.getTrend_by_seq_ma() + dto_15.getTrend_by_seq_ma())
+                                .contains(Utils.TEXT_SEQ);
+
+                if (is_position_trade) {
+                    append += "_xuhog3";
+                    allow_open_trade = true;
+                }
+            }
+            // --------------------------------------------------------------------------------------------
+            if (!allow_open_trade) {
                 String find_trend_to_trade = Utils.find_trend_to_trade(dto_d1, dto_h4, dto_h1);
 
-                if (Utils.isNotBlank(find_trend_to_trade) && Objects.equals(trend_d1, trend_h1)) {
+                if (Utils.isNotBlank(find_trend_to_trade) && Objects.equals(trend_d1, trend_h1)
+                        && Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())) {
+
                     boolean m_allow_trade = Objects.equals(trend_15, find_trend_to_trade);
 
                     boolean h_allow_trade = Objects.equals(trend_h1, find_trend_to_trade)
@@ -4214,19 +4233,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
             }
-            // --------------------------------------------------------------------------------------------
-            if (!allow_open_trade) {
-                Boolean is_position_trade = dto_w1.getTrend_by_bread_area().contains(trend_h1)
-                        && dto_d1.getTrend_by_bread_area().contains(trend_h1)
-                        && dto_h4.getTrend_by_bread_area().contains(trend_h1)
-                        && (Objects.equals(trend_h1, dto_h1.getTrend_by_ma_10()) || Objects.equals(trend_h1, trend_h4))
-                        && Objects.equals(trend_h1, trend_15);
 
-                if (is_position_trade) {
-                    append += "_vithed";
-                    allow_open_trade = true;
-                }
-            }
             // --------------------------------------------------------------------------------------------
             if (allow_open_trade) {
                 append += seq_minus + Utils.TEXT_PASS;
