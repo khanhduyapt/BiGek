@@ -5128,23 +5128,23 @@ public class Utils {
         return tmp_msg + url;
     }
 
-    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_15, Orders dto_h4, Orders dto_d1,
+    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_h1, Orders dto_h4, Orders dto_d1,
             Orders dto_w1, String append, boolean isTradeNow, String CAPITAL_TIME_XX) {
-        BigDecimal curr_price = dto_15.getCurrent_price();
+        BigDecimal curr_price = dto_h1.getCurrent_price();
 
         BigDecimal entry = curr_price;
         if (Objects.equals(trend, Utils.TREND_LONG)) {
-            entry = curr_price.subtract(dto_15.getAmplitude_avg_of_candles());
+            entry = curr_price.subtract(dto_h1.getAmplitude_avg_of_candles());
 
-            if (entry.compareTo(dto_15.getLow_50candle()) > 0) {
-                entry = dto_15.getLow_50candle().add(dto_15.getAmplitude_1_part_15());
+            if (entry.compareTo(dto_h1.getLow_50candle()) > 0) {
+                // entry = dto_15.getLow_50candle().add(dto_15.getAmplitude_1_part_15());
             }
 
         } else if (Objects.equals(trend, Utils.TREND_SHOT)) {
-            entry = curr_price.add(dto_15.getAmplitude_avg_of_candles());
+            entry = curr_price.add(dto_h1.getAmplitude_avg_of_candles());
 
-            if (entry.compareTo(dto_15.getHig_50candle()) < 0) {
-                entry = dto_15.getHig_50candle().subtract(dto_15.getAmplitude_1_part_15());
+            if (entry.compareTo(dto_h1.getHig_50candle()) < 0) {
+                // entry = dto_15.getHig_50candle().subtract(dto_15.getAmplitude_1_part_15());
             }
 
         } else {
@@ -5160,7 +5160,7 @@ public class Utils {
         BigDecimal tp_d1 = calc_tp_by_amplitude_of_candle(curr_price, dto_d1.getAmplitude_avg_of_candles(), trend);
         BigDecimal tp_w1 = calc_tp_by_amplitude_of_candle(curr_price, dto_w1.getAmplitude_avg_of_candles(), trend);
 
-        MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, RISK_PER_TRADE, dto_15.getCurrent_price(), sl, tp_h4);
+        MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, RISK_PER_TRADE, curr_price, sl, tp_h4);
         BigDecimal volume = money.calcLot();
 
         BigDecimal standard_vol = get_standard_vol_per_100usd(EPIC);
@@ -5180,7 +5180,7 @@ public class Utils {
         Mt5OpenTrade dto = new Mt5OpenTrade();
         dto.setEpic(EPIC);
         dto.setOrder_type(trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
-        dto.setCur_price(dto_15.getCurrent_price());
+        dto.setCur_price(curr_price);
         dto.setLots(volume);
         dto.setEntry(entry);
         dto.setStop_loss(sl);
