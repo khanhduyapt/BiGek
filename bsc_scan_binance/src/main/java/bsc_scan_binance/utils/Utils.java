@@ -4112,11 +4112,7 @@ public class Utils {
         String trend_h4 = dto_h4.getTrend_of_heiken3();
         String trend_h1 = dto_h1.getTrend_of_heiken3();
 
-        boolean is_eq_d1_h1 = Objects.equals(trend_d1, trend_h1) || dto_h1.getTrend_by_seq_ma().contains(trend_d1)
-                || (Objects.equals(trend_d1, dto_h1.getTrend_by_ma_06())
-                        && Objects.equals(trend_d1, dto_h1.getTrend_by_ma_10())
-                        && Objects.equals(trend_d1, dto_h1.getTrend_by_ma_20())
-                        && Objects.equals(trend_d1, dto_h1.getTrend_by_ma_50()));
+        boolean is_eq_d1_h1 = Objects.equals(trend_d1, trend_h1) || dto_h1.getTrend_by_seq_ma().contains(trend_d1);
         if (!is_eq_d1_h1) {
             return "";
         }
@@ -4133,36 +4129,14 @@ public class Utils {
             }
         }
 
-        if (Objects.equals(dto_h1.getTrend_by_ma_50(), trend_d1) && Objects.equals(dto_h1.getTrend_by_ma_50(), trend_h4)
-                && Objects.equals(dto_h1.getTrend_by_ma_50(), trend_h1)
-                && Objects.equals(dto_h1.getTrend_by_ma_50(), dto_h1.getTrend_by_ma_20())
-                && Objects.equals(dto_h1.getTrend_by_ma_50(), dto_h1.getTrend_by_ma_10())
-                && Objects.equals(dto_h1.getTrend_by_ma_50(), dto_h1.getTrend_by_ma_06())) {
-
-            return trend_d1;
-        }
-
-        if (Objects.equals(dto_h4.getTrend_by_ma_50(), trend_d1) && Objects.equals(dto_h4.getTrend_by_ma_50(), trend_h1)
-                && Objects.equals(dto_h4.getTrend_by_ma_50(), trend_h4)
-                && Objects.equals(dto_h4.getTrend_by_ma_50(), dto_h4.getTrend_by_ma_20())
-                && Objects.equals(dto_h4.getTrend_by_ma_50(), dto_h4.getTrend_by_ma_10())
-                && Objects.equals(dto_h4.getTrend_by_ma_50(), dto_h4.getTrend_by_ma_06())) {
-
-            return trend_d1;
-        }
-
         if (dto_d1.getTradable_zone().contains(trend_h1) && dto_h4.getTradable_zone().contains(trend_h1)) {
             if (!Objects.equals(dto_d1.getTrend_of_heiken3(), dto_d1.getTrend_by_ma_06())) {
                 return "";
             }
         }
-        if (Objects.equals(trend_d1, trend_d1)
-                && (Objects.equals(trend_d1, trend_h4) || dto_h4.getTrend_by_seq_ma().contains(trend_d1)
-                        || (Objects.equals(trend_d1, dto_h4.getTrend_by_ma_10())
-                                && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_20())
-                                && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_50())))
 
-        ) {
+        if (Objects.equals(trend_d1, trend_d1)
+                && (Objects.equals(trend_d1, trend_h4) || dto_h4.getTrend_by_seq_ma().contains(trend_d1))) {
             return trend_d1;
         }
 
@@ -4591,12 +4565,13 @@ public class Utils {
     }
 
     public static String calculatePoints(String EPIC, BigDecimal amplitude_avg_of_candles) {
-        int decimalPlaces = 4;
+        int decimalPlaces = 5;
+        if ("_CADCHF_".contains(EPIC)) {
+            decimalPlaces = 5;
+        }
 
         if (EPIC.contains("JPY") || EPIC.contains("XAU")) {
             decimalPlaces = 3;
-        } else if (EPICS_FOREXS_ALL.contains(EPIC)) {
-            decimalPlaces = 4;
         } else if (amplitude_avg_of_candles.compareTo(BigDecimal.valueOf(10)) > 0) {
             decimalPlaces = 2;
         } else if (amplitude_avg_of_candles.compareTo(BigDecimal.valueOf(1)) > 0) {
@@ -5278,17 +5253,17 @@ public class Utils {
     public static String possible_take_profit(Orders dto_d1, Orders dto_h4, String trend_h1) {
         String type = getType(trend_h1).toUpperCase();
 
-        BigDecimal amplitude = dto_h4.getAmplitude_avg_of_candles().multiply(BigDecimal.valueOf(1.2));
+        BigDecimal amplitude = dto_h4.getAmplitude_avg_of_candles().multiply(BigDecimal.valueOf(1.5));
 
         if (Objects.equals(TREND_LONG, trend_h1)) {
             // Hết biên độ để đạt TP(H4)
             BigDecimal next_price = dto_d1.getCurrent_price().add(amplitude);
             {
-                if (next_price.compareTo(dto_d1.getBody_end_50_candle()) > 0) {
+                if (next_price.compareTo(dto_d1.getHig_50candle()) > 0) {
                     return type + "_by_d1";
                 }
 
-                if (next_price.compareTo(dto_h4.getBody_end_50_candle()) > 0) {
+                if (next_price.compareTo(dto_h4.getHig_50candle()) > 0) {
                     return type + "_by_h4";
                 }
             }
@@ -5299,7 +5274,7 @@ public class Utils {
             BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_d1.getCurrent_price(),
                     dto_h4.getAmplitude_avg_of_candles(), trend_h1);
             if (maxValue.compareTo(tp) > 0) {
-                return "";
+                return ""; // Đủ biên độ để dạt TP
             } else {
                 return type + "_by_ha";
             }
@@ -5309,11 +5284,11 @@ public class Utils {
             // Hết biên độ để đạt TP(H4)
             BigDecimal next_price = dto_d1.getCurrent_price().subtract(amplitude);
             {
-                if (next_price.compareTo(dto_d1.getBody_str_50_candle()) < 0) {
+                if (next_price.compareTo(dto_d1.getLow_50candle()) < 0) {
                     return type + "_by_d1";
                 }
 
-                if (next_price.compareTo(dto_h4.getBody_end_50_candle()) < 0) {
+                if (next_price.compareTo(dto_h4.getLow_50candle()) < 0) {
                     return type + "_by_h4";
                 }
             }
@@ -5324,7 +5299,7 @@ public class Utils {
             BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_d1.getCurrent_price(),
                     dto_h4.getAmplitude_avg_of_candles(), trend_h1);
             if (minValue.compareTo(tp) < 0) {
-                return "";
+                return ""; // Đủ biên độ để dạt TP
             } else {
                 return type + "_by_ha";
             }

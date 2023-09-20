@@ -101,7 +101,7 @@ public class Orders {
     private String trend_by_ma_20;
 
     @Column(name = "trend_by_ma_50")
-    private String trend_by_ma_50;
+    private String wait_buy_or_sell_by_89_candles;
 
     @Column(name = "trend_by_seq_ma")
     private String trend_by_seq_ma;
