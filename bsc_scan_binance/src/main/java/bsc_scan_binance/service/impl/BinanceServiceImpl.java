@@ -3798,11 +3798,14 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (Utils.is_increase_decrease_rhythmic(heiken_list)) {
             if (CAPITAL_TIME_XX.contains("HOUR_")) {
-                switch_trend += Utils.switchTrendByMa1vs10(heiken_list);
-                switch_trend += Utils.switchTrendByMa1vs10(list);
 
-                switch_trend += Utils.switchTrendByMa1vs2025(heiken_list);
-                switch_trend += Utils.switchTrendByMa1vs2025(list);
+                if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4)) {
+                    switch_trend += Utils.switchTrendByMa1vs10(heiken_list);
+                    switch_trend += Utils.switchTrendByMa1vs10(list);
+                } else {
+                    switch_trend += Utils.switchTrendByMa1vs2025(heiken_list);
+                    switch_trend += Utils.switchTrendByMa1vs2025(list);
+                }
 
                 switch_trend += Utils.switch_trend_seq_1_10_20_50(heiken_list, amplitude_avg_of_candles);
                 switch_trend += Utils.switch_trend_seq_1_10_20_50(list, amplitude_avg_of_candles);
@@ -3817,9 +3820,6 @@ public class BinanceServiceImpl implements BinanceService {
                 switch_trend += Utils.switch_trend_seq_1_10_20_50(list, amplitude_avg_of_candles);
 
             } else {
-                switch_trend += Utils.switchTrendByMa3_2_1(heiken_list);
-                switch_trend += Utils.switchTrendByHeken_12(heiken_list);
-
                 switch_trend += Utils.switchTrendByMa1vs10(heiken_list);
                 switch_trend += Utils.switchTrendByMa1vs10(list);
             }
@@ -4132,13 +4132,12 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_15 = dto_15.getTrend_of_heiken3();
 
             if (!Objects.equals(trend_d1, trend_h1)
+                    || !Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())
                     || (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_w1, trend_h1))) {
                 continue;
             }
 
-            boolean is_reversal_zone = (dto_10.getSwitch_trend() + dto_15.getSwitch_trend() + dto_h1.getSwitch_trend()
-                    + dto_h4.getSwitch_trend() + dto_d1.getSwitch_trend() + dto_h1.getTrend_by_seq_ma()
-                    + dto_h4.getTrend_by_seq_ma()).contains(trend_h1);
+            boolean is_reversal_zone = (dto_h4.getSwitch_trend() + dto_d1.getSwitch_trend()).contains(trend_h1);
             if (!is_reversal_zone) {
                 continue;
             }
@@ -4180,7 +4179,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // --------------------------------------------------------------------------------------------
             if (!allow_open_trade && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_d1.getTrend_of_heiken3_1())
-                    && Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())
                     && Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_h1, trend_15)
                     && (dto_05.getSwitch_trend() + dto_10.getSwitch_trend() + dto_15.getSwitch_trend())
                             .contains(Utils.TEXT_SEQ)) {
@@ -4190,7 +4188,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // --------------------------------------------------------------------------------------------
             if (!allow_open_trade && Objects.equals(trend_w1, trend_d1)
-                    && Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())
                     && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)
                     && Objects.equals(trend_h1, trend_15)
                     && (dto_15.getSwitch_trend() + dto_h1.getSwitch_trend()).contains(trend_h1)
