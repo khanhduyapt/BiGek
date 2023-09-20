@@ -3223,28 +3223,28 @@ public class BinanceServiceImpl implements BinanceService {
                 result += "   Open: " + Utils.appendLeft(Utils.getStringValue(trade.getPriceOpen()), 12);
 
                 result += "   TP(h1): " + Utils.appendLeft(
-                        Utils.getStringValue(Utils.calc_tp_by_amplitude_of_candle(dto_h1.getCurrent_price(),
+                        Utils.getStringValue(Utils.calc_tp_by_amplitude_of_candle(trade.getPriceOpen(),
                                 dto_h1.getAmplitude_avg_of_candles(), TRADE_TREND)),
                         12);
 
                 if (Objects.nonNull(dto_h4)) {
                     result += "   TP(h4): " + Utils.appendLeft(
-                            Utils.getStringValue(Utils.calc_tp_by_amplitude_of_candle(dto_h4.getCurrent_price(),
-                                    dto_h4.getAmplitude_avg_of_candles(), TRADE_TREND)),
+                            Utils.getStringValue(Utils.calc_tp_by_amplitude_of_candle(trade
+                                    .getPriceOpen(), dto_h4.getAmplitude_avg_of_candles(), TRADE_TREND)),
                             12);
                 }
 
                 if (Objects.nonNull(dto_d1)) {
                     result += "   TP(d1): " + Utils.appendLeft(
-                            Utils.getStringValue(Utils.calc_tp_by_amplitude_of_candle(dto_d1.getCurrent_price(),
-                                    dto_d1.getAmplitude_avg_of_candles(), TRADE_TREND)),
+                            Utils.getStringValue(Utils.calc_tp_by_amplitude_of_candle(trade
+                                    .getPriceOpen(), dto_d1.getAmplitude_avg_of_candles(), TRADE_TREND)),
                             12);
                 }
 
                 if (Objects.nonNull(dto_w1)) {
                     result += "   TP(w1): " + Utils.appendLeft(
-                            Utils.getStringValue(Utils.calc_tp_by_amplitude_of_candle(dto_w1.getCurrent_price(),
-                                    dto_w1.getAmplitude_avg_of_candles(), TRADE_TREND)),
+                            Utils.getStringValue(Utils.calc_tp_by_amplitude_of_candle(trade
+                                    .getPriceOpen(), dto_w1.getAmplitude_avg_of_candles(), TRADE_TREND)),
                             12);
                 }
 
