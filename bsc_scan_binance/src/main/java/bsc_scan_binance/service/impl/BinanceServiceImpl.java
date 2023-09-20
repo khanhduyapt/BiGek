@@ -4203,9 +4203,7 @@ public class BinanceServiceImpl implements BinanceService {
             // --------------------------------------------------------------------------------------------
             if (!allow_open_trade && Objects.equals(trend_w1, trend_d1)) {
                 String find_trend_to_trade = Utils.find_trend_to_trade(dto_d1, dto_h4, dto_h1);
-
-                if (Utils.isNotBlank(find_trend_to_trade) && Objects.equals(trend_d1, trend_h1)
-                        && Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())) {
+                if (Objects.equals(trend_d1, find_trend_to_trade) && Objects.equals(trend_d1, trend_h1)) {
 
                     boolean m_allow_trade = Objects.equals(trend_15, find_trend_to_trade);
 
@@ -4281,7 +4279,6 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(dto_h1);
             Orders dto_10 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_10).orElse(dto_h1);
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(dto_h1);
-            Orders dto_03 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_03).orElse(dto_h1);
 
             if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
                 String str_null = "";
