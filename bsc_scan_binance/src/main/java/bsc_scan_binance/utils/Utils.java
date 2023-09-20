@@ -4578,6 +4578,8 @@ public class Utils {
             decimalPlaces = 3;
         } else if (EPIC.contains("USOIL")) {
             decimalPlaces = 3;
+        } else if (EPIC.contains("XAG") || EPIC.contains("XAU")) {
+            decimalPlaces = 4;
         }
 
         BigDecimal point = formatPrice(amplitude_avg_of_candles, decimalPlaces)

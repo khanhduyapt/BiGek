@@ -291,13 +291,13 @@ void openTrade(string line)
             //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp, comment);
            }
 
-         if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry, stop_loss, tp_h4, comment + "_h"))
+         if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry, stop_loss, tp_h4, comment + "_1"))
             Alert("Duydk: BUY: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
 
          //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry, stop_loss, tp_d1, comment + "_d");
          //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry, stop_loss, tp_w1, comment + "_w");
-         m_trade.BuyLimit(volume, entry, trade_symbol, stop_loss, tp_d1, ORDER_TIME_GTC, expiration, comment + "_d");
-         m_trade.BuyLimit(volume, entry, trade_symbol, stop_loss, tp_w1, ORDER_TIME_GTC, expiration, comment + "_w");
+         m_trade.BuyLimit(volume, entry, trade_symbol, stop_loss, tp_d1, ORDER_TIME_GTC, expiration, comment + "_2");
+         m_trade.BuyLimit(volume, entry, trade_symbol, stop_loss, tp_w1, ORDER_TIME_GTC, expiration, comment + "_3");
         }
 
       if(type== "buy_limit")

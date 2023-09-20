@@ -3941,10 +3941,6 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            if (EPIC.contains("EURNZD")) {
-                boolean debug = true;
-            }
-
             if ((dto_d1.getTrend_by_seq_ma() + dto_d1.getSwitch_trend()).contains(Utils.TEXT_SEQ)
                     && !(dto_d1.getTrend_by_seq_ma() + dto_d1.getSwitch_trend())
                             .contains(dto_d1.getTrend_of_heiken3())) {
@@ -4002,7 +3998,10 @@ public class BinanceServiceImpl implements BinanceService {
             if (eoz.contains("eoz_      ")) {
                 eoz = eoz.replace("eoz_      ", "          ");
             }
-            eoz += " h1_wait_" + Utils.getType(dto_h1.getWait_buy_or_sell_by_89_candles()).toUpperCase() + " ";
+
+            String wait = (dto_h4.getSwitch_trend() + dto_d1.getSwitch_trend())
+                    .contains(trend_h1) ? " wait_" + Utils.getType(trend_h1).toUpperCase() : "       ";
+            eoz += wait;
 
             if (!Objects.equals(EPIC, "BTCUSD")) {
                 BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
@@ -4137,7 +4136,8 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            boolean is_reversal_zone = (dto_h4.getSwitch_trend() + dto_d1.getSwitch_trend()).contains(trend_h1);
+            boolean is_reversal_zone = (dto_h4.getSwitch_trend() + dto_d1.getSwitch_trend())
+                    .contains(trend_h1);
             if (!is_reversal_zone) {
                 continue;
             }
