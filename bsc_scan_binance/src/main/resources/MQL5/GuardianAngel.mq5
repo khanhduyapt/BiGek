@@ -206,7 +206,7 @@ void openTrade(string line)
    string epic = toLower(result[0]);
    string type = toLower(result[1]);
    double volume = StringToDouble(result[2]);
-   double price = StringToDouble(result[3]);
+   double entry = StringToDouble(result[3]);
    double stop_loss = StringToDouble(result[4]);
    double tp_h4 = StringToDouble(result[5]);
    string comment = result[6];
@@ -272,7 +272,7 @@ void openTrade(string line)
       int    digits = (int)SymbolInfoInteger(trade_symbol,SYMBOL_DIGITS);     // number of decimal places
       double point  = SymbolInfoDouble(trade_symbol,SYMBOL_POINT);            // point
 
-      price     = NormalizeDouble(price,digits);                              // normalizing open price
+      entry     = NormalizeDouble(entry,digits);                              // normalizing open price
       stop_loss = NormalizeDouble(stop_loss, digits);                         // normalizing Stop Loss
       tp_h4     = NormalizeDouble(tp_h4, digits);                             // normalizing TP_h4
       tp_d1     = NormalizeDouble(tp_d1, digits);                             // normalizing tp_d1
@@ -291,17 +291,18 @@ void openTrade(string line)
             //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp, comment);
            }
 
-         if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp_h4, comment + "_h"))
+         if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry, stop_loss, tp_h4, comment + "_h"))
             Alert("Duydk: BUY: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
 
-         m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp_d1, comment + "_d");
-         m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp_w1, comment + "_w");
-
+         //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry, stop_loss, tp_d1, comment + "_d");
+         //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry, stop_loss, tp_w1, comment + "_w");
+         m_trade.BuyLimit(volume, entry, trade_symbol, stop_loss, tp_d1, ORDER_TIME_GTC, expiration, comment + "_d");
+         m_trade.BuyLimit(volume, entry, trade_symbol, stop_loss, tp_w1, ORDER_TIME_GTC, expiration, comment + "_w");
         }
 
       if(type== "buy_limit")
         {
-         if(!m_trade.BuyLimit(volume, price, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment))
+         if(!m_trade.BuyLimit(volume, entry, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment))
             Alert("Duydk: BUY LIMIT: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
         }
 
@@ -310,19 +311,21 @@ void openTrade(string line)
          //--- open position
          if(StringFind(comment, "_vithed", 0) >= 0)
            {
-            //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, tp, comment);
+            //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry, stop_loss, tp, comment);
            }
 
-         if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, tp_h4, comment + "_h"))
+         if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry, stop_loss, tp_h4, comment + "_h"))
             Alert("Duydk: SELL: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
 
-         m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, tp_d1, comment + "_d");
-         m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, price, stop_loss, tp_w1, comment + "_w");
+         //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry, stop_loss, tp_d1, comment + "_d");
+         //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry, stop_loss, tp_w1, comment + "_w");
+         m_trade.SellLimit(volume, entry, trade_symbol, stop_loss, tp_d1, ORDER_TIME_GTC, expiration, comment + "_d");
+         m_trade.SellLimit(volume, entry, trade_symbol, stop_loss, tp_w1, ORDER_TIME_GTC, expiration, comment + "_w");
         }
 
       if(type== "sell_limit")
         {
-         if(!m_trade.SellLimit(volume, price, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment))
+         if(!m_trade.SellLimit(volume, entry, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment))
             Alert("Duydk: SELL LIMIT: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
         }
 
