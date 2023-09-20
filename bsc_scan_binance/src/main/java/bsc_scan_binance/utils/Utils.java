@@ -5136,16 +5136,8 @@ public class Utils {
         if (Objects.equals(trend, Utils.TREND_LONG)) {
             entry = curr_price.subtract(dto_h1.getAmplitude_avg_of_candles());
 
-            if (entry.compareTo(dto_h1.getLow_50candle()) > 0) {
-                // entry = dto_15.getLow_50candle().add(dto_15.getAmplitude_1_part_15());
-            }
-
         } else if (Objects.equals(trend, Utils.TREND_SHOT)) {
             entry = curr_price.add(dto_h1.getAmplitude_avg_of_candles());
-
-            if (entry.compareTo(dto_h1.getHig_50candle()) < 0) {
-                // entry = dto_15.getHig_50candle().subtract(dto_15.getAmplitude_1_part_15());
-            }
 
         } else {
             Utils.logWritelnDraft("(ERROR_LONG_OR_SHORT?) calc_Lot_En_SL_TP:trend=" + trend);
@@ -5155,7 +5147,6 @@ public class Utils {
         List<BigDecimal> sl1 = Utils.calc_sl1_tp2(dto_h4, trend);
         BigDecimal sl = sl1.get(0);
 
-        // BigDecimal tp = calc_tp_by_amplitude_of_d1(dto_d1, trend);
         BigDecimal tp_h4 = calc_tp_by_amplitude_of_candle(curr_price, dto_h4.getAmplitude_avg_of_candles(), trend);
         BigDecimal tp_d1 = calc_tp_by_amplitude_of_candle(curr_price, dto_d1.getAmplitude_avg_of_candles(), trend);
         BigDecimal tp_w1 = calc_tp_by_amplitude_of_candle(curr_price, dto_w1.getAmplitude_avg_of_candles(), trend);
