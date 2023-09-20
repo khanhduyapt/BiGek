@@ -4151,9 +4151,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean allow_trade_by_trend_h1 = Objects.equals(trend_h1, trend_15)
                     && Objects.equals(trend_h1, dto_10.getTrend_of_heiken3())
-                    && Objects.equals(trend_h1, dto_05.getTrend_by_ma_06())
                     && Objects.equals(trend_h1, dto_05.getTrend_of_heiken3())
-                    && Objects.equals(trend_h1, dto_03.getTrend_by_ma_06())
                     && Objects.equals(trend_h1, dto_03.getTrend_of_heiken3());
             if (!allow_trade_by_trend_h1) {
                 continue;
@@ -4209,21 +4207,6 @@ public class BinanceServiceImpl implements BinanceService {
                     allow_open_trade = true;
                 }
             }
-
-            // --------------------------------------------------------------------------------------------
-            if (!allow_open_trade) {
-                Boolean is_position_trade = dto_w1.getTrend_by_bread_area().contains(trend_h1)
-                        && dto_d1.getTrend_by_bread_area().contains(trend_h1)
-                        && dto_h4.getTrend_by_bread_area().contains(trend_h1)
-                        && (Objects.equals(trend_h1, dto_h1.getTrend_by_ma_10()) || Objects.equals(trend_h1, trend_h4))
-                        && Objects.equals(trend_h1, trend_15);
-
-                if (is_position_trade) {
-                    append += "_vithed";
-                    allow_open_trade = true;
-                }
-            }
-
             // --------------------------------------------------------------------------------------------
             if (!allow_open_trade) {
                 String find_trend_to_trade = Utils.find_trend_to_trade(dto_d1, dto_h4, dto_h1);
@@ -4243,6 +4226,19 @@ public class BinanceServiceImpl implements BinanceService {
                             append += "_sq4g";
                         }
                     }
+                }
+            }
+            // --------------------------------------------------------------------------------------------
+            if (!allow_open_trade) {
+                Boolean is_position_trade = dto_w1.getTrend_by_bread_area().contains(trend_h1)
+                        && dto_d1.getTrend_by_bread_area().contains(trend_h1)
+                        && dto_h4.getTrend_by_bread_area().contains(trend_h1)
+                        && (Objects.equals(trend_h1, dto_h1.getTrend_by_ma_10()) || Objects.equals(trend_h1, trend_h4))
+                        && Objects.equals(trend_h1, trend_15);
+
+                if (is_position_trade) {
+                    append += "_vithed";
+                    allow_open_trade = true;
                 }
             }
 
