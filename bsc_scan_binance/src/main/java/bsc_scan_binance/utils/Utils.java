@@ -5134,10 +5134,10 @@ public class Utils {
 
         BigDecimal entry = curr_price;
         if (Objects.equals(trend, Utils.TREND_LONG)) {
-            entry = curr_price.subtract(dto_h1.getAmplitude_avg_of_candles());
+            entry = curr_price.subtract(dto_h4.getAmplitude_avg_of_candles());
 
         } else if (Objects.equals(trend, Utils.TREND_SHOT)) {
-            entry = curr_price.add(dto_h1.getAmplitude_avg_of_candles());
+            entry = curr_price.add(dto_h4.getAmplitude_avg_of_candles());
 
         } else {
             Utils.logWritelnDraft("(ERROR_LONG_OR_SHORT?) calc_Lot_En_SL_TP:trend=" + trend);

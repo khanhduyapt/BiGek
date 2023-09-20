@@ -4175,7 +4175,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_h4, trend_h1)
                     && Objects.equals(trend_h1, trend_15)) {
 
-                append += "_xuhog1";
+                append += "_xh1";
                 allow_open_trade = true;
             }
             // --------------------------------------------------------------------------------------------
@@ -4185,7 +4185,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && (dto_05.getSwitch_trend() + dto_10.getSwitch_trend() + dto_15.getSwitch_trend())
                             .contains(Utils.TEXT_SEQ)) {
 
-                append += "_xuhog2";
+                append += "_xh2";
                 allow_open_trade = true;
             }
             // --------------------------------------------------------------------------------------------
@@ -4197,7 +4197,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && (dto_05.getTrend_by_seq_ma() + dto_10.getTrend_by_seq_ma() + dto_15.getTrend_by_seq_ma())
                             .contains(Utils.TEXT_SEQ)) {
 
-                append += "_xuhog3";
+                append += "_xh3";
                 allow_open_trade = true;
             }
             // --------------------------------------------------------------------------------------------
@@ -4214,9 +4214,9 @@ public class BinanceServiceImpl implements BinanceService {
                         allow_open_trade = true;
 
                         if (dto_h1.getTrend_by_seq_ma().contains(find_trend_to_trade)) {
-                            append += "_sq1g";
+                            append += "_sq1";
                         } else if (dto_h4.getTrend_by_seq_ma().contains(find_trend_to_trade)) {
-                            append += "_sq4g";
+                            append += "_sq4";
                         }
                     }
                 }
