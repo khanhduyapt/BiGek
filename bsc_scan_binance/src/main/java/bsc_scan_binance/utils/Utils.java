@@ -5136,8 +5136,16 @@ public class Utils {
         if (Objects.equals(trend, Utils.TREND_LONG)) {
             entry = curr_price.subtract(dto_15.getAmplitude_avg_of_candles());
 
+            if (entry.compareTo(dto_15.getLow_50candle()) > 0) {
+                entry = dto_15.getLow_50candle().add(dto_15.getAmplitude_1_part_15());
+            }
+
         } else if (Objects.equals(trend, Utils.TREND_SHOT)) {
             entry = curr_price.add(dto_15.getAmplitude_avg_of_candles());
+
+            if (entry.compareTo(dto_15.getHig_50candle()) < 0) {
+                entry = dto_15.getHig_50candle().subtract(dto_15.getAmplitude_1_part_15());
+            }
 
         } else {
             Utils.logWritelnDraft("(ERROR_LONG_OR_SHORT?) calc_Lot_En_SL_TP:trend=" + trend);
