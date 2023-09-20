@@ -4337,8 +4337,9 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // -------------------------------------------------------------------------------------
             if (PROFIT.compareTo(BigDecimal.valueOf(1)) > 0) {
-                if ((Objects.equals(dto_10.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
-                        || Objects.equals(dto_15.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND))) {
+                if (Objects.equals(dto_05.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
+                        && Objects.equals(dto_10.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
+                        && Objects.equals(dto_15.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)) {
 
                     if (Objects.equals(TRADING_TREND, Utils.TREND_LONG)) {
                         BigDecimal next_price = trade.getPriceOpen().add(dto_h1.getAmplitude_avg_of_candles());
