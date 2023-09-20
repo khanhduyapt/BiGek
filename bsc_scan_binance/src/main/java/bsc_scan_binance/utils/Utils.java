@@ -5375,7 +5375,7 @@ public class Utils {
         return " " + seq.trim() + "   ";
     }
 
-    public static String get_seq_minus(String trend_h1, Orders dto_15, Orders dto_10, Orders dto_05, Orders dto_03) {
+    public static String get_seq_minus(String trend_h1, Orders dto_15, Orders dto_10, Orders dto_05) {
 
         String switch_trend_m1x = "";
         switch_trend_m1x += dto_15.getSwitch_trend();
@@ -5387,14 +5387,7 @@ public class Utils {
             switch_trend_m1x += dto_05.getTrend_by_seq_ma();
         }
 
-        switch_trend_m1x += dto_03.getSwitch_trend();
-        if (dto_03.getTrend_by_seq_ma().contains(dto_03.getTrend_of_heiken3())
-                || dto_03.getTrend_by_seq_ma().contains(dto_03.getTrend_by_ma_06())) {
-            switch_trend_m1x += dto_03.getTrend_by_seq_ma();
-        }
-
         boolean h1_allow_trade = switch_trend_m1x.contains(Utils.TEXT_SEQ)
-                && Objects.equals(trend_h1, dto_03.getTrend_by_ma_06())
                 && Objects.equals(trend_h1, dto_05.getTrend_by_ma_06())
                 && Objects.equals(trend_h1, dto_10.getTrend_of_heiken3())
                 && Objects.equals(trend_h1, dto_15.getTrend_of_heiken3());
@@ -5412,11 +5405,6 @@ public class Utils {
             if ((dto_05.getSwitch_trend() + dto_05.getTrend_by_seq_ma()).contains(Utils.TEXT_SEQ)
                     && Objects.equals(trend_h1, dto_05.getTrend_by_ma_06())) {
                 return Utils.ENCRYPTED_05;
-            }
-
-            if ((dto_03.getSwitch_trend() + dto_03.getTrend_by_seq_ma()).contains(Utils.TEXT_SEQ)
-                    && Objects.equals(trend_h1, dto_03.getTrend_by_ma_06())) {
-                return Utils.ENCRYPTED_03;
             }
         }
         return "";
