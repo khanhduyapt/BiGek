@@ -5132,8 +5132,7 @@ public class Utils {
     }
 
     public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String find_trend, Orders dto_h1, Orders dto_h4,
-            Orders dto_d1,
-            Orders dto_w1, String append, boolean isTradeNow, String CAPITAL_TIME_XX) {
+            Orders dto_d1, Orders dto_w1, String append, boolean isTradeNow, String CAPITAL_TIME_XX) {
         BigDecimal curr_price = dto_h1.getCurrent_price();
 
         BigDecimal entry_h1 = curr_price;

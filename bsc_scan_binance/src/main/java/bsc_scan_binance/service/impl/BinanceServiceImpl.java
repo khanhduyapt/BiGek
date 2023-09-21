@@ -3883,8 +3883,8 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal ma10 = Utils.calcMA(list, 10, 0);
         BigDecimal ma20 = Utils.calcMA(list, 20, 0);
 
-        BigDecimal close_candle_1 = list.get(1).getPrice_close_candle();
-        BigDecimal close_candle_2 = list.get(2).getPrice_close_candle();
+        BigDecimal close_candle_1 = list.get(0).getPrice_close_candle();
+        BigDecimal close_candle_2 = list.get(1).getPrice_close_candle();
 
         int sub_size = 50;
         if (heiken_list.size() < 50) {
@@ -3900,9 +3900,7 @@ public class BinanceServiceImpl implements BinanceService {
                 close_candle_2, switch_trend, trend_by_ma_10, tradable_zone, trend_by_ma_06, trend_by_ma_20,
                 trend_by_ma_50, trend_by_seq_ma, trend_by_bread_area, body_end_50_candle, body_str_50_candle,
                 amplitude_1_part_15, amplitude_avg_of_candles, ma10, ma20, low_50candle, hig_50candle,
-                lowest_price_of_curr_candle, highest_price_of_curr_candle, trend_of_heiken3_1)
-
-        ;
+                lowest_price_of_curr_candle, highest_price_of_curr_candle, trend_of_heiken3_1);
 
         ordersRepository.save(entity);
 
