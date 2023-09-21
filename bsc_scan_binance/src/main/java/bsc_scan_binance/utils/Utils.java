@@ -3155,14 +3155,18 @@ public class Utils {
 
         BigDecimal sl = BigDecimal.ZERO;
         BigDecimal tp = BigDecimal.ZERO;
+
+        BigDecimal amp = dto_sl.getAmplitude_avg_of_candles();
+        //BigDecimal amp = dto_sl.getAmplitude_avg_of_candles().multiply(BigDecimal.valueOf(1.5));
+
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            sl = dto_sl.getSl_long();
-            tp = dto_sl.getTp_long();
+            sl = dto_sl.getCurrent_price().subtract(amp);
+            tp = dto_sl.getCurrent_price().add(amp);
         }
 
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            sl = dto_sl.getSl_shot();
-            tp = dto_sl.getTp_shot();
+            sl = dto_sl.getCurrent_price().add(amp);
+            tp = dto_sl.getCurrent_price().subtract(amp);
         }
 
         result.add(sl);
@@ -4022,7 +4026,7 @@ public class Utils {
         return false;
     }
 
-    private static String checkXCutUpY(BigDecimal maX_1, BigDecimal maX_2, BigDecimal maY_1, BigDecimal maY_2) {
+    public static String checkXCutUpY(BigDecimal maX_1, BigDecimal maX_2, BigDecimal maY_1, BigDecimal maY_2) {
         if ((maX_1.compareTo(maX_2) >= 0) && (maX_1.compareTo(maY_1) >= 0) && (maY_2.compareTo(maX_2) >= 0)) {
             return TREND_LONG;
         }
@@ -4030,7 +4034,7 @@ public class Utils {
         return "";
     }
 
-    private static String checkXCutDnY(BigDecimal maX_1, BigDecimal maX_2, BigDecimal maY_1, BigDecimal maY_2) {
+    public static String checkXCutDnY(BigDecimal maX_1, BigDecimal maX_2, BigDecimal maY_1, BigDecimal maY_2) {
         if ((maX_1.compareTo(maX_2) <= 0) && (maX_1.compareTo(maY_1) <= 0) && (maY_2.compareTo(maX_2) <= 0)) {
             return TREND_SHOT;
         }
@@ -5127,34 +5131,35 @@ public class Utils {
         return tmp_msg + url;
     }
 
-    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String trend, Orders dto_h1, Orders dto_h4, Orders dto_d1,
+    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String find_trend, Orders dto_h1, Orders dto_h4,
+            Orders dto_d1,
             Orders dto_w1, String append, boolean isTradeNow, String CAPITAL_TIME_XX) {
         BigDecimal curr_price = dto_h1.getCurrent_price();
 
         BigDecimal entry_h1 = curr_price;
         BigDecimal entry_h4 = curr_price;
         BigDecimal entry_d1 = curr_price;
-        if (Objects.equals(trend, Utils.TREND_LONG)) {
+        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
             entry_h1 = curr_price.subtract(dto_h4.getAmplitude_avg_of_candles());
             entry_h4 = curr_price.subtract(dto_d1.getAmplitude_avg_of_candles());
             entry_d1 = curr_price.subtract(dto_w1.getAmplitude_avg_of_candles());
 
-        } else if (Objects.equals(trend, Utils.TREND_SHOT)) {
+        } else if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
             entry_h1 = curr_price.add(dto_h4.getAmplitude_avg_of_candles());
             entry_h4 = curr_price.add(dto_d1.getAmplitude_avg_of_candles());
             entry_d1 = curr_price.add(dto_w1.getAmplitude_avg_of_candles());
 
         } else {
-            Utils.logWritelnDraft("(ERROR_LONG_OR_SHORT?) calc_Lot_En_SL_TP:trend=" + trend);
+            Utils.logWritelnDraft("(ERROR_LONG_OR_SHORT?) calc_Lot_En_SL_TP:trend=" + find_trend);
             return null;
         }
 
-        List<BigDecimal> sl1 = Utils.calc_sl1_tp2(dto_h4, trend);
+        List<BigDecimal> sl1 = Utils.calc_sl1_tp2(dto_d1, find_trend);
         BigDecimal sl = sl1.get(0);
 
-        BigDecimal tp_h4 = calc_tp_by_amplitude_of_candle(curr_price, dto_h4.getAmplitude_avg_of_candles(), trend);
-        // BigDecimal tp_d1 = calc_tp_by_amplitude_of_candle(curr_price, dto_d1.getAmplitude_avg_of_candles(), trend);
-        // BigDecimal tp_w1 = calc_tp_by_amplitude_of_candle(curr_price, dto_w1.getAmplitude_avg_of_candles(), trend);
+        BigDecimal tp_h4 = calc_tp_by_amplitude_of_candle(curr_price, dto_h4.getAmplitude_avg_of_candles(), find_trend);
+        // BigDecimal tp_d1 = calc_tp_by_amplitude_of_candle(curr_price, dto_d1.getAmplitude_avg_of_candles(), find_trend);
+        // BigDecimal tp_w1 = calc_tp_by_amplitude_of_candle(curr_price, dto_w1.getAmplitude_avg_of_candles(), find_trend);
 
         MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, RISK_PER_TRADE, curr_price, sl, tp_h4);
         BigDecimal volume = money.calcLot();
@@ -5171,11 +5176,11 @@ public class Utils {
             volume = standard_vol;
         }
 
-        String type = Objects.equals(trend, Utils.TREND_LONG) ? "_b" : "_s";
+        String type = Objects.equals(find_trend, Utils.TREND_LONG) ? "_b" : "_s";
 
         Mt5OpenTrade dto = new Mt5OpenTrade();
         dto.setEpic(EPIC);
-        dto.setOrder_type(trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
+        dto.setOrder_type(find_trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
         dto.setCur_price(curr_price);
         dto.setLots(volume);
         dto.setEntry(entry_h1);
@@ -5199,8 +5204,8 @@ public class Utils {
             Orders dto_entry, Orders dto_sl) {
         String result = "";
 
-        BigDecimal sl_long = Utils.getBigDecimal(dto_sl.getSl_long());
-        BigDecimal sl_shot = Utils.getBigDecimal(dto_sl.getSl_shot());
+        BigDecimal sl_long = Utils.getBigDecimal(calc_sl1_tp2(dto_sl, TREND_LONG));
+        BigDecimal sl_shot = Utils.getBigDecimal(calc_sl1_tp2(dto_sl, TREND_SHOT));
 
         BigDecimal en_long = Utils.getBigDecimal(dto_entry.getLow_50candle());
         BigDecimal en_shot = Utils.getBigDecimal(dto_entry.getHig_50candle());
@@ -5257,13 +5262,19 @@ public class Utils {
     }
 
     public static String find_trend_to_trade(Orders dto_d1, Orders dto_h4, Orders dto_h1, Orders dto_15) {
-        if (Objects.equals(dto_d1.getTrend_by_ma_10(), dto_15.getTrend_by_ma_20())
+        if (Objects.equals(dto_d1.getTrend_by_bread_area(), dto_d1.getTrend_of_heiken3())) {
+            return "";
+        }
 
-                && Objects.equals(dto_d1.getTrend_by_ma_10(), dto_h1.getTrend_by_ma_10())
+        if (Objects.equals(dto_d1.getTrend_of_heiken3(), dto_d1.getTrend_by_ma_10())
 
-                && Objects.equals(dto_d1.getTrend_by_ma_10(), dto_h4.getTrend_by_ma_10())
-                && Objects.equals(dto_d1.getTrend_by_ma_10(), dto_h4.getTrend_by_ma_20())
-                && Objects.equals(dto_d1.getTrend_by_ma_10(), dto_h4.getTrend_by_ma_50())) {
+                && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h4.getTrend_by_ma_10())
+                && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h4.getTrend_of_heiken3())
+
+                && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h1.getTrend_by_ma_10())
+                && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h1.getTrend_of_heiken3())
+
+        ) {
 
             return dto_d1.getTrend_by_ma_10();
         }

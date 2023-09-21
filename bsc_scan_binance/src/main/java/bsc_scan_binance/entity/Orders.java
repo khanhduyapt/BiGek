@@ -80,10 +80,10 @@ public class Orders {
     private BigDecimal tp_shot = BigDecimal.ZERO;
 
     @Column(name = "low_price")
-    private BigDecimal sl_long = BigDecimal.ZERO;
+    private BigDecimal close_candle_1 = BigDecimal.ZERO;
 
     @Column(name = "high_price")
-    private BigDecimal sl_shot = BigDecimal.ZERO;
+    private BigDecimal close_candle_2 = BigDecimal.ZERO;
 
     @Column(name = "note")
     private String switch_trend;
