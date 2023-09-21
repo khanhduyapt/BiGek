@@ -101,7 +101,7 @@ public class Orders {
     private String trend_by_ma_20;
 
     @Column(name = "trend_by_ma_50")
-    private String wait_buy_or_sell_by_89_candles;
+    private String trend_by_ma_50;
 
     @Column(name = "trend_by_seq_ma")
     private String trend_by_seq_ma;
@@ -122,10 +122,10 @@ public class Orders {
     private BigDecimal amplitude_avg_of_candles = BigDecimal.ZERO;
 
     @Column(name = "ma050")
-    private BigDecimal low_10candle = BigDecimal.ZERO;
+    private BigDecimal ma10 = BigDecimal.ZERO;
 
     @Column(name = "ma020")
-    private BigDecimal hig_10candle = BigDecimal.ZERO;
+    private BigDecimal ma20 = BigDecimal.ZERO;
 
     @Column(name = "low_50candle")
     private BigDecimal low_50candle = BigDecimal.ZERO;

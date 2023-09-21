@@ -3175,7 +3175,8 @@ public class BinanceServiceImpl implements BinanceService {
             BigDecimal total = BigDecimal.ZERO;
             String risk_0_15 = "     Risk: 0.05% : " + Utils.RISK_PER_TRADE.intValue() + "$ per trade";
 
-            List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByCompanyOrderBySymbolAsc(company);
+            List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository
+                    .findAllByCompanyOrderBySymbolAscTicketAsc(company);
 
             for (Mt5OpenTradeEntity trade : mt5Openlist) {
                 count += 1;
@@ -3787,6 +3788,7 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_by_ma_06 = Utils.getTrendByMaXx(heiken_list, 06);
         String trend_by_ma_10 = Utils.getTrendByMaXx(heiken_list, 10);
         String trend_by_ma_20 = Utils.getTrendByMaXx(heiken_list, 20);
+        String trend_by_ma_50 = Utils.getTrendByMaXx(heiken_list, 50);
 
         String trend_of_heiken3 = Utils.getTrendByHekenAshiList(heiken_list);
         String trend_of_heiken3_1 = Utils.getTrendByHekenAshiList(heiken_list, 3, 1);
@@ -3841,14 +3843,6 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal hig = lohi.get(1);
         BigDecimal amplitude_1_part_15 = (hig.subtract(low)).multiply(BigDecimal.valueOf(0.0666666));
 
-        String wait_buy_or_sell_by_89_candles = "";
-        BigDecimal mid_low_and_hig = low.add(((hig.subtract(low)).multiply(BigDecimal.valueOf(0.5))));
-        if (current_price.compareTo(mid_low_and_hig) > 0) {
-            wait_buy_or_sell_by_89_candles = Utils.TREND_SHOT;
-        } else {
-            wait_buy_or_sell_by_89_candles = Utils.TREND_LONG;
-        }
-
         List<BigDecimal> body = Utils.getBodyCandle(heiken_list.subList(1, heiken_list.size()));
         BigDecimal avg_bread = Utils.calcAvgBread(heiken_list);
         if (avg_bread.compareTo(amplitude_1_part_15) > 0) {
@@ -3879,8 +3873,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         String tradable_zone = Utils.getZone(heiken_list);
 
-        BigDecimal low_10candle = lohi_10.get(0);
-        BigDecimal hig_10candle = lohi_10.get(1);
+        BigDecimal ma10 = Utils.calcMA(list, 10, 1);
+        BigDecimal ma20 = Utils.calcMA(list, 20, 1);
 
         int sub_size = 50;
         if (heiken_list.size() < 50) {
@@ -3894,8 +3888,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         Orders entity = new Orders(id, insertTime, trend_of_heiken3, current_price, tp_long, tp_shot, sl_long, sl_shot,
                 switch_trend, trend_by_ma_10, tradable_zone, trend_by_ma_06, trend_by_ma_20,
-                wait_buy_or_sell_by_89_candles, trend_by_seq_ma, trend_by_bread_area, body_end_50_candle,
-                body_str_50_candle, amplitude_1_part_15, amplitude_avg_of_candles, low_10candle, hig_10candle,
+                trend_by_ma_50, trend_by_seq_ma, trend_by_bread_area, body_end_50_candle,
+                body_str_50_candle, amplitude_1_part_15, amplitude_avg_of_candles, ma10, ma20,
                 low_50candle, hig_50candle, lowest_price_of_curr_candle, highest_price_of_curr_candle,
                 trend_of_heiken3_1);
 
@@ -3951,7 +3945,7 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_d1 = dto_d1.getTrend_of_heiken3();
             String trend_h1 = dto_h1.getTrend_of_heiken3();
 
-            String find_trend_to_trade = Utils.find_trend_to_trade(dto_d1, dto_h4, dto_h1);
+            String find_trend_to_trade = Utils.find_trend_to_trade(dto_d1, dto_h4);
 
             String seq_h1_h4 = "";
             if (dto_h1.getSwitch_trend().contains(Utils.TEXT_SEQ)) {
@@ -3994,9 +3988,12 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String eoz = "eoz_";
-            eoz += Utils.appendSpace(Utils.possible_take_profit(dto_d1, dto_h4, trend_h1), 12);
-            if (eoz.contains("eoz_      ")) {
-                eoz = eoz.replace("eoz_      ", "          ");
+            eoz += Utils.appendSpace(
+                    (Utils.is_daily_range_can_still_be_trade(dto_d1, dto_h4, find_trend_to_trade) ? find_trend_to_trade
+                            : ""),
+                    5);
+            if (eoz.contains("eoz_     ")) {
+                eoz = eoz.replace("eoz_     ", "         ");
             }
 
             String wait = (dto_h4.getSwitch_trend() + dto_d1.getSwitch_trend())
@@ -4011,21 +4008,6 @@ public class BinanceServiceImpl implements BinanceService {
             count += 1;
             String No = Utils.appendLeft(String.valueOf(count), 2, "0") + ". ";
             // --------------------------------------------
-            String prefix_trend = "[W1-D1-H4-H1]";
-            {
-                if (!Objects.equals(find_trend_to_trade, trend_w1)) {
-                    prefix_trend = prefix_trend.replace("W1", "--");
-                }
-                if (!Objects.equals(find_trend_to_trade, dto_d1.getTrend_of_heiken3_1())) {
-                    prefix_trend = prefix_trend.replace("D1", "--");
-                }
-                if (!Objects.equals(find_trend_to_trade, dto_h4.getTrend_of_heiken3_1())) {
-                    prefix_trend = prefix_trend.replace("H4", "--");
-                }
-                if (!Objects.equals(find_trend_to_trade, dto_h1.getTrend_of_heiken3_1())) {
-                    prefix_trend = prefix_trend.replace("H1]", "--]");
-                }
-            }
 
             String amp = " Points";
             amp += "(h4):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dto_h4.getAmplitude_avg_of_candles()), 6);
@@ -4130,6 +4112,30 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1 = dto_h1.getTrend_of_heiken3();
             String trend_15 = dto_15.getTrend_of_heiken3();
 
+            boolean allow_trade_by_trend_h1 = Objects.equals(trend_h1, trend_15)
+                    && Objects.equals(trend_h1, dto_10.getTrend_of_heiken3())
+                    && Objects.equals(trend_h1, dto_05.getTrend_of_heiken3())
+                    && Objects.equals(trend_h1, dto_03.getTrend_of_heiken3());
+            if (!allow_trade_by_trend_h1) {
+                continue;
+            }
+
+            String find_trend_to_trade = Utils.find_trend_to_trade(dto_d1, dto_h4);
+            if (!Objects.equals(find_trend_to_trade, trend_h1)) {
+                continue;
+            }
+
+            // Kiểm tra biên độ đủ đảm bảo TP 1 cây nến H4 không.
+            boolean possible_tp = Utils.is_daily_range_can_still_be_trade(dto_d1, dto_h4, trend_h1);
+            if (!possible_tp) {
+                continue;
+            }
+
+            if (Utils.EPICS_INDEXS_CFD.contains(EPIC)) {
+                //trade_for_indexs(String EPIC, Orders dto_d1, Orders dto_h4, Orders dto_h1);
+                //continue;
+            }
+
             if (!Objects.equals(trend_d1, trend_h1)
                     || !Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())
                     || (Objects.equals(trend_w1, trend_d1) && !Objects.equals(trend_w1, trend_h1))) {
@@ -4139,20 +4145,6 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_reversal_zone = (dto_h4.getSwitch_trend() + dto_d1.getSwitch_trend())
                     .contains(trend_h1);
             if (!is_reversal_zone) {
-                continue;
-            }
-
-            // Kiểm tra biên độ đủ đảm bảo TP 1 cây nến H4 không.
-            String possible_tp = Utils.possible_take_profit(dto_d1, dto_h4, trend_h1);
-            if (Utils.isNotBlank(possible_tp)) {
-                continue;
-            }
-
-            boolean allow_trade_by_trend_h1 = Objects.equals(trend_h1, trend_15)
-                    && Objects.equals(trend_h1, dto_10.getTrend_of_heiken3())
-                    && Objects.equals(trend_h1, dto_05.getTrend_of_heiken3())
-                    && Objects.equals(trend_h1, dto_03.getTrend_of_heiken3());
-            if (!allow_trade_by_trend_h1) {
                 continue;
             }
 
@@ -4199,13 +4191,12 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // --------------------------------------------------------------------------------------------
             if (!allow_open_trade && Objects.equals(trend_w1, trend_d1)) {
-                String find_trend_to_trade = Utils.find_trend_to_trade(dto_d1, dto_h4, dto_h1);
+
                 if (Objects.equals(trend_d1, find_trend_to_trade) && Objects.equals(trend_d1, trend_h1)) {
 
                     boolean m_allow_trade = Objects.equals(trend_15, find_trend_to_trade);
 
-                    boolean h_allow_trade = Objects.equals(trend_h1, find_trend_to_trade)
-                            && Utils.isBlank(Utils.possible_take_profit(dto_d1, dto_h4, find_trend_to_trade));
+                    boolean h_allow_trade = Objects.equals(trend_h1, find_trend_to_trade);
 
                     if (h_allow_trade && m_allow_trade) {
                         allow_open_trade = true;
@@ -4352,8 +4343,10 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(dto_10.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
                         && Objects.equals(dto_15.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)) {
 
+                    BigDecimal amplitude = dto_d1.getAmplitude_avg_of_candles();
+
                     if (Objects.equals(TRADING_TREND, Utils.TREND_LONG)) {
-                        BigDecimal next_price = trade.getPriceOpen().add(dto_h1.getAmplitude_avg_of_candles());
+                        BigDecimal next_price = trade.getPriceOpen().add(amplitude);
 
                         if (dto_h1.getCurrent_price().compareTo(next_price) > 0) {
                             is_hit_sl = true;
@@ -4361,7 +4354,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     if (Objects.equals(TRADING_TREND, Utils.TREND_SHOT)) {
-                        BigDecimal next_price = trade.getPriceOpen().subtract(dto_h1.getAmplitude_avg_of_candles());
+                        BigDecimal next_price = trade.getPriceOpen().subtract(amplitude);
 
                         if (dto_h1.getCurrent_price().compareTo(next_price) < 0) {
                             is_hit_sl = true;

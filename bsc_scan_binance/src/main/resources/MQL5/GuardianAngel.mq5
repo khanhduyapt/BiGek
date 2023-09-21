@@ -399,8 +399,33 @@ void OnTimer()
         {
          double profit = m_position.Commission() + m_position.Swap() + m_position.Profit();
 
+         double test = -150;
+         if(profit < test)
+           {
+
+
+           }
+
+         //-------------------------------------------------
+
          if(profit < Loss_In_Money)
            {
+            if((m_position.TypeDescription() == "buy") || (StringFind(m_position.TypeDescription(), "buy", 0) >= 0))
+              {
+               m_trade.PositionOpen(m_position.Symbol(), ORDER_TYPE_BUY, m_position.Volume(), m_position.PriceCurrent(), 0.0, 0.0, m_position.Comment() + "_ap1");
+               m_trade.PositionOpen(m_position.Symbol(), ORDER_TYPE_BUY, m_position.Volume(), m_position.PriceCurrent(), 0.0, 0.0, m_position.Comment() + "_ap2");
+
+               Alert("AppendPosition=" + m_position.TypeDescription() + (string) m_position.Symbol() + ", " + (string) ORDER_TYPE_BUY + ", " + (string) m_position.Volume() + ", " + (string) m_position.PriceCurrent() + ", " + (string) m_position.Comment() + "_ap1");
+              }
+
+            if((m_position.TypeDescription() == "sell") || (StringFind(m_position.TypeDescription(), "sell", 0) >= 0))
+              {
+               m_trade.PositionOpen(m_position.Symbol(), ORDER_TYPE_SELL, m_position.Volume(), m_position.PriceCurrent(), 0.0, 0.0, m_position.Comment() + "_ap1");
+               m_trade.PositionOpen(m_position.Symbol(), ORDER_TYPE_SELL, m_position.Volume(), m_position.PriceCurrent(), 0.0, 0.0, m_position.Comment() + "_ap2");
+
+               Alert("AppendPosition=" + m_position.TypeDescription() + (string) m_position.Symbol() + ", " + (string) ORDER_TYPE_SELL + ", " + (string) m_position.Volume() + ", " + (string) m_position.PriceCurrent() + ", " + (string) m_position.Comment() + "_ap1");
+              }
+
             m_trade.PositionClose(m_position.Ticket());
             Alert("PositionClose=" + (string) m_position.Ticket() + " Loss_In_Money="+ (string)profit);
            }

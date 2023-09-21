@@ -2056,8 +2056,7 @@ public class Utils {
     }
 
     public static boolean isOpenTradeTime_6h_to_1h() {
-        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 0, 1, 2,
-                3);
+        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -4107,42 +4106,6 @@ public class Utils {
         return find_trend;
     }
 
-    public static String find_trend_to_trade(Orders dto_d1, Orders dto_h4, Orders dto_h1) {
-        String trend_d1 = dto_d1.getTrend_of_heiken3();
-        String trend_h4 = dto_h4.getTrend_of_heiken3();
-        String trend_h1 = dto_h1.getTrend_of_heiken3();
-
-        boolean is_eq_d1_h1 = Objects.equals(trend_d1, trend_h1) || dto_h1.getTrend_by_seq_ma().contains(trend_d1);
-        if (!is_eq_d1_h1) {
-            return "";
-        }
-
-        String trend_by_seq_ma = "(H1):" + dto_h1.getTrend_by_seq_ma() + "(H4):" + dto_h4.getTrend_by_seq_ma();
-
-        if (trend_by_seq_ma.contains(trend_d1)) {
-            if (trend_by_seq_ma.contains(Utils.TREND_LONG)) {
-                return Utils.TREND_LONG;
-            }
-
-            if (trend_by_seq_ma.contains(Utils.TREND_SHOT)) {
-                return Utils.TREND_SHOT;
-            }
-        }
-
-        if (dto_d1.getTradable_zone().contains(trend_h1) && dto_h4.getTradable_zone().contains(trend_h1)) {
-            if (!Objects.equals(dto_d1.getTrend_of_heiken3(), dto_d1.getTrend_by_ma_06())) {
-                return "";
-            }
-        }
-
-        if (Objects.equals(trend_d1, trend_d1)
-                && (Objects.equals(trend_d1, trend_h4) || dto_h4.getTrend_by_seq_ma().contains(trend_d1))) {
-            return trend_d1;
-        }
-
-        return "";
-    }
-
     public static String trend_by_seq_ma_1_6_10_20(List<BtcFutures> heiken_list) {
         String result = "";
         if (heiken_list.size() < 20) {
@@ -5253,12 +5216,57 @@ public class Utils {
         return type;
     }
 
-    public static String possible_take_profit(Orders dto_d1, Orders dto_h4, String trend_h1) {
-        String type = getType(trend_h1).toUpperCase();
+    public static String find_trend_to_trade(Orders dto_d1, Orders dto_h4) {
+        if (Objects.equals(dto_d1.getTrend_by_ma_10(), dto_h4.getTrend_by_ma_10())
+                && Objects.equals(dto_d1.getTrend_by_ma_10(), dto_h4.getTrend_by_ma_20())
+                && Objects.equals(dto_d1.getTrend_by_ma_10(), dto_h4.getTrend_by_ma_50())) {
+
+            return dto_d1.getTrend_by_ma_10();
+        }
+
+        return "";
+    }
+
+    public static boolean is_daily_range_can_still_be_trade(Orders dto_d1, Orders dto_h4, String find_trend) {
+        if (Utils.isBlank(find_trend)) {
+            return false;
+        }
+
+        if (Utils.isBlank(possible_take_profit(dto_d1, dto_h4, find_trend))) {
+            return true;
+        }
+
+        BigDecimal current_price = dto_h4.getCurrent_price();
+        BigDecimal amplitude_avg_d1 = dto_d1.getAmplitude_avg_of_candles();
+
+        BigDecimal tp_h4 = calc_tp_by_amplitude_of_candle(current_price, dto_h4.getAmplitude_avg_of_candles(),
+                find_trend);
+
+        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
+            BigDecimal target_price = dto_d1.getLowest_price_of_curr_candle().add(amplitude_avg_d1);
+
+            if (tp_h4.compareTo(target_price) < 0) {
+                return true;
+            }
+        }
+
+        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
+            BigDecimal target_price = dto_d1.getHighest_price_of_curr_candle().subtract(amplitude_avg_d1);
+
+            if (tp_h4.compareTo(target_price) > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static String possible_take_profit(Orders dto_d1, Orders dto_h4, String find_trend) {
+        String type = getType(find_trend).toUpperCase();
 
         BigDecimal amplitude = dto_h4.getAmplitude_avg_of_candles().multiply(BigDecimal.valueOf(1.5));
 
-        if (Objects.equals(TREND_LONG, trend_h1)) {
+        if (Objects.equals(TREND_LONG, find_trend)) {
             // Hết biên độ để đạt TP(H4)
             BigDecimal next_price = dto_d1.getCurrent_price().add(amplitude);
             {
@@ -5275,7 +5283,7 @@ public class Utils {
             maxValue = maxValue.subtract(amplitude);
 
             BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_d1.getCurrent_price(),
-                    dto_h4.getAmplitude_avg_of_candles(), trend_h1);
+                    dto_h4.getAmplitude_avg_of_candles(), find_trend);
             if (maxValue.compareTo(tp) > 0) {
                 return ""; // Đủ biên độ để dạt TP
             } else {
@@ -5283,7 +5291,7 @@ public class Utils {
             }
         }
 
-        if (Objects.equals(TREND_SHOT, trend_h1)) {
+        if (Objects.equals(TREND_SHOT, find_trend)) {
             // Hết biên độ để đạt TP(H4)
             BigDecimal next_price = dto_d1.getCurrent_price().subtract(amplitude);
             {
@@ -5300,7 +5308,7 @@ public class Utils {
             minValue = minValue.add(amplitude);
 
             BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_d1.getCurrent_price(),
-                    dto_h4.getAmplitude_avg_of_candles(), trend_h1);
+                    dto_h4.getAmplitude_avg_of_candles(), find_trend);
             if (minValue.compareTo(tp) < 0) {
                 return ""; // Đủ biên độ để dạt TP
             } else {
