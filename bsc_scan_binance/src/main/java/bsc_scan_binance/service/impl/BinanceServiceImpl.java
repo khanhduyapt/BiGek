@@ -4267,6 +4267,13 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
+            // TODO: 5. OpenTrade
+            String append = "";
+            Mt5OpenTrade trade_dto = null;
+            if (NOTICE_LIST.contains(EPIC)) {
+                append += Utils.TEXT_NOTICE_ONLY;
+            }
+
             if (switch_trend_real_time) {
                 // Kiểm tra biên độ đủ đảm bảo TP 1 cây nến H4 không.
                 boolean possible_tp = Utils.is_daily_range_can_still_be_trade(dto_d1, dto_h4, trend_d1);
@@ -4274,8 +4281,10 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                Mt5OpenTrade trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1, dto_h1, dto_h4, dto_d1, dto_w1,
-                        "_REAL" + Utils.TEXT_NOTICE_ONLY, true, Utils.CAPITAL_TIME_15);
+                append += Utils.TEXT_NOTICE_ONLY;
+
+                trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1, dto_h1, dto_h4, dto_d1, dto_w1,
+                        append, true, Utils.CAPITAL_TIME_15);
 
                 String key = EPIC + Utils.CAPITAL_TIME_15;
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
@@ -4330,13 +4339,7 @@ public class BinanceServiceImpl implements BinanceService {
             //                continue;
             //            }
             //
-            //            // TODO: 5. OpenTrade
-            //            String append = "";
-            //            Mt5OpenTrade trade_dto = null;
-            //            boolean allow_open_trade = false;
-            //            if (NOTICE_LIST.contains(EPIC)) {
-            //                append += Utils.TEXT_NOTICE_ONLY;
-            //            }
+
             //            // --------------------------------------------------------------------------------------------
             //            if (!allow_open_trade && Objects.equals(trend_w1, trend_d1)
             //                    && Objects.equals(trend_d1, dto_d1.getTrend_of_heiken3_1())
