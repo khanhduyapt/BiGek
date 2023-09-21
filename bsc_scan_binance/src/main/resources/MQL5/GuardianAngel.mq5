@@ -210,8 +210,8 @@ void openTrade(string line)
    double stop_loss = StringToDouble(result[4]);
    double tp_h4 = StringToDouble(result[5]);
    string comment = result[6];
-   double tp_d1 = StringToDouble(result[7]);
-   double tp_w1 = StringToDouble(result[8]);
+   double entry_h4 = StringToDouble(result[7]);
+   double entry_d1 = StringToDouble(result[8]);
 
    string trade_symbol = result[0];
    string lowcase_symbol = epic;
@@ -275,8 +275,8 @@ void openTrade(string line)
       entry     = NormalizeDouble(entry,digits);                              // normalizing open price
       stop_loss = NormalizeDouble(stop_loss, digits);                         // normalizing Stop Loss
       tp_h4     = NormalizeDouble(tp_h4, digits);                             // normalizing TP_h4
-      tp_d1     = NormalizeDouble(tp_d1, digits);                             // normalizing tp_d1
-      tp_w1     = NormalizeDouble(tp_w1, digits);                             // normalizing tp_w1
+      entry_h4  = NormalizeDouble(entry_h4, digits);                             // normalizing tp_d1
+      entry_d1  = NormalizeDouble(entry_d1, digits);                             // normalizing tp_w1
 
       // tp=0.0;
       // stop_loss=0.0;
@@ -291,13 +291,24 @@ void openTrade(string line)
             //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp, comment);
            }
 
-         if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry, stop_loss, tp_h4, comment + "_1"))
+         if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry, stop_loss, tp_h4, comment))
             Alert("Duydk: BUY: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
 
          //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry, stop_loss, tp_d1, comment + "_d");
          //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry, stop_loss, tp_w1, comment + "_w");
-         m_trade.BuyLimit(volume, entry, trade_symbol, stop_loss, tp_d1, ORDER_TIME_GTC, expiration, comment + "_2");
-         m_trade.BuyLimit(volume, entry, trade_symbol, stop_loss, tp_w1, ORDER_TIME_GTC, expiration, comment + "_3");
+
+         m_trade.BuyLimit(volume, entry, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_11");
+         m_trade.BuyLimit(volume, entry_h4, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_12");
+
+         //m_trade.BuyLimit(volume, entry_h4, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_21");
+         //m_trade.BuyLimit(volume, entry_h4, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_22");
+         //m_trade.BuyLimit(volume, entry_h4, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_23");
+
+         //m_trade.BuyLimit(volume, entry_d1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_31");
+         //m_trade.BuyLimit(volume, entry_d1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_32");
+         //m_trade.BuyLimit(volume, entry_d1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_33");
+         //m_trade.BuyLimit(volume, entry_d1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_34");
+         //m_trade.BuyLimit(volume, entry_d1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_35");
         }
 
       if(type== "buy_limit")
@@ -314,13 +325,24 @@ void openTrade(string line)
             //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry, stop_loss, tp, comment);
            }
 
-         if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry, stop_loss, tp_h4, comment + "_h"))
+         if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry, stop_loss, tp_h4, comment))
             Alert("Duydk: SELL: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
 
-         //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry, stop_loss, tp_d1, comment + "_d");
-         //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry, stop_loss, tp_w1, comment + "_w");
-         m_trade.SellLimit(volume, entry, trade_symbol, stop_loss, tp_d1, ORDER_TIME_GTC, expiration, comment + "_d");
-         m_trade.SellLimit(volume, entry, trade_symbol, stop_loss, tp_w1, ORDER_TIME_GTC, expiration, comment + "_w");
+         //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry, stop_loss, 0.0, comment + "_d");
+         //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry, stop_loss, 0.0, comment + "_w");
+
+         m_trade.SellLimit(volume, entry, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_11");
+         m_trade.SellLimit(volume, entry_h4, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_22");
+
+         //m_trade.SellLimit(volume, entry_h4, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_21");
+         //m_trade.SellLimit(volume, entry_h4, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_22");
+         //m_trade.SellLimit(volume, entry_h4, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_23");
+
+         //m_trade.SellLimit(volume, entry_d1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_31");
+         //m_trade.SellLimit(volume, entry_d1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_32");
+         //m_trade.SellLimit(volume, entry_d1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_33");
+         //m_trade.SellLimit(volume, entry_d1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_34");
+         //m_trade.SellLimit(volume, entry_d1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_35");
         }
 
       if(type== "sell_limit")
@@ -399,29 +421,22 @@ void OnTimer()
         {
          double profit = m_position.Commission() + m_position.Swap() + m_position.Profit();
 
-         double test = -150;
-         if(profit < test)
-           {
-
-
-           }
-
          //-------------------------------------------------
 
          if(profit < Loss_In_Money)
            {
             if((m_position.TypeDescription() == "buy") || (StringFind(m_position.TypeDescription(), "buy", 0) >= 0))
               {
-               m_trade.PositionOpen(m_position.Symbol(), ORDER_TYPE_BUY, m_position.Volume(), m_position.PriceCurrent(), 0.0, 0.0, m_position.Comment() + "_ap1");
-               m_trade.PositionOpen(m_position.Symbol(), ORDER_TYPE_BUY, m_position.Volume(), m_position.PriceCurrent(), 0.0, 0.0, m_position.Comment() + "_ap2");
+               m_trade.PositionOpen(m_position.Symbol(), ORDER_TYPE_BUY, m_position.Volume(), m_position.PriceCurrent(), 0.0, m_position.TakeProfit(), m_position.Comment() + "_ap1");
+               m_trade.PositionOpen(m_position.Symbol(), ORDER_TYPE_BUY, m_position.Volume(), m_position.PriceCurrent(), 0.0, m_position.TakeProfit(), m_position.Comment() + "_ap2");
 
                Alert("AppendPosition=" + m_position.TypeDescription() + (string) m_position.Symbol() + ", " + (string) ORDER_TYPE_BUY + ", " + (string) m_position.Volume() + ", " + (string) m_position.PriceCurrent() + ", " + (string) m_position.Comment() + "_ap1");
               }
 
             if((m_position.TypeDescription() == "sell") || (StringFind(m_position.TypeDescription(), "sell", 0) >= 0))
               {
-               m_trade.PositionOpen(m_position.Symbol(), ORDER_TYPE_SELL, m_position.Volume(), m_position.PriceCurrent(), 0.0, 0.0, m_position.Comment() + "_ap1");
-               m_trade.PositionOpen(m_position.Symbol(), ORDER_TYPE_SELL, m_position.Volume(), m_position.PriceCurrent(), 0.0, 0.0, m_position.Comment() + "_ap2");
+               m_trade.PositionOpen(m_position.Symbol(), ORDER_TYPE_SELL, m_position.Volume(), m_position.PriceCurrent(), 0.0, m_position.TakeProfit(), m_position.Comment() + "_ap1");
+               m_trade.PositionOpen(m_position.Symbol(), ORDER_TYPE_SELL, m_position.Volume(), m_position.PriceCurrent(), 0.0, m_position.TakeProfit(), m_position.Comment() + "_ap2");
 
                Alert("AppendPosition=" + m_position.TypeDescription() + (string) m_position.Symbol() + ", " + (string) ORDER_TYPE_SELL + ", " + (string) m_position.Volume() + ", " + (string) m_position.PriceCurrent() + ", " + (string) m_position.Comment() + "_ap1");
               }
@@ -429,6 +444,8 @@ void OnTimer()
             m_trade.PositionClose(m_position.Ticket());
             Alert("PositionClose=" + (string) m_position.Ticket() + " Loss_In_Money="+ (string)profit);
            }
+
+         //-------------------------------------------------
 
          if(profit > Profit_In_Money)
            {

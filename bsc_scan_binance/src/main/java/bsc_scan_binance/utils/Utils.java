@@ -140,6 +140,7 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_Ma_1vs10 = "(Ma1.10)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs20 = "(Ma1.20)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs50 = "(Ma1.50)";
+    public static final String TEXT_SWITCH_TREND_Ma_10vs20 = "(Ma10.20)";
 
     public static final String TEXT_SEQ = "SEQ";
     public static final String TEXT_SWITCH_TREND_SEQ_6_10_20 = "(" + TEXT_SEQ + ".6.10.20)";
@@ -2229,6 +2230,24 @@ public class Utils {
 
     public static String getTimeHHmm() {
         return Utils.convertDateToString("(HH:mm) ", Calendar.getInstance().getTime());
+    }
+
+    public static boolean is_must_close_avoid_overnight_fees_triple() {
+        DayOfWeek day = DayOfWeek.of(LocalDate.now().get(ChronoField.DAY_OF_WEEK));
+        int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
+
+        if ((day == DayOfWeek.WEDNESDAY) || (day == DayOfWeek.FRIDAY)) {
+            if (hh > 20) {
+                return true;
+            }
+        }
+        if ((day == DayOfWeek.THURSDAY) || (day == DayOfWeek.SATURDAY)) {
+            if (hh < 5) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static String getTime_day24Hmm() {
@@ -4347,6 +4366,21 @@ public class Utils {
         return sw_1;
     }
 
+    public static String switchTrendByMa10vs2025(List<BtcFutures> heiken_list) {
+        String sw_1 = switchTrendByMa1(heiken_list, 11, 20, 25, TEXT_SWITCH_TREND_Ma_10vs20);
+        String sw_0 = switchTrendByMa1(heiken_list, 10, 20, 25, TEXT_SWITCH_TREND_Ma_10vs20);
+
+        if (Utils.isNotBlank(sw_1) && Utils.isNotBlank(sw_0)) {
+            String trend_1 = sw_1.contains(TREND_LONG) ? TREND_LONG : TREND_SHOT;
+            String trend_0 = sw_1.contains(TREND_LONG) ? TREND_LONG : TREND_SHOT;
+
+            if (!Objects.equals(trend_1, trend_0)) {
+                return sw_0;
+            }
+        }
+        return sw_1;
+    }
+
     public static String switchTrendByMa1vs2025(List<BtcFutures> heiken_list) {
         String sw_1 = switchTrendByMa1(heiken_list, 1, 20, 25, TEXT_SWITCH_TREND_Ma_1vs20);
         String sw_0 = switchTrendByMa1(heiken_list, 0, 20, 25, TEXT_SWITCH_TREND_Ma_1vs20);
@@ -4721,14 +4755,14 @@ public class Utils {
         String msg = Utils.appendSpace("", 10) + getTimeHHmm() + prefix;
         msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type().toUpperCase(), 4, "_") + ")", 15);
         msg += Utils.appendSpace(dto.getEpic(), 10) + new_line_from_service + " ";
-        msg += Utils.appendSpace(dto.getComment().trim() + ".", 30) + "  ";
+        msg += Utils.appendSpace(dto.getComment().trim() + ".", 35);
         msg += " ,Entry: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()), 10);
         msg += " ";
         msg += " ,SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10) + "   ";
 
         msg += " ,TP(h4): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_h4()), 10) + "   ";
-        msg += " ,TP(d1): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_d1()), 10) + "   ";
-        msg += " ,TP(w1): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_w1()), 10) + "   ";
+        //msg += " ,TP(d1): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_d1()), 10) + "   ";
+        //msg += " ,TP(w1): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_w1()), 10) + "   ";
 
         msg += " ,Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 6) + "(lot)   ";
         msg += " ,Standard:"
@@ -5097,12 +5131,18 @@ public class Utils {
             Orders dto_w1, String append, boolean isTradeNow, String CAPITAL_TIME_XX) {
         BigDecimal curr_price = dto_h1.getCurrent_price();
 
-        BigDecimal entry = curr_price;
+        BigDecimal entry_h1 = curr_price;
+        BigDecimal entry_h4 = curr_price;
+        BigDecimal entry_d1 = curr_price;
         if (Objects.equals(trend, Utils.TREND_LONG)) {
-            entry = curr_price.subtract(dto_h4.getAmplitude_avg_of_candles());
+            entry_h1 = curr_price.subtract(dto_h4.getAmplitude_avg_of_candles());
+            entry_h4 = curr_price.subtract(dto_d1.getAmplitude_avg_of_candles());
+            entry_d1 = curr_price.subtract(dto_w1.getAmplitude_avg_of_candles());
 
         } else if (Objects.equals(trend, Utils.TREND_SHOT)) {
-            entry = curr_price.add(dto_h4.getAmplitude_avg_of_candles());
+            entry_h1 = curr_price.add(dto_h4.getAmplitude_avg_of_candles());
+            entry_h4 = curr_price.add(dto_d1.getAmplitude_avg_of_candles());
+            entry_d1 = curr_price.add(dto_w1.getAmplitude_avg_of_candles());
 
         } else {
             Utils.logWritelnDraft("(ERROR_LONG_OR_SHORT?) calc_Lot_En_SL_TP:trend=" + trend);
@@ -5113,8 +5153,8 @@ public class Utils {
         BigDecimal sl = sl1.get(0);
 
         BigDecimal tp_h4 = calc_tp_by_amplitude_of_candle(curr_price, dto_h4.getAmplitude_avg_of_candles(), trend);
-        BigDecimal tp_d1 = calc_tp_by_amplitude_of_candle(curr_price, dto_d1.getAmplitude_avg_of_candles(), trend);
-        BigDecimal tp_w1 = calc_tp_by_amplitude_of_candle(curr_price, dto_w1.getAmplitude_avg_of_candles(), trend);
+        // BigDecimal tp_d1 = calc_tp_by_amplitude_of_candle(curr_price, dto_d1.getAmplitude_avg_of_candles(), trend);
+        // BigDecimal tp_w1 = calc_tp_by_amplitude_of_candle(curr_price, dto_w1.getAmplitude_avg_of_candles(), trend);
 
         MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, RISK_PER_TRADE, curr_price, sl, tp_h4);
         BigDecimal volume = money.calcLot();
@@ -5138,12 +5178,12 @@ public class Utils {
         dto.setOrder_type(trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
         dto.setCur_price(curr_price);
         dto.setLots(volume);
-        dto.setEntry(entry);
+        dto.setEntry(entry_h1);
         dto.setStop_loss(sl);
         dto.setTake_profit_h4(tp_h4);
         dto.setComment(create_trade_comment(EPIC, CAPITAL_TIME_XX, type + append));
-        dto.setTake_profit_d1(tp_d1);
-        dto.setTake_profit_w1(tp_w1);
+        dto.setEntry_h4(entry_h4);
+        dto.setEntry_d1(entry_d1);
 
         return dto;
     }
@@ -5216,8 +5256,12 @@ public class Utils {
         return type;
     }
 
-    public static String find_trend_to_trade(Orders dto_d1, Orders dto_h4) {
-        if (Objects.equals(dto_d1.getTrend_by_ma_10(), dto_h4.getTrend_by_ma_10())
+    public static String find_trend_to_trade(Orders dto_d1, Orders dto_h4, Orders dto_h1, Orders dto_15) {
+        if (Objects.equals(dto_d1.getTrend_by_ma_10(), dto_15.getTrend_by_ma_20())
+
+                && Objects.equals(dto_d1.getTrend_by_ma_10(), dto_h1.getTrend_by_ma_10())
+
+                && Objects.equals(dto_d1.getTrend_by_ma_10(), dto_h4.getTrend_by_ma_10())
                 && Objects.equals(dto_d1.getTrend_by_ma_10(), dto_h4.getTrend_by_ma_20())
                 && Objects.equals(dto_d1.getTrend_by_ma_10(), dto_h4.getTrend_by_ma_50())) {
 
