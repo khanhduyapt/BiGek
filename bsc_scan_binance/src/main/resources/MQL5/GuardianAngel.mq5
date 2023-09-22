@@ -380,12 +380,12 @@ void trailingSL(string line)
 
          if(my_key != cur_key)
            {
-            Alert("TrailingSL: ticket=" + (string)my_ticket + "   " + trade_symbol + " SL:" + (string)cur_sl + "->" + (string)my_sl + "    TP:" + (string)cur_tp + "->" + (string)my_tp);
+            Alert("TrailingSL: ticket=" + (string)my_ticket + "   " + trade_symbol + " SL:" + (string)cur_sl + "->" + (string)my_sl + "    TP:" + (string)cur_tp);
 
             m_trade.PositionModify(my_ticket, my_sl, cur_tp);
 
 
-            Comment("----------------------------- TrailingSL: ticket=" + (string)my_ticket + "   " + trade_symbol + " SL:" + (string)cur_sl + "->" + (string)my_sl + "    TP:" + (string)cur_tp + "->" + (string)my_tp);
+            Comment("----------------------------- TrailingSL: ticket=" + (string)my_ticket + "   " + trade_symbol + " SL:" + (string)cur_sl + "->" + (string)my_sl + "    TP:" + (string)cur_tp);
            }
 
          break;
@@ -421,14 +421,14 @@ void OnTimer()
             // Khong duoc dung cac lenh nay, rat nguy hiem, khong kiem soat dc lenh.
             //  if((m_position.TypeDescription() == "buy") || (StringFind(m_position.TypeDescription(), "buy", 0) >= 0))
             //  {
-            //    m_trade.Buy(m_position.Volume(), m_position.Symbol(), 0.0, 0.0, 0.0, m_position.Comment() + "_x2.1");
-            //    m_trade.Buy(m_position.Volume(), m_position.Symbol(), 0.0, 0.0, 0.0, m_position.Comment() + "_x2.2");
+            //    --m_trade.Buy(m_position.Volume(), m_position.Symbol(), 0.0, 0.0, 0.0, m_position.Comment() + "_x2.1");
+            //    --m_trade.Buy(m_position.Volume(), m_position.Symbol(), 0.0, 0.0, 0.0, m_position.Comment() + "_x2.2");
             //  }
             //
             // if((m_position.TypeDescription() == "sell") || (StringFind(m_position.TypeDescription(), "sell", 0) >= 0))
             //   {
-            //    m_trade.Sell(m_position.Volume(), m_position.Symbol(), 0.0, 0.0, 0.0, m_position.Comment() + "_x2.1");
-            //    m_trade.Sell(m_position.Volume(), m_position.Symbol(), 0.0, 0.0, 0.0, m_position.Comment() + "_x2.2");
+            //    --m_trade.Sell(m_position.Volume(), m_position.Symbol(), 0.0, 0.0, 0.0, m_position.Comment() + "_x2.1");
+            //    --m_trade.Sell(m_position.Volume(), m_position.Symbol(), 0.0, 0.0, 0.0, m_position.Comment() + "_x2.2");
             //   }
            }
 
