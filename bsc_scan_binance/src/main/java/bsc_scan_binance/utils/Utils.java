@@ -4760,7 +4760,7 @@ public class Utils {
         msg += Utils.appendSpace("(" + Utils.appendSpace(dto.getOrder_type().toUpperCase(), 4, "_") + ")", 15);
         msg += Utils.appendSpace(dto.getEpic(), 10) + new_line_from_service + " ";
         msg += Utils.appendSpace(dto.getComment().trim() + ".", 35);
-        msg += " ,Entry: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry()), 10);
+        msg += " ,Entry: " + Utils.appendLeft(Utils.removeLastZero(dto.getEntry_h1()), 10);
         msg += " ";
         msg += " ,SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10) + "   ";
 
@@ -5139,14 +5139,14 @@ public class Utils {
         BigDecimal entry_h4 = curr_price;
         BigDecimal entry_d1 = curr_price;
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            entry_h1 = curr_price.subtract(dto_h4.getAmplitude_avg_of_candles());
-            entry_h4 = curr_price.subtract(dto_d1.getAmplitude_avg_of_candles());
-            entry_d1 = curr_price.subtract(dto_w1.getAmplitude_avg_of_candles());
+            entry_h1 = dto_h1.getLow_50candle();
+            entry_h4 = dto_h4.getLow_50candle();
+            entry_d1 = dto_d1.getLow_50candle();
 
         } else if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            entry_h1 = curr_price.add(dto_h4.getAmplitude_avg_of_candles());
-            entry_h4 = curr_price.add(dto_d1.getAmplitude_avg_of_candles());
-            entry_d1 = curr_price.add(dto_w1.getAmplitude_avg_of_candles());
+            entry_h1 = dto_h1.getHig_50candle();
+            entry_h4 = dto_h4.getHig_50candle();
+            entry_d1 = dto_d1.getHig_50candle();
 
         } else {
             Utils.logWritelnDraft("(ERROR_LONG_OR_SHORT?) calc_Lot_En_SL_TP:trend=" + find_trend);
@@ -5182,7 +5182,7 @@ public class Utils {
         dto.setOrder_type(find_trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
         dto.setCur_price(curr_price);
         dto.setLots(volume);
-        dto.setEntry(entry_h1);
+        dto.setEntry_h1(entry_h1);
         dto.setStop_loss(sl);
         dto.setTake_profit_h4(tp_h4);
         dto.setComment(create_trade_comment(EPIC, CAPITAL_TIME_XX, type + append));
@@ -5628,7 +5628,8 @@ public class Utils {
             }
 
             Utils.logWritelnDraft(
-                    Utils.appendSpace(EPIC, 10) + Utils.appendSpace(trend_d1, 10) + Utils.appendSpace(append, 25)
+                    Utils.appendSpace(EPIC, 10) + Utils.appendSpace(trend_d1, 10) + Utils.appendSpace(append, 10)
+                            + Utils.appendSpace("eoz_" + Utils.possible_take_profit(dto_d1, dto_h4, trend_d1), 20)
                             + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + cutting);
 
             return append;

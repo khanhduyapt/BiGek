@@ -18,7 +18,7 @@ public class Mt5OpenTrade {
 
     private BigDecimal lots = BigDecimal.ZERO;
 
-    private BigDecimal entry = BigDecimal.ZERO;
+    private BigDecimal entry_h1 = BigDecimal.ZERO;
 
     private BigDecimal stop_loss = BigDecimal.ZERO;
 
