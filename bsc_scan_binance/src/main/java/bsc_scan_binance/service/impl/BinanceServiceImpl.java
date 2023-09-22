@@ -4162,7 +4162,12 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            if (!Objects.equals(dto_w1.getTrend_of_heiken3(), dto_d1.getTrend_of_heiken3())) {
+            String trend_d1 = dto_d1.getTrend_of_heiken3();
+            if (!(Objects.equals(trend_d1, dto_w1.getTrend_of_heiken3())
+                    || (Objects.equals(trend_d1, dto_d1.getTrend_of_heiken3_1())
+                            && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3())
+                            && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3_1()))
+                    || Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10()))) {
                 continue;
             }
 
@@ -4172,8 +4177,6 @@ public class BinanceServiceImpl implements BinanceService {
             if (NOTICE_LIST.contains(EPIC)) {
                 append += Utils.TEXT_NOTICE_ONLY;
             }
-
-            String trend_d1 = dto_d1.getTrend_of_heiken3();
 
             String cutting = Utils.switch_trend_real_time_by_trend_d1(EPIC, dto_d1, dto_h4, dto_h1, dto_15, dto_10,
                     dto_05, dto_03);
@@ -4372,14 +4375,19 @@ public class BinanceServiceImpl implements BinanceService {
 
                 String prifix = "CloseTrade: ";
                 if (is_hit_sl) {
-                    reason = "stoploss:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5) + "$"
-                            + trade.getComment();
+
+                    reason = "stoploss:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5) + "$   "
+                            + Utils.appendSpace(trade.getComment(), 30);
+
                 } else if (take_profit) {
+
                     prifix = "Take_Profit: ";
 
                     reason = "take_profit:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5)
                             + "$   (H1_REVERSE)";
+
                 } else if (is_append_trade) {
+
                     prifix = "(DCA)Trade:  ";
                     reason = "DCA";
                 }
