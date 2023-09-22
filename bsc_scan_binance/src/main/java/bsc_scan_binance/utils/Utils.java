@@ -1249,30 +1249,30 @@ public class Utils {
     }
 
     public static String getEncryptedChartNameCapital(String TIME) {
-        if (Objects.equals(TIME, CAPITAL_TIME_03)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_03) || TIME.contains(CAPITAL_TIME_03)) {
             return ENCRYPTED_03;
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_05)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_05) || TIME.contains(CAPITAL_TIME_05)) {
             return ENCRYPTED_05;
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_10)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_10) || TIME.contains(CAPITAL_TIME_10)) {
             return ENCRYPTED_10;
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_15)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_15) || TIME.contains(CAPITAL_TIME_15)) {
             return ENCRYPTED_15;
         }
 
-        if (Objects.equals(TIME, CAPITAL_TIME_H1)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_H1) || TIME.contains(CAPITAL_TIME_H1)) {
             return ENCRYPTED_H1;
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_H4)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_H4) || TIME.contains(CAPITAL_TIME_H4)) {
             return ENCRYPTED_H4;
         }
 
-        if (Objects.equals(TIME, CAPITAL_TIME_D1)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_D1) || TIME.contains(CAPITAL_TIME_D1)) {
             return ENCRYPTED_D1;
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_W1)) {
+        if (Objects.equals(TIME, CAPITAL_TIME_W1) || TIME.contains(CAPITAL_TIME_W1)) {
             return ENCRYPTED_W1;
         }
 
@@ -5749,38 +5749,33 @@ public class Utils {
         return " " + seq.trim() + "   ";
     }
 
-    public static String get_seq_minus(String trend_h1, Orders dto_15, Orders dto_10, Orders dto_05) {
-
+    public static String get_seq_minus(String find_trend, Orders dto_15, Orders dto_10, Orders dto_05) {
         String switch_trend_m1x = "";
         switch_trend_m1x += dto_15.getSwitch_trend();
         switch_trend_m1x += dto_10.getSwitch_trend();
 
-        switch_trend_m1x += dto_05.getSwitch_trend();
-        if (dto_05.getTrend_by_seq_ma().contains(dto_05.getTrend_of_heiken3())
-                || dto_05.getTrend_by_seq_ma().contains(dto_05.getTrend_by_ma_06())) {
-            switch_trend_m1x += dto_05.getTrend_by_seq_ma();
-        }
+        boolean allow_trade = switch_trend_m1x.contains(Utils.TEXT_SEQ)
+                && Objects.equals(find_trend, dto_15.getTrend_of_heiken3())
+                && Objects.equals(find_trend, dto_10.getTrend_of_heiken3())
+                && Objects.equals(find_trend, dto_05.getTrend_of_heiken3());
 
-        boolean h1_allow_trade = switch_trend_m1x.contains(Utils.TEXT_SEQ)
-                && Objects.equals(trend_h1, dto_05.getTrend_by_ma_06())
-                && Objects.equals(trend_h1, dto_10.getTrend_of_heiken3())
-                && Objects.equals(trend_h1, dto_15.getTrend_of_heiken3());
-
-        if (h1_allow_trade) {
-            if (dto_15.getSwitch_trend().contains(Utils.TEXT_SEQ)) {
-                return Utils.ENCRYPTED_15;
+        if (allow_trade) {
+            if (dto_15.getSwitch_trend().contains(Utils.TEXT_SEQ)
+                    && Objects.equals(find_trend, dto_15.getTrend_by_ma_10())) {
+                return getEncryptedChartNameCapital(dto_15.getId());// Utils.ENCRYPTED_15;
             }
 
             if (dto_10.getSwitch_trend().contains(Utils.TEXT_SEQ)
-                    && Objects.equals(trend_h1, dto_10.getTrend_by_seq_ma())) {
-                return Utils.ENCRYPTED_10;
+                    && Objects.equals(find_trend, dto_10.getTrend_by_ma_10())) {
+                return getEncryptedChartNameCapital(dto_10.getId());// Utils.ENCRYPTED_10;
             }
 
-            if ((dto_05.getSwitch_trend() + dto_05.getTrend_by_seq_ma()).contains(Utils.TEXT_SEQ)
-                    && Objects.equals(trend_h1, dto_05.getTrend_by_ma_06())) {
-                return Utils.ENCRYPTED_05;
+            if (dto_05.getSwitch_trend().contains(Utils.TEXT_SEQ)
+                    && Objects.equals(find_trend, dto_05.getTrend_by_ma_10())) {
+                return getEncryptedChartNameCapital(dto_05.getId());// Utils.ENCRYPTED_05;
             }
         }
+
         return "";
     }
 

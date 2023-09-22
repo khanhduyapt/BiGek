@@ -81,6 +81,7 @@ import bsc_scan_binance.response.CandidateTokenResponse;
 import bsc_scan_binance.response.DepthResponse;
 import bsc_scan_binance.response.EntryCssResponse;
 import bsc_scan_binance.response.ForexHistoryResponse;
+import bsc_scan_binance.response.MoneyAtRiskResponse;
 import bsc_scan_binance.service.BinanceService;
 import bsc_scan_binance.utils.Utils;
 import lombok.RequiredArgsConstructor;
@@ -2443,8 +2444,8 @@ public class BinanceServiceImpl implements BinanceService {
             fundingHistoryRepository.deleteAll(list);
         }
 
-        // List<Orders> orders = ordersRepository.findAll();
-        List<Orders> orders = ordersRepository.getForexList();
+        List<Orders> orders = ordersRepository.findAll();
+        // List<Orders> orders = ordersRepository.getForexList();
         if (!CollectionUtils.isEmpty(orders)) {
             ordersRepository.deleteAll(orders);
         }
@@ -4137,6 +4138,8 @@ public class BinanceServiceImpl implements BinanceService {
         NOTICE_LIST.addAll(Utils.EPICS_STOCKS);
         CAPITAL_LIST.addAll(NOTICE_LIST);
 
+        List<String> scap_15m_list = new ArrayList<String>();
+
         Collections.sort(CAPITAL_LIST);
         for (String EPIC : CAPITAL_LIST) {
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
@@ -4158,6 +4161,35 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
+            String scap_15m = Utils.get_seq_minus(dto_15.getTrend_of_heiken3_1(), dto_15, dto_10, dto_05);
+            if (Utils.isNotBlank(scap_15m)) {
+
+                Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, dto_15.getTrend_of_heiken3_1(), dto_15, dto_15, dto_15,
+                        dto_15, "(SCAP_15M)", true, Utils.CAPITAL_TIME_15);
+
+                BigDecimal stop_loss = Objects.equals(dto_15.getTrend_of_heiken3_1(), Utils.TREND_LONG)
+                        ? dto_15.getLow_50candle()
+                        : dto_15.getHig_50candle();
+
+                BigDecimal take_profit = Objects.equals(dto_15.getTrend_of_heiken3_1(), Utils.TREND_LONG)
+                        ? dto_15.getHig_50candle()
+                        : dto_15.getLow_50candle();
+
+                MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, Utils.RISK_PER_TRADE,
+                        dto_15.getCurrent_price(), stop_loss, take_profit);
+                BigDecimal volume = money.calcLot();
+
+                dto.setLots(volume);
+                dto.setStop_loss(stop_loss);
+                dto.setTake_profit_h4(take_profit);
+
+                String prefix = Utils.appendSpace("(SCAP_15M)", 10) + Utils.appendSpace(scap_15m, 10) + ": ";
+                String log = Utils.createOpenTradeMsg(dto, prefix);
+                log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
+
+                scap_15m_list.add(log);
+            }
+
             String trend_d1 = dto_d1.getTrend_of_heiken3();
             if (!(Objects.equals(trend_d1, dto_w1.getTrend_of_heiken3())
                     || (Objects.equals(trend_d1, dto_d1.getTrend_of_heiken3_1())
@@ -4177,7 +4209,25 @@ public class BinanceServiceImpl implements BinanceService {
             String cutting = Utils.switch_trend_real_time_by_trend_d1(EPIC, dto_d1, dto_h4, dto_h1, dto_15, dto_10,
                     dto_05, dto_03);
 
-            if (Utils.isNotBlank(cutting)) {
+            boolean allow_trade_by_seq = false;
+            String seq = Utils.get_seq_minus(trend_d1, dto_h1, dto_15, dto_10);
+            if (Objects.equals(trend_d1, dto_w1.getTrend_of_heiken3())
+                    && Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())
+
+                    && Objects.equals(trend_d1, dto_h1.getTrend_by_ma_10())
+                    && Objects.equals(trend_d1, dto_h1.getTrend_of_heiken3())
+                    && Objects.equals(trend_d1, dto_h1.getTrend_of_heiken3_1())
+
+                    && Objects.equals(trend_d1, dto_15.getTrend_of_heiken3())
+                    && Objects.equals(trend_d1, dto_10.getTrend_of_heiken3())
+                    && Objects.equals(trend_d1, dto_05.getTrend_of_heiken3())
+                    && Objects.equals(trend_d1, dto_03.getTrend_of_heiken3())
+
+                    && Utils.isNotBlank(seq)) {
+                allow_trade_by_seq = true;
+            }
+
+            if (Utils.isNotBlank(cutting) || allow_trade_by_seq) {
                 // Kiểm tra biên độ đủ đảm bảo TP 1 cây nến H4 không.
                 boolean possible_tp = Utils.is_daily_range_can_still_be_trade(dto_w1, dto_d1, dto_h4, trend_d1);
                 String eoz = Utils.possible_take_profit(dto_d1, dto_h4, trend_d1);
@@ -4185,7 +4235,7 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                append += cutting + Utils.TEXT_PASS;
+                append += cutting + seq + Utils.TEXT_PASS;
 
                 trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1, dto_h1, dto_h4, dto_d1, dto_w1,
                         append, true, Utils.CAPITAL_TIME_15);
@@ -4358,7 +4408,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_h1.getTrend_by_ma_10(), TRADING_TREND)
                     && Objects.equals(dto_15.getTrend_by_ma_10(), TRADING_TREND)
                     && (PROFIT.add(BigDecimal.valueOf(100)).compareTo(BigDecimal.ZERO) < 0)
-                    && Utils.isNotBlank(Utils.get_seq_minus(trend_h1, dto_15, dto_10, dto_05))) {
+                    && Utils.isNotBlank(Utils.get_seq_minus(trend_h1, dto_15, dto_15, dto_10))) {
                 is_append_trade = true;
             }
             if (PROFIT.add(Utils.RISK_PER_TRADE.multiply(BigDecimal.valueOf(1.8))).compareTo(BigDecimal.ZERO) < 0) {
@@ -4421,6 +4471,11 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.logWritelnDraft("");
 
         openTrade();
+
+        for (String log : scap_15m_list) {
+            Utils.logWritelnDraft(log);
+            Utils.logWritelnReport(log);
+        }
     }
 
 }

@@ -189,11 +189,11 @@ public class BscScanBinanceApplication {
                             binance_service.sendMsgKillLongShort("BNB");
                         }
 
-                        String SYMBOL = Utils.ALL_COINS_BINANCE.get(index_crypto).toUpperCase();
-                        if (isReloadAfter(getWattingTime(SYMBOL), "CHECK_CRYPTO_" + SYMBOL)) {
-                            String crypto_time = binance_service.initCryptoTrend(SYMBOL);
-                            setWattingTime(SYMBOL, crypto_time);
-                        }
+                        //String SYMBOL = Utils.ALL_COINS_BINANCE.get(index_crypto).toUpperCase();
+                        //if (isReloadAfter(getWattingTime(SYMBOL), "CHECK_CRYPTO_" + SYMBOL)) {
+                        //    String crypto_time = binance_service.initCryptoTrend(SYMBOL);
+                        //    setWattingTime(SYMBOL, crypto_time);
+                        //}
 
                         // ---------------------------------------------------------
                         if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "CREATE_REPORT")) {
@@ -217,7 +217,6 @@ public class BscScanBinanceApplication {
 
                         if (round_crypto % 10 == 0) {
                             System.out.println(msg);
-                            binance_service.clearTrash();
                         }
                     } else {
                         index_crypto += 1;
