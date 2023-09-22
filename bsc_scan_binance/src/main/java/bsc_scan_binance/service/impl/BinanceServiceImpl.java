@@ -4175,7 +4175,8 @@ public class BinanceServiceImpl implements BinanceService {
                         ? dto_15.getHig_50candle()
                         : dto_15.getLow_50candle();
 
-                MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, Utils.RISK_PER_TRADE,
+                MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC,
+                        Utils.RISK_PER_TRADE.multiply(BigDecimal.valueOf(2)),
                         dto_15.getCurrent_price(), stop_loss, take_profit);
                 BigDecimal volume = money.calcLot();
 
