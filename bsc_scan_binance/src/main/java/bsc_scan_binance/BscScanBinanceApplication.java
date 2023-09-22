@@ -125,8 +125,6 @@ public class BscScanBinanceApplication {
                 System.out.println(Utils.getMt5DataFolder());
                 System.out.println();
 
-                Utils.writelnLogFooter();
-
                 while (index_crypto < total) {
                     try {
                         if (isReloadAfter(1, "MsgKillZone")) {

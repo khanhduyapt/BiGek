@@ -4220,10 +4220,22 @@ public class BinanceServiceImpl implements BinanceService {
 
             String trend_d1 = dto_d1.getTrend_of_heiken3();
             if (!(Objects.equals(trend_d1, dto_w1.getTrend_of_heiken3())
+
                     || (Objects.equals(trend_d1, dto_d1.getTrend_of_heiken3_1())
+                            && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_10())
                             && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3())
                             && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3_1()))
-                    || Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10()))) {
+
+                    || (Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())
+                            && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3())
+                            && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_10()))
+
+                    || (Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3())
+                            && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_10())
+                            && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_20())
+                            && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_50()))
+
+            )) {
                 continue;
             }
 

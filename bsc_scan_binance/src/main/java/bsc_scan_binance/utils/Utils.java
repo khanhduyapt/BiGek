@@ -1836,15 +1836,6 @@ public class Utils {
         }
     }
 
-    public static void writelnLogFooter() {
-        try {
-            FileWriter fw = new FileWriter(getReportFilePath(), true);
-            fw.write(BscScanBinanceApplication.hostname + Utils.appendSpace("", 151, "-") + "\n");
-            fw.close();
-        } catch (IOException ioe) {
-            System.err.println("IOException: " + ioe.getMessage());
-        }
-    }
 
     public static void sendToMyTelegram(String text) {
         try {
