@@ -4765,8 +4765,8 @@ public class Utils {
         msg += " ,SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10) + "   ";
 
         msg += " ,TP(h4): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_h4()), 10) + "   ";
-        //msg += " ,TP(d1): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_d1()), 10) + "   ";
-        //msg += " ,TP(w1): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_w1()), 10) + "   ";
+        msg += " ,TP(d1): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_d1()), 10) + "   ";
+        msg += " ,TP(w1): " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit_w1()), 10) + "   ";
 
         msg += " ,Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 6) + "(lot)   ";
         msg += " ,Standard:"
@@ -5157,10 +5157,10 @@ public class Utils {
         BigDecimal sl = sl1.get(0);
 
         BigDecimal tp_h4 = calc_tp_by_amplitude_of_candle(curr_price, dto_h4.getAmplitude_avg_of_candles(), find_trend);
-        // BigDecimal tp_d1 = calc_tp_by_amplitude_of_candle(curr_price, dto_d1.getAmplitude_avg_of_candles(), find_trend);
-        // BigDecimal tp_w1 = calc_tp_by_amplitude_of_candle(curr_price, dto_w1.getAmplitude_avg_of_candles(), find_trend);
+        BigDecimal tp_d1 = calc_tp_by_amplitude_of_candle(curr_price, dto_d1.getAmplitude_avg_of_candles(), find_trend);
+        BigDecimal tp_w1 = calc_tp_by_amplitude_of_candle(curr_price, dto_w1.getAmplitude_avg_of_candles(), find_trend);
 
-        MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, RISK_PER_TRADE, curr_price, sl, tp_h4);
+        MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC, RISK_PER_TRADE, curr_price, sl, tp_d1);
         BigDecimal volume = money.calcLot();
 
         BigDecimal standard_vol = get_standard_vol_per_100usd(EPIC);
@@ -5188,6 +5188,8 @@ public class Utils {
         dto.setComment(create_trade_comment(EPIC, CAPITAL_TIME_XX, type + append));
         dto.setEntry_h4(entry_h4);
         dto.setEntry_d1(entry_d1);
+        dto.setTake_profit_d1(tp_d1);
+        dto.setTake_profit_w1(tp_w1);
 
         return dto;
     }

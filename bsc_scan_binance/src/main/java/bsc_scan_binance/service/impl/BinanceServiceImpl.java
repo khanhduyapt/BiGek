@@ -2869,9 +2869,9 @@ public class BinanceServiceImpl implements BinanceService {
                         sb.append('\t');
                         sb.append(dto.getEntry_h1());
                         sb.append('\t');
-                        sb.append(dto.getStop_loss()); // BigDecimal.ZERO
+                        sb.append(dto.getStop_loss());
                         sb.append('\t');
-                        sb.append(dto.getTake_profit_h4());
+                        sb.append(dto.getTake_profit_d1());
                         sb.append('\t');
                         sb.append(dto.getComment().trim());
                         sb.append('\t');
@@ -3942,13 +3942,9 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal close_candle_1 = list.get(1).getPrice_close_candle();
         BigDecimal close_candle_2 = list.get(2).getPrice_close_candle();
 
-        int sub_size = 50;
-        if (heiken_list.size() < 50) {
-            sub_size = heiken_list.size();
-        }
-        List<BigDecimal> lohi_50 = Utils.getLowHighCandle(heiken_list.subList(0, sub_size));
-        BigDecimal low_50candle = lohi_50.get(0).add(bread.multiply(BigDecimal.valueOf(0.3)));
-        BigDecimal hig_50candle = lohi_50.get(1).subtract(bread.multiply(BigDecimal.valueOf(0.3)));
+        BigDecimal low_50candle = lohi.get(0).add(bread.multiply(BigDecimal.valueOf(0.3)));
+        BigDecimal hig_50candle = lohi.get(1).subtract(bread.multiply(BigDecimal.valueOf(0.3)));
+
         BigDecimal lowest_price_of_curr_candle = heiken_list.get(0).getLow_price();
         BigDecimal highest_price_of_curr_candle = heiken_list.get(0).getHight_price();
 

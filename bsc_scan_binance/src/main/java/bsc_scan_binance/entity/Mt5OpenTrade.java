@@ -29,4 +29,7 @@ public class Mt5OpenTrade {
     private BigDecimal entry_h4 = BigDecimal.ZERO;
 
     private BigDecimal entry_d1 = BigDecimal.ZERO;
+
+    private BigDecimal take_profit_d1 = BigDecimal.ZERO;
+    private BigDecimal take_profit_w1 = BigDecimal.ZERO;
 }
