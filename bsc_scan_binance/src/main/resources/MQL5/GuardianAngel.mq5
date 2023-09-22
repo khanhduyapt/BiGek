@@ -34,7 +34,7 @@ double input PASS_CRITERIA = 220000.;
 int OnInit()
   {
 //--- create timer
-   EventSetTimer(60); //1800=30minutes; 900=15minutes; 300=5minutes; 180=3minutes; 60=1minute;
+   EventSetTimer(30); //1800=30minutes; 900=15minutes; 300=5minutes; 180=3minutes; 60=1minute;
 
    m_trade.SetExpertMagicNumber(EXPERT_MAGIC);
    printf(BOT_NAME + " initialized!");
