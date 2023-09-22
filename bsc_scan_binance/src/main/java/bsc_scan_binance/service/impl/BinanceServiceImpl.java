@@ -4401,7 +4401,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (trade.getVolume().compareTo(standard_vol.multiply(BigDecimal.valueOf(3))) > 0) {
                 is_hit_sl = true;
             }
-            if ((PROFIT.compareTo(BigDecimal.valueOf(1)) > 0)
+            if ((PROFIT.compareTo(BigDecimal.valueOf(10)) > 0)
                     && Objects.equals(dto_05.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
                     && Utils.is_must_close_avoid_overnight_fees_triple()) {
                 is_hit_sl = true;
