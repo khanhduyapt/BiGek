@@ -247,15 +247,14 @@ public class BscScanBinanceApplication {
         // --------------------------------------------------------------------------
         File myScap = new File(Utils.getDraftLogFile());
         myScap.delete();
-        File myObj = new File(Utils.getReportFilePath());
-        myObj.delete();
+        //File myObj = new File(Utils.getReportFilePath());
+        //myObj.delete();
         EPICS_OUTPUTED_LOG = "";
         // --------------------------------------------------------------------------
         EPICS_OUTPUT_MSG = "";
         // --------------------------------------------------------------------------
         int result = 0;
         Utils.logWritelnDraft("");
-        Utils.logWritelnReport("...");
         result = binance_service.controlMt5(Utils.EPICS_METALS);
         if (result > 0)
             Utils.logWritelnDraft("...");
@@ -264,7 +263,7 @@ public class BscScanBinanceApplication {
         // --------------------------------------------------------------------------
         Utils.logWritelnDraftFooter();
         if (result > 0)
-            Utils.logWritelnReport("...");
+            Utils.logWritelnDraft("...");
 
         result = binance_service.controlMt5(Utils.EPICS_FOREXS_JPY);
         if (result > 0)
@@ -292,14 +291,14 @@ public class BscScanBinanceApplication {
 
         result = binance_service.controlMt5(Utils.EPICS_CRYPTO_CFD);
         if (result > 0)
-            Utils.logWritelnReport("...");
+            Utils.logWritelnDraft("...");
 
         // --------------------------------------------------------------------------
         Utils.logWritelnDraftFooter();
         Utils.logWritelnDraftFooter();
         Utils.logWritelnDraftFooter();
         binance_service.controlMt5(Utils.EPICS_STOCKS_EUR);
-        Utils.logWritelnReport("...");
+        Utils.logWritelnDraft("...");
         binance_service.controlMt5(Utils.EPICS_STOCKS);
         Utils.logWritelnDraftFooter();
         // --------------------------------------------------------------------------

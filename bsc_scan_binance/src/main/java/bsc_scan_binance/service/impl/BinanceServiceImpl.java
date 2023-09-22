@@ -3460,6 +3460,11 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Override
     public void createReport() {
+        boolean exit = true;
+        if (exit) {
+            return;
+        }
+
         // TODO: createReport
         File myObj = new File(Utils.getReportFilePath());
         myObj.delete();
