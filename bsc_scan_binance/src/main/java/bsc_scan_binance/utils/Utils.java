@@ -5433,6 +5433,27 @@ public class Utils {
                 cutting += " 15vsD1Ma10:" + Utils.appendSpace(temp, 5);
 
             // ------------------------------------------------------------------------------
+            temp = Utils.checkXCutUpY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(),
+                    dto_h4.getMa50(), dto_h4.getMa50());
+            if (Utils.isNotBlank(temp))
+                cutting += " 03vsH4Ma50:" + Utils.appendSpace(temp, 5);
+
+            temp = Utils.checkXCutUpY(dto_05.getClose_candle_1(), dto_05.getClose_candle_2(),
+                    dto_h4.getMa50(), dto_h4.getMa50());
+            if (Utils.isNotBlank(temp))
+                cutting += " 05vsH4Ma50:" + Utils.appendSpace(temp, 5);
+
+            temp = Utils.checkXCutUpY(dto_10.getClose_candle_1(), dto_10.getClose_candle_2(),
+                    dto_h4.getMa50(), dto_h4.getMa50());
+            if (Utils.isNotBlank(temp))
+                cutting += " 10vsH4Ma50:" + Utils.appendSpace(temp, 5);
+
+            temp = Utils.checkXCutUpY(dto_15.getClose_candle_1(), dto_15.getClose_candle_2(),
+                    dto_h4.getMa50(), dto_h4.getMa50());
+            if (Utils.isNotBlank(temp))
+                cutting += " 15vsH4Ma50:" + Utils.appendSpace(temp, 5);
+
+            // ------------------------------------------------------------------------------
 
             temp = Utils.checkXCutUpY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(),
                     dto_h4.getMa20(), dto_h4.getMa20());
@@ -5535,6 +5556,26 @@ public class Utils {
                 cutting += " 15vsD1Ma10:" + Utils.appendSpace(temp, 5);
 
             // ------------------------------------------------------------------------------
+            temp = Utils.checkXCutDnY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(),
+                    dto_h4.getMa50(), dto_h4.getMa50());
+            if (Utils.isNotBlank(temp))
+                cutting += " 03vsH4Ma50:" + Utils.appendSpace(temp, 5);
+
+            temp = Utils.checkXCutDnY(dto_05.getClose_candle_1(), dto_05.getClose_candle_2(),
+                    dto_h4.getMa50(), dto_h4.getMa50());
+            if (Utils.isNotBlank(temp))
+                cutting += " 05vsH4Ma50:" + Utils.appendSpace(temp, 5);
+
+            temp = Utils.checkXCutDnY(dto_10.getClose_candle_1(), dto_10.getClose_candle_2(),
+                    dto_h4.getMa50(), dto_h4.getMa50());
+            if (Utils.isNotBlank(temp))
+                cutting += " 10vsH4Ma50:" + Utils.appendSpace(temp, 5);
+
+            temp = Utils.checkXCutDnY(dto_15.getClose_candle_1(), dto_15.getClose_candle_2(),
+                    dto_h4.getMa50(), dto_h4.getMa50());
+            if (Utils.isNotBlank(temp))
+                cutting += " 15vsH4Ma50:" + Utils.appendSpace(temp, 5);
+            // ------------------------------------------------------------------------------
 
             temp = Utils.checkXCutDnY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(),
                     dto_h4.getMa20(), dto_h4.getMa20());
@@ -5619,6 +5660,8 @@ public class Utils {
 
             if (cutting.contains("D1Ma10")) {
                 append += "2410";
+            } else if (cutting.contains("H4Ma50")) {
+                append += "0450";
             } else if (cutting.contains("H4Ma20")) {
                 append += "0420";
             } else if (cutting.contains("H4Ma10")) {
