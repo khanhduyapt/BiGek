@@ -4168,16 +4168,17 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             if (Utils.EPICS_SCAP_15M_FX.contains(EPIC)) {
-                String scap_15m = Utils.get_seq_minus(dto_15.getTrend_of_heiken3_1(), dto_15, dto_10, dto_05);
+                String trend_15 = dto_15.getTrend_of_heiken3();
+                String scap_15m = Utils.get_seq_minus(trend_15, dto_15, dto_10, dto_05);
                 if (Utils.isNotBlank(scap_15m)) {
 
-                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, dto_15.getTrend_of_heiken3_1(), dto_15, dto_15,
+                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_15, dto_15, dto_15,
                             dto_15, dto_15, "(SCAP_15M)", true, Utils.CAPITAL_TIME_15);
 
                     BigDecimal curr_price = dto_15.getCurrent_price();
                     BigDecimal stop_loss = BigDecimal.ZERO;
                     BigDecimal take_profit = BigDecimal.ZERO;
-                    if (Objects.equals(dto_15.getTrend_of_heiken3_1(), Utils.TREND_LONG)) {
+                    if (Objects.equals(trend_15, Utils.TREND_LONG)) {
                         stop_loss = dto_15.getLow_50candle();
                         take_profit = curr_price.add(curr_price.subtract(stop_loss));
                     } else {
@@ -4200,7 +4201,9 @@ public class BinanceServiceImpl implements BinanceService {
                     String log = Utils.createOpenTradeMsg(dto, prefix);
                     log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
 
-                    scap_epics += EPIC + ".";
+                    scap_epics += Utils.new_line_from_service + "(" + Utils.getType(trend_15) + ")" + EPIC + "."
+                            + volume + "lot." + scap_15m;
+
                     scap_15m_list.add(log);
                 }
             }
@@ -4491,7 +4494,7 @@ public class BinanceServiceImpl implements BinanceService {
             String EVENT_ID = "SCAP_EPICS" + Utils.getCurrentYyyyMmDd_HH() + scap_epics;
             sendMsgPerHour_OnlyMe(EVENT_ID, scap_epics);
         } else {
-            Utils.logWritelnReport(Utils.getMmDD_TimeHHmm() + scap_epics + "   NOT_FOUND");
+            // Utils.logWritelnReport(Utils.getMmDD_TimeHHmm() + scap_epics + "   NOT_FOUND");
         }
 
         for (String log : scap_15m_list) {

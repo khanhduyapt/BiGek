@@ -247,8 +247,6 @@ public class BscScanBinanceApplication {
         // --------------------------------------------------------------------------
         File myScap = new File(Utils.getDraftLogFile());
         myScap.delete();
-        //File myObj = new File(Utils.getReportFilePath());
-        //myObj.delete();
         EPICS_OUTPUTED_LOG = "";
         // --------------------------------------------------------------------------
         EPICS_OUTPUT_MSG = "";
