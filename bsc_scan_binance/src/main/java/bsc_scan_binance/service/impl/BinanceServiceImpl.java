@@ -4169,13 +4169,16 @@ public class BinanceServiceImpl implements BinanceService {
                     Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, dto_15.getTrend_of_heiken3_1(), dto_15, dto_15,
                             dto_15, dto_15, "(SCAP_15M)", true, Utils.CAPITAL_TIME_15);
 
-                    BigDecimal stop_loss = Objects.equals(dto_15.getTrend_of_heiken3_1(), Utils.TREND_LONG)
-                            ? dto_15.getLow_50candle()
-                            : dto_15.getHig_50candle();
-
-                    BigDecimal take_profit = Objects.equals(dto_15.getTrend_of_heiken3_1(), Utils.TREND_LONG)
-                            ? dto_15.getHig_50candle()
-                            : dto_15.getLow_50candle();
+                    BigDecimal curr_price = dto_15.getCurrent_price();
+                    BigDecimal stop_loss = BigDecimal.ZERO;
+                    BigDecimal take_profit = BigDecimal.ZERO;
+                    if (Objects.equals(dto_15.getTrend_of_heiken3_1(), Utils.TREND_LONG)) {
+                        stop_loss = dto_15.getLow_50candle();
+                        take_profit = curr_price.add(curr_price.subtract(stop_loss));
+                    } else {
+                        stop_loss = dto_15.getHig_50candle();
+                        take_profit = curr_price.subtract(stop_loss.subtract(curr_price));
+                    }
 
                     MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC,
                             Utils.RISK_PER_TRADE.multiply(BigDecimal.valueOf(2)),
@@ -4185,6 +4188,8 @@ public class BinanceServiceImpl implements BinanceService {
                     dto.setLots(volume);
                     dto.setStop_loss(stop_loss);
                     dto.setTake_profit_h4(take_profit);
+                    dto.setTake_profit_d1(take_profit);
+                    dto.setTake_profit_w1(take_profit);
 
                     String prefix = Utils.appendSpace("(SCAP_15M)", 10) + Utils.appendSpace(scap_15m, 10) + ": ";
                     String log = Utils.createOpenTradeMsg(dto, prefix);
@@ -4477,14 +4482,18 @@ public class BinanceServiceImpl implements BinanceService {
 
         openTrade();
 
-        for (String log : scap_15m_list) {
-            Utils.logWritelnDraft(log);
-            Utils.logWritelnReport(log);
-        }
         if (scap_15m_list.size() > 0) {
             String EVENT_ID = "SCAP_EPICS" + Utils.getCurrentYyyyMmDd_HH() + scap_epics;
             sendMsgPerHour_OnlyMe(EVENT_ID, scap_epics);
+        } else {
+            Utils.logWritelnReport(Utils.getMmDD_TimeHHmm() + scap_epics + "   NOT_FOUND");
         }
+
+        for (String log : scap_15m_list) {
+            Utils.logWritelnDraft(Utils.getMmDD_TimeHHmm() + log);
+            Utils.logWritelnReport(Utils.getMmDD_TimeHHmm() + log);
+        }
+
     }
 
 }
