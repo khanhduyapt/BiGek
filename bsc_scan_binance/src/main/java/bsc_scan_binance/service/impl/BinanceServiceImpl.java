@@ -4096,20 +4096,15 @@ public class BinanceServiceImpl implements BinanceService {
 
             String append = str_trend_d3 + seq + eoz;
 
-            boolean allow_notice = (dto_h1.getSwitch_trend() + dto_h4.getSwitch_trend()).contains(Utils.TEXT_SEQ)
-                    && (dto_h1.getSwitch_trend() + dto_h4.getSwitch_trend()).contains(trend_d1);
-
             if (Utils.EPICS_STOCKS.contains(EPIC)) {
                 String trend_d10 = dto_d1.getTrend_by_ma_10();
                 if (Utils.isBlank(trend_d1) || !Objects.equals(trend_d10, trend_d1)
                         || !Objects.equals(trend_d10, trend_d1)) {
-
-                    allow_notice = false;
                     append = Utils.appendSpace("", append.length());
                 }
             }
 
-            analysis_profit(prefix, EPIC, append, trend_d1, allow_notice, dto_h1, dto_h4);
+            analysis_profit(prefix, EPIC, append, trend_d1, false, dto_h1, dto_h4);
         }
 
         return count;
@@ -4170,7 +4165,22 @@ public class BinanceServiceImpl implements BinanceService {
                 String eoz = Utils.possible_take_profit(dto_d1, dto_h4, trend_15);
                 String scap_15m = Utils.get_seq_minus(trend_15, dto_15, dto_10, dto_05);
 
-                if (possible_tp && Utils.isBlank(eoz) && Utils.isNotBlank(scap_15m)) {
+                String cutting = "";
+                boolean allow_trade_by_seq = false;
+                if (Utils.isNotBlank(scap_15m)) {
+                    allow_trade_by_seq = true;
+
+                } else if ((dto_15.getTrend_by_seq_ma() + dto_10.getTrend_by_seq_ma() + dto_05.getTrend_by_seq_ma())
+                        .contains(Utils.TEXT_SEQ)) {
+                    cutting += Utils.get_cutting_real_time(trend_15, dto_03, dto_15.getMa20(), "15Ma20");
+                    cutting += Utils.get_cutting_real_time(trend_15, dto_03, dto_15.getMa50(), "15Ma50");
+
+                    if (Utils.isNotBlank(cutting)) {
+                        allow_trade_by_seq = true;
+                    }
+                }
+
+                if (possible_tp && Utils.isBlank(eoz) && allow_trade_by_seq) {
 
                     Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_15, dto_15, dto_15, dto_15, dto_15,
                             "(SCAP_15M)", true, Utils.CAPITAL_TIME_15);
@@ -4199,7 +4209,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String prefix = Utils.appendSpace("(SCAP_15M)", 10) + Utils.appendSpace(scap_15m, 10) + ": ";
                     String log = Utils.createOpenTradeMsg(dto, prefix);
-                    log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
+                    log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " " + cutting;
 
                     scap_epics += Utils.new_line_from_service;
                     scap_epics += "(" + Utils.getType(trend_15).toUpperCase() + ")";
@@ -4229,7 +4239,7 @@ public class BinanceServiceImpl implements BinanceService {
                     dto_05, dto_03);
 
             boolean allow_trade_by_seq = false;
-            String seq = Utils.get_seq_minus(trend_d1, dto_h1, dto_15, dto_10);
+            String seq = Utils.get_seq_minus(trend_d1, dto_15, dto_10, dto_10);
             if (Objects.equals(trend_d1, dto_w1.getTrend_of_heiken3())
                     && Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())
 
@@ -4490,7 +4500,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         openTrade();
 
-        if (Utils.is_open_trade_time() && (scap_15m_list.size() > 0)) {
+        if (Utils.is_open_trade_time_8_to_21() && (scap_15m_list.size() > 0)) {
             String EVENT_ID = "SCAP_EPICS" + Utils.getCurrentYyyyMmDd_HH() + scap_epics;
             sendMsgPerHour_OnlyMe(EVENT_ID, scap_epics);
         } else {
@@ -4498,8 +4508,8 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         for (String log : scap_15m_list) {
-            Utils.logWritelnDraft(Utils.getMmDD_TimeHHmm() + log);
-            Utils.logWritelnReport(Utils.getMmDD_TimeHHmm() + log);
+            Utils.logWritelnDraft(log);
+            Utils.logWritelnReport(log);
         }
 
     }
