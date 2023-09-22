@@ -5305,44 +5305,11 @@ public class Utils {
             return false;
         }
 
-        BigDecimal current_price = dto_h4.getCurrent_price();
-
-        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            // Tuần đi hết biên độ trung bình thì nghỉ.
-            BigDecimal predic_close_price_w1 = dto_w1.getLowest_price_of_curr_candle()
-                    .add(dto_w1.getAmplitude_avg_of_candles());
-            if (current_price.compareTo(predic_close_price_w1) > 0) {
-                return false;
-            }
-
-            // Ngày đi hết biên độ trung bình thì nghỉ.
-            BigDecimal predic_close_price_d1 = dto_d1.getLowest_price_of_curr_candle()
-                    .add(dto_d1.getAmplitude_avg_of_candles());
-            if (current_price.compareTo(predic_close_price_d1) > 0) {
-                return false;
-            }
-        }
-
-        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            // Tuần đi hết biên độ trung bình thì nghỉ.
-            BigDecimal predic_close_price_w1 = dto_w1.getHighest_price_of_curr_candle()
-                    .subtract(dto_w1.getAmplitude_avg_of_candles());
-            if (current_price.compareTo(predic_close_price_w1) < 0) {
-                return false;
-            }
-
-            // Ngày đi hết biên độ trung bình thì nghỉ.
-            BigDecimal predic_close_price_d1 = dto_d1.getHighest_price_of_curr_candle()
-                    .add(dto_d1.getAmplitude_avg_of_candles());
-            if (current_price.compareTo(predic_close_price_d1) > 0) {
-                return false;
-            }
-        }
-
         if (Utils.isBlank(possible_take_profit(dto_d1, dto_h4, find_trend))) {
             return true;
         }
 
+        BigDecimal current_price = dto_h4.getCurrent_price();
         BigDecimal amplitude_avg_d1 = dto_d1.getAmplitude_avg_of_candles();
 
         BigDecimal tp_h4 = calc_tp_by_amplitude_of_candle(current_price, dto_h4.getAmplitude_avg_of_candles(),
@@ -5372,7 +5339,7 @@ public class Utils {
     private static String possible_take_profit(Orders dto_d1, Orders dto_h4, String find_trend) {
         String type = getType(find_trend).toUpperCase();
 
-        BigDecimal amplitude = dto_h4.getAmplitude_avg_of_candles().multiply(BigDecimal.valueOf(1.5));
+        BigDecimal amplitude = dto_h4.getAmplitude_avg_of_candles().add(dto_h4.getAmplitude_1_part_15());
 
         if (Objects.equals(TREND_LONG, find_trend)) {
             // Hết biên độ để đạt TP(H4)
@@ -5431,9 +5398,10 @@ public class Utils {
             Orders dto_15, Orders dto_10, Orders dto_05, Orders dto_03) {
 
         String trend_d1 = dto_d1.getTrend_of_heiken3();
-        String trend_15 = dto_15.getTrend_of_heiken3();
 
-        if (!Objects.equals(trend_d1, trend_15)) {
+        if (!(Objects.equals(trend_d1, dto_15.getTrend_of_heiken3())
+                || Objects.equals(trend_d1, dto_10.getTrend_of_heiken3())
+                || Objects.equals(trend_d1, dto_05.getTrend_of_heiken3()))) {
             return "";
         }
 

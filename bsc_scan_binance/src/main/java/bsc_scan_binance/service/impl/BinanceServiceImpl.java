@@ -3990,12 +3990,9 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // ---------------------------------------------------------------------------------------------
-            String seq = "trade:";
+            String seq = "";
             {
-                seq += Utils.appendSpace(trend_d1, 5) + Utils.appendSpace(seq_h1_h4, 12);
-                if (Utils.isBlank(trend_d1)) {
-                    seq = Utils.appendSpace("", seq.length());
-                }
+                seq += Utils.appendSpace(seq_h1_h4, 12);
                 seq += Utils.get_seq(dto_h1, dto_15, dto_10, dto_05, dto_03);
                 seq += "   ";
             }
