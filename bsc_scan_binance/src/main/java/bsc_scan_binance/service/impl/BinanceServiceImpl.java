@@ -3221,41 +3221,40 @@ public class BinanceServiceImpl implements BinanceService {
                 result += Utils.getTypeOfEpic(EPIC) + "   ";
                 result += Utils.appendSpace(EPIC, 10);
                 result += Utils.appendSpace(trade.getTicket(), 10);
-                result += "   Vol:" + Utils.appendLeft(Utils.removeLastZero(trade.getVolume()), 6) + "(lot)    ";
-                result += "   Standard:"
-                        + Utils.appendLeft(Utils.removeLastZero(Utils.get_standard_vol_per_100usd(EPIC)), 6)
-                        + "(lot)    ";
+                result += ", Vol:" + Utils.appendLeft(Utils.removeLastZero(trade.getVolume()), 6) + "(lot)";
+                result += ", Standard:"
+                        + Utils.appendLeft(Utils.removeLastZero(Utils.get_standard_vol_per_100usd(EPIC)), 6) + "(lot)";
 
-                result += "   Open: " + Utils.appendLeft(Utils.getStringValue(trade.getPriceOpen()), 12);
+                result += "   Open: " + Utils.appendLeft(Utils.getStringValue(trade.getPriceOpen()), 10);
 
-                result += "   TP(h1): " + Utils
+                result += ", TP(h1): " + Utils
                         .appendLeft(Utils.getStringValue(Utils.calc_tp_by_amplitude_of_candle(trade.getPriceOpen(),
-                                dto_h1.getAmplitude_avg_of_candles(), TRADE_TREND)), 12);
+                                dto_h1.getAmplitude_avg_of_candles(), TRADE_TREND)), 10);
 
                 if (Objects.nonNull(dto_h4)) {
-                    result += "   TP(h4): " + Utils
+                    result += ", TP(h4): " + Utils
                             .appendLeft(Utils.getStringValue(Utils.calc_tp_by_amplitude_of_candle(trade.getPriceOpen(),
-                                    dto_h4.getAmplitude_avg_of_candles(), TRADE_TREND)), 12);
+                                    dto_h4.getAmplitude_avg_of_candles(), TRADE_TREND)), 10);
                 }
 
                 if (Objects.nonNull(dto_d1)) {
-                    result += "   TP(d1): " + Utils
+                    result += ", TP(d1): " + Utils
                             .appendLeft(Utils.getStringValue(Utils.calc_tp_by_amplitude_of_candle(trade.getPriceOpen(),
-                                    dto_d1.getAmplitude_avg_of_candles(), TRADE_TREND)), 12);
+                                    dto_d1.getAmplitude_avg_of_candles(), TRADE_TREND)), 10);
                 }
 
                 if (Objects.nonNull(dto_w1)) {
-                    result += "   TP(w1): " + Utils
+                    result += ", TP(w1): " + Utils
                             .appendLeft(Utils.getStringValue(Utils.calc_tp_by_amplitude_of_candle(trade.getPriceOpen(),
-                                    dto_w1.getAmplitude_avg_of_candles(), TRADE_TREND)), 12);
+                                    dto_w1.getAmplitude_avg_of_candles(), TRADE_TREND)), 10);
                 }
 
                 if (Objects.nonNull(dto_d1)) {
-                    result += "   SL(d1): " + Utils
-                            .appendLeft(Utils.getStringValue(Utils.calc_sl1_tp2(dto_d1, TRADE_TREND).get(0)), 12);
+                    result += ", SL(d1): " + Utils
+                            .appendLeft(Utils.getStringValue(Utils.calc_sl1_tp2(dto_d1, TRADE_TREND).get(0)), 10);
                 }
 
-                result += "   Profit: " + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 6) + "$";
+                result += ", Profit: " + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 6) + "$";
                 result += Utils.appendSpace(trend_reverse, 20);
                 result += Utils.appendSpace(Utils.get_duration_trade_time(trade) + "   " + trade.getComment(), 60);
                 result += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62);
@@ -3896,7 +3895,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // ---------------------------------------------------------------------------
-            trend_by_seq_ma = Utils.trend_by_seq_ma_1_10_20_50(heiken_list);
+            trend_by_seq_ma = Utils.trend_by_seq_ma_1_10_20_50(heiken_list, amplitude_avg_of_candles);
 
             if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)) {
                 trend_by_seq_ma += Utils.trend_by_seq_ma_1_6_10_20(heiken_list);

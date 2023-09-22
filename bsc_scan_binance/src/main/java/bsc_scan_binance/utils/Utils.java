@@ -4173,27 +4173,55 @@ public class Utils {
         return result;
     }
 
-    public static String trend_by_seq_ma_1_10_20_50(List<BtcFutures> heiken_list) {
+    public static boolean is_insite_lohi(List<BtcFutures> heiken_list, String heiken,
+            BigDecimal amplitude_avg_of_candles, BigDecimal ma01_0, BigDecimal ma10_0, BigDecimal ma20_0,
+            BigDecimal ma50_0) {
+
+        List<BigDecimal> lohi = getLowHighCandle(heiken_list.subList(0, 1));
+        BigDecimal low = lohi.get(0);
+        BigDecimal hig = lohi.get(1);
+
+        BigDecimal amp = amplitude_avg_of_candles.multiply(BigDecimal.valueOf(2));
+        if (Objects.equals(heiken, TREND_LONG)) {
+            low = low.subtract(amp);
+        } else {
+            hig = hig.add(amp);
+        }
+
+        boolean inside_lohi = true;
+        inside_lohi &= (ma10_0.compareTo(low) >= 0) && (ma20_0.compareTo(low) >= 0) && (ma50_0.compareTo(low) >= 0);
+        inside_lohi &= (hig.compareTo(ma10_0) >= 0) && (hig.compareTo(ma20_0) >= 0) && (hig.compareTo(ma50_0) >= 0);
+
+        return inside_lohi;
+    }
+
+    public static String trend_by_seq_ma_1_10_20_50(List<BtcFutures> heiken_list, BigDecimal amplitude_avg_of_candles) {
         String result = "";
         if (heiken_list.size() < 20) {
             return result;
         }
         String heiken_1 = getTrendByHekenAshiList(heiken_list);
 
-        BigDecimal ma01_1 = calcMA(heiken_list, 01, 1);
-        BigDecimal ma10_1 = calcMA(heiken_list, 10, 1);
-        BigDecimal ma20_1 = calcMA(heiken_list, 20, 1);
-        BigDecimal ma50_1 = calcMA(heiken_list, 50, 1);
+        BigDecimal ma01 = calcMA(heiken_list, 01, 0);
+        BigDecimal ma10 = calcMA(heiken_list, 10, 0);
+        BigDecimal ma20 = calcMA(heiken_list, 20, 0);
+        BigDecimal ma50 = calcMA(heiken_list, 50, 0);
+
+        boolean is_insite_lohi = is_insite_lohi(heiken_list, heiken_1, amplitude_avg_of_candles, ma01, ma10, ma20,
+                ma50);
+        if (!is_insite_lohi) {
+            return "";
+        }
 
         if (heiken_1.contains(Utils.TREND_LONG)) {
-            if ((ma01_1.compareTo(ma10_1) >= 0) && (ma10_1.compareTo(ma20_1) >= 0) && (ma20_1.compareTo(ma50_1) >= 0)) {
+            if ((ma01.compareTo(ma10) >= 0) && (ma10.compareTo(ma20) >= 0) && (ma20.compareTo(ma50) >= 0)) {
                 String chart_name = getChartName(heiken_list).trim();
                 result = chart_name + TEXT_SWITCH_TREND_SEQ_1_10_20_50 + ":" + Utils.TREND_LONG;
             }
         }
 
         if (heiken_1.contains(Utils.TREND_SHOT)) {
-            if ((ma01_1.compareTo(ma10_1) <= 0) && (ma10_1.compareTo(ma20_1) <= 0) && (ma20_1.compareTo(ma50_1) <= 0)) {
+            if ((ma01.compareTo(ma10) <= 0) && (ma10.compareTo(ma20) <= 0) && (ma20.compareTo(ma50) <= 0)) {
                 String chart_name = getChartName(heiken_list).trim();
                 result = chart_name + TEXT_SWITCH_TREND_SEQ_1_10_20_50 + ":" + Utils.TREND_SHOT;
             }
@@ -5709,7 +5737,7 @@ public class Utils {
         }
 
         if (switch_trend_real_time) {
-            String append = Utils.getType(trend_d1);
+            String append = "";
 
             if (cutting.contains("D1Ma10")) {
                 append += "2410";
