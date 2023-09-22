@@ -2625,7 +2625,8 @@ public class BinanceServiceImpl implements BinanceService {
         Orders entity = new Orders(orderId, date_time, trend, heiken_list.get(0).getCurrPrice(), body.get(0),
                 body.get(1), low_high.get(0), low_high.get(1), note, trend_by_ma10, tradable_zone, trend_heiken_1, "",
                 "", "", "", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-                BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "");
+                BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+                "");
 
         ordersRepository.save(entity);
     }
@@ -3887,6 +3888,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         BigDecimal ma10 = Utils.calcMA(list, 10, 0);
         BigDecimal ma20 = Utils.calcMA(list, 20, 0);
+        BigDecimal ma50 = Utils.calcMA(list, 50, 0);
 
         BigDecimal close_candle_1 = list.get(1).getPrice_close_candle();
         BigDecimal close_candle_2 = list.get(2).getPrice_close_candle();
@@ -3904,7 +3906,7 @@ public class BinanceServiceImpl implements BinanceService {
         Orders entity = new Orders(id, insertTime, trend_of_heiken3, current_price, tp_long, tp_shot, close_candle_1,
                 close_candle_2, switch_trend, trend_by_ma_10, tradable_zone, trend_by_ma_06, trend_by_ma_20,
                 trend_by_ma_50, trend_by_seq_ma, trend_by_bread_area, body_end_50_candle, body_str_50_candle,
-                amplitude_1_part_15, amplitude_avg_of_candles, ma10, ma20, low_50candle, hig_50candle,
+                amplitude_1_part_15, amplitude_avg_of_candles, ma50, ma20, ma10, low_50candle, hig_50candle,
                 lowest_price_of_curr_candle, highest_price_of_curr_candle, trend_of_heiken3_1);
 
         ordersRepository.save(entity);
@@ -3957,9 +3959,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             String trend_w1 = dto_w1.getTrend_of_heiken3();
             String trend_d1 = dto_d1.getTrend_of_heiken3();
-            String trend_h1 = dto_h1.getTrend_of_heiken3();
-
-            String find_trend_to_trade = Utils.find_trend_to_trade(dto_d1, dto_h4, dto_h1, dto_15);
 
             String seq_h1_h4 = "";
             if (dto_h1.getSwitch_trend().contains(Utils.TEXT_SEQ)) {
@@ -3993,8 +3992,8 @@ public class BinanceServiceImpl implements BinanceService {
             // ---------------------------------------------------------------------------------------------
             String seq = "trade:";
             {
-                seq += Utils.appendSpace(find_trend_to_trade, 5) + Utils.appendSpace(seq_h1_h4, 12);
-                if (Utils.isBlank(find_trend_to_trade)) {
+                seq += Utils.appendSpace(trend_d1, 5) + Utils.appendSpace(seq_h1_h4, 12);
+                if (Utils.isBlank(trend_d1)) {
                     seq = Utils.appendSpace("", seq.length());
                 }
                 seq += Utils.get_seq(dto_h1, dto_15, dto_10, dto_05, dto_03);
@@ -4002,17 +4001,31 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String eoz = "eoz_";
+
+            if ("_CHFJPY_".contains(EPIC)) {
+                eoz = "eoz_";
+            }
             eoz += Utils.appendSpace(
-                    (Utils.is_daily_range_can_still_be_trade(dto_d1, dto_h4, find_trend_to_trade) ? find_trend_to_trade
+                    (Utils.is_daily_range_can_still_be_trade(dto_w1, dto_d1, dto_h4, trend_d1)
+                            ? trend_d1
                             : ""),
                     5);
             if (eoz.contains("eoz_     ")) {
                 eoz = eoz.replace("eoz_     ", "         ");
             }
 
-            String wait = (dto_h4.getSwitch_trend() + dto_d1.getSwitch_trend())
-                    .contains(trend_h1) ? " wait_" + Utils.getType(trend_h1).toUpperCase() : "       ";
-            eoz += wait;
+            String end_of_candle = "";
+            end_of_candle += Utils.is_price_still_be_trade(dto_w1, dto_h4.getAmplitude_avg_of_candles(), trend_d1)
+                    ? "   "
+                    : "w1 ";
+            end_of_candle += Utils.is_price_still_be_trade(dto_d1, dto_h4.getAmplitude_avg_of_candles(), trend_d1)
+                    ? "  "
+                    : "d1";
+            end_of_candle += "  ";
+            if (Utils.isNotBlank(end_of_candle)) {
+                end_of_candle = "ec_" + Utils.getType(trend_d1) + "(" + end_of_candle + ")";
+            }
+            eoz += Utils.appendSpace(end_of_candle, 15);
 
             if (!Objects.equals(EPIC, "BTCUSD")) {
                 BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
@@ -4039,14 +4052,13 @@ public class BinanceServiceImpl implements BinanceService {
             str_trend_d3 += " D:" + Utils.appendSpace(trend_d1, 6);
 
             String append = str_trend_d3 + seq + eoz;
-            String log_trend = Objects.equals(trend_d1, find_trend_to_trade) ? find_trend_to_trade : "";
 
             boolean allow_notice = (dto_h1.getSwitch_trend() + dto_h4.getSwitch_trend()).contains(Utils.TEXT_SEQ)
                     && (dto_h1.getSwitch_trend() + dto_h4.getSwitch_trend()).contains(trend_d1);
 
             if (Utils.EPICS_STOCKS.contains(EPIC)) {
                 String trend_d10 = dto_d1.getTrend_by_ma_10();
-                if (Utils.isBlank(find_trend_to_trade) || !Objects.equals(trend_d10, find_trend_to_trade)
+                if (Utils.isBlank(trend_d1) || !Objects.equals(trend_d10, trend_d1)
                         || !Objects.equals(trend_d10, trend_d1)) {
 
                     allow_notice = false;
@@ -4054,7 +4066,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            analysis_profit(prefix, EPIC, append, log_trend, allow_notice, dto_h1, dto_h4);
+            analysis_profit(prefix, EPIC, append, trend_d1, allow_notice, dto_h1, dto_h4);
         }
 
         return count;
@@ -4122,7 +4134,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Utils.isNotBlank(cutting)) {
                 // Kiểm tra biên độ đủ đảm bảo TP 1 cây nến H4 không.
-                boolean possible_tp = Utils.is_daily_range_can_still_be_trade(dto_d1, dto_h4, trend_d1);
+                boolean possible_tp = Utils.is_daily_range_can_still_be_trade(dto_w1, dto_d1, dto_h4, trend_d1);
                 if (!possible_tp) {
                     continue;
                 }

@@ -5260,37 +5260,89 @@ public class Utils {
         return type;
     }
 
-    public static String find_trend_to_trade(Orders dto_d1, Orders dto_h4, Orders dto_h1, Orders dto_15) {
-        if (Objects.equals(dto_d1.getTrend_by_bread_area(), dto_d1.getTrend_of_heiken3())) {
-            return "";
+    public static boolean is_price_still_be_trade(Orders dto_xx, BigDecimal amplitude_avg_of_h4, String find_trend) {
+        BigDecimal current_price = dto_xx.getCurrent_price();
+
+        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
+            BigDecimal tp_price = current_price.add(amplitude_avg_of_h4);
+
+            BigDecimal predic_close_price = dto_xx.getLowest_price_of_curr_candle();
+            predic_close_price = predic_close_price.add(dto_xx.getAmplitude_avg_of_candles());
+
+            // Còn biên độ trung bình để đạt TP.
+            if (tp_price.compareTo(predic_close_price) < 0) {
+                return true;
+            }
+
         }
 
-        if (Objects.equals(dto_d1.getTrend_of_heiken3(), dto_d1.getTrend_by_ma_10())
+        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
+            BigDecimal tp_price = current_price.subtract(amplitude_avg_of_h4);
 
-                && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h4.getTrend_by_ma_10())
-                && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h4.getTrend_of_heiken3())
+            BigDecimal predic_close_price = dto_xx.getHighest_price_of_curr_candle();
+            predic_close_price = predic_close_price.subtract(dto_xx.getAmplitude_avg_of_candles());
 
-                && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h1.getTrend_by_ma_10())
-                && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h1.getTrend_of_heiken3())
-
-        ) {
-
-            return dto_d1.getTrend_by_ma_10();
+            // Còn biên độ trung bình để đạt TP.
+            if (tp_price.compareTo(predic_close_price) > 0) {
+                return true;
+            }
         }
 
-        return "";
+        return false;
     }
 
-    public static boolean is_daily_range_can_still_be_trade(Orders dto_d1, Orders dto_h4, String find_trend) {
+    public static boolean is_daily_range_can_still_be_trade(Orders dto_w1, Orders dto_d1, Orders dto_h4,
+            String find_trend) {
         if (Utils.isBlank(find_trend)) {
             return false;
+        }
+
+        if (!is_price_still_be_trade(dto_w1, dto_h4.getAmplitude_avg_of_candles(), find_trend)) {
+            return false;
+        }
+
+        if (!is_price_still_be_trade(dto_d1, dto_h4.getAmplitude_avg_of_candles(), find_trend)) {
+            return false;
+        }
+
+        BigDecimal current_price = dto_h4.getCurrent_price();
+
+        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
+            // Tuần đi hết biên độ trung bình thì nghỉ.
+            BigDecimal predic_close_price_w1 = dto_w1.getLowest_price_of_curr_candle()
+                    .add(dto_w1.getAmplitude_avg_of_candles());
+            if (current_price.compareTo(predic_close_price_w1) > 0) {
+                return false;
+            }
+
+            // Ngày đi hết biên độ trung bình thì nghỉ.
+            BigDecimal predic_close_price_d1 = dto_d1.getLowest_price_of_curr_candle()
+                    .add(dto_d1.getAmplitude_avg_of_candles());
+            if (current_price.compareTo(predic_close_price_d1) > 0) {
+                return false;
+            }
+        }
+
+        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
+            // Tuần đi hết biên độ trung bình thì nghỉ.
+            BigDecimal predic_close_price_w1 = dto_w1.getHighest_price_of_curr_candle()
+                    .subtract(dto_w1.getAmplitude_avg_of_candles());
+            if (current_price.compareTo(predic_close_price_w1) < 0) {
+                return false;
+            }
+
+            // Ngày đi hết biên độ trung bình thì nghỉ.
+            BigDecimal predic_close_price_d1 = dto_d1.getHighest_price_of_curr_candle()
+                    .add(dto_d1.getAmplitude_avg_of_candles());
+            if (current_price.compareTo(predic_close_price_d1) > 0) {
+                return false;
+            }
         }
 
         if (Utils.isBlank(possible_take_profit(dto_d1, dto_h4, find_trend))) {
             return true;
         }
 
-        BigDecimal current_price = dto_h4.getCurrent_price();
         BigDecimal amplitude_avg_d1 = dto_d1.getAmplitude_avg_of_candles();
 
         BigDecimal tp_h4 = calc_tp_by_amplitude_of_candle(current_price, dto_h4.getAmplitude_avg_of_candles(),
@@ -5299,7 +5351,8 @@ public class Utils {
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
             BigDecimal target_price = dto_d1.getLowest_price_of_curr_candle().add(amplitude_avg_d1);
 
-            if ((tp_h4.compareTo(target_price) < 0) && (tp_h4.compareTo(dto_h4.getHig_50candle()) < 0)) {
+            if ((tp_h4.compareTo(target_price) < 0)
+                    && (tp_h4.compareTo(dto_h4.getHig_50candle().subtract(dto_h4.getAmplitude_1_part_15())) < 0)) {
                 return true;
             }
         }
@@ -5307,7 +5360,8 @@ public class Utils {
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
             BigDecimal target_price = dto_d1.getHighest_price_of_curr_candle().subtract(amplitude_avg_d1);
 
-            if ((tp_h4.compareTo(target_price) > 0) && (tp_h4.compareTo(dto_h4.getLow_50candle()) > 0)) {
+            if ((tp_h4.compareTo(target_price) > 0)
+                    && (tp_h4.compareTo(dto_h4.getLow_50candle().add(dto_h4.getAmplitude_1_part_15())) > 0)) {
                 return true;
             }
         }
@@ -5375,7 +5429,13 @@ public class Utils {
 
     public static String switch_trend_real_time_by_trend_d1(String EPIC, Orders dto_d1, Orders dto_h4, Orders dto_h1,
             Orders dto_15, Orders dto_10, Orders dto_05, Orders dto_03) {
+
         String trend_d1 = dto_d1.getTrend_of_heiken3();
+        String trend_15 = dto_15.getTrend_of_heiken3();
+
+        if (!Objects.equals(trend_d1, trend_15)) {
+            return "";
+        }
 
         String cutting = "";
         boolean switch_trend_real_time = false;
@@ -5454,26 +5514,25 @@ public class Utils {
                 // ------------------------------------------------------------------------------
                 if (Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3())
                         && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3_1())
-                        && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_10())
-                        && Utils.is_daily_range_can_still_be_trade(dto_d1, dto_h4, trend_d1)) {
+                        && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_10())) {
 
                     temp = Utils.checkXCutUpY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(),
-                            dto_h1.getMa20(), dto_h1.getMa20());
+                            dto_h1.getMa50(), dto_h1.getMa50());
                     if (Utils.isNotBlank(temp))
                         cutting += " 03vsH1Ma20:" + Utils.appendSpace(temp, 5);
 
                     temp = Utils.checkXCutUpY(dto_05.getClose_candle_1(), dto_05.getClose_candle_2(),
-                            dto_h1.getMa20(), dto_h1.getMa20());
+                            dto_h1.getMa50(), dto_h1.getMa50());
                     if (Utils.isNotBlank(temp))
                         cutting += " 05vsH1Ma20:" + Utils.appendSpace(temp, 5);
 
                     temp = Utils.checkXCutUpY(dto_10.getClose_candle_1(), dto_10.getClose_candle_2(),
-                            dto_h1.getMa20(), dto_h1.getMa20());
+                            dto_h1.getMa50(), dto_h1.getMa50());
                     if (Utils.isNotBlank(temp))
                         cutting += " 10vsH1Ma20:" + Utils.appendSpace(temp, 5);
 
                     temp = Utils.checkXCutUpY(dto_15.getClose_candle_1(), dto_15.getClose_candle_2(),
-                            dto_h1.getMa20(), dto_h1.getMa20());
+                            dto_h1.getMa50(), dto_h1.getMa50());
                     if (Utils.isNotBlank(temp))
                         cutting += " 15vsH1Ma20:" + Utils.appendSpace(temp, 5);
                 }
@@ -5558,26 +5617,25 @@ public class Utils {
 
                 if (Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3())
                         && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3_1())
-                        && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_10())
-                        && Utils.is_daily_range_can_still_be_trade(dto_d1, dto_h4, trend_d1)) {
+                        && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_10())) {
 
                     temp = Utils.checkXCutDnY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(),
-                            dto_h1.getMa20(), dto_h1.getMa20());
+                            dto_h1.getMa50(), dto_h1.getMa50());
                     if (Utils.isNotBlank(temp))
                         cutting += " 03vsH1Ma20:" + Utils.appendSpace(temp, 5);
 
                     temp = Utils.checkXCutDnY(dto_05.getClose_candle_1(), dto_05.getClose_candle_2(),
-                            dto_h1.getMa20(), dto_h1.getMa20());
+                            dto_h1.getMa50(), dto_h1.getMa50());
                     if (Utils.isNotBlank(temp))
                         cutting += " 05vsH1Ma20:" + Utils.appendSpace(temp, 5);
 
                     temp = Utils.checkXCutDnY(dto_10.getClose_candle_1(), dto_10.getClose_candle_2(),
-                            dto_h1.getMa20(), dto_h1.getMa20());
+                            dto_h1.getMa50(), dto_h1.getMa50());
                     if (Utils.isNotBlank(temp))
                         cutting += " 10vsH1Ma20:" + Utils.appendSpace(temp, 5);
 
                     temp = Utils.checkXCutDnY(dto_15.getClose_candle_1(), dto_15.getClose_candle_2(),
-                            dto_h1.getMa20(), dto_h1.getMa20());
+                            dto_h1.getMa50(), dto_h1.getMa50());
                     if (Utils.isNotBlank(temp))
                         cutting += " 15vsH1Ma20:" + Utils.appendSpace(temp, 5);
                 }

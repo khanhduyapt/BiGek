@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "orders")
 
-//-- DROP TABLE IF EXISTS public.orders;
+//--  DROP TABLE IF EXISTS public.orders;
 //
 //CREATE TABLE IF NOT EXISTS public.orders
 //(
@@ -45,6 +45,7 @@ import lombok.NoArgsConstructor;
 //    amplitude_avg_of_candles numeric(30,5) DEFAULT 0,
 //    ma050 numeric(30,5) DEFAULT 0,
 //    ma020 numeric(30,5) DEFAULT 0,
+//    ma010 numeric(30,5) DEFAULT 0,
 //    low_50candle numeric(30,5) DEFAULT 0,
 //    hig_50candle numeric(30,5) DEFAULT 0,
 //    lowest_price_of_curr_candle numeric(30,5) DEFAULT 0,
@@ -122,10 +123,13 @@ public class Orders {
     private BigDecimal amplitude_avg_of_candles = BigDecimal.ZERO;
 
     @Column(name = "ma050")
-    private BigDecimal ma10 = BigDecimal.ZERO;
+    private BigDecimal ma50 = BigDecimal.ZERO;
 
     @Column(name = "ma020")
     private BigDecimal ma20 = BigDecimal.ZERO;
+
+    @Column(name = "ma010")
+    private BigDecimal ma10 = BigDecimal.ZERO;
 
     @Column(name = "low_50candle")
     private BigDecimal low_50candle = BigDecimal.ZERO;
