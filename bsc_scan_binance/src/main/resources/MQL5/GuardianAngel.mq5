@@ -298,11 +298,14 @@ void openTrade(string line)
          //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry, stop_loss, tp_w1, comment + "_w");
 
          m_trade.BuyLimit(volume, entry_h1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_11");
-         m_trade.BuyLimit(volume, entry_h1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_11");
+         //m_trade.BuyLimit(volume, entry_h1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_11");
 
          m_trade.BuyLimit(volume, entry_h4, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_21");
-         m_trade.BuyLimit(volume, entry_h4, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_22");
-         m_trade.BuyLimit(volume, entry_h4, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_23");
+         //m_trade.BuyLimit(volume, entry_h4, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_22");
+         //m_trade.BuyLimit(volume, entry_h4, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_23");
+
+         m_trade.BuyLimit(volume, entry_d1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_31");
+         // m_trade.BuyLimit(volume, entry_d1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_32");
         }
 
       if(type== "buy_limit")
@@ -326,11 +329,14 @@ void openTrade(string line)
          //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry_h1, stop_loss, 0.0, comment + "_w");
 
          m_trade.SellLimit(volume, entry_h1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_11");
-         m_trade.SellLimit(volume, entry_h1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_12");
+         //m_trade.SellLimit(volume, entry_h1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_12");
 
          m_trade.SellLimit(volume, entry_h4, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_21");
-         m_trade.SellLimit(volume, entry_h4, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_22");
-         m_trade.SellLimit(volume, entry_h4, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_23");
+         //m_trade.SellLimit(volume, entry_h4, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_22");
+         //m_trade.SellLimit(volume, entry_h4, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_23");
+
+         m_trade.SellLimit(volume, entry_d1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_31");
+         //m_trade.SellLimit(volume, entry_d1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment + "_32");
         }
 
       if(type== "sell_limit")
