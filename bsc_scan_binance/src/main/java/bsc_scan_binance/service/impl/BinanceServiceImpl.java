@@ -4138,6 +4138,7 @@ public class BinanceServiceImpl implements BinanceService {
         NOTICE_LIST.addAll(Utils.EPICS_STOCKS);
         CAPITAL_LIST.addAll(NOTICE_LIST);
 
+        String scap_epics = "(SCAP_15M)";
         List<String> scap_15m_list = new ArrayList<String>();
 
         Collections.sort(CAPITAL_LIST);
@@ -4161,34 +4162,37 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            String scap_15m = Utils.get_seq_minus(dto_15.getTrend_of_heiken3_1(), dto_15, dto_10, dto_05);
-            if (Utils.isNotBlank(scap_15m)) {
+            if (Utils.EPICS_SCAP_15M_FX.contains(EPIC)) {
+                String scap_15m = Utils.get_seq_minus(dto_15.getTrend_of_heiken3_1(), dto_15, dto_10, dto_05);
+                if (Utils.isNotBlank(scap_15m)) {
 
-                Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, dto_15.getTrend_of_heiken3_1(), dto_15, dto_15, dto_15,
-                        dto_15, "(SCAP_15M)", true, Utils.CAPITAL_TIME_15);
+                    Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, dto_15.getTrend_of_heiken3_1(), dto_15, dto_15,
+                            dto_15, dto_15, "(SCAP_15M)", true, Utils.CAPITAL_TIME_15);
 
-                BigDecimal stop_loss = Objects.equals(dto_15.getTrend_of_heiken3_1(), Utils.TREND_LONG)
-                        ? dto_15.getLow_50candle()
-                        : dto_15.getHig_50candle();
+                    BigDecimal stop_loss = Objects.equals(dto_15.getTrend_of_heiken3_1(), Utils.TREND_LONG)
+                            ? dto_15.getLow_50candle()
+                            : dto_15.getHig_50candle();
 
-                BigDecimal take_profit = Objects.equals(dto_15.getTrend_of_heiken3_1(), Utils.TREND_LONG)
-                        ? dto_15.getHig_50candle()
-                        : dto_15.getLow_50candle();
+                    BigDecimal take_profit = Objects.equals(dto_15.getTrend_of_heiken3_1(), Utils.TREND_LONG)
+                            ? dto_15.getHig_50candle()
+                            : dto_15.getLow_50candle();
 
-                MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC,
-                        Utils.RISK_PER_TRADE.multiply(BigDecimal.valueOf(2)),
-                        dto_15.getCurrent_price(), stop_loss, take_profit);
-                BigDecimal volume = money.calcLot();
+                    MoneyAtRiskResponse money = new MoneyAtRiskResponse(EPIC,
+                            Utils.RISK_PER_TRADE.multiply(BigDecimal.valueOf(2)),
+                            dto_15.getCurrent_price(), stop_loss, take_profit);
+                    BigDecimal volume = money.calcLot();
 
-                dto.setLots(volume);
-                dto.setStop_loss(stop_loss);
-                dto.setTake_profit_h4(take_profit);
+                    dto.setLots(volume);
+                    dto.setStop_loss(stop_loss);
+                    dto.setTake_profit_h4(take_profit);
 
-                String prefix = Utils.appendSpace("(SCAP_15M)", 10) + Utils.appendSpace(scap_15m, 10) + ": ";
-                String log = Utils.createOpenTradeMsg(dto, prefix);
-                log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
+                    String prefix = Utils.appendSpace("(SCAP_15M)", 10) + Utils.appendSpace(scap_15m, 10) + ": ";
+                    String log = Utils.createOpenTradeMsg(dto, prefix);
+                    log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
 
-                scap_15m_list.add(log);
+                    scap_epics += EPIC + ".";
+                    scap_15m_list.add(log);
+                }
             }
 
             String trend_d1 = dto_d1.getTrend_of_heiken3();
@@ -4476,6 +4480,10 @@ public class BinanceServiceImpl implements BinanceService {
         for (String log : scap_15m_list) {
             Utils.logWritelnDraft(log);
             Utils.logWritelnReport(log);
+        }
+        if (scap_15m_list.size() > 0) {
+            String EVENT_ID = "SCAP_EPICS" + Utils.getCurrentYyyyMmDd_HH() + scap_epics;
+            sendMsgPerHour_OnlyMe(EVENT_ID, scap_epics);
         }
     }
 

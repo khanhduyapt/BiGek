@@ -286,8 +286,8 @@ public class Utils {
     //"AUS200", "EU50", "FRA40", "GER40", "SPN35", "UK100",
     public static final List<String> EPICS_INDEXS_CFD = Arrays.asList("US100", "US30");
 
-    public static final List<String> EPICS_7PAIRS_FX = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD",
-            "USDCAD", "NZDUSD");
+    public static final List<String> EPICS_SCAP_15M_FX = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD",
+            "USDCAD", "NZDUSD", "XAUUSD", "USOIL", "US30");
 
     public static final List<String> EPICS_MAIN_FX = Arrays.asList("USDCAD", "EURJPY", "EURUSD", "EURCHF", "USDCHF",
             "GBPUSD", "AUDCAD", "NZDUSD", "GBPCHF", "AUDUSD", "GBPJPY", "USDJPY", "CHFJPY", "EURCAD", "AUDJPY",
