@@ -3686,9 +3686,9 @@ public class BinanceServiceImpl implements BinanceService {
                         : Objects.equals(trade.getType().toUpperCase(), Utils.TREND_SHOT) ? Utils.TREND_SHOT
                                 : Utils.TREND_UNSURE;
 
-                if ((PROFIT.compareTo(Utils.RISK_PER_TRADE) > 0)) {
-                    boolean allow_traning_stop = false;
+                boolean allow_traning_stop = false;
 
+                if ((PROFIT.compareTo(Utils.RISK_PER_TRADE) > 0)) {
                     if ((Objects.equals(TRADE_TREND, Utils.TREND_LONG)
                             && trade.getPriceOpen().compareTo(trade.getStopLoss()) > 0)) {
                         allow_traning_stop = true;
@@ -3697,39 +3697,39 @@ public class BinanceServiceImpl implements BinanceService {
                             && trade.getPriceOpen().compareTo(trade.getStopLoss()) < 0)) {
                         allow_traning_stop = true;
                     }
+                }
 
-                    if (allow_traning_stop) {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append(trade.getTicket()); // TICKET
-                        sb.append('\t');
-                        sb.append(trade.getPriceOpen()); // SL
-                        sb.append('\t');
-                        sb.append(trade.getTakeProfit()); // TP
-                        sb.append('\n');
-                        writer.write(sb.toString());
-                    } else {
+                if (allow_traning_stop) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(trade.getTicket()); // TICKET
+                    sb.append('\t');
+                    sb.append(trade.getPriceOpen()); // SL
+                    sb.append('\t');
+                    sb.append(trade.getTakeProfit()); // TP
+                    sb.append('\n');
+                    writer.write(sb.toString());
+                } else {
 
-                        if (trade.getStopLoss().compareTo(BigDecimal.ZERO) < 1) {
-                            Orders dto_w1 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_W1)
-                                    .orElse(null);
+                    if (trade.getStopLoss().compareTo(BigDecimal.ZERO) < 1) {
+                        Orders dto_w1 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_W1)
+                                .orElse(null);
 
-                            if (Objects.nonNull(dto_w1)) {
-                                if (!Objects.equals(TRADE_TREND, Utils.TREND_UNSURE)) {
-                                    BigDecimal stop_loss_w1 = Utils.calc_sl1_tp2(dto_w1, TRADE_TREND).get(0);
+                        if (Objects.nonNull(dto_w1)) {
+                            if (!Objects.equals(TRADE_TREND, Utils.TREND_UNSURE)) {
+                                BigDecimal stop_loss_w1 = Utils.calc_sl1_tp2(dto_w1, TRADE_TREND).get(0);
 
-                                    StringBuilder sb = new StringBuilder();
-                                    sb.append(trade.getTicket()); // TICKET
-                                    sb.append('\t');
-                                    sb.append(stop_loss_w1); // SL
-                                    sb.append('\t');
-                                    sb.append(trade.getTakeProfit()); // TP
-                                    sb.append('\n');
-                                    writer.write(sb.toString());
-                                }
+                                StringBuilder sb = new StringBuilder();
+                                sb.append(trade.getTicket()); // TICKET
+                                sb.append('\t');
+                                sb.append(stop_loss_w1); // SL
+                                sb.append('\t');
+                                sb.append(trade.getTakeProfit()); // TP
+                                sb.append('\n');
+                                writer.write(sb.toString());
                             }
                         }
-
                     }
+
                 }
             }
             writer.close();
