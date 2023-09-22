@@ -4020,14 +4020,14 @@ public class BinanceServiceImpl implements BinanceService {
 
             String eoz = "eoz_";
 
-            if ("_CHFJPY_".contains(EPIC)) {
+            if ("_NZDUSD_".contains(EPIC)) {
                 eoz = "eoz_";
             }
             eoz += Utils.appendSpace(
                     (Utils.is_daily_range_can_still_be_trade(dto_w1, dto_d1, dto_h4, trend_d1)
-                            ? trend_d1
+                            ? Utils.possible_take_profit(dto_d1, dto_h4, trend_d1)
                             : ""),
-                    5);
+                    10);
             if (eoz.contains("eoz_     ")) {
                 eoz = eoz.replace("eoz_     ", "         ");
             }
@@ -4146,13 +4146,15 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String trend_d1 = dto_d1.getTrend_of_heiken3();
+
             String cutting = Utils.switch_trend_real_time_by_trend_d1(EPIC, dto_d1, dto_h4, dto_h1, dto_15, dto_10,
                     dto_05, dto_03);
 
             if (Utils.isNotBlank(cutting)) {
                 // Kiểm tra biên độ đủ đảm bảo TP 1 cây nến H4 không.
                 boolean possible_tp = Utils.is_daily_range_can_still_be_trade(dto_w1, dto_d1, dto_h4, trend_d1);
-                if (!possible_tp) {
+                String eoz = Utils.possible_take_profit(dto_d1, dto_h4, trend_d1);
+                if (!possible_tp || Utils.isNotBlank(eoz)) {
                     continue;
                 }
 
@@ -4288,10 +4290,10 @@ public class BinanceServiceImpl implements BinanceService {
                 is_hit_sl = true;
             }
             // -------------------------------------------------------------------------------------
-            if (PROFIT.compareTo(BigDecimal.valueOf(1)) > 0
-                    && Objects.equals(dto_05.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_10.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_15.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)) {
+            if (PROFIT.compareTo(BigDecimal.valueOf(10)) > 0
+                    && (Objects.equals(dto_05.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
+                            || Objects.equals(dto_10.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
+                            || Objects.equals(dto_15.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND))) {
 
                 BigDecimal amplitude = dto_h4.getAmplitude_avg_of_candles();
 

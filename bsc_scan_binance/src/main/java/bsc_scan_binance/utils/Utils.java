@@ -5305,7 +5305,7 @@ public class Utils {
             return false;
         }
 
-        if (Utils.isBlank(possible_take_profit(dto_d1, dto_h4, find_trend))) {
+        if (Utils.isNotBlank(possible_take_profit(dto_d1, dto_h4, find_trend))) {
             return true;
         }
 
@@ -5336,7 +5336,7 @@ public class Utils {
         return false;
     }
 
-    private static String possible_take_profit(Orders dto_d1, Orders dto_h4, String find_trend) {
+    public static String possible_take_profit(Orders dto_d1, Orders dto_h4, String find_trend) {
         String type = getType(find_trend).toUpperCase();
 
         BigDecimal amplitude = dto_h4.getAmplitude_avg_of_candles().add(dto_h4.getAmplitude_1_part_15());
