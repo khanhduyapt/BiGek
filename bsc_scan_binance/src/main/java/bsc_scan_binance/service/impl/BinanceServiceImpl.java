@@ -3699,6 +3699,34 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
+                if ((PROFIT.compareTo(BigDecimal.valueOf(10)) > 0)) {
+                    Orders dto_h4 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_H4)
+                            .orElse(null);
+
+                    if (Objects.nonNull(dto_h4) && !Objects.equals(TRADE_TREND, Utils.TREND_UNSURE)) {
+
+                        BigDecimal amplitude = dto_h4.getAmplitude_avg_of_candles()
+                                .add(dto_h4.getAmplitude_1_part_15());
+
+                        if (Objects.equals(TRADE_TREND, Utils.TREND_LONG)) {
+                            BigDecimal next_price = trade.getPriceOpen().add(amplitude);
+
+                            if (dto_h4.getCurrent_price().compareTo(next_price) > 0) {
+                                allow_traning_stop = true;
+                            }
+                        }
+
+                        if (Objects.equals(TRADE_TREND, Utils.TREND_SHOT)) {
+                            BigDecimal next_price = trade.getPriceOpen().subtract(amplitude);
+
+                            if (dto_h4.getCurrent_price().compareTo(next_price) < 0) {
+                                allow_traning_stop = true;
+                            }
+                        }
+
+                    }
+                }
+
                 if (allow_traning_stop) {
                     StringBuilder sb = new StringBuilder();
                     sb.append(trade.getTicket()); // TICKET
@@ -3708,25 +3736,25 @@ public class BinanceServiceImpl implements BinanceService {
                     sb.append(trade.getTakeProfit()); // TP
                     sb.append('\n');
                     writer.write(sb.toString());
+
+                    System.out.println("traning_stop:   " + trade.toString());
                 } else {
 
                     if (trade.getStopLoss().compareTo(BigDecimal.ZERO) < 1) {
                         Orders dto_w1 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_W1)
                                 .orElse(null);
 
-                        if (Objects.nonNull(dto_w1)) {
-                            if (!Objects.equals(TRADE_TREND, Utils.TREND_UNSURE)) {
-                                BigDecimal stop_loss_w1 = Utils.calc_sl1_tp2(dto_w1, TRADE_TREND).get(0);
+                        if (Objects.nonNull(dto_w1) && !Objects.equals(TRADE_TREND, Utils.TREND_UNSURE)) {
+                            BigDecimal stop_loss_w1 = Utils.calc_sl1_tp2(dto_w1, TRADE_TREND).get(0);
 
-                                StringBuilder sb = new StringBuilder();
-                                sb.append(trade.getTicket()); // TICKET
-                                sb.append('\t');
-                                sb.append(stop_loss_w1); // SL
-                                sb.append('\t');
-                                sb.append(trade.getTakeProfit()); // TP
-                                sb.append('\n');
-                                writer.write(sb.toString());
-                            }
+                            StringBuilder sb = new StringBuilder();
+                            sb.append(trade.getTicket()); // TICKET
+                            sb.append('\t');
+                            sb.append(stop_loss_w1); // SL
+                            sb.append('\t');
+                            sb.append(trade.getTakeProfit()); // TP
+                            sb.append('\n');
+                            writer.write(sb.toString());
                         }
                     }
 
