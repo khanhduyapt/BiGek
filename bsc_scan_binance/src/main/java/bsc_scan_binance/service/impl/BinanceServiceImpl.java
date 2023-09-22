@@ -3700,14 +3700,35 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (allow_traning_stop) {
                         StringBuilder sb = new StringBuilder();
-                        sb.append(trade.getTicket());
+                        sb.append(trade.getTicket()); // TICKET
                         sb.append('\t');
-                        sb.append(trade.getPriceOpen());
+                        sb.append(trade.getPriceOpen()); // SL
                         sb.append('\t');
-                        sb.append(trade.getTakeProfit());
+                        sb.append(trade.getTakeProfit()); // TP
                         sb.append('\n');
-
                         writer.write(sb.toString());
+                    } else {
+
+                        if (trade.getStopLoss().compareTo(BigDecimal.ZERO) < 1) {
+                            Orders dto_w1 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_W1)
+                                    .orElse(null);
+
+                            if (Objects.nonNull(dto_w1)) {
+                                if (!Objects.equals(TRADE_TREND, Utils.TREND_UNSURE)) {
+                                    BigDecimal stop_loss_w1 = Utils.calc_sl1_tp2(dto_w1, TRADE_TREND).get(0);
+
+                                    StringBuilder sb = new StringBuilder();
+                                    sb.append(trade.getTicket()); // TICKET
+                                    sb.append('\t');
+                                    sb.append(stop_loss_w1); // SL
+                                    sb.append('\t');
+                                    sb.append(trade.getTakeProfit()); // TP
+                                    sb.append('\n');
+                                    writer.write(sb.toString());
+                                }
+                            }
+                        }
+
                     }
                 }
             }
