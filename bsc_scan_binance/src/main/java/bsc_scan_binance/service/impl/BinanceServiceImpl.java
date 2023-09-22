@@ -4105,6 +4105,10 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
+            if (!Objects.equals(dto_w1.getTrend_of_heiken3(), dto_d1.getTrend_of_heiken3())) {
+                continue;
+            }
+
             // TODO: 5. OpenTrade
             String append = "";
             Mt5OpenTrade trade_dto = null;
@@ -4113,7 +4117,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String trend_d1 = dto_d1.getTrend_of_heiken3();
-            String cutting = Utils.switch_trend_real_time(dto_d1, dto_h4, dto_h1, dto_15, dto_10, dto_05, dto_03);
+            String cutting = Utils.switch_trend_real_time_by_trend_d1(EPIC, dto_d1, dto_h4, dto_h1, dto_15, dto_10,
+                    dto_05, dto_03);
 
             if (Utils.isNotBlank(cutting)) {
                 // Kiểm tra biên độ đủ đảm bảo TP 1 cây nến H4 không.
@@ -4122,20 +4127,7 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                if (cutting.contains("D1Ma10")) {
-                    append += ".2410";
-                }
-                if (cutting.contains("H4Ma20")) {
-                    append += ".0420";
-                }
-                if (cutting.contains("H4Ma10")) {
-                    append += ".0410";
-                }
-                if (cutting.contains("H1Ma20")) {
-                    append += ".0120";
-                }
-
-                append += Utils.TEXT_PASS;
+                append += cutting + Utils.TEXT_PASS;
 
                 trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1, dto_h1, dto_h4, dto_d1, dto_w1,
                         append, true, Utils.CAPITAL_TIME_15);
@@ -4144,10 +4136,6 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
 
                 BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
-
-                Utils.logWritelnDraft(
-                        Utils.appendSpace(EPIC, 10) + Utils.appendSpace(trend_d1, 10)
-                                + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + cutting);
 
                 close_reverse_trade(EPIC, trend_d1, true);
             }
@@ -4225,7 +4213,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             String trend_h1 = dto_h1.getTrend_of_heiken3();
-            boolean is_open_by_algorithm = Utils.isNotBlank(trade.getComment());
             // -------------------------------------------------------------------------------------
             boolean take_profit = false;
             if (has_profit && Objects.equals(dto_h1.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
