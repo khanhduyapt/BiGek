@@ -4039,7 +4039,6 @@ public class BinanceServiceImpl implements BinanceService {
             end_of_candle += Utils.is_price_still_be_trade(dto_d1, dto_h4.getAmplitude_avg_of_candles(), trend_d1)
                     ? "  "
                     : "d1";
-            end_of_candle += "  ";
             if (Utils.isNotBlank(end_of_candle)) {
                 end_of_candle = "ec_" + Utils.getType(trend_d1) + "(" + end_of_candle + ")";
             }
@@ -4283,7 +4282,9 @@ public class BinanceServiceImpl implements BinanceService {
             if (trade.getVolume().compareTo(standard_vol.multiply(BigDecimal.valueOf(3))) > 0) {
                 is_hit_sl = true;
             }
-            if ((PROFIT.compareTo(BigDecimal.valueOf(1)) > 0) && Utils.is_must_close_avoid_overnight_fees_triple()) {
+            if ((PROFIT.compareTo(BigDecimal.valueOf(1)) > 0)
+                    && Objects.equals(dto_05.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
+                    && Utils.is_must_close_avoid_overnight_fees_triple()) {
                 is_hit_sl = true;
             }
             // -------------------------------------------------------------------------------------
@@ -4310,7 +4311,18 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
             }
-
+            if (Objects.equals(TRADING_TREND, Utils.TREND_LONG)) {
+                BigDecimal next_price = trade.getPriceOpen().add(dto_d1.getAmplitude_avg_of_candles());
+                if (dto_h1.getCurrent_price().compareTo(next_price) > 0) {
+                    is_hit_sl = true;
+                }
+            }
+            if (Objects.equals(TRADING_TREND, Utils.TREND_SHOT)) {
+                BigDecimal next_price = trade.getPriceOpen().subtract(dto_d1.getAmplitude_avg_of_candles());
+                if (dto_h1.getCurrent_price().compareTo(next_price) < 0) {
+                    is_hit_sl = true;
+                }
+            }
             // -------------------------------------------------------------------------------------
             boolean is_append_trade = false;
             if (Objects.equals(trend_h1, TRADING_TREND)
