@@ -4157,11 +4157,14 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            boolean is_wdh4 = Objects.equals(dto_d1.getTrend_of_heiken3(), dto_w1.getTrend_of_heiken3())
-                    && Objects.equals(dto_d1.getTrend_of_heiken3(), dto_h4.getTrend_of_heiken3());
+            String trend_d1 = dto_d1.getTrend_of_heiken3();
+            String trend_15 = dto_15.getTrend_of_heiken3();
+
+            boolean is_wdh4 = Objects.equals(trend_d1, trend_15)
+                    && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3())
+                    && Objects.equals(trend_d1, dto_w1.getTrend_of_heiken3());
 
             if (Utils.EPICS_SCAP_15M_FX.contains(EPIC) || is_wdh4) {
-                String trend_15 = dto_15.getTrend_of_heiken3();
 
                 boolean possible_tp = Utils.is_daily_range_can_still_be_trade(dto_w1, dto_d1, dto_h4, trend_15);
                 String eoz = Utils.possible_take_profit(dto_d1, dto_h4, trend_15);
@@ -4221,7 +4224,6 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            String trend_d1 = dto_d1.getTrend_of_heiken3();
             if (!(Objects.equals(trend_d1, dto_w1.getTrend_of_heiken3())
 
                     || (Objects.equals(trend_d1, dto_d1.getTrend_of_heiken3_1())
