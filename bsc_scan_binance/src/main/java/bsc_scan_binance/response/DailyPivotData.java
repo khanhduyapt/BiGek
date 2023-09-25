@@ -13,11 +13,10 @@ public class DailyPivotData {
     private String TimeCurrent = "";
     private String symbol;
 
-    private BigDecimal pivot;
+    private BigDecimal mid;
     private BigDecimal amp;
 
     private BigDecimal open;
-    private BigDecimal mid;
     private BigDecimal close;
 
     private BigDecimal support1;

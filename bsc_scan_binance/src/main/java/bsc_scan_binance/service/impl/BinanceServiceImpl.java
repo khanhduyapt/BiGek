@@ -4158,15 +4158,13 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
+            String trend_w1 = dto_w1.getTrend_of_heiken3();
             String trend_d1 = dto_d1.getTrend_of_heiken3();
             String trend_15 = dto_15.getTrend_of_heiken3();
 
-            boolean is_wdh4 = Objects.equals(trend_d1, trend_15)
-                    && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3())
-                    && Objects.equals(trend_d1, dto_w1.getTrend_of_heiken3());
+            boolean is_wd = Objects.equals(trend_d1, trend_w1) && Objects.equals(trend_d1, trend_15);
 
-            if (Utils.EPICS_SCAP_15M_FX.contains(EPIC) || is_wdh4) {
-
+            if (Objects.equals(trend_15, trend_w1) && (Utils.EPICS_SCAP_15M_FX.contains(EPIC) || is_wd)) {
                 boolean possible_tp = Utils.is_daily_range_can_still_be_trade(dto_w1, dto_d1, dto_h4, trend_15);
                 String eoz = Utils.possible_take_profit(dto_d1, dto_h4, trend_15);
                 String scap_15m = Utils.get_seq_minus(trend_15, dto_15, dto_10, dto_05);
