@@ -4134,6 +4134,7 @@ public class BinanceServiceImpl implements BinanceService {
         CAPITAL_LIST.addAll(NOTICE_LIST);
 
         String scap_epics = "(SCAP_15M)";
+        String scap_epic_keys = "";
         List<String> scap_15m_list = new ArrayList<String>();
 
         Collections.sort(CAPITAL_LIST);
@@ -4212,10 +4213,11 @@ public class BinanceServiceImpl implements BinanceService {
                     dto.setTake_profit_d1(take_profit);
                     dto.setTake_profit_w1(take_profit);
 
-                    String prefix = Utils.appendSpace("(SCAP_15M)", 10) + Utils.appendSpace(scap_15m, 10) + ": ";
+                    String prefix = Utils.appendSpace("(SCAP" + scap_15m.toUpperCase() + ")", 10) + ": ";
                     String log = Utils.createOpenTradeMsg(dto, prefix);
                     log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " " + cutting;
 
+                    scap_epic_keys += EPIC;
                     scap_epics += Utils.new_line_from_service;
                     scap_epics += "(" + Utils.getType(trend_15).toUpperCase() + ")";
                     scap_epics += EPIC + "(" + volume + "lot" + scap_15m + ")";
@@ -4517,7 +4519,7 @@ public class BinanceServiceImpl implements BinanceService {
         openTrade();
 
         if (Utils.is_open_trade_time_8_to_21() && (scap_15m_list.size() > 0)) {
-            String EVENT_ID = "SCAP_EPICS" + Utils.getCurrentYyyyMmDd_HH() + scap_epics;
+            String EVENT_ID = "SCAP_EPICS" + Utils.getCurrentYyyyMmDd_HH() + scap_epic_keys;
             sendMsgPerHour_OnlyMe(EVENT_ID, scap_epics);
         } else {
             // Utils.logWritelnReport(Utils.getMmDD_TimeHHmm() + scap_epics + " NOT_FOUND");
