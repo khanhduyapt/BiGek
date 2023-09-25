@@ -45,32 +45,116 @@ void OnTimer(void)
    int cur_minu = (int)dt_struct.min;
    double mod5 = MathMod(cur_minu, 2);
 
+   string arr_symbol[] = {"DX.f", "XAUUSD", "XAGUSD", "USOIL.cash",
+                          "US30.cash", "US100.cash",
+//"EU50.cash", "GER40.cash", "UK100.cash", "AUS200.cash", "FRA40.cash", "SPN35.cash", "NATGAS.f", "ERBN.f",
+
+                          "BTCUSD",
+//"ETHUSD", "DOGEUSD", "DASHUSD", "ADAUSD", "DOTUSD", "LTCUSD", "XRPUSD",
+
+                          "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
+                          "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
+                          "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD",
+                          "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD",
+                          "USDCAD", "USDCHF", "USDJPY", "CADJPY", "CHFJPY", "CADCHF"
+                         };
+   int s_size = ArraySize(arr_symbol);
+//-------------------------------------------------------------------------------------------------------------------------------
+
+   FileDelete("Data//DailyPivot.csv");
+   int nfile_daily_pivot = FileOpen("Data//DailyPivot.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
+
+   if(nfile_daily_pivot != INVALID_HANDLE)
+     {
+      FileWrite(nfile_daily_pivot, "TimeCurrent", "symbol", "mid", "amp", "daily_open", "daily_close", "support1", "support2", "support3", "resistance1", "resistance2", "resistance3");
+
+      for(int index=0; index < s_size; index++)
+        {
+         string symbol = arr_symbol[index];
+         int    digits = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);     // number of decimal places
+         //-------------------------------------------------------------------------------------------------------------------------------
+         datetime daily_time = iTime(symbol, PERIOD_D1, 1);
+         double daily_open   = iOpen(symbol, PERIOD_D1, 1);
+         double daily_high   = iHigh(symbol, PERIOD_D1, 1);
+         double daily_low    = iLow(symbol, PERIOD_D1, 1);
+         double daily_close  = iClose(symbol, PERIOD_D1, 1);
+
+         double mid = daily_close - daily_open;
+         color candle_color = clrBlue;
+         if(daily_open > daily_close)
+           {
+            candle_color = clrRed;
+            mid = daily_open - daily_close;
+           }
+
+         mid = (mid / 2);
+
+         if(daily_open > daily_close)
+           {
+            mid = daily_close + mid;
+           }
+         else
+           {
+            mid = daily_open + mid;
+           }
+
+
+         double pivot       = (daily_high + daily_low + daily_close) / 3;
+         double support1    = (2 * pivot) - daily_high;
+         double support2    = pivot - (daily_high - daily_low);
+         double support3    = daily_low - 2 * (daily_high - pivot);
+         double resistance1 = (2 * pivot) - daily_low;
+         double resistance2 = pivot + (daily_high - daily_low);
+         double resistance3 = daily_high + 2 * (pivot - daily_low);
+
+         double amp = MathAbs(support3 - support2) + MathAbs(support2 - support1) + MathAbs(support1 - pivot) + MathAbs(pivot - resistance1) + MathAbs(resistance1 - resistance2) + MathAbs(resistance2 - resistance3);
+         amp = amp / 6;
+
+         support1 = mid - amp;
+         support2 = support1 - amp;
+         support3 = support2 - amp;
+         resistance1 = mid + amp;
+         resistance2 = resistance1 + amp;
+         resistance3 = resistance2 + amp;
+
+
+
+         mid                = NormalizeDouble(mid, digits);
+         amp                = NormalizeDouble(amp, digits);
+         pivot              = NormalizeDouble(pivot, digits);
+         support1           = NormalizeDouble(support1, digits);
+         support2           = NormalizeDouble(support2, digits);
+         support3           = NormalizeDouble(support3, digits);
+         resistance1        = NormalizeDouble(resistance1, digits);
+         resistance2        = NormalizeDouble(resistance2, digits);
+         resistance3        = NormalizeDouble(resistance3, digits);
+
+
+         FileWrite(nfile_daily_pivot, TimeToString(TimeCurrent(), TIME_DATE), symbol, mid, amp, daily_open, daily_close, support1, support2, support3, resistance1, resistance2, resistance3);
+        } //for
+      //--------------------------------------------------------------------------------------------------------------------
+
+      FileClose(nfile_daily_pivot);
+     }
+   else
+     {
+      Print("(DailyPivot) Failed to get history data.");
+     }
+
+//--------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------
+
    FileDelete("Data//TimeBreaker.csv");
    int nfile_handle = FileOpen("Data//TimeBreaker.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
 
    if(nfile_handle != INVALID_HANDLE)
      {
       FileWrite(nfile_handle, "");
-
-      string arr_symbol[] = {"DX.f", "XAUUSD", "XAGUSD", "USOIL.cash", 
-                             "US30.cash", "US100.cash", 
-                             //"EU50.cash", "GER40.cash", "UK100.cash", "AUS200.cash", "FRA40.cash", "SPN35.cash", "NATGAS.f", "ERBN.f",
-
-                             "BTCUSD", 
-                             //"ETHUSD", "DOGEUSD", "DASHUSD", "ADAUSD", "DOTUSD", "LTCUSD", "XRPUSD",
-
-                             "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
-                             "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
-                             "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD",
-                             "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD",
-                             "USDCAD", "USDCHF", "USDJPY", "CADJPY", "CHFJPY", "CADCHF"
-                            };
-
-
       Comment("-----------------------------TimeBreaker (Symbol):"+ Symbol());
 
       int copied;
-      int s_size = ArraySize(arr_symbol);
+
       for(int index=0; index < s_size; index++)
         {
          //---------------------------------------------

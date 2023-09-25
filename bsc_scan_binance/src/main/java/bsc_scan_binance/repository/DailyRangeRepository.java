@@ -14,8 +14,8 @@ import bsc_scan_binance.entity.DailyRangeKey;
 public interface DailyRangeRepository extends JpaRepository<DailyRange, DailyRangeKey> {
 
     @Query(value = "SELECT m.* FROM daily_range m WHERE yyyy_mm_dd = TO_CHAR(CURRENT_DATE, 'YYYY.MM.DD') ORDER BY symbol", nativeQuery = true)
-    public List<DailyRangeKey> findAllToday();
+    public List<DailyRange> findAllToday();
 
     @Query(value = "SELECT m.* FROM daily_range m WHERE yyyy_mm_dd = TO_CHAR(CURRENT_DATE, 'YYYY.MM.DD') and symbol = :symbol", nativeQuery = true)
-    public List<DailyRangeKey> findSymbolToday(@Param("symbol") String symbol);
+    public List<DailyRange> findSymbolToday(@Param("symbol") String symbol);
 }

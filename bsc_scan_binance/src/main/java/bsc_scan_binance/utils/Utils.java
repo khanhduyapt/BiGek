@@ -51,6 +51,7 @@ import org.springframework.web.servlet.LocaleResolver;
 
 import bsc_scan_binance.BscScanBinanceApplication;
 import bsc_scan_binance.entity.BtcFutures;
+import bsc_scan_binance.entity.DailyRange;
 import bsc_scan_binance.entity.Mt5OpenTrade;
 import bsc_scan_binance.entity.Mt5OpenTradeEntity;
 import bsc_scan_binance.entity.Orders;
@@ -4615,6 +4616,26 @@ public class Utils {
         }
 
         return "";
+    }
+
+    public static BigDecimal getTakeProfitByAmp(DailyRange dailyRange, BigDecimal curr_price, String find_trend) {
+        if (Objects.equals(Utils.TREND_LONG, find_trend)) {
+            if (curr_price.compareTo(dailyRange.getResistance1()) < 0) {
+                return dailyRange.getResistance1();
+            }
+            if (curr_price.compareTo(dailyRange.getResistance2()) < 0) {
+                return dailyRange.getResistance2();
+            }
+            return dailyRange.getResistance3();
+        } else {
+            if (curr_price.compareTo(dailyRange.getSupport1()) > 0) {
+                return dailyRange.getSupport1();
+            }
+            if (curr_price.compareTo(dailyRange.getSupport2()) > 0) {
+                return dailyRange.getSupport2();
+            }
+            return dailyRange.getSupport3();
+        }
     }
 
     public static String switchTrendByMa13_XX(List<BtcFutures> heiken_list, int slowIndexXx) {
