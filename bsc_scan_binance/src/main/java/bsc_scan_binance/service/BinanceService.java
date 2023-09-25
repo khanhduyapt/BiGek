@@ -57,6 +57,8 @@ public interface BinanceService {
 
     public void saveMt5Data(String filename, Integer MINUTES_OF_XX);
 
+    public void saveDailyPivotData();
+
     public void sendMsgPerHour_OnlyMe(String EVENT_ID, String msg_content);
 
     public void logMsgPerHour(String epic_id, String log, Integer MINUTES_OF_Xx);

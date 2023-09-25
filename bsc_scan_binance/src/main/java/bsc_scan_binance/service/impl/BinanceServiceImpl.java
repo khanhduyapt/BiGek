@@ -49,6 +49,8 @@ import bsc_scan_binance.entity.BinanceVolumnWeekKey;
 import bsc_scan_binance.entity.BtcFutures;
 import bsc_scan_binance.entity.BtcVolumeDay;
 import bsc_scan_binance.entity.CandidateCoin;
+import bsc_scan_binance.entity.DailyRange;
+import bsc_scan_binance.entity.DailyRangeKey;
 import bsc_scan_binance.entity.DepthAsks;
 import bsc_scan_binance.entity.DepthBids;
 import bsc_scan_binance.entity.FundingHistory;
@@ -67,6 +69,7 @@ import bsc_scan_binance.repository.BinanceVolumnDayRepository;
 import bsc_scan_binance.repository.BinanceVolumnWeekRepository;
 import bsc_scan_binance.repository.BtcVolumeDayRepository;
 import bsc_scan_binance.repository.CandidateCoinRepository;
+import bsc_scan_binance.repository.DailyRangeRepository;
 import bsc_scan_binance.repository.DepthAsksRepository;
 import bsc_scan_binance.repository.DepthBidsRepository;
 import bsc_scan_binance.repository.FundingHistoryRepository;
@@ -143,6 +146,9 @@ public class BinanceServiceImpl implements BinanceService {
 
     @Autowired
     private PrepareOrdersRepository prepareOrdersRepository;
+
+    @Autowired
+    private DailyRangeRepository dailyRangeRepository;
 
     private String BTC_ETH_BNB = "_BTC_ETH_BNB_";
     private static final String EVENT_BTC_RANGE = "BTC_RANGE";
@@ -3324,6 +3330,78 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         return mt5_data_file_path;
+    }
+
+    @Override
+    @Transactional
+    public void saveDailyPivotData() {
+        String mt5_data_file_path = Utils.getMt5DataFolder() + "DailyPivot.csv";
+        String mt5_data_file = check_mt5_data_file(mt5_data_file_path, Utils.MINUTES_RELOAD_CSV_DATA);
+        if (Utils.isBlank(mt5_data_file)) {
+            return;
+        }
+        // ------------------------------------------------------------------------
+        String line;
+        int total_line = 0;
+        List<DailyRange> list = new ArrayList<DailyRange>();
+
+        InputStream inputStream;
+        try {
+            inputStream = new FileInputStream(mt5_data_file);
+
+            InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8");
+
+            BufferedReader fin = new BufferedReader(reader);
+            while ((line = fin.readLine()) != null) {
+                total_line += 1;
+
+                if (total_line < 2) {
+                    continue;
+                }
+
+                String[] tempArr = line.replace(".f", "").replace(".cash", "").replace(".pro", "").split("\\t");
+
+                if (tempArr.length == 12) {
+                    String yyyy_mm_dd = tempArr[0];
+                    String symbol = tempArr[1];
+
+                    BigDecimal mid = Utils.getBigDecimal(tempArr[2]);
+                    BigDecimal amp = Utils.getBigDecimal(tempArr[3]);
+                    BigDecimal open_price = Utils.getBigDecimal(tempArr[4]);
+                    BigDecimal close_price = Utils.getBigDecimal(tempArr[5]);
+
+                    BigDecimal support1 = Utils.getBigDecimal(tempArr[6]);
+                    BigDecimal support2 = Utils.getBigDecimal(tempArr[7]);
+                    BigDecimal support3 = Utils.getBigDecimal(tempArr[8]);
+
+                    BigDecimal resistance1 = Utils.getBigDecimal(tempArr[9]);
+                    BigDecimal resistance2 = Utils.getBigDecimal(tempArr[10]);
+                    BigDecimal resistance3 = Utils.getBigDecimal(tempArr[11]);
+
+                    DailyRangeKey id = new DailyRangeKey(yyyy_mm_dd, symbol);
+                    DailyRange daily = new DailyRange(id, mid, amp, open_price, close_price, support1, support2,
+                            support3, resistance1, resistance2, resistance3);
+
+                    list.add(daily);
+                }
+            }
+
+            // Remember to call close.
+            // calling close on a BufferedReader/BufferedWriter
+            // will automatically call close on its underlying stream
+            fin.close();
+            reader.close();
+            inputStream.close();
+
+        } catch (Exception e) {
+            // TODO 自動生成された catch ブロック
+            e.printStackTrace();
+        }
+
+        // ------------------------------------------------------------------------
+        if (list.size() > 1) {
+            dailyRangeRepository.saveAll(list);
+        }
     }
 
     @Override

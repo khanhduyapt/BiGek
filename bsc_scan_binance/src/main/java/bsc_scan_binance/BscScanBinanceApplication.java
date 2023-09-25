@@ -139,6 +139,7 @@ public class BscScanBinanceApplication {
 
                                 if (isReloadAfter(Utils.MINUTES_OF_15, "MT5_DATA_TIMEBREAKER")) {
                                     binance_service.saveMt5Data("TimeBreaker.csv", Utils.MINUTES_RELOAD_CSV_DATA);
+                                    binance_service.saveDailyPivotData();
                                 }
 
                                 if (isReloadAfter(Utils.MINUTES_OF_1H, "MT5_DATA_STOCKS")) {
