@@ -1433,6 +1433,15 @@ public class Utils {
         return false;
     }
 
+    public static String appendSpace(BigDecimal value, int length) {
+        String str_value = Utils.getStringValue(value);
+        if (str_value.contains(".")) {
+            str_value = removeLastZero(str_value);
+        }
+
+        return appendSpace(str_value, length);
+    }
+
     public static String appendSpace(String value, int length) {
         String result = value;
         int len = value.length();
@@ -4636,6 +4645,42 @@ public class Utils {
             }
             return dailyRange.getSupport3();
         }
+    }
+
+    public static String getTakeProfit123ByAmp(DailyRange dailyRange, BigDecimal curr_price, String find_trend) {
+        String result = "";
+        if (Objects.equals(Utils.TREND_LONG, find_trend)) {
+
+            if (curr_price.compareTo(dailyRange.getResistance1()) < 0) {
+                result += " tp1:" + Utils.appendSpace(dailyRange.getResistance1(), 8);
+            } else {
+                result += "     " + Utils.appendSpace("", 8);
+            }
+
+            if (curr_price.compareTo(dailyRange.getResistance2()) < 0) {
+                result += " tp2:" + Utils.appendSpace(dailyRange.getResistance2(), 8);
+            } else {
+                result += "     " + Utils.appendSpace("", 8);
+            }
+
+            result += " tp3:" + Utils.appendSpace(dailyRange.getResistance3(), 8);
+        } else {
+            if (curr_price.compareTo(dailyRange.getSupport1()) > 0) {
+                result += " tp1:" + Utils.appendSpace(dailyRange.getSupport1(), 8);
+            } else {
+                result += "     " + Utils.appendSpace("", 8);
+            }
+
+            if (curr_price.compareTo(dailyRange.getSupport2()) > 0) {
+                result += " tp2:" + Utils.appendSpace(dailyRange.getSupport2(), 8);
+            } else {
+                result += "     " + Utils.appendSpace("", 8);
+            }
+
+            result += " tp3:" + Utils.appendSpace(dailyRange.getSupport3(), 8);
+        }
+
+        return result;
     }
 
     public static String switchTrendByMa13_XX(List<BtcFutures> heiken_list, int slowIndexXx) {

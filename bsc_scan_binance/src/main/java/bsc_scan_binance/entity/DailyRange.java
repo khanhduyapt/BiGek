@@ -33,6 +33,7 @@ import lombok.NoArgsConstructor;
 //    resistance1 numeric(30,5) DEFAULT 0,
 //    resistance2 numeric(30,5) DEFAULT 0,
 //    resistance3 numeric(30,5) DEFAULT 0,
+//    pivot numeric(30,5) DEFAULT 0,
 //    CONSTRAINT daily_range_pkey PRIMARY KEY (yyyy_mm_dd, symbol)
 //)
 
@@ -70,5 +71,8 @@ public class DailyRange {
 
     @Column(name = "resistance3")
     private BigDecimal resistance3 = BigDecimal.ZERO;
+
+    @Column(name = "pivot")
+    private BigDecimal pivot = BigDecimal.ZERO;
 
 }

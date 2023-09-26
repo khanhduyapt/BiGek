@@ -3373,7 +3373,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 String[] tempArr = line.replace(".f", "").replace(".cash", "").replace(".pro", "").split("\\t");
 
-                if (tempArr.length == 12) {
+                if (tempArr.length == 13) {
                     String yyyy_mm_dd = tempArr[0];
                     String symbol = tempArr[1];
 
@@ -3390,9 +3390,11 @@ public class BinanceServiceImpl implements BinanceService {
                     BigDecimal resistance2 = Utils.getBigDecimal(tempArr[10]);
                     BigDecimal resistance3 = Utils.getBigDecimal(tempArr[11]);
 
+                    BigDecimal pivot = Utils.getBigDecimal(tempArr[12]);
+
                     DailyRangeKey id = new DailyRangeKey(yyyy_mm_dd, symbol);
                     DailyRange daily = new DailyRange(id, mid, amp, open_price, close_price, support1, support2,
-                            support3, resistance1, resistance2, resistance3);
+                            support3, resistance1, resistance2, resistance3, pivot);
 
                     list.add(daily);
                 }
@@ -4096,6 +4098,7 @@ public class BinanceServiceImpl implements BinanceService {
                             .contains(dto_d1.getTrend_of_heiken3())) {
                 continue;
             }
+            BigDecimal curr_price = dto_h1.getCurrent_price();
             DailyRange dailyRange = ranges.get(0);
 
             String trend_w1 = dto_w1.getTrend_of_heiken3();
@@ -4171,11 +4174,13 @@ public class BinanceServiceImpl implements BinanceService {
             count += 1;
             String No = Utils.appendLeft(String.valueOf(count), 2, "0") + ". ";
             // --------------------------------------------
-            String type_h1 = Utils.getType(trend_h1);
+            String type_w1 = Utils.getType(trend_w1);
             String amp = " Points";
             amp += "(amp):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dailyRange.getAmp()), 6);
             amp += "(h4):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dto_h4.getAmplitude_avg_of_candles()), 6);
-            amp += "tp_" + type_h1 + "1" + Utils.getTakeProfitByAmp(dailyRange, dto_h1.getCurrent_price(), trend_h1);
+            amp += "(w_" + type_w1 + ")";
+            amp += Utils.getTakeProfit123ByAmp(dailyRange, curr_price, trend_w1);
+            amp += "   ";
 
             String prefix = amp + No; // + " " + prefix_trend;
 
@@ -4185,7 +4190,7 @@ public class BinanceServiceImpl implements BinanceService {
             } else {
                 str_trend_d3 += "   ";
             }
-            str_trend_d3 += " D:" + Utils.appendSpace(trend_d1, 6);
+            str_trend_d3 += " W:" + Utils.appendSpace(trend_w1, 6);
 
             String append = str_trend_d3 + seq + eoz;
 

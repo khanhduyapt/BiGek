@@ -33,6 +33,8 @@ int OnInit(void)
 void OnTick(void)
   {
   }
+
+
 //+------------------------------------------------------------------+
 //| Timer function                                                   |
 //+------------------------------------------------------------------+
@@ -58,7 +60,15 @@ void OnTimer(void)
                           "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD",
                           "USDCAD", "USDCHF", "USDJPY", "CADJPY", "CHFJPY", "CADCHF"
                          };
-   int s_size = ArraySize(arr_symbol);
+
+   string arr_stocks[] = {"AAPL", "AIRF", "AMZN", "BAC", "BAYGn", "DBKGn",
+                          "GOOG", "LVMH", "META", "MSFT", "NFLX", "NVDA", "PFE", "RACE", "TSLA", "VOWG_p", "WMT", "BABA", "T", "V", "ZM"
+                         };
+
+   string sAllSymbols[];
+   ArrayCopy(sAllSymbols, arr_symbol, ArraySize(arr_symbol));
+   ArrayCopy(sAllSymbols, arr_stocks, ArraySize(arr_stocks));
+
 //-------------------------------------------------------------------------------------------------------------------------------
 
    FileDelete("Data//DailyPivot.csv");
@@ -66,11 +76,15 @@ void OnTimer(void)
 
    if(nfile_daily_pivot != INVALID_HANDLE)
      {
-      FileWrite(nfile_daily_pivot, "TimeCurrent", "symbol", "mid", "amp", "daily_open", "daily_close", "support1", "support2", "support3", "resistance1", "resistance2", "resistance3");
+      FileWrite(nfile_daily_pivot, "TimeCurrent", "symbol", "mid", "amp", "daily_open", "daily_close", "support1", "support2", "support3", "resistance1", "resistance2", "resistance3", "pivot");
 
-      for(int index=0; index < s_size; index++)
+
+      int total_fx_stock_size = ArraySize(sAllSymbols);
+
+      for(int index = 0; index < total_fx_stock_size; index++)
         {
-         string symbol = arr_symbol[index];
+         string symbol = sAllSymbols[index];
+
          int    digits = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);     // number of decimal places
          //-------------------------------------------------------------------------------------------------------------------------------
          datetime daily_time = iTime(symbol, PERIOD_D1, 1);
@@ -130,7 +144,7 @@ void OnTimer(void)
          resistance3        = NormalizeDouble(resistance3, digits);
 
 
-         FileWrite(nfile_daily_pivot, TimeToString(TimeCurrent(), TIME_DATE), symbol, mid, amp, daily_open, daily_close, support1, support2, support3, resistance1, resistance2, resistance3);
+         FileWrite(nfile_daily_pivot, TimeToString(TimeCurrent(), TIME_DATE), symbol, mid, amp, daily_open, daily_close, support1, support2, support3, resistance1, resistance2, resistance3, pivot);
         } //for
       //--------------------------------------------------------------------------------------------------------------------
 
@@ -144,7 +158,7 @@ void OnTimer(void)
 //--------------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------------------------
-
+   int s_size = ArraySize(arr_symbol);
    FileDelete("Data//TimeBreaker.csv");
    int nfile_handle = FileOpen("Data//TimeBreaker.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
 
