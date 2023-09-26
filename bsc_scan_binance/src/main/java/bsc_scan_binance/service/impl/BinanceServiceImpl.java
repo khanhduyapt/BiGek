@@ -4320,6 +4320,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String REVERSE_TRADE_TREND = TRADING_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_SHOT : Utils.TREND_LONG;
 
+            List<DailyRange> ranges = dailyRangeRepository.findSymbolToday(EPIC);
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
@@ -4329,19 +4330,21 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_10 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_10).orElse(dto_h1);
             Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_05).orElse(dto_h1);
 
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
+            if (CollectionUtils.isEmpty(ranges) || Objects.isNull(dto_w1) || Objects.isNull(dto_d1)
+                    || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
                 String str_null = "";
-                str_null += "w1:" + (Objects.isNull(dto_w1) ? "null" : "    ");
-                str_null += "d1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
-                str_null += "h4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
-                str_null += "h1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
+                str_null += "DailyRange:" + (CollectionUtils.isEmpty(ranges) ? "isEmpty" : "       ");
+                str_null += " w1:" + (Objects.isNull(dto_w1) ? "null" : "    ");
+                str_null += " d1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
+                str_null += " h4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
+                str_null += " h1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
 
                 Utils.logWritelnDraft(String.format("[closetrade_by_sl_tp_take_profit] dto (%s): %s.",
                         Utils.appendSpace(EPIC, 10), str_null));
 
                 continue;
             }
-
+            DailyRange dailyRange = ranges.get(0);
             String trend_h1 = dto_h1.getTrend_of_heiken3();
             // -------------------------------------------------------------------------------------
             boolean take_profit = false;
@@ -4395,6 +4398,9 @@ public class BinanceServiceImpl implements BinanceService {
                             || Objects.equals(dto_15.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND))) {
 
                 BigDecimal amplitude = dto_h4.getAmplitude_avg_of_candles();
+                if (amplitude.compareTo(dailyRange.getAmp()) > 0) {
+                    amplitude = dailyRange.getAmp();
+                }
 
                 if (Objects.equals(TRADING_TREND, Utils.TREND_LONG)) {
                     BigDecimal next_price = trade.getPriceOpen().add(amplitude);
