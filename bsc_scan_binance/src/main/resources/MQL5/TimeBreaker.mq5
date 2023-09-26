@@ -47,13 +47,11 @@ void OnTimer(void)
    int cur_minu = (int)dt_struct.min;
    double mod5 = MathMod(cur_minu, 2);
 
+//"EU50.cash", "GER40.cash", "UK100.cash", "AUS200.cash", "FRA40.cash", "SPN35.cash", "NATGAS.f", "ERBN.f",
+//"ETHUSD", "DOGEUSD", "DASHUSD", "ADAUSD", "DOTUSD", "LTCUSD", "XRPUSD",
    string arr_symbol[] = {"DX.f", "XAUUSD", "XAGUSD", "USOIL.cash",
                           "US30.cash", "US100.cash",
-//"EU50.cash", "GER40.cash", "UK100.cash", "AUS200.cash", "FRA40.cash", "SPN35.cash", "NATGAS.f", "ERBN.f",
-
                           "BTCUSD",
-//"ETHUSD", "DOGEUSD", "DASHUSD", "ADAUSD", "DOTUSD", "LTCUSD", "XRPUSD",
-
                           "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
                           "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
                           "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD",
@@ -66,8 +64,8 @@ void OnTimer(void)
                          };
 
    string sAllSymbols[];
-   ArrayCopy(sAllSymbols, arr_symbol, ArraySize(arr_symbol));
    ArrayCopy(sAllSymbols, arr_stocks, ArraySize(arr_stocks));
+   ArrayCopy(sAllSymbols, arr_symbol, ArraySize(arr_symbol));
 
 //-------------------------------------------------------------------------------------------------------------------------------
 

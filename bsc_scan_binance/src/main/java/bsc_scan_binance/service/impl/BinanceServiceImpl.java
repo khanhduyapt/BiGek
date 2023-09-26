@@ -2638,8 +2638,8 @@ public class BinanceServiceImpl implements BinanceService {
         ordersRepository.save(entity);
     }
 
-    private String analysis_profit(String prifix, String EPIC, String append2, String find_trend, boolean allow_notice,
-            Orders dto_h1, Orders dto_h4) {
+    private String analysis_profit(String prefix, String EPIC, String append2, DailyRange dailyRange, String trend_w1,
+            BigDecimal curr_price) {
 
         String type = "";
         BigDecimal t_profit = BigDecimal.ZERO;
@@ -2656,98 +2656,15 @@ public class BinanceServiceImpl implements BinanceService {
             t_volume = t_volume.add(Utils.getBigDecimal(trade.getVolume()));
         }
 
-        String volume_per_trade = "t_profit:" + type + ": ";
-        volume_per_trade += Utils.appendLeft(String.valueOf(t_profit.intValue()), 5) + "$";
-        volume_per_trade += "/" + Utils.appendLeft(String.valueOf(t_volume), 5) + "(lot)";
-        volume_per_trade += "/" + Utils.appendSpace(String.valueOf(tradeList.size()), 2) + "(trade)";
+        String total_profit = "t_profit:" + type + ": ";
+        total_profit += Utils.appendLeft(String.valueOf(t_profit.intValue()), 5) + "$";
+        total_profit += "/" + Utils.appendLeft(String.valueOf(t_volume), 5) + "(lot)";
+        total_profit += "/" + Utils.appendSpace(String.valueOf(tradeList.size()), 2) + "(trade)";
 
-        String append = prifix.trim() + " " + append2
-                + Utils.appendSpace(tradeList.size() > 0
-                        ? volume_per_trade
-                        : "", volume_per_trade.length());
+        String append = prefix.trim() + " " + append2;
 
-        String msg_notice = "";
+        outputLog(EPIC, dailyRange, curr_price, append, trend_w1, total_profit);
 
-        if (allow_notice) {
-            String trend = "";
-            String CAPITAL_TIME_XX = "";
-            type = Objects.equals(trend, Utils.TREND_LONG) ? "_b" : "_s";
-            String msg_append = type + "_ma";
-
-            if (dto_h1.getSwitch_trend().contains(Utils.TEXT_SEQ)
-                    && dto_h1.getSwitch_trend().contains(dto_h1.getTrend_of_heiken3())) {
-                trend = dto_h1.getTrend_of_heiken3();
-                CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H1;
-
-            } else if (dto_h4.getSwitch_trend().contains(Utils.TEXT_SEQ)
-                    && dto_h4.getSwitch_trend().contains(dto_h1.getTrend_of_heiken3())
-                    && dto_h4.getSwitch_trend().contains(dto_h4.getTrend_of_heiken3())) {
-                trend = dto_h4.getTrend_of_heiken3();
-                CAPITAL_TIME_XX = Utils.CAPITAL_TIME_H4;
-            }
-
-            if (Utils.isNotBlank(CAPITAL_TIME_XX)) {
-                String comment = Utils.create_trade_comment(EPIC, CAPITAL_TIME_XX, msg_append);
-                msg_notice = " Notice" + Utils.getChartName(CAPITAL_TIME_XX);
-                msg_notice += ": " + Utils.appendSpace(trend, 11) + comment;
-
-                msg_notice = Utils.appendSpace(">>>>>", 119, "-") + msg_notice;
-            }
-        }
-
-        if (Utils.isNotBlank(msg_notice)) {
-            // Utils.logWritelnDraft(Utils.appendSpace("", 370) + " \n");
-        }
-
-        outputLog(EPIC, append, find_trend);
-
-        if (Utils.isNotBlank(msg_notice)) {
-            Utils.logWritelnDraft(msg_notice);
-            if (tradeList.size() == 0) {
-                Utils.logWritelnDraft("");
-            }
-        }
-
-        //for (Mt5OpenTradeEntity trade : tradeList) {
-        //    String TRADE_TREND = trade.getType().toUpperCase();
-        //    if (TRADE_TREND.contains("LIMIT")) {
-        //        continue;
-        //    }
-        //
-        //    String REVERSE_TRADE_TREND = TRADE_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_SHOT : Utils.TREND_LONG;
-        //    String trend_reverse = "";
-        //    Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
-        //    if (Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1) && Objects.nonNull(dto_15)
-        //            && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
-        //            && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
-        //            && Objects.equals(dto_h4.getTrend_of_heiken3(), REVERSE_TRADE_TREND)) {
-        //        trend_reverse = "h4_h1_15_reverse";
-        //    }
-        //
-        //    String ea = "Opening : ";
-        //    ea += Utils.appendSpace(trade.getType(), 11);
-        //    ea += Utils.appendSpace(trade.getCompany(), 9) + " ";
-        //    ea += "     Profit:"
-        //            + Utils.appendLeft(Utils.getStringValue(Utils.getBigDecimal(trade.getProfit()).intValue()), 6)
-        //            + "$    ";
-        //    ea += Utils.appendLeft(Utils.getStringValue(Utils.formatPrice(trade.getVolume(), 2)), 8) + "(lot)";
-        //    ea += " Open " + Utils.appendLeft(Utils.getStringValue(trade.getPriceOpen()), 10) + "   ";
-        //    ea += " SL " + Utils.appendLeft(Utils.removeLastZero(trade.getStopLoss()), 10) + "   ";
-        //    ea += " TP " + Utils.appendLeft(Utils.removeLastZero(trade.getTakeProfit()), 10);
-        //    ea += Utils.appendSpace(trend_reverse, 25);
-        //    ea += "    " + trade.getComment();
-        //
-        //    ea = Utils.appendLeft("", 180, " ") + Utils.appendSpace(ea, 60);
-        //
-        //    Utils.logWritelnDraft(ea);
-        //}
-        //if (tradeList.size() > 0) {
-        //    Utils.logWritelnDraft("");
-        //}
-
-        if (!isReloadAfter(Utils.MINUTES_OF_1H, EPIC + find_trend)) {
-            return "";
-        }
         return EPIC;
     }
 
@@ -2929,54 +2846,22 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.logWritelnDraft("");
     }
 
-    private void outputLog(String EPIC, String append, String find_trend) {
-        Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-        Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
-        Orders dto_10 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_10).orElse(dto_h1);
-
-        if (Objects.isNull(dto_d1) || Objects.isNull(dto_h1) || Objects.isNull(dto_10)) {
-            return;
-        }
-
-        String text_risk = "0.05% ";
-        BigDecimal risk = Utils.RISK_PER_TRADE;
-
-        BigDecimal tp_by_d1 = Utils.calc_tp_by_amplitude_of_candle(dto_d1.getCurrent_price(),
-                dto_d1.getAmplitude_avg_of_candles(), find_trend);
-        String tp = "   TP(d1): " + Utils.appendLeft(Utils.getStringValue(tp_by_d1), 10);
-
-        String log_long = text_risk + Utils
-                .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, Utils.TREND_LONG, EPIC, dto_10, dto_h1), 45);
-        log_long += "E:b(10): " + Utils.appendLeft(Utils.removeLastZero(dto_10.getLow_50candle()), 10);
-
-        String log_shot = text_risk + Utils
-                .appendSpace(Utils.calc_BUF_LO_HI_BUF_Forex(risk, false, Utils.TREND_SHOT, EPIC, dto_10, dto_h1), 45);
-        log_shot += "E:s(10): " + Utils.appendLeft(Utils.removeLastZero(dto_10.getHig_50candle()), 10) + "   ";
-
+    private void outputLog(String EPIC, DailyRange dailyRange, BigDecimal curr_price, String append, String trend_w1,
+            String total_profit) {
         // TODO: outputLog
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
-        log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(dto_h1.getCurrent_price(), 5)), 11);
+        log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(curr_price, 5)), 11);
         log += Utils.appendSpace(append.trim(), 160);
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
 
         log += "Unit:" + Utils.appendLeft(String.valueOf(Utils.get_standard_vol_per_100usd(EPIC)), 5) + "(lot)     ";
-
-        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            log += log_long.trim() + tp;
-        } else if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            log += log_shot.trim() + tp;
-        } else {
-            tp_by_d1 = Utils.calc_tp_by_amplitude_of_candle(dto_d1.getCurrent_price(),
-                    dto_d1.getAmplitude_avg_of_candles(), dto_d1.getTrend_of_heiken3());
-            tp = "   TP(d1): " + Utils.appendLeft(Utils.getStringValue(tp_by_d1), 10);
-
-            if (Objects.equals(dto_d1.getTrend_of_heiken3(), Utils.TREND_LONG)) {
-                log += log_long.trim() + tp + Utils.appendLeft("(byD3)", 10);
-            }
-            if (Objects.equals(dto_d1.getTrend_of_heiken3(), Utils.TREND_SHOT)) {
-                log += log_shot.trim() + tp + Utils.appendLeft("(byD3)", 10);
-            }
+        if (Objects.equals(trend_w1, Utils.TREND_LONG)) {
+            log += Utils.getTakeProfit123ByAmp(dailyRange, curr_price, Utils.TREND_SHOT).replace("tp", "en");
         }
+        if (Objects.equals(trend_w1, Utils.TREND_SHOT)) {
+            log += Utils.getTakeProfit123ByAmp(dailyRange, curr_price, Utils.TREND_LONG).replace("tp", "en");
+        }
+        log += total_profit;
 
         Utils.logWritelnDraft(log.trim());
     }
@@ -4201,7 +4086,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            analysis_profit(prefix, EPIC, append, trend_d1, false, dto_h1, dto_h4);
+            analysis_profit(prefix, EPIC, append, dailyRange, trend_w1, curr_price);
         }
 
         return count;
