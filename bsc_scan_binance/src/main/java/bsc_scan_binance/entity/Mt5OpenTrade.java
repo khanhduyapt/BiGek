@@ -18,18 +18,17 @@ public class Mt5OpenTrade {
 
     private BigDecimal lots = BigDecimal.ZERO;
 
-    private BigDecimal entry_h1 = BigDecimal.ZERO;
+    private BigDecimal entry1 = BigDecimal.ZERO;
 
     private BigDecimal stop_loss = BigDecimal.ZERO;
 
-    private BigDecimal take_profit_h4 = BigDecimal.ZERO;
+    private BigDecimal take_profit1 = BigDecimal.ZERO;
 
     private String comment;
 
-    private BigDecimal entry_h4 = BigDecimal.ZERO;
+    private BigDecimal entry2 = BigDecimal.ZERO;
+    private BigDecimal entry3 = BigDecimal.ZERO;
 
-    private BigDecimal entry_d1 = BigDecimal.ZERO;
-
-    private BigDecimal take_profit_d1 = BigDecimal.ZERO;
-    private BigDecimal take_profit_w1 = BigDecimal.ZERO;
+    private BigDecimal take_profit2 = BigDecimal.ZERO;
+    private BigDecimal take_profit3 = BigDecimal.ZERO;
 }

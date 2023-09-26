@@ -206,12 +206,14 @@ void openTrade(string line)
    string epic = toLower(result[0]);
    string type = toLower(result[1]);
    double volume = StringToDouble(result[2]);
-   double entry_h1 = StringToDouble(result[3]);
+   double entry1 = StringToDouble(result[3]);
    double stop_loss = StringToDouble(result[4]);
-   double take_prifit = StringToDouble(result[5]);
+   double take_prifit_1 = StringToDouble(result[5]);
    string comment = result[6];
-   double entry_h4 = StringToDouble(result[7]);
-   double entry_d1 = StringToDouble(result[8]);
+   double entry_2 = StringToDouble(result[7]);
+   double take_prifit_2 = StringToDouble(result[8]);
+   double entry_3 = StringToDouble(result[9]);
+   double take_prifit_3 = StringToDouble(result[10]);
 
    string trade_symbol = result[0];
    string lowcase_symbol = epic;
@@ -226,7 +228,7 @@ void openTrade(string line)
       Alert("EPIC: " + epic);
       Alert("ORDER_TYPE: " + result[1]);
       Alert("lots: " + result[2]);
-      Alert("entry_h1: " + result[3]);
+      Alert("entry1: " + result[3]);
       Alert("stop_loss: " + result[4]);
    */
 
@@ -272,77 +274,55 @@ void openTrade(string line)
       int    digits = (int)SymbolInfoInteger(trade_symbol,SYMBOL_DIGITS);     // number of decimal places
       double point  = SymbolInfoDouble(trade_symbol,SYMBOL_POINT);            // point
 
-      entry_h1    = NormalizeDouble(entry_h1,digits);                              // normalizing open price
-      stop_loss   = NormalizeDouble(stop_loss, digits);                            // normalizing Stop Loss
-      take_prifit = NormalizeDouble(take_prifit, digits);                          // normalizing take_prifit
-      entry_h4    = NormalizeDouble(entry_h4, digits);                             // normalizing tp_d1
-      entry_d1    = NormalizeDouble(entry_d1, digits);                             // normalizing tp_w1
+      stop_loss        = NormalizeDouble(stop_loss, digits);
 
-      // tp=0.0;
-      // stop_loss=0.0;
+      entry1           = NormalizeDouble(entry1,digits);
+      take_prifit_1    = NormalizeDouble(take_prifit_1, digits);
+
+      entry_2          = NormalizeDouble(entry_2, digits);
+      take_prifit_2    = NormalizeDouble(take_prifit_2, digits);
+
+      entry_3          = NormalizeDouble(entry_3, digits);
+      take_prifit_3    = NormalizeDouble(take_prifit_3, digits);
+
+
       datetime expiration=TimeTradeServer() + PeriodSeconds(PERIOD_D1);
 
 
-      if(type== "buy")
+      if(type == "buy")
         {
-         //--- open position
-         if(StringFind(comment, "_vithed", 0) >= 0)
-           {
-            //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, price, stop_loss, tp, comment);
-           }
+         m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry1, stop_loss, take_prifit_1, comment);
 
-         if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry_h1, stop_loss, take_prifit, comment))
-            Alert("Duydk: BUY: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
+         m_trade.BuyLimit(volume, entry_2, trade_symbol, stop_loss, take_prifit_2, ORDER_TIME_GTC, expiration, comment + "_21");
+         m_trade.BuyLimit(volume, entry_2, trade_symbol, stop_loss, take_prifit_2, ORDER_TIME_GTC, expiration, comment + "_22");
 
-         //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry, stop_loss, tp_d1, comment + "_d");
-         //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry, stop_loss, tp_w1, comment + "_w");
-
-         m_trade.BuyLimit(volume, entry_h1, trade_symbol, stop_loss, take_prifit, ORDER_TIME_GTC, expiration, comment + "_11");
-         //m_trade.BuyLimit(volume, entry_h1, trade_symbol, stop_loss, take_prifit, ORDER_TIME_GTC, expiration, comment + "_11");
-
-         m_trade.BuyLimit(volume, entry_h4, trade_symbol, stop_loss, take_prifit, ORDER_TIME_GTC, expiration, comment + "_21");
-         //m_trade.BuyLimit(volume, entry_h4, trade_symbol, stop_loss, take_prifit, ORDER_TIME_GTC, expiration, comment + "_22");
-         //m_trade.BuyLimit(volume, entry_h4, trade_symbol, stop_loss, take_prifit, ORDER_TIME_GTC, expiration, comment + "_23");
-
-         m_trade.BuyLimit(volume, entry_d1, trade_symbol, stop_loss, take_prifit, ORDER_TIME_GTC, expiration, comment + "_31");
-         // m_trade.BuyLimit(volume, entry_d1, trade_symbol, stop_loss, take_prifit, ORDER_TIME_GTC, expiration, comment + "_32");
+         m_trade.BuyLimit(volume, entry_3, trade_symbol, stop_loss, take_prifit_3, ORDER_TIME_GTC, expiration, comment + "_21");
+         m_trade.BuyLimit(volume, entry_3, trade_symbol, stop_loss, take_prifit_3, ORDER_TIME_GTC, expiration, comment + "_22");
+         m_trade.BuyLimit(volume, entry_3, trade_symbol, stop_loss, take_prifit_3, ORDER_TIME_GTC, expiration, comment + "_23");
+         m_trade.BuyLimit(volume, entry_3, trade_symbol, stop_loss, take_prifit_3, ORDER_TIME_GTC, expiration, comment + "_24");
         }
 
-      if(type== "buy_limit")
+      if(type == "buy_limit")
         {
-         if(!m_trade.BuyLimit(volume, entry_h1, trade_symbol, stop_loss, 0.0, ORDER_TIME_GTC, expiration, comment))
-            Alert("Duydk: BUY LIMIT: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
+
         }
 
-      if(type== "sell")
+      if(type == "sell")
         {
-         //--- open position
-         if(StringFind(comment, "_vithed", 0) >= 0)
-           {
-            //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry_h1, stop_loss, tp, comment);
-           }
+         m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry1, stop_loss, take_prifit_1, comment);
 
-         if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry_h1, stop_loss, take_prifit, comment))
-            Alert("Duydk: SELL: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
+         m_trade.SellLimit(volume, entry_2, trade_symbol, stop_loss, take_prifit_2, ORDER_TIME_GTC, expiration, comment + "_21");
+         m_trade.SellLimit(volume, entry_2, trade_symbol, stop_loss, take_prifit_2, ORDER_TIME_GTC, expiration, comment + "_22");
 
-         //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry_h1, stop_loss, take_prifit, comment + "_d");
-         //m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry_h1, stop_loss, take_prifit, comment + "_w");
-
-         m_trade.SellLimit(volume, entry_h1, trade_symbol, stop_loss, take_prifit, ORDER_TIME_GTC, expiration, comment + "_11");
-         //m_trade.SellLimit(volume, entry_h1, trade_symbol, stop_loss, take_prifit, ORDER_TIME_GTC, expiration, comment + "_12");
-
-         m_trade.SellLimit(volume, entry_h4, trade_symbol, stop_loss, take_prifit, ORDER_TIME_GTC, expiration, comment + "_21");
-         //m_trade.SellLimit(volume, entry_h4, trade_symbol, stop_loss, take_prifit, ORDER_TIME_GTC, expiration, comment + "_22");
-         //m_trade.SellLimit(volume, entry_h4, trade_symbol, stop_loss, take_prifit, ORDER_TIME_GTC, expiration, comment + "_23");
-
-         m_trade.SellLimit(volume, entry_d1, trade_symbol, stop_loss, take_prifit, ORDER_TIME_GTC, expiration, comment + "_31");
-         //m_trade.SellLimit(volume, entry_d1, trade_symbol, stop_loss, take_prifit, ORDER_TIME_GTC, expiration, comment + "_32");
+         m_trade.SellLimit(volume, entry_3, trade_symbol, stop_loss, take_prifit_3, ORDER_TIME_GTC, expiration, comment + "_21");
+         m_trade.SellLimit(volume, entry_3, trade_symbol, stop_loss, take_prifit_3, ORDER_TIME_GTC, expiration, comment + "_22");
+         m_trade.SellLimit(volume, entry_3, trade_symbol, stop_loss, take_prifit_3, ORDER_TIME_GTC, expiration, comment + "_23");
+         m_trade.SellLimit(volume, entry_3, trade_symbol, stop_loss, take_prifit_3, ORDER_TIME_GTC, expiration, comment + "_24");
         }
 
       if(type== "sell_limit")
         {
-         if(!m_trade.SellLimit(volume, entry_h1, trade_symbol, stop_loss, take_prifit, ORDER_TIME_GTC, expiration, comment))
-            Alert("Duydk: SELL LIMIT: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
+
         }
 
      }
