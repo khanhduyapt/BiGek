@@ -5304,6 +5304,23 @@ public class Utils {
         }
     }
 
+    public static String get_trend_by_amp(DailyRange dailyRange, BigDecimal curr_price) {
+        BigDecimal mid = dailyRange.getMid();
+        BigDecimal amp = dailyRange.getAmp();
+        BigDecimal en_shot = mid.add(amp);
+        BigDecimal en_long = mid.subtract(amp);
+
+        String trend_by_amp = "";
+        if (curr_price.compareTo(en_long) < 0) {
+            trend_by_amp = Utils.TREND_LONG;
+        }
+        if (curr_price.compareTo(en_shot) > 0) {
+            trend_by_amp = Utils.TREND_SHOT;
+        }
+
+        return trend_by_amp;
+    }
+
     public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String find_trend, BigDecimal curr_price, String append,
             boolean isTradeNow, String CAPITAL_TIME_XX, DailyRange dailyRange) {
 
@@ -5322,7 +5339,7 @@ public class Utils {
         BigDecimal take_profit_3 = BigDecimal.ZERO;
 
         BigDecimal mid = dailyRange.getMid();
-        BigDecimal amp = dailyRange.getMid();
+        BigDecimal amp = dailyRange.getAmp();
 
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
             entry_1 = mid.subtract(amp);
