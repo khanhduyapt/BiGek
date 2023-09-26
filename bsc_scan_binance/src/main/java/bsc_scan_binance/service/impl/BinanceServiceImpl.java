@@ -4080,12 +4080,12 @@ public class BinanceServiceImpl implements BinanceService {
             if (CollectionUtils.isEmpty(ranges) || Objects.isNull(dto_w1) || Objects.isNull(dto_d1)
                     || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)) {
                 String str_null = "";
-                str_null += "DailyRange:" + (CollectionUtils.isEmpty(ranges) ? "isEmpty" : "    ");
-                str_null += "W1:" + (Objects.isNull(dto_w1) ? "null" : "    ");
-                str_null += "D1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
-                str_null += "H4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
-                str_null += "H1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
-                str_null += "15:" + (Objects.isNull(dto_15) ? "null" : "    ");
+                str_null += "DailyRange:" + (CollectionUtils.isEmpty(ranges) ? "isEmpty" : "       ");
+                str_null += " W1:" + (Objects.isNull(dto_w1) ? "null" : "    ");
+                str_null += " D1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
+                str_null += " H4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
+                str_null += " H1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
+                str_null += " 15:" + (Objects.isNull(dto_15) ? "null" : "    ");
 
                 Utils.logWritelnDraft(
                         String.format("[controlMt5] dto (%s): %s.", Utils.appendSpace(EPIC, 10), str_null));
@@ -4103,7 +4103,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             String trend_w1 = dto_w1.getTrend_of_heiken3();
             String trend_d1 = dto_d1.getTrend_of_heiken3();
-            String trend_h1 = dto_h1.getTrend_of_heiken3();
 
             String seq_h1_h4 = "";
             if (dto_h1.getSwitch_trend().contains(Utils.TEXT_SEQ)) {
@@ -4238,6 +4237,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         Collections.sort(CAPITAL_LIST);
         for (String EPIC : CAPITAL_LIST) {
+            List<DailyRange> ranges = dailyRangeRepository.findSymbolToday(EPIC);
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
@@ -4252,10 +4252,11 @@ public class BinanceServiceImpl implements BinanceService {
                 debug = true;
             }
 
-            if (Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
-                    || Objects.isNull(dto_15)) {
+            if (CollectionUtils.isEmpty(ranges) || Objects.isNull(dto_w1) || Objects.isNull(dto_d1)
+                    || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)) {
                 continue;
             }
+            DailyRange dailyRange = ranges.get(0);
 
             String trend_w1 = dto_w1.getTrend_of_heiken3();
             String trend_d1 = dto_d1.getTrend_of_heiken3();
@@ -4286,7 +4287,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (possible_tp && Utils.isBlank(eoz) && allow_trade_by_seq) {
 
                     Mt5OpenTrade dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_15, dto_15, dto_15, dto_15, dto_15,
-                            "(SCAP_15M)", true, Utils.CAPITAL_TIME_15);
+                            "(SCAP_15M)", true, Utils.CAPITAL_TIME_15, dailyRange);
 
                     BigDecimal curr_price = dto_15.getCurrent_price();
                     BigDecimal stop_loss = BigDecimal.ZERO;
@@ -4381,7 +4382,7 @@ public class BinanceServiceImpl implements BinanceService {
                 append += cutting + seq + Utils.TEXT_PASS;
 
                 trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1, dto_h1, dto_h4, dto_d1, dto_w1, append, true,
-                        Utils.CAPITAL_TIME_H1);
+                        Utils.CAPITAL_TIME_H1, dailyRange);
 
                 String key = EPIC + Utils.CAPITAL_TIME_H1;
                 BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);

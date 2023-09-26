@@ -5236,26 +5236,75 @@ public class Utils {
         return tmp_msg + url;
     }
 
+    public static List<BigDecimal> getEntrys(DailyRange dailyRange, String find_trend, BigDecimal curr_price) {
+        BigDecimal mid = dailyRange.getMid();
+        BigDecimal amp_per10 = dailyRange.getAmp().multiply(BigDecimal.valueOf(0.1));
+
+        BigDecimal entry = BigDecimal.ZERO;
+
+        BigDecimal entry_h1 = BigDecimal.ZERO;
+        BigDecimal entry_h4 = BigDecimal.ZERO;
+        BigDecimal entry_d1 = BigDecimal.ZERO;
+        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
+            if (curr_price.compareTo(dailyRange.getSupport3()) < 0) {
+                entry = dailyRange.getSupport3().subtract(dailyRange.getAmp());
+            } else {
+                entry = dailyRange.getSupport2();
+            }
+
+            entry_h1 = entry.add(amp_per10).add(amp_per10);
+            entry_h4 = entry.add(amp_per10);
+            entry_d1 = entry;
+
+        } else if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
+            if (curr_price.compareTo(dailyRange.getResistance3()) < 0) {
+                entry = dailyRange.getResistance3().subtract(dailyRange.getAmp());
+            } else {
+                entry = dailyRange.getResistance2();
+            }
+
+            entry_h1 = entry.subtract(amp_per10).subtract(amp_per10);
+            entry_h4 = entry.subtract(amp_per10);
+            entry_d1 = entry;
+        }
+
+        List<BigDecimal> result = new ArrayList<BigDecimal>();
+        result.add(entry_h1);
+        result.add(entry_h4);
+        result.add(entry_d1);
+
+        return result;
+    }
+
     public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String find_trend, Orders dto_h1, Orders dto_h4,
-            Orders dto_d1, Orders dto_w1, String append, boolean isTradeNow, String CAPITAL_TIME_XX) {
+            Orders dto_d1, Orders dto_w1, String append, boolean isTradeNow, String CAPITAL_TIME_XX,
+            DailyRange dailyRange) {
         BigDecimal curr_price = dto_h1.getCurrent_price();
 
         BigDecimal entry_h1 = curr_price;
         BigDecimal entry_h4 = curr_price;
         BigDecimal entry_d1 = curr_price;
-        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            entry_h1 = dto_h1.getLow_50candle();
-            entry_h4 = dto_h4.getLow_50candle();
-            entry_d1 = dto_d1.getLow_50candle();
 
-        } else if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            entry_h1 = dto_h1.getHig_50candle();
-            entry_h4 = dto_h4.getHig_50candle();
-            entry_d1 = dto_d1.getHig_50candle();
+        if (Objects.isNull(dailyRange)) {
+            if (Objects.equals(find_trend, Utils.TREND_LONG)) {
+                entry_h1 = dto_h1.getLow_50candle();
+                entry_h4 = dto_h4.getLow_50candle();
+                entry_d1 = dto_d1.getLow_50candle();
 
+            } else if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
+                entry_h1 = dto_h1.getHig_50candle();
+                entry_h4 = dto_h4.getHig_50candle();
+                entry_d1 = dto_d1.getHig_50candle();
+
+            } else {
+                Utils.logWritelnDraft("(ERROR_LONG_OR_SHORT?) calc_Lot_En_SL_TP:trend=" + find_trend);
+                return null;
+            }
         } else {
-            Utils.logWritelnDraft("(ERROR_LONG_OR_SHORT?) calc_Lot_En_SL_TP:trend=" + find_trend);
-            return null;
+            List<BigDecimal> entrys = getEntrys(dailyRange, find_trend, curr_price);
+            entry_h1 = entrys.get(0);
+            entry_h4 = entrys.get(1);
+            entry_d1 = entrys.get(2);
         }
 
         List<BigDecimal> sl1 = Utils.calc_sl1_tp2(dto_w1, find_trend);
