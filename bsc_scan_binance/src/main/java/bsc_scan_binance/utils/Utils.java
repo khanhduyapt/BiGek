@@ -4640,33 +4640,12 @@ public class Utils {
     public static String getTakeProfit123ByAmp(DailyRange dailyRange, BigDecimal curr_price, String find_trend) {
         String result = "";
         if (Objects.equals(Utils.TREND_LONG, find_trend)) {
-
-            if (curr_price.compareTo(dailyRange.getResistance1()) < 0) {
-                result += " tp1:" + Utils.appendSpace(dailyRange.getResistance1(), 8);
-            } else {
-                result += "     " + Utils.appendSpace("", 8);
-            }
-
-            if (curr_price.compareTo(dailyRange.getResistance2()) < 0) {
-                result += " tp2:" + Utils.appendSpace(dailyRange.getResistance2(), 8);
-            } else {
-                result += "     " + Utils.appendSpace("", 8);
-            }
-
+            result += " tp1:" + Utils.appendSpace(dailyRange.getResistance1(), 8);
+            result += " tp2:" + Utils.appendSpace(dailyRange.getResistance2(), 8);
             result += " tp3:" + Utils.appendSpace(dailyRange.getResistance3(), 8);
         } else {
-            if (curr_price.compareTo(dailyRange.getSupport1()) > 0) {
-                result += " tp1:" + Utils.appendSpace(dailyRange.getSupport1(), 8);
-            } else {
-                result += "     " + Utils.appendSpace("", 8);
-            }
-
-            if (curr_price.compareTo(dailyRange.getSupport2()) > 0) {
-                result += " tp2:" + Utils.appendSpace(dailyRange.getSupport2(), 8);
-            } else {
-                result += "     " + Utils.appendSpace("", 8);
-            }
-
+            result += " tp1:" + Utils.appendSpace(dailyRange.getSupport1(), 8);
+            result += " tp2:" + Utils.appendSpace(dailyRange.getSupport2(), 8);
             result += " tp3:" + Utils.appendSpace(dailyRange.getSupport3(), 8);
         }
 
@@ -5535,11 +5514,11 @@ public class Utils {
             BigDecimal next_price = dto_d1.getCurrent_price().add(amplitude);
             {
                 if (next_price.compareTo(dto_d1.getHig_50candle()) > 0) {
-                    return type + "_by_d1";
+                    return type + "_d1";
                 }
 
                 if (next_price.compareTo(dto_h4.getHig_50candle()) > 0) {
-                    return type + "_by_h4";
+                    return type + "_h4";
                 }
             }
 
@@ -5551,7 +5530,7 @@ public class Utils {
             if (maxValue.compareTo(tp) > 0) {
                 return ""; // Đủ biên độ để dạt TP
             } else {
-                return type + "_by_ha";
+                return type + "_ha";
             }
         }
 
@@ -5560,11 +5539,11 @@ public class Utils {
             BigDecimal next_price = dto_d1.getCurrent_price().subtract(amplitude);
             {
                 if (next_price.compareTo(dto_d1.getLow_50candle()) < 0) {
-                    return type + "_by_d1";
+                    return type + "_d1";
                 }
 
                 if (next_price.compareTo(dto_h4.getLow_50candle()) < 0) {
-                    return type + "_by_h4";
+                    return type + "_h4";
                 }
             }
 
@@ -5576,7 +5555,7 @@ public class Utils {
             if (minValue.compareTo(tp) < 0) {
                 return ""; // Đủ biên độ để dạt TP
             } else {
-                return type + "_by_ha";
+                return type + "_ha";
             }
         }
 

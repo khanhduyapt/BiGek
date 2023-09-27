@@ -2657,15 +2657,19 @@ public class BinanceServiceImpl implements BinanceService {
             t_volume = t_volume.add(Utils.getBigDecimal(trade.getVolume()));
         }
 
+        String profit = "";
         String total_profit = "";
         if (tradeList.size() > 0) {
             total_profit += "t_profit:" + type + ": ";
             total_profit += Utils.appendLeft(String.valueOf(t_profit.intValue()), 5) + "$";
             total_profit += "/" + Utils.appendLeft(String.valueOf(t_volume), 5) + "(lot)";
             total_profit += "/" + Utils.appendSpace(String.valueOf(tradeList.size()), 2) + "(trade)";
+
+            profit = "   " + type + Utils.appendLeft(String.valueOf(t_profit.intValue()), 5) + "$";
+            profit += "/" + Utils.appendSpace(String.valueOf(tradeList.size()), 2) + "   ";
         }
 
-        String append = prefix.trim() + " " + append2;
+        String append = prefix.trim() + " " + append2 + profit;
 
         outputLog(EPIC, dailyRange, curr_price, append, trend_w1, total_profit);
 
@@ -4129,7 +4133,6 @@ public class BinanceServiceImpl implements BinanceService {
             {
                 seq += Utils.appendSpace(seq_h1_h4, 12);
                 seq += Utils.get_seq(dto_h1, dto_15, dto_10, dto_05, dto_03);
-                seq += "   ";
             }
 
             String eoz = "eoz_";
@@ -4137,18 +4140,18 @@ public class BinanceServiceImpl implements BinanceService {
             if ("_NZDUSD_".contains(EPIC)) {
                 eoz = "eoz_";
             }
-            eoz += Utils.appendSpace((Utils.is_daily_range_can_still_be_trade(dto_w1, dto_d1, dto_h4, trend_d1)
-                    ? Utils.possible_take_profit(dto_d1, dto_h4, trend_d1)
-                    : ""), 10);
+            eoz += Utils.appendSpace((Utils.is_daily_range_can_still_be_trade(dto_w1, dto_d1, dto_h4, trend_w1)
+                    ? Utils.possible_take_profit(dto_d1, dto_h4, trend_w1)
+                    : ""), 8);
             if (eoz.contains("eoz_     ")) {
-                eoz = eoz.replace("eoz_     ", "         ");
+                eoz = eoz.replace("eoz_   ", "       ");
             }
 
             String trend_by_amp = Utils.get_trend_by_amp(dailyRange, curr_price);
             if (Utils.isNotBlank(trend_by_amp)) {
                 trend_by_amp = "amp_" + Utils.getType(trend_by_amp);
             }
-            eoz += Utils.appendSpace(trend_by_amp, 15);
+            eoz += Utils.appendSpace(trend_by_amp, 5);
 
             // ---------------------------------------------------------------------------------------------
 
@@ -4185,6 +4188,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             analysis_profit(prefix, EPIC, append, dailyRange, trend_w1, curr_price);
 
+            BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
         }
 
         return count;
