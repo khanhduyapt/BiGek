@@ -4206,7 +4206,7 @@ public class BinanceServiceImpl implements BinanceService {
             // -------------------------------------------------------------------------------------------------
             // -------------------------------------------------------------------------------------------------
 
-            if (Objects.equals(trend_w1, trend_d1)) {
+            if (Objects.equals(trend_by_amp, trend_w1) && Objects.equals(trend_w1, trend_d1)) {
                 // Kiểm tra biên độ đủ đảm bảo TP 1 cây nến H4 không.
                 boolean possible_tp = Utils.is_daily_range_can_still_be_trade(dto_w1, dto_d1, dto_h4, trend_d1);
                 String eoz = Utils.possible_take_profit(dto_d1, dto_h4, trend_d1);
