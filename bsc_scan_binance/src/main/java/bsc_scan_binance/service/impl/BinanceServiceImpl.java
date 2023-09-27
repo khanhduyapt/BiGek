@@ -4314,7 +4314,6 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.isNull(trade_dto) && Objects.equals(trend_w1, trend_d1) && Objects.equals(trend_w1, trend_h1)
                     && Utils.is_daily_range_can_still_be_trade(dto_w1, dto_d1, dto_h4, trend_d1)) {
 
-                // TODO: 5. OpenTrade
                 String cutting = Utils.switch_trend_real_time_by_trend_d1(EPIC, dto_d1, dto_h4, dto_h1, dto_15, dto_10,
                         dto_05, dto_03);
 
