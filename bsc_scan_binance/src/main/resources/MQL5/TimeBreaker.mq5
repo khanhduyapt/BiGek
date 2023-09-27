@@ -74,7 +74,7 @@ void OnTimer(void)
 
    if(nfile_daily_pivot != INVALID_HANDLE)
      {
-      FileWrite(nfile_daily_pivot, "TimeCurrent", "symbol", "mid", "amp", "daily_open", "daily_close", "support1", "support2", "support3", "resistance1", "resistance2", "resistance3", "pivot");
+      FileWrite(nfile_daily_pivot, "TimeCurrent", "symbol", "mid", "amp", "daily_open", "daily_close", "support1", "support2", "support3", "resistance1", "resistance2", "resistance3", "pivot", "trend_w1", "pre_week_mid", "this_week_mid");
 
 
       int total_fx_stock_size = ArraySize(sAllSymbols);
@@ -131,18 +131,30 @@ void OnTimer(void)
 
 
 
-         mid                = NormalizeDouble(mid, digits);
-         amp                = NormalizeDouble(amp, digits);
-         pivot              = NormalizeDouble(pivot, digits);
-         support1           = NormalizeDouble(support1, digits);
-         support2           = NormalizeDouble(support2, digits);
-         support3           = NormalizeDouble(support3, digits);
-         resistance1        = NormalizeDouble(resistance1, digits);
-         resistance2        = NormalizeDouble(resistance2, digits);
-         resistance3        = NormalizeDouble(resistance3, digits);
+         mid                = format_double(mid, digits);
+         amp                = format_double(amp, digits);
+         pivot              = format_double(pivot, digits);
+         support1           = format_double(support1, digits);
+         support2           = format_double(support2, digits);
+         support3           = format_double(support3, digits);
+         resistance1        = format_double(resistance1, digits);
+         resistance2        = format_double(resistance2, digits);
+         resistance3        = format_double(resistance3, digits);
 
+         double pre_week_open = iOpen(symbol, PERIOD_W1, 1);
+         double pre_week_close = iClose(symbol, PERIOD_W1, 1);
+         double pre_week_mid = format_double((pre_week_open + pre_week_close) / 2.0, digits);
 
-         FileWrite(nfile_daily_pivot, TimeToString(TimeCurrent(), TIME_DATE), symbol, mid, amp, daily_open, daily_close, support1, support2, support3, resistance1, resistance2, resistance3, pivot);
+         double this_week_open = iOpen(symbol, PERIOD_W1, 0);
+         double this_week_close = iClose(symbol, PERIOD_W1, 0);
+         double this_week_mid = format_double((this_week_open + this_week_close) / 2.0, digits);
+
+         string trend_w1 = "BUY";
+         if(pre_week_mid > this_week_mid)
+           {
+            trend_w1 = "SELL";
+           }
+         FileWrite(nfile_daily_pivot, TimeToString(TimeCurrent(), TIME_DATE), symbol, mid, amp, daily_open, daily_close, support1, support2, support3, resistance1, resistance2, resistance3, pivot, trend_w1, pre_week_mid, this_week_mid);
         } //for
       //--------------------------------------------------------------------------------------------------------------------
 
@@ -300,6 +312,14 @@ int OnCalculate(const int rates_total,
   }
 
 //+------------------------------------------------------------------+
+double format_double(double number, int digits)
+  {
+   string formattedNumber = DoubleToString(number, 5);
+   StringReplace(formattedNumber, "00000000001", "");
+   StringReplace(formattedNumber, "99999999999", "");
+
+   return NormalizeDouble(StringToDouble(formattedNumber), digits);
+  }
 
 //+------------------------------------------------------------------+
 

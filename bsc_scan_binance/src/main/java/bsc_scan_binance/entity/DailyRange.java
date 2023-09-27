@@ -34,6 +34,9 @@ import lombok.NoArgsConstructor;
 //    resistance2 numeric(30,5) DEFAULT 0,
 //    resistance3 numeric(30,5) DEFAULT 0,
 //    pivot numeric(30,5) DEFAULT 0,
+//    trend_w1 character varying(255) COLLATE pg_catalog."default",
+//    pre_week_mid numeric(30,5),
+//    this_week_mid numeric(30,5),
 //    CONSTRAINT daily_range_pkey PRIMARY KEY (yyyy_mm_dd, symbol)
 //)
 
@@ -75,4 +78,12 @@ public class DailyRange {
     @Column(name = "pivot")
     private BigDecimal pivot = BigDecimal.ZERO;
 
+    @Column(name = "trend_w1")
+    private String trend_w1 = "";
+
+    @Column(name = "pre_week_mid")
+    private BigDecimal pre_week_mid = BigDecimal.ZERO;
+
+    @Column(name = "this_week_mid")
+    private BigDecimal this_week_mid = BigDecimal.ZERO;
 }

@@ -31,4 +31,6 @@ public class Mt5OpenTrade {
 
     private BigDecimal take_profit2 = BigDecimal.ZERO;
     private BigDecimal take_profit3 = BigDecimal.ZERO;
+
+    private Integer total_trade = 0;
 }
