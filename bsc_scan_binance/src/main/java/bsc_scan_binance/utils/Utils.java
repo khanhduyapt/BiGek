@@ -313,14 +313,15 @@ public class Utils {
     public static final List<String> EPICS_FOREXS_AUD = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD");
 
     // "16:30 - 23:00"
-    public static final List<String> EPICS_STOCKS = Arrays.asList("AAPL", "AIRF", "AMZN", "BAC", "BAYGn", "DBKGn",
-            "GOOG", "LVMH", "META", "MSFT", "NFLX", "NVDA", "PFE", "RACE", "TSLA", "VOWG_p", "WMT", "BABA", "T", "V",
-            "ZM");
+    // "AIRF", "LVMH", "PFE", "RACE", "VOWG_p", "BABA", "T", "V", "ZM"
+    public static final List<String> EPICS_STOCKS = Arrays.asList("AAPL", "AMZN", "BAC", "BAYGn", "DBKGn",
+            "GOOG", "META", "MSFT", "NFLX", "NVDA", "TSLA", "WMT");
 
-    public static final List<String> EPICS_STOCKS_EUR = Arrays.asList("AIRF", "LVMH", "BAYGn", "VOWG_p", "DBKGn");
+    //"AIRF", "LVMH", "BAYGn", "VOWG_p", "DBKGn"
+    public static final List<String> EPICS_STOCKS_EUR = Arrays.asList();
 
-    public static final List<String> EPICS_STOCKS_USA = Arrays.asList("AAPL", "AMZN", "BAC", "GOOG", "META", "MSFT",
-            "NFLX", "NVDA", "PFE", "RACE", "TSLA", "WMT", "BABA", "T", "V", "ZM");
+    public static final List<String> EPICS_STOCKS_USA = Arrays.asList("AAPL", "AMZN", "BAC", "BAYGn", "DBKGn",
+            "GOOG", "META", "MSFT", "NFLX", "NVDA", "TSLA", "WMT");
 
     // ALL Binance.com
     public static final List<String> ALL_COINS_BINANCE = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ARB", "ADA",
@@ -4640,13 +4641,13 @@ public class Utils {
     public static String getTakeProfit123ByAmp(DailyRange dailyRange, BigDecimal curr_price, String find_trend) {
         String result = "";
         if (Objects.equals(Utils.TREND_LONG, find_trend)) {
-            result += " tp1:" + Utils.appendSpace(dailyRange.getResistance1(), 8);
-            result += " tp2:" + Utils.appendSpace(dailyRange.getResistance2(), 8);
-            result += " tp3:" + Utils.appendSpace(dailyRange.getResistance3(), 8);
+            result += " (r1):" + Utils.appendSpace(dailyRange.getResistance1(), 8);
+            result += " (r2):" + Utils.appendSpace(dailyRange.getResistance2(), 8);
+            result += " (r3):" + Utils.appendSpace(dailyRange.getResistance3(), 8);
         } else {
-            result += " tp1:" + Utils.appendSpace(dailyRange.getSupport1(), 8);
-            result += " tp2:" + Utils.appendSpace(dailyRange.getSupport2(), 8);
-            result += " tp3:" + Utils.appendSpace(dailyRange.getSupport3(), 8);
+            result += " (s1):" + Utils.appendSpace(dailyRange.getSupport1(), 8);
+            result += " (s2):" + Utils.appendSpace(dailyRange.getSupport2(), 8);
+            result += " (s3):" + Utils.appendSpace(dailyRange.getSupport3(), 8);
         }
 
         return result;
@@ -6078,75 +6079,3 @@ public class Utils {
         return result;
     }
 }
-
-/*
-// -------------------------------------------------------------------------------------------------
-            // -------------------------------------------------------------------------------------------------
-            // -------------------------------------------------------------------------------------------------
-
-            if (Objects.isNull(trade_dto) && Objects.equals(trend_by_amp, trend_w1)
-                    && Objects.equals(trend_w1, trend_d1)) {
-                // Kiểm tra biên độ đủ đảm bảo TP 1 cây nến H4 không.
-                boolean possible_tp = Utils.is_daily_range_can_still_be_trade(dto_w1, dto_d1, dto_h4, trend_d1);
-                String eoz = Utils.possible_take_profit(dto_d1, dto_h4, trend_d1);
-                if (!possible_tp || Utils.isNotBlank(eoz)) {
-                    continue;
-                }
-
-                if (!(Objects.equals(trend_d1, dto_w1.getTrend_of_heiken3())
-
-                        || (Objects.equals(trend_d1, dto_d1.getTrend_of_heiken3_1())
-                                && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_10())
-                                && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3())
-                                && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3_1()))
-
-                        || (Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())
-                                && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3())
-                                && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_10()))
-
-                        || (Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3())
-                                && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_10())
-                                && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_20())
-                                && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_50()))
-
-                )) {
-                    continue;
-                }
-
-                // TODO: 5. OpenTrade
-                String cutting = Utils.switch_trend_real_time_by_trend_d1(EPIC, dto_d1, dto_h4, dto_h1, dto_15, dto_10,
-                        dto_05, dto_03);
-
-                boolean allow_trade_by_seq = false;
-                String seq = Utils.get_seq_minus(trend_d1, dto_15, dto_10, dto_10);
-                if (Objects.equals(trend_d1, dto_w1.getTrend_of_heiken3())
-                        && Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())
-
-                        && Objects.equals(trend_d1, dto_h1.getTrend_by_ma_10())
-                        && Objects.equals(trend_d1, dto_h1.getTrend_of_heiken3())
-                        && Objects.equals(trend_d1, dto_h1.getTrend_of_heiken3_1())
-
-                        && Objects.equals(trend_d1, dto_15.getTrend_of_heiken3())
-                        && Objects.equals(trend_d1, dto_10.getTrend_of_heiken3())
-                        && Objects.equals(trend_d1, dto_05.getTrend_of_heiken3())
-                        && Objects.equals(trend_d1, dto_03.getTrend_of_heiken3())
-
-                        && Utils.isNotBlank(seq)) {
-                    allow_trade_by_seq = true;
-                }
-
-                if (Utils.isNotBlank(cutting) || allow_trade_by_seq) {
-                    append += "_xuh" + cutting + seq + Utils.TEXT_PASS;
-
-                    trade_dto = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1, curr_price, "_xuhong" + append,
-                            true, Utils.CAPITAL_TIME_H1, dailyRange, total_trade);
-
-                    String key = EPIC + Utils.CAPITAL_TIME_H1;
-                    BscScanBinanceApplication.mt5_open_trade_List.add(trade_dto);
-
-                    BscScanBinanceApplication.dic_comment.put(key, trade_dto.getComment());
-
-                    close_reverse_trade(EPIC, trend_d1, true);
-                }
-            }
-*/

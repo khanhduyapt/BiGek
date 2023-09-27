@@ -130,7 +130,7 @@ double get_total_loss()
 //+------------------------------------------------------------------+
 bool isDailyLimit()
   {
-   double DAILY_LOSS_LIMIT = 3000;
+   double DAILY_LOSS_LIMIT = 3500;
 
    double total_loss = get_total_loss();
 //Alert("total_loss="+ (string)total_loss);
@@ -302,16 +302,14 @@ void openTrade(string line)
       allow_append_trade = false;
      }
 
-   /*
-      double LOSS_LIMIT = 1000;
-      double total_loss = get_total_loss();
-      if(total_loss > LOSS_LIMIT)
-        {
-         allow_append_trade = false;
-        }
-   */
 
-// Alert("Count: ", (string)count, " total_trade: ", (string)total_trade);
+   double LOSS_LIMIT = 1000;
+   double total_loss = get_total_loss();
+   if(total_loss > LOSS_LIMIT)
+     {
+      allow_append_trade = false;
+     }
+
 
    if(allow_append_trade && (1 <= total_trade) && (total_trade <= 3))
      {
@@ -319,16 +317,16 @@ void openTrade(string line)
       int    digits = (int)SymbolInfoInteger(trade_symbol,SYMBOL_DIGITS);     // number of decimal places
       double point  = SymbolInfoDouble(trade_symbol,SYMBOL_POINT);            // point
 
-      stop_loss        = NormalizeDouble(stop_loss, digits);
+      stop_loss        = format_double(stop_loss, digits);
 
-      entry1           = NormalizeDouble(entry1,digits);
-      take_prifit_1    = NormalizeDouble(take_prifit_1, digits);
+      entry1           = format_double(entry1,digits);
+      take_prifit_1    = format_double(take_prifit_1, digits);
 
-      entry_2          = NormalizeDouble(entry_2, digits);
-      take_prifit_2    = NormalizeDouble(take_prifit_2, digits);
+      entry_2          = format_double(entry_2, digits);
+      take_prifit_2    = format_double(take_prifit_2, digits);
 
-      entry_3          = NormalizeDouble(entry_3, digits);
-      take_prifit_3    = NormalizeDouble(take_prifit_3, digits);
+      entry_3          = format_double(entry_3, digits);
+      take_prifit_3    = format_double(take_prifit_3, digits);
 
 
       datetime expiration=TimeTradeServer() + PeriodSeconds(PERIOD_D1);
@@ -371,6 +369,7 @@ void openTrade(string line)
 
   }
 
+
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -397,20 +396,20 @@ void trailingSL(string line)
 
       if(my_ticket == cur_ticket)
         {
-         double my_sl     = NormalizeDouble(StringToDouble(result[1]),digits);
-         double my_tp     = NormalizeDouble(StringToDouble(result[2]),digits);
+         double my_sl     = format_double(StringToDouble(result[1]), digits);
+         double my_tp     = format_double(StringToDouble(result[2]), digits);
 
-         double cur_sl    = NormalizeDouble(PositionGetDouble(POSITION_SL),digits);   // Stop Loss of the position
-         double cur_tp    = NormalizeDouble(PositionGetDouble(POSITION_TP),digits);   // Take Profit of the position
+         double cur_sl    = format_double(PositionGetDouble(POSITION_SL), digits);   // Stop Loss of the position
+         double cur_tp    = format_double(PositionGetDouble(POSITION_TP), digits);   // Take Profit of the position
 
-         string my_key    = (string)cur_ticket + "_" + (string) my_sl + "_" + (string)cur_tp;
+         string my_key    = (string)cur_ticket + "_" + (string)my_sl  + "_" + (string)my_tp;
          string cur_key   = (string)cur_ticket + "_" + (string)cur_sl + "_" + (string)cur_tp;
 
          if(my_key != cur_key)
            {
-            Alert("TrailingSL: ticket=" + (string)my_ticket + "   " + trade_symbol + " SL:" + (string)cur_sl + "->" + (string)my_sl + "    TP:" + (string)cur_tp);
+            Alert("TrailingSL: ticket=" + (string)my_ticket + "   " + trade_symbol + " SL:" + (string)cur_sl + "->" + (string)my_sl + "    TP:" + (string)cur_tp + "->" + (string)my_tp);
 
-            m_trade.PositionModify(my_ticket, my_sl, cur_tp);
+            m_trade.PositionModify(my_ticket, my_sl, my_tp);
 
 
             Comment("----------------------------- TrailingSL: ticket=" + (string)my_ticket + "   " + trade_symbol + " SL:" + (string)cur_sl + "->" + (string)my_sl + "    TP:" + (string)cur_tp);
@@ -534,6 +533,19 @@ void OnTimer()
 //+------------------------------------------------------------------+
   }
 //+------------------------------------------------------------------+
+double format_double(double number, int digits)
+  {
+   string numberString = DoubleToString(number, 10);
+   int dotPosition = StringFind(numberString, ".");
+   if(dotPosition != -1 && StringLen(numberString) > dotPosition + digits)
+     {
+      int integerPart = (int)MathFloor(number);
+      string fractionalPart = StringSubstr(numberString, dotPosition + 1, digits);
+      numberString = (string)integerPart+ "." + fractionalPart;
+     }
+
+   return NormalizeDouble(StringToDouble(numberString), digits);
+  }
 
 //+------------------------------------------------------------------+
 
