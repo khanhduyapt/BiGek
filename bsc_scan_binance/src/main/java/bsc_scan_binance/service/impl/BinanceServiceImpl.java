@@ -2687,6 +2687,11 @@ public class BinanceServiceImpl implements BinanceService {
                     EPIC = mt5Entity.getSymbol();
                 }
 
+                // TODO: CloseTickets HOLDING
+                if (!"__XAUUSD___".contains("_" + EPIC.toUpperCase() + "_")) {
+                    continue;
+                }
+
                 if (Utils.EPICS_STOCKS_EUR.contains(EPIC) && !Utils.is_london_session()) {
                     continue;
                 }
@@ -2807,7 +2812,7 @@ public class BinanceServiceImpl implements BinanceService {
                         sb.append('\t');
                         sb.append(dto.getEntry1()); //3
                         sb.append('\t');
-                        sb.append(dto.getStop_loss()); //4
+                        sb.append(BigDecimal.ZERO); //4 dto.getStop_loss()
                         sb.append('\t');
                         sb.append(dto.getTake_profit1()); //5
                         sb.append('\t');
@@ -3663,7 +3668,13 @@ public class BinanceServiceImpl implements BinanceService {
         // ----------------------------------------------------------------------------------------------
         try {
             String mt5_trailing_sl_file = Utils.getMt5DataFolder() + "TrailingStoploss.csv";
-            FileWriter writer = new FileWriter(mt5_trailing_sl_file, true);
+            try {
+                //File myScap = new File(mt5_trailing_sl_file);
+                //myScap.delete();
+            } catch (Exception e) {
+            }
+
+            FileWriter writer = new FileWriter(mt5_trailing_sl_file, false);
             for (Mt5DataTrade trade : tradeList) {
                 BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
 
@@ -3725,23 +3736,23 @@ public class BinanceServiceImpl implements BinanceService {
                     System.out.println("traning_stop:   " + trade.toString());
                 } else {
 
-                    if (trade.getStopLoss().compareTo(BigDecimal.ZERO) < 1) {
-                        Orders dto_w1 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_W1)
-                                .orElse(null);
-
-                        if (Objects.nonNull(dto_w1) && !Objects.equals(TRADE_TREND, Utils.TREND_UNSURE)) {
-                            BigDecimal stop_loss_w1 = Utils.calc_sl1_tp2(dto_w1, TRADE_TREND).get(0);
-
-                            StringBuilder sb = new StringBuilder();
-                            sb.append(trade.getTicket()); // TICKET
-                            sb.append('\t');
-                            sb.append(stop_loss_w1); // SL
-                            sb.append('\t');
-                            sb.append(trade.getTakeProfit()); // TP
-                            sb.append('\n');
-                            writer.write(sb.toString());
-                        }
-                    }
+                    //if (Utils.getBigDecimal(trade.getStopLoss()).compareTo(BigDecimal.ZERO) < 1) {
+                    //    Orders dto_d1 = ordersRepository.findById(trade.getSymbol() + "_" + Utils.CAPITAL_TIME_D1)
+                    //            .orElse(null);
+                    //
+                    //    if (Objects.nonNull(dto_d1) && !Objects.equals(TRADE_TREND, Utils.TREND_UNSURE)) {
+                    //        BigDecimal stop_loss = Utils.calc_sl1_tp2(dto_d1, TRADE_TREND).get(0);
+                    //
+                    //        StringBuilder sb = new StringBuilder();
+                    //        sb.append(trade.getTicket()); // TICKET
+                    //        sb.append('\t');
+                    //        sb.append(stop_loss); // SL
+                    //        sb.append('\t');
+                    //        sb.append(trade.getTakeProfit()); // TP
+                    //        sb.append('\n');
+                    //        writer.write(sb.toString());
+                    //    }
+                    //}
 
                 }
             }
@@ -4108,10 +4119,6 @@ public class BinanceServiceImpl implements BinanceService {
         CAPITAL_LIST.addAll(Utils.EPICS_INDEXS_CFD);
         CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_ALL);
 
-        List<String> NOTICE_LIST = new ArrayList<String>();
-        NOTICE_LIST.addAll(Utils.EPICS_STOCKS);
-        CAPITAL_LIST.addAll(NOTICE_LIST);
-
         String scap_epics = "(SCAP_15M)";
         String scap_epic_keys = "";
         List<String> scap_15m_list = new ArrayList<String>();
@@ -4144,13 +4151,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             DailyRange dailyRange = ranges.get(0);
             String append = "";
-            if (NOTICE_LIST.contains(EPIC)) {
-                if (Objects.equals(Utils.TREND_SHOT, trend_w1)) {
-                    continue;
-                }
-
-                append += Utils.TEXT_NOTICE_ONLY;
-            }
 
             String trend_by_amp = Utils.get_trend_by_amp(dailyRange, curr_price);
 
@@ -4479,10 +4479,8 @@ public class BinanceServiceImpl implements BinanceService {
                     reason = "DCA";
                 }
 
-                if (!"__HOLDING____".contains("_" + EPIC + "_")) {
-                    if (is_hit_sl) {
-                        BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
-                    }
+                if (is_hit_sl) {
+                    BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
                 }
 
                 if (is_append_trade || take_profit) {
