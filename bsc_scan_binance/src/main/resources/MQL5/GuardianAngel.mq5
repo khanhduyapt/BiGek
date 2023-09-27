@@ -145,7 +145,7 @@ bool isDailyLimit()
          ulong positionTicket = PositionGetTicket(i);
          double profit = PositionGetDouble(POSITION_PROFIT);
          string _symbol = PositionGetString(POSITION_SYMBOL);
-         if(profit > 10)
+         if(profit > 100)
            {
             Alert("Close Position: " + (string)positionTicket + " : " + _symbol + " Profit: " + (string) profit);
             m_trade.PositionClose(positionTicket);
@@ -334,7 +334,7 @@ void openTrade(string line)
 
       if(type == "buy")
         {
-         Alert("AutoTrade: BUY: ", trade_symbol, " ",volume," ", comment);
+         Alert("AutoTrade: BUY: ", trade_symbol, " vol:",volume," stop_loss:", stop_loss, " ", comment);
 
          if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry1, stop_loss, take_prifit_1, comment))
             Alert("Duydk: BUY: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
@@ -351,7 +351,7 @@ void openTrade(string line)
 
       if(type == "sell")
         {
-         Alert("AutoTrade: SELL: ", trade_symbol, " ",volume," ", comment);
+         Alert("AutoTrade: SELL: ", trade_symbol, " vol:",volume," stop_loss:", stop_loss, " ", comment);
 
          if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry1, stop_loss, take_prifit_1, comment))
             Alert("Duydk: SELL: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
