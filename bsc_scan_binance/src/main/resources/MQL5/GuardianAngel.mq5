@@ -73,10 +73,12 @@ void ClearAll()
   }
 
 //+------------------------------------------------------------------+
-//|                                                                  |
+//| Get current server time function                                 |
 //+------------------------------------------------------------------+
-double get_total_loss()
+bool isDailyLimit()
   {
+   double DAILY_LOSS_LIMIT = 5000;
+
    MqlDateTime date_time;
    TimeToStruct(TimeCurrent(), date_time);
    int current_day = date_time.day, current_month = date_time.mon, current_year = date_time.year;
@@ -121,48 +123,14 @@ double get_total_loss()
    double current_equity   = AccountInfoDouble(ACCOUNT_EQUITY);
 
    double loss = starting_balance - current_equity;
-
-   return loss;
-  }
-
-//+------------------------------------------------------------------+
-//| Get current server time function                                 |
-//+------------------------------------------------------------------+
-bool isDailyLimit()
-  {
-   double DAILY_LOSS_LIMIT = 3500;
-
-   double total_loss = get_total_loss();
-//Alert("total_loss="+ (string)total_loss);
+   Comment("-----------------------------------------------Today Loss:" + format_double_to_string(loss, 5) + "-----------------------------------------------");
 
 // Return result
-   bool result = total_loss > DAILY_LOSS_LIMIT;
+   bool result = current_equity < starting_balance - DAILY_LOSS_LIMIT;
    if(result)
      {
-      Alert("Stop trading today! total_loss="+ (string)total_loss);
-      for(int i = PositionsTotal() - 1; i >= 0; i--)
-        {
-         ulong positionTicket = PositionGetTicket(i);
-         double profit = PositionGetDouble(POSITION_PROFIT);
-         string _symbol = PositionGetString(POSITION_SYMBOL);
-         if(profit > 100)
-           {
-            Alert("Close Position: " + (string)positionTicket + " : " + _symbol + " Profit: " + (string) profit);
-            m_trade.PositionClose(positionTicket);
-           }
-        }
-     }
-
-
-   if(total_loss > (DAILY_LOSS_LIMIT/3))
-     {
-      for(int i = OrdersTotal() - 1; i >= 0; i--)
-        {
-         ulong orderTicket = OrderGetTicket(i);
-         string order_symbol = OrderGetString(ORDER_SYMBOL);
-         Alert(" Close Order: " + (string)orderTicket + " : " + order_symbol);
-         m_trade.OrderDelete(orderTicket);
-        }
+      //Alert("Stop trading today! Loss="+ (string)loss + " current_equity=" + (string) current_equity + " starting_balance=" + (string)starting_balance);
+      Comment("-----------------------------------------------Stop trading today! Today Loss:" + format_double_to_string(loss, 5) + " current_equity=" + (string) current_equity + " starting_balance=" + (string)starting_balance);
      }
 
    return result;
@@ -189,7 +157,7 @@ void closeSymbol(ulong ticket)
          if(OrderSelect(orderTicket))
            {
             m_trade.OrderDelete(orderTicket);
-            Comment("-----------------------------GuardianAngel: (OrderDelete)" + (string) orderTicket +  " Symbol: " + OrderGetString(ORDER_SYMBOL));
+            //Comment("-----------------------------GuardianAngel: (OrderDelete)" + (string) orderTicket +  " Symbol: " + OrderGetString(ORDER_SYMBOL));
            }
         }
      }
@@ -201,7 +169,7 @@ void closeSymbol(ulong ticket)
       if(positionTicket == ticket)
         {
          m_trade.PositionClose(positionTicket);
-         Comment("-----------------------------GuardianAngel: (PositionClose)" + (string) positionTicket +  " Symbol: " + PositionGetString(POSITION_SYMBOL));
+         //Comment("-----------------------------GuardianAngel: (PositionClose)" + (string) positionTicket +  " Symbol: " + PositionGetString(POSITION_SYMBOL));
         }
      }
   }
@@ -233,7 +201,7 @@ void openTrade(string line)
 //Alert((string) k);
 
 
-   if(k != 12)
+   if(k != 11)
      {
       return ;
      }
@@ -252,9 +220,6 @@ void openTrade(string line)
    double entry_3 = StringToDouble(result[9]);
    double take_prifit_3 = StringToDouble(result[10]);
 
-   int total_trade = (int)StringToInteger(result[11]);
-
-
    string trade_symbol = result[0];
    string lowcase_symbol = epic;
    if(StringFind(cash, epic, 0) >= 0)
@@ -263,7 +228,16 @@ void openTrade(string line)
       trade_symbol = trade_symbol + ".cash";
      }
 
-   int count = 0;
+   /*
+      Alert("lowcase_symbol: " + lowcase_symbol);
+      Alert("EPIC: " + epic);
+      Alert("ORDER_TYPE: " + result[1]);
+      Alert("lots: " + result[2]);
+      Alert("entry1: " + result[3]);
+      Alert("stop_loss: " + result[4]);
+   */
+
+   bool not_found = true;
    for(int i = OrdersTotal() - 1; i >= 0; i--)
      {
       ulong orderTicket = OrderGetTicket(i);
@@ -274,10 +248,10 @@ void openTrade(string line)
       if(lowcase_symbol == order_symbol)
         {
          // Alert(type + " order_symbol: " + order_symbol + " lowcase_symbol:" + lowcase_symbol);
-         count = count + 1;
+         not_found = false;
+         break;
         }
      }
-
 
    for(int i = PositionsTotal() - 1; i >= 0; i--)
      {
@@ -287,46 +261,34 @@ void openTrade(string line)
       if(lowcase_symbol == trading_symbol)
         {
          // Alert(type + " order_symbol: " + order_symbol + " lowcase_symbol:" + lowcase_symbol);
-         count = count + 1;
+         not_found = false;
+         break;
         }
      }
 
-   bool allow_append_trade = false;
-   if(count < total_trade)
+   if(not_found == false)
      {
-      allow_append_trade = true;
-     }
-
-   if(count > 3)
-     {
-      allow_append_trade = false;
+      // Alert(type + " " + trade_symbol + " REALLY EXIST.");
      }
 
 
-   double LOSS_LIMIT = 1000;
-   double total_loss = get_total_loss();
-   if(total_loss > LOSS_LIMIT)
-     {
-      allow_append_trade = false;
-     }
 
-
-   if(allow_append_trade && (1 <= total_trade) && (total_trade <= 3))
+   if(not_found)
      {
       // Alert(type + " " + trade_symbol + " ADDED ORDER.");
       int    digits = (int)SymbolInfoInteger(trade_symbol,SYMBOL_DIGITS);     // number of decimal places
       double point  = SymbolInfoDouble(trade_symbol,SYMBOL_POINT);            // point
 
-      stop_loss        = format_double(stop_loss, digits);
+      stop_loss        = NormalizeDouble(stop_loss, digits);
 
-      entry1           = format_double(entry1,digits);
-      take_prifit_1    = format_double(take_prifit_1, digits);
+      entry1           = NormalizeDouble(entry1,digits);
+      take_prifit_1    = NormalizeDouble(take_prifit_1, digits);
 
-      entry_2          = format_double(entry_2, digits);
-      take_prifit_2    = format_double(take_prifit_2, digits);
+      entry_2          = NormalizeDouble(entry_2, digits);
+      take_prifit_2    = NormalizeDouble(take_prifit_2, digits);
 
-      entry_3          = format_double(entry_3, digits);
-      take_prifit_3    = format_double(take_prifit_3, digits);
+      entry_3          = NormalizeDouble(entry_3, digits);
+      take_prifit_3    = NormalizeDouble(take_prifit_3, digits);
 
 
       datetime expiration=TimeTradeServer() + PeriodSeconds(PERIOD_D1);
@@ -334,13 +296,11 @@ void openTrade(string line)
 
       if(type == "buy")
         {
-         Alert("AutoTrade: BUY: ", trade_symbol, " vol:",volume," stop_loss:", stop_loss, " ", comment);
-
          if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry1, stop_loss, take_prifit_1, comment))
             Alert("Duydk: BUY: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
 
-         //m_trade.BuyLimit(volume, entry_2, trade_symbol, stop_loss, take_prifit_2, ORDER_TIME_GTC, expiration, comment + "_21");
-         //m_trade.BuyLimit(volume, entry_2, trade_symbol, stop_loss, take_prifit_2, ORDER_TIME_GTC, expiration, comment + "_22");
+         m_trade.BuyLimit(volume, entry_2, trade_symbol, stop_loss, take_prifit_2, ORDER_TIME_GTC, expiration, comment + "_21");
+         m_trade.BuyLimit(volume, entry_2, trade_symbol, stop_loss, take_prifit_2, ORDER_TIME_GTC, expiration, comment + "_22");
 
          //m_trade.BuyLimit(volume, entry_3, trade_symbol, stop_loss, take_prifit_3, ORDER_TIME_GTC, expiration, comment + "_31");
          //m_trade.BuyLimit(volume, entry_3, trade_symbol, stop_loss, take_prifit_3, ORDER_TIME_GTC, expiration, comment + "_32");
@@ -348,16 +308,18 @@ void openTrade(string line)
          //m_trade.BuyLimit(volume, entry_3, trade_symbol, stop_loss, take_prifit_3, ORDER_TIME_GTC, expiration, comment + "_34");
         }
 
+      if(type == "buy_limit")
+        {
+
+        }
 
       if(type == "sell")
         {
-         Alert("AutoTrade: SELL: ", trade_symbol, " vol:",volume," stop_loss:", stop_loss, " ", comment);
-
          if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry1, stop_loss, take_prifit_1, comment))
             Alert("Duydk: SELL: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
 
-         //m_trade.SellLimit(volume, entry_2, trade_symbol, stop_loss, take_prifit_2, ORDER_TIME_GTC, expiration, comment + "_21");
-         //m_trade.SellLimit(volume, entry_2, trade_symbol, stop_loss, take_prifit_2, ORDER_TIME_GTC, expiration, comment + "_22");
+         m_trade.SellLimit(volume, entry_2, trade_symbol, stop_loss, take_prifit_2, ORDER_TIME_GTC, expiration, comment + "_21");
+         m_trade.SellLimit(volume, entry_2, trade_symbol, stop_loss, take_prifit_2, ORDER_TIME_GTC, expiration, comment + "_22");
 
          //m_trade.SellLimit(volume, entry_3, trade_symbol, stop_loss, take_prifit_3, ORDER_TIME_GTC, expiration, comment + "_31");
          //m_trade.SellLimit(volume, entry_3, trade_symbol, stop_loss, take_prifit_3, ORDER_TIME_GTC, expiration, comment + "_32");
@@ -365,10 +327,14 @@ void openTrade(string line)
          //m_trade.SellLimit(volume, entry_3, trade_symbol, stop_loss, take_prifit_3, ORDER_TIME_GTC, expiration, comment + "_34");
         }
 
+      if(type== "sell_limit")
+        {
+
+        }
+
      }
 
   }
-
 
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -396,23 +362,23 @@ void trailingSL(string line)
 
       if(my_ticket == cur_ticket)
         {
-         double my_sl     = format_double(StringToDouble(result[1]), digits);
-         double my_tp     = format_double(StringToDouble(result[2]), digits);
+         double my_sl     = NormalizeDouble(StringToDouble(result[1]),digits);
+         double my_tp     = NormalizeDouble(StringToDouble(result[2]),digits);
 
-         double cur_sl    = format_double(PositionGetDouble(POSITION_SL), digits);   // Stop Loss of the position
-         double cur_tp    = format_double(PositionGetDouble(POSITION_TP), digits);   // Take Profit of the position
+         double cur_sl    = NormalizeDouble(PositionGetDouble(POSITION_SL),digits);   // Stop Loss of the position
+         double cur_tp    = NormalizeDouble(PositionGetDouble(POSITION_TP),digits);   // Take Profit of the position
 
-         string my_key    = (string)cur_ticket + "_" + (string)my_sl  + "_" + (string)my_tp;
+         string my_key    = (string)cur_ticket + "_" + (string) my_sl + "_" + (string)cur_tp;
          string cur_key   = (string)cur_ticket + "_" + (string)cur_sl + "_" + (string)cur_tp;
 
          if(my_key != cur_key)
            {
-            Alert("TrailingSL: ticket=" + (string)my_ticket + "   " + trade_symbol + " SL:" + (string)cur_sl + "->" + (string)my_sl + "    TP:" + (string)cur_tp + "->" + (string)my_tp);
+            Alert("TrailingSL: ticket=" + (string)my_ticket + "   " + trade_symbol + " SL:" + (string)cur_sl + "->" + (string)my_sl + "    TP:" + (string)cur_tp);
 
-            m_trade.PositionModify(my_ticket, my_sl, my_tp);
+            m_trade.PositionModify(my_ticket, my_sl, cur_tp);
 
 
-            Comment("----------------------------- TrailingSL: ticket=" + (string)my_ticket + "   " + trade_symbol + " SL:" + (string)cur_sl + "->" + (string)my_sl + "    TP:" + (string)cur_tp);
+            //Comment("----------------------------- TrailingSL: ticket=" + (string)my_ticket + "   " + trade_symbol + " SL:" + (string)cur_sl + "->" + (string)my_sl + "    TP:" + (string)cur_tp);
            }
 
          break;
@@ -443,7 +409,7 @@ void OnTimer()
          if(profit < Loss_In_Money)
            {
             m_trade.PositionClose(m_position.Ticket());
-            Alert("PositionClose=" + (string) m_position.Ticket() + ": " + m_position.Symbol() + " Loss_In_Money="+ (string)profit);
+            Alert("PositionClose=" + (string) m_position.Ticket() + " Loss_In_Money="+ (string)profit);
 
             // Khong duoc dung cac lenh nay, rat nguy hiem, khong kiem soat dc lenh.
             //  if((m_position.TypeDescription() == "buy") || (StringFind(m_position.TypeDescription(), "buy", 0) >= 0))
@@ -533,7 +499,7 @@ void OnTimer()
 //+------------------------------------------------------------------+
   }
 //+------------------------------------------------------------------+
-double format_double(double number, int digits)
+string format_double_to_string(double number, int digits)
   {
    string numberString = DoubleToString(number, 10);
    int dotPosition = StringFind(numberString, ".");
@@ -544,9 +510,8 @@ double format_double(double number, int digits)
       numberString = (string)integerPart+ "." + fractionalPart;
      }
 
-   return NormalizeDouble(StringToDouble(numberString), digits);
+   return numberString;
   }
-
 //+------------------------------------------------------------------+
 
 //+------------------------------------------------------------------+

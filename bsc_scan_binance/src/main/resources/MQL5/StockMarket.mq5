@@ -49,8 +49,6 @@ void OnTimer(void)
                              "GOOG", "LVMH", "META", "MSFT", "NFLX", "NVDA", "PFE", "RACE", "TSLA", "VOWG_p", "WMT", "BABA", "T", "V", "ZM"
                             };
 
-      Comment("-----------------------------StockMarket: (Symbol):" + Symbol());
-
       int copied;
       int stocks_size = ArraySize(arr_stocks);
       for(int index=0; index < stocks_size; index++)

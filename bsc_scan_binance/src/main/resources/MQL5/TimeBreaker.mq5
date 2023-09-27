@@ -175,7 +175,6 @@ void OnTimer(void)
    if(nfile_handle != INVALID_HANDLE)
      {
       FileWrite(nfile_handle, "");
-      Comment("-----------------------------TimeBreaker (Symbol):"+ Symbol());
 
       int copied;
 

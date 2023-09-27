@@ -52,9 +52,6 @@ void OnTimer(void)
                              "USDCAD", "USDCHF", "USDJPY", "CADJPY", "CHFJPY", "CADCHF"
                             };
 
-
-      Comment("-----------------------------AureliusIronheart:"+ Symbol());
-
       int copied;
       int s_size = ArraySize(arr_symbol);
       for(int index=0; index < s_size; index++)
