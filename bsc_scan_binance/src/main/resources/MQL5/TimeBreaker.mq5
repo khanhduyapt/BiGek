@@ -121,9 +121,13 @@ void OnTimer(void)
          double amp = MathAbs(w_s3 - w_s2) + MathAbs(w_s2 - w_s1) + MathAbs(w_s1 - pivot) + MathAbs(pivot - w_r1) + MathAbs(w_r1 - w_r2) + MathAbs(w_r2 - w_r3);
          amp = amp / 6;
 
+         double week_clo = iClose(Symbol(), PERIOD_W1, 1);
+         mid = week_clo;
+
          w_s1 = mid - amp;
          w_s2 = w_s1 - amp;
          w_s3 = w_s2 - amp;
+
          w_r1 = mid + amp;
          w_r2 = w_r1 + amp;
          w_r3 = w_r2 + amp;

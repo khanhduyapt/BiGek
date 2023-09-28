@@ -2880,12 +2880,10 @@ public class BinanceServiceImpl implements BinanceService {
         log += "Unit:" + Utils.appendLeft(String.valueOf(Utils.get_standard_vol_per_100usd(EPIC)), 5) + "(lot)     ";
         log += "Mid:" + Utils.appendSpace(dailyRange.getMid(), 8);
 
-        if (Objects.equals(trend_w1, Utils.TREND_LONG)) {
-            log += Utils.getTakeProfit123ByAmp(dailyRange, curr_price, Utils.TREND_SHOT);
-        }
-        if (Objects.equals(trend_w1, Utils.TREND_SHOT)) {
-            log += Utils.getTakeProfit123ByAmp(dailyRange, curr_price, Utils.TREND_LONG);
-        }
+        log += Utils.getTakeProfit123ByAmp(dailyRange, curr_price, Utils.TREND_LONG);
+        log += "     ";
+        log += Utils.getTakeProfit123ByAmp(dailyRange, curr_price, Utils.TREND_SHOT);
+
         log += total_profit;
 
         Utils.logWritelnDraft(log.trim());
@@ -4185,7 +4183,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.isNotBlank(trend_by_amp) && Objects.equals(trend_h1, trend_by_amp)) {
                 trend_by_amp = "amp_" + Utils.getType(trend_by_amp);
             }
-            eoz += Utils.appendSpace(trend_by_amp, 5);
+            eoz += Utils.appendSpace("", 5);
 
             // ---------------------------------------------------------------------------------------------
 
@@ -4197,8 +4195,33 @@ public class BinanceServiceImpl implements BinanceService {
             amp += "(amp):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dailyRange.getAmp()), 6);
             amp += "(h4):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dto_h4.getAmplitude_avg_of_candles()), 6);
             amp += "(w_" + type_w1 + ")";
-            amp += Utils.getTakeProfit123ByAmp(dailyRange, curr_price, trend_w1);
             amp += "   ";
+
+            String st_d1 = dto_d1.getSwitch_trend().contains(trend_h1)
+                    ? "D1" + Utils.getType(dto_d1.getTrend_of_heiken3())
+                    : "   ";
+            String st_h4 = dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs20)
+                    ? "H4" + Utils.getType(dto_h4.getTrend_of_heiken3())
+                    : "   ";
+            String st_h1 = dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs50)
+                    ? "H1" + Utils.getType(dto_h1.getTrend_of_heiken3())
+                    : "  ";
+            amp += "~" + st_d1 + st_h4 + st_h1 + "~   ";
+
+            if (Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())
+                    && Objects.equals(trend_d1, dto_d1.getTrend_by_ma_20())) {
+
+                for (int index = -5; index < 6; index++) {
+                    BigDecimal distince = dailyRange.getAmp().multiply(BigDecimal.valueOf(index));
+                    BigDecimal sr = dailyRange.getMid().add(distince);
+
+                    String str_cut = Utils.get_cutting_real_time(trend_d1, dto_03, sr, "vs_sr");
+                    if (Utils.isNotBlank(str_cut)) {
+                        amp += "Cutting:" + Utils.getStringValue(sr);
+                        break;
+                    }
+                }
+            }
 
             String prefix = amp + No; // + " " + prefix_trend;
 
@@ -4208,7 +4231,7 @@ public class BinanceServiceImpl implements BinanceService {
             } else {
                 str_trend_d3 += "   ";
             }
-            str_trend_d3 += " W:" + Utils.appendSpace(dailyRange.getTrend_w1(), 6);
+            str_trend_d3 += " D:" + Utils.appendSpace(trend_d1, 6);
 
             String append = str_trend_d3 + seq + eoz;
 
@@ -4596,7 +4619,7 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
                 }
 
-                if (is_append_trade || take_profit) {
+                if (is_append_trade) {
                     String key = trade.getSymbol() + "_" + trade.getType() + trade.getTimeframe();
                     if (isReloadAfter(Utils.MINUTES_OF_1H, key)) {
                         keys += key;

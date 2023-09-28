@@ -132,7 +132,8 @@ bool isDailyLimit()
   {
    double DAILY_LOSS_LIMIT = 2000;
    double total_loss = get_total_loss();
-   Comment("-----------------------------------------------Today Loss:" + format_double_to_string(total_loss, 5) + "-----------------------------------------------");
+   Comment("----------------------------------------------------------------------------------------------",
+           "Today Loss:" + format_double_to_string(total_loss, 5) + "-----------------------------------------------");
 
 // Return result
    bool result = total_loss > DAILY_LOSS_LIMIT;
