@@ -5685,7 +5685,7 @@ public class Utils {
             if (Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())
                     || Objects.equals(trend_d1, dto_d1.getTrend_of_heiken3_1())) {
 
-                if (Objects.equals(Utils.TREND_LONG, trend_h4)) {
+                if (Objects.equals(Utils.TREND_LONG, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
                     temp = Utils.checkXCutUpY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(), dto_h4.getMa10(),
                             dto_h4.getMa10());
                     if (Utils.isNotBlank(temp))
@@ -5708,7 +5708,7 @@ public class Utils {
                 }
 
                 // ------------------------------------------------------------------------------
-                if (Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3())
+                if (Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_d1, trend_h4)
                         && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3_1())
                         && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_10())) {
 
@@ -5817,7 +5817,7 @@ public class Utils {
             if (Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())
                     || Objects.equals(trend_d1, dto_d1.getTrend_of_heiken3_1())) {
 
-                if (Objects.equals(Utils.TREND_SHOT, trend_h4)) {
+                if (Objects.equals(Utils.TREND_SHOT, trend_h4) && Objects.equals(trend_h4, trend_h1)) {
                     temp = Utils.checkXCutDnY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(), dto_h4.getMa10(),
                             dto_h4.getMa10());
                     if (Utils.isNotBlank(temp))
@@ -5841,7 +5841,7 @@ public class Utils {
 
                 // ------------------------------------------------------------------------------
 
-                if (Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3())
+                if (Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_d1, trend_h4)
                         && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3_1())
                         && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_10())) {
 

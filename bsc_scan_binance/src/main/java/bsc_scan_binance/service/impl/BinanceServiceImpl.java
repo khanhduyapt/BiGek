@@ -3981,8 +3981,10 @@ public class BinanceServiceImpl implements BinanceService {
 
                 switch_trend += Utils.switchTrendByMa1vs10(list);
                 switch_trend += Utils.switchTrendByMa1vs10(heiken_list);
+
                 switch_trend += Utils.switchTrendByMa1vs2025(list);
                 switch_trend += Utils.switchTrendByMa1vs2025(heiken_list);
+
                 switch_trend += Utils.switch_trend_seq_1_10_20_50(list, amplitude_avg_of_candles);
                 switch_trend += Utils.switch_trend_seq_1_10_20_50(heiken_list, amplitude_avg_of_candles);
 
@@ -4202,7 +4204,7 @@ public class BinanceServiceImpl implements BinanceService {
             String st_h1 = dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs50)
                     ? "H1" + Utils.getType(dto_h1.getTrend_of_heiken3())
                     : "  ";
-            amp += "~" + st_d1 + st_h4 + st_h1 + "~   ";
+            amp += "~" + st_d1 + " " + st_h4 + " " + st_h1 + "~   ";
 
             if (Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())
                     && Objects.equals(trend_d1, dto_d1.getTrend_by_ma_20())) {
