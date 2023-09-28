@@ -412,7 +412,7 @@ void trailingSL(string line)
            {
             Alert("TrailingSL: ticket=" + (string)my_ticket + "   " + trade_symbol + " SL:" + (string)cur_sl + "->" + (string)my_sl + "    TP:" + (string)cur_tp + "->" + (string)my_tp);
 
-            m_trade.PositionModify(my_ticket, my_sl, cur_tp);
+            m_trade.PositionModify(my_ticket, my_sl, my_tp);
 
 
             //Comment("----------------------------- TrailingSL: ticket=" + (string)my_ticket + "   " + trade_symbol + " SL:" + (string)cur_sl + "->" + (string)my_sl + "    TP:" + (string)cur_tp);

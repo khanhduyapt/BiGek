@@ -59,9 +59,8 @@ void OnTimer(void)
                           "USDCAD", "USDCHF", "USDJPY", "CADJPY", "CHFJPY", "CADCHF"
                          };
 
-   string arr_stocks[] = {"AAPL", "AIRF", "AMZN", "BAC", "BAYGn", "DBKGn",
-                          "GOOG", "LVMH", "META", "MSFT", "NFLX", "NVDA", "PFE", "RACE", "TSLA", "VOWG_p", "WMT", "BABA", "T", "V", "ZM"
-                         };
+//"AAPL", "AIRF", "AMZN", "BAC", "BAYGn", "DBKGn", "GOOG", "LVMH", "META", "MSFT", "NFLX", "NVDA", "PFE", "RACE", "TSLA", "VOWG_p", "WMT", "BABA", "T", "V", "ZM"
+   string arr_stocks[] = {};
 
    string sAllSymbols[];
    ArrayCopy(sAllSymbols, arr_stocks, ArraySize(arr_stocks));
@@ -70,11 +69,11 @@ void OnTimer(void)
 //-------------------------------------------------------------------------------------------------------------------------------
 
    FileDelete("Data//DailyPivot.csv");
-   int nfile_daily_pivot = FileOpen("Data//DailyPivot.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
+   int nfile_w_pivot = FileOpen("Data//DailyPivot.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
 
-   if(nfile_daily_pivot != INVALID_HANDLE)
+   if(nfile_w_pivot != INVALID_HANDLE)
      {
-      FileWrite(nfile_daily_pivot, "TimeCurrent", "symbol", "mid", "amp", "daily_open", "daily_close", "support1", "support2", "support3", "resistance1", "resistance2", "resistance3", "pivot", "trend_w1", "pre_week_mid", "this_week_mid");
+      FileWrite(nfile_w_pivot, "TimeCurrent", "symbol", "mid", "amp", "w_open", "w_close", "w_s1", "w_s2", "w_s3", "w_r1", "w_r2", "w_r3", "pivot", "trend_w1", "d_close", "d_amp");
 
 
       int total_fx_stock_size = ArraySize(sAllSymbols);
@@ -83,63 +82,63 @@ void OnTimer(void)
         {
          string symbol = sAllSymbols[index];
 
-         int    digits = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);     // number of decimal places
+         int      digits = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);          // number of decimal places
          //-------------------------------------------------------------------------------------------------------------------------------
-         datetime daily_time = iTime(symbol, PERIOD_D1, 1);
-         double daily_open   = iOpen(symbol, PERIOD_D1, 1);
-         double daily_high   = iHigh(symbol, PERIOD_D1, 1);
-         double daily_low    = iLow(symbol, PERIOD_D1, 1);
-         double daily_close  = iClose(symbol, PERIOD_D1, 1);
+         datetime w_time  = iTime(symbol, PERIOD_W1, 1);
+         double   w_open  = iOpen(symbol, PERIOD_W1, 1);
+         double   w_high  = iHigh(symbol, PERIOD_W1, 1);
+         double   w_low   = iLow(symbol, PERIOD_W1, 1);
+         double   w_close = iClose(symbol, PERIOD_W1, 1);
 
-         double mid = daily_close - daily_open;
+         double mid = w_close - w_open;
          color candle_color = clrBlue;
-         if(daily_open > daily_close)
+         if(w_open > w_close)
            {
             candle_color = clrRed;
-            mid = daily_open - daily_close;
+            mid = w_open - w_close;
            }
 
          mid = (mid / 2);
 
-         if(daily_open > daily_close)
+         if(w_open > w_close)
            {
-            mid = daily_close + mid;
+            mid = w_close + mid;
            }
          else
            {
-            mid = daily_open + mid;
+            mid = w_open + mid;
            }
 
 
-         double pivot       = (daily_high + daily_low + daily_close) / 3;
-         double support1    = (2 * pivot) - daily_high;
-         double support2    = pivot - (daily_high - daily_low);
-         double support3    = daily_low - 2 * (daily_high - pivot);
-         double resistance1 = (2 * pivot) - daily_low;
-         double resistance2 = pivot + (daily_high - daily_low);
-         double resistance3 = daily_high + 2 * (pivot - daily_low);
+         double pivot       = (w_high + w_low + w_close) / 3;
+         double w_s1    = (2 * pivot) - w_high;
+         double w_s2    = pivot - (w_high - w_low);
+         double w_s3    = w_low - 2 * (w_high - pivot);
+         double w_r1    = (2 * pivot) - w_low;
+         double w_r2    = pivot + (w_high - w_low);
+         double w_r3    = w_high + 2 * (pivot - w_low);
 
-         double amp = MathAbs(support3 - support2) + MathAbs(support2 - support1) + MathAbs(support1 - pivot) + MathAbs(pivot - resistance1) + MathAbs(resistance1 - resistance2) + MathAbs(resistance2 - resistance3);
+         double amp = MathAbs(w_s3 - w_s2) + MathAbs(w_s2 - w_s1) + MathAbs(w_s1 - pivot) + MathAbs(pivot - w_r1) + MathAbs(w_r1 - w_r2) + MathAbs(w_r2 - w_r3);
          amp = amp / 6;
 
-         support1 = mid - amp;
-         support2 = support1 - amp;
-         support3 = support2 - amp;
-         resistance1 = mid + amp;
-         resistance2 = resistance1 + amp;
-         resistance3 = resistance2 + amp;
+         w_s1 = mid - amp;
+         w_s2 = w_s1 - amp;
+         w_s3 = w_s2 - amp;
+         w_r1 = mid + amp;
+         w_r2 = w_r1 + amp;
+         w_r3 = w_r2 + amp;
 
 
 
-         mid                = format_double(mid, digits);
-         amp                = format_double(amp, digits);
-         pivot              = format_double(pivot, digits);
-         support1           = format_double(support1, digits);
-         support2           = format_double(support2, digits);
-         support3           = format_double(support3, digits);
-         resistance1        = format_double(resistance1, digits);
-         resistance2        = format_double(resistance2, digits);
-         resistance3        = format_double(resistance3, digits);
+         mid         = format_double(mid, digits);
+         amp         = format_double(amp, digits);
+         pivot       = format_double(pivot, digits);
+         w_s1        = format_double(w_s1, digits);
+         w_s2        = format_double(w_s2, digits);
+         w_s3        = format_double(w_s3, digits);
+         w_r1        = format_double(w_r1, digits);
+         w_r2        = format_double(w_r2, digits);
+         w_r3        = format_double(w_r3, digits);
 
          double pre_week_open = iOpen(symbol, PERIOD_W1, 1);
          double pre_week_close = iClose(symbol, PERIOD_W1, 1);
@@ -154,11 +153,15 @@ void OnTimer(void)
            {
             trend_w1 = "SELL";
            }
-         FileWrite(nfile_daily_pivot, TimeToString(TimeCurrent(), TIME_DATE), symbol, mid, amp, daily_open, daily_close, support1, support2, support3, resistance1, resistance2, resistance3, pivot, trend_w1, pre_week_mid, this_week_mid);
+
+         double d_close = iClose(Symbol(), PERIOD_D1, 1);
+         double d_amp   = format_double(amp / 2.0, digits);
+
+         FileWrite(nfile_w_pivot, TimeToString(TimeCurrent(), TIME_DATE), symbol, mid, amp, w_open, w_close, w_s1, w_s2, w_s3, w_r1, w_r2, w_r3, pivot, trend_w1, d_close, d_amp);
         } //for
       //--------------------------------------------------------------------------------------------------------------------
 
-      FileClose(nfile_daily_pivot);
+      FileClose(nfile_w_pivot);
      }
    else
      {
