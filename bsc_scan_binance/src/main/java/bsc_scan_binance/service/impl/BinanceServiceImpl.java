@@ -3979,14 +3979,10 @@ public class BinanceServiceImpl implements BinanceService {
         if (Utils.is_increase_decrease_rhythmic(heiken_list)) {
             if (CAPITAL_TIME_XX.contains("HOUR_")) {
 
-                if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4)) {
-                    switch_trend += Utils.switchTrendByMa1vs10(list);
-                    switch_trend += Utils.switchTrendByMa1vs10(heiken_list);
-                } else {
-                    switch_trend += Utils.switchTrendByMa1vs2025(list);
-                    switch_trend += Utils.switchTrendByMa1vs2025(heiken_list);
-                }
-
+                switch_trend += Utils.switchTrendByMa1vs10(list);
+                switch_trend += Utils.switchTrendByMa1vs10(heiken_list);
+                switch_trend += Utils.switchTrendByMa1vs2025(list);
+                switch_trend += Utils.switchTrendByMa1vs2025(heiken_list);
                 switch_trend += Utils.switch_trend_seq_1_10_20_50(list, amplitude_avg_of_candles);
                 switch_trend += Utils.switch_trend_seq_1_10_20_50(heiken_list, amplitude_avg_of_candles);
 
