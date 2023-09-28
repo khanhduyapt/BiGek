@@ -314,14 +314,14 @@ public class Utils {
 
     // "16:30 - 23:00"
     // "AIRF", "LVMH", "PFE", "RACE", "VOWG_p", "BABA", "T", "V", "ZM"
-    public static final List<String> EPICS_STOCKS = Arrays.asList("AAPL", "AMZN", "BAC", "BAYGn", "DBKGn",
-            "GOOG", "META", "MSFT", "NFLX", "NVDA", "TSLA", "WMT");
+    public static final List<String> EPICS_STOCKS = Arrays.asList("AAPL", "AMZN", "BAC", "BAYGn", "DBKGn", "GOOG",
+            "META", "MSFT", "NFLX", "NVDA", "TSLA", "WMT");
 
-    //"AIRF", "LVMH", "BAYGn", "VOWG_p", "DBKGn"
+    // "AIRF", "LVMH", "BAYGn", "VOWG_p", "DBKGn"
     public static final List<String> EPICS_STOCKS_EUR = Arrays.asList();
 
-    public static final List<String> EPICS_STOCKS_USA = Arrays.asList("AAPL", "AMZN", "BAC", "BAYGn", "DBKGn",
-            "GOOG", "META", "MSFT", "NFLX", "NVDA", "TSLA", "WMT");
+    public static final List<String> EPICS_STOCKS_USA = Arrays.asList("AAPL", "AMZN", "BAC", "BAYGn", "DBKGn", "GOOG",
+            "META", "MSFT", "NFLX", "NVDA", "TSLA", "WMT");
 
     // ALL Binance.com
     public static final List<String> ALL_COINS_BINANCE = Arrays.asList("1INCH", "AAVE", "ACA", "ACH", "ARB", "ADA",
@@ -5683,7 +5683,7 @@ public class Utils {
             // ------------------------------------------------------------------------------
 
             if (Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())
-                    && Objects.equals(trend_d1, dto_d1.getTrend_by_ma_20())) {
+                    || Objects.equals(trend_d1, dto_d1.getTrend_of_heiken3_1())) {
 
                 if (Objects.equals(Utils.TREND_LONG, trend_h4)) {
                     temp = Utils.checkXCutUpY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(), dto_h4.getMa10(),
@@ -5708,8 +5708,7 @@ public class Utils {
                 }
 
                 // ------------------------------------------------------------------------------
-                if (Objects.equals(trend_d1, trend_h1)
-                        && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3())
+                if (Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3())
                         && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3_1())
                         && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_10())) {
 
@@ -5816,7 +5815,7 @@ public class Utils {
             // ------------------------------------------------------------------------------
 
             if (Objects.equals(trend_d1, dto_d1.getTrend_by_ma_10())
-                    && Objects.equals(trend_d1, dto_d1.getTrend_by_ma_20())) {
+                    || Objects.equals(trend_d1, dto_d1.getTrend_of_heiken3_1())) {
 
                 if (Objects.equals(Utils.TREND_SHOT, trend_h4)) {
                     temp = Utils.checkXCutDnY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(), dto_h4.getMa10(),
@@ -5842,8 +5841,7 @@ public class Utils {
 
                 // ------------------------------------------------------------------------------
 
-                if (Objects.equals(trend_d1, trend_h1)
-                        && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3())
+                if (Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3())
                         && Objects.equals(trend_d1, dto_h4.getTrend_of_heiken3_1())
                         && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_10())) {
 
@@ -5878,17 +5876,16 @@ public class Utils {
 
         {
             String append = "";
-
             if (cutting.contains("D1Ma10")) {
-                append += "2410";
+                append += "24_10";
             } else if (cutting.contains("H4Ma50")) {
-                append += "0450";
+                append += "04_50";
             } else if (cutting.contains("H4Ma20")) {
-                append += "0420";
+                append += "04_20";
             } else if (cutting.contains("H4Ma10")) {
-                append += "0410";
+                append += "04_10";
             } else if (cutting.contains("H1Ma20")) {
-                append += "0120";
+                append += "01_20";
             }
 
             Utils.logWritelnDraft(

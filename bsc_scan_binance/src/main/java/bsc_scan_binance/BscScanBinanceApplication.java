@@ -108,7 +108,7 @@ public class BscScanBinanceApplication {
             CAPITAL_LIST.addAll(Utils.EPICS_CRYPTO_CFD);
             CAPITAL_LIST.addAll(Utils.EPICS_INDEXS_CFD);
             CAPITAL_LIST.addAll(Utils.EPICS_FOREXS_ALL);
-            CAPITAL_LIST.addAll(Utils.EPICS_STOCKS);
+            // CAPITAL_LIST.addAll(Utils.EPICS_STOCKS);
 
             if (app_flag != Utils.const_app_flag_webonly) {
                 int index_crypto = 0;
@@ -290,11 +290,11 @@ public class BscScanBinanceApplication {
             Utils.logWritelnDraft("...");
 
         // --------------------------------------------------------------------------
-        Utils.logWritelnDraftFooter();
-        binance_service.controlMt5(Utils.EPICS_STOCKS_EUR);
-        Utils.logWritelnDraft("...");
-        binance_service.controlMt5(Utils.EPICS_STOCKS);
-        Utils.logWritelnDraftFooter();
+        // Utils.logWritelnDraftFooter();
+        // binance_service.controlMt5(Utils.EPICS_STOCKS_EUR);
+        // Utils.logWritelnDraft("...");
+        // binance_service.controlMt5(Utils.EPICS_STOCKS);
+        // Utils.logWritelnDraftFooter();
         // --------------------------------------------------------------------------
         String cur_epics = EPICS_OUTPUT_MSG;
         String[] arr = cur_epics.split("_");
