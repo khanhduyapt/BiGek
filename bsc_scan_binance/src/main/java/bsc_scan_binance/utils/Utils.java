@@ -5332,7 +5332,6 @@ public class Utils {
         return list;
     }
 
-    //TODO: Utils.calc_Lot_En_SL_TP
     public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String find_trend, BigDecimal curr_price, String append,
             boolean isTradeNow, String CAPITAL_TIME_XX, DailyRange dailyRange, int total_trade) {
 
@@ -5344,6 +5343,7 @@ public class Utils {
         BigDecimal entry_2 = BigDecimal.ZERO;
         BigDecimal entry_3 = BigDecimal.ZERO;
 
+        //TODO: Utils.calc_Lot_En_SL_TP
         BigDecimal stop_loss = BigDecimal.ZERO;
         BigDecimal take_profit = BigDecimal.ZERO;
 
@@ -5383,7 +5383,7 @@ public class Utils {
         dto.setCur_price(curr_price);
         dto.setLots(standard_vol);
         dto.setEntry1(entry_1);
-        dto.setStop_loss(stop_loss);
+        dto.setStop_loss(BigDecimal.ZERO);
         dto.setTake_profit1(take_profit);
         dto.setComment(create_trade_comment(EPIC, CAPITAL_TIME_XX, type + append));
         dto.setEntry2(entry_2);
@@ -5997,6 +5997,15 @@ public class Utils {
         }
 
         return " " + seq.trim() + "   ";
+    }
+
+    public static boolean is_trend_trend_15m_eq(String find_trend, Orders dto_15, Orders dto_10, Orders dto_05,
+            Orders dto_03) {
+
+        return Objects.equals(find_trend, dto_15.getTrend_of_heiken3())
+                && Objects.equals(find_trend, dto_10.getTrend_of_heiken3())
+                && Objects.equals(find_trend, dto_05.getTrend_of_heiken3())
+                && Objects.equals(find_trend, dto_03.getTrend_of_heiken3());
     }
 
     public static String get_seq_minus(String find_trend, Orders dto_15, Orders dto_10, Orders dto_05) {

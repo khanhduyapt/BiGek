@@ -253,6 +253,7 @@ void openTrade(string line)
    double entry_3 = StringToDouble(result[9]);
    double take_prifit_3 = StringToDouble(result[10]);
    int total_trade = (int)StringToInteger(result[11]);
+   //Alert("total_trade", (string) total_trade);
 
    string trade_symbol = result[0];
    string lowcase_symbol = epic;
@@ -296,21 +297,25 @@ void openTrade(string line)
      {
       allow_append_trade = true;
      }
-   if(count > 3)
+
+   if(count >= 3)
      {
       allow_append_trade = false;
      }
 
-   double LOSS_LIMIT = 1000;
-   double total_loss = get_total_loss();
-   if(total_loss > LOSS_LIMIT)
+   if(allow_append_trade)
      {
-      allow_append_trade = false;
+      double LOSS_LIMIT = 1000;
+      double total_loss = get_total_loss();
+      if(total_loss > LOSS_LIMIT)
+        {
+         allow_append_trade = false;
+        }
      }
 
    if(allow_append_trade && (1 <= total_trade) && (total_trade <= 3))
      {
-      // Alert(type + " " + trade_symbol + " ADDED ORDER.");
+      //Alert(type + " " + trade_symbol + " ADDED ORDER.");
       int    digits = (int)SymbolInfoInteger(trade_symbol,SYMBOL_DIGITS);     // number of decimal places
       double point  = SymbolInfoDouble(trade_symbol,SYMBOL_POINT);            // point
 
