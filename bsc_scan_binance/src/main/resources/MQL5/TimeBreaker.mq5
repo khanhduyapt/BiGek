@@ -44,7 +44,7 @@ void get_history_today()
 
    if(nfile_history != INVALID_HANDLE)
      {
-      FileWrite(nfile_history, AppendSpaces("deal_time"), AppendSpaces("symbol"), AppendSpaces("profit"), AppendSpaces("type"), AppendSpaces("ticket"), AppendSpaces("volume"), AppendSpaces("price"), AppendSpaces("comment"));
+      FileWrite(nfile_history, AppendSpaces("deal_time", 10), AppendSpaces("symbol"), AppendSpaces("profit"), AppendSpaces("type"), AppendSpaces("ticket"), AppendSpaces("volume"), AppendSpaces("price"), AppendSpaces("comment"));
 
       MqlDateTime date_time;
       TimeToStruct(TimeCurrent(), date_time);
@@ -91,9 +91,11 @@ void get_history_today()
                if(deal_type == DEAL_TYPE_SELL)
                   type = "SELL";
 
+               if(HistoryDealGetInteger(ticket, DEAL_ENTRY) == DEAL_ENTRY_OUT)
+                  comment = "CLOSED" + comment;
 
                FileWrite(nfile_history
-                         , AppendSpaces(current_year + "." + current_month + "." + current_day)
+                         , AppendSpaces(date_time_to_string(deal_time))
                          , AppendSpaces((string)symbol)
                          , AppendSpaces((string)profit)
                          , AppendSpaces((string)type)
@@ -112,9 +114,9 @@ void get_history_today()
       double current_equity   = AccountInfoDouble(ACCOUNT_EQUITY);
       double loss = current_equity - starting_balance;
 
+      FileWrite(nfile_history, "TOTAL_PROFIT:" + (string)format_double(PL, 5));
+      FileWrite(nfile_history, "OPEN_POSITIONS:" + (string)format_double(OpenPositionsProfit(), 5));
       FileWrite(nfile_history, "TOTAL_LOSS_TODAY:" + (string)format_double(loss, 5));
-
-
       //--------------------------------------------------------------------------------------------------------------------
 
       FileClose(nfile_history);
@@ -124,6 +126,48 @@ void get_history_today()
       Print("(HistoryToday) Failed to get history data.");
      }
 
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+double OpenPositionsProfit()
+  {
+   double allProfit = 0;
+   if(PositionsTotal() > 0)
+      for(int i = 0; i < PositionsTotal(); i++)
+        {
+         ulong ticket = PositionGetTicket(i);
+         if(PositionSelectByTicket(ticket))
+            allProfit += PositionGetDouble(POSITION_PROFIT);
+        }
+   return allProfit;
+  }
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+string date_time_to_string(const MqlDateTime &deal_time)
+  {
+   string result = (string)deal_time.year ;
+   if(deal_time.mon < 10)
+     {
+      result += "0" + (string)deal_time.mon ;
+     }
+   else
+     {
+      result += (string)deal_time.mon ;
+     }
+   if(deal_time.day < 10)
+     {
+      result += "0" + (string)deal_time.day ;
+     }
+   else
+     {
+      result += (string)deal_time.day;
+     }
+
+
+   return result;
   }
 
 //+------------------------------------------------------------------+
@@ -421,9 +465,9 @@ double format_double(double number, int digits)
   }
 
 //+------------------------------------------------------------------+
-string AppendSpaces(string inputString)
+string AppendSpaces(string inputString, int totalLength = 10)
   {
-   int totalLength = 10;
+
    int currentLength = StringLen(inputString);
 
    if(currentLength >= totalLength)
