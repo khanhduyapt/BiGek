@@ -34,6 +34,97 @@ void OnTick(void)
   {
   }
 
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void get_history_today()
+  {
+   FileDelete("Data//HistoryToday.csv");
+   int nfile_history = FileOpen("Data//HistoryToday.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
+
+   if(nfile_history != INVALID_HANDLE)
+     {
+      FileWrite(nfile_history, AppendSpaces("deal_time"), AppendSpaces("symbol"), AppendSpaces("profit"), AppendSpaces("type"), AppendSpaces("ticket"), AppendSpaces("volume"), AppendSpaces("price"), AppendSpaces("comment"));
+
+      MqlDateTime date_time;
+      TimeToStruct(TimeCurrent(), date_time);
+      int current_day = date_time.day, current_month = date_time.mon, current_year = date_time.year;
+
+
+      double current_balance = AccountInfoDouble(ACCOUNT_BALANCE);
+
+
+      HistorySelect(0, TimeCurrent()); // today closed trades PL
+      int orders = HistoryDealsTotal();
+
+      double PL = 0.0;
+      for(int i = orders - 1; i >= 0; i--)
+        {
+         ulong ticket=HistoryDealGetTicket(i);
+         if(ticket==0)
+           {
+            Print("ERROR: no trade history");
+            break;
+           }
+
+         double profit = HistoryDealGetDouble(ticket,DEAL_PROFIT);
+         if(profit != 0)  // If deal is trade exit with profit or loss
+           {
+
+            MqlDateTime deal_time;
+            TimeToStruct(HistoryDealGetInteger(ticket, DEAL_TIME), deal_time);
+
+            // If is today deal
+            if(deal_time.day == current_day && deal_time.mon == current_month && deal_time.year == current_year)
+              {
+               PL += profit;
+
+               string symbol = HistoryDealGetString(ticket, DEAL_SYMBOL);
+               double volume = HistoryDealGetDouble(ticket,DEAL_VOLUME);
+               double price = HistoryDealGetDouble(ticket,DEAL_PRICE);
+               string comment = HistoryDealGetString(ticket, DEAL_COMMENT);
+               int deal_type = HistoryDealGetInteger(ticket, DEAL_TYPE);
+
+               string type = (string) deal_type;
+               if(deal_type == DEAL_TYPE_BUY)
+                  type = "BUY";
+               if(deal_type == DEAL_TYPE_SELL)
+                  type = "SELL";
+
+
+               FileWrite(nfile_history
+                         , AppendSpaces(current_year + "." + current_month + "." + current_day)
+                         , AppendSpaces((string)symbol)
+                         , AppendSpaces((string)profit)
+                         , AppendSpaces((string)type)
+                         , AppendSpaces((string)ticket)
+                         , AppendSpaces((string)volume)
+                         , AppendSpaces((string)price)
+                         , AppendSpaces((string)comment));
+
+              }
+            else
+               break;
+           }
+        }
+
+      double starting_balance = current_balance - PL;
+      double current_equity   = AccountInfoDouble(ACCOUNT_EQUITY);
+      double loss = current_equity - starting_balance;
+
+      FileWrite(nfile_history, "TOTAL_LOSS_TODAY:" + (string)format_double(loss, 5));
+
+
+      //--------------------------------------------------------------------------------------------------------------------
+
+      FileClose(nfile_history);
+     }
+   else
+     {
+      Print("(HistoryToday) Failed to get history data.");
+     }
+
+  }
 
 //+------------------------------------------------------------------+
 //| Timer function                                                   |
@@ -68,12 +159,15 @@ void OnTimer(void)
 
 //-------------------------------------------------------------------------------------------------------------------------------
 
+   get_history_today();
+
+//-------------------------------------------------------------------------------------------------------------------------------
    FileDelete("Data//DailyPivot.csv");
    int nfile_w_pivot = FileOpen("Data//DailyPivot.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
 
    if(nfile_w_pivot != INVALID_HANDLE)
      {
-      FileWrite(nfile_w_pivot, "TimeCurrent", "symbol", "mid", "amp", "w_open", "w_close", "w_s1", "w_s2", "w_s3", "w_r1", "w_r2", "w_r3", "pivot", "trend_w1", "d_close", "d_amp");
+      FileWrite(nfile_w_pivot, "TimeCurrent", "symbol", "pre_week_closed", "amp", "w_open", "w_close", "w_s1", "w_s2", "w_s3", "w_r1", "w_r2", "w_r3", "pivot", "trend_w1", "d_close", "d_amp");
 
 
       int total_fx_stock_size = ArraySize(sAllSymbols);
@@ -121,14 +215,14 @@ void OnTimer(void)
          double amp = MathAbs(w_s3 - w_s2) + MathAbs(w_s2 - w_s1) + MathAbs(w_s1 - pivot) + MathAbs(pivot - w_r1) + MathAbs(w_r1 - w_r2) + MathAbs(w_r2 - w_r3);
          amp = amp / 6;
 
-         double week_clo = iClose(symbol, PERIOD_W1, 1);
-         mid = week_clo;
+         double pre_week_close = iClose(symbol, PERIOD_W1, 1);
 
-         w_s1 = mid - amp;
+
+         w_s1 = pre_week_close - amp;
          w_s2 = w_s1 - amp;
          w_s3 = w_s2 - amp;
 
-         w_r1 = mid + amp;
+         w_r1 = pre_week_close + amp;
          w_r2 = w_r1 + amp;
          w_r3 = w_r2 + amp;
 
@@ -145,7 +239,6 @@ void OnTimer(void)
          w_r3        = format_double(w_r3, digits);
 
          double pre_week_open = iOpen(symbol, PERIOD_W1, 1);
-         double pre_week_close = iClose(symbol, PERIOD_W1, 1);
          double pre_week_mid = format_double((pre_week_open + pre_week_close) / 2.0, digits);
 
          double this_week_open = iOpen(symbol, PERIOD_W1, 0);
@@ -161,7 +254,7 @@ void OnTimer(void)
          double d_close = iClose(symbol, PERIOD_D1, 1);
          double d_amp   = format_double(amp / 2.0, digits);
 
-         FileWrite(nfile_w_pivot, TimeToString(TimeCurrent(), TIME_DATE), symbol, mid, amp, w_open, w_close, w_s1, w_s2, w_s3, w_r1, w_r2, w_r3, pivot, trend_w1, d_close, d_amp);
+         FileWrite(nfile_w_pivot, TimeToString(TimeCurrent(), TIME_DATE), symbol, pre_week_close, amp, w_open, w_close, w_s1, w_s2, w_s3, w_r1, w_r2, w_r3, pivot, trend_w1, d_close, d_amp);
         } //for
       //--------------------------------------------------------------------------------------------------------------------
 
@@ -328,5 +421,25 @@ double format_double(double number, int digits)
   }
 
 //+------------------------------------------------------------------+
+string AppendSpaces(string inputString)
+  {
+   int totalLength = 10;
+   int currentLength = StringLen(inputString);
 
+   if(currentLength >= totalLength)
+     {
+      return (inputString);
+     }
+   else
+     {
+      int spacesToAdd = totalLength - currentLength;
+      string spaces = "";
+      for(int index = 1; index <= spacesToAdd; index++)
+        {
+         spaces+= " ";
+        }
+
+      return (spaces + inputString);
+     }
+  }
 //+------------------------------------------------------------------+

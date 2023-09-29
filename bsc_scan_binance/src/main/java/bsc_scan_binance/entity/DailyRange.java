@@ -46,7 +46,7 @@ public class DailyRange {
     private DailyRangeKey id;
 
     @Column(name = "mid")
-    private BigDecimal mid = BigDecimal.ZERO;
+    private BigDecimal pre_week_closed = BigDecimal.ZERO;
 
     @Column(name = "amp")
     private BigDecimal amp = BigDecimal.ZERO;
@@ -82,8 +82,8 @@ public class DailyRange {
     private String trend_w1 = "";
 
     @Column(name = "pre_week_mid")
-    private BigDecimal pre_week_mid = BigDecimal.ZERO;
+    private BigDecimal d_closed = BigDecimal.ZERO;
 
     @Column(name = "this_week_mid")
-    private BigDecimal this_week_mid = BigDecimal.ZERO;
+    private BigDecimal d_amp = BigDecimal.ZERO;
 }
