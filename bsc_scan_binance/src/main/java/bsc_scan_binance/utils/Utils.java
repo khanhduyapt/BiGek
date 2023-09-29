@@ -5349,7 +5349,7 @@ public class Utils {
 
         BigDecimal amp = dailyRange.getAmp();
         BigDecimal amp_sl = amp.multiply(BigDecimal.valueOf(1.2));
-        BigDecimal amp_waste = amp.multiply(BigDecimal.valueOf(0.1));
+        BigDecimal amp_tp = amp.multiply(BigDecimal.valueOf(0.5));
 
         List<BigDecimal> amp_fr_to = Utils.get_amp_fr_to(dailyRange, curr_price);
         BigDecimal amp_fr = amp_fr_to.get(0);
@@ -5361,7 +5361,7 @@ public class Utils {
             entry_3 = entry_2.subtract(amp);
 
             stop_loss = amp_fr.subtract(amp_sl);
-            take_profit = amp_to.subtract(amp_waste);
+            take_profit = curr_price.add(amp_tp);
         }
 
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
@@ -5370,7 +5370,7 @@ public class Utils {
             entry_3 = entry_2.add(amp);
 
             stop_loss = amp_to.add(amp_sl);
-            take_profit = amp_fr.add(amp_waste);
+            take_profit = curr_price.subtract(amp_tp);
         }
 
         BigDecimal standard_vol = get_standard_vol_per_100usd(EPIC);
@@ -5383,7 +5383,7 @@ public class Utils {
         dto.setCur_price(curr_price);
         dto.setLots(standard_vol);
         dto.setEntry1(entry_1);
-        dto.setStop_loss(BigDecimal.ZERO);
+        dto.setStop_loss(stop_loss);
         dto.setTake_profit1(take_profit);
         dto.setComment(create_trade_comment(EPIC, CAPITAL_TIME_XX, type + append));
         dto.setEntry2(entry_2);
@@ -5671,25 +5671,25 @@ public class Utils {
             // ------------------------------------------------------------------------------
             if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
 
-                temp = Utils.checkXCutUpY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(), dto_h4.getMa50(),
-                        dto_h4.getMa50());
-                if (Utils.isNotBlank(temp))
-                    cutting += " 03vsH4Ma50:" + Utils.appendSpace(temp, 5);
-
-                temp = Utils.checkXCutUpY(dto_05.getClose_candle_1(), dto_05.getClose_candle_2(), dto_h4.getMa50(),
-                        dto_h4.getMa50());
-                if (Utils.isNotBlank(temp))
-                    cutting += " 05vsH4Ma50:" + Utils.appendSpace(temp, 5);
-
-                temp = Utils.checkXCutUpY(dto_10.getClose_candle_1(), dto_10.getClose_candle_2(), dto_h4.getMa50(),
-                        dto_h4.getMa50());
-                if (Utils.isNotBlank(temp))
-                    cutting += " 10vsH4Ma50:" + Utils.appendSpace(temp, 5);
-
-                temp = Utils.checkXCutUpY(dto_15.getClose_candle_1(), dto_15.getClose_candle_2(), dto_h4.getMa50(),
-                        dto_h4.getMa50());
-                if (Utils.isNotBlank(temp))
-                    cutting += " 15vsH4Ma50:" + Utils.appendSpace(temp, 5);
+                //temp = Utils.checkXCutUpY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(), dto_h4.getMa50(),
+                //        dto_h4.getMa50());
+                //if (Utils.isNotBlank(temp))
+                //    cutting += " 03vsH4Ma50:" + Utils.appendSpace(temp, 5);
+                //
+                //temp = Utils.checkXCutUpY(dto_05.getClose_candle_1(), dto_05.getClose_candle_2(), dto_h4.getMa50(),
+                //        dto_h4.getMa50());
+                //if (Utils.isNotBlank(temp))
+                //    cutting += " 05vsH4Ma50:" + Utils.appendSpace(temp, 5);
+                //
+                //temp = Utils.checkXCutUpY(dto_10.getClose_candle_1(), dto_10.getClose_candle_2(), dto_h4.getMa50(),
+                //        dto_h4.getMa50());
+                //if (Utils.isNotBlank(temp))
+                //    cutting += " 10vsH4Ma50:" + Utils.appendSpace(temp, 5);
+                //
+                //temp = Utils.checkXCutUpY(dto_15.getClose_candle_1(), dto_15.getClose_candle_2(), dto_h4.getMa50(),
+                //        dto_h4.getMa50());
+                //if (Utils.isNotBlank(temp))
+                //    cutting += " 15vsH4Ma50:" + Utils.appendSpace(temp, 5);
 
                 // ------------------------------------------------------------------------------
 
@@ -5803,25 +5803,25 @@ public class Utils {
 
             // ------------------------------------------------------------------------------
             if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
-                temp = Utils.checkXCutDnY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(), dto_h4.getMa50(),
-                        dto_h4.getMa50());
-                if (Utils.isNotBlank(temp))
-                    cutting += " 03vsH4Ma50:" + Utils.appendSpace(temp, 5);
-
-                temp = Utils.checkXCutDnY(dto_05.getClose_candle_1(), dto_05.getClose_candle_2(), dto_h4.getMa50(),
-                        dto_h4.getMa50());
-                if (Utils.isNotBlank(temp))
-                    cutting += " 05vsH4Ma50:" + Utils.appendSpace(temp, 5);
-
-                temp = Utils.checkXCutDnY(dto_10.getClose_candle_1(), dto_10.getClose_candle_2(), dto_h4.getMa50(),
-                        dto_h4.getMa50());
-                if (Utils.isNotBlank(temp))
-                    cutting += " 10vsH4Ma50:" + Utils.appendSpace(temp, 5);
-
-                temp = Utils.checkXCutDnY(dto_15.getClose_candle_1(), dto_15.getClose_candle_2(), dto_h4.getMa50(),
-                        dto_h4.getMa50());
-                if (Utils.isNotBlank(temp))
-                    cutting += " 15vsH4Ma50:" + Utils.appendSpace(temp, 5);
+                //temp = Utils.checkXCutDnY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(), dto_h4.getMa50(),
+                //        dto_h4.getMa50());
+                //if (Utils.isNotBlank(temp))
+                //    cutting += " 03vsH4Ma50:" + Utils.appendSpace(temp, 5);
+                //
+                //temp = Utils.checkXCutDnY(dto_05.getClose_candle_1(), dto_05.getClose_candle_2(), dto_h4.getMa50(),
+                //        dto_h4.getMa50());
+                //if (Utils.isNotBlank(temp))
+                //    cutting += " 05vsH4Ma50:" + Utils.appendSpace(temp, 5);
+                //
+                //temp = Utils.checkXCutDnY(dto_10.getClose_candle_1(), dto_10.getClose_candle_2(), dto_h4.getMa50(),
+                //        dto_h4.getMa50());
+                //if (Utils.isNotBlank(temp))
+                //    cutting += " 10vsH4Ma50:" + Utils.appendSpace(temp, 5);
+                //
+                //temp = Utils.checkXCutDnY(dto_15.getClose_candle_1(), dto_15.getClose_candle_2(), dto_h4.getMa50(),
+                //        dto_h4.getMa50());
+                //if (Utils.isNotBlank(temp))
+                //    cutting += " 15vsH4Ma50:" + Utils.appendSpace(temp, 5);
                 // ------------------------------------------------------------------------------
 
                 temp = Utils.checkXCutDnY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(), dto_h4.getMa20(),

@@ -3284,6 +3284,52 @@ public class BinanceServiceImpl implements BinanceService {
         return mt5_data_file_path;
     }
 
+    public BigDecimal get_total_loss_today() {
+        String mt5_data_file_path = Utils.getMt5DataFolder() + "HistoryToday.csv";
+        String mt5_data_file = check_mt5_data_file(mt5_data_file_path, Utils.MINUTES_RELOAD_CSV_DATA);
+        if (Utils.isBlank(mt5_data_file)) {
+            return BigDecimal.ZERO;
+        }
+        // ------------------------------------------------------------------------
+        String line;
+        int total_line = 0;
+        BigDecimal total_loss_today = BigDecimal.ZERO;
+
+        InputStream inputStream;
+        try {
+            inputStream = new FileInputStream(mt5_data_file);
+
+            InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8");
+
+            BufferedReader fin = new BufferedReader(reader);
+            while ((line = fin.readLine()) != null) {
+                total_line += 1;
+
+                if (total_line < 2) {
+                    continue;
+                }
+
+                if (line.contains("TOTAL_LOSS_TODAY")) {
+                    String str_loss = line.replace("TOTAL_LOSS_TODAY:", "");
+                    total_loss_today = Utils.getBigDecimal(str_loss);
+                }
+            }
+
+            // Remember to call close.
+            // calling close on a BufferedReader/BufferedWriter
+            // will automatically call close on its underlying stream
+            fin.close();
+            reader.close();
+            inputStream.close();
+
+        } catch (Exception e) {
+            // TODO 自動生成された catch ブロック
+            e.printStackTrace();
+        }
+
+        return total_loss_today;
+    }
+
     @Override
     @Transactional
     public void saveDailyPivotData() {
@@ -4043,6 +4089,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (BscScanBinanceApplication.EPICS_OUTPUTED_LOG.contains(EPIC)) {
                 continue;
             }
+
             List<DailyRange> ranges = dailyRangeRepository.findSymbolToday(EPIC);
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
@@ -4404,7 +4451,6 @@ public class BinanceServiceImpl implements BinanceService {
             boolean h1_reverse = Objects.equals(dto_h1.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_by_ma_10(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
-
                     && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_05.getTrend_of_heiken3(), REVERSE_TRADE_TREND);
 
@@ -4419,6 +4465,15 @@ public class BinanceServiceImpl implements BinanceService {
             // -------------------------------------------------------------------------------------
             // -------------------------------------------------------------------------------------
             boolean is_hit_sl = false;
+
+            // Bảo vệ tài khoản tránh thua sạch tiền tích góp trong 53 ngày: -$6,133.97
+            BigDecimal TOTAL_LOSS_TODAY = get_total_loss_today();
+            if (TOTAL_LOSS_TODAY.add(BigDecimal.valueOf(1000)).compareTo(BigDecimal.ZERO) < 0) {
+                if (h1_reverse) {
+                    is_hit_sl = true;
+                }
+            }
+
             BigDecimal standard_vol = Utils.get_standard_vol_per_100usd(EPIC);
             boolean no_stop_loss = (trade.getStopLoss().compareTo(BigDecimal.ZERO) == 0);
             if (no_stop_loss && PROFIT.add(Utils.RISK_PER_TRADE.multiply(BigDecimal.valueOf(2)))
@@ -4432,25 +4487,6 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_05.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
                     && Utils.is_must_close_avoid_overnight_fees_triple()) {
                 is_hit_sl = true;
-            }
-
-            if (PROFIT.add(BigDecimal.valueOf(50)).compareTo(BigDecimal.ZERO) < 0) {
-
-                BigDecimal amp_sl = dailyRange.getAmp().multiply(BigDecimal.valueOf(3));
-
-                if (Objects.equals(TRADING_TREND, Utils.TREND_LONG)) {
-                    BigDecimal sl_price = dailyRange.getPre_week_closed().subtract(amp_sl);
-                    if (dto_h1.getCurrent_price().compareTo(sl_price) < 0) {
-                        // is_hit_sl = true;
-                    }
-                }
-
-                if (Objects.equals(TRADING_TREND, Utils.TREND_SHOT)) {
-                    BigDecimal sl_price = dailyRange.getPre_week_closed().add(amp_sl);
-                    if (dto_h1.getCurrent_price().compareTo(sl_price) > 0) {
-                        // is_hit_sl = true;
-                    }
-                }
             }
 
             // -------------------------------------------------------------------------------------
