@@ -121,7 +121,7 @@ void OnTimer(void)
          double amp = MathAbs(w_s3 - w_s2) + MathAbs(w_s2 - w_s1) + MathAbs(w_s1 - pivot) + MathAbs(pivot - w_r1) + MathAbs(w_r1 - w_r2) + MathAbs(w_r2 - w_r3);
          amp = amp / 6;
 
-         double week_clo = iClose(Symbol(), PERIOD_W1, 1);
+         double week_clo = iClose(symbol, PERIOD_W1, 1);
          mid = week_clo;
 
          w_s1 = mid - amp;
@@ -158,7 +158,7 @@ void OnTimer(void)
             trend_w1 = "SELL";
            }
 
-         double d_close = iClose(Symbol(), PERIOD_D1, 1);
+         double d_close = iClose(symbol, PERIOD_D1, 1);
          double d_amp   = format_double(amp / 2.0, digits);
 
          FileWrite(nfile_w_pivot, TimeToString(TimeCurrent(), TIME_DATE), symbol, mid, amp, w_open, w_close, w_s1, w_s2, w_s3, w_r1, w_r2, w_r3, pivot, trend_w1, d_close, d_amp);

@@ -1493,6 +1493,10 @@ public class Utils {
         return value;
     }
 
+    public static String appendLeft(BigDecimal value, int length) {
+        return appendLeft(getStringValue(value), length);
+    }
+
     public static String appendLeft(String value, int length) {
         String result = value;
         int len = value.length();
@@ -4128,9 +4132,10 @@ public class Utils {
         }
         String trend = getTrendByHekenAshiList(heiken_list);
 
-        BigDecimal ma03_1 = calcMA(heiken_list, 3, 1);
-        BigDecimal ma06_1 = calcMA(heiken_list, 6, 1);
-        BigDecimal ma09_1 = calcMA(heiken_list, 9, 1);
+        BigDecimal ma03_1 = calcMA(heiken_list, 3, 0);
+        BigDecimal ma06_1 = calcMA(heiken_list, 6, 0);
+        BigDecimal ma09_1 = calcMA(heiken_list, 9, 0);
+
         boolean allow_next = false;
         if (Objects.equals(trend, TREND_LONG) && (ma03_1.compareTo(ma06_1) >= 0) && (ma06_1.compareTo(ma09_1) >= 0)) {
             allow_next = true;
@@ -4142,19 +4147,18 @@ public class Utils {
             return "";
         }
 
-        BigDecimal ma01_1 = calcMA(heiken_list, 01, 1);
-        BigDecimal ma10_1 = calcMA(heiken_list, 10, 1);
-        BigDecimal ma10_2 = calcMA(heiken_list, 10, 2);
-        BigDecimal ma20_1 = calcMA(heiken_list, 20, 1);
+        BigDecimal ma01_1 = calcMA(heiken_list, 01, 0);
+        BigDecimal ma10_1 = calcMA(heiken_list, 10, 0);
+        BigDecimal ma20_1 = calcMA(heiken_list, 20, 0);
 
-        if (trend.contains(Utils.TREND_LONG) && (ma10_1.compareTo(ma10_2) >= 0)) {
+        if (trend.contains(Utils.TREND_LONG)) {
             if ((ma01_1.compareTo(ma06_1) >= 0) && (ma06_1.compareTo(ma10_1) >= 0) && (ma10_1.compareTo(ma20_1) >= 0)) {
                 String chart_name = getChartName(heiken_list).trim();
                 result = chart_name + TEXT_SWITCH_TREND_SEQ_6_10_20 + ":" + Utils.TREND_LONG;
             }
         }
 
-        if (trend.contains(Utils.TREND_SHOT) && (ma10_1.compareTo(ma10_2) <= 0)) {
+        if (trend.contains(Utils.TREND_SHOT)) {
             if ((ma01_1.compareTo(ma06_1) <= 0) && (ma06_1.compareTo(ma10_1) <= 0) && (ma10_1.compareTo(ma20_1) <= 0)) {
                 String chart_name = getChartName(heiken_list).trim();
                 result = chart_name + TEXT_SWITCH_TREND_SEQ_6_10_20 + ":" + Utils.TREND_SHOT;
