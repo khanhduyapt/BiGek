@@ -164,8 +164,8 @@ public class BscScanBinanceApplication {
                                         }
 
                                         binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_03);
-                                        binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_05);
                                         binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_10);
+                                        binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_12);
                                         binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_15);
                                     }
                                 }

@@ -184,8 +184,9 @@ public class Utils {
     public static final String CRYPTO_TIME_MO = "1M";
 
     public static final String CAPITAL_TIME_03 = "MINUTE_03";
-    public static final String CAPITAL_TIME_05 = "MINUTE_05";
+    // public static final String CAPITAL_TIME_05 = "MINUTE_05";
     public static final String CAPITAL_TIME_10 = "MINUTE_10";
+    public static final String CAPITAL_TIME_12 = "MINUTE_12";
     public static final String CAPITAL_TIME_15 = "MINUTE_15";
 
     public static final String CAPITAL_TIME_H1 = "HOUR_01";
@@ -195,8 +196,9 @@ public class Utils {
     public static final String CAPITAL_TIME_MO = "MONTH";
 
     public static final String PREFIX_03m = "_m03";
-    public static final String PREFIX_05m = "_m05";
+    // public static final String PREFIX_05m = "_m05";
     public static final String PREFIX_10m = "_m10";
+    public static final String PREFIX_12m = "_m12";
     public static final String PREFIX_15m = "_m15";
     public static final String PREFIX_30m = "_m30";
     public static final String PREFIX_H01 = "_h01";
@@ -208,9 +210,11 @@ public class Utils {
     public static final String PREFIX_MO1 = "_d30";
 
     public static final String ENCRYPTED_03 = "_03p";
-    public static final String ENCRYPTED_05 = "_05p";
+    // public static final String ENCRYPTED_05 = "_05p";
     public static final String ENCRYPTED_10 = "_10p";
+    public static final String ENCRYPTED_12 = "_12p";
     public static final String ENCRYPTED_15 = "_15p";
+
     public static final String ENCRYPTED_H1 = "_mgi";
     public static final String ENCRYPTED_H4 = "_bng";
     public static final String ENCRYPTED_D1 = "_mng";
@@ -1220,11 +1224,14 @@ public class Utils {
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_03)) {
             return PREFIX_03m;
         }
-        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_05)) {
-            return PREFIX_05m;
-        }
+//        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_05)) {
+//            return PREFIX_05m;
+//        }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_10)) {
             return PREFIX_10m;
+        }
+        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_12)) {
+            return PREFIX_12m;
         }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_15)) {
             return PREFIX_15m;
@@ -1254,11 +1261,14 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_03) || TIME.contains(CAPITAL_TIME_03)) {
             return ENCRYPTED_03;
         }
-        if (Objects.equals(TIME, CAPITAL_TIME_05) || TIME.contains(CAPITAL_TIME_05)) {
-            return ENCRYPTED_05;
-        }
+//        if (Objects.equals(TIME, CAPITAL_TIME_05) || TIME.contains(CAPITAL_TIME_05)) {
+//            return ENCRYPTED_05;
+//        }
         if (Objects.equals(TIME, CAPITAL_TIME_10) || TIME.contains(CAPITAL_TIME_10)) {
             return ENCRYPTED_10;
+        }
+        if (Objects.equals(TIME, CAPITAL_TIME_12) || TIME.contains(CAPITAL_TIME_12)) {
+            return ENCRYPTED_12;
         }
         if (Objects.equals(TIME, CAPITAL_TIME_15) || TIME.contains(CAPITAL_TIME_15)) {
             return ENCRYPTED_15;
@@ -1285,11 +1295,14 @@ public class Utils {
         if (encryptedChartName.contains(ENCRYPTED_03)) {
             return CAPITAL_TIME_03;
         }
-        if (encryptedChartName.contains(ENCRYPTED_05)) {
-            return CAPITAL_TIME_05;
-        }
+//        if (encryptedChartName.contains(ENCRYPTED_05)) {
+//            return CAPITAL_TIME_05;
+//        }
         if (encryptedChartName.contains(ENCRYPTED_10)) {
             return CAPITAL_TIME_10;
+        }
+        if (encryptedChartName.contains(ENCRYPTED_12)) {
+            return CAPITAL_TIME_12;
         }
         if (encryptedChartName.contains(ENCRYPTED_15)) {
             return CAPITAL_TIME_15;
@@ -1315,11 +1328,14 @@ public class Utils {
         if (TIME.contains(CAPITAL_TIME_03) || TIME.contains(PREFIX_03m)) {
             return "(03)";
         }
-        if (TIME.contains(CAPITAL_TIME_05) || TIME.contains(PREFIX_05m)) {
-            return "(05)";
-        }
+//        if (TIME.contains(CAPITAL_TIME_05) || TIME.contains(PREFIX_05m)) {
+//            return "(05)";
+//        }
         if (TIME.contains(CAPITAL_TIME_10) || TIME.contains(PREFIX_10m)) {
             return "(10)";
+        }
+        if (TIME.contains(CAPITAL_TIME_12) || TIME.contains(PREFIX_12m)) {
+            return "(12)";
         }
         if (TIME.contains(CAPITAL_TIME_15) || TIME.contains(PREFIX_15m)) {
             return "(15)";
@@ -1963,7 +1979,7 @@ public class Utils {
 
     public static boolean isWorkingTime() {
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-        if ((7 <= hh && hh <= 18)) {
+        if ((8 <= hh && hh <= 22)) {
             return true;
         }
 
@@ -3116,11 +3132,14 @@ public class Utils {
         if (dto_id.contains(CAPITAL_TIME_03) || dto_id.contains(PREFIX_03m)) {
             return "(03)";
         }
-        if (dto_id.contains(CAPITAL_TIME_05) || dto_id.contains(PREFIX_05m)) {
-            return "(05)";
-        }
+//        if (dto_id.contains(CAPITAL_TIME_05) || dto_id.contains(PREFIX_05m)) {
+//            return "(05)";
+//        }
         if (dto_id.contains(CAPITAL_TIME_10) || dto_id.contains(PREFIX_10m)) {
             return "(10)";
+        }
+        if (dto_id.contains(CAPITAL_TIME_12) || dto_id.contains(PREFIX_12m)) {
+            return "(12)";
         }
         if (dto_id.contains(CAPITAL_TIME_15) || dto_id.contains(PREFIX_15m)) {
             return "(15)";
@@ -4765,8 +4784,9 @@ public class Utils {
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H1, "");
 
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_03, "");
-        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_05, "");
+        // EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_05, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_10, "");
+        EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_12, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_15, "");
 
         EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_05, "");
@@ -4777,9 +4797,10 @@ public class Utils {
         EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_W1, "");
         EPIC = EPIC.replace("_" + Utils.CRYPTO_TIME_MO, "");
 
-        EPIC = EPIC.replace(Utils.PREFIX_05m, "");
-        EPIC = EPIC.replace(Utils.PREFIX_10m, "");
+        // EPIC = EPIC.replace(Utils.PREFIX_05m, "");
         EPIC = EPIC.replace(Utils.PREFIX_03m, "");
+        EPIC = EPIC.replace(Utils.PREFIX_10m, "");
+        EPIC = EPIC.replace(Utils.PREFIX_12m, "");
         EPIC = EPIC.replace(Utils.PREFIX_15m, "");
         EPIC = EPIC.replace(Utils.PREFIX_30m, "");
         EPIC = EPIC.replace(Utils.PREFIX_H01, "");
@@ -4802,8 +4823,9 @@ public class Utils {
     public static int capitalTimeToWaitingMimutes(String CAPITAL_TIME_XX) {
         switch (CAPITAL_TIME_XX) {
 
-        case CAPITAL_TIME_05:
+        case CAPITAL_TIME_03:
         case CAPITAL_TIME_10:
+        case CAPITAL_TIME_12:
         case CAPITAL_TIME_15:
             return MINUTES_OF_1H;
 
@@ -5198,128 +5220,14 @@ public class Utils {
         return tmp_msg + url;
     }
 
-    public static List<BigDecimal> getEntrys(DailyRange dailyRange, String find_trend, BigDecimal curr_price) {
-        BigDecimal amp_per10 = dailyRange.getAmp().multiply(BigDecimal.valueOf(0.1));
-
-        BigDecimal entry = BigDecimal.ZERO;
-
-        BigDecimal entry_h1 = BigDecimal.ZERO;
-        BigDecimal entry_h4 = BigDecimal.ZERO;
-        BigDecimal entry_d1 = BigDecimal.ZERO;
-        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            if (curr_price.compareTo(dailyRange.getSupport3()) < 0) {
-                entry = dailyRange.getSupport3().subtract(dailyRange.getAmp());
-            } else {
-                entry = dailyRange.getSupport3();
-            }
-
-            entry_h1 = entry.add(amp_per10).add(amp_per10);
-            entry_h4 = entry.add(amp_per10);
-            entry_d1 = entry;
-
-        }
-        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            if (curr_price.compareTo(dailyRange.getResistance3()) < 0) {
-                entry = dailyRange.getResistance3().subtract(dailyRange.getAmp());
-            } else {
-                entry = dailyRange.getResistance3();
-            }
-
-            entry_h1 = entry.subtract(amp_per10).subtract(amp_per10);
-            entry_h4 = entry.subtract(amp_per10);
-            entry_d1 = entry;
-        }
-
-        List<BigDecimal> result = new ArrayList<BigDecimal>();
-        result.add(entry_h1);
-        result.add(entry_h4);
-        result.add(entry_d1);
-
-        return result;
-    }
-
-    public static BigDecimal getTP(DailyRange dailyRange, String find_trend, BigDecimal curr_price) {
-        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            if (curr_price.compareTo(dailyRange.getResistance1()) < 0) {
-                return dailyRange.getResistance1();
-            }
-            if (curr_price.compareTo(dailyRange.getResistance2()) < 0) {
-                return dailyRange.getResistance2();
-            }
-            if (curr_price.compareTo(dailyRange.getResistance3()) < 0) {
-                return dailyRange.getResistance3();
-            }
-
-            return dailyRange.getResistance3().add(dailyRange.getAmp());
-
-        } else {
-            if (curr_price.compareTo(dailyRange.getSupport1()) > 0) {
-                return dailyRange.getSupport1();
-            }
-            if (curr_price.compareTo(dailyRange.getSupport2()) > 0) {
-                return dailyRange.getSupport2();
-            }
-            if (curr_price.compareTo(dailyRange.getSupport3()) > 0) {
-                return dailyRange.getSupport3();
-            }
-
-            return dailyRange.getSupport3().subtract(dailyRange.getAmp());
-
-        }
-    }
-
-    public static String get_trade_trend_by_amp_w(DailyRange dailyRange, BigDecimal curr_price) {
-        BigDecimal amp_w = dailyRange.getAmp();
-
-        BigDecimal hig_long_shot = dailyRange.getPre_week_closed().add(amp_w);
-        BigDecimal low_long_shot = dailyRange.getPre_week_closed().subtract(amp_w);
-
-        String trend_by_amp = "";
-        if ((low_long_shot.compareTo(curr_price) < 0) && (curr_price.compareTo(hig_long_shot) < 0)) {
-            trend_by_amp = Utils.TREND_LONG + "_" + Utils.TREND_SHOT;
-        }
-
-        if (curr_price.compareTo(hig_long_shot) > 0) {
-            trend_by_amp = Utils.TREND_SHOT;
-        }
-
-        if (curr_price.compareTo(low_long_shot) < 0) {
-            trend_by_amp = Utils.TREND_LONG;
-        }
-
-        trend_by_amp = "_" + trend_by_amp + "_";
-
-        return trend_by_amp;
-    }
-
-    public static BigDecimal get_take_profit_price(DailyRange dailyRange, BigDecimal curr_price, String find_trend) {
-        BigDecimal take_profit_price = BigDecimal.ZERO;
-
-        List<BigDecimal> amp_fr_to = Utils.get_amp_fr_to(dailyRange, curr_price);
-        BigDecimal amp_fr = amp_fr_to.get(0);
-        BigDecimal amp_to = amp_fr_to.get(1);
-
-        BigDecimal amp_waste = dailyRange.getAmp().multiply(BigDecimal.valueOf(0.1));
-
-        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            take_profit_price = amp_to.subtract(amp_waste);
-        }
-
-        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            take_profit_price = amp_fr.add(amp_waste);
-        }
-
-        return take_profit_price;
-    }
-
     public static List<BigDecimal> get_amp_fr_to(DailyRange dailyRange, BigDecimal curr_price) {
         List<BigDecimal> list = new ArrayList<BigDecimal>();
 
         BigDecimal amp_fr = BigDecimal.ZERO;
         BigDecimal amp_to = BigDecimal.ZERO;
         for (int idx = -5; idx < 6; idx++) {
-            amp_fr = dailyRange.getPre_week_closed().add(dailyRange.getAmp().multiply(BigDecimal.valueOf(idx)));
-            amp_to = dailyRange.getPre_week_closed().add(dailyRange.getAmp().multiply(BigDecimal.valueOf(idx + 1)));
+            amp_fr = dailyRange.getPre_week_closed().add(dailyRange.getAmp_w().multiply(BigDecimal.valueOf(idx)));
+            amp_to = dailyRange.getPre_week_closed().add(dailyRange.getAmp_w().multiply(BigDecimal.valueOf(idx + 1)));
 
             if ((amp_fr.compareTo(curr_price) <= 0) && (curr_price.compareTo(amp_to) <= 0)) {
 
@@ -5347,9 +5255,8 @@ public class Utils {
         BigDecimal stop_loss = BigDecimal.ZERO;
         BigDecimal take_profit = BigDecimal.ZERO;
 
-        BigDecimal amp = dailyRange.getAmp();
-        BigDecimal amp_sl = amp.multiply(BigDecimal.valueOf(1.2));
-        BigDecimal amp_tp = amp.multiply(BigDecimal.valueOf(0.5));
+        BigDecimal amp_w = dailyRange.getAmp_w();
+        BigDecimal amp_sl = amp_w.multiply(BigDecimal.valueOf(2));
 
         List<BigDecimal> amp_fr_to = Utils.get_amp_fr_to(dailyRange, curr_price);
         BigDecimal amp_fr = amp_fr_to.get(0);
@@ -5357,20 +5264,20 @@ public class Utils {
 
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
             entry_1 = amp_fr;
-            entry_2 = entry_1.subtract(amp);
-            entry_3 = entry_2.subtract(amp);
+            entry_2 = entry_1.subtract(amp_w);
+            entry_3 = entry_2.subtract(amp_w);
 
-            stop_loss = amp_fr.subtract(amp_sl);
-            take_profit = curr_price.add(amp_tp);
+            stop_loss = curr_price.subtract(amp_sl);
+            take_profit = curr_price.add(dailyRange.getAmp_avg_h4());
         }
 
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
             entry_1 = amp_to;
-            entry_2 = entry_1.add(amp);
-            entry_3 = entry_2.add(amp);
+            entry_2 = entry_1.add(amp_w);
+            entry_3 = entry_2.add(amp_w);
 
-            stop_loss = amp_to.add(amp_sl);
-            take_profit = curr_price.subtract(amp_tp);
+            stop_loss = curr_price.add(amp_sl);
+            take_profit = curr_price.subtract(dailyRange.getAmp_avg_h4());
         }
 
         BigDecimal standard_vol = get_standard_vol_per_100usd(EPIC);
@@ -5383,7 +5290,7 @@ public class Utils {
         dto.setCur_price(curr_price);
         dto.setLots(standard_vol);
         dto.setEntry1(entry_1);
-        dto.setStop_loss(BigDecimal.ZERO);
+        dto.setStop_loss(stop_loss);
         dto.setTake_profit1(take_profit);
         dto.setComment(create_trade_comment(EPIC, CAPITAL_TIME_XX, type + append));
         dto.setEntry2(entry_2);
@@ -6021,6 +5928,64 @@ public class Utils {
         }
 
         return " " + seq.trim() + "   ";
+    }
+
+    public static boolean is_able_take_profit(String trend_6_10_20, DailyRange dailyRange, BigDecimal curr_price) {
+        if (Utils.isBlank(trend_6_10_20)) {
+            return false;
+        }
+        boolean tp_condition = false;
+
+        if (Objects.equals(trend_6_10_20, Utils.TREND_LONG)) {
+            BigDecimal tp_point_avg = dailyRange.getD_closed().add(dailyRange.getAmp_avg_h4());
+
+            BigDecimal tp_point_min = dailyRange.getD_closed()
+                    .add(dailyRange.getAmp_avg_h4().multiply(BigDecimal.valueOf(0.5)));
+
+            BigDecimal tp_price = curr_price.add(dailyRange.getAmp_avg_h4());
+
+            if ((curr_price.compareTo(tp_point_min) < 0) && (tp_price.compareTo(tp_point_avg) < 0)) {
+                tp_condition = true;
+            }
+        }
+
+        if (Objects.equals(trend_6_10_20, Utils.TREND_SHOT)) {
+            BigDecimal tp_point_avg = dailyRange.getD_closed().subtract(dailyRange.getAmp_avg_h4());
+
+            BigDecimal tp_point_min = dailyRange.getD_closed()
+                    .subtract(dailyRange.getAmp_avg_h4().multiply(BigDecimal.valueOf(0.5)));
+
+            BigDecimal tp_price = curr_price.subtract(dailyRange.getAmp_avg_h4());
+            if ((curr_price.compareTo(tp_point_min) > 0) && (tp_price.compareTo(tp_point_avg) > 0)) {
+                tp_condition = true;
+            }
+        }
+
+        return tp_condition;
+    }
+
+    public static String have_eq_trend_6_10_20(Orders dto_15, Orders dto_12, Orders dto_10, Orders dto_03) {
+        String trend_15 = dto_15.getTrend_by_ma_06();
+
+        if (Objects.equals(trend_15, dto_15.getTrend_by_ma_06()) && Objects.equals(trend_15, dto_15.getTrend_by_ma_10())
+                && Objects.equals(trend_15, dto_15.getTrend_by_ma_20())
+
+                && Objects.equals(trend_15, dto_12.getTrend_by_ma_06())
+                && Objects.equals(trend_15, dto_12.getTrend_by_ma_10())
+                && Objects.equals(trend_15, dto_12.getTrend_by_ma_20())
+
+                && Objects.equals(trend_15, dto_10.getTrend_by_ma_06())
+                && Objects.equals(trend_15, dto_10.getTrend_by_ma_10())
+                && Objects.equals(trend_15, dto_10.getTrend_by_ma_20())
+
+                && Objects.equals(trend_15, dto_03.getTrend_by_ma_06())
+                && Objects.equals(trend_15, dto_03.getTrend_by_ma_10())
+                && Objects.equals(trend_15, dto_03.getTrend_by_ma_20())) {
+
+            return trend_15;
+        }
+
+        return "";
     }
 
     public static boolean is_trend_trend_15m_eq(String find_trend, Orders dto_15, Orders dto_10, Orders dto_05,

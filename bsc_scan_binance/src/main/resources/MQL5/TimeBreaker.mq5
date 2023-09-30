@@ -165,8 +165,6 @@ string date_time_to_string(const MqlDateTime &deal_time)
      {
       result += (string)deal_time.day;
      }
-
-
    return result;
   }
 
@@ -195,11 +193,10 @@ void OnTimer(void)
                          };
 
 //"AAPL", "AIRF", "AMZN", "BAC", "BAYGn", "DBKGn", "GOOG", "LVMH", "META", "MSFT", "NFLX", "NVDA", "PFE", "RACE", "TSLA", "VOWG_p", "WMT", "BABA", "T", "V", "ZM"
-   string arr_stocks[] = {};
-
-   string sAllSymbols[];
-   ArrayCopy(sAllSymbols, arr_stocks, ArraySize(arr_stocks));
-   ArrayCopy(sAllSymbols, arr_symbol, ArraySize(arr_symbol));
+//string arr_stocks[] = {};
+//string sAllSymbols[];
+//ArrayCopy(sAllSymbols, arr_stocks, ArraySize(arr_stocks));
+//ArrayCopy(sAllSymbols, arr_symbol, ArraySize(arr_symbol));
 
 //-------------------------------------------------------------------------------------------------------------------------------
 
@@ -211,14 +208,14 @@ void OnTimer(void)
 
    if(nfile_w_pivot != INVALID_HANDLE)
      {
-      FileWrite(nfile_w_pivot, "TimeCurrent", "symbol", "pre_week_closed", "amp", "w_open", "w_close", "w_s1", "w_s2", "w_s3", "w_r1", "w_r2", "w_r3", "pivot", "trend_w1", "d_close", "d_amp");
+      FileWrite(nfile_w_pivot, "TimeCurrent", "symbol", "pre_week_closed", "amp", "w_open", "w_close", "w_s1", "w_s2", "w_s3", "w_r1", "w_r2", "w_r3", "pivot", "trend_w1", "d_close", "amp_avg_h4");
 
 
-      int total_fx_stock_size = ArraySize(sAllSymbols);
+      int total_fx_stock_size = ArraySize(arr_symbol);
 
       for(int index = 0; index < total_fx_stock_size; index++)
         {
-         string symbol = sAllSymbols[index];
+         string symbol = arr_symbol[index];
 
          int      digits = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);          // number of decimal places
          //-------------------------------------------------------------------------------------------------------------------------------
@@ -248,7 +245,7 @@ void OnTimer(void)
            }
 
 
-         double pivot       = (w_high + w_low + w_close) / 3;
+         double pivot   = (w_high + w_low + w_close) / 3;
          double w_s1    = (2 * pivot) - w_high;
          double w_s2    = pivot - (w_high - w_low);
          double w_s3    = w_low - 2 * (w_high - pivot);
@@ -296,9 +293,33 @@ void OnTimer(void)
            }
 
          double d_close = iClose(symbol, PERIOD_D1, 1);
-         double d_amp   = format_double(amp / 2.0, digits);
 
-         FileWrite(nfile_w_pivot, TimeToString(TimeCurrent(), TIME_DATE), symbol, pre_week_close, amp, w_open, w_close, w_s1, w_s2, w_s3, w_r1, w_r2, w_r3, pivot, trend_w1, d_close, d_amp);
+         int total_candle = 50;
+         double total_amp_daily = 0.0;
+         for(int index = 1; index <= total_candle; index ++)
+           {
+            double   tmp_hig         = iHigh(symbol, PERIOD_H4, index);
+            double   tmp_low         = iLow(symbol, PERIOD_H4, index);
+            total_amp_daily += (tmp_hig - tmp_low);
+           }
+         double amp_avg_h4 = format_double(total_amp_daily / total_candle, digits);
+
+         FileWrite(nfile_w_pivot, TimeToString(TimeCurrent(), TIME_DATE), symbol
+                   , format_double_to_string(pre_week_close, digits)
+                   , format_double_to_string(amp, digits)
+                   , format_double_to_string(w_open, digits)
+                   , format_double_to_string(w_close, digits)
+                   , format_double_to_string(w_s1, digits)
+                   , format_double_to_string(w_s2, digits)
+                   , format_double_to_string(w_s3, digits)
+                   , format_double_to_string(w_r1, digits)
+                   , format_double_to_string(w_r2, digits)
+                   , format_double_to_string(w_r3, digits)
+                   , format_double_to_string(pivot, digits)
+                   , trend_w1
+                   , format_double_to_string(d_close, digits)
+                   , format_double_to_string(amp_avg_h4, digits));
+
         } //for
       //--------------------------------------------------------------------------------------------------------------------
 
@@ -485,5 +506,19 @@ string AppendSpaces(string inputString, int totalLength = 10)
 
       return (spaces + inputString);
      }
+  }
+//+------------------------------------------------------------------+
+string format_double_to_string(double number, int digits)
+  {
+   string numberString = DoubleToString(number, 10);
+   int dotPosition = StringFind(numberString, ".");
+   if(dotPosition != -1 && StringLen(numberString) > dotPosition + digits)
+     {
+      int integerPart = (int)MathFloor(number);
+      string fractionalPart = StringSubstr(numberString, dotPosition + 1, digits);
+      numberString = (string)integerPart+ "." + fractionalPart;
+     }
+
+   return numberString;
   }
 //+------------------------------------------------------------------+

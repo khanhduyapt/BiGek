@@ -49,7 +49,7 @@ public class DailyRange {
     private BigDecimal pre_week_closed = BigDecimal.ZERO;
 
     @Column(name = "amp")
-    private BigDecimal amp = BigDecimal.ZERO;
+    private BigDecimal amp_w = BigDecimal.ZERO;
 
     @Column(name = "open_price")
     private BigDecimal open_price = BigDecimal.ZERO;
@@ -85,5 +85,5 @@ public class DailyRange {
     private BigDecimal d_closed = BigDecimal.ZERO;
 
     @Column(name = "this_week_mid")
-    private BigDecimal d_amp = BigDecimal.ZERO;
+    private BigDecimal amp_avg_h4 = BigDecimal.ZERO;
 }
