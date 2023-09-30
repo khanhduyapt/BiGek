@@ -4440,7 +4440,14 @@ public class BinanceServiceImpl implements BinanceService {
             if (trade.getVolume().compareTo(standard_vol.multiply(BigDecimal.valueOf(3))) > 0) {
                 is_hit_sl = true;
             }
-            if (m15_reverse && is_trade_by_algorithm) {
+            if (is_trade_by_algorithm && Objects.equals(dto_15.getTrend_by_ma_06(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_15.getTrend_by_ma_10(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_15.getTrend_by_ma_20(), REVERSE_TRADE_TREND)) {
+                is_hit_sl = true;
+            }
+            if (is_trade_by_algorithm && Objects.equals(dto_10.getTrend_by_ma_06(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_10.getTrend_by_ma_10(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_10.getTrend_by_ma_20(), REVERSE_TRADE_TREND)) {
                 is_hit_sl = true;
             }
             if (m15_reverse && (PROFIT.compareTo(BigDecimal.valueOf(50)) > 0)) {
