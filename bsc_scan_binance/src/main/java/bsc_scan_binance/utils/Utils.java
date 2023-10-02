@@ -1225,9 +1225,9 @@ public class Utils {
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_03)) {
             return PREFIX_03m;
         }
-        //        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_05)) {
-        //            return PREFIX_05m;
-        //        }
+        // if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_05)) {
+        // return PREFIX_05m;
+        // }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_10)) {
             return PREFIX_10m;
         }
@@ -1262,9 +1262,10 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_03) || TIME.contains(CAPITAL_TIME_03)) {
             return ENCRYPTED_03;
         }
-        //        if (Objects.equals(TIME, CAPITAL_TIME_05) || TIME.contains(CAPITAL_TIME_05)) {
-        //            return ENCRYPTED_05;
-        //        }
+        // if (Objects.equals(TIME, CAPITAL_TIME_05) || TIME.contains(CAPITAL_TIME_05))
+        // {
+        // return ENCRYPTED_05;
+        // }
         if (Objects.equals(TIME, CAPITAL_TIME_10) || TIME.contains(CAPITAL_TIME_10)) {
             return ENCRYPTED_10;
         }
@@ -1296,9 +1297,9 @@ public class Utils {
         if (encryptedChartName.contains(ENCRYPTED_03)) {
             return CAPITAL_TIME_03;
         }
-        //        if (encryptedChartName.contains(ENCRYPTED_05)) {
-        //            return CAPITAL_TIME_05;
-        //        }
+        // if (encryptedChartName.contains(ENCRYPTED_05)) {
+        // return CAPITAL_TIME_05;
+        // }
         if (encryptedChartName.contains(ENCRYPTED_10)) {
             return CAPITAL_TIME_10;
         }
@@ -1329,9 +1330,9 @@ public class Utils {
         if (TIME.contains(CAPITAL_TIME_03) || TIME.contains(PREFIX_03m)) {
             return "(03)";
         }
-        //        if (TIME.contains(CAPITAL_TIME_05) || TIME.contains(PREFIX_05m)) {
-        //            return "(05)";
-        //        }
+        // if (TIME.contains(CAPITAL_TIME_05) || TIME.contains(PREFIX_05m)) {
+        // return "(05)";
+        // }
         if (TIME.contains(CAPITAL_TIME_10) || TIME.contains(PREFIX_10m)) {
             return "(10)";
         }
@@ -3138,9 +3139,9 @@ public class Utils {
         if (dto_id.contains(CAPITAL_TIME_03) || dto_id.contains(PREFIX_03m)) {
             return "(03)";
         }
-        //        if (dto_id.contains(CAPITAL_TIME_05) || dto_id.contains(PREFIX_05m)) {
-        //            return "(05)";
-        //        }
+        // if (dto_id.contains(CAPITAL_TIME_05) || dto_id.contains(PREFIX_05m)) {
+        // return "(05)";
+        // }
         if (dto_id.contains(CAPITAL_TIME_10) || dto_id.contains(PREFIX_10m)) {
             return "(10)";
         }
@@ -4860,8 +4861,10 @@ public class Utils {
                 + Utils.appendLeft(Utils.removeLastZero(Utils.get_standard_vol_per_100usd(dto.getEpic())), 6)
                 + "(lot)    ";
         msg += Utils.appendSpace(dto.getComment(), 30);
-        //msg += " ,SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10) + "   ";
-        //msg += " ,TP: " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit1()), 10) + "   ";
+        // msg += " ,SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()),
+        // 10) + " ";
+        // msg += " ,TP: " +
+        // Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit1()), 10) + " ";
         msg += " ,Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 6) + "(lot)   ";
 
         return msg.replace(TEXT_NOTICE_ONLY, "");
@@ -6001,21 +6004,42 @@ public class Utils {
         return tp_condition;
     }
 
-    public static String have_eq_trend_6_10_20(Orders dto_15, Orders dto_12, Orders dto_10, Orders dto_03) {
+    public static String find_trend_by_h4(Orders dto_h4) {
+        if (Objects.equals(Utils.TREND_LONG, dto_h4.getTrend_by_ma_06())
+                && (dto_h4.getMa06().compareTo(dto_h4.getMa10()) > 0)
+                && (dto_h4.getMa10().compareTo(dto_h4.getMa20()) > 0)) {
+            return Utils.TREND_LONG;
+        }
+        if (Objects.equals(Utils.TREND_SHOT, dto_h4.getTrend_by_ma_06())
+                && (dto_h4.getMa06().compareTo(dto_h4.getMa10()) < 0)
+                && (dto_h4.getMa10().compareTo(dto_h4.getMa20()) < 0)) {
+            return Utils.TREND_SHOT;
+        }
+        // -------------------------------------------------------------
+        if (Objects.equals(Utils.TREND_LONG, dto_h4.getTrend_by_ma_06())
+                && Objects.equals(Utils.TREND_LONG, dto_h4.getTrend_by_ma_10())
+                && Objects.equals(Utils.TREND_LONG, dto_h4.getTrend_by_ma_20())) {
+            return Utils.TREND_LONG;
+        }
+        if (Objects.equals(Utils.TREND_SHOT, dto_h4.getTrend_by_ma_06())
+                && Objects.equals(Utils.TREND_SHOT, dto_h4.getTrend_by_ma_10())
+                && Objects.equals(Utils.TREND_SHOT, dto_h4.getTrend_by_ma_20())) {
+            return Utils.TREND_SHOT;
+        }
+        // -------------------------------------------------------------
+
+        return dto_h4.getTrend_by_ma_06();
+    }
+
+    public static String find_trend_by_15m(Orders dto_15, Orders dto_12, Orders dto_10, Orders dto_03) {
         String trend_15 = dto_15.getTrend_by_ma_06();
 
         if (Objects.equals(dto_15.getTrend_by_ma6_vs_ma20(), trend_15)
                 && Objects.equals(trend_15, dto_15.getTrend_by_ma_06())
                 && Objects.equals(trend_15, dto_15.getTrend_by_ma_10())
-                && (Objects.equals(trend_15, dto_15.getTrend_by_ma_20())
-                        || Objects.equals(trend_15, dto_15.getTrend_by_ma6_vs_ma20())
-                        || Objects.equals(trend_15, dto_15.getTrend_by_seq_ma()))
 
                 && Objects.equals(trend_15, dto_12.getTrend_by_ma_06())
                 && Objects.equals(trend_15, dto_12.getTrend_by_ma_10())
-                && (Objects.equals(trend_15, dto_12.getTrend_by_ma_20())
-                        || Objects.equals(trend_15, dto_12.getTrend_by_ma6_vs_ma20())
-                        || Objects.equals(trend_15, dto_12.getTrend_by_seq_ma()))
 
                 && Objects.equals(trend_15, dto_10.getTrend_by_ma_06())
                 && Objects.equals(trend_15, dto_10.getTrend_by_ma_10())

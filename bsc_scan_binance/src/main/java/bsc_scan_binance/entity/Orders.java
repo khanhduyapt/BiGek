@@ -123,7 +123,7 @@ public class Orders {
     private BigDecimal amplitude_avg_of_candles = BigDecimal.ZERO;
 
     @Column(name = "ma050")
-    private BigDecimal ma50 = BigDecimal.ZERO;
+    private BigDecimal ma06 = BigDecimal.ZERO;
 
     @Column(name = "ma020")
     private BigDecimal ma20 = BigDecimal.ZERO;
