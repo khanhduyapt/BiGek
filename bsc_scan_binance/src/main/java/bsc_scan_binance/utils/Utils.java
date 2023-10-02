@@ -5276,9 +5276,10 @@ public class Utils {
             stop_loss = curr_price.add(amp_sl);
             take_profit = curr_price.subtract(dailyRange.getAmp_avg_h4());
         }
+        stop_loss = BigDecimal.ZERO;
+        take_profit = BigDecimal.ZERO;
 
         BigDecimal standard_vol = get_standard_vol_per_100usd(EPIC);
-
         String type = Objects.equals(find_trend, Utils.TREND_LONG) ? "_b" : "_s";
 
         Mt5OpenTrade dto = new Mt5OpenTrade();
@@ -5287,7 +5288,7 @@ public class Utils {
         dto.setCur_price(curr_price);
         dto.setLots(standard_vol);
         dto.setEntry1(entry_1);
-        dto.setStop_loss(BigDecimal.ZERO);
+        dto.setStop_loss(stop_loss);
         dto.setTake_profit1(take_profit);
         dto.setComment(create_trade_comment(EPIC, CAPITAL_TIME_XX, type + append));
         dto.setEntry2(entry_2);
