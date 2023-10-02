@@ -2697,7 +2697,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // TODO: CloseTickets HOLDING
-                if ("__XAUUSD_USDJPY__".contains("_" + EPIC.toUpperCase() + "_")) {
+                if ("___".contains("_" + EPIC.toUpperCase() + "_")) {
                     continue;
                 }
 
@@ -3968,9 +3968,9 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal ma20 = Utils.calcMA(list, 20, 1);
         BigDecimal ma50 = Utils.calcMA(list, 50, 1);
 
-        String trend_by_ma_06 = Utils.isUptrendByMa(heiken_list, 06, 0, 1) ? Utils.TREND_LONG : Utils.TREND_SHOT;
-        String trend_by_ma_10 = Utils.isUptrendByMa(heiken_list, 10, 0, 1) ? Utils.TREND_LONG : Utils.TREND_SHOT;
-        String trend_by_ma_20 = Utils.isUptrendByMa(heiken_list, 20, 0, 1) ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        String trend_by_ma_06 = Utils.isUptrendByMa(heiken_list, 06, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        String trend_by_ma_10 = Utils.isUptrendByMa(heiken_list, 10, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        String trend_by_ma_20 = Utils.isUptrendByMa(heiken_list, 20, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHOT;
         String trend_by_ma6_vs_ma20 = (ma06.compareTo(ma20) > 0) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
         String trend_of_heiken3_0 = Utils.getTrendByHekenAshiList(heiken_list, 3, 0);
@@ -4279,6 +4279,9 @@ public class BinanceServiceImpl implements BinanceService {
                     trend_condition = false;
                 }
                 if (!Objects.equals(trend_6_10_20, trend_d1)) {
+                    trend_condition = false;
+                }
+                if (!Objects.equals(trend_6_10_20, dto_h1.getTrend_by_ma_10())) {
                     trend_condition = false;
                 }
 
