@@ -24,6 +24,7 @@ import lombok.NoArgsConstructor;
 //    trade_type character varying(255) COLLATE pg_catalog."default",
 //    open_date character varying(255) COLLATE pg_catalog."default",
 //    profit numeric(30,5) DEFAULT 0,
+//    open_price numeric(30,5) DEFAULT 0,
 //    CONSTRAINT take_profit_pkey PRIMARY KEY (ticket)
 //)
 
@@ -44,5 +45,8 @@ public class TakeProfit {
 
     @Column(name = "profit")
     private BigDecimal profit = BigDecimal.ZERO;
+
+    @Column(name = "open_price")
+    private BigDecimal open_price = BigDecimal.ZERO;
 
 }

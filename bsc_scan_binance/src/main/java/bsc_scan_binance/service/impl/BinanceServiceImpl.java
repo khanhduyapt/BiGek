@@ -2699,7 +2699,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // TODO: CloseTickets HOLDING
-                if ("__XAUUSD___".contains("_" + EPIC.toUpperCase() + "_")) {
+                if ("__XAUUSD_USDJPY__".contains("_" + EPIC.toUpperCase() + "_")) {
                     continue;
                 }
 
@@ -3293,8 +3293,9 @@ public class BinanceServiceImpl implements BinanceService {
                     BigDecimal profit = Utils.getBigDecimal(tempArr[2].trim());
                     String trade_type = tempArr[3].trim();
                     String ticket = tempArr[4].trim();
+                    BigDecimal open_price = Utils.getBigDecimal(tempArr[6].trim());
 
-                    TakeProfit take_profit = new TakeProfit(ticket, symbol, trade_type, open_date, profit);
+                    TakeProfit take_profit = new TakeProfit(ticket, symbol, trade_type, open_date, profit, open_price);
                     list.add(take_profit);
 
                     String key = "(" + symbol + "_" + trade_type + ")";
@@ -4242,7 +4243,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String able = "";
             if (Utils.is_able_take_profit(trend_15, dailyRange, curr_price)) {
-                able = "   able_" + Utils.getType(trend_15);
+                able = "   M1x_" + Utils.getType(trend_15);
             }
             able = Utils.appendSpace(able, 10);
 
@@ -4514,10 +4515,15 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
                 BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
             }
+
+            boolean hod_time_condition = (PROFIT.compareTo(BigDecimal.valueOf(10)) > 0);
+            hod_time_condition |= (PROFIT.compareTo(BigDecimal.ZERO) < 0)
+                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H);
+
             // -------------------------------------------------------------------------------------
             // TODO: 5 closeTrade_by_SL_TP
             // -------------------------------------------------------------------------------------
-            if ((take_profit || is_hit_sl || is_append_trade) && allow_close_trade_after(TICKET, Utils.MINUTES_OF_1H)) {
+            if ((take_profit || is_hit_sl || is_append_trade) && hod_time_condition) {
                 String reason = "";
 
                 String prifix = "CloseTrade: ";
