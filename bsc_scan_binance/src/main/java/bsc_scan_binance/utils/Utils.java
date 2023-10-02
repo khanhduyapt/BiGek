@@ -4859,7 +4859,7 @@ public class Utils {
         msg += " ,Standard:"
                 + Utils.appendLeft(Utils.removeLastZero(Utils.get_standard_vol_per_100usd(dto.getEpic())), 6)
                 + "(lot)    ";
-
+        msg += Utils.appendSpace(dto.getComment(), 30);
         //msg += " ,SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10) + "   ";
         //msg += " ,TP: " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit1()), 10) + "   ";
         msg += " ,Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 6) + "(lot)   ";

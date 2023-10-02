@@ -4264,6 +4264,8 @@ public class BinanceServiceImpl implements BinanceService {
             // (dk2) vào lệnh giá hiện tại phải đạt được tp tại <h4>
             // (dk3) H4 có ma6=ma10=ma20 thì không đánh ngược xu hướng của h4ma10
             if (Utils.isWorkingTime() && Utils.isNotBlank(trend_6_10_20)) {
+                String closed_key = "(" + EPIC + "_" + trend_6_10_20 + ")".toUpperCase();
+                ;
 
                 boolean trend_condition = true;
                 if (!Objects.equals(trend_6_10_20, dto_h4.getTrend_of_heiken3())
@@ -4276,11 +4278,14 @@ public class BinanceServiceImpl implements BinanceService {
                         && !Objects.equals(trend_6_10_20, trend_d1)) {
                     trend_condition = false;
                 }
+                if (!Objects.equals(trend_6_10_20, trend_d1)) {
+                    trend_condition = false;
+                }
 
                 boolean tp_condition = Utils.is_able_take_profit(trend_6_10_20, dailyRange, curr_price);
 
                 boolean is_better_price = false;
-                if (Objects.equals(trend_6_10_20, trend_d1)) {
+                if (CLOSED_TRADE_TODAY.contains(closed_key) && Objects.equals(trend_6_10_20, trend_d1)) {
                     List<TakeProfit> his_list = takeProfitRepository.findAllBySymbolAndTradeTypeAndClosedDate(EPIC,
                             trend_6_10_20, Utils.getYyyyMMdd());
 
@@ -4292,22 +4297,21 @@ public class BinanceServiceImpl implements BinanceService {
                 if (trend_condition && (tp_condition || is_better_price)) {
                     close_reverse_trade(EPIC, trend_6_10_20);
 
-                    String closed_key = "(" + EPIC + "_" + trend_6_10_20 + ")";
-                    closed_key = closed_key.toUpperCase();
+                    String comments = Utils.TEXT_PASS;
+                    if (tp_condition)
+                        comments += "_sq15";
+                    if (is_better_price)
+                        comments += "_trd1";
 
-                    if (!CLOSED_TRADE_TODAY.contains(closed_key) || is_better_price) {
-                        int total_trade = append_trade_number(EPIC, trend_6_10_20, dailyRange, curr_price);
+                    int total_trade = append_trade_number(EPIC, trend_6_10_20, dailyRange, curr_price);
 
-                        if (total_trade > 0) {
-                            Mt5OpenTrade dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_6_10_20, curr_price,
-                                    Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_15, dailyRange, total_trade);
+                    if (total_trade > 0) {
+                        Mt5OpenTrade dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_6_10_20, curr_price,
+                                comments, true, Utils.CAPITAL_TIME_15, dailyRange, total_trade);
 
-                            String key = EPIC + Utils.CAPITAL_TIME_15;
-                            BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
-                            BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
-                        }
-                    } else {
-                        Utils.logWritelnDraft("Đã đóng, không mở lại lần 2:" + closed_key);
+                        String key = EPIC + Utils.CAPITAL_TIME_15;
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
+                        BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
                     }
                 }
             }
