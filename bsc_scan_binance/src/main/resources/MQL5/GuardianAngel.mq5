@@ -471,7 +471,7 @@ void OnTimer()
          if(profit > Profit_In_Money)
            {
             m_trade.PositionClose(m_position.Ticket());
-            Alert("PositionClose=" + (string) m_position.Ticket() + " Profit_In_Money="+ (string)profit);
+            Alert("PositionClose=", (string) m_position.Ticket(), "    ",  m_position.Symbol(), "    Profit_In_Money="+ (string)profit);
            }
 
         }
