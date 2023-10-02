@@ -416,7 +416,7 @@ void trailingSL(string line)
 
          if(my_key != cur_key)
            {
-            Alert("TrailingSL: ticket=" + (string)my_ticket + "   " + trade_symbol + " SL:" + (string)cur_sl + "->" + (string)my_sl + "    TP:" + (string)cur_tp + "->" + (string)my_tp);
+            // Alert("TrailingSL: ticket=" + (string)my_ticket + "   " + trade_symbol + " SL:" + (string)cur_sl + "->" + (string)my_sl + "    TP:" + (string)cur_tp + "->" + (string)my_tp);
 
             m_trade.PositionModify(my_ticket, my_sl, my_tp);
 

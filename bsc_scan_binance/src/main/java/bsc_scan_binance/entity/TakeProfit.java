@@ -38,15 +38,15 @@ public class TakeProfit {
     private String symbol;
 
     @Column(name = "trade_type")
-    private String trade_type;
+    private String tradeType;
 
     @Column(name = "open_date")
-    private String open_date;
+    private String closedDate;
 
     @Column(name = "profit")
     private BigDecimal profit = BigDecimal.ZERO;
 
     @Column(name = "open_price")
-    private BigDecimal open_price = BigDecimal.ZERO;
+    private BigDecimal openPrice = BigDecimal.ZERO;
 
 }

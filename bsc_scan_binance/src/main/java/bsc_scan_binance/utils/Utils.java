@@ -55,6 +55,7 @@ import bsc_scan_binance.entity.DailyRange;
 import bsc_scan_binance.entity.Mt5OpenTrade;
 import bsc_scan_binance.entity.Mt5OpenTradeEntity;
 import bsc_scan_binance.entity.Orders;
+import bsc_scan_binance.entity.TakeProfit;
 import bsc_scan_binance.response.CandidateTokenCssResponse;
 import bsc_scan_binance.response.DepthResponse;
 import bsc_scan_binance.response.FundingResponse;
@@ -2411,6 +2412,11 @@ public class Utils {
     public static String getYYYYMMDD2(int hoursadd) {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.HOUR_OF_DAY, hoursadd);
+        return Utils.convertDateToString("yyyyMMdd", calendar.getTime());
+    }
+
+    public static String getYyyyMMdd() {
+        Calendar calendar = Calendar.getInstance();
         return Utils.convertDateToString("yyyyMMdd", calendar.getTime());
     }
 
@@ -4854,8 +4860,8 @@ public class Utils {
                 + Utils.appendLeft(Utils.removeLastZero(Utils.get_standard_vol_per_100usd(dto.getEpic())), 6)
                 + "(lot)    ";
 
-        msg += " ,SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10) + "   ";
-        msg += " ,TP: " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit1()), 10) + "   ";
+        //msg += " ,SL: " + Utils.appendLeft(Utils.removeLastZero(dto.getStop_loss()), 10) + "   ";
+        //msg += " ,TP: " + Utils.appendLeft(Utils.removeLastZero(dto.getTake_profit1()), 10) + "   ";
         msg += " ,Vol: " + Utils.appendLeft(Utils.getStringValue(dto.getLots()), 6) + "(lot)   ";
 
         return msg.replace(TEXT_NOTICE_ONLY, "");
@@ -5926,6 +5932,39 @@ public class Utils {
         }
 
         return " " + seq.trim() + "   ";
+    }
+
+    public static boolean is_better_price(String trend_6_10_20, BigDecimal curr_price, List<TakeProfit> his_list,
+            DailyRange dailyRange) {
+
+        if (CollectionUtils.isEmpty(his_list)) {
+            return false;
+        }
+
+        boolean result = false;
+
+        for (TakeProfit ido : his_list) {
+            BigDecimal before_price = ido.getOpenPrice();
+
+            if (Objects.equals(trend_6_10_20, Utils.TREND_LONG)) {
+                BigDecimal good_price = before_price
+                        .subtract(dailyRange.getAmp_avg_h4().multiply(BigDecimal.valueOf(0.25)));
+
+                if (curr_price.compareTo(good_price) < 0) {
+                    result = true;
+                }
+            }
+
+            if (Objects.equals(trend_6_10_20, Utils.TREND_SHOT)) {
+                BigDecimal good_price = before_price.add(dailyRange.getAmp_avg_h4().multiply(BigDecimal.valueOf(0.25)));
+
+                if (curr_price.compareTo(good_price) > 0) {
+                    result = true;
+                }
+            }
+        }
+
+        return result;
     }
 
     public static boolean is_able_take_profit(String trend_6_10_20, DailyRange dailyRange, BigDecimal curr_price) {
