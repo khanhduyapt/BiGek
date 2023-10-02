@@ -24,6 +24,9 @@ int OnInit()
 //+------------------------------------------------------------------+
 void OnTimer(void)
   {
+
+
+
    string scap_5m = "_XAUUSD_US30_";
    string indexs_cfd = "_US30_SP500_GER30_GER40_UK100_FRA40_SPN35_EU50_US100_AUS200_";
    MqlDateTime dt_struct;
@@ -167,3 +170,4 @@ int OnCalculate(const int rates_total,
    return(rates_total);
   }
 //+------------------------------------------------------------------+
+
