@@ -1224,9 +1224,9 @@ public class Utils {
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_03)) {
             return PREFIX_03m;
         }
-//        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_05)) {
-//            return PREFIX_05m;
-//        }
+        //        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_05)) {
+        //            return PREFIX_05m;
+        //        }
         if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_10)) {
             return PREFIX_10m;
         }
@@ -1261,9 +1261,9 @@ public class Utils {
         if (Objects.equals(TIME, CAPITAL_TIME_03) || TIME.contains(CAPITAL_TIME_03)) {
             return ENCRYPTED_03;
         }
-//        if (Objects.equals(TIME, CAPITAL_TIME_05) || TIME.contains(CAPITAL_TIME_05)) {
-//            return ENCRYPTED_05;
-//        }
+        //        if (Objects.equals(TIME, CAPITAL_TIME_05) || TIME.contains(CAPITAL_TIME_05)) {
+        //            return ENCRYPTED_05;
+        //        }
         if (Objects.equals(TIME, CAPITAL_TIME_10) || TIME.contains(CAPITAL_TIME_10)) {
             return ENCRYPTED_10;
         }
@@ -1295,9 +1295,9 @@ public class Utils {
         if (encryptedChartName.contains(ENCRYPTED_03)) {
             return CAPITAL_TIME_03;
         }
-//        if (encryptedChartName.contains(ENCRYPTED_05)) {
-//            return CAPITAL_TIME_05;
-//        }
+        //        if (encryptedChartName.contains(ENCRYPTED_05)) {
+        //            return CAPITAL_TIME_05;
+        //        }
         if (encryptedChartName.contains(ENCRYPTED_10)) {
             return CAPITAL_TIME_10;
         }
@@ -1328,9 +1328,9 @@ public class Utils {
         if (TIME.contains(CAPITAL_TIME_03) || TIME.contains(PREFIX_03m)) {
             return "(03)";
         }
-//        if (TIME.contains(CAPITAL_TIME_05) || TIME.contains(PREFIX_05m)) {
-//            return "(05)";
-//        }
+        //        if (TIME.contains(CAPITAL_TIME_05) || TIME.contains(PREFIX_05m)) {
+        //            return "(05)";
+        //        }
         if (TIME.contains(CAPITAL_TIME_10) || TIME.contains(PREFIX_10m)) {
             return "(10)";
         }
@@ -1979,7 +1979,7 @@ public class Utils {
 
     public static boolean isWorkingTime() {
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-        if ((8 <= hh && hh <= 22)) {
+        if ((7 <= hh && hh <= 22)) {
             return true;
         }
 
@@ -3132,9 +3132,9 @@ public class Utils {
         if (dto_id.contains(CAPITAL_TIME_03) || dto_id.contains(PREFIX_03m)) {
             return "(03)";
         }
-//        if (dto_id.contains(CAPITAL_TIME_05) || dto_id.contains(PREFIX_05m)) {
-//            return "(05)";
-//        }
+        //        if (dto_id.contains(CAPITAL_TIME_05) || dto_id.contains(PREFIX_05m)) {
+        //            return "(05)";
+        //        }
         if (dto_id.contains(CAPITAL_TIME_10) || dto_id.contains(PREFIX_10m)) {
             return "(10)";
         }
@@ -4653,7 +4653,6 @@ public class Utils {
             if (curr_price.compareTo(dailyRange.getResistance2()) < 0) {
                 return dailyRange.getResistance2();
             }
-            return dailyRange.getResistance3();
         } else {
             if (curr_price.compareTo(dailyRange.getSupport1()) > 0) {
                 return dailyRange.getSupport1();
@@ -4661,8 +4660,8 @@ public class Utils {
             if (curr_price.compareTo(dailyRange.getSupport2()) > 0) {
                 return dailyRange.getSupport2();
             }
-            return dailyRange.getSupport3();
         }
+        return BigDecimal.ZERO;
     }
 
     public static String getTakeProfit123ByAmp(DailyRange dailyRange, BigDecimal curr_price, String find_trend) {
@@ -4670,11 +4669,9 @@ public class Utils {
         if (Objects.equals(Utils.TREND_LONG, find_trend)) {
             result += " (r1):" + Utils.appendSpace(dailyRange.getResistance1(), 8);
             result += " (r2):" + Utils.appendSpace(dailyRange.getResistance2(), 8);
-            result += " (r3):" + Utils.appendSpace(dailyRange.getResistance3(), 8);
         } else {
             result += " (s1):" + Utils.appendSpace(dailyRange.getSupport1(), 8);
             result += " (s2):" + Utils.appendSpace(dailyRange.getSupport2(), 8);
-            result += " (s3):" + Utils.appendSpace(dailyRange.getSupport3(), 8);
         }
 
         return result;
@@ -5290,7 +5287,7 @@ public class Utils {
         dto.setCur_price(curr_price);
         dto.setLots(standard_vol);
         dto.setEntry1(entry_1);
-        dto.setStop_loss(stop_loss);
+        dto.setStop_loss(BigDecimal.ZERO);
         dto.setTake_profit1(take_profit);
         dto.setComment(create_trade_comment(EPIC, CAPITAL_TIME_XX, type + append));
         dto.setEntry2(entry_2);
@@ -5967,7 +5964,9 @@ public class Utils {
     public static String have_eq_trend_6_10_20(Orders dto_15, Orders dto_12, Orders dto_10, Orders dto_03) {
         String trend_15 = dto_15.getTrend_by_ma_06();
 
-        if (Objects.equals(trend_15, dto_15.getTrend_by_ma_06()) && Objects.equals(trend_15, dto_15.getTrend_by_ma_10())
+        if (Objects.equals(dto_15.getTrend_by_ma6_vs_ma20(), trend_15)
+                && Objects.equals(trend_15, dto_15.getTrend_by_ma_06())
+                && Objects.equals(trend_15, dto_15.getTrend_by_ma_10())
                 && Objects.equals(trend_15, dto_15.getTrend_by_ma_20())
 
                 && Objects.equals(trend_15, dto_12.getTrend_by_ma_06())

@@ -64,7 +64,7 @@ public class DailyRange {
     private BigDecimal support2 = BigDecimal.ZERO;
 
     @Column(name = "support3")
-    private BigDecimal support3 = BigDecimal.ZERO;
+    private BigDecimal d_today_low = BigDecimal.ZERO;
 
     @Column(name = "resistance1")
     private BigDecimal resistance1 = BigDecimal.ZERO;
@@ -73,10 +73,10 @@ public class DailyRange {
     private BigDecimal resistance2 = BigDecimal.ZERO;
 
     @Column(name = "resistance3")
-    private BigDecimal resistance3 = BigDecimal.ZERO;
+    private BigDecimal d_today_hig = BigDecimal.ZERO;
 
     @Column(name = "pivot")
-    private BigDecimal pivot = BigDecimal.ZERO;
+    private BigDecimal amp_min_d1 = BigDecimal.ZERO;
 
     @Column(name = "trend_w1")
     private String trend_w1 = "";

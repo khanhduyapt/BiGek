@@ -83,22 +83,6 @@ void OnTimer(void)
             FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M3");
            }
          //-------------------------------------------------------------------------------------------------------------------------------
-         MqlRates rates_05[];
-         ArraySetAsSeries(rates_05,true);
-         copied=CopyRates(symbol, PERIOD_M5, 0, 55, rates_05);
-         if(copied>0)
-           {
-            int size=fmin(copied, 55);
-            for(int i=0; i<size; i++)
-              {
-               FileWrite(nfile_handle, symbol, "MINUTE_05", rates_05[i].time, rates_05[i].open, rates_05[i].high, rates_05[i].low, rates_05[i].close, current_price);
-              }
-           }
-         else
-           {
-            FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M5");
-           }
-         //-------------------------------------------------------------------------------------------------------------------------------
          MqlRates rates_10[];
          ArraySetAsSeries(rates_10,true);
          copied=CopyRates(symbol, PERIOD_M10, 0, 55, rates_10);
@@ -116,6 +100,21 @@ void OnTimer(void)
            }
          //-------------------------------------------------------------------------------------------------------------------------------
          //-------------------------------------------------------------------------------------------------------------------------------
+         MqlRates rates_12[];
+         ArraySetAsSeries(rates_12,true);
+         copied=CopyRates(symbol, PERIOD_M12, 0, 55, rates_12);
+         if(copied>0)
+           {
+            int size=fmin(copied, 55);
+            for(int i=0; i<size; i++)
+              {
+               FileWrite(nfile_handle, symbol, "MINUTE_12", rates_12[i].time, rates_12[i].open, rates_12[i].high, rates_12[i].low, rates_12[i].close, current_price);
+              }
+           }
+         else
+           {
+            FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M12");
+           }
          //-------------------------------------------------------------------------------------------------------------------------------
          MqlRates rates_15[];
          ArraySetAsSeries(rates_15,true);

@@ -153,18 +153,18 @@ bool isDailyLimit()
             m_trade.PositionClose(positionTicket);
            }
         }
-     }
 
-   if(total_loss > (DAILY_LOSS_LIMIT/3))
-     {
-      for(int i = OrdersTotal() - 1; i >= 0; i--)
         {
-         ulong orderTicket = OrderGetTicket(i);
-         string order_symbol = OrderGetString(ORDER_SYMBOL);
-         Alert(" Close Order: " + (string)orderTicket + " : " + order_symbol);
-         m_trade.OrderDelete(orderTicket);
+         for(int i = OrdersTotal() - 1; i >= 0; i--)
+           {
+            ulong orderTicket = OrderGetTicket(i);
+            string order_symbol = OrderGetString(ORDER_SYMBOL);
+            Alert(" Close Order: " + (string)orderTicket + " : " + order_symbol);
+            m_trade.OrderDelete(orderTicket);
+           }
         }
      }
+
 
    return result;
   }
@@ -253,7 +253,7 @@ void openTrade(string line)
    double entry_3 = StringToDouble(result[9]);
    double take_prifit_3 = StringToDouble(result[10]);
    int total_trade = (int)StringToInteger(result[11]);
-   //Alert("total_trade", (string) total_trade);
+//Alert("total_trade", (string) total_trade);
 
    string trade_symbol = result[0];
    string lowcase_symbol = epic;
@@ -305,7 +305,7 @@ void openTrade(string line)
 
    if(allow_append_trade)
      {
-      double LOSS_LIMIT = 1000;
+      double LOSS_LIMIT = 2000;
       double total_loss = get_total_loss();
       if(total_loss > LOSS_LIMIT)
         {

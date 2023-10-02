@@ -86,13 +86,15 @@ void get_history_today()
                int deal_type = HistoryDealGetInteger(ticket, DEAL_TYPE);
 
                string type = (string) deal_type;
-               if(deal_type == DEAL_TYPE_BUY)
+               if(deal_type == 1)
                   type = "BUY";
-               if(deal_type == DEAL_TYPE_SELL)
+               if(deal_type == 0)
                   type = "SELL";
 
                if(HistoryDealGetInteger(ticket, DEAL_ENTRY) == DEAL_ENTRY_OUT)
                   comment = "CLOSED" + comment;
+
+               comment = "https://www.tradingview.com/chart/r46Q5U5a/?symbol=" + symbol;
 
                FileWrite(nfile_history
                          , AppendSpaces(date_time_to_string(deal_time))
@@ -208,7 +210,7 @@ void OnTimer(void)
 
    if(nfile_w_pivot != INVALID_HANDLE)
      {
-      FileWrite(nfile_w_pivot, "TimeCurrent", "symbol", "pre_week_closed", "amp", "w_open", "w_close", "w_s1", "w_s2", "w_s3", "w_r1", "w_r2", "w_r3", "pivot", "trend_w1", "d_close", "amp_avg_h4");
+      FileWrite(nfile_w_pivot, "TimeCurrent", "symbol", "pre_week_closed", "amp", "w_open", "w_close", "w_s1", "w_s2", "d_today_low", "w_r1", "w_r2", "d_today_hig", "amp_min_d1", "trend_w1", "d_close", "amp_avg_h4");
 
 
       int total_fx_stock_size = ArraySize(arr_symbol);
@@ -293,14 +295,25 @@ void OnTimer(void)
            }
 
          double d_close = iClose(symbol, PERIOD_D1, 1);
+         double d_today_low  = iLow(symbol, PERIOD_D1, 0);
+         double d_today_hig  = iHigh(symbol, PERIOD_D1, 0);
 
          int total_candle = 50;
          double total_amp_daily = 0.0;
+         double amp_min_d1 = (w_high - w_low);
          for(int index = 1; index <= total_candle; index ++)
            {
             double   tmp_hig         = iHigh(symbol, PERIOD_H4, index);
             double   tmp_low         = iLow(symbol, PERIOD_H4, index);
             total_amp_daily += (tmp_hig - tmp_low);
+
+
+            double d_tmp_low  = iLow(symbol, PERIOD_D1, index);
+            double d_tmp_hig  = iHigh(symbol, PERIOD_D1, index);
+            if(amp_min_d1 > (d_tmp_hig - d_tmp_low))
+              {
+               amp_min_d1 = (d_tmp_hig - d_tmp_low);
+              }
            }
          double amp_avg_h4 = format_double(total_amp_daily / total_candle, digits);
 
@@ -311,11 +324,11 @@ void OnTimer(void)
                    , format_double_to_string(w_close, digits)
                    , format_double_to_string(w_s1, digits)
                    , format_double_to_string(w_s2, digits)
-                   , format_double_to_string(w_s3, digits)
+                   , format_double_to_string(d_today_low, digits)
                    , format_double_to_string(w_r1, digits)
                    , format_double_to_string(w_r2, digits)
-                   , format_double_to_string(w_r3, digits)
-                   , format_double_to_string(pivot, digits)
+                   , format_double_to_string(d_today_hig, digits)
+                   , format_double_to_string(amp_min_d1, digits)
                    , trend_w1
                    , format_double_to_string(d_close, digits)
                    , format_double_to_string(amp_avg_h4, digits));
@@ -419,25 +432,6 @@ void OnTimer(void)
            {
             FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_H1");
            }
-         //-------------------------------------------------------------------------------------------------------------------------------
-         /*
-         MqlRates rates_30[];
-         ArraySetAsSeries(rates_30,true);
-         copied=CopyRates(symbol, PERIOD_M30, 0, 55, rates_30);
-         if(copied>0)
-           {
-            int size=fmin(copied, 55);
-            for(int i=0; i<size; i++)
-              {
-               FileWrite(nfile_handle, symbol, "MINUTE_30", rates_30[i].time, rates_30[i].open, rates_30[i].high, rates_30[i].low, rates_30[i].close, current_price);
-              }
-           }
-         else
-           {
-            FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M30");
-           }
-           */
-         //-------------------------------------------------------------------------------------------------------------------------------
          //-------------------------------------------------------------------------------------------------------------------------------
 
         } //for
