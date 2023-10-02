@@ -4380,7 +4380,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean has_profit = PROFIT.compareTo(BigDecimal.valueOf(20)) > 0;
             if (has_profit && Objects.equals(dto_h1.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_by_ma_10(), REVERSE_TRADE_TREND)
-
+                    && Objects.equals(dto_15.getTrend_by_ma6_vs_ma20(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_03.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)) {
@@ -4423,14 +4423,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (trade.getVolume().compareTo(standard_vol.multiply(BigDecimal.valueOf(3))) > 0) {
                 is_hit_sl = true;
             }
-            if (is_trade_by_algorithm && Objects.equals(dto_15.getTrend_by_ma_06(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_15.getTrend_by_ma_10(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_15.getTrend_by_ma_20(), REVERSE_TRADE_TREND)) {
-                is_hit_sl = true;
-            }
-            if (is_trade_by_algorithm && Objects.equals(dto_10.getTrend_by_ma_06(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_10.getTrend_by_ma_10(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_10.getTrend_by_ma_20(), REVERSE_TRADE_TREND)) {
+            if (is_trade_by_algorithm && m15_reverse) {
                 is_hit_sl = true;
             }
             if (m15_reverse && (PROFIT.compareTo(BigDecimal.valueOf(10)) > 0)) {
@@ -4444,7 +4437,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             if ((PROFIT.compareTo(BigDecimal.ZERO) > 0)) {
                 BigDecimal amp_avg_h4 = dailyRange.getAmp_avg_h4().multiply(BigDecimal.valueOf(0.95));
-
                 if (Objects.equals(TRADING_TREND, Utils.TREND_LONG)) {
                     BigDecimal tp_h4 = trade.getPriceOpen().add(amp_avg_h4);
                     if (curr_price.compareTo(tp_h4) > 0) {
