@@ -4375,7 +4375,8 @@ public class BinanceServiceImpl implements BinanceService {
             BigDecimal curr_price = dto_h1.getCurrent_price();
             boolean is_trade_by_algorithm = Utils.isNotBlank(trade.getComment());
             // -------------------------------------------------------------------------------------
-            boolean take_profit = false;
+            boolean is_hit_sl = false;
+
             boolean has_profit = PROFIT.compareTo(BigDecimal.valueOf(20)) > 0;
             if (has_profit && Objects.equals(dto_h1.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_by_ma_10(), REVERSE_TRADE_TREND)
@@ -4383,7 +4384,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_03.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)) {
-                take_profit = true;
+                is_hit_sl = true;
             }
 
             boolean h1_reverse = Objects.equals(dto_h1.getTrend_by_ma6_vs_ma20(), REVERSE_TRADE_TREND)
@@ -4401,11 +4402,11 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_03.getTrend_of_heiken3(), REVERSE_TRADE_TREND);
 
             if ((h1_reverse || m15_reverse) && has_profit) {
-                take_profit = true;
+                is_hit_sl = true;
             }
             // -------------------------------------------------------------------------------------
             // -------------------------------------------------------------------------------------
-            boolean is_hit_sl = false;
+
             // Bảo vệ tài khoản tránh thua sạch tiền tích góp trong 53 ngày: -$6,133.97
             if (OPEN_POSITIONS.add(BigDecimal.valueOf(1000)).compareTo(BigDecimal.ZERO) < 0) {
                 if (h1_reverse) {
@@ -4518,14 +4519,16 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
             }
 
-            boolean hod_time_condition = (PROFIT.compareTo(BigDecimal.valueOf(0)) > 0);
+            boolean hod_time_condition = (PROFIT.compareTo(BigDecimal.valueOf(0)) > 0)
+                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_1H);
+
             hod_time_condition |= (PROFIT.compareTo(BigDecimal.ZERO) < 0)
                     && allow_close_trade_after(TICKET, Utils.MINUTES_OF_4H);
 
             // -------------------------------------------------------------------------------------
             // TODO: 5 closeTrade_by_SL_TP
             // -------------------------------------------------------------------------------------
-            if ((take_profit || is_hit_sl || is_append_trade) && hod_time_condition) {
+            if ((is_hit_sl || is_append_trade) && hod_time_condition) {
                 String reason = "";
 
                 String prifix = "CloseTrade: ";
@@ -4533,18 +4536,12 @@ public class BinanceServiceImpl implements BinanceService {
                     reason = "Stoploss:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5) + "$   "
                             + Utils.appendSpace(trade.getComment(), 30);
 
-                } else if (take_profit) {
-                    prifix = "Take_Profit: ";
-
-                    reason = "take_profit:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5)
-                            + "$   (H1_REVERSE)";
-
                 } else if (is_append_trade) {
                     prifix = "(DCA)Trade:  ";
                     reason = "DCA";
                 }
 
-                if (is_hit_sl || take_profit) {
+                if (is_hit_sl) {
                     BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
                 }
 
