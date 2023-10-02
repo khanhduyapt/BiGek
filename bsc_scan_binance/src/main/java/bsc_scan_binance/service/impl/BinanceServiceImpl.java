@@ -4116,7 +4116,6 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_w1 = dailyRange.getTrend_w1();
             String trend_d1 = dto_d1.getTrend_of_heiken3();
             String trend_h1 = dto_h1.getTrend_of_heiken3();
-            String trend_15 = dto_15.getTrend_of_heiken3();
 
             List<BigDecimal> amp_fr_to = Utils.get_amp_fr_to(dailyRange, curr_price);
             BigDecimal amp_fr = amp_fr_to.get(0);
@@ -4193,7 +4192,7 @@ public class BinanceServiceImpl implements BinanceService {
             String type_w1 = Utils.getType(trend_w1);
             String amp = " Points";
             amp += "(amp):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dailyRange.getAmp_avg_h4()), 6);
-            amp += "(h4):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dto_h4.getAmplitude_avg_of_candles()), 6);
+            amp += "(d1):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dailyRange.getAmp_min_d1()), 6);
             amp += "(w_" + type_w1 + ")";
             amp += "   ";
 
@@ -4348,9 +4347,6 @@ public class BinanceServiceImpl implements BinanceService {
             String REVERSE_TRADE_TREND = TRADING_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_SHOT : Utils.TREND_LONG;
 
             List<DailyRange> ranges = dailyRangeRepository.findSymbolToday(EPIC);
-            Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
-            Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
-            Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
 
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
@@ -4358,14 +4354,11 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_10 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_10).orElse(dto_15);
             Orders dto_03 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_03).orElse(dto_15);
 
-            if (CollectionUtils.isEmpty(ranges) || Objects.isNull(dto_w1) || Objects.isNull(dto_d1)
-                    || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)) {
+            if (CollectionUtils.isEmpty(ranges) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)) {
                 String str_null = "";
                 str_null += "DailyRange:" + (CollectionUtils.isEmpty(ranges) ? "isEmpty" : "       ");
-                str_null += " w1:" + (Objects.isNull(dto_w1) ? "null" : "    ");
-                str_null += " d1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
-                str_null += " h4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
                 str_null += " h1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
+                str_null += " 15:" + (Objects.isNull(dto_h1) ? "null" : "    ");
 
                 Utils.logWritelnDraft(String.format("[closetrade_by_sl_tp_take_profit] dto (%s): %s.",
                         Utils.appendSpace(EPIC, 10), str_null));
@@ -4386,12 +4379,10 @@ public class BinanceServiceImpl implements BinanceService {
             boolean has_profit = PROFIT.compareTo(BigDecimal.valueOf(20)) > 0;
             if (has_profit && Objects.equals(dto_h1.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_by_ma_10(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h4.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)
 
                     && Objects.equals(dto_03.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h4.getTrend_of_heiken3(), REVERSE_TRADE_TREND)) {
+                    && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)) {
                 take_profit = true;
             }
 
