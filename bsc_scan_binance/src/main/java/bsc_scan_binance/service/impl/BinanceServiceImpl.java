@@ -4248,16 +4248,19 @@ public class BinanceServiceImpl implements BinanceService {
                 able += "         ";
             }
 
-            String str_profit = "T:";
+            String str_profit = "";
             BigDecimal t_profit = BigDecimal.ZERO;
             if (his_list.size() > 0) {
-                str_profit = Utils.appendLeft(Utils.getStringValue(his_list.size()), 2);
+                str_profit += "T:" + Utils.appendLeft(Utils.getStringValue(his_list.size()), 2);
+
                 for (TakeProfit dto : his_list) {
                     t_profit = t_profit.add(dto.getProfit());
                 }
+                str_profit += "/P:" + Utils.appendLeft(Utils.getStringValue(t_profit.intValue()), 3) + "$";
+            } else {
+                str_profit = ".";
             }
-            str_profit += "/P:" + Utils.appendLeft(Utils.getStringValue(t_profit.intValue()), 5) + "$";
-            str_profit = Utils.appendSpace(str_profit, 8);
+            str_profit = Utils.appendSpace(str_profit, 15);
 
             String append = str_find_trend + seq + eoz + able;
 
