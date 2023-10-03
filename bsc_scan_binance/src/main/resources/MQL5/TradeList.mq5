@@ -110,11 +110,54 @@ void get_history_today()
       MqlDateTime date_time;
       TimeToStruct(TimeCurrent(), date_time);
       int current_day = date_time.day, current_month = date_time.mon, current_year = date_time.year;
+      int row_count = 0;
+      // --------------------------------------------------------------------
+
+      for(int i=PositionsTotal()-1; i>=0; i--) // returns the number of current positions
+        {
+         // selects the position by index for further access to its properties
+         if(m_position.SelectByIndex(i))
+           {
+
+            datetime deal_time   = m_position.Time();
+            ulong ticket         = m_position.Ticket();
+            string symbol        = m_position.Symbol();
+            double profit        = m_position.Commission() + m_position.Swap() + m_position.Profit();
+            string type          = m_position.TypeDescription();
+            double volume        = m_position.Volume();
+            double price         = m_position.PriceOpen();
+            int    digits        = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);
+
+            StringToUpper(type);
+            StringReplace(symbol, ".cash", "");
+
+            row_count += 1;
+            string comment = AppendSpaces("OPENING") + AppendSpaces((string)row_count) + "   https://www.tradingview.com/chart/r46Q5U5a/?symbol=" + symbol;
 
 
+            MqlDateTime struct_open_time;
+            TimeToStruct(deal_time, struct_open_time);
+
+
+            FileWrite(nfile_history
+                      , AppendSpaces(date_time_to_string(struct_open_time))
+                      , AppendSpaces(symbol)
+                      , AppendSpaces(format_double_to_string(profit, 2))
+                      , AppendSpaces(type)
+                      , AppendSpaces((string)ticket)
+                      , AppendSpaces((string)volume)
+                      , AppendSpaces(format_double_to_string(price, digits))
+                      , AppendSpaces((string)comment));
+
+
+           }
+        }
+
+      // --------------------------------------------------------------------
+      FileWrite(nfile_history, "");
+
+      // --------------------------------------------------------------------
       double current_balance = AccountInfoDouble(ACCOUNT_BALANCE);
-
-
       HistorySelect(0, TimeCurrent()); // today closed trades PL
       int orders = HistoryDealsTotal();
 
@@ -140,11 +183,13 @@ void get_history_today()
               {
                PL += profit;
 
-               string symbol = HistoryDealGetString(ticket, DEAL_SYMBOL);
-               double volume = HistoryDealGetDouble(ticket,DEAL_VOLUME);
-               double price = HistoryDealGetDouble(ticket,DEAL_PRICE);
-               string comment = HistoryDealGetString(ticket, DEAL_COMMENT);
-               int deal_type = HistoryDealGetInteger(ticket, DEAL_TYPE);
+               string symbol  = HistoryDealGetString(ticket,   DEAL_SYMBOL);
+               double volume  = HistoryDealGetDouble(ticket,   DEAL_VOLUME);
+               double price   = HistoryDealGetDouble(ticket,   DEAL_PRICE);
+               int deal_type  = HistoryDealGetInteger(ticket,  DEAL_TYPE);
+               int digits     = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);
+
+               StringReplace(symbol, ".cash", "");
 
                string type = (string) deal_type;
                if(deal_type == 1)
@@ -152,19 +197,23 @@ void get_history_today()
                if(deal_type == 0)
                   type = "SELL";
 
+               string comment = "";
                if(HistoryDealGetInteger(ticket, DEAL_ENTRY) == DEAL_ENTRY_OUT)
-                  comment = "CLOSED" + comment;
+                  comment = AppendSpaces("CLOSED");
 
-               comment = "https://www.tradingview.com/chart/r46Q5U5a/?symbol=" + symbol;
+
+               row_count += 1;
+               comment = AppendSpaces(comment) + AppendSpaces((string)row_count) + "   https://www.tradingview.com/chart/r46Q5U5a/?symbol=" + symbol;
+
 
                FileWrite(nfile_history
                          , AppendSpaces(date_time_to_string(deal_time))
-                         , AppendSpaces((string)symbol)
-                         , AppendSpaces((string)profit)
+                         , AppendSpaces(symbol)
+                         , AppendSpaces(format_double_to_string(profit, 2))
                          , AppendSpaces((string)type)
                          , AppendSpaces((string)ticket)
                          , AppendSpaces((string)volume)
-                         , AppendSpaces(format_double_to_string(price))
+                         , AppendSpaces(format_double_to_string(price, digits))
                          , AppendSpaces((string)comment));
 
               }
@@ -172,6 +221,10 @@ void get_history_today()
                break;
            }
         }
+
+
+      FileWrite(nfile_history, "");
+
 
       double starting_balance = current_balance - PL;
       double current_equity   = AccountInfoDouble(ACCOUNT_EQUITY);

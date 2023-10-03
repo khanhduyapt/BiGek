@@ -4290,12 +4290,16 @@ public class BinanceServiceImpl implements BinanceService {
                             (Objects.equals(find_trend_by_h4, Utils.TREND_SHOT)
                                     && (curr_price.compareTo(dto_15.getMa10()) > 0)));
 
+            boolean wd_condition = true;
+            if (Utils.EPICS_INDEXS_CFD.contains(EPIC)) {
+                wd_condition = Objects.equals(find_trend_by_h4, dto_w1.getTrend_by_ma_06());
+            }
             // TODO: 3 controlMt5
             // (dk0) thời gian vào lệnh từ 8h~22h.
             // (dk1) dto_15, 12m, 10m, 03m xuất hiện đồng pha ma6, ma10, ma20.
             // (dk2) vào lệnh giá hiện tại phải đạt được tp tại <h4>
             // (dk3) H4 có ma6=ma10=ma20 thì không đánh ngược xu hướng của h4ma10
-            if (Utils.isWorkingTime() && (trend_h4h1m03_condition || trend_h4h1m15_condition)) {
+            if (Utils.isWorkingTime() && wd_condition && (trend_h4h1m03_condition || trend_h4h1m15_condition)) {
 
                 close_reverse_trade(EPIC, find_trend_by_h4);
 

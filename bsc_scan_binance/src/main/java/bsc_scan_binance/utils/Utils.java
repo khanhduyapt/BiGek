@@ -290,7 +290,7 @@ public class Utils {
     public static final List<String> EPICS_CRYPTO_CFD = Arrays.asList("BTCUSD");
 
     // "AUS200", "EU50", "FRA40", "GER40", "SPN35", "UK100",
-    public static final List<String> EPICS_INDEXS_CFD = Arrays.asList("US100", "US30");
+    public static final List<String> EPICS_INDEXS_CFD = Arrays.asList("US100", "US30", "BTCUSD");
 
     public static final List<String> EPICS_SCAP_15M_FX = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD",
             "USDCAD", "NZDUSD", "XAUUSD", "USOIL", "US30");
