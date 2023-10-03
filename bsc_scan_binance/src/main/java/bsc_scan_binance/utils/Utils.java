@@ -5472,7 +5472,6 @@ public class Utils {
         return false;
     }
 
-
     public static String possible_take_profit(Orders dto_d1, Orders dto_h4, String find_trend) {
         String type = getType(find_trend).toUpperCase();
 
@@ -5945,26 +5944,22 @@ public class Utils {
             return false;
         }
 
-        boolean result = false;
+        boolean result = true;
 
         for (TakeProfit ido : his_list) {
             BigDecimal before_price = ido.getOpenPrice();
 
             if (Objects.equals(trend_6_10_20, Utils.TREND_LONG)) {
-                BigDecimal good_price = before_price
-                        .subtract(dailyRange.getAmp_avg_h4().multiply(BigDecimal.valueOf(0.1)));
-
-                if (curr_price.compareTo(good_price) < 0) {
-                    result = true;
+                // Tồn tại trade nào giá nhỏ hơn thì chưa phải giá tốt nhất.
+                if (curr_price.compareTo(before_price) > 0) {
+                    result = false;
                 }
             }
 
             if (Objects.equals(trend_6_10_20, Utils.TREND_SHOT)) {
-                BigDecimal good_price = before_price
-                        .add(dailyRange.getAmp_avg_h4().multiply(BigDecimal.valueOf(0.1)));
-
-                if (curr_price.compareTo(good_price) > 0) {
-                    result = true;
+                // Tồn tại trade nào giá lớn hơn thì chưa phải giá tốt nhất.
+                if (curr_price.compareTo(before_price) < 0) {
+                    result = false;
                 }
             }
         }
@@ -6033,8 +6028,29 @@ public class Utils {
             return Utils.TREND_SHOT;
         }
         // -------------------------------------------------------------
+        if (Objects.equals(dto_h4.getTrend_by_ma_06(), dto_h4.getTrend_by_ma_10())) {
+            return dto_h4.getTrend_by_ma_06();
+        }
 
-        return dto_h4.getTrend_by_ma_06();
+        if (Objects.equals(Utils.TREND_LONG, dto_h4.getTrend_by_ma_06())
+                && (dto_h4.getMa06().compareTo(dto_h4.getMa10()) > 0)) {
+            return Utils.TREND_LONG;
+        }
+
+        if (Objects.equals(Utils.TREND_SHOT, dto_h4.getTrend_by_ma_06())
+                && (dto_h4.getMa06().compareTo(dto_h4.getMa10()) < 0)) {
+            return Utils.TREND_SHOT;
+        }
+        // -------------------------------------------------------------
+        if (dto_h4.getMa06().compareTo(dto_h4.getMa10()) > 0) {
+            return Utils.TREND_LONG;
+        }
+
+        if (dto_h4.getMa06().compareTo(dto_h4.getMa10()) < 0) {
+            return Utils.TREND_SHOT;
+        }
+        // -------------------------------------------------------------
+        return TREND_UNSURE;
     }
 
     public static String find_trend_by_15m(Orders dto_15, Orders dto_12, Orders dto_10, Orders dto_03) {
