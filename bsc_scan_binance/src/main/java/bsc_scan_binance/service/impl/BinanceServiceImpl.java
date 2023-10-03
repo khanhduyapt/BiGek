@@ -2697,7 +2697,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // TODO: CloseTickets HOLDING
-                if ("_XAUUSD__".contains("_" + EPIC.toUpperCase() + "_")) {
+                if ("_XAUUSD_USDJPY_".contains("_" + EPIC.toUpperCase() + "_")) {
                     continue;
                 }
 
