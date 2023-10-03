@@ -5456,7 +5456,7 @@ public class Utils {
         if (Objects.equals(TREND_LONG, find_trend)) {
             BigDecimal next_price = dto_h4.getCurrent_price().add(amplitude);
 
-            if (next_price.compareTo(dto_h4.getHig_50candle()) < 0) {
+            if (next_price.compareTo(dto_h4.getBody_hig_50_candle()) < 0) {
                 return true;
             }
         }
@@ -5464,13 +5464,14 @@ public class Utils {
         if (Objects.equals(TREND_SHOT, find_trend)) {
             BigDecimal next_price = dto_h4.getCurrent_price().subtract(amplitude);
 
-            if (next_price.compareTo(dto_h4.getLow_50candle()) > 0) {
+            if (next_price.compareTo(dto_h4.getBody_low_50_candle()) > 0) {
                 return true;
             }
         }
 
         return false;
     }
+
 
     public static String possible_take_profit(Orders dto_d1, Orders dto_h4, String find_trend) {
         String type = getType(find_trend).toUpperCase();
@@ -5951,7 +5952,7 @@ public class Utils {
 
             if (Objects.equals(trend_6_10_20, Utils.TREND_LONG)) {
                 BigDecimal good_price = before_price
-                        .subtract(dailyRange.getAmp_avg_h4().multiply(BigDecimal.valueOf(0.25)));
+                        .subtract(dailyRange.getAmp_avg_h4().multiply(BigDecimal.valueOf(0.1)));
 
                 if (curr_price.compareTo(good_price) < 0) {
                     result = true;
@@ -5959,7 +5960,8 @@ public class Utils {
             }
 
             if (Objects.equals(trend_6_10_20, Utils.TREND_SHOT)) {
-                BigDecimal good_price = before_price.add(dailyRange.getAmp_avg_h4().multiply(BigDecimal.valueOf(0.25)));
+                BigDecimal good_price = before_price
+                        .add(dailyRange.getAmp_avg_h4().multiply(BigDecimal.valueOf(0.1)));
 
                 if (curr_price.compareTo(good_price) > 0) {
                     result = true;
@@ -5970,13 +5972,13 @@ public class Utils {
         return result;
     }
 
-    public static boolean is_able_take_profit(String trend_6_10_20, DailyRange dailyRange, BigDecimal curr_price) {
-        if (Utils.isBlank(trend_6_10_20)) {
+    public static boolean is_able_take_profit(String find_trend_by_h4, DailyRange dailyRange, BigDecimal curr_price) {
+        if (Utils.isBlank(find_trend_by_h4)) {
             return false;
         }
         boolean tp_condition = false;
 
-        if (Objects.equals(trend_6_10_20, Utils.TREND_LONG)) {
+        if (Objects.equals(find_trend_by_h4, Utils.TREND_LONG)) {
             BigDecimal tp_point_avg = dailyRange.getD_closed().add(dailyRange.getAmp_avg_h4());
 
             BigDecimal tp_point_min = dailyRange.getD_closed()
@@ -5989,7 +5991,7 @@ public class Utils {
             }
         }
 
-        if (Objects.equals(trend_6_10_20, Utils.TREND_SHOT)) {
+        if (Objects.equals(find_trend_by_h4, Utils.TREND_SHOT)) {
             BigDecimal tp_point_avg = dailyRange.getD_closed().subtract(dailyRange.getAmp_avg_h4());
 
             BigDecimal tp_point_min = dailyRange.getD_closed()
@@ -6005,6 +6007,10 @@ public class Utils {
     }
 
     public static String find_trend_by_h4(Orders dto_h4) {
+        if (!Objects.equals(dto_h4.getTrend_of_heiken3(), dto_h4.getTrend_by_ma_06())) {
+            return "";
+        }
+
         if (Objects.equals(Utils.TREND_LONG, dto_h4.getTrend_by_ma_06())
                 && (dto_h4.getMa06().compareTo(dto_h4.getMa10()) > 0)
                 && (dto_h4.getMa10().compareTo(dto_h4.getMa20()) > 0)) {
