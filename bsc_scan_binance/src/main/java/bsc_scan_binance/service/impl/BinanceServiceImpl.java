@@ -4079,6 +4079,10 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
+            if ("_USOIL_XAGUSD_".contains(EPIC)) {
+                boolean debug = true;
+            }
+
             List<DailyRange> ranges = dailyRangeRepository.findSymbolToday(EPIC);
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
@@ -4086,9 +4090,9 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
 
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
-            Orders dto_12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_12).orElse(null);
-            Orders dto_10 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_10).orElse(null);
-            Orders dto_03 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_03).orElse(null);
+            Orders dto_12 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_12).orElse(dto_15);
+            Orders dto_10 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_10).orElse(dto_15);
+            Orders dto_03 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_03).orElse(dto_15);
 
             if (CollectionUtils.isEmpty(ranges) || Objects.isNull(dto_w1) || Objects.isNull(dto_d1)
                     || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)
@@ -4110,18 +4114,11 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            if ((dto_d1.getTrend_by_seq_ma() + dto_d1.getSwitch_trend()).contains(Utils.TEXT_SEQ)
-                    && !(dto_d1.getTrend_by_seq_ma() + dto_d1.getSwitch_trend())
-                            .contains(dto_d1.getTrend_of_heiken3())) {
-                continue;
-            }
-
             BigDecimal curr_price = dto_h1.getCurrent_price();
             DailyRange dailyRange = ranges.get(0);
 
             String trend_w1 = dailyRange.getTrend_w1();
             String trend_d1 = dto_d1.getTrend_of_heiken3();
-            String trend_h4 = dto_h4.getTrend_of_heiken3();
             String trend_h1 = dto_h1.getTrend_of_heiken3();
 
             List<BigDecimal> amp_fr_to = Utils.get_amp_fr_to(dailyRange, curr_price);
@@ -4276,9 +4273,6 @@ public class BinanceServiceImpl implements BinanceService {
             BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
 
             // -------------------------------------------------------------------------------------
-            if ("_USDCAD_".contains(EPIC)) {
-                boolean debug = true;
-            }
 
             boolean trend_h4h1m03_condition = Objects.equals(find_trend_by_h4, trend_h1)
                     && Objects.equals(find_trend_by_h4, dto_h1.getTrend_by_ma_06())
