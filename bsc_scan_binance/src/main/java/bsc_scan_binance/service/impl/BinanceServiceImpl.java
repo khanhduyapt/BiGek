@@ -4302,11 +4302,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
             wd_condition = wd_condition
                     && (Objects.equals(find_trend_by_h4, dto_h1.getTrend_by_ma_06())
-                            || (Objects.equals(find_trend_by_h4, dto_d1.getTrend_of_heiken3())
-                                    && Objects.equals(find_trend_by_h4, dto_d1.getTrend_of_heiken3_1())))
+                            || Objects.equals(find_trend_by_h4, dto_d1.getTrend_of_heiken3()))
                     && Objects.equals(find_trend_by_h4, dto_d1.getTrend_by_ma_06());
 
-            if ("_EURNZD_".contains(EPIC)) {
+            if ("_USDJPY_".contains(EPIC)) {
                 boolean debug = true;
             }
 
