@@ -223,7 +223,7 @@ public class Utils {
 
     public static final Integer MINUTES_OF_2D = 2880;
     public static final Integer MINUTES_OF_1D = 1440;
-    public static final Integer MINUTES_OF_12H = 720;
+    public static final Integer MINUTES_OF_8H = 480;
     public static final Integer MINUTES_OF_4H = 240;
     public static final Integer MINUTES_OF_2H = 120;
     public static final Integer MINUTES_OF_1H = 60;
@@ -5485,7 +5485,7 @@ public class Utils {
         return false;
     }
 
-    public static boolean is_amplitude_possible_to_trade(Orders dto_h4, BigDecimal amplitude, String find_trend) {
+    public static boolean is_able_to_trade(Orders dto_h4, BigDecimal amplitude, String find_trend) {
         if (Objects.equals(TREND_LONG, find_trend)) {
             BigDecimal next_price = dto_h4.getCurrent_price().add(amplitude);
 

@@ -2948,7 +2948,7 @@ public class BinanceServiceImpl implements BinanceService {
                     Duration duration = Duration.between(pre_time, LocalDateTime.now());
                     long elapsedMinutes = duration.toMinutes();
 
-                    if (elapsedMinutes > Utils.MINUTES_OF_12H) {
+                    if (elapsedMinutes > Utils.MINUTES_OF_8H) {
                         count += 1;
                     }
                 }
@@ -4205,7 +4205,8 @@ public class BinanceServiceImpl implements BinanceService {
             // --------------------------------------------
             String type_w1 = Utils.getType(trend_w1);
             String amp = " ";
-            amp += "(amp):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dailyRange.getAmp_avg_h4()), 6);
+            BigDecimal amp_avg_h4 = dailyRange.getAmp_avg_h4();
+            amp += "(amp):" + Utils.appendSpace(Utils.calculatePoints(EPIC, amp_avg_h4), 6);
             amp += "(avg_w):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dailyRange.getAmp_w()), 6);
             amp += "(w_" + type_w1 + ")";
             amp += "   ";
@@ -4302,7 +4303,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             wd_condition = wd_condition
                     && (Objects.equals(find_trend_by_h4, dto_h1.getTrend_by_ma_06())
-                            || Objects.equals(find_trend_by_h4, dto_d1.getTrend_of_heiken3()))
+                            || Objects.equals(find_trend_by_h4, dto_h1.getTrend_of_heiken3()))
                     && Objects.equals(find_trend_by_h4, dto_d1.getTrend_by_ma_06());
 
             if ("_USDJPY_".contains(EPIC)) {
@@ -4320,8 +4321,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 boolean tp_condition = false;
                 boolean is_better_price = false;
-                boolean is_possible_to_trade = Utils.is_amplitude_possible_to_trade(dto_h4, dailyRange.getAmp_avg_h4(),
-                        find_trend_by_h4);
+                boolean is_possible_to_trade = Utils.is_able_to_trade(dto_h4, amp_avg_h4, find_trend_by_h4);
 
                 if (CollectionUtils.isEmpty(his_list)) {
                     tp_condition = Utils.is_able_take_profit(find_trend_by_h4, dailyRange, curr_price);
@@ -4477,13 +4477,12 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
                 }
             }
-
-            if (Objects.equals(dto_15.getTrend_by_ma_06(), REVERSE_TRADE_TREND)
+            if (m15_reverse
+                    && Objects.equals(dto_15.getTrend_by_ma_06(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_by_ma_06(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h4.getTrend_by_ma_06(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_d1.getTrend_by_ma_06(), REVERSE_TRADE_TREND)) {
+                    && Objects.equals(dto_h4.getTrend_by_ma_06(), REVERSE_TRADE_TREND)) {
                 is_hit_sl = true;
-                reason_id += "(d1_h4_h1_15)";
+                reason_id += "(h4_h1_15)";
             }
             // -------------------------------------------------------------------------------------
 
@@ -4585,7 +4584,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && allow_close_trade_after(TICKET, Utils.MINUTES_OF_15);
 
             hod_time_condition |= (PROFIT.compareTo(BigDecimal.ZERO) < 0)
-                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_1D);
+                    && allow_close_trade_after(TICKET, Utils.MINUTES_OF_8H);
 
             // -------------------------------------------------------------------------------------
             // TODO: 5 closeTrade_by_SL_TP
