@@ -125,6 +125,9 @@ public class BscScanBinanceApplication {
                 System.out.println(Utils.getMt5DataFolder());
                 System.out.println();
 
+                String mt5_open_trade_file = Utils.getMt5DataFolder() + "OpenTrade.csv";
+                Utils.delete_file(mt5_open_trade_file);
+
                 while (index_crypto < total) {
                     try {
                         if (isReloadAfter(1, "MsgKillZone")) {

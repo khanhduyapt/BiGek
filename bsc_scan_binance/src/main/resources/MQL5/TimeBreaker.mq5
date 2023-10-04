@@ -35,6 +35,53 @@ void OnTick(void)
   }
 
 //+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+double calc_week_amp(string symbol, int week_index)
+  {
+   int digits = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);// number of decimal places
+
+   double week_hig = iHigh(symbol, PERIOD_W1, week_index);
+   double week_low = iLow(symbol, PERIOD_W1, week_index);
+   double week_clo = iClose(symbol, PERIOD_W1, week_index);
+
+   double w_pivot    = format_double((week_hig + week_low + week_clo) / 3, digits);
+   double week_s1    = format_double((2 * w_pivot) - week_hig, digits);
+   double week_s2    = format_double(w_pivot - (week_hig - week_low), digits);
+   double week_s3    = format_double(week_low - 2 * (week_hig - w_pivot), digits);
+   double week_r1    = format_double((2 * w_pivot) - week_low, digits);
+   double week_r2    = format_double(w_pivot + (week_hig - week_low), digits);
+   double week_r3    = format_double(week_hig + 2 * (w_pivot - week_low), digits);
+
+   double week_amp = MathAbs(week_s3 - week_s2)
+                     + MathAbs(week_s2 - week_s1)
+                     + MathAbs(week_s1 - w_pivot)
+                     + MathAbs(w_pivot - week_r1)
+                     + MathAbs(week_r1 - week_r2)
+                     + MathAbs(week_r2 - week_r3);
+
+   week_amp = format_double(week_amp / 6, digits);
+
+   return week_amp;
+  }
+
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+double calc_avg_amp_week(string symbol, int size = 20)
+  {
+   double total_amp = 0.0;
+   for(int index = 1; index <= size; index ++)
+     {
+      total_amp = total_amp + calc_week_amp(symbol, index);
+     }
+   double week_amp = total_amp / size;
+
+   return week_amp;
+  }
+
+//+------------------------------------------------------------------+
 //| Timer function                                                   |
 //+------------------------------------------------------------------+
 void OnTimer(void)
@@ -85,59 +132,24 @@ void OnTimer(void)
 
          int      digits = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);          // number of decimal places
          //-------------------------------------------------------------------------------------------------------------------------------
-         datetime w_time  = iTime(symbol, PERIOD_W1, 1);
          double   w_open  = iOpen(symbol, PERIOD_W1, 1);
-         double   w_high  = iHigh(symbol, PERIOD_W1, 1);
-         double   w_low   = iLow(symbol, PERIOD_W1, 1);
          double   w_close = iClose(symbol, PERIOD_W1, 1);
-
-         double mid = w_close - w_open;
-         color candle_color = clrBlue;
-         if(w_open > w_close)
-           {
-            candle_color = clrRed;
-            mid = w_open - w_close;
-           }
-
-         mid = (mid / 2);
-
-         if(w_open > w_close)
-           {
-            mid = w_close + mid;
-           }
-         else
-           {
-            mid = w_open + mid;
-           }
-
-
-         double pivot   = (w_high + w_low + w_close) / 3;
-         double w_s1    = (2 * pivot) - w_high;
-         double w_s2    = pivot - (w_high - w_low);
-         double w_s3    = w_low - 2 * (w_high - pivot);
-         double w_r1    = (2 * pivot) - w_low;
-         double w_r2    = pivot + (w_high - w_low);
-         double w_r3    = w_high + 2 * (pivot - w_low);
-
-         double amp = MathAbs(w_s3 - w_s2) + MathAbs(w_s2 - w_s1) + MathAbs(w_s1 - pivot) + MathAbs(pivot - w_r1) + MathAbs(w_r1 - w_r2) + MathAbs(w_r2 - w_r3);
-         amp = amp / 6;
+         double avg_amp_week = calc_avg_amp_week(symbol, 20);
 
          double pre_week_close = iClose(symbol, PERIOD_W1, 1);
 
+         double w_s1 = pre_week_close - avg_amp_week;
+         double w_s2 = w_s1 - avg_amp_week;
+         double w_s3 = w_s2 - avg_amp_week;
 
-         w_s1 = pre_week_close - amp;
-         w_s2 = w_s1 - amp;
-         w_s3 = w_s2 - amp;
-
-         w_r1 = pre_week_close + amp;
-         w_r2 = w_r1 + amp;
-         w_r3 = w_r2 + amp;
-
+         double w_r1 = pre_week_close + avg_amp_week;
+         double w_r2 = w_r1 + avg_amp_week;
+         double w_r3 = w_r2 + avg_amp_week;
 
 
-         mid         = format_double(mid, digits);
-         amp         = format_double(amp, digits);
-         pivot       = format_double(pivot, digits);
+
+
+         avg_amp_week= format_double(avg_amp_week, digits);
          w_s1        = format_double(w_s1, digits);
          w_s2        = format_double(w_s2, digits);
          w_s3        = format_double(w_s3, digits);
@@ -164,7 +176,7 @@ void OnTimer(void)
 
          int total_candle = 50;
          double total_amp_daily = 0.0;
-         double amp_min_d1 = (w_high - w_low);
+         double amp_min_d1 = avg_amp_week;
          for(int index = 1; index <= total_candle; index ++)
            {
             double   tmp_hig         = iHigh(symbol, PERIOD_H4, index);
@@ -183,7 +195,7 @@ void OnTimer(void)
 
          FileWrite(nfile_w_pivot, TimeToString(TimeCurrent(), TIME_DATE), symbol
                    , format_double_to_string(pre_week_close, digits)
-                   , format_double_to_string(amp, digits)
+                   , format_double_to_string(avg_amp_week, digits)
                    , format_double_to_string(w_open, digits)
                    , format_double_to_string(w_close, digits)
                    , format_double_to_string(w_s1, digits)
