@@ -105,7 +105,7 @@ void get_history_today()
 
    if(nfile_history != INVALID_HANDLE)
      {
-      FileWrite(nfile_history, AppendSpaces("deal_time", 10), AppendSpaces("symbol"), AppendSpaces("profit"), AppendSpaces("type"), AppendSpaces("ticket"), AppendSpaces("volume"), AppendSpaces("price"), AppendSpaces("comment"));
+      FileWrite(nfile_history, AppendSpaces("deal_time", 10), AppendSpaces("symbol"), AppendSpaces("profit"), AppendSpaces("type"), AppendSpaces("ticket"), AppendSpaces("volume"), AppendSpaces("price"), AppendSpaces("status"), AppendSpaces("comment"));
 
       MqlDateTime date_time;
       TimeToStruct(TimeCurrent(), date_time);
@@ -131,13 +131,12 @@ void get_history_today()
             StringToUpper(type);
             StringReplace(symbol, ".cash", "");
 
+            string status = AppendSpaces("OPENING");
             row_count += 1;
-            string comment = AppendSpaces("OPENING") + AppendSpaces((string)row_count) + "   https://www.tradingview.com/chart/r46Q5U5a/?symbol=" + symbol;
-
+            string comment = AppendSpaces((string)row_count) + "   https://www.tradingview.com/chart/r46Q5U5a/?symbol=" + symbol;
 
             MqlDateTime struct_open_time;
-            TimeToStruct(deal_time, struct_open_time);
-
+            TimeToStruct(TimeCurrent(), struct_open_time);
 
             FileWrite(nfile_history
                       , AppendSpaces(date_time_to_string(struct_open_time))
@@ -147,6 +146,7 @@ void get_history_today()
                       , AppendSpaces((string)ticket)
                       , AppendSpaces((string)volume)
                       , AppendSpaces(format_double_to_string(price, digits))
+                      , AppendSpaces(status)
                       , AppendSpaces((string)comment));
 
 
@@ -197,13 +197,9 @@ void get_history_today()
                if(deal_type == 0)
                   type = "SELL";
 
-               string comment = "";
-               if(HistoryDealGetInteger(ticket, DEAL_ENTRY) == DEAL_ENTRY_OUT)
-                  comment = AppendSpaces("CLOSED");
-
-
+               string status = AppendSpaces("CLOSED");
                row_count += 1;
-               comment = AppendSpaces(comment) + AppendSpaces((string)row_count) + "   https://www.tradingview.com/chart/r46Q5U5a/?symbol=" + symbol;
+               string comment = AppendSpaces((string)row_count) + "   https://www.tradingview.com/chart/r46Q5U5a/?symbol=" + symbol;
 
 
                FileWrite(nfile_history
@@ -214,6 +210,7 @@ void get_history_today()
                          , AppendSpaces((string)ticket)
                          , AppendSpaces((string)volume)
                          , AppendSpaces(format_double_to_string(price, digits))
+                         , AppendSpaces(status)
                          , AppendSpaces((string)comment));
 
               }

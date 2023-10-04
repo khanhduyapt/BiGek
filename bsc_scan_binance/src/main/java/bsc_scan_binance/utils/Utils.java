@@ -6104,8 +6104,10 @@ public class Utils {
 
                 && Objects.equals(trend_15, dto_03.getTrend_by_ma_06())
                 && Objects.equals(trend_15, dto_03.getTrend_by_ma_10())
-                && Objects.equals(trend_15, dto_03.getTrend_by_ma_20())) {
+                && (Objects.equals(trend_15, dto_03.getTrend_by_ma_20())
+                        || Objects.equals(trend_15, dto_03.getTrend_by_seq_ma()))
 
+        ) {
             return trend_15;
         }
 
