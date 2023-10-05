@@ -2272,6 +2272,10 @@ public class Utils {
             }
         }
 
+        if ((22 < hh) && (hh < 3)) {
+            return true;
+        }
+
         return false;
     }
 

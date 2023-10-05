@@ -4479,11 +4479,11 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
             if (m15_reverse
-                    && Objects.equals(dto_15.getTrend_by_ma_06(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_by_ma_06(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h4.getTrend_by_ma_06(), REVERSE_TRADE_TREND)) {
+                    && Objects.equals(dto_h4.getTrend_by_ma_06(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_d1.getTrend_by_ma_06(), REVERSE_TRADE_TREND)) {
                 is_hit_sl = true;
-                reason_id += "(h4_h1_15)";
+                reason_id += "(d1_h4_h1_15)";
             }
             // -------------------------------------------------------------------------------------
 
