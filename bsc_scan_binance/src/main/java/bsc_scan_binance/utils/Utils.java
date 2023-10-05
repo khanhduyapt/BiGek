@@ -1989,7 +1989,7 @@ public class Utils {
 
     public static boolean isWorkingTime() {
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-        if ((6 <= hh && hh <= 22)) {
+        if ((6 <= hh && hh <= 21)) {
             return true;
         }
 
