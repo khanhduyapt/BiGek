@@ -2692,9 +2692,11 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
+                String type = "";
                 String EPIC = "NOT_FOUND";
                 Mt5OpenTradeEntity mt5Entity = mt5OpenTradeRepository.findById(TICKET).orElse(null);
                 if (Objects.nonNull(mt5Entity)) {
+                    type = mt5Entity.getType();
                     EPIC = mt5Entity.getSymbol();
                 }
 
@@ -2715,8 +2717,9 @@ public class BinanceServiceImpl implements BinanceService {
                 sb.append('\n');
                 writer.write(sb.toString());
 
-                System.out.println("CloseTicket: " + TICKET + "    " + EPIC + "    Resion: "
-                        + BscScanBinanceApplication.mt5_close_ticket_dict.get(TICKET));
+                System.out.println("CloseTicket: " + Utils.appendSpace(TICKET, 15) + Utils.appendSpace(type, 10)
+                        + Utils.appendSpace(EPIC, 10)
+                        + "    Resion: " + BscScanBinanceApplication.mt5_close_ticket_dict.get(TICKET));
             }
 
             writer.close();
