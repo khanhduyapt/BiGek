@@ -4436,24 +4436,9 @@ public class Utils {
         return sw_1;
     }
 
-    public static String switchTrendByMa10vs2025(List<BtcFutures> heiken_list) {
-        String sw_1 = switchTrendByMa1(heiken_list, 11, 20, 25, TEXT_SWITCH_TREND_Ma_10vs20);
-        String sw_0 = switchTrendByMa1(heiken_list, 10, 20, 25, TEXT_SWITCH_TREND_Ma_10vs20);
-
-        if (Utils.isNotBlank(sw_1) && Utils.isNotBlank(sw_0)) {
-            String trend_1 = sw_1.contains(TREND_LONG) ? TREND_LONG : TREND_SHOT;
-            String trend_0 = sw_1.contains(TREND_LONG) ? TREND_LONG : TREND_SHOT;
-
-            if (!Objects.equals(trend_1, trend_0)) {
-                return sw_0;
-            }
-        }
-        return sw_1;
-    }
-
     public static String switchTrendByMa1vs2025(List<BtcFutures> heiken_list) {
-        String sw_1 = switchTrendByMa1(heiken_list, 1, 20, 25, TEXT_SWITCH_TREND_Ma_1vs20);
-        String sw_0 = switchTrendByMa1(heiken_list, 0, 20, 25, TEXT_SWITCH_TREND_Ma_1vs20);
+        String sw_1 = switchTrendByMa1(heiken_list, 1, 15, 25, TEXT_SWITCH_TREND_Ma_1vs20);
+        String sw_0 = switchTrendByMa1(heiken_list, 0, 15, 25, TEXT_SWITCH_TREND_Ma_1vs20);
 
         if (Utils.isNotBlank(sw_1) && Utils.isNotBlank(sw_0)) {
             String trend_1 = sw_1.contains(TREND_LONG) ? TREND_LONG : TREND_SHOT;
@@ -5322,8 +5307,8 @@ public class Utils {
             stop_loss = amp_to.add(amp_w).subtract(amp_waste);
             take_profit = amp_fr.subtract(amp_w).add(amp_waste);
         }
-        //stop_loss = BigDecimal.ZERO;
-        //take_profit = BigDecimal.ZERO;
+        // stop_loss = BigDecimal.ZERO;
+        // take_profit = BigDecimal.ZERO;
 
         BigDecimal standard_vol = get_standard_vol_per_100usd(EPIC);
         String type = Objects.equals(find_trend, Utils.TREND_LONG) ? "_b" : "_s";
@@ -6004,33 +5989,28 @@ public class Utils {
         return result;
     }
 
-    public static boolean is_able_take_profit(String find_trend_by_h4, DailyRange dailyRange, BigDecimal curr_price) {
+    public static boolean is_able_take_profit(String find_trend_by_h4, DailyRange dailyRange, BigDecimal h4ma10,
+            BigDecimal curr_price) {
         if (Utils.isBlank(find_trend_by_h4)) {
             return false;
         }
         boolean tp_condition = false;
+        List<BigDecimal> fr_to = get_amp_fr_to(dailyRange, h4ma10);
+        BigDecimal low = fr_to.get(0);
+        BigDecimal hig = fr_to.get(1);
 
         if (Objects.equals(find_trend_by_h4, Utils.TREND_LONG)) {
-            BigDecimal tp_point_avg = dailyRange.getD_closed().add(dailyRange.getAmp_avg_h4());
-
-            BigDecimal tp_point_min = dailyRange.getD_closed()
-                    .add(dailyRange.getAmp_avg_h4().multiply(BigDecimal.valueOf(0.5)));
-
             BigDecimal tp_price = curr_price.add(dailyRange.getAmp_avg_h4());
 
-            if ((curr_price.compareTo(tp_point_min) < 0) && (tp_price.compareTo(tp_point_avg) < 0)) {
+            if (tp_price.compareTo(hig) < 0) {
                 tp_condition = true;
             }
         }
 
         if (Objects.equals(find_trend_by_h4, Utils.TREND_SHOT)) {
-            BigDecimal tp_point_avg = dailyRange.getD_closed().subtract(dailyRange.getAmp_avg_h4());
-
-            BigDecimal tp_point_min = dailyRange.getD_closed()
-                    .subtract(dailyRange.getAmp_avg_h4().multiply(BigDecimal.valueOf(0.5)));
-
             BigDecimal tp_price = curr_price.subtract(dailyRange.getAmp_avg_h4());
-            if ((curr_price.compareTo(tp_point_min) > 0) && (tp_price.compareTo(tp_point_avg) > 0)) {
+
+            if (tp_price.compareTo(low) > 0) {
                 tp_condition = true;
             }
         }
