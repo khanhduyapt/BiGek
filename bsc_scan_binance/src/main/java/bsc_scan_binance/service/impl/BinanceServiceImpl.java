@@ -2797,7 +2797,8 @@ public class BinanceServiceImpl implements BinanceService {
                     }
 
                     trade_count += 1;
-                    if (Utils.isPcCongTy()) {
+                    // if (Utils.isPcCongTy())
+                    {
                         StringBuilder sb = new StringBuilder();
                         sb.append(dto.getEpic()); // 0
                         sb.append('\t');
