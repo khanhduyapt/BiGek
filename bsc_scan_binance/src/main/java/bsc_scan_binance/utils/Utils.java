@@ -4650,33 +4650,33 @@ public class Utils {
     }
 
     public static BigDecimal getTakeProfitByAmp(DailyRange dailyRange, BigDecimal curr_price, String find_trend) {
-        if (Objects.equals(Utils.TREND_LONG, find_trend)) {
-            if (curr_price.compareTo(dailyRange.getResistance1()) < 0) {
-                return dailyRange.getResistance1();
-            }
-            if (curr_price.compareTo(dailyRange.getResistance2()) < 0) {
-                return dailyRange.getResistance2();
-            }
-        } else {
-            if (curr_price.compareTo(dailyRange.getSupport1()) > 0) {
-                return dailyRange.getSupport1();
-            }
-            if (curr_price.compareTo(dailyRange.getSupport2()) > 0) {
-                return dailyRange.getSupport2();
-            }
-        }
+//        if (Objects.equals(Utils.TREND_LONG, find_trend)) {
+//            if (curr_price.compareTo(dailyRange.getResistance1()) < 0) {
+//                return dailyRange.getResistance1();
+//            }
+//            if (curr_price.compareTo(dailyRange.getResistance2()) < 0) {
+//                return dailyRange.getResistance2();
+//            }
+//        } else {
+//            if (curr_price.compareTo(dailyRange.getSupport1()) > 0) {
+//                return dailyRange.getSupport1();
+//            }
+//            if (curr_price.compareTo(dailyRange.getSupport2()) > 0) {
+//                return dailyRange.getSupport2();
+//            }
+//        }
         return BigDecimal.ZERO;
     }
 
     public static String getTakeProfit123ByAmp(DailyRange dailyRange, BigDecimal curr_price, String find_trend) {
-        String result = "";
-        if (Objects.equals(Utils.TREND_LONG, find_trend)) {
-            result += " (r1):" + Utils.appendSpace(dailyRange.getResistance1(), 8);
-            result += " (r2):" + Utils.appendSpace(dailyRange.getResistance2(), 8);
-        } else {
-            result += " (s1):" + Utils.appendSpace(dailyRange.getSupport1(), 8);
-            result += " (s2):" + Utils.appendSpace(dailyRange.getSupport2(), 8);
-        }
+        String result = "TODO";
+//        if (Objects.equals(Utils.TREND_LONG, find_trend)) {
+//            result += " (r1):" + Utils.appendSpace(dailyRange.getResistance1(), 8);
+//            result += " (r2):" + Utils.appendSpace(dailyRange.getResistance2(), 8);
+//        } else {
+//            result += " (s1):" + Utils.appendSpace(dailyRange.getSupport1(), 8);
+//            result += " (s2):" + Utils.appendSpace(dailyRange.getSupport2(), 8);
+//        }
 
         return result;
     }
@@ -5227,7 +5227,7 @@ public class Utils {
         BigDecimal stop_loss = BigDecimal.ZERO;
         BigDecimal take_profit = BigDecimal.ZERO;
 
-        BigDecimal amp_w = dailyRange.getAmp_w();
+        BigDecimal amp_w = dailyRange.getAvg_amp_week();
         List<BigDecimal> amp_fr_to = Utils.get_amp_fr_to(dailyRange, curr_price);
         BigDecimal amp_fr = amp_fr_to.get(0);
         BigDecimal amp_to = amp_fr_to.get(1);
@@ -5256,8 +5256,8 @@ public class Utils {
         BigDecimal amp_fr = BigDecimal.ZERO;
         BigDecimal amp_to = BigDecimal.ZERO;
         for (int idx = -5; idx < 6; idx++) {
-            amp_fr = dailyRange.getPre_week_closed().add(dailyRange.getAmp_w().multiply(BigDecimal.valueOf(idx)));
-            amp_to = dailyRange.getPre_week_closed().add(dailyRange.getAmp_w().multiply(BigDecimal.valueOf(idx + 1)));
+            amp_fr = dailyRange.getW_close().add(dailyRange.getAvg_amp_week().multiply(BigDecimal.valueOf(idx)));
+            amp_to = dailyRange.getW_close().add(dailyRange.getAvg_amp_week().multiply(BigDecimal.valueOf(idx + 1)));
 
             if ((amp_fr.compareTo(curr_price) <= 0) && (curr_price.compareTo(amp_to) <= 0)) {
 
@@ -5284,7 +5284,7 @@ public class Utils {
         // TODO: Utils.calc_Lot_En_SL_TP
         BigDecimal stop_loss = BigDecimal.ZERO;
         BigDecimal take_profit = BigDecimal.ZERO;
-        BigDecimal amp_w = dailyRange.getAmp_w();
+        BigDecimal amp_w = dailyRange.getAvg_amp_week();
         List<BigDecimal> amp_fr_to = Utils.get_amp_fr_to(dailyRange, curr_price);
         BigDecimal amp_fr = amp_fr_to.get(0);
         BigDecimal amp_to = amp_fr_to.get(1);

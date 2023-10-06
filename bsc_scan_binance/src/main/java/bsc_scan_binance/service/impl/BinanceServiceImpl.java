@@ -2867,7 +2867,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         log += Utils.getTakeProfit123ByAmp(dailyRange, curr_price, Utils.TREND_LONG);
         log += "     ";
-        log += "w_close:" + Utils.appendSpace(dailyRange.getPre_week_closed(), 8);
+        log += "w_close:" + Utils.appendSpace(dailyRange.getW_close(), 8);
         log += "     ";
         log += Utils.getTakeProfit123ByAmp(dailyRange, curr_price, Utils.TREND_SHOT);
 
@@ -3031,14 +3031,14 @@ public class BinanceServiceImpl implements BinanceService {
 
         // BUY: giá nhỏ nhất - AMP > curr_price >>> có thể nhồi lệnh.
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            last_open_price = last_open_price.subtract(dailyRange.getAmp_w());
+            last_open_price = last_open_price.subtract(dailyRange.getAvg_amp_week());
 
             satisfy_loss_range_when_enter = curr_price.compareTo(last_open_price) < 0;
         }
 
         // SELL: giá lớn nhất + AMP < curr_price >>> có thể nhồi lệnh.
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            last_open_price = last_open_price.add(dailyRange.getAmp_w());
+            last_open_price = last_open_price.add(dailyRange.getAvg_amp_week());
 
             satisfy_loss_range_when_enter = curr_price.compareTo(last_open_price) > 0;
         }
@@ -3365,30 +3365,26 @@ public class BinanceServiceImpl implements BinanceService {
                 if (tempArr.length == 16) {
                     String yyyy_mm_dd = tempArr[0];
                     String symbol = tempArr[1];
+                    String trend_w1 = tempArr[2];
 
-                    BigDecimal mid = Utils.getBigDecimal(tempArr[2]);
-                    BigDecimal amp = Utils.getBigDecimal(tempArr[3]);
-                    BigDecimal open_price = Utils.getBigDecimal(tempArr[4]);
-                    BigDecimal close_price = Utils.getBigDecimal(tempArr[5]);
-
-                    BigDecimal support1 = Utils.getBigDecimal(tempArr[6]);
-                    BigDecimal support2 = Utils.getBigDecimal(tempArr[7]);
-                    BigDecimal support3 = Utils.getBigDecimal(tempArr[8]);
-
-                    BigDecimal resistance1 = Utils.getBigDecimal(tempArr[9]);
-                    BigDecimal resistance2 = Utils.getBigDecimal(tempArr[10]);
-                    BigDecimal resistance3 = Utils.getBigDecimal(tempArr[11]);
-
-                    BigDecimal pivot = Utils.getBigDecimal(tempArr[12]);
-
-                    String trend_w1 = tempArr[13];
-                    BigDecimal pre_week_mid = Utils.getBigDecimal(tempArr[14]);
-                    BigDecimal this_week_mid = Utils.getBigDecimal(tempArr[15]);
+                    BigDecimal w_close = Utils.getBigDecimal(tempArr[3]);
+                    BigDecimal avg_amp_week = Utils.getBigDecimal(tempArr[4]);
+                    BigDecimal upper_h1 = Utils.getBigDecimal(tempArr[5]);
+                    BigDecimal middle_h1 = Utils.getBigDecimal(tempArr[6]);
+                    BigDecimal lower_h1 = Utils.getBigDecimal(tempArr[7]);
+                    BigDecimal upper_h4 = Utils.getBigDecimal(tempArr[8]);
+                    BigDecimal middle_h4 = Utils.getBigDecimal(tempArr[9]);
+                    BigDecimal lower_h4 = Utils.getBigDecimal(tempArr[10]);
+                    BigDecimal d_close = Utils.getBigDecimal(tempArr[11]);
+                    BigDecimal d_today_low = Utils.getBigDecimal(tempArr[12]);
+                    BigDecimal d_today_hig = Utils.getBigDecimal(tempArr[13]);
+                    BigDecimal amp_min_d1 = Utils.getBigDecimal(tempArr[14]);
+                    BigDecimal amp_avg_h4 = Utils.getBigDecimal(tempArr[15]);
 
                     DailyRangeKey id = new DailyRangeKey(yyyy_mm_dd, symbol);
-                    DailyRange daily = new DailyRange(id, mid, amp, open_price, close_price, support1, support2,
-                            support3, resistance1, resistance2, resistance3, pivot, trend_w1, pre_week_mid,
-                            this_week_mid);
+                    DailyRange daily = new DailyRange(id, trend_w1, w_close, avg_amp_week, upper_h1, middle_h1,
+                            lower_h1, upper_h4, middle_h4, lower_h4, d_close, d_today_low, d_today_hig, amp_min_d1,
+                            amp_avg_h4);
 
                     list.add(daily);
                 }
@@ -3801,7 +3797,7 @@ public class BinanceServiceImpl implements BinanceService {
                     DailyRange dailyRange = ranges.get(0);
                     if (Objects.nonNull(dailyRange) && !Objects.equals(TRADE_TREND, Utils.TREND_UNSURE)) {
 
-                        BigDecimal amplitude = dailyRange.getAmp_w();
+                        BigDecimal amplitude = dailyRange.getAvg_amp_week();
 
                         if (Objects.equals(TRADE_TREND, Utils.TREND_LONG)) {
                             BigDecimal next_price = trade.getPriceOpen().add(amplitude);
@@ -4207,7 +4203,7 @@ public class BinanceServiceImpl implements BinanceService {
             String amp = " ";
             BigDecimal amp_avg_h4 = dailyRange.getAmp_avg_h4();
             amp += "(amp):" + Utils.appendSpace(Utils.calculatePoints(EPIC, amp_avg_h4), 6);
-            amp += "(avg_w):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dailyRange.getAmp_w()), 6);
+            amp += "(avg_w):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dailyRange.getAvg_amp_week()), 6);
             amp += "(w_" + type_w1 + ")";
             amp += "   ";
 

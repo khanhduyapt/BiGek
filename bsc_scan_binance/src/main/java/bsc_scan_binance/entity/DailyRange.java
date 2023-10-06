@@ -23,20 +23,20 @@ import lombok.NoArgsConstructor;
 //(
 //    yyyy_mm_dd character varying(255) COLLATE pg_catalog."default" NOT NULL,
 //    symbol character varying(255) COLLATE pg_catalog."default" NOT NULL,
-//    mid numeric(30,5) DEFAULT 0,
-//    amp numeric(30,5) DEFAULT 0,
-//    open_price numeric(30,5) DEFAULT 0,
-//    close_price numeric(30,5) DEFAULT 0,
-//    support1 numeric(30,5) DEFAULT 0,
-//    support2 numeric(30,5) DEFAULT 0,
-//    support3 numeric(30,5) DEFAULT 0,
-//    resistance1 numeric(30,5) DEFAULT 0,
-//    resistance2 numeric(30,5) DEFAULT 0,
-//    resistance3 numeric(30,5) DEFAULT 0,
-//    pivot numeric(30,5) DEFAULT 0,
 //    trend_w1 character varying(255) COLLATE pg_catalog."default",
-//    pre_week_mid numeric(30,5),
-//    this_week_mid numeric(30,5),
+//    w_close numeric(30,5) DEFAULT 0,
+//    avg_amp_week numeric(30,5) DEFAULT 0,
+//    upper_h1 numeric(30,5) DEFAULT 0,
+//    middle_h1 numeric(30,5) DEFAULT 0,
+//    lower_h1 numeric(30,5) DEFAULT 0,
+//    upper_h4 numeric(30,5) DEFAULT 0,
+//    middle_h4 numeric(30,5) DEFAULT 0,
+//    lower_h4 numeric(30,5) DEFAULT 0,
+//    d_close numeric(30,5) DEFAULT 0,
+//    d_today_low numeric(30,5) DEFAULT 0,
+//    d_today_hig numeric(30,5) DEFAULT 0,
+//    amp_min_d1 numeric(30,5) DEFAULT 0,
+//    amp_avg_h4 numeric(30,5) DEFAULT 0,
 //    CONSTRAINT daily_range_pkey PRIMARY KEY (yyyy_mm_dd, symbol)
 //)
 
@@ -45,45 +45,45 @@ public class DailyRange {
     @EmbeddedId
     private DailyRangeKey id;
 
-    @Column(name = "mid")
-    private BigDecimal pre_week_closed = BigDecimal.ZERO;
-
-    @Column(name = "amp")
-    private BigDecimal amp_w = BigDecimal.ZERO;
-
-    @Column(name = "open_price")
-    private BigDecimal open_price = BigDecimal.ZERO;
-
-    @Column(name = "close_price")
-    private BigDecimal close_price = BigDecimal.ZERO;
-
-    @Column(name = "support1")
-    private BigDecimal support1 = BigDecimal.ZERO;
-
-    @Column(name = "support2")
-    private BigDecimal support2 = BigDecimal.ZERO;
-
-    @Column(name = "support3")
-    private BigDecimal d_today_low = BigDecimal.ZERO;
-
-    @Column(name = "resistance1")
-    private BigDecimal resistance1 = BigDecimal.ZERO;
-
-    @Column(name = "resistance2")
-    private BigDecimal resistance2 = BigDecimal.ZERO;
-
-    @Column(name = "resistance3")
-    private BigDecimal d_today_hig = BigDecimal.ZERO;
-
-    @Column(name = "pivot")
-    private BigDecimal amp_min_d1 = BigDecimal.ZERO;
-
     @Column(name = "trend_w1")
     private String trend_w1 = "";
 
-    @Column(name = "pre_week_mid")
-    private BigDecimal d_closed = BigDecimal.ZERO;
+    @Column(name = "w_close")
+    private BigDecimal w_close = BigDecimal.ZERO;
 
-    @Column(name = "this_week_mid")
+    @Column(name = "avg_amp_week")
+    private BigDecimal avg_amp_week = BigDecimal.ZERO;
+
+    @Column(name = "upper_h1")
+    private BigDecimal upper_h1 = BigDecimal.ZERO;
+
+    @Column(name = "middle_h1")
+    private BigDecimal middle_h1 = BigDecimal.ZERO;
+
+    @Column(name = "lower_h1")
+    private BigDecimal lower_h1 = BigDecimal.ZERO;
+
+    @Column(name = "upper_h4")
+    private BigDecimal upper_h4 = BigDecimal.ZERO;
+
+    @Column(name = "middle_h4")
+    private BigDecimal middle_h4 = BigDecimal.ZERO;
+
+    @Column(name = "lower_h4")
+    private BigDecimal lower_h4 = BigDecimal.ZERO;
+
+    @Column(name = "d_close")
+    private BigDecimal d_close = BigDecimal.ZERO;
+
+    @Column(name = "d_today_low")
+    private BigDecimal d_today_low = BigDecimal.ZERO;
+
+    @Column(name = "d_today_hig")
+    private BigDecimal d_today_hig = BigDecimal.ZERO;
+
+    @Column(name = "amp_min_d1")
+    private BigDecimal amp_min_d1 = BigDecimal.ZERO;
+
+    @Column(name = "amp_avg_h4")
     private BigDecimal amp_avg_h4 = BigDecimal.ZERO;
 }
