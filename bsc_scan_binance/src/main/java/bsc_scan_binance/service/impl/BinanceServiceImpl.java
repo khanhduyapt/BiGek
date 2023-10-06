@@ -4360,23 +4360,23 @@ public class BinanceServiceImpl implements BinanceService {
         String keys = "";
         List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository.findAllByOrderByCompanyAscSymbolAsc();
         for (Mt5OpenTradeEntity trade : mt5Openlist) {
-            if (trade.getType().toUpperCase().contains("LIMIT")) {
-
-                boolean is_trading = false;
-                for (Mt5OpenTradeEntity trade_2 : mt5Openlist) {
-                    if (Objects.equals(trade_2.getSymbol(), trade.getSymbol())
-                            && !trade_2.getType().toUpperCase().contains("LIMIT")) {
-                        is_trading = true;
-                        break;
-                    }
-                }
-
-                if (!is_trading) {
-                    BscScanBinanceApplication.mt5_close_ticket_dict.put(trade.getTicket(), "close_limit");
-                }
-
-                continue;
-            }
+            // if (trade.getType().toUpperCase().contains("LIMIT")) {
+            // boolean is_trading = false;
+            // for (Mt5OpenTradeEntity trade_2 : mt5Openlist) {
+            // if (Objects.equals(trade_2.getSymbol(), trade.getSymbol())
+            // && !trade_2.getType().toUpperCase().contains("LIMIT")) {
+            // is_trading = true;
+            // break;
+            // }
+            // }
+            //
+            // if (!is_trading) {
+            // BscScanBinanceApplication.mt5_close_ticket_dict.put(trade.getTicket(),
+            // "close_limit");
+            // }
+            //
+            // continue;
+            // }
 
             String EPIC = trade.getSymbol();
             String TICKET = trade.getTicket();
