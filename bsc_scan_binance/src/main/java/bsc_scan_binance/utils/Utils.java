@@ -4167,41 +4167,25 @@ public class Utils {
         return find_trend;
     }
 
-    public static String trend_by_seq_ma_1_6_10_20(List<BtcFutures> heiken_list) {
+    public static String trend_by_seq_ma_6_10_20(List<BtcFutures> heiken_list) {
         String result = "";
         if (heiken_list.size() < 20) {
             return result;
         }
         String trend = getTrendByHekenAshiList(heiken_list);
-
-        BigDecimal ma03_1 = calcMA(heiken_list, 3, 0);
-        BigDecimal ma06_1 = calcMA(heiken_list, 6, 0);
-        BigDecimal ma09_1 = calcMA(heiken_list, 9, 0);
-
-        boolean allow_next = false;
-        if (Objects.equals(trend, TREND_LONG) && (ma03_1.compareTo(ma06_1) >= 0) && (ma06_1.compareTo(ma09_1) >= 0)) {
-            allow_next = true;
-        }
-        if (Objects.equals(trend, TREND_SHOT) && (ma03_1.compareTo(ma06_1) <= 0) && (ma06_1.compareTo(ma09_1) <= 0)) {
-            allow_next = true;
-        }
-        if (!allow_next) {
-            return "";
-        }
-
-        BigDecimal ma01_1 = calcMA(heiken_list, 01, 0);
-        BigDecimal ma10_1 = calcMA(heiken_list, 10, 0);
-        BigDecimal ma20_1 = calcMA(heiken_list, 20, 0);
+        BigDecimal ma06_1 = calcMA(heiken_list, 6, 1);
+        BigDecimal ma10_1 = calcMA(heiken_list, 10, 1);
+        BigDecimal ma20_1 = calcMA(heiken_list, 20, 1);
 
         if (trend.contains(Utils.TREND_LONG)) {
-            if ((ma01_1.compareTo(ma06_1) >= 0) && (ma06_1.compareTo(ma10_1) >= 0) && (ma10_1.compareTo(ma20_1) >= 0)) {
+            if ((ma06_1.compareTo(ma10_1) >= 0) && (ma10_1.compareTo(ma20_1) >= 0)) {
                 String chart_name = getChartName(heiken_list).trim();
                 result = chart_name + TEXT_SWITCH_TREND_SEQ_6_10_20 + ":" + Utils.TREND_LONG;
             }
         }
 
         if (trend.contains(Utils.TREND_SHOT)) {
-            if ((ma01_1.compareTo(ma06_1) <= 0) && (ma06_1.compareTo(ma10_1) <= 0) && (ma10_1.compareTo(ma20_1) <= 0)) {
+            if ((ma06_1.compareTo(ma10_1) <= 0) && (ma10_1.compareTo(ma20_1) <= 0)) {
                 String chart_name = getChartName(heiken_list).trim();
                 result = chart_name + TEXT_SWITCH_TREND_SEQ_6_10_20 + ":" + Utils.TREND_SHOT;
             }
@@ -4239,26 +4223,20 @@ public class Utils {
         }
         String heiken_1 = getTrendByHekenAshiList(heiken_list);
 
-        BigDecimal ma01 = calcMA(heiken_list, 01, 0);
-        BigDecimal ma10 = calcMA(heiken_list, 10, 0);
-        BigDecimal ma20 = calcMA(heiken_list, 20, 0);
-        BigDecimal ma50 = calcMA(heiken_list, 50, 0);
-
-        boolean is_insite_lohi = is_insite_lohi(heiken_list, heiken_1, amplitude_avg_of_candles, ma01, ma10, ma20,
-                ma50);
-        if (!is_insite_lohi) {
-            // return "";
-        }
+        BigDecimal ma01 = calcMA(heiken_list, 01, 1);
+        BigDecimal ma10 = calcMA(heiken_list, 10, 1);
+        BigDecimal ma20 = calcMA(heiken_list, 20, 1);
+        BigDecimal ma50 = calcMA(heiken_list, 50, 1);
 
         if (heiken_1.contains(Utils.TREND_LONG)) {
-            if ((ma01.compareTo(ma10) >= 0) && (ma10.compareTo(ma20) >= 0) && (ma20.compareTo(ma50) >= 0)) {
+            if ((ma01.compareTo(ma10) >= 0) && (ma10.compareTo(ma20) >= 0) && (ma01.compareTo(ma50) >= 0)) {
                 String chart_name = getChartName(heiken_list).trim();
                 result = chart_name + TEXT_SWITCH_TREND_SEQ_1_10_20_50 + ":" + Utils.TREND_LONG;
             }
         }
 
         if (heiken_1.contains(Utils.TREND_SHOT)) {
-            if ((ma01.compareTo(ma10) <= 0) && (ma10.compareTo(ma20) <= 0) && (ma20.compareTo(ma50) <= 0)) {
+            if ((ma01.compareTo(ma10) <= 0) && (ma10.compareTo(ma20) <= 0) && (ma01.compareTo(ma50) <= 0)) {
                 String chart_name = getChartName(heiken_list).trim();
                 result = chart_name + TEXT_SWITCH_TREND_SEQ_1_10_20_50 + ":" + Utils.TREND_SHOT;
             }
@@ -4650,33 +4628,33 @@ public class Utils {
     }
 
     public static BigDecimal getTakeProfitByAmp(DailyRange dailyRange, BigDecimal curr_price, String find_trend) {
-        //        if (Objects.equals(Utils.TREND_LONG, find_trend)) {
-        //            if (curr_price.compareTo(dailyRange.getResistance1()) < 0) {
-        //                return dailyRange.getResistance1();
-        //            }
-        //            if (curr_price.compareTo(dailyRange.getResistance2()) < 0) {
-        //                return dailyRange.getResistance2();
-        //            }
-        //        } else {
-        //            if (curr_price.compareTo(dailyRange.getSupport1()) > 0) {
-        //                return dailyRange.getSupport1();
-        //            }
-        //            if (curr_price.compareTo(dailyRange.getSupport2()) > 0) {
-        //                return dailyRange.getSupport2();
-        //            }
-        //        }
+        // if (Objects.equals(Utils.TREND_LONG, find_trend)) {
+        // if (curr_price.compareTo(dailyRange.getResistance1()) < 0) {
+        // return dailyRange.getResistance1();
+        // }
+        // if (curr_price.compareTo(dailyRange.getResistance2()) < 0) {
+        // return dailyRange.getResistance2();
+        // }
+        // } else {
+        // if (curr_price.compareTo(dailyRange.getSupport1()) > 0) {
+        // return dailyRange.getSupport1();
+        // }
+        // if (curr_price.compareTo(dailyRange.getSupport2()) > 0) {
+        // return dailyRange.getSupport2();
+        // }
+        // }
         return BigDecimal.ZERO;
     }
 
     public static String getTakeProfit123ByAmp(DailyRange dailyRange, BigDecimal curr_price, String find_trend) {
         String result = "TODO";
-        //        if (Objects.equals(Utils.TREND_LONG, find_trend)) {
-        //            result += " (r1):" + Utils.appendSpace(dailyRange.getResistance1(), 8);
-        //            result += " (r2):" + Utils.appendSpace(dailyRange.getResistance2(), 8);
-        //        } else {
-        //            result += " (s1):" + Utils.appendSpace(dailyRange.getSupport1(), 8);
-        //            result += " (s2):" + Utils.appendSpace(dailyRange.getSupport2(), 8);
-        //        }
+        // if (Objects.equals(Utils.TREND_LONG, find_trend)) {
+        // result += " (r1):" + Utils.appendSpace(dailyRange.getResistance1(), 8);
+        // result += " (r2):" + Utils.appendSpace(dailyRange.getResistance2(), 8);
+        // } else {
+        // result += " (s1):" + Utils.appendSpace(dailyRange.getSupport1(), 8);
+        // result += " (s2):" + Utils.appendSpace(dailyRange.getSupport2(), 8);
+        // }
 
         return result;
     }
@@ -6057,16 +6035,14 @@ public class Utils {
 
         BigDecimal h41_upper = dailyRange.getUpper_h4().min(dailyRange.getUpper_h1());
         BigDecimal h41_lower = dailyRange.getLower_h4().max(dailyRange.getLower_h1());
-        if ((cur_price.compareTo(h41_upper) > 0)
-                && Objects.equals(dto_03.getTrend_by_ma_06(), Utils.TREND_SHOT)
+        if ((cur_price.compareTo(h41_upper) > 0) && Objects.equals(dto_03.getTrend_by_ma_06(), Utils.TREND_SHOT)
                 && Objects.equals(dto_h1.getTrend_by_ma_06(), Utils.TREND_SHOT)
                 && Objects.equals(dto_h1.getTrend_by_ma_10(), Utils.TREND_SHOT)
                 && is_able_take_profit_bolliger_min(dto_h1.getTrend_by_ma_06(), dailyRange, cur_price)) {
             return Utils.TREND_SHOT;
         }
 
-        if ((cur_price.compareTo(h41_lower) < 0)
-                && Objects.equals(dto_03.getTrend_by_ma_06(), Utils.TREND_LONG)
+        if ((cur_price.compareTo(h41_lower) < 0) && Objects.equals(dto_03.getTrend_by_ma_06(), Utils.TREND_LONG)
                 && Objects.equals(dto_h1.getTrend_by_ma_06(), Utils.TREND_LONG)
                 && Objects.equals(dto_h1.getTrend_by_ma_10(), Utils.TREND_LONG)
                 && is_able_take_profit_bolliger_min(dto_h1.getTrend_by_ma_06(), dailyRange, cur_price)) {
@@ -6109,9 +6085,7 @@ public class Utils {
     public static String find_trend_by_15m(Orders dto_15, Orders dto_12, Orders dto_10, Orders dto_03) {
         String trend_15 = dto_15.getTrend_by_ma_06();
 
-        if (Objects.equals(dto_15.getTrend_by_ma6_vs_ma20(), trend_15)
-                && Objects.equals(trend_15, dto_15.getTrend_by_ma_06())
-                && Objects.equals(trend_15, dto_15.getTrend_by_ma_10())
+        if (Objects.equals(trend_15, dto_15.getTrend_by_ma_06()) && Objects.equals(trend_15, dto_15.getTrend_by_ma_10())
 
                 && Objects.equals(trend_15, dto_12.getTrend_by_ma_06())
                 && Objects.equals(trend_15, dto_12.getTrend_by_ma_10())
@@ -6119,7 +6093,6 @@ public class Utils {
                 && Objects.equals(trend_15, dto_10.getTrend_by_ma_06())
                 && Objects.equals(trend_15, dto_10.getTrend_by_ma_10())
                 && (Objects.equals(trend_15, dto_10.getTrend_by_ma_20())
-                        || Objects.equals(trend_15, dto_10.getTrend_by_ma6_vs_ma20())
                         || Objects.equals(trend_15, dto_10.getTrend_by_seq_ma()))
 
                 && Objects.equals(trend_15, dto_03.getTrend_by_ma_06())
