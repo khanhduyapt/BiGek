@@ -6019,7 +6019,35 @@ public class Utils {
         return tp_condition;
     }
 
-    public static String find_trend_by_amp(DailyRange dailyRange, Orders dto_03) {
+    public static boolean is_able_take_profit_bolliger_min(String find_trend, DailyRange dailyRange,
+            BigDecimal curr_price) {
+        if (Utils.isBlank(find_trend)) {
+            return false;
+        }
+        boolean tp_condition = false;
+        BigDecimal h41_upper = dailyRange.getUpper_h4().min(dailyRange.getUpper_h1());
+        BigDecimal h41_lower = dailyRange.getLower_h4().max(dailyRange.getLower_h1());
+
+        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
+            BigDecimal tp_price = curr_price.add(dailyRange.getAmp_avg_h4());
+
+            if (tp_price.compareTo(h41_upper) < 0) {
+                tp_condition = true;
+            }
+        }
+
+        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
+            BigDecimal tp_price = curr_price.subtract(dailyRange.getAmp_avg_h4());
+
+            if (tp_price.compareTo(h41_lower) > 0) {
+                tp_condition = true;
+            }
+        }
+
+        return tp_condition;
+    }
+
+    public static String find_trend_by_amp(DailyRange dailyRange, Orders dto_h1, Orders dto_03) {
         BigDecimal cur_price = dto_03.getCurrent_price();
         BigDecimal max_upper = dailyRange.getUpper_d1().max(dailyRange.getUpper_h4()).max(dailyRange.getUpper_h1());
         BigDecimal min_lower = dailyRange.getLower_d1().min(dailyRange.getLower_h4()).min(dailyRange.getLower_h1());
@@ -6030,13 +6058,21 @@ public class Utils {
             return Utils.TREND_LONG;
         }
 
-        BigDecimal h41_upper = dailyRange.getUpper_h4().max(dailyRange.getUpper_h1());
-        BigDecimal h41_lower = dailyRange.getLower_h4().min(dailyRange.getLower_h1());
-        if ((cur_price.compareTo(h41_upper) > 0) && Objects.equals(dto_03.getTrend_by_ma_06(), Utils.TREND_SHOT)) {
+        BigDecimal h41_upper = dailyRange.getUpper_h4().min(dailyRange.getUpper_h1());
+        BigDecimal h41_lower = dailyRange.getLower_h4().max(dailyRange.getLower_h1());
+        if ((cur_price.compareTo(h41_upper) > 0)
+                && Objects.equals(dto_03.getTrend_by_ma_06(), Utils.TREND_SHOT)
+                && Objects.equals(dto_h1.getTrend_by_ma_06(), Utils.TREND_SHOT)
+                && Objects.equals(dto_h1.getTrend_by_ma_10(), Utils.TREND_SHOT)
+                && is_able_take_profit(dto_h1.getTrend_by_ma_06(), dailyRange, cur_price)) {
             return Utils.TREND_SHOT;
         }
 
-        if ((cur_price.compareTo(h41_lower) < 0) && Objects.equals(dto_03.getTrend_by_ma_06(), Utils.TREND_LONG)) {
+        if ((cur_price.compareTo(h41_lower) < 0)
+                && Objects.equals(dto_03.getTrend_by_ma_06(), Utils.TREND_LONG)
+                && Objects.equals(dto_h1.getTrend_by_ma_06(), Utils.TREND_LONG)
+                && Objects.equals(dto_h1.getTrend_by_ma_10(), Utils.TREND_LONG)
+                && is_able_take_profit(dto_h1.getTrend_by_ma_06(), dailyRange, cur_price)) {
             return Utils.TREND_LONG;
         }
 
