@@ -4252,7 +4252,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Utils.isWorkingTime() && is_able_tp_min_bb) {
                 boolean h4_seq_condition = dto_h4.getTrend_by_seq_ma().contains(trend_d1_ma10)
-                        && dto_03.getTrend_by_seq_ma().contains(trend_d1_ma10);
+                        && dto_03.getTrend_by_seq_ma().contains(trend_d1_ma10)
+                        && Objects.equals(dto_h1.getTrend_by_ma_06(), trend_d1_ma10);
 
                 boolean h1_seq_condition = dto_h1.getTrend_by_seq_ma().contains(trend_d1_ma10)
                         && dto_03.getTrend_by_seq_ma().contains(trend_d1_ma10);
