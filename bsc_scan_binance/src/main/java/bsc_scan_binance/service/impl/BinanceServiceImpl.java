@@ -4285,16 +4285,24 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (Utils.isWorkingTime() && is_able_tp_min_bb) {
                 boolean trend_condition = Objects.equals(trend_d1, trend_w1) && Objects.equals(trend_d1, trend_d1_ma6)
+                        && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_06())
+                        && Objects.equals(trend_d1, dto_h1.getTrend_by_ma_06())
                         && Objects.equals(trend_d1, trend_h1);
 
                 trend_condition |= Objects.equals(trend_d1, trend_w1) && Objects.equals(trend_d1, find_trend_by_h4)
+                        && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_06())
+                        && Objects.equals(trend_d1, dto_h1.getTrend_by_ma_06())
                         && Objects.equals(trend_d1, trend_h1);
 
                 trend_condition |= Objects.equals(trend_d1, trend_d1_ma6) && Objects.equals(trend_d1, find_trend_by_h4)
+                        && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_06())
+                        && Objects.equals(trend_d1, dto_h1.getTrend_by_ma_06())
                         && Objects.equals(trend_d1, trend_h1);
 
                 trend_condition |= Objects.equals(trend_d1, dto_d1.getTrend_of_heiken3_1())
                         && Objects.equals(trend_d1, find_trend_by_h4)
+                        && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_06())
+                        && Objects.equals(trend_d1, dto_h1.getTrend_by_ma_06())
                         && Objects.equals(trend_d1, trend_h1);
 
                 trend_condition |= Objects.equals(trend_d1_ma6, find_trend_by_h4)
@@ -4319,19 +4327,9 @@ public class BinanceServiceImpl implements BinanceService {
                     trend_condition = trend_condition && Objects.equals(trend_h1, trend_w1);
                 }
 
-                boolean m15x_condition = Objects.equals(trend_h1, dto_15.getTrend_by_ma_06())
-                        && Objects.equals(trend_h1, dto_12.getTrend_by_ma_06())
-                        && Objects.equals(trend_h1, dto_10.getTrend_by_ma_06())
-                        && Objects.equals(trend_h1, dto_03.getTrend_by_ma_06());
+                boolean has_seq_03 = dto_03.getTrend_by_seq_ma().contains(trend_h1);
 
-                boolean has_seq_15x = (dto_03.getTrend_by_seq_ma() + dto_10.getTrend_by_seq_ma()
-                        + dto_12.getTrend_by_seq_ma() + dto_15.getTrend_by_seq_ma() + dto_h1.getTrend_by_seq_ma())
-                                .contains(trend_h1);
-
-                boolean has_swt_15x = (dto_03.getSwitch_trend() + dto_10.getSwitch_trend() + dto_12.getSwitch_trend()
-                        + dto_15.getSwitch_trend() + dto_h1.getSwitch_trend()).contains(trend_h1);
-
-                if (trend_condition && m15x_condition && (has_seq_15x || has_swt_15x) && is_able_tp_min_bb) {
+                if (trend_condition && has_seq_03 && is_able_tp_min_bb) {
 
                     close_reverse_trade(EPIC, trend_h1);
 
