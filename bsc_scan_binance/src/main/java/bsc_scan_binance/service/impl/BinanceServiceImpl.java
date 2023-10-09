@@ -4312,20 +4312,21 @@ public class BinanceServiceImpl implements BinanceService {
             // (dk1) dto_15, 12m, 10m, 03m xuất hiện đồng pha ma6, ma10, ma20.
             // (dk2) vào lệnh giá hiện tại phải đạt được tp tại <h4>
             // (dk3) H4 có ma6=ma10=ma20 thì không đánh ngược xu hướng của h4ma10
+            Mt5OpenTrade dto_notifiy = null;
 
             boolean is_h4_able_to_trade = Utils.is_able_to_trade(dto_h4, amp_avg_h4, find_trend_by_h4);
-            boolean tp_condition = Utils.is_able_take_profit_bolliger_max(find_trend_by_h4, dailyRange, curr_price);
-            Mt5OpenTrade dto_notifiy = null;
+
+            boolean is_able_tp_min_bb = Utils.is_able_take_profit_bolliger_min(trend_d1_ma6, dailyRange,
+                    curr_price);
 
             boolean wd_condition = Objects.equals(find_trend_by_h4, trend_d1)
                     && Objects.equals(find_trend_by_h4, trend_d1_ma6);
-
             if (Utils.EPICS_INDEXS_CFD.contains(EPIC)) {
-                wd_condition = Objects.equals(find_trend_by_h4, dto_w1.getTrend_by_ma_06());
+                wd_condition = Objects.equals(trend_d1_ma6, trend_w1);
             }
 
             if (Utils.isWorkingTime()) {
-                if (wd_condition && h1_condition && is_h4_able_to_trade && tp_condition
+                if (wd_condition && h1_condition && is_h4_able_to_trade && is_able_tp_min_bb
                         && (trend_h4h1m03_condition || trend_h4h1m15_condition || has_seq_15x || has_switch_trend)) {
 
                     close_reverse_trade(EPIC, find_trend_by_h4);
@@ -4362,11 +4363,10 @@ public class BinanceServiceImpl implements BinanceService {
                         wd_condition &= Objects.equals(trend_d1_ma6, trend_w1);
                     }
 
-                    boolean is_able_tp_min_bb = Utils.is_able_take_profit_bolliger_min(trend_d1_ma6, dailyRange,
-                            curr_price);
-
                     if (wd_condition && is_able_tp_min_bb) {
+
                         close_reverse_trade(EPIC, trend_by_amp);
+
                         String comments = "_bdo" + Utils.TEXT_PASS;
                         int total_trade = 1; // append_trade_number(EPIC, find_trend_by_h4, dailyRange, curr_price);
                         if (total_trade > 0) {
@@ -4388,11 +4388,10 @@ public class BinanceServiceImpl implements BinanceService {
                             && Objects.equals(trend_d1_ma6, dto_10.getTrend_by_ma_06())
                             && Objects.equals(trend_d1_ma6, dto_03.getTrend_by_ma_06());
 
-                    boolean is_able_tp_min_bb = Utils.is_able_take_profit_bolliger_min(trend_d1_ma6, dailyRange,
-                            curr_price);
-
                     if (wd_condition && m15x_condition && (has_seq_15x || has_switch_trend) && is_able_tp_min_bb) {
+
                         close_reverse_trade(EPIC, trend_d1_ma6);
+
                         String comments = "_wdm" + Utils.TEXT_PASS;
                         int total_trade = 1;
                         if (total_trade > 0) {
