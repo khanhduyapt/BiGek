@@ -4410,7 +4410,8 @@ public class BinanceServiceImpl implements BinanceService {
                 reason_id += "(volume)";
             }
 
-            if (has_profit && Objects.equals(dto_03.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)) {
+            if (has_profit && Objects.equals(dto_03.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_03.getTrend_of_heiken3_1(), REVERSE_TRADE_TREND)) {
                 if (h1_reverse || m15_reverse || (PROFIT.compareTo(BigDecimal.valueOf(50)) > 0)) {
                     is_hit_sl = true;
                     reason_id += "(has_profit,h1_or_15_or_20$)";
