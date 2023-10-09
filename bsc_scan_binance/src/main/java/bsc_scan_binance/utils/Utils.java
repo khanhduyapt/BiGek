@@ -798,7 +798,7 @@ public class Utils {
             return BigDecimal.valueOf(0.35);
 
         case "USOIL":
-            return BigDecimal.valueOf(1);
+            return BigDecimal.valueOf(0.5);
 
         case "XAGUSD":
             return BigDecimal.valueOf(0.05);
@@ -5992,31 +5992,28 @@ public class Utils {
         return result;
     }
 
-    public static boolean is_able_take_profit_bolliger_max(String find_trend_by_h4, DailyRange dailyRange, BigDecimal curr_price) {
-        if (Utils.isBlank(find_trend_by_h4)) {
+    public static boolean is_price_touches_BB_max(String find_trend, DailyRange dailyRange, BigDecimal curr_price) {
+        if (Utils.isBlank(find_trend)) {
             return false;
         }
-        boolean tp_condition = false;
+        boolean is_price_touches_BB = false;
+
         BigDecimal h41_upper = dailyRange.getUpper_h4().max(dailyRange.getUpper_h1());
         BigDecimal h41_lower = dailyRange.getLower_h4().min(dailyRange.getLower_h1());
 
-        if (Objects.equals(find_trend_by_h4, Utils.TREND_LONG)) {
-            BigDecimal tp_price = curr_price.add(dailyRange.getAmp_avg_h4());
-
-            if (tp_price.compareTo(h41_upper) < 0) {
-                tp_condition = true;
+        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
+            if (curr_price.compareTo(h41_lower) < 0) {
+                is_price_touches_BB = true;
             }
         }
 
-        if (Objects.equals(find_trend_by_h4, Utils.TREND_SHOT)) {
-            BigDecimal tp_price = curr_price.subtract(dailyRange.getAmp_avg_h4());
-
-            if (tp_price.compareTo(h41_lower) > 0) {
-                tp_condition = true;
+        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
+            if (curr_price.compareTo(h41_upper) > 0) {
+                is_price_touches_BB = true;
             }
         }
 
-        return tp_condition;
+        return is_price_touches_BB;
     }
 
     public static boolean is_able_take_profit_bolliger_min(String find_trend, DailyRange dailyRange,
@@ -6064,7 +6061,7 @@ public class Utils {
                 && Objects.equals(dto_03.getTrend_by_ma_06(), Utils.TREND_SHOT)
                 && Objects.equals(dto_h1.getTrend_by_ma_06(), Utils.TREND_SHOT)
                 && Objects.equals(dto_h1.getTrend_by_ma_10(), Utils.TREND_SHOT)
-                && is_able_take_profit_bolliger_max(dto_h1.getTrend_by_ma_06(), dailyRange, cur_price)) {
+                && is_able_take_profit_bolliger_min(dto_h1.getTrend_by_ma_06(), dailyRange, cur_price)) {
             return Utils.TREND_SHOT;
         }
 
@@ -6072,7 +6069,7 @@ public class Utils {
                 && Objects.equals(dto_03.getTrend_by_ma_06(), Utils.TREND_LONG)
                 && Objects.equals(dto_h1.getTrend_by_ma_06(), Utils.TREND_LONG)
                 && Objects.equals(dto_h1.getTrend_by_ma_10(), Utils.TREND_LONG)
-                && is_able_take_profit_bolliger_max(dto_h1.getTrend_by_ma_06(), dailyRange, cur_price)) {
+                && is_able_take_profit_bolliger_min(dto_h1.getTrend_by_ma_06(), dailyRange, cur_price)) {
             return Utils.TREND_LONG;
         }
 
