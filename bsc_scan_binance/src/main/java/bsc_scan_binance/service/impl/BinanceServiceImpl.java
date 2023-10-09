@@ -4309,6 +4309,12 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_h1, dto_h1.getTrend_by_ma_10())
                         && Objects.equals(trend_h1, dto_h1.getTrend_by_ma_20());
 
+                trend_condition |= dto_h4.getTrend_by_seq_ma().contains(trend_h1)
+                        && dto_h1.getTrend_by_seq_ma().contains(trend_h1)
+                        && Objects.equals(trend_h1, dto_h1.getTrend_of_heiken3_1())
+                        && Objects.equals(trend_h1, dto_h4.getTrend_of_heiken3())
+                        && Objects.equals(trend_h1, dto_h4.getTrend_of_heiken3_1());
+
                 if (Utils.EPICS_INDEXS_CFD.contains(EPIC)) {
                     trend_condition = trend_condition && Objects.equals(trend_h1, trend_w1);
                 }
