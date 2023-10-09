@@ -3366,25 +3366,28 @@ public class BinanceServiceImpl implements BinanceService {
                     String yyyy_mm_dd = tempArr[0];
                     String symbol = tempArr[1];
                     String trend_w1 = tempArr[2];
-
                     BigDecimal w_close = Utils.getBigDecimal(tempArr[3]);
                     BigDecimal avg_amp_week = Utils.getBigDecimal(tempArr[4]);
+
                     BigDecimal upper_h1 = Utils.getBigDecimal(tempArr[5]);
-                    BigDecimal middle_h1 = Utils.getBigDecimal(tempArr[6]);
-                    BigDecimal lower_h1 = Utils.getBigDecimal(tempArr[7]);
-                    BigDecimal upper_h4 = Utils.getBigDecimal(tempArr[8]);
-                    BigDecimal middle_h4 = Utils.getBigDecimal(tempArr[9]);
-                    BigDecimal lower_h4 = Utils.getBigDecimal(tempArr[10]);
+                    BigDecimal lower_h1 = Utils.getBigDecimal(tempArr[6]);
+
+                    BigDecimal upper_h4 = Utils.getBigDecimal(tempArr[7]);
+                    BigDecimal lower_h4 = Utils.getBigDecimal(tempArr[8]);
+
+                    BigDecimal upper_d1 = Utils.getBigDecimal(tempArr[9]);
+                    BigDecimal lower_d1 = Utils.getBigDecimal(tempArr[10]);
+
                     BigDecimal d_close = Utils.getBigDecimal(tempArr[11]);
                     BigDecimal d_today_low = Utils.getBigDecimal(tempArr[12]);
                     BigDecimal d_today_hig = Utils.getBigDecimal(tempArr[13]);
+
                     BigDecimal amp_min_d1 = Utils.getBigDecimal(tempArr[14]);
                     BigDecimal amp_avg_h4 = Utils.getBigDecimal(tempArr[15]);
 
                     DailyRangeKey id = new DailyRangeKey(yyyy_mm_dd, symbol);
-                    DailyRange daily = new DailyRange(id, trend_w1, w_close, avg_amp_week, upper_h1, middle_h1,
-                            lower_h1, upper_h4, middle_h4, lower_h4, d_close, d_today_low, d_today_hig, amp_min_d1,
-                            amp_avg_h4);
+                    DailyRange daily = new DailyRange(id, trend_w1, w_close, avg_amp_week, upper_h1, lower_h1, upper_h4,
+                            lower_h4, upper_d1, lower_d1, d_close, d_today_low, d_today_hig, amp_min_d1, amp_avg_h4);
 
                     list.add(daily);
                 }
@@ -3844,6 +3847,9 @@ public class BinanceServiceImpl implements BinanceService {
                         BigDecimal stop_loss = trade.getStopLoss();
                         BigDecimal take_profit = trade.getTakeProfit();
 
+                        BigDecimal bb_min = dailyRange.getLower_h1().min(dailyRange.getLower_h4());
+                        BigDecimal bb_max = dailyRange.getUpper_h1().min(dailyRange.getUpper_h4());
+
                         if (Utils.getBigDecimal(trade.getStopLoss()).compareTo(BigDecimal.ZERO) < 1) {
                             List<BigDecimal> sl_tp = Utils.get_SL_TP_by_amp(dailyRange, trade.getCurrPrice(),
                                     TRADE_TREND);
@@ -3864,11 +3870,11 @@ public class BinanceServiceImpl implements BinanceService {
 
                             if (Objects.equals(TRADE_TREND, Utils.TREND_LONG)) {
                                 init_tp = true;
-                                take_profit = sl_tp.get(1);
+                                take_profit = bb_max;
                             }
                             if (Objects.equals(TRADE_TREND, Utils.TREND_SHOT)) {
                                 init_tp = true;
-                                take_profit = sl_tp.get(1);
+                                take_profit = bb_min;
                             }
                         }
 
@@ -4240,7 +4246,7 @@ public class BinanceServiceImpl implements BinanceService {
                     find_trend_by_h4, Utils.getYyyyMMdd());
 
             String able = "";
-            if (Utils.is_able_take_profit(find_trend_by_15m, dailyRange, dto_h4.getMa06(), curr_price)) {
+            if (Utils.is_able_take_profit(find_trend_by_15m, dailyRange, curr_price)) {
                 able = "   m1x_" + Utils.getType(find_trend_by_15m);
             }
             able = Utils.appendSpace(able, 10);
@@ -4285,18 +4291,23 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(find_trend_by_h4, dto_10.getTrend_by_ma_06())
                     && Objects.equals(find_trend_by_h4, dto_03.getTrend_by_ma_06());
 
+            boolean has_seq_15x = (dto_10.getTrend_by_seq_ma() + dto_12.getTrend_by_seq_ma()
+                    + dto_15.getTrend_by_seq_ma()).contains(find_trend_by_h4);
+
             boolean wd_condition = true;
             if (Utils.EPICS_INDEXS_CFD.contains(EPIC)) {
-                wd_condition = wd_condition && Objects.equals(find_trend_by_h4, dto_w1.getTrend_by_ma_06());
+                wd_condition = Objects.equals(find_trend_by_h4, trend_d1_ma6)
+                        && Objects.equals(find_trend_by_h4, dto_w1.getTrend_by_ma_06());
             }
-            wd_condition &= Objects.equals(find_trend_by_h4, trend_d1_ma6)
-                    && (Objects.equals(find_trend_by_h4, dto_h1.getTrend_by_ma_06())
-                            || Objects.equals(find_trend_by_h4, dto_h1.getTrend_of_heiken3()));
 
-            boolean has_switch_trend = (dto_10.getSwitch_trend() + dto_12.getSwitch_trend() + dto_15.getSwitch_trend())
-                    .contains(Utils.TEXT_SWITCH_TREND_Ma_1vs20);
+            boolean trend_h1_condition = Objects.equals(find_trend_by_h4, dto_h1.getTrend_of_heiken3())
+                    && Objects.equals(find_trend_by_h4, dto_h1.getTrend_by_ma_06())
+                    && Objects.equals(find_trend_by_h4, dto_h1.getTrend_by_ma_10());
 
-            if ("_USDJPY_".contains(EPIC)) {
+            boolean has_switch_trend = (dto_03.getSwitch_trend() + dto_10.getSwitch_trend() + dto_12.getSwitch_trend()
+                    + dto_15.getSwitch_trend()).contains(Utils.TEXT_SWITCH_TREND_Ma_1vs20);
+
+            if ("_AUDCHF_".contains(EPIC)) {
                 boolean debug = true;
             }
 
@@ -4306,20 +4317,22 @@ public class BinanceServiceImpl implements BinanceService {
             // (dk2) vào lệnh giá hiện tại phải đạt được tp tại <h4>
             // (dk3) H4 có ma6=ma10=ma20 thì không đánh ngược xu hướng của h4ma10
 
-            boolean is_possible_to_trade = Utils.is_able_to_trade(dto_h4, amp_avg_h4, find_trend_by_h4);
-            boolean tp_condition = Utils.is_able_take_profit(find_trend_by_h4, dailyRange, dto_h4.getMa06(),
-                    curr_price);
+            boolean is_h4_able_to_trade = Utils.is_able_to_trade(dto_h4, amp_avg_h4, find_trend_by_h4);
+            boolean tp_condition = Utils.is_able_take_profit(find_trend_by_h4, dailyRange, curr_price);
 
-            if (Utils.isWorkingTime() && wd_condition && has_switch_trend && is_possible_to_trade && tp_condition
-                    && (trend_h4h1m03_condition || trend_h4h1m15_condition)) {
+            if (Utils.isWorkingTime() && wd_condition && trend_h1_condition && has_switch_trend && is_h4_able_to_trade
+                    && tp_condition && (trend_h4h1m03_condition || trend_h4h1m15_condition || has_seq_15x)) {
 
                 close_reverse_trade(EPIC, find_trend_by_h4);
 
-                String comments = Utils.TEXT_PASS;
+                String comments = "_xuh" + Utils.TEXT_PASS;
+
                 if (trend_h4h1m15_condition)
                     comments += "_15";
                 if (trend_h4h1m03_condition)
                     comments += "_03";
+                if (has_seq_15x)
+                    comments += "_sq";
 
                 int total_trade = 1; // append_trade_number(EPIC, find_trend_by_h4, dailyRange, curr_price);
 
@@ -4331,6 +4344,31 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
                     BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
                 }
+
+            } else if (Utils.isWorkingTime()) {
+
+                String trend_by_amp = Utils.find_trend_by_amp(dailyRange, dto_03);
+                trend_h1_condition = Objects.equals(trend_by_amp, dto_h1.getTrend_of_heiken3())
+                        && Objects.equals(trend_by_amp, dto_h1.getTrend_by_ma_06())
+                        && Objects.equals(trend_by_amp, dto_h1.getTrend_by_ma_10());
+
+                if (trend_h1_condition) {
+                    close_reverse_trade(EPIC, trend_by_amp);
+
+                    String comments = "_bdo" + Utils.TEXT_PASS;
+
+                    int total_trade = 1; // append_trade_number(EPIC, find_trend_by_h4, dailyRange, curr_price);
+
+                    if (total_trade > 0) {
+                        Mt5OpenTrade dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_by_amp, curr_price, comments,
+                                true, Utils.CAPITAL_TIME_15, dailyRange, total_trade);
+
+                        String key = EPIC + Utils.CAPITAL_TIME_15;
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
+                        BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+                    }
+                }
+
             }
         }
 

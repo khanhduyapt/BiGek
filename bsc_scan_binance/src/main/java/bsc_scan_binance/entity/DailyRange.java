@@ -27,11 +27,11 @@ import lombok.NoArgsConstructor;
 //    w_close numeric(30,5) DEFAULT 0,
 //    avg_amp_week numeric(30,5) DEFAULT 0,
 //    upper_h1 numeric(30,5) DEFAULT 0,
-//    middle_h1 numeric(30,5) DEFAULT 0,
 //    lower_h1 numeric(30,5) DEFAULT 0,
 //    upper_h4 numeric(30,5) DEFAULT 0,
-//    middle_h4 numeric(30,5) DEFAULT 0,
 //    lower_h4 numeric(30,5) DEFAULT 0,
+//    upper_d1 numeric(30,5) DEFAULT 0,
+//    lower_d1 numeric(30,5) DEFAULT 0,
 //    d_close numeric(30,5) DEFAULT 0,
 //    d_today_low numeric(30,5) DEFAULT 0,
 //    d_today_hig numeric(30,5) DEFAULT 0,
@@ -47,43 +47,35 @@ public class DailyRange {
 
     @Column(name = "trend_w1")
     private String trend_w1 = "";
-
     @Column(name = "w_close")
     private BigDecimal w_close = BigDecimal.ZERO;
-
     @Column(name = "avg_amp_week")
     private BigDecimal avg_amp_week = BigDecimal.ZERO;
 
     @Column(name = "upper_h1")
     private BigDecimal upper_h1 = BigDecimal.ZERO;
-
-    @Column(name = "middle_h1")
-    private BigDecimal middle_h1 = BigDecimal.ZERO;
-
     @Column(name = "lower_h1")
     private BigDecimal lower_h1 = BigDecimal.ZERO;
 
     @Column(name = "upper_h4")
     private BigDecimal upper_h4 = BigDecimal.ZERO;
-
-    @Column(name = "middle_h4")
-    private BigDecimal middle_h4 = BigDecimal.ZERO;
-
     @Column(name = "lower_h4")
     private BigDecimal lower_h4 = BigDecimal.ZERO;
 
+    @Column(name = "upper_d1")
+    private BigDecimal upper_d1 = BigDecimal.ZERO;
+    @Column(name = "lower_d1")
+    private BigDecimal lower_d1 = BigDecimal.ZERO;
+
     @Column(name = "d_close")
     private BigDecimal d_close = BigDecimal.ZERO;
-
     @Column(name = "d_today_low")
     private BigDecimal d_today_low = BigDecimal.ZERO;
-
     @Column(name = "d_today_hig")
     private BigDecimal d_today_hig = BigDecimal.ZERO;
 
     @Column(name = "amp_min_d1")
     private BigDecimal amp_min_d1 = BigDecimal.ZERO;
-
     @Column(name = "amp_avg_h4")
     private BigDecimal amp_avg_h4 = BigDecimal.ZERO;
 }
