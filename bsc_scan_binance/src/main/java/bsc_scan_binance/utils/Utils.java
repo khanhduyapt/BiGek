@@ -1988,8 +1988,9 @@ public class Utils {
     }
 
     public static boolean isWorkingTime() {
+        List<Integer> times = Arrays.asList(7, 9, 11, 13, 14, 15, 17, 19, 21);
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
-        if ((6 <= hh && hh <= 21)) {
+        if (times.contains(hh)) {
             return true;
         }
 
@@ -4357,18 +4358,11 @@ public class Utils {
             return "";
         }
 
-        List<BtcFutures> sub_list = heiken_list.subList(0, 1);
-
-        List<BigDecimal> lohi = getLowHighCandle(sub_list);
-        BigDecimal low = lohi.get(0);
-        BigDecimal hig = lohi.get(1);
-
         BigDecimal amp = amplitude_avg_of_candles.multiply(BigDecimal.valueOf(2));
-        if (Objects.equals(heiken, TREND_LONG)) {
-            low = low.subtract(amp);
-        } else {
-            hig = hig.add(amp);
-        }
+        List<BtcFutures> sub_list = heiken_list.subList(0, 1);
+        List<BigDecimal> lohi = getLowHighCandle(sub_list);
+        BigDecimal low = lohi.get(0).subtract(amp);
+        BigDecimal hig = lohi.get(1).add(amp);
 
         BigDecimal ma01_0 = calcMA(heiken_list, 01, 0);
         BigDecimal ma10_0 = calcMA(heiken_list, 10, 0);
@@ -4415,8 +4409,8 @@ public class Utils {
     }
 
     public static String switchTrendByMa1vs2025(List<BtcFutures> heiken_list) {
-        String sw_1 = switchTrendByMa1(heiken_list, 1, 15, 25, TEXT_SWITCH_TREND_Ma_1vs20);
-        String sw_0 = switchTrendByMa1(heiken_list, 0, 15, 25, TEXT_SWITCH_TREND_Ma_1vs20);
+        String sw_1 = switchTrendByMa1(heiken_list, 1, 20, 25, TEXT_SWITCH_TREND_Ma_1vs20);
+        String sw_0 = switchTrendByMa1(heiken_list, 0, 20, 25, TEXT_SWITCH_TREND_Ma_1vs20);
 
         if (Utils.isNotBlank(sw_1) && Utils.isNotBlank(sw_0)) {
             String trend_1 = sw_1.contains(TREND_LONG) ? TREND_LONG : TREND_SHOT;
@@ -4430,8 +4424,8 @@ public class Utils {
     }
 
     public static String switchTrendByMa1vs50(List<BtcFutures> heiken_list) {
-        String sw_1 = switchTrendByMa1(heiken_list, 1, 48, 50, TEXT_SWITCH_TREND_Ma_1vs20);
-        String sw_0 = switchTrendByMa1(heiken_list, 0, 48, 50, TEXT_SWITCH_TREND_Ma_1vs20);
+        String sw_1 = switchTrendByMa1(heiken_list, 1, 45, 50, TEXT_SWITCH_TREND_Ma_1vs20);
+        String sw_0 = switchTrendByMa1(heiken_list, 0, 45, 50, TEXT_SWITCH_TREND_Ma_1vs20);
 
         if (Utils.isNotBlank(sw_1) && Utils.isNotBlank(sw_0)) {
             String trend_1 = sw_1.contains(TREND_LONG) ? TREND_LONG : TREND_SHOT;
@@ -5267,8 +5261,8 @@ public class Utils {
         BigDecimal amp_fr = amp_fr_to.get(0);
         BigDecimal amp_to = amp_fr_to.get(1);
 
-        BigDecimal bb_min = dailyRange.getLower_h1().min(dailyRange.getLower_h4());
-        BigDecimal bb_max = dailyRange.getUpper_h1().min(dailyRange.getUpper_h4());
+        //BigDecimal bb_min = dailyRange.getLower_h1().min(dailyRange.getLower_h4());
+        //BigDecimal bb_max = dailyRange.getUpper_h1().max(dailyRange.getUpper_h4());
 
         BigDecimal amp_waste = amp_w.multiply(BigDecimal.valueOf(0.1));
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
@@ -5277,7 +5271,7 @@ public class Utils {
             entry_3 = entry_2.subtract(amp_w);
 
             stop_loss = amp_fr.subtract(amp_w).add(amp_waste);
-            take_profit = bb_max;
+            take_profit = amp_to.subtract(amp_waste);// bb_max;
         }
 
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
@@ -5286,7 +5280,7 @@ public class Utils {
             entry_3 = entry_2.add(amp_w);
 
             stop_loss = amp_to.add(amp_w).subtract(amp_waste);
-            take_profit = bb_min;
+            take_profit = amp_fr.add(amp_waste);// bb_min;
         }
         // stop_loss = BigDecimal.ZERO;
         // take_profit = BigDecimal.ZERO;
