@@ -4159,6 +4159,10 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (Utils.isNotBlank(seq_h1_h4)) {
                     seq_h1_h4 = "SEQ:(" + seq_h1_h4 + ")";
+
+                    if ((dto_03.getSwitch_trend() + dto_03.getTrend_by_seq_ma()).contains(trend_h1)) {
+                        seq_h1_h4 += "Seq03";
+                    }
                 }
             }
 
@@ -4294,6 +4298,24 @@ public class BinanceServiceImpl implements BinanceService {
                         BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
                     }
                 }
+
+                if (Objects.isNull(dto_notifiy) && Utils.EPICS_FOREXS_ALL.contains(EPIC)) {
+                    String trend_possion = Utils.trend_possion_when_price_touches_BB_D1(dailyRange, curr_price);
+
+                    if (Utils.isNotBlank(trend_possion)) {
+                        close_reverse_trade(EPIC, trend_possion);
+
+                        String comments = "_pos" + Utils.TEXT_PASS;
+
+                        dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_possion, curr_price, comments, true,
+                                Utils.CAPITAL_TIME_15, dailyRange, 1);
+
+                        String key = EPIC + Utils.CAPITAL_TIME_15;
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
+                        BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+                    }
+                }
+                //-----------------------------------------------------------------------------------------------
             }
         }
 
