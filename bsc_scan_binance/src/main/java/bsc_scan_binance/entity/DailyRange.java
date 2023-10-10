@@ -26,6 +26,10 @@ import lombok.NoArgsConstructor;
 //    trend_w1 character varying(255) COLLATE pg_catalog."default",
 //    w_close numeric(30,5) DEFAULT 0,
 //    avg_amp_week numeric(30,5) DEFAULT 0,
+//    upper_03 numeric(30,5) DEFAULT 0,
+//    lower_03 numeric(30,5) DEFAULT 0,
+//    upper_15 numeric(30,5) DEFAULT 0,
+//    lower_15 numeric(30,5) DEFAULT 0,
 //    upper_h1 numeric(30,5) DEFAULT 0,
 //    lower_h1 numeric(30,5) DEFAULT 0,
 //    upper_h4 numeric(30,5) DEFAULT 0,
@@ -51,6 +55,16 @@ public class DailyRange {
     private BigDecimal w_close = BigDecimal.ZERO;
     @Column(name = "avg_amp_week")
     private BigDecimal avg_amp_week = BigDecimal.ZERO;
+
+    @Column(name = "upper_03")
+    private BigDecimal upper_03 = BigDecimal.ZERO;
+    @Column(name = "lower_03")
+    private BigDecimal lower_03 = BigDecimal.ZERO;
+
+    @Column(name = "upper_15")
+    private BigDecimal upper_15 = BigDecimal.ZERO;
+    @Column(name = "lower_15")
+    private BigDecimal lower_15 = BigDecimal.ZERO;
 
     @Column(name = "upper_h1")
     private BigDecimal upper_h1 = BigDecimal.ZERO;

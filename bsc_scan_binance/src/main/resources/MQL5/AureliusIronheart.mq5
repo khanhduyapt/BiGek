@@ -24,9 +24,6 @@ int OnInit()
 //+------------------------------------------------------------------+
 void OnTimer(void)
   {
-
-
-
    string scap_5m = "_XAUUSD_US30_";
    string indexs_cfd = "_US30_SP500_GER30_GER40_UK100_FRA40_SPN35_EU50_US100_AUS200_";
    MqlDateTime dt_struct;
@@ -86,6 +83,7 @@ void OnTimer(void)
             FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M3");
            }
          //-------------------------------------------------------------------------------------------------------------------------------
+         /*
          MqlRates rates_10[];
          ArraySetAsSeries(rates_10,true);
          copied=CopyRates(symbol, PERIOD_M10, 0, 55, rates_10);
@@ -118,6 +116,7 @@ void OnTimer(void)
            {
             FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M12");
            }
+           */
          //-------------------------------------------------------------------------------------------------------------------------------
          MqlRates rates_15[];
          ArraySetAsSeries(rates_15,true);
@@ -171,3 +170,4 @@ int OnCalculate(const int rates_total,
   }
 //+------------------------------------------------------------------+
 
+//+------------------------------------------------------------------+
