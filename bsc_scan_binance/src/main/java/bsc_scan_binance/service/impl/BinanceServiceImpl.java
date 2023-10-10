@@ -2703,7 +2703,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // TODO: CloseTickets HOLDING
-                if ("_XAUUSD_XAGUSD_NZDCHF_AUDUSD_US100_".contains("_" + EPIC.toUpperCase() + "_")) {
+                if ("_XAUUSD_XAGUSD_NZDCHF_AUDUSD_US100_US30_".contains("_" + EPIC.toUpperCase() + "_")) {
                     continue;
                 }
                 if (Utils.EPICS_STOCKS_EUR.contains(EPIC) && !Utils.is_london_session()) {
