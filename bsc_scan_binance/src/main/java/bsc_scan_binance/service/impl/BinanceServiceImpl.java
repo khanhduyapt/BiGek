@@ -4273,8 +4273,11 @@ public class BinanceServiceImpl implements BinanceService {
                     int total_trade = 1;
                     String comments = "_wdm";
                     if (h4_seq_condition && h1_seq_condition) {
-                        total_trade = 2;
                         comments += "_sq41";
+
+                        if (Utils.is_able_take_profit_bolliger_min(trend_d1_ma10, dailyRange, curr_price)) {
+                            total_trade = 2;
+                        }
                     } else if (h4_seq_condition) {
                         comments += "_sq04";
                     } else if (h1_seq_condition) {

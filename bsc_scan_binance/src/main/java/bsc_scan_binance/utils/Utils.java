@@ -5970,30 +5970,6 @@ public class Utils {
         return result;
     }
 
-    public static boolean is_price_touches_BB_max(String find_trend, DailyRange dailyRange, BigDecimal curr_price) {
-        if (Utils.isBlank(find_trend)) {
-            return false;
-        }
-        boolean is_price_touches_BB = false;
-
-        BigDecimal h41_upper = dailyRange.getUpper_h4().max(dailyRange.getUpper_h1());
-        BigDecimal h41_lower = dailyRange.getLower_h4().min(dailyRange.getLower_h1());
-
-        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            if (curr_price.compareTo(h41_lower) < 0) {
-                is_price_touches_BB = true;
-            }
-        }
-
-        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            if (curr_price.compareTo(h41_upper) > 0) {
-                is_price_touches_BB = true;
-            }
-        }
-
-        return is_price_touches_BB;
-    }
-
     public static boolean is_able_take_profit_bolliger_min(String find_trend, DailyRange dailyRange,
             BigDecimal curr_price) {
         if (Utils.isBlank(find_trend)) {
@@ -6020,6 +5996,47 @@ public class Utils {
         }
 
         return tp_condition;
+    }
+
+    public static boolean is_price_touches_BB_max(String find_trend, DailyRange dailyRange, BigDecimal curr_price) {
+        if (Utils.isBlank(find_trend)) {
+            return false;
+        }
+        boolean is_price_touches_BB = false;
+
+        BigDecimal h41_upper = dailyRange.getUpper_h4().max(dailyRange.getUpper_h1());
+        BigDecimal h41_lower = dailyRange.getLower_h4().min(dailyRange.getLower_h1());
+
+        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
+            if (curr_price.compareTo(h41_lower) < 0) {
+                is_price_touches_BB = true;
+            }
+        }
+
+        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
+            if (curr_price.compareTo(h41_upper) > 0) {
+                is_price_touches_BB = true;
+            }
+        }
+
+        return is_price_touches_BB;
+    }
+
+    public static String trend_possion_when_price_touches_BB_D1(DailyRange dailyRange, BigDecimal curr_price) {
+        String trend = "";
+
+        BigDecimal h41_upper = dailyRange.getUpper_d1();
+        BigDecimal h41_lower = dailyRange.getLower_d1();
+
+        if (curr_price.compareTo(h41_lower) < 0) {
+            trend = Utils.TREND_LONG;
+        }
+
+        if (curr_price.compareTo(h41_upper) > 0) {
+            trend = Utils.TREND_SHOT;
+        }
+
+        return trend;
     }
 
     public static String find_trend_by_amp(DailyRange dailyRange, Orders dto_h1, Orders dto_03) {
