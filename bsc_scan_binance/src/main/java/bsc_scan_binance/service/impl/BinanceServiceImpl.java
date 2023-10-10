@@ -2703,7 +2703,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 // TODO: CloseTickets HOLDING
-                if ("_XAUUSD_XAGUSD_".contains("_" + EPIC.toUpperCase() + "_")) {
+                if ("_XAUUSD_XAGUSD_NZDCHF_AUDUSD_".contains("_" + EPIC.toUpperCase() + "_")) {
                     continue;
                 }
                 if (Utils.EPICS_STOCKS_EUR.contains(EPIC) && !Utils.is_london_session()) {
@@ -3848,8 +3848,11 @@ public class BinanceServiceImpl implements BinanceService {
                         BigDecimal stop_loss = trade.getStopLoss();
                         BigDecimal take_profit = trade.getTakeProfit();
 
-                        BigDecimal bb_min = dailyRange.getLower_h1().min(dailyRange.getLower_h4());
-                        BigDecimal bb_max = dailyRange.getUpper_h1().min(dailyRange.getUpper_h4());
+                        BigDecimal bb_min = dailyRange.getLower_h1().min(dailyRange.getLower_h4())
+                                .min(dailyRange.getLower_d1());
+
+                        BigDecimal bb_max = dailyRange.getUpper_h1().max(dailyRange.getUpper_h4())
+                                .max(dailyRange.getLower_d1());
 
                         if (Utils.getBigDecimal(trade.getStopLoss()).compareTo(BigDecimal.ZERO) < 1) {
                             List<BigDecimal> sl_tp = Utils.get_SL_TP_by_amp(dailyRange, trade.getCurrPrice(),
@@ -3871,11 +3874,11 @@ public class BinanceServiceImpl implements BinanceService {
 
                             if (Objects.equals(TRADE_TREND, Utils.TREND_LONG)) {
                                 init_tp = true;
-                                take_profit = bb_max;
+                                take_profit = bb_max.min(sl_tp.get(1));
                             }
                             if (Objects.equals(TRADE_TREND, Utils.TREND_SHOT)) {
                                 init_tp = true;
-                                take_profit = bb_min;
+                                take_profit = bb_min.max(sl_tp.get(1));
                             }
                         }
 
@@ -4169,7 +4172,7 @@ public class BinanceServiceImpl implements BinanceService {
             String cutting = Utils.switch_trend_real_time_by_trend_d1(EPIC, dto_d1, dto_h4, dto_h1, dto_15, dto_10,
                     dto_12, dto_03);
             if (Utils.isNotBlank(cutting)) {
-                eoz += cutting;
+                eoz += "x" + cutting;
             } else {
                 eoz += "     ";
             }
@@ -4250,7 +4253,7 @@ public class BinanceServiceImpl implements BinanceService {
             // (dk3) H4 có ma6=ma10=ma20 thì không đánh ngược xu hướng của h4ma10
             Mt5OpenTrade dto_notifiy = null;
 
-            if (Utils.isWorkingTime() && is_able_tp_min_bb) {
+            if (Utils.isWorkingTime()) {
                 boolean h4_seq_condition = dto_h4.getTrend_by_seq_ma().contains(trend_d1_ma10)
                         && dto_03.getTrend_by_seq_ma().contains(trend_d1_ma10)
                         && Objects.equals(dto_h1.getTrend_by_ma_06(), trend_d1_ma10);
@@ -4261,7 +4264,9 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean st_condition = (dto_03.getSwitch_trend() + dto_10.getSwitch_trend() + dto_12.getSwitch_trend()
                         + dto_15.getSwitch_trend() + dto_h1.getSwitch_trend()).contains(trend_d1_ma10);
 
-                if ((h4_seq_condition || h1_seq_condition) && st_condition && is_able_tp_min_bb) {
+                boolean is_able_h4 = Utils.is_able_to_trade(dto_h4, dailyRange.getAmp_avg_h4(), trend_d1_ma10);
+
+                if ((h4_seq_condition || h1_seq_condition) && st_condition && is_able_h4) {
 
                     close_reverse_trade(EPIC, trend_d1_ma10);
 
