@@ -4246,9 +4246,23 @@ public class BinanceServiceImpl implements BinanceService {
             }
             str_profit = Utils.appendSpace(str_profit, 15);
 
-            String append = str_find_trend + seq + eoz + able;
+            String trend_bb_d1 = Utils.find_trend_by_bb(dailyRange, curr_price, Utils.CAPITAL_TIME_D1);
+            String trend_bb_h4 = Utils.find_trend_by_bb(dailyRange, curr_price, Utils.CAPITAL_TIME_H4);
+            String trend_bb_h1 = Utils.find_trend_by_bb(dailyRange, curr_price, Utils.CAPITAL_TIME_H1);
+            String trend_bb_15 = Utils.find_trend_by_bb(dailyRange, curr_price, Utils.CAPITAL_TIME_15);
+            String trend_bb_03 = Utils.find_trend_by_bb(dailyRange, curr_price, Utils.CAPITAL_TIME_03);
 
-            analysis_profit(str_profit + prefix, EPIC, append, dailyRange, trend_w1, curr_price);
+            String bb = "";
+            bb += (Utils.isNotBlank(trend_bb_d1) ? "d1:" + Utils.getType(trend_bb_d1) : "    ") + " ";
+            bb += (Utils.isNotBlank(trend_bb_h4) ? "h4:" + Utils.getType(trend_bb_h4) : "    ") + " ";
+            bb += (Utils.isNotBlank(trend_bb_h1) ? "h1:" + Utils.getType(trend_bb_h1) : "    ") + " ";
+            if (Utils.isNotBlank(bb))
+                bb = " bb:" + bb;
+            bb = Utils.appendSpace(bb, 20);
+
+            String append = str_find_trend + seq + eoz + able + bb;
+
+            analysis_profit(str_profit + prefix, EPIC, append.trim(), dailyRange, trend_w1, curr_price);
             BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
 
             // -------------------------------------------------------------------------------------
@@ -4273,11 +4287,6 @@ public class BinanceServiceImpl implements BinanceService {
                 int total_trade = 0;
                 String comments = "";
 
-                String trend_bb_03 = Utils.find_trend_by_bb(dailyRange, curr_price, Utils.CAPITAL_TIME_03);
-                String trend_bb_15 = Utils.find_trend_by_bb(dailyRange, curr_price, Utils.CAPITAL_TIME_15);
-                String trend_bb_h1 = Utils.find_trend_by_bb(dailyRange, curr_price, Utils.CAPITAL_TIME_H1);
-                String trend_bb_h4 = Utils.find_trend_by_bb(dailyRange, curr_price, Utils.CAPITAL_TIME_H4);
-                String trend_bb_d1 = Utils.find_trend_by_bb(dailyRange, curr_price, Utils.CAPITAL_TIME_D1);
                 boolean m03_condition = Utils.check_m03_condition(dto_03, trend_bb_d1);
 
                 if (m03_condition) {
