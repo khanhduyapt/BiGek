@@ -5302,7 +5302,8 @@ public class Utils {
     }
 
     public static String create_trade_comment(String EPIC, String CAPITAL_TIME_XX, String append) {
-        String comment = getTime_day24Hmm() + append.trim().replace(Utils.TEXT_PASS, "");
+        String comment = BscScanBinanceApplication.hostname + getTime_day24Hmm()
+                + append.trim().replace(Utils.TEXT_PASS, "");
 
         return comment;
     }

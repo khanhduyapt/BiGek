@@ -53,7 +53,6 @@ public class BscScanBinanceApplication {
             if (hostname.length() > 2) {
                 hostname = hostname.substring(0, 2);
             }
-            hostname = "(" + hostname + ")";
 
             System.out.println("Start "
                     + Utils.convertDateToString("yyyy-MM-dd HH:mm:ss", Calendar.getInstance().getTime()) + " ---->");
