@@ -4212,7 +4212,8 @@ public class BinanceServiceImpl implements BinanceService {
             String prefix = range + amp + No; // + " " + prefix_trend;
 
             String str_find_trend = "";
-            String find_trend_by_h4 = Utils.find_trend_by_h4(dto_h4);
+            String find_trend_by_h4 = Utils.find_trend_by_ma6_vs_ma10(dto_h4);
+            String find_trend_by_h1 = Utils.find_trend_by_ma6_vs_ma10(dto_h1);
             String find_trend_by_bb = Utils.find_trend_by_bb(dailyRange, curr_price);
 
             str_find_trend += "   D10:" + Utils.getType(trend_d1_ma10).toUpperCase();
@@ -4272,7 +4273,8 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                boolean trend_condition = Objects.equals(find_trend_by_h4, find_trend_by_bb);
+                boolean trend_condition = Objects.equals(find_trend_by_h4, find_trend_by_bb)
+                        && Objects.equals(find_trend_by_h1, find_trend_by_bb);
 
                 boolean m03_condition = Objects.equals(Utils.TREND_LONG, find_trend_by_bb)
                         && (dto_03.getMa06().compareTo(dto_03.getMa10()) > 0);
@@ -4373,7 +4375,7 @@ public class BinanceServiceImpl implements BinanceService {
             DailyRange dailyRange = ranges.get(0);
             BigDecimal curr_price = dto_h1.getCurrent_price();
 
-            String find_trend_by_h4 = Utils.find_trend_by_h4(dto_h4);
+            String find_trend_by_h4 = Utils.find_trend_by_ma6_vs_ma10(dto_h4);
             if (Objects.equals(find_trend_by_h4, Utils.TREND_UNSURE)) {
                 find_trend_by_h4 = dto_h4.getTrend_by_ma_06();
             }

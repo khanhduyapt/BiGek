@@ -5259,8 +5259,8 @@ public class Utils {
         BigDecimal amp_fr = amp_fr_to.get(0);
         BigDecimal amp_to = amp_fr_to.get(1);
 
-        List<BigDecimal> bb_low_hig = getLowHigBB(dailyRange);
-        // BigDecimal bb_max = dailyRange.getUpper_h1().max(dailyRange.getUpper_h4());
+        BigDecimal lower = dailyRange.getLower_15().min(dailyRange.getLower_h1());
+        BigDecimal upper = dailyRange.getUpper_15().max(dailyRange.getUpper_h1());
 
         BigDecimal amp_waste = amp_w.multiply(BigDecimal.valueOf(0.1));
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
@@ -5269,7 +5269,7 @@ public class Utils {
             entry_3 = entry_2.subtract(amp_w);
 
             stop_loss = amp_fr.subtract(amp_w).add(amp_waste);
-            take_profit = bb_low_hig.get(1);
+            take_profit = upper;
         }
 
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
@@ -5278,7 +5278,7 @@ public class Utils {
             entry_3 = entry_2.add(amp_w);
 
             stop_loss = amp_to.add(amp_w).subtract(amp_waste);
-            take_profit = bb_low_hig.get(0);
+            take_profit = lower;
         }
 
         BigDecimal standard_vol = get_standard_vol_per_100usd(EPIC);
@@ -6059,7 +6059,7 @@ public class Utils {
         return "";
     }
 
-    public static String find_trend_by_h4(Orders dto_h4) {
+    public static String find_trend_by_ma6_vs_ma10(Orders dto_h4) {
         if (Objects.equals(Utils.TREND_LONG, dto_h4.getTrend_by_ma_06())
                 && (dto_h4.getMa06().compareTo(dto_h4.getMa10()) > 0)) {
             return Utils.TREND_LONG;
@@ -6087,11 +6087,10 @@ public class Utils {
     public static List<BigDecimal> getLowHigBB(DailyRange dailyRange) {
         BigDecimal lower = dailyRange.getLower_15().max(dailyRange.getLower_h1());
         BigDecimal upper = dailyRange.getUpper_15().min(dailyRange.getUpper_h1());
-        BigDecimal high = (upper.subtract(lower)).multiply(BigDecimal.valueOf(0.1));
 
         List<BigDecimal> result = new ArrayList<BigDecimal>();
-        result.add(lower.add(high));
-        result.add(upper.subtract(high));
+        result.add(lower);
+        result.add(upper);
 
         return result;
     }
