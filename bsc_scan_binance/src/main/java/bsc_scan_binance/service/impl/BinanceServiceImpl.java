@@ -4304,7 +4304,7 @@ public class BinanceServiceImpl implements BinanceService {
                         total_trade = 3;
                         comments = "_v1bb";
                     }
-                    if (Objects.equals(trend_bb_h4, trend_bb_h1) && Objects.equals(trend_bb_h4, trend_bb_15)) {
+                    if (Objects.equals(trend_bb_h4, trend_bb_15)) {
                         total_trade = 1;
                         comments = "_v0bb";
                         find_trend = trend_bb_h4;
