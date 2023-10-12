@@ -2793,7 +2793,7 @@ public class BinanceServiceImpl implements BinanceService {
                 Utils.logWritelnDraft(log);
 
                 if (Utils.isNewsAt_19_20_21h()) {
-                    continue;
+                    // continue;
                 }
                 if (!Utils.isOpenTradeTime_6h_to_1h() || Utils.isWeekend()) {
                     continue;
@@ -4279,7 +4279,7 @@ public class BinanceServiceImpl implements BinanceService {
                 int total_trade = 0;
                 String comments = "";
 
-                //trend
+                // trend
                 {
                     // H4
                     if (Utils.isNotBlank(trend_h4_ma610) && Objects.isNull(dto_notifiy)) {
@@ -4310,8 +4310,7 @@ public class BinanceServiceImpl implements BinanceService {
                             }
 
                             dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4_ma610, curr_price,
-                                    comments + Utils.TEXT_PASS, true,
-                                    Utils.CAPITAL_TIME_15, dailyRange, total_trade);
+                                    comments + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_15, dailyRange, total_trade);
 
                             String key = EPIC + Utils.CAPITAL_TIME_15;
                             BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
@@ -4350,33 +4349,23 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
                 // -----------------------------------------------------------------------------------------------
-                //amplitude
+                // amplitude
                 // -----------------------------------------------------------------------------------------------
                 {
                     comments = Utils.TEXT_POSSION_TRADE;
                     String find_trend = trend_bb_d1;
-                    boolean m03_condition = Utils.check_m03_condition(dailyRange, dto_03, trend_bb_d1);
 
-                    if ((Objects.equals(trend_bb_d1, trend_bb_h4) || Objects.equals(trend_bb_d1, trend_bb_h1))
-                            && Objects.equals(trend_bb_d1, trend_bb_15)) {
-                        total_trade = 3;
-                        comments += "2d";
-                    }
                     if (Objects.equals(trend_bb_d1, trend_bb_15) || Objects.equals(trend_bb_d1, trend_bb_03)) {
                         total_trade = 3;
-                        comments += "1d";
-                    }
-                    if (Objects.equals(trend_d1_ma610, trend_bb_15) && Objects.equals(trend_bb_h4, trend_bb_h1)
-                            && (Objects.equals(trend_bb_h4, trend_bb_15) || Objects.equals(trend_bb_h4, trend_bb_03))) {
-                        total_trade = 3;
-                        comments += "dh";
-                        find_trend = trend_bb_h4;
-                        m03_condition = Utils.check_m03_condition(dailyRange, dto_03, trend_bb_h4);
+                        comments += "posd";
                     }
 
                     if (is_sell_only && Objects.equals(Utils.TREND_LONG, find_trend)) {
                         continue;
                     }
+
+                    boolean m03_condition = Utils.check_m03_condition(dailyRange, dto_03, find_trend)
+                            || Objects.equals(find_trend, trend_bb_03) || Objects.equals(find_trend, trend_bb_15);
 
                     boolean is_able_h4 = Utils.is_able_to_trade_by_h4(dto_h4, dailyRange, find_trend);
 
@@ -4544,8 +4533,8 @@ public class BinanceServiceImpl implements BinanceService {
                     if (!Objects.equals(entity.getTicket(), TICKET)) {
                         if (entity.getProfit().compareTo(BigDecimal.valueOf(1)) > 0) {
 
-                            String reason = "group_stoploss:" +
-                                    Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5) + "$";
+                            String reason = "group_stoploss:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5)
+                                    + "$";
                             BscScanBinanceApplication.mt5_close_ticket_dict.put(entity.getTicket(), reason);
                         }
                     }
