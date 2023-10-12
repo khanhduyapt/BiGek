@@ -4355,7 +4355,7 @@ public class BinanceServiceImpl implements BinanceService {
                 // -----------------------------------------------------------------------------------------------
                 // amplitude
                 // -----------------------------------------------------------------------------------------------
-                {
+                if (Utils.isNotBlank(trend_bb_d1)) {
                     comments = Utils.TEXT_POSSION_TRADE;
                     String find_trend = trend_bb_d1;
 
