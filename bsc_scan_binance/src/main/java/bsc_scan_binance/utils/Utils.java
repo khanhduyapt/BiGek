@@ -5259,8 +5259,8 @@ public class Utils {
         BigDecimal amp_fr = amp_fr_to.get(0);
         BigDecimal amp_to = amp_fr_to.get(1);
 
-        BigDecimal lower = dailyRange.getLower_15().min(dailyRange.getLower_h1());
-        BigDecimal upper = dailyRange.getUpper_15().max(dailyRange.getUpper_h1());
+        BigDecimal lower = dailyRange.getLower_h1().min(dailyRange.getLower_h4()).min(amp_fr);
+        BigDecimal upper = dailyRange.getUpper_h1().max(dailyRange.getUpper_h4()).max(amp_to);
 
         BigDecimal amp_waste = amp_w.multiply(BigDecimal.valueOf(0.1));
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
@@ -5305,7 +5305,7 @@ public class Utils {
         String comment = BscScanBinanceApplication.hostname + getTime_day24Hmm()
                 + append.trim().replace(Utils.TEXT_PASS, "");
 
-        return comment;
+        return comment.toLowerCase();
     }
 
     public static String calc_BUF_LO_HI_BUF_Forex(BigDecimal risk, boolean onlyWait, String trend, String EPIC,
@@ -5449,13 +5449,20 @@ public class Utils {
         BigDecimal amplitude = dailyRange.getAmp_avg_h4();
         BigDecimal curr_price = dto_h4.getCurrent_price();
 
+        BigDecimal bb_high = dailyRange.getUpper_h4().subtract(dailyRange.getLower_h4());
+        if (bb_high.compareTo(amplitude.multiply(BigDecimal.valueOf(2))) < 0) {
+            return false;
+        }
+
         List<BigDecimal> fr_to = get_amp_fr_to(dailyRange, curr_price);
+        BigDecimal lower = dailyRange.getLower_h4().max(fr_to.get(0));
+        BigDecimal upper = dailyRange.getUpper_h4().min(fr_to.get(1));
 
         if (Objects.equals(TREND_LONG, find_trend)) {
             BigDecimal next_price = curr_price.add(amplitude);
 
             if ((next_price.compareTo(dto_h4.getBody_hig_50_candle()) < 0)
-                    && (next_price.compareTo(fr_to.get(1)) < 0)) {
+                    && (next_price.compareTo(upper) < 0)) {
                 return true;
             }
         }
@@ -5464,7 +5471,7 @@ public class Utils {
             BigDecimal next_price = curr_price.subtract(amplitude);
 
             if ((next_price.compareTo(dto_h4.getBody_low_50_candle()) > 0)
-                    && (next_price.compareTo(fr_to.get(0)) > 0)) {
+                    && (next_price.compareTo(lower) > 0)) {
                 return true;
             }
         }
@@ -6088,9 +6095,11 @@ public class Utils {
         return "";
     }
 
-    public static boolean check_m03_condition(Orders dto_03, String find_trend) {
+    public static boolean check_m03_condition(DailyRange dailyRange, Orders dto_03, String find_trend) {
         if (Utils.isBlank(find_trend))
             return false;
+
+        String trend_bb_03 = Utils.find_trend_by_bb(dailyRange, dto_03.getCurrent_price(), Utils.CAPITAL_TIME_03);
 
         boolean m03_condition = Objects.equals(Utils.TREND_LONG, find_trend)
                 && (dto_03.getMa06().compareTo(dto_03.getMa10()) > 0);
@@ -6106,6 +6115,8 @@ public class Utils {
 
         m03_condition |= Objects.equals(dto_03.getTrend_of_heiken3(), find_trend)
                 && Objects.equals(dto_03.getTrend_of_heiken3_1(), find_trend);
+
+        m03_condition |= Objects.equals(find_trend, trend_bb_03);
 
         return m03_condition;
     }
