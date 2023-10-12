@@ -4276,7 +4276,7 @@ public class BinanceServiceImpl implements BinanceService {
                             continue;
                         }
                         boolean is_tradable = Utils.is_able_to_trade_by_h4(dto_h4, dailyRange, trend_h4_ma610)
-                                && Utils.is_able_to_trade_by_bb(dailyRange, trend_h4_ma610, curr_price);
+                                || Utils.is_able_to_trade_by_bb(dailyRange, trend_h4_ma610, curr_price);
 
                         boolean trend_condition = Objects.equals(trend_h4_ma610, trend_h1_ma610);
 
@@ -4305,7 +4305,7 @@ public class BinanceServiceImpl implements BinanceService {
                             continue;
                         }
                         boolean is_tradable = Utils.is_able_to_trade_by_h4(dto_h4, dailyRange, trend_h1_ma610)
-                                && Utils.is_able_to_trade_by_bb(dailyRange, trend_h1_ma610, curr_price);
+                                || Utils.is_able_to_trade_by_bb(dailyRange, trend_h1_ma610, curr_price);
 
                         boolean trend_condition = Objects.equals(trend_h1_ma610, dto_h4.getTrend_by_ma_06());
 
@@ -4459,12 +4459,16 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_15_ma610 = Utils.find_trend_by_ma6_vs_ma10(dto_15);
             String trend_03_ma610 = Utils.find_trend_by_ma6_vs_ma10(dto_03);
 
+            String trend_bb_h1 = Utils.find_trend_by_bb(dailyRange, curr_price, Utils.CAPITAL_TIME_H1);
+            boolean tp_at_bb_h1 = Objects.equals(trend_bb_h1, REVERSE_TRADE_TREND);
+
             boolean reverse_h4 = Objects.equals(trend_h4_ma610, REVERSE_TRADE_TREND);
             boolean reverse_h1 = Objects.equals(trend_h1_ma610, REVERSE_TRADE_TREND);
             boolean reverse_15 = Objects.equals(trend_15_ma610, REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_by_ma_06(), REVERSE_TRADE_TREND);
             boolean reverse_03 = Objects.equals(trend_03_ma610, REVERSE_TRADE_TREND)
                     && Objects.equals(dto_03.getTrend_by_ma_06(), REVERSE_TRADE_TREND);
+
             // -------------------------------------------------------------------------------------
             boolean is_hit_sl = false;
 
@@ -4497,13 +4501,13 @@ public class BinanceServiceImpl implements BinanceService {
                 reason_id += "(volume)";
             }
 
-            if (has_profit && reverse_03) {
+            if (has_profit && (reverse_03 || tp_at_bb_h1)) {
                 if (Utils.is_must_close_avoid_overnight_fees_triple()) {
                     is_hit_sl = true;
                     reason_id += "(has_profit,overnight)";
                 }
 
-                if (reverse_h4 || reverse_h1 || reverse_15 || (PROFIT.compareTo(BigDecimal.valueOf(50)) > 0)) {
+                if (tp_at_bb_h1 || reverse_15 || (PROFIT.compareTo(BigDecimal.valueOf(50)) > 0)) {
                     is_hit_sl = true;
                     reason_id += "(has_profit,h1_or_15_or_50$)";
                 }
