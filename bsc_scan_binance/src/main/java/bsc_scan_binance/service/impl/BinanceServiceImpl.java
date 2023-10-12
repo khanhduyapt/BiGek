@@ -2709,13 +2709,24 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                // TODO: CloseTickets HOLDING
-                if (!"_XAUUSD_XAGUSD_NZDJPY_CHFJPY_US100_US30__".contains("_" + EPIC.toUpperCase() + "_")) {
+                boolean is_possion_trade = false;
+                List<Mt5OpenTradeEntity> list = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
+                for (Mt5OpenTradeEntity dto : list) {
+                    if (dto.getComment().contains(Utils.TEXT_POSSION_TRADE)) {
+                        is_possion_trade = true;
+                    }
+                }
 
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(TICKET);
-                    sb.append('\n');
-                    writer.write(sb.toString());
+                // TODO: CloseTickets HOLDING
+                if (!is_possion_trade) {
+                    if (!"_XAUUSD_XAGUSD_NZDJPY_CHFJPY_US100_US30_GBPCHF_EURCHF_"
+                            .contains("_" + EPIC.toUpperCase() + "_")) {
+
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(TICKET);
+                        sb.append('\n');
+                        writer.write(sb.toString());
+                    }
                 }
 
                 System.out.println("CloseTicket: " + Utils.appendSpace(TICKET, 15) + Utils.appendSpace(type, 10)
@@ -4342,7 +4353,7 @@ public class BinanceServiceImpl implements BinanceService {
                 //amplitude
                 // -----------------------------------------------------------------------------------------------
                 {
-                    comments = "_am";
+                    comments = Utils.TEXT_POSSION_TRADE;
                     String find_trend = trend_bb_d1;
                     boolean m03_condition = Utils.check_m03_condition(dailyRange, dto_03, trend_bb_d1);
 
