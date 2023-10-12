@@ -4498,7 +4498,8 @@ public class BinanceServiceImpl implements BinanceService {
             // Bảo vệ tài khoản tránh thua sạch tiền tích góp trong 53 ngày: -$6,133.97
             if ((OPEN_POSITIONS.add(BigDecimal.valueOf(1000)).compareTo(BigDecimal.ZERO) < 0)
                     || (TOTAL_LOSS_TODAY.add(BigDecimal.valueOf(2000)).compareTo(BigDecimal.ZERO) < 0)) {
-                if (reverse_h1 && reverse_15 && reverse_03) {
+
+                if (reverse_h1 && reverse_15 && reverse_03 && is_loss_50usd) {
                     is_hit_sl = true;
                     reason_id += "(open_positions)";
                     String reason = "stoploss:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5)
