@@ -6144,65 +6144,65 @@ public class Utils {
         return "";
     }
 
-    public static boolean check_m03_condition(DailyRange dailyRange, Orders dto_03, String find_trend) {
+    public static boolean check_m03_condition(Orders dto_03, String find_trend) {
         if (Utils.isBlank(find_trend))
             return false;
 
         boolean m03_condition = Objects.equals(Utils.TREND_LONG, find_trend)
-                && (dto_03.getMa06().compareTo(dto_03.getMa10()) > 0);
-
-        m03_condition |= Objects.equals(Utils.TREND_SHOT, find_trend)
-                && (dto_03.getMa06().compareTo(dto_03.getMa10()) < 0);
-
-        m03_condition |= Objects.equals(dto_03.getTrend_by_ma_06(), find_trend)
+                && (dto_03.getMa06().compareTo(dto_03.getMa10()) > 0)
+                && Objects.equals(dto_03.getTrend_of_heiken3_1(), find_trend)
+                && Objects.equals(dto_03.getTrend_by_ma_06(), find_trend)
                 && Objects.equals(dto_03.getTrend_by_ma_10(), find_trend);
 
-        m03_condition |= Objects.equals(dto_03.getTrend_of_heiken3_1(), find_trend)
-                && Objects.equals(dto_03.getTrend_by_ma_06(), find_trend);
-
-        m03_condition |= Objects.equals(dto_03.getTrend_of_heiken3(), find_trend)
-                && Objects.equals(dto_03.getTrend_of_heiken3_1(), find_trend);
+        m03_condition |= Objects.equals(Utils.TREND_SHOT, find_trend)
+                && (dto_03.getMa06().compareTo(dto_03.getMa10()) < 0)
+                && Objects.equals(dto_03.getTrend_of_heiken3_1(), find_trend)
+                && Objects.equals(dto_03.getTrend_by_ma_06(), find_trend)
+                && Objects.equals(dto_03.getTrend_by_ma_10(), find_trend);
 
         return m03_condition;
     }
 
-    public static String find_trend_by_bb(DailyRange dailyRange, BigDecimal curr_price, String CAPITAL_TIME_XX) {
+    public static String find_trend_by_bb(DailyRange dailyRange, Orders dto_xx) {
         BigDecimal lower = dailyRange.getLower_d1();
         BigDecimal upper = dailyRange.getUpper_d1();
-        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_03)) {
+        String dto_id = dto_xx.getId();
+        BigDecimal curr_price = dto_xx.getCurrent_price();
+
+        if (dto_id.contains(CAPITAL_TIME_03) || dto_id.contains(PREFIX_03m)) {
             lower = dailyRange.getLower_03();
             upper = dailyRange.getUpper_03();
         }
-        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_15)) {
+        if (dto_id.contains(CAPITAL_TIME_15) || dto_id.contains(PREFIX_15m)) {
             lower = dailyRange.getLower_15();
             upper = dailyRange.getUpper_15();
         }
-        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H1)) {
+        if (dto_id.contains(CAPITAL_TIME_H1) || dto_id.contains(PREFIX_H01)) {
             lower = dailyRange.getLower_h1();
             upper = dailyRange.getUpper_h1();
         }
-        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_H4)) {
+        if (dto_id.contains(CAPITAL_TIME_H4) || dto_id.contains(PREFIX_H04)) {
             lower = dailyRange.getLower_h4();
             upper = dailyRange.getUpper_h4();
         }
-        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_D1)) {
+        if (dto_id.contains(CAPITAL_TIME_D1) || dto_id.contains(PREFIX_D01) || dto_id.contains("_1d")) {
             lower = dailyRange.getLower_d1();
             upper = dailyRange.getUpper_d1();
         }
-        if (Objects.equals(CAPITAL_TIME_XX, CAPITAL_TIME_W1)) {
+        if (dto_id.contains(CAPITAL_TIME_W1) || dto_id.contains(PREFIX_W01)) {
             List<BigDecimal> amp_fr_to = Utils.get_amp_fr_to(dailyRange, curr_price);
             lower = amp_fr_to.get(0);
             upper = amp_fr_to.get(1);
         }
 
-        if (curr_price.compareTo(lower) <= 0) {
+        if (dto_xx.getLowest_price_of_curr_candle().compareTo(lower) <= 0) {
             return Utils.TREND_LONG;
         }
-        if (curr_price.compareTo(upper) >= 0) {
+        if (dto_xx.getHighest_price_of_curr_candle().compareTo(upper) >= 0) {
             return Utils.TREND_SHOT;
         }
 
-        return Utils.TREND_UNSURE + CAPITAL_TIME_XX;
+        return Utils.TREND_UNSURE + dto_id;
     }
 
     public static List<BigDecimal> getLowHigBB(DailyRange dailyRange) {
