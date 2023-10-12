@@ -4289,7 +4289,9 @@ public class BinanceServiceImpl implements BinanceService {
                         boolean is_tradable = Utils.is_able_to_trade_by_h4(dto_h4, dailyRange, trend_h4_ma610)
                                 || Utils.is_able_to_trade_by_bb(dailyRange, trend_h4_ma610, curr_price);
 
-                        boolean trend_condition = Objects.equals(trend_h4_ma610, trend_h1_ma610);
+                        boolean trend_condition = Objects.equals(trend_h4_ma610, trend_h1_ma610)
+                                && Objects.equals(trend_h4_ma610, trend_bb_15)
+                                && Objects.equals(trend_h4_ma610, trend_bb_h1);
 
                         boolean m03_condition = Objects.equals(trend_h1_ma610, trend_bb_15)
                                 || Objects.equals(trend_h1_ma610, trend_bb_03)
@@ -4326,7 +4328,9 @@ public class BinanceServiceImpl implements BinanceService {
                         boolean is_tradable = Utils.is_able_to_trade_by_h4(dto_h4, dailyRange, trend_h1_ma610)
                                 || Utils.is_able_to_trade_by_bb(dailyRange, trend_h1_ma610, curr_price);
 
-                        boolean trend_condition = Objects.equals(trend_h1_ma610, dto_h4.getTrend_by_ma_06());
+                        boolean trend_condition = Objects.equals(trend_h1_ma610, dto_h4.getTrend_by_ma_06())
+                                && Objects.equals(trend_h1_ma610, trend_bb_15)
+                                && Objects.equals(trend_h1_ma610, trend_bb_h1);
 
                         boolean m03_condition = Objects.equals(trend_h1_ma610, trend_bb_15)
                                 || Objects.equals(trend_h1_ma610, trend_bb_03)
