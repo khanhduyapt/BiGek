@@ -5203,6 +5203,7 @@ public class Utils {
         BigDecimal amp_to = amp_fr_to_tp.get(1);
 
         BigDecimal amp_waste = amp_w.multiply(BigDecimal.valueOf(0.05));
+
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
             stop_loss = curr_price.subtract(amp_w);
             take_profit = amp_to.subtract(amp_waste);

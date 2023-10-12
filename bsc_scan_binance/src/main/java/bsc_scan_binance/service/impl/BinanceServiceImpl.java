@@ -3851,18 +3851,15 @@ public class BinanceServiceImpl implements BinanceService {
                         if (CollectionUtils.isEmpty(ranges)) {
                             continue;
                         }
+                        if ("_AUDNZD_NZDCAD_".contains(trade.getSymbol())) {
+                            boolean debug = true;
+                        }
 
                         DailyRange dailyRange = ranges.get(0);
                         boolean init_tp = false;
 
                         BigDecimal stop_loss = trade.getStopLoss();
                         BigDecimal take_profit = trade.getTakeProfit();
-
-                        BigDecimal bb_min = dailyRange.getLower_h1().min(dailyRange.getLower_h4())
-                                .min(dailyRange.getLower_d1());
-
-                        BigDecimal bb_max = dailyRange.getUpper_h1().max(dailyRange.getUpper_h4())
-                                .max(dailyRange.getLower_d1());
 
                         // Ko cài SL
                         if (Utils.getBigDecimal(trade.getStopLoss()).compareTo(BigDecimal.ZERO) < 1) {
@@ -3881,16 +3878,16 @@ public class BinanceServiceImpl implements BinanceService {
 
                         // Ko cài TP
                         if (Utils.getBigDecimal(trade.getTakeProfit()).compareTo(BigDecimal.ZERO) < 1) {
-                            List<BigDecimal> sl_tp = Utils.get_SL_TP_by_amp(dailyRange, trade.getPriceOpen(),
+                            List<BigDecimal> sl_tp = Utils.get_SL_TP_by_amp(dailyRange, trade.getCurrPrice(),
                                     TRADE_TREND);
 
                             if (Objects.equals(TRADE_TREND, Utils.TREND_LONG)) {
                                 init_tp = true;
-                                take_profit = bb_max.min(sl_tp.get(1)); // TP = giá cao nhất
+                                take_profit = sl_tp.get(1); // TP = giá cao nhất
                             }
                             if (Objects.equals(TRADE_TREND, Utils.TREND_SHOT)) {
                                 init_tp = true;
-                                take_profit = bb_min.max(sl_tp.get(0)); // TP = giá thấp nhất
+                                take_profit = sl_tp.get(0); // TP = giá thấp nhất
                             }
                         }
 
@@ -4295,11 +4292,13 @@ public class BinanceServiceImpl implements BinanceService {
                                 && Utils.is_able_to_trade_by_bb(dailyRange, trend_h4_ma610, curr_price);
 
                         boolean trend_condition = Objects.equals(trend_h4_ma610, trend_h1_ma610)
-                                && (Objects.equals(trend_h1_ma610, trend_bb_03)
-                                        || Objects.equals(trend_h1_ma610, trend_03_ma610));
+                                && (Objects.equals(trend_h1_ma610, trend_03_ma610)
+                                        || Objects.equals(trend_h1_ma610, trend_bb_15)
+                                        || Objects.equals(trend_h1_ma610, trend_bb_03));
 
                         boolean m03_condition = Utils.check_m03_condition(dailyRange, dto_03, trend_h4_ma610)
-                                || Objects.equals(trend_h4_ma610, trend_bb_15);
+                                || Objects.equals(trend_h4_ma610, trend_bb_15)
+                                || Objects.equals(trend_h1_ma610, trend_bb_03);
 
                         if (is_tradable && trend_condition && m03_condition) {
                             close_reverse_trade(EPIC, trend_h4_ma610);
@@ -4325,11 +4324,13 @@ public class BinanceServiceImpl implements BinanceService {
                                 && Utils.is_able_to_trade_by_bb(dailyRange, trend_h1_ma610, curr_price);
 
                         boolean trend_condition = Objects.equals(trend_h1_ma610, dto_h4.getTrend_by_ma_06())
-                                && (Objects.equals(trend_h1_ma610, trend_bb_03)
-                                        || Objects.equals(trend_h1_ma610, trend_03_ma610));
+                                && (Objects.equals(trend_h1_ma610, trend_03_ma610)
+                                        || Objects.equals(trend_h1_ma610, trend_bb_15)
+                                        || Objects.equals(trend_h1_ma610, trend_bb_03));
 
                         boolean m03_condition = Utils.check_m03_condition(dailyRange, dto_03, trend_h1_ma610)
-                                || Objects.equals(trend_h1_ma610, trend_bb_15);
+                                || Objects.equals(trend_h1_ma610, trend_bb_15)
+                                || Objects.equals(trend_h1_ma610, trend_bb_03);
 
                         if (is_tradable && trend_condition && m03_condition) {
 
