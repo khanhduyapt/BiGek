@@ -5444,7 +5444,31 @@ public class Utils {
         return false;
     }
 
-    public static boolean is_able_to_trade(Orders dto_h4, DailyRange dailyRange, String find_trend) {
+    public static boolean is_able_to_trade_by_bb(DailyRange dailyRange, String find_trend, BigDecimal curr_price) {
+        BigDecimal lower = dailyRange.getLower_h1().min(dailyRange.getLower_h4());
+        BigDecimal upper = dailyRange.getUpper_h1().max(dailyRange.getUpper_h4());
+        BigDecimal amplitude = dailyRange.getAmp_avg_h4();
+
+        if (Objects.equals(TREND_LONG, find_trend)) {
+            BigDecimal next_price = curr_price.add(amplitude);
+
+            if (next_price.compareTo(upper) < 0) {
+                return true;
+            }
+        }
+
+        if (Objects.equals(TREND_SHOT, find_trend)) {
+            BigDecimal next_price = curr_price.subtract(amplitude);
+
+            if (next_price.compareTo(lower) > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean is_able_to_trade_by_h4(Orders dto_h4, DailyRange dailyRange, String find_trend) {
         if (Utils.isBlank(find_trend)) {
             return false;
         }
