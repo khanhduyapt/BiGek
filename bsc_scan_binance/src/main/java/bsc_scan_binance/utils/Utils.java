@@ -144,7 +144,7 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_Ma_1vs50 = "(Ma1.50)";
     public static final String TEXT_SWITCH_TREND_Ma_10vs20 = "(Ma10.20)";
 
-    public static final String TEXT_POSSION_TRADE ="_am";
+    public static final String TEXT_POSSION_TRADE = "_am";
     public static final String TEXT_SEQ = "SEQ";
     public static final String TEXT_SWITCH_TREND_SEQ_6_10_20 = "(" + TEXT_SEQ + ".6.10.20)";
     public static final String TEXT_SWITCH_TREND_SEQ_1_10_20_50 = "(" + TEXT_SEQ + ".1.10.20.50)";
@@ -4844,11 +4844,16 @@ public class Utils {
         msg += Utils.appendSpace(trade.getSymbol(), 10) + new_line_from_service + " ";
         msg += Utils.appendSpace(reason + " " + Utils.get_duration_trade_time(trade), 30);
 
-        //msg += " ,Ticket: " + Utils.appendSpace(trade.getTicket(), 15);
-        //msg += " ,Profit:" + Utils.appendLeft(Utils.getStringValue(trade.getProfit().intValue()), 6) + "   ";
-        //msg += " ,SL: " + Utils.appendLeft(Utils.removeLastZero(trade.getStopLoss()), 10);
-        //msg += " ,TP: " + Utils.appendLeft(Utils.removeLastZero(trade.getTakeProfit()), 10) + "   ";
-        //msg += " ,Vol: " + Utils.appendLeft(Utils.getStringValue(trade.getVolume()), 10) + "(lot)   ";
+        // msg += " ,Ticket: " + Utils.appendSpace(trade.getTicket(), 15);
+        // msg += " ,Profit:" +
+        // Utils.appendLeft(Utils.getStringValue(trade.getProfit().intValue()), 6) + "
+        // ";
+        // msg += " ,SL: " + Utils.appendLeft(Utils.removeLastZero(trade.getStopLoss()),
+        // 10);
+        // msg += " ,TP: " +
+        // Utils.appendLeft(Utils.removeLastZero(trade.getTakeProfit()), 10) + " ";
+        // msg += " ,Vol: " + Utils.appendLeft(Utils.getStringValue(trade.getVolume()),
+        // 10) + "(lot) ";
         msg += Utils.appendSpace(Utils.getCapitalLink(trade.getSymbol()), 62);
         msg += Utils.appendSpace(trade.getComment(), 35);
 
@@ -5507,8 +5512,7 @@ public class Utils {
         if (Objects.equals(TREND_LONG, find_trend)) {
             BigDecimal next_price = curr_price.add(amplitude);
 
-            if ((next_price.compareTo(dto_h4.getBody_hig_50_candle()) < 0)
-                    && (next_price.compareTo(upper) < 0)) {
+            if ((next_price.compareTo(dto_h4.getBody_hig_50_candle()) < 0) && (next_price.compareTo(upper) < 0)) {
                 return true;
             }
         }
@@ -5516,8 +5520,7 @@ public class Utils {
         if (Objects.equals(TREND_SHOT, find_trend)) {
             BigDecimal next_price = curr_price.subtract(amplitude);
 
-            if ((next_price.compareTo(dto_h4.getBody_low_50_candle()) > 0)
-                    && (next_price.compareTo(lower) > 0)) {
+            if ((next_price.compareTo(dto_h4.getBody_low_50_candle()) > 0) && (next_price.compareTo(lower) > 0)) {
                 return true;
             }
         }
@@ -6128,7 +6131,7 @@ public class Utils {
                 && (dto_h4.getMa06().compareTo(dto_h4.getMa10()) < 0)) {
             return Utils.TREND_SHOT;
         }
-        //---------------------------------------------------------------
+        // ---------------------------------------------------------------
         if (Objects.equals(Utils.TREND_LONG, dto_h4.getTrend_of_heiken3())
                 && (dto_h4.getMa06().compareTo(dto_h4.getMa10()) > 0)) {
             return Utils.TREND_LONG;
@@ -6137,7 +6140,7 @@ public class Utils {
                 && (dto_h4.getMa06().compareTo(dto_h4.getMa10()) < 0)) {
             return Utils.TREND_SHOT;
         }
-        //---------------------------------------------------------------
+        // ---------------------------------------------------------------
         return "";
     }
 
@@ -6199,7 +6202,7 @@ public class Utils {
             return Utils.TREND_SHOT;
         }
 
-        return "";
+        return Utils.TREND_UNSURE + CAPITAL_TIME_XX;
     }
 
     public static List<BigDecimal> getLowHigBB(DailyRange dailyRange) {
