@@ -144,7 +144,7 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_Ma_1vs50 = "(Ma1.50)";
     public static final String TEXT_SWITCH_TREND_Ma_10vs20 = "(Ma10.20)";
 
-    public static final String TEXT_POSSION_TRADE = "_am";
+    public static final String TEXT_POSSION_TRADE = "_pos24";
     public static final String TEXT_SEQ = "SEQ";
     public static final String TEXT_SWITCH_TREND_SEQ_6_10_20 = "(" + TEXT_SEQ + ".6.10.20)";
     public static final String TEXT_SWITCH_TREND_SEQ_1_10_20_50 = "(" + TEXT_SEQ + ".1.10.20.50)";
@@ -6151,14 +6151,12 @@ public class Utils {
         boolean m03_condition = Objects.equals(Utils.TREND_LONG, find_trend)
                 && (dto_03.getMa06().compareTo(dto_03.getMa10()) > 0)
                 && Objects.equals(dto_03.getTrend_of_heiken3_1(), find_trend)
-                && Objects.equals(dto_03.getTrend_by_ma_06(), find_trend)
-                && Objects.equals(dto_03.getTrend_by_ma_10(), find_trend);
+                && Objects.equals(dto_03.getTrend_by_ma_06(), find_trend);
 
         m03_condition |= Objects.equals(Utils.TREND_SHOT, find_trend)
                 && (dto_03.getMa06().compareTo(dto_03.getMa10()) < 0)
                 && Objects.equals(dto_03.getTrend_of_heiken3_1(), find_trend)
-                && Objects.equals(dto_03.getTrend_by_ma_06(), find_trend)
-                && Objects.equals(dto_03.getTrend_by_ma_10(), find_trend);
+                && Objects.equals(dto_03.getTrend_by_ma_06(), find_trend);
 
         return m03_condition;
     }
