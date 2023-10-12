@@ -2702,10 +2702,6 @@ public class BinanceServiceImpl implements BinanceService {
                     profit = Utils.appendSpace(mt5Entity.getProfit(), 10) + "$";
                 }
 
-                // TODO: CloseTickets HOLDING
-                if ("_XAUUSD_XAGUSD__US100_US30__".contains("_" + EPIC.toUpperCase() + "_")) {
-                    continue;
-                }
                 if (Utils.EPICS_STOCKS_EUR.contains(EPIC) && !Utils.is_london_session()) {
                     continue;
                 }
@@ -2713,10 +2709,14 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                StringBuilder sb = new StringBuilder();
-                sb.append(TICKET);
-                sb.append('\n');
-                writer.write(sb.toString());
+                // TODO: CloseTickets HOLDING
+                if (!"_XAUUSD_XAGUSD_NZDJPY_CHFJPY_US100_US30__".contains("_" + EPIC.toUpperCase() + "_")) {
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(TICKET);
+                    sb.append('\n');
+                    writer.write(sb.toString());
+                }
 
                 System.out.println("CloseTicket: " + Utils.appendSpace(TICKET, 15) + Utils.appendSpace(type, 10)
                         + Utils.appendSpace(EPIC, 10) + "     Profit:" + profit + "    Resion: "
@@ -4288,9 +4288,18 @@ public class BinanceServiceImpl implements BinanceService {
                             close_reverse_trade(EPIC, trend_h4_ma610);
 
                             total_trade = 1;
-                            comments = "_xh41" + Utils.TEXT_PASS;
 
-                            dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4_ma610, curr_price, comments, true,
+                            comments = "_xh41";
+                            if (Objects.equals(trend_h1_ma610, trend_bb_15)) {
+                                comments += "bb15";
+                            } else if (Objects.equals(trend_h1_ma610, trend_bb_03)) {
+                                comments += "bb03";
+                            } else if (dto_03.getSwitch_trend().contains(trend_h1_ma610)) {
+                                comments += "swtr";
+                            }
+
+                            dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4_ma610, curr_price,
+                                    comments + Utils.TEXT_PASS, true,
                                     Utils.CAPITAL_TIME_15, dailyRange, total_trade);
 
                             String key = EPIC + Utils.CAPITAL_TIME_15;
@@ -4460,7 +4469,12 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_03_ma610 = Utils.find_trend_by_ma6_vs_ma10(dto_03);
 
             String trend_bb_h1 = Utils.find_trend_by_bb(dailyRange, curr_price, Utils.CAPITAL_TIME_H1);
-            boolean tp_at_bb_h1 = Objects.equals(trend_bb_h1, REVERSE_TRADE_TREND);
+            String trend_bb_15 = Utils.find_trend_by_bb(dailyRange, curr_price, Utils.CAPITAL_TIME_15);
+            String trend_bb_03 = Utils.find_trend_by_bb(dailyRange, curr_price, Utils.CAPITAL_TIME_03);
+
+            boolean tp_by_bb = Objects.equals(trend_bb_h1, REVERSE_TRADE_TREND)
+                    && Objects.equals(trend_bb_15, REVERSE_TRADE_TREND)
+                    && Objects.equals(trend_bb_03, REVERSE_TRADE_TREND);
 
             boolean reverse_h4 = Objects.equals(trend_h4_ma610, REVERSE_TRADE_TREND);
             boolean reverse_h1 = Objects.equals(trend_h1_ma610, REVERSE_TRADE_TREND);
@@ -4501,32 +4515,15 @@ public class BinanceServiceImpl implements BinanceService {
                 reason_id += "(volume)";
             }
 
-            if (has_profit && (reverse_03 || tp_at_bb_h1)) {
-                if (Utils.is_must_close_avoid_overnight_fees_triple()) {
-                    is_hit_sl = true;
-                    reason_id += "(has_profit,overnight)";
-                }
-
-                if (tp_at_bb_h1 || reverse_15 || (PROFIT.compareTo(BigDecimal.valueOf(50)) > 0)) {
+            if (has_profit && (reverse_03 || tp_by_bb)) {
+                if (tp_by_bb || reverse_15) {
                     is_hit_sl = true;
                     reason_id += "(has_profit,h1_or_15_or_50$)";
                 }
 
-                BigDecimal amp_avg_h4 = dailyRange.getAmp_avg_h4();
-                if (Objects.equals(TRADING_TREND, Utils.TREND_LONG)) {
-                    BigDecimal tp_h4 = trade.getPriceOpen().add(amp_avg_h4);
-                    if (curr_price.compareTo(tp_h4) > 0) {
-                        is_hit_sl = true;
-                        reason_id += "(has_profit,amp_avg_h4)";
-                    }
-                }
-
-                if (Objects.equals(TRADING_TREND, Utils.TREND_SHOT)) {
-                    BigDecimal tp_h4 = trade.getPriceOpen().add(amp_avg_h4);
-                    if (curr_price.compareTo(tp_h4) < 0) {
-                        is_hit_sl = true;
-                        reason_id += "(has_profit,amp_avg_h4)";
-                    }
+                if (Utils.is_must_close_avoid_overnight_fees_triple()) {
+                    is_hit_sl = true;
+                    reason_id += "(has_profit,overnight)";
                 }
             }
 
@@ -4549,6 +4546,24 @@ public class BinanceServiceImpl implements BinanceService {
                 reason_id += "(loss_50usd)";
             }
 
+            if (PROFIT.compareTo(BigDecimal.valueOf(50)) > 0) {
+                BigDecimal amp_avg_h4 = dailyRange.getAmp_avg_h4();
+                if (Objects.equals(TRADING_TREND, Utils.TREND_LONG)) {
+                    BigDecimal tp_h4 = trade.getPriceOpen().add(amp_avg_h4);
+                    if (curr_price.compareTo(tp_h4) > 0) {
+                        is_hit_sl = true;
+                        reason_id += "(has_profit,amp_avg_h4)";
+                    }
+                }
+
+                if (Objects.equals(TRADING_TREND, Utils.TREND_SHOT)) {
+                    BigDecimal tp_h4 = trade.getPriceOpen().add(amp_avg_h4);
+                    if (curr_price.compareTo(tp_h4) < 0) {
+                        is_hit_sl = true;
+                        reason_id += "(has_profit,amp_avg_h4)";
+                    }
+                }
+            }
             // -------------------------------------------------------------------------------------
             int total_trade = 0;
             boolean is_append_trade = false;
