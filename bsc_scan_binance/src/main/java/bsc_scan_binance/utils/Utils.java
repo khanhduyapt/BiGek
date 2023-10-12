@@ -6099,8 +6099,6 @@ public class Utils {
         if (Utils.isBlank(find_trend))
             return false;
 
-        String trend_bb_03 = Utils.find_trend_by_bb(dailyRange, dto_03.getCurrent_price(), Utils.CAPITAL_TIME_03);
-
         boolean m03_condition = Objects.equals(Utils.TREND_LONG, find_trend)
                 && (dto_03.getMa06().compareTo(dto_03.getMa10()) > 0);
 
@@ -6115,8 +6113,6 @@ public class Utils {
 
         m03_condition |= Objects.equals(dto_03.getTrend_of_heiken3(), find_trend)
                 && Objects.equals(dto_03.getTrend_of_heiken3_1(), find_trend);
-
-        m03_condition |= Objects.equals(find_trend, trend_bb_03);
 
         return m03_condition;
     }
