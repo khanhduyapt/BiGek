@@ -436,6 +436,25 @@ void trailingSL(string line)
 void OnTimer()
   {
 //------------------------------------------------------------
+   int n_trailing_sl_file_handle = FileOpen("Data//TrailingStoploss.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\n', CP_UTF8);
+   if(n_trailing_sl_file_handle != INVALID_HANDLE)
+     {
+      for(int Count=0; Count<99; Count++)
+        {
+         if(FileIsEnding(n_trailing_sl_file_handle))
+            break;
+
+         string DataItem = FileReadString(n_trailing_sl_file_handle,0);
+         trailingSL(DataItem);
+        }
+
+      FileClose(n_trailing_sl_file_handle);
+     }
+   else
+     {
+      // Alert("n_trailing_sl_file_handle Error " + (string) GetLastError());
+     }
+//------------------------------------------------------------
    double Loss_In_Money = -200;     // loss in money $
    double Profit_In_Money = 1000;    // profit in money $
 
@@ -500,25 +519,6 @@ void OnTimer()
    if(isDailyLimit())
      {
       // Alert("Loss more than 2000$. Stop trading today!");
-     }
-//------------------------------------------------------------
-   int n_trailing_sl_file_handle = FileOpen("Data//TrailingStoploss.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\n', CP_UTF8);
-   if(n_trailing_sl_file_handle != INVALID_HANDLE)
-     {
-      for(int Count=0; Count<99; Count++)
-        {
-         if(FileIsEnding(n_trailing_sl_file_handle))
-            break;
-
-         string DataItem = FileReadString(n_trailing_sl_file_handle,0);
-         trailingSL(DataItem);
-        }
-
-      FileClose(n_trailing_sl_file_handle);
-     }
-   else
-     {
-      // Alert("n_trailing_sl_file_handle Error " + (string) GetLastError());
      }
 //------------------------------------------------------------
    int n_open_trade_file_handle = FileOpen("Data//OpenTrade.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\n', CP_UTF8);
