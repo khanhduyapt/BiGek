@@ -4267,7 +4267,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // -------------------------------------------------------------------------------------
 
-            if ("_NZDJPY_GBPCHF_NZDCAD_AUDCHF_".contains(EPIC)) {
+            if ("_NZDUSD_".contains(EPIC)) {
                 boolean debug = true;
             }
 
@@ -4277,19 +4277,14 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // TODO: 3 controlMt5
-            // (dk0) thời gian vào lệnh từ 8h~22h.
-            // (dk1) dto_15, 12m, 10m, 03m xuất hiện đồng pha ma6, ma10, ma20.
-            // (dk2) vào lệnh giá hiện tại phải đạt được tp tại <h4>
-            // (dk3) H4 có ma6=ma10=ma20 thì không đánh ngược xu hướng của h4ma10
             Mt5OpenTrade dto_notifiy = null;
-            boolean not_opened_yet = !is_opening_trade(EPIC, "");
 
             if (Utils.isWorkingTime()) {
                 int total_trade = 0;
                 String comments = "";
 
                 //trend
-                if (not_opened_yet) {
+                {
                     // H4
                     if (Utils.isNotBlank(find_trend_by_h4) && Objects.isNull(dto_notifiy)) {
                         if (is_sell_only && Objects.equals(Utils.TREND_LONG, find_trend_by_h4)) {
@@ -4300,9 +4295,10 @@ public class BinanceServiceImpl implements BinanceService {
                         boolean trend_condition = Objects.equals(find_trend_by_h4, find_trend_by_h1);
 
                         boolean m03_condition = Utils.check_m03_condition(dailyRange, dto_03, find_trend_by_h4)
-                                || Objects.equals(find_trend_by_h4, trend_bb_15);
+                                || Objects.equals(find_trend_by_h4, trend_bb_15)
+                                || Objects.equals(find_trend_by_h4, trend_bb_03);
 
-                        if (trend_condition && is_able_h4 && m03_condition) {
+                        if (is_able_h4 && trend_condition && m03_condition) {
                             close_reverse_trade(EPIC, find_trend_by_h4);
 
                             total_trade = 1;
@@ -4323,14 +4319,15 @@ public class BinanceServiceImpl implements BinanceService {
                             continue;
                         }
 
-                        boolean is_able_h1 = Utils.is_able_to_trade(dto_h4, dailyRange, find_trend_by_h1);
+                        boolean is_able_h1 = Utils.is_able_to_trade(dto_h4, dailyRange, find_trend_by_h1)
+                                && Objects.equals(find_trend_by_h1, dto_h4.getTrend_by_ma_06());
 
                         boolean trend_condition = Objects.equals(find_trend_by_h1, trend_bb_15)
                                 || Objects.equals(find_trend_by_h1, trend_bb_03);
 
                         boolean m03_condition = Utils.check_m03_condition(dailyRange, dto_03, find_trend_by_h1);
 
-                        if (trend_condition && is_able_h1 && m03_condition) {
+                        if (is_able_h1 && trend_condition && m03_condition) {
 
                             close_reverse_trade(EPIC, find_trend_by_h1);
 
@@ -4380,7 +4377,9 @@ public class BinanceServiceImpl implements BinanceService {
                         continue;
                     }
 
-                    if (Utils.isNotBlank(find_trend) && m03_condition && (total_trade > 0)) {
+                    boolean is_able_h4 = Utils.is_able_to_trade(dto_h4, dailyRange, find_trend);
+
+                    if (is_able_h4 && m03_condition && (total_trade > 0)) {
                         close_reverse_trade(EPIC, find_trend);
 
                         comments += Utils.TEXT_PASS;
@@ -4487,6 +4486,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_hit_sl = false;
 
             boolean has_profit = PROFIT.compareTo(BigDecimal.valueOf(10)) > 0;
+            boolean is_loss_50usd = (PROFIT.add(BigDecimal.valueOf(50)).compareTo(BigDecimal.ZERO) < 0);
 
             String reason_id = "";
             // -------------------------------------------------------------------------------------
@@ -4557,10 +4557,15 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
+            if (is_loss_50usd && reverse_h4 && reverse_h1 && reverse_15 && reverse_03) {
+                is_hit_sl = true;
+                reason_id += "(loss_50usd)";
+            }
+
             // -------------------------------------------------------------------------------------
             int total_trade = 0;
             boolean is_append_trade = false;
-            if ((PROFIT.add(BigDecimal.valueOf(50)).compareTo(BigDecimal.ZERO) < 0)) {
+            if (is_loss_50usd) {
                 List<Mt5OpenTradeEntity> opening_list = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
 
                 if (opening_list.size() < 3) {

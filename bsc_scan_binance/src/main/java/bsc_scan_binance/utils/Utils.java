@@ -5197,20 +5197,20 @@ public class Utils {
         BigDecimal stop_loss = BigDecimal.ZERO;
         BigDecimal take_profit = BigDecimal.ZERO;
 
-        BigDecimal amp_w = dailyRange.getAvg_amp_week();
         List<BigDecimal> amp_fr_to = Utils.get_amp_fr_to(dailyRange, curr_price);
         BigDecimal amp_fr = amp_fr_to.get(0);
         BigDecimal amp_to = amp_fr_to.get(1);
+        BigDecimal amp_w = dailyRange.getAvg_amp_week();
 
-        BigDecimal amp_waste = amp_w.multiply(BigDecimal.valueOf(0.1));
+        BigDecimal amp_waste = amp_w.multiply(BigDecimal.valueOf(0.05));
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            stop_loss = amp_fr.subtract(amp_w).add(amp_waste);
-            take_profit = amp_to.add(amp_w).subtract(amp_waste);
+            stop_loss = curr_price.subtract(amp_w);
+            take_profit = amp_to.subtract(amp_waste);
         }
 
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            stop_loss = amp_to.add(amp_w).subtract(amp_waste);
-            take_profit = amp_fr.subtract(amp_w).add(amp_waste);
+            stop_loss = curr_price.add(amp_w);
+            take_profit = amp_fr.add(amp_waste);
         }
 
         List<BigDecimal> list = new ArrayList<BigDecimal>();
@@ -5252,34 +5252,24 @@ public class Utils {
         BigDecimal entry_3 = BigDecimal.ZERO;
 
         // TODO: Utils.calc_Lot_En_SL_TP
-        BigDecimal stop_loss = BigDecimal.ZERO;
-        BigDecimal take_profit = BigDecimal.ZERO;
         BigDecimal amp_w = dailyRange.getAvg_amp_week();
-        List<BigDecimal> amp_fr_to = Utils.get_amp_fr_to(dailyRange, curr_price);
-        BigDecimal amp_fr = amp_fr_to.get(0);
-        BigDecimal amp_to = amp_fr_to.get(1);
 
-        BigDecimal lower = dailyRange.getLower_h1().min(dailyRange.getLower_h4()).min(amp_fr);
-        BigDecimal upper = dailyRange.getUpper_h1().max(dailyRange.getUpper_h4()).max(amp_to);
+        List<BigDecimal> sl_tp = Utils.get_SL_TP_by_amp(dailyRange, curr_price, find_trend);
 
-        BigDecimal amp_waste = amp_w.multiply(BigDecimal.valueOf(0.1));
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            entry_1 = amp_fr;
+            entry_1 = curr_price;
             entry_2 = entry_1.subtract(amp_w);
             entry_3 = entry_2.subtract(amp_w);
-
-            stop_loss = amp_fr.subtract(amp_w).add(amp_waste);
-            take_profit = upper;
         }
 
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            entry_1 = amp_to;
+            entry_1 = curr_price;
             entry_2 = entry_1.add(amp_w);
             entry_3 = entry_2.add(amp_w);
-
-            stop_loss = amp_to.add(amp_w).subtract(amp_waste);
-            take_profit = lower;
         }
+
+        BigDecimal stop_loss = sl_tp.get(0);
+        BigDecimal take_profit = sl_tp.get(1);
 
         BigDecimal standard_vol = get_standard_vol_per_100usd(EPIC);
         String type = Objects.equals(find_trend, Utils.TREND_LONG) ? "_b" : "_s";
@@ -5446,6 +5436,10 @@ public class Utils {
     }
 
     public static boolean is_able_to_trade(Orders dto_h4, DailyRange dailyRange, String find_trend) {
+        if (Utils.isBlank(find_trend)) {
+            return false;
+        }
+
         BigDecimal amplitude = dailyRange.getAmp_avg_h4();
         BigDecimal curr_price = dto_h4.getCurrent_price();
 
@@ -5455,8 +5449,8 @@ public class Utils {
         }
 
         List<BigDecimal> fr_to = get_amp_fr_to(dailyRange, curr_price);
-        BigDecimal lower = dailyRange.getLower_h4().max(fr_to.get(0));
-        BigDecimal upper = dailyRange.getUpper_h4().min(fr_to.get(1));
+        BigDecimal lower = dailyRange.getLower_d1().max(fr_to.get(0));
+        BigDecimal upper = dailyRange.getUpper_d1().min(fr_to.get(1));
 
         if (Objects.equals(TREND_LONG, find_trend)) {
             BigDecimal next_price = curr_price.add(amplitude);
