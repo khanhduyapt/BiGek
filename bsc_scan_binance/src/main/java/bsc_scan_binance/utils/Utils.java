@@ -5197,6 +5197,7 @@ public class Utils {
         BigDecimal stop_loss = BigDecimal.ZERO;
         BigDecimal take_profit = BigDecimal.ZERO;
         BigDecimal amp_w = dailyRange.getAvg_amp_week();
+        BigDecimal amp_h4 = dailyRange.getAmp_avg_h4();
 
         List<BigDecimal> amp_fr_to_tp = Utils.get_amp_fr_to(dailyRange, curr_price);
         BigDecimal amp_fr = amp_fr_to_tp.get(0);
@@ -5207,20 +5208,36 @@ public class Utils {
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
             stop_loss = curr_price.subtract(amp_w);
             take_profit = amp_to.subtract(amp_waste);
+
+            if (take_profit.subtract(curr_price).abs().compareTo(amp_h4) < 0) {
+                take_profit = take_profit.add(amp_h4);
+            }
         }
 
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
             stop_loss = curr_price.add(amp_w);
             take_profit = amp_fr.add(amp_waste);
+
+            if (curr_price.subtract(take_profit).abs().compareTo(amp_h4) < 0) {
+                take_profit = take_profit.subtract(amp_h4);
+            }
         }
 
         List<BigDecimal> amp_fr_to_sl = Utils.get_amp_fr_to(dailyRange, stop_loss);
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
             stop_loss = amp_fr_to_sl.get(0).add(amp_waste);
+
+            if (curr_price.subtract(stop_loss).abs().compareTo(amp_h4) < 0) {
+                stop_loss = stop_loss.subtract(amp_h4);
+            }
         }
 
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
             stop_loss = amp_fr_to_sl.get(1).subtract(amp_waste);
+
+            if (curr_price.subtract(stop_loss).abs().compareTo(amp_h4) < 0) {
+                stop_loss = stop_loss.add(amp_h4);
+            }
         }
 
         List<BigDecimal> list = new ArrayList<BigDecimal>();

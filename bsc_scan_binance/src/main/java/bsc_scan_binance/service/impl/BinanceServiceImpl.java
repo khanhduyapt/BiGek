@@ -3803,7 +3803,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if ((PROFIT.compareTo(BigDecimal.valueOf(10)) > 0)) {
+                if ((PROFIT.compareTo(BigDecimal.valueOf(100)) > 0)) {
                     List<DailyRange> ranges = dailyRangeRepository.findSymbolToday(trade.getSymbol());
                     if (CollectionUtils.isEmpty(ranges)) {
                         continue;
@@ -3844,15 +3844,16 @@ public class BinanceServiceImpl implements BinanceService {
 
                     System.out.println("traning_stop:   " + trade.toString());
                 } else {
+                    if ("_CHFJPY_".contains(trade.getSymbol())) {
+                        boolean debug = true;
+                    }
+
                     if ((Utils.getBigDecimal(trade.getTakeProfit()).compareTo(BigDecimal.ZERO) < 1)
                             || (Utils.getBigDecimal(trade.getStopLoss()).compareTo(BigDecimal.ZERO) < 1)) {
 
                         List<DailyRange> ranges = dailyRangeRepository.findSymbolToday(trade.getSymbol());
                         if (CollectionUtils.isEmpty(ranges)) {
                             continue;
-                        }
-                        if ("_AUDNZD_NZDCAD_".contains(trade.getSymbol())) {
-                            boolean debug = true;
                         }
 
                         DailyRange dailyRange = ranges.get(0);
@@ -3863,32 +3864,18 @@ public class BinanceServiceImpl implements BinanceService {
 
                         // Ko cài SL
                         if (Utils.getBigDecimal(trade.getStopLoss()).compareTo(BigDecimal.ZERO) < 1) {
-                            List<BigDecimal> sl_tp = Utils.get_SL_TP_by_amp(dailyRange, trade.getCurrPrice(),
+                            List<BigDecimal> sl_tp = Utils.get_SL_TP_by_amp(dailyRange, trade.getPriceOpen(),
                                     TRADE_TREND);
-
-                            if (Objects.equals(TRADE_TREND, Utils.TREND_LONG)) {
-                                init_tp = true;
-                                stop_loss = sl_tp.get(0); // SL = Giá thấp nhất
-                            }
-                            if (Objects.equals(TRADE_TREND, Utils.TREND_SHOT)) {
-                                init_tp = true;
-                                stop_loss = sl_tp.get(1); // SL = Giá cao nhất
-                            }
+                            init_tp = true;
+                            stop_loss = sl_tp.get(0);
                         }
 
                         // Ko cài TP
                         if (Utils.getBigDecimal(trade.getTakeProfit()).compareTo(BigDecimal.ZERO) < 1) {
                             List<BigDecimal> sl_tp = Utils.get_SL_TP_by_amp(dailyRange, trade.getCurrPrice(),
                                     TRADE_TREND);
-
-                            if (Objects.equals(TRADE_TREND, Utils.TREND_LONG)) {
-                                init_tp = true;
-                                take_profit = sl_tp.get(1); // TP = giá cao nhất
-                            }
-                            if (Objects.equals(TRADE_TREND, Utils.TREND_SHOT)) {
-                                init_tp = true;
-                                take_profit = sl_tp.get(0); // TP = giá thấp nhất
-                            }
+                            init_tp = true;
+                            take_profit = sl_tp.get(1);
                         }
 
                         if (init_tp) {
@@ -4270,7 +4257,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean is_sell_only = false;
-            if ("_US30_US100_US500_".contains(EPIC)) {
+            if ("_US30_US100_US500_".contains(EPIC) || EPIC.contains("JPY")) {
                 is_sell_only = true;
             }
 
@@ -4291,14 +4278,11 @@ public class BinanceServiceImpl implements BinanceService {
                         boolean is_tradable = Utils.is_able_to_trade_by_h4(dto_h4, dailyRange, trend_h4_ma610)
                                 && Utils.is_able_to_trade_by_bb(dailyRange, trend_h4_ma610, curr_price);
 
-                        boolean trend_condition = Objects.equals(trend_h4_ma610, trend_h1_ma610)
-                                && (Objects.equals(trend_h1_ma610, trend_03_ma610)
-                                        || Objects.equals(trend_h1_ma610, trend_bb_15)
-                                        || Objects.equals(trend_h1_ma610, trend_bb_03));
+                        boolean trend_condition = Objects.equals(trend_h4_ma610, trend_h1_ma610);
 
-                        boolean m03_condition = Utils.check_m03_condition(dailyRange, dto_03, trend_h4_ma610)
-                                || Objects.equals(trend_h4_ma610, trend_bb_15)
-                                || Objects.equals(trend_h1_ma610, trend_bb_03);
+                        boolean m03_condition = Objects.equals(trend_h1_ma610, trend_bb_15)
+                                || Objects.equals(trend_h1_ma610, trend_bb_03)
+                                || dto_03.getSwitch_trend().contains(trend_h1_ma610);
 
                         if (is_tradable && trend_condition && m03_condition) {
                             close_reverse_trade(EPIC, trend_h4_ma610);
@@ -4323,14 +4307,11 @@ public class BinanceServiceImpl implements BinanceService {
                         boolean is_tradable = Utils.is_able_to_trade_by_h4(dto_h4, dailyRange, trend_h1_ma610)
                                 && Utils.is_able_to_trade_by_bb(dailyRange, trend_h1_ma610, curr_price);
 
-                        boolean trend_condition = Objects.equals(trend_h1_ma610, dto_h4.getTrend_by_ma_06())
-                                && (Objects.equals(trend_h1_ma610, trend_03_ma610)
-                                        || Objects.equals(trend_h1_ma610, trend_bb_15)
-                                        || Objects.equals(trend_h1_ma610, trend_bb_03));
+                        boolean trend_condition = Objects.equals(trend_h1_ma610, dto_h4.getTrend_by_ma_06());
 
-                        boolean m03_condition = Utils.check_m03_condition(dailyRange, dto_03, trend_h1_ma610)
-                                || Objects.equals(trend_h1_ma610, trend_bb_15)
-                                || Objects.equals(trend_h1_ma610, trend_bb_03);
+                        boolean m03_condition = Objects.equals(trend_h1_ma610, trend_bb_15)
+                                || Objects.equals(trend_h1_ma610, trend_bb_03)
+                                || dto_03.getSwitch_trend().contains(trend_h1_ma610);
 
                         if (is_tradable && trend_condition && m03_condition) {
 
@@ -4480,8 +4461,10 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean reverse_h4 = Objects.equals(trend_h4_ma610, REVERSE_TRADE_TREND);
             boolean reverse_h1 = Objects.equals(trend_h1_ma610, REVERSE_TRADE_TREND);
-            boolean reverse_15 = Objects.equals(trend_15_ma610, REVERSE_TRADE_TREND);
-            boolean reverse_03 = Objects.equals(trend_03_ma610, REVERSE_TRADE_TREND);
+            boolean reverse_15 = Objects.equals(trend_15_ma610, REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_15.getTrend_by_ma_06(), REVERSE_TRADE_TREND);
+            boolean reverse_03 = Objects.equals(trend_03_ma610, REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_03.getTrend_by_ma_06(), REVERSE_TRADE_TREND);
             // -------------------------------------------------------------------------------------
             boolean is_hit_sl = false;
 
