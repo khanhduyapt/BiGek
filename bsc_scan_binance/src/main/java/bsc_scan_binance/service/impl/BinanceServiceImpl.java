@@ -3276,6 +3276,7 @@ public class BinanceServiceImpl implements BinanceService {
         return false;
     }
 
+    @Override
     public void get_total_loss_today() {
         String mt5_data_file_path = Utils.getMt5DataFolder() + "HistoryToday.csv";
         String mt5_data_file = check_mt5_data_file(mt5_data_file_path, Utils.MINUTES_RELOAD_CSV_DATA);
@@ -4266,6 +4267,9 @@ public class BinanceServiceImpl implements BinanceService {
                             && Utils.check_m03_condition(dto_03, trend_h4_ma610)) {
 
                         total_trade = 1;
+                        if (OPEN_POSITIONS.compareTo(BigDecimal.ZERO) > 0) {
+                            total_trade = 3;
+                        }
 
                         close_reverse_trade(EPIC, trend_h4_ma610);
 
@@ -4383,9 +4387,6 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1_369 = Utils.find_trend_by_ma3_6_9(dto_h1);
             String trend_15_369 = Utils.find_trend_by_ma3_6_9(dto_15);
             String trend_03_369 = Utils.find_trend_by_ma3_6_9(dto_03);
-
-            String trend_bb_15 = Utils.find_trend_by_bb(dailyRange, dto_15);
-            boolean tp_by_bb_15 = Objects.equals(trend_bb_15, REVERSE_TRADE_TREND);
 
             boolean reverse_h4 = Objects.equals(trend_h4_369, REVERSE_TRADE_TREND);
 

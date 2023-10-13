@@ -69,4 +69,6 @@ public interface BinanceService {
 
     public void CloseTickets();
 
+    public void get_total_loss_today();
+
 }

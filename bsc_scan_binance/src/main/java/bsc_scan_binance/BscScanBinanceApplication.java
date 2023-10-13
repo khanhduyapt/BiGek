@@ -127,22 +127,20 @@ public class BscScanBinanceApplication {
                 String mt5_open_trade_file = Utils.getMt5DataFolder() + "OpenTrade.csv";
                 Utils.delete_file(mt5_open_trade_file);
 
+                binance_service.get_total_loss_today();
+
                 while (index_crypto < total) {
                     try {
                         if (isReloadAfter(1, "MsgKillZone")) {
                             alertMsgKillZone(binance_service);
                         }
 
-                        // if (Utils.isWeekday() && Utils.isAllowSendMsg())
-                        {
+                        if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
 
                             if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
                                 binance_service.saveMt5Data("AureliusIronheart.csv", Utils.MINUTES_RELOAD_CSV_DATA);
-
-                                if (isReloadAfter(Utils.MINUTES_OF_15, "MT5_DATA_TIMEBREAKER")) {
-                                    binance_service.saveMt5Data("TimeBreaker.csv", Utils.MINUTES_RELOAD_CSV_DATA);
-                                    binance_service.saveDailyPivotData();
-                                }
+                                binance_service.saveMt5Data("TimeBreaker.csv", Utils.MINUTES_RELOAD_CSV_DATA);
+                                binance_service.saveDailyPivotData();
 
                                 if (isReloadAfter(Utils.MINUTES_OF_1H, "MT5_DATA_STOCKS")) {
                                     binance_service.saveMt5Data("Stocks.csv", Utils.MINUTES_OF_1H);

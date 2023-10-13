@@ -144,8 +144,8 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_Ma_1vs50 = "(Ma1.50)";
     public static final String TEXT_SWITCH_TREND_Ma_10vs20 = "(Ma10.20)";
 
-    public static final String TEXT_POSSION_TRADE = "_pos24";
-    public static final String TEXT_TREND_FLOWING = "_fow41";
+    public static final String TEXT_POSSION_TRADE = "_pos";
+    public static final String TEXT_TREND_FLOWING = "_xuh";
 
     public static final String TEXT_SEQ = "SEQ";
     public static final String TEXT_SWITCH_TREND_SEQ_6_10_20 = "(" + TEXT_SEQ + ".6.10.20)";
