@@ -145,6 +145,8 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_Ma_10vs20 = "(Ma10.20)";
 
     public static final String TEXT_POSSION_TRADE = "_pos24";
+    public static final String TEXT_TREND_FLOWING = "_fow41";
+
     public static final String TEXT_SEQ = "SEQ";
     public static final String TEXT_SWITCH_TREND_SEQ_6_10_20 = "(" + TEXT_SEQ + ".6.10.20)";
     public static final String TEXT_SWITCH_TREND_SEQ_1_10_20_50 = "(" + TEXT_SEQ + ".1.10.20.50)";
@@ -6122,43 +6124,33 @@ public class Utils {
         return "";
     }
 
-    public static String find_trend_by_ma6_vs_ma10(Orders dto_h4) {
-        if (Objects.equals(Utils.TREND_LONG, dto_h4.getTrend_by_ma_06())
-                && (dto_h4.getMa06().compareTo(dto_h4.getMa10()) > 0)) {
+    public static String find_trend_by_ma6_vs_ma10(Orders dto_xx) {
+        if (Objects.equals(Utils.TREND_LONG, dto_xx.getTrend_by_ma_06())
+                && (dto_xx.getMa06().compareTo(dto_xx.getMa10()) > 0)) {
             return Utils.TREND_LONG;
         }
-        if (Objects.equals(Utils.TREND_SHOT, dto_h4.getTrend_by_ma_06())
-                && (dto_h4.getMa06().compareTo(dto_h4.getMa10()) < 0)) {
+        if (Objects.equals(Utils.TREND_SHOT, dto_xx.getTrend_by_ma_06())
+                && (dto_xx.getMa06().compareTo(dto_xx.getMa10()) < 0)) {
             return Utils.TREND_SHOT;
         }
         // ---------------------------------------------------------------
-        if (Objects.equals(Utils.TREND_LONG, dto_h4.getTrend_of_heiken3())
-                && (dto_h4.getMa06().compareTo(dto_h4.getMa10()) > 0)) {
+        if (Objects.equals(Utils.TREND_LONG, dto_xx.getTrend_of_heiken3())
+                && (dto_xx.getMa06().compareTo(dto_xx.getMa10()) > 0)) {
             return Utils.TREND_LONG;
         }
-        if (Objects.equals(Utils.TREND_SHOT, dto_h4.getTrend_of_heiken3())
-                && (dto_h4.getMa06().compareTo(dto_h4.getMa10()) < 0)) {
+        if (Objects.equals(Utils.TREND_SHOT, dto_xx.getTrend_of_heiken3())
+                && (dto_xx.getMa06().compareTo(dto_xx.getMa10()) < 0)) {
             return Utils.TREND_SHOT;
         }
         // ---------------------------------------------------------------
-        return "";
+        return Utils.TREND_UNSURE + dto_xx.getId();
     }
 
     public static boolean check_m03_condition(Orders dto_03, String find_trend) {
         if (Utils.isBlank(find_trend))
             return false;
 
-        boolean m03_condition = Objects.equals(Utils.TREND_LONG, find_trend)
-                && (dto_03.getMa06().compareTo(dto_03.getMa10()) > 0)
-                && Objects.equals(dto_03.getTrend_of_heiken3_1(), find_trend)
-                && Objects.equals(dto_03.getTrend_by_ma_06(), find_trend);
-
-        m03_condition |= Objects.equals(Utils.TREND_SHOT, find_trend)
-                && (dto_03.getMa06().compareTo(dto_03.getMa10()) < 0)
-                && Objects.equals(dto_03.getTrend_of_heiken3_1(), find_trend)
-                && Objects.equals(dto_03.getTrend_by_ma_06(), find_trend);
-
-        return m03_condition;
+        return Objects.equals(find_trend_by_ma6_vs_ma10(dto_03), find_trend);
     }
 
     public static String find_trend_by_bb(DailyRange dailyRange, Orders dto_xx) {
