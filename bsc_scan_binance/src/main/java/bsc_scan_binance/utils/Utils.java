@@ -5499,17 +5499,17 @@ public class Utils {
             return false;
         }
 
-        BigDecimal amplitude = dailyRange.getAmp_avg_h4();
+        BigDecimal amplitude = dailyRange.getAmp_avg_h4().multiply(BigDecimal.valueOf(2));
         BigDecimal curr_price = dto_h4.getCurrent_price();
 
         BigDecimal bb_high = dailyRange.getUpper_h4().subtract(dailyRange.getLower_h4());
-        if (bb_high.compareTo(amplitude.multiply(BigDecimal.valueOf(2))) < 0) {
+        if (bb_high.compareTo(amplitude) < 0) {
             return false;
         }
 
         List<BigDecimal> fr_to = get_amp_fr_to(dailyRange, curr_price);
-        BigDecimal lower = dailyRange.getLower_d1().max(fr_to.get(0));
-        BigDecimal upper = dailyRange.getUpper_d1().min(fr_to.get(1));
+        BigDecimal lower = fr_to.get(0);
+        BigDecimal upper = fr_to.get(1);
 
         if (Objects.equals(TREND_LONG, find_trend)) {
             BigDecimal next_price = curr_price.add(amplitude);
