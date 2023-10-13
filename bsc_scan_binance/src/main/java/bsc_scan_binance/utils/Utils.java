@@ -6143,6 +6143,10 @@ public class Utils {
             return Utils.TREND_SHOT;
         }
         // ---------------------------------------------------------------
+        if (Objects.equals(dto_xx.getTrend_by_ma_06(), dto_xx.getTrend_by_ma_10())) {
+            return dto_xx.getTrend_by_ma_10();
+        }
+        // ---------------------------------------------------------------
         return Utils.TREND_UNSURE + dto_xx.getId();
     }
 

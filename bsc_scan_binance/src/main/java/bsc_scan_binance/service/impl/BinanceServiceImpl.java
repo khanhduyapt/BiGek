@@ -2719,7 +2719,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // TODO: CloseTickets HOLDING
                 if (!is_possion_trade) {
-                    if (!"_US100_US30_GBPCHF_EURCHF_AUDUSD_EURNZD_USDJPY_"
+                    if (!"_US100_US30_USDJPY_"
                             .contains("_" + EPIC.toUpperCase() + "_")) {
 
                         StringBuilder sb = new StringBuilder();
@@ -3984,15 +3984,16 @@ public class BinanceServiceImpl implements BinanceService {
         // Trên Ma chỉ LONG, dưới Ma chỉ SHORT
         BigDecimal current_price = heiken_list.get(0).getCurrPrice();
 
-        BigDecimal ma06 = Utils.calcMA(list, 06, 1);
-        BigDecimal ma10 = Utils.calcMA(list, 10, 1);
+        BigDecimal ma06 = Utils.calcMA(list, 6, 1);
+        BigDecimal ma10 = Utils.calcMA(list, 8, 1);
         BigDecimal ma20 = Utils.calcMA(list, 20, 1);
 
         if ("_GBPNZD_".contains(EPIC)) {
             boolean debug = true;
         }
-        String trend_by_ma_06 = Utils.isUptrendByMa(heiken_list, 06, 0, 1) ? Utils.TREND_LONG : Utils.TREND_SHOT;
-        String trend_by_ma_10 = Utils.isUptrendByMa(heiken_list, 10, 0, 1) ? Utils.TREND_LONG : Utils.TREND_SHOT;
+
+        String trend_by_ma_06 = Utils.isUptrendByMa(heiken_list, 6, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        String trend_by_ma_10 = Utils.isUptrendByMa(heiken_list, 8, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHOT;
         String trend_by_ma_20 = Utils.getTrendByMaXx(heiken_list, 20);
         String trend_by_ma_50 = Utils.getTrendByMaXx(heiken_list, 50);
 
@@ -4210,7 +4211,6 @@ public class BinanceServiceImpl implements BinanceService {
             String str_find_trend = "";
             String trend_h4_ma610 = Utils.find_trend_by_ma6_vs_ma10(dto_h4);
             String trend_h1_ma610 = Utils.find_trend_by_ma6_vs_ma10(dto_h1);
-            String trend_03_ma610 = Utils.find_trend_by_ma6_vs_ma10(dto_03);
 
             String trend_bb_d1 = Utils.find_trend_by_bb(dailyRange, dto_d1);
             String trend_bb_h4 = Utils.find_trend_by_bb(dailyRange, dto_h4);
@@ -4438,21 +4438,21 @@ public class BinanceServiceImpl implements BinanceService {
             if (no_stop_loss && PROFIT.add(Utils.RISK_PER_TRADE.multiply(BigDecimal.valueOf(2)))
                     .compareTo(BigDecimal.ZERO) < 0) {
                 is_hit_sl = true;
-                reason_id += "(risk_per_trade)";
+                reason_id += "(over_risk_per_trade)";
             }
             BigDecimal standard_vol = Utils.get_standard_vol_per_100usd(EPIC);
             if (trade.getVolume().compareTo(standard_vol.multiply(BigDecimal.valueOf(3))) > 0) {
                 is_hit_sl = true;
-                reason_id += "(volume)";
+                reason_id += "(VOLUME_NG)";
             }
             if (reverse_h4 && reverse_h1 && reverse_15 && reverse_03) {
                 is_hit_sl = true;
-                reason_id += "(reverse_trend)";
+                reason_id += "(reverse_trend_h4_h1_15_05)";
             }
             // -------------------------------------------------------------------------------------
             if (has_profit && reverse_03) {
                 is_hit_sl = true;
-                reason_id += "(has_profit,h1_or_15_or_50$)";
+                reason_id += "(has_profit,reverse_03)";
             }
 
             if (is_hit_sl) {
