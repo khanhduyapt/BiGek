@@ -4197,7 +4197,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String prefix = range + amp + No; // + " " + prefix_trend;
 
-            String trend_d1_ma369 = Utils.find_trend_by_ma3_6_9(dto_d1);
+            String trend_d6 = dto_d1.getTrend_by_ma_6();
             String trend_h4_ma369 = Utils.find_trend_by_ma3_6_9(dto_h4);
             String trend_h1_ma369 = Utils.find_trend_by_ma3_6_9(dto_h1);
 
@@ -4205,14 +4205,14 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_03_ma369 = Utils.find_trend_by_ma3_6_9(dto_03);
 
             boolean allow_trend_following = false;
-            if (Objects.equals(trend_d1_ma369, trend_h4_ma369) && Objects.equals(trend_d1_ma369, trend_h1_ma369)
-                    && Objects.equals(trend_d1_ma369, dto_h1.getTrend_by_ma_6())) {
+            if (Objects.equals(trend_d6, trend_h4_ma369) && Objects.equals(trend_d6, trend_h1_ma369)
+                    && Objects.equals(trend_d6, dto_h1.getTrend_by_ma_6())) {
                 allow_trend_following = true;
             }
 
             String append = seq + eoz;
             if (allow_trend_following) {
-                append += " TREND_FW_" + Utils.getType(trend_d1_ma369).toUpperCase();
+                append += " TREND_FW_" + Utils.getType(trend_d6).toUpperCase();
             }
 
             List<TakeProfit> total_trade_list = takeProfitRepository.findAllBySymbolAndOpenDate(EPIC, "20231013");
@@ -4250,7 +4250,8 @@ public class BinanceServiceImpl implements BinanceService {
                 int total_trade = 0;
 
                 boolean allow_trade_now = false;
-                if (Objects.equals(trend_d1_ma369, trend_15_ma369) && Objects.equals(trend_d1_ma369, trend_03_ma369)) {
+                if (Objects.equals(trend_d6, trend_15_ma369) && Objects.equals(trend_d6, dto_15.getTrend_by_ma_6())
+                        && Objects.equals(trend_d6, trend_03_ma369)) {
                     allow_trade_now = true;
                 }
 
@@ -4259,14 +4260,14 @@ public class BinanceServiceImpl implements BinanceService {
                 if (allow_trend_following && allow_trade_now && is_able_h4) {
 
                     List<TakeProfit> his_list_folow_d369 = takeProfitRepository
-                            .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_d1_ma369, Utils.getYyyyMMdd());
+                            .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_d6, Utils.getYyyyMMdd());
 
                     if (CollectionUtils.isEmpty(his_list_folow_d369)) {
-                        total_trade = 3;
+                        total_trade = 1;
 
-                        close_reverse_trade(EPIC, trend_d1_ma369);
+                        close_reverse_trade(EPIC, trend_d6);
 
-                        dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1_ma369, dto_h4,
+                        dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_d6, dto_h4,
                                 Utils.TEXT_TREND_FLOWING + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1, dailyRange,
                                 total_trade);
 
@@ -4317,6 +4318,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
+            Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(dto_h1);
 
             if (Objects.isNull(dto_h1)) {
                 String str_null = "";
@@ -4338,10 +4340,16 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean debug = true;
             }
 
+            boolean has_profit = PROFIT.compareTo(BigDecimal.valueOf(10)) > 0;
+
             String trend_h1_369 = Utils.find_trend_by_ma3_6_9(dto_h1);
+            String trend_15_369 = Utils.find_trend_by_ma3_6_9(dto_15);
 
             boolean reverse_h1 = Objects.equals(trend_h1_369, REVERSE_TRADE_TREND)
                     || Objects.equals(dto_h1.getTrend_by_ma_6(), REVERSE_TRADE_TREND);
+
+            boolean reverse_15 = Objects.equals(trend_15_369, REVERSE_TRADE_TREND)
+                    || Objects.equals(dto_15.getTrend_by_ma_6(), REVERSE_TRADE_TREND);
 
             // -------------------------------------------------------------------------------------
             boolean is_hit_sl = false;
@@ -4361,15 +4369,32 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
                 }
             }
-            // -------------------------------------------------------------------------------------
             if (reverse_h1) {
                 is_hit_sl = true;
-                reason_id += "(reverse_h1)";
+                reason_id += "(stoploss,reverse_h1)";
             }
-
+            // -------------------------------------------------------------------------------------
+            if (has_profit && reverse_15) {
+                is_hit_sl = true;
+                reason_id += "(profit,reverse_15)";
+            }
             // -------------------------------------------------------------------------------------
             // TODO: 5 closeTrade_by_SL_TP
             // -------------------------------------------------------------------------------------
+            if (is_hit_sl) {
+                List<Mt5OpenTradeEntity> tradeList = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
+                for (Mt5OpenTradeEntity entity : tradeList) {
+                    if (!Objects.equals(entity.getTicket(), TICKET)) {
+                        if (entity.getProfit().compareTo(BigDecimal.valueOf(5)) > 0) {
+
+                            String reason = "group_stoploss:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5)
+                                    + "$";
+                            BscScanBinanceApplication.mt5_close_ticket_dict.put(entity.getTicket(), reason);
+                        }
+                    }
+                }
+            }
+
             if (is_hit_sl && allow_close_trade_after(TICKET, Utils.MINUTES_OF_1H)) {
                 String reason = "Profit:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5) + "$   "
                         + Utils.appendSpace(trade.getComment(), 30) + reason_id;
@@ -4382,6 +4407,7 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason_id);
             }
         }
+
         if (Utils.isNotBlank(msg)) {
             String EVENT_ID = "CLOSE_TRADE" + Utils.getCurrentYyyyMmDd_HH() + keys;
             sendMsgPerHour_OnlyMe(EVENT_ID, Utils.new_line_from_service + msg);
