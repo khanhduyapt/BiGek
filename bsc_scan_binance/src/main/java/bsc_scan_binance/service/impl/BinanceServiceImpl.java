@@ -4205,7 +4205,8 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_03_ma369 = Utils.find_trend_by_ma3_6_9(dto_03);
 
             boolean allow_trend_following = false;
-            if (Objects.equals(trend_d1_ma369, trend_h4_ma369) && Objects.equals(trend_d1_ma369, trend_h1_ma369)) {
+            if (Objects.equals(trend_d1_ma369, trend_h4_ma369) && Objects.equals(trend_d1_ma369, trend_h1_ma369)
+                    && Objects.equals(trend_d1_ma369, dto_h1.getTrend_by_ma_6())) {
                 allow_trend_following = true;
             }
 
@@ -4214,8 +4215,7 @@ public class BinanceServiceImpl implements BinanceService {
                 append += " TREND_FW_" + Utils.getType(trend_d1_ma369).toUpperCase();
             }
 
-            List<TakeProfit> total_trade_list = takeProfitRepository.findAllBySymbolAndOpenDate(EPIC,
-                    "20231013");
+            List<TakeProfit> total_trade_list = takeProfitRepository.findAllBySymbolAndOpenDate(EPIC, "20231013");
 
             String str_profit = "";
             {
@@ -4340,7 +4340,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             String trend_h1_369 = Utils.find_trend_by_ma3_6_9(dto_h1);
 
-            boolean reverse_h1 = Objects.equals(trend_h1_369, REVERSE_TRADE_TREND);
+            boolean reverse_h1 = Objects.equals(trend_h1_369, REVERSE_TRADE_TREND)
+                    || Objects.equals(dto_h1.getTrend_by_ma_6(), REVERSE_TRADE_TREND);
 
             // -------------------------------------------------------------------------------------
             boolean is_hit_sl = false;
