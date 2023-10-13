@@ -90,13 +90,13 @@ public class Orders {
     private String switch_trend;
 
     @Column(name = "trend_by_ma_10")
-    private String trend_by_ma_10;
+    private String trend_by_ma_9;
 
     @Column(name = "tradable_zone")
     private String tradable_zone;
 
     @Column(name = "trend_by_ma_06")
-    private String trend_by_ma_06;
+    private String trend_by_ma_6;
 
     @Column(name = "trend_by_ma_20")
     private String trend_by_ma_20;
@@ -123,13 +123,13 @@ public class Orders {
     private BigDecimal amplitude_avg_of_candles = BigDecimal.ZERO;
 
     @Column(name = "ma050")
-    private BigDecimal ma06 = BigDecimal.ZERO;
+    private BigDecimal ma6 = BigDecimal.ZERO;
 
     @Column(name = "ma020")
     private BigDecimal ma20 = BigDecimal.ZERO;
 
     @Column(name = "ma010")
-    private BigDecimal ma10 = BigDecimal.ZERO;
+    private BigDecimal ma9 = BigDecimal.ZERO;
 
     @Column(name = "low_50candle")
     private BigDecimal low_50candle = BigDecimal.ZERO;
