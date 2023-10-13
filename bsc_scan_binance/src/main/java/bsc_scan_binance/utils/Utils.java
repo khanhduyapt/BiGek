@@ -5275,45 +5275,55 @@ public class Utils {
         return list;
     }
 
-    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String find_trend, BigDecimal curr_price, String append,
+    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String find_trend, Orders dto_h4, String append,
             boolean isTradeNow, String CAPITAL_TIME_XX, DailyRange dailyRange, int total_trade) {
 
         if (Utils.isBlank(find_trend)) {
             return null;
         }
-
+        BigDecimal curr_price = dto_h4.getCurrent_price();
         BigDecimal entry_1 = BigDecimal.ZERO;
         BigDecimal entry_2 = BigDecimal.ZERO;
         BigDecimal entry_3 = BigDecimal.ZERO;
 
         // TODO: Utils.calc_Lot_En_SL_TP
-        BigDecimal amp_w = dailyRange.getAvg_amp_week();
+        BigDecimal avg_amp_h4 = dailyRange.getAmp_avg_h4();
 
         List<BigDecimal> sl_tp = Utils.get_SL_TP_by_amp(dailyRange, curr_price, find_trend);
-
-        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            entry_1 = curr_price;
-            entry_2 = entry_1.subtract(amp_w);
-            entry_3 = entry_2.subtract(amp_w);
-        }
-
-        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            entry_1 = curr_price;
-            entry_2 = entry_1.add(amp_w);
-            entry_3 = entry_2.add(amp_w);
-        }
-
         BigDecimal stop_loss = sl_tp.get(0);
         BigDecimal take_profit = sl_tp.get(1);
 
-        BigDecimal standard_vol = get_standard_vol_per_100usd(EPIC);
+        BigDecimal volume = get_standard_vol_per_100usd(EPIC);
+        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
+            BigDecimal sl_long = dto_h4.getLow_50candle().subtract(avg_amp_h4);
+            BigDecimal tp_long = dto_h4.getBody_hig_50_candle();
+
+            MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, RISK_0_15_PERCENT, curr_price, sl_long,
+                    tp_long);
+            volume = money_x1_now.calcLot();
+            stop_loss = sl_long;
+            take_profit = tp_long;
+        }
+
+        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
+            BigDecimal sl_shot = dto_h4.getHig_50candle().add(avg_amp_h4);
+            BigDecimal tp_shot = dto_h4.getBody_low_50_candle();
+
+            MoneyAtRiskResponse money_x1_now = new MoneyAtRiskResponse(EPIC, RISK_0_15_PERCENT, curr_price, sl_shot,
+                    tp_shot);
+
+            volume = money_x1_now.calcLot();
+            stop_loss = sl_shot;
+            take_profit = tp_shot;
+        }
+
         String type = Objects.equals(find_trend, Utils.TREND_LONG) ? "_b" : "_s";
 
         Mt5OpenTrade dto = new Mt5OpenTrade();
         dto.setEpic(EPIC);
         dto.setOrder_type(find_trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
         dto.setCur_price(curr_price);
-        dto.setLots(standard_vol);
+        dto.setLots(volume);
         dto.setEntry1(entry_1);
         dto.setStop_loss(stop_loss);
         dto.setTake_profit1(take_profit);

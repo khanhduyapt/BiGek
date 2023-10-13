@@ -42,7 +42,7 @@ public class TakeProfit {
     private String tradeType;
 
     @Column(name = "open_date")
-    private String closedDate;
+    private String openDate;
 
     @Column(name = "profit")
     private BigDecimal profit = BigDecimal.ZERO;
