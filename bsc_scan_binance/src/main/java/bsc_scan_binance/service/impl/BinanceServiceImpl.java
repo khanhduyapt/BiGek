@@ -4450,8 +4450,7 @@ public class BinanceServiceImpl implements BinanceService {
                 reason_id += "(reverse_trend)";
             }
             // -------------------------------------------------------------------------------------
-
-            if (has_profit && tp_by_bb_15 && reverse_03) {
+            if (has_profit && reverse_03) {
                 is_hit_sl = true;
                 reason_id += "(has_profit,h1_or_15_or_50$)";
             }
@@ -4466,30 +4465,6 @@ public class BinanceServiceImpl implements BinanceService {
                                     + "$";
                             BscScanBinanceApplication.mt5_close_ticket_dict.put(entity.getTicket(), reason);
                         }
-                    }
-                }
-            }
-
-            if (PROFIT.compareTo(BigDecimal.valueOf(50)) > 0) {
-                if (reverse_15) {
-                    is_hit_sl = true;
-                    reason_id += "(has_profit,reverse_h4)";
-                }
-
-                BigDecimal amp_avg_h4 = dailyRange.getAmp_avg_h4();
-                if (Objects.equals(TRADING_TREND, Utils.TREND_LONG)) {
-                    BigDecimal tp_h4 = trade.getPriceOpen().add(amp_avg_h4);
-                    if (curr_price.compareTo(tp_h4) > 0) {
-                        is_hit_sl = true;
-                        reason_id += "(has_profit,amp_avg_h4)";
-                    }
-                }
-
-                if (Objects.equals(TRADING_TREND, Utils.TREND_SHOT)) {
-                    BigDecimal tp_h4 = trade.getPriceOpen().add(amp_avg_h4);
-                    if (curr_price.compareTo(tp_h4) < 0) {
-                        is_hit_sl = true;
-                        reason_id += "(has_profit,amp_avg_h4)";
                     }
                 }
             }
