@@ -5350,11 +5350,11 @@ public class Utils {
             Orders dto_entry, Orders dto_sl) {
         String result = "";
 
-        BigDecimal sl_long = Utils.getBigDecimal(calc_sl1_tp2(dto_sl, TREND_LONG));
-        BigDecimal sl_shot = Utils.getBigDecimal(calc_sl1_tp2(dto_sl, TREND_SHOT));
+        BigDecimal sl_long = dto_sl.getLow_50candle().subtract(dto_sl.getAmplitude_avg_of_candles());
+        BigDecimal sl_shot = dto_sl.getHig_50candle().add((dto_sl.getAmplitude_avg_of_candles()));
 
-        BigDecimal en_long = Utils.getBigDecimal(dto_entry.getLow_50candle());
-        BigDecimal en_shot = Utils.getBigDecimal(dto_entry.getHig_50candle());
+        BigDecimal en_long = dto_entry.getCurrent_price();
+        BigDecimal en_shot = dto_entry.getCurrent_price();
 
         BigDecimal tp_long = Utils.getBigDecimal(dto_entry.getTp_long());
         BigDecimal tp_shot = Utils.getBigDecimal(dto_entry.getTp_shot());
@@ -5638,8 +5638,7 @@ public class Utils {
         String trend_h4 = dto_h4.getTrend_by_ma_3();
         String trend_h1 = dto_h1.getTrend_by_ma_3();
 
-        if (!(Objects.equals(trend_d1, dto_15.getTrend_by_ma_3())
-                || Objects.equals(trend_d1, dto_10.getTrend_by_ma_3())
+        if (!(Objects.equals(trend_d1, dto_15.getTrend_by_ma_3()) || Objects.equals(trend_d1, dto_10.getTrend_by_ma_3())
                 || Objects.equals(trend_d1, dto_05.getTrend_by_ma_3()))) {
             return "";
         }
@@ -5702,25 +5701,29 @@ public class Utils {
 
                 // ------------------------------------------------------------------------------
 
-                //temp = Utils.checkXCutUpY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(), dto_h4.getMa20(),
-                //        dto_h4.getMa20());
-                //if (Utils.isNotBlank(temp))
-                //    cutting += " 03vsH4Ma20:" + Utils.appendSpace(temp, 5);
+                // temp = Utils.checkXCutUpY(dto_03.getClose_candle_1(),
+                // dto_03.getClose_candle_2(), dto_h4.getMa20(),
+                // dto_h4.getMa20());
+                // if (Utils.isNotBlank(temp))
+                // cutting += " 03vsH4Ma20:" + Utils.appendSpace(temp, 5);
                 //
-                //temp = Utils.checkXCutUpY(dto_05.getClose_candle_1(), dto_05.getClose_candle_2(), dto_h4.getMa20(),
-                //        dto_h4.getMa20());
-                //if (Utils.isNotBlank(temp))
-                //    cutting += " 05vsH4Ma20:" + Utils.appendSpace(temp, 5);
+                // temp = Utils.checkXCutUpY(dto_05.getClose_candle_1(),
+                // dto_05.getClose_candle_2(), dto_h4.getMa20(),
+                // dto_h4.getMa20());
+                // if (Utils.isNotBlank(temp))
+                // cutting += " 05vsH4Ma20:" + Utils.appendSpace(temp, 5);
                 //
-                //temp = Utils.checkXCutUpY(dto_10.getClose_candle_1(), dto_10.getClose_candle_2(), dto_h4.getMa20(),
-                //        dto_h4.getMa20());
-                //if (Utils.isNotBlank(temp))
-                //    cutting += " 10vsH4Ma20:" + Utils.appendSpace(temp, 5);
+                // temp = Utils.checkXCutUpY(dto_10.getClose_candle_1(),
+                // dto_10.getClose_candle_2(), dto_h4.getMa20(),
+                // dto_h4.getMa20());
+                // if (Utils.isNotBlank(temp))
+                // cutting += " 10vsH4Ma20:" + Utils.appendSpace(temp, 5);
                 //
-                //temp = Utils.checkXCutUpY(dto_15.getClose_candle_1(), dto_15.getClose_candle_2(), dto_h4.getMa20(),
-                //        dto_h4.getMa20());
-                //if (Utils.isNotBlank(temp))
-                //    cutting += " 15vsH4Ma20:" + Utils.appendSpace(temp, 5);
+                // temp = Utils.checkXCutUpY(dto_15.getClose_candle_1(),
+                // dto_15.getClose_candle_2(), dto_h4.getMa20(),
+                // dto_h4.getMa20());
+                // if (Utils.isNotBlank(temp))
+                // cutting += " 15vsH4Ma20:" + Utils.appendSpace(temp, 5);
             }
             // ------------------------------------------------------------------------------
             /*
@@ -5835,25 +5838,29 @@ public class Utils {
                 // cutting += " 15vsH4Ma50:" + Utils.appendSpace(temp, 5);
                 // ------------------------------------------------------------------------------
 
-                //temp = Utils.checkXCutDnY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(), dto_h4.getMa20(),
-                //        dto_h4.getMa20());
-                //if (Utils.isNotBlank(temp))
-                //    cutting += " 03vsH4Ma20:" + Utils.appendSpace(temp, 5);
+                // temp = Utils.checkXCutDnY(dto_03.getClose_candle_1(),
+                // dto_03.getClose_candle_2(), dto_h4.getMa20(),
+                // dto_h4.getMa20());
+                // if (Utils.isNotBlank(temp))
+                // cutting += " 03vsH4Ma20:" + Utils.appendSpace(temp, 5);
                 //
-                //temp = Utils.checkXCutDnY(dto_05.getClose_candle_1(), dto_05.getClose_candle_2(), dto_h4.getMa20(),
-                //        dto_h4.getMa20());
-                //if (Utils.isNotBlank(temp))
-                //    cutting += " 05vsH4Ma20:" + Utils.appendSpace(temp, 5);
+                // temp = Utils.checkXCutDnY(dto_05.getClose_candle_1(),
+                // dto_05.getClose_candle_2(), dto_h4.getMa20(),
+                // dto_h4.getMa20());
+                // if (Utils.isNotBlank(temp))
+                // cutting += " 05vsH4Ma20:" + Utils.appendSpace(temp, 5);
                 //
-                //temp = Utils.checkXCutDnY(dto_10.getClose_candle_1(), dto_10.getClose_candle_2(), dto_h4.getMa20(),
-                //        dto_h4.getMa20());
-                //if (Utils.isNotBlank(temp))
-                //    cutting += " 10vsH4Ma20:" + Utils.appendSpace(temp, 5);
+                // temp = Utils.checkXCutDnY(dto_10.getClose_candle_1(),
+                // dto_10.getClose_candle_2(), dto_h4.getMa20(),
+                // dto_h4.getMa20());
+                // if (Utils.isNotBlank(temp))
+                // cutting += " 10vsH4Ma20:" + Utils.appendSpace(temp, 5);
                 //
-                //temp = Utils.checkXCutDnY(dto_15.getClose_candle_1(), dto_15.getClose_candle_2(), dto_h4.getMa20(),
-                //        dto_h4.getMa20());
-                //if (Utils.isNotBlank(temp))
-                //    cutting += " 15vsH4Ma20:" + Utils.appendSpace(temp, 5);
+                // temp = Utils.checkXCutDnY(dto_15.getClose_candle_1(),
+                // dto_15.getClose_candle_2(), dto_h4.getMa20(),
+                // dto_h4.getMa20());
+                // if (Utils.isNotBlank(temp))
+                // cutting += " 15vsH4Ma20:" + Utils.appendSpace(temp, 5);
             }
 
             // ------------------------------------------------------------------------------

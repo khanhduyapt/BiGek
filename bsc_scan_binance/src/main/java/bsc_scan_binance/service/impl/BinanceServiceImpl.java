@@ -2645,8 +2645,7 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private String analysis_profit(String prefix, String EPIC, String append2, DailyRange dailyRange,
-            String trend_folow,
-            BigDecimal curr_price, String trend_by_ma89_h4) {
+            String trend_folow, BigDecimal curr_price, String trend_by_ma89_h4) {
 
         String type = "";
         BigDecimal t_profit = BigDecimal.ZERO;
@@ -2865,7 +2864,7 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO: outputLog
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(curr_price, 5)), 11);
-        log += Utils.appendSpace(append.trim(), 100);
+        log += Utils.appendSpace(append.trim(), 80);
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
 
         log += "Unit:" + Utils.appendLeft(String.valueOf(Utils.get_standard_vol_per_100usd(EPIC)), 5) + "(lot)     ";
@@ -4006,10 +4005,10 @@ public class BinanceServiceImpl implements BinanceService {
             BigDecimal ma89 = Utils.calcMA(list, 89, 1);
             BigDecimal ma34 = Utils.calcMA(list, 34, 1);
 
-            if ((curr_price.compareTo(ma34) > 0) && (curr_price.compareTo(ma89) > 0)) {
+            if ((ma6.compareTo(ma34) > 0) && (ma6.compareTo(ma89) > 0)) {
                 trend_by_ma_89 = "maOnly:" + Utils.TREND_LONG;
 
-            } else if ((curr_price.compareTo(ma34) < 0) && (curr_price.compareTo(ma89) < 0)) {
+            } else if ((ma6.compareTo(ma34) < 0) && (ma6.compareTo(ma89) < 0)) {
                 trend_by_ma_89 = "maOnly:" + Utils.TREND_SHOT;
             }
 
@@ -4017,10 +4016,10 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.nonNull(dailyRange)) {
                 BigDecimal amp_w_x2 = dailyRange.getAvg_amp_week().multiply(BigDecimal.valueOf(2));
 
-                if (curr_price.compareTo(ma89.subtract(amp_w_x2)) < 0) {
+                if (ma6.compareTo(ma89.subtract(amp_w_x2)) < 0) {
                     trend_by_ma_89 = "amOnly:" + Utils.TREND_LONG;
 
-                } else if (curr_price.compareTo(ma89.add(amp_w_x2)) > 0) {
+                } else if (ma6.compareTo(ma89.add(amp_w_x2)) > 0) {
                     trend_by_ma_89 = "amOnly:" + Utils.TREND_SHOT;
 
                 }
@@ -4100,8 +4099,8 @@ public class BinanceServiceImpl implements BinanceService {
         Orders entity = new Orders(id, insertTime, trend_by_ma_3, curr_price, tp_long, tp_shot, close_candle_1,
                 close_candle_2, switch_trend, trend_by_ma_9, tradable_zone, trend_by_ma_6, trend_by_ma_20,
                 trend_by_ma_89, trend_by_seq_ma, trend_by_bread_area, body_hig_50_candle, body_low_50_candle,
-                amplitude_1_part_15, amp_avg_h4, ma6, ma3, ma9, low_50candle, hig_50candle,
-                lowest_price_of_curr_candle, highest_price_of_curr_candle, "");
+                amplitude_1_part_15, amp_avg_h4, ma6, ma3, ma9, low_50candle, hig_50candle, lowest_price_of_curr_candle,
+                highest_price_of_curr_candle, "");
 
         ordersRepository.save(entity);
 
@@ -4132,9 +4131,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             DailyRange dailyRange = get_DailyRange(EPIC);
 
-            if (Objects.isNull(dailyRange) || Objects.isNull(dto_w1) || Objects.isNull(dto_d1)
-                    || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)
-                    || Objects.isNull(dto_03)) {
+            if (Objects.isNull(dailyRange) || Objects.isNull(dto_w1) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4)
+                    || Objects.isNull(dto_h1) || Objects.isNull(dto_15) || Objects.isNull(dto_03)) {
                 String str_null = "";
                 str_null += "DailyRange:" + (Objects.isNull(dailyRange) ? "isEmpty" : "       ");
                 str_null += " W1:" + (Objects.isNull(dto_w1) ? "null" : "    ");
@@ -4155,27 +4153,14 @@ public class BinanceServiceImpl implements BinanceService {
 
             BigDecimal curr_price = dto_h1.getCurrent_price();
 
-            String trend_w1 = dto_w1.getTrend_by_ma_3();
             String trend_h1 = dto_h1.getTrend_by_ma_3();
 
-            List<BigDecimal> amp_fr_to = Utils.get_amp_fr_to(dailyRange, curr_price);
-            BigDecimal amp_fr = amp_fr_to.get(0);
-            BigDecimal amp_to = amp_fr_to.get(1);
-
-            String range = "  " + No + " Range:" + Utils.appendLeft(Utils.removeLastZero(amp_fr), 10) + " : "
-                    + Utils.appendSpace(Utils.removeLastZero(amp_to), 10);
-            range = Utils.appendSpace(range, 32);
-
-            // ---------------------------------------------------------------------------------------------
-            String eoz = "";
-            String cutting = Utils.switch_trend_real_time_by_trend_d1(EPIC, dto_d1, dto_h4, dto_h1, dto_15, dto_03,
-                    dto_03, dto_03);
-            if (Utils.isNotBlank(cutting)) {
-                eoz += "x" + cutting;
-            } else {
-                eoz += "     ";
-            }
-            eoz += "  ";
+            // List<BigDecimal> amp_fr_to = Utils.get_amp_fr_to(dailyRange, curr_price);
+            // BigDecimal amp_fr = amp_fr_to.get(0);
+            // BigDecimal amp_to = amp_fr_to.get(1);
+            String range = "  " + No;// + " Range:" + Utils.appendLeft(Utils.removeLastZero(amp_fr), 10) + " : "
+            // + Utils.appendSpace(Utils.removeLastZero(amp_to), 10);
+            // range = Utils.appendSpace(range, 32);
 
             // ---------------------------------------------------------------------------------------------
 
@@ -4186,8 +4171,7 @@ public class BinanceServiceImpl implements BinanceService {
             amp += "(avg_w):" + Utils.appendSpace(Utils.calculatePoints(EPIC, dailyRange.getAvg_amp_week()), 6);
             amp += "   ";
 
-            String st_d1 = dto_d1.getSwitch_trend().contains(trend_h1)
-                    ? "D1" + Utils.getType(dto_d1.getTrend_by_ma_3())
+            String st_d1 = dto_d1.getSwitch_trend().contains(trend_h1) ? "D1" + Utils.getType(dto_d1.getTrend_by_ma_3())
                     : "   ";
             String st_h4 = dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs20)
                     ? "H4" + Utils.getType(dto_h4.getTrend_by_ma_3())
@@ -4206,16 +4190,15 @@ public class BinanceServiceImpl implements BinanceService {
 
             String trend_folow = "";
             boolean allow_trend_following = false;
-            if (dto_h4.getTrend_by_ma_89().contains(trend_h4_ma369)
-                    && Objects.equals(trend_h4_ma369, trend_h1_ma369)
+            if (dto_h4.getTrend_by_ma_89().contains(trend_h4_ma369) && Objects.equals(trend_h4_ma369, trend_h1_ma369)
                     && Objects.equals(trend_h4_ma369, dto_h1.getTrend_by_ma_6())) {
                 trend_folow = trend_h4_ma369;
                 allow_trend_following = true;
             }
 
-            String append = eoz;
+            String append = "";
             if (allow_trend_following) {
-                append += " FW_" + Utils.getType(trend_h4_ma369).toUpperCase();
+                append += "      FW_" + Utils.getType(trend_h4_ma369).toUpperCase();
             }
 
             List<TakeProfit> total_trade_list = takeProfitRepository.findAllBySymbolAndOpenDate(EPIC, "20231013");
@@ -4236,7 +4219,7 @@ public class BinanceServiceImpl implements BinanceService {
                 str_profit = Utils.appendSpace(str_profit, 15);
             }
 
-            analysis_profit(str_profit + prefix, EPIC, append.trim(), dailyRange, trend_folow, curr_price,
+            analysis_profit(str_profit + prefix, EPIC, append, dailyRange, trend_folow, curr_price,
                     dto_h4.getTrend_by_ma_89());
 
             BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
