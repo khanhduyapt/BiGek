@@ -3174,9 +3174,9 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
                 if (Objects.nonNull(dto_h4) && Objects.nonNull(dto_h1) && Objects.nonNull(dto_15)
-                        && Objects.equals(dto_15.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
-                        && Objects.equals(dto_h1.getTrend_of_heiken3(), REVERSE_TRADE_TREND)
-                        && Objects.equals(dto_h4.getTrend_of_heiken3(), REVERSE_TRADE_TREND)) {
+                        && Objects.equals(dto_15.getTrend_by_ma_3(), REVERSE_TRADE_TREND)
+                        && Objects.equals(dto_h1.getTrend_by_ma_3(), REVERSE_TRADE_TREND)
+                        && Objects.equals(dto_h4.getTrend_by_ma_3(), REVERSE_TRADE_TREND)) {
                     trend_reverse = "    h4_h1_15_reverse";
                 }
 
@@ -3583,7 +3583,7 @@ public class BinanceServiceImpl implements BinanceService {
                 type = "  (Spot   )   ";
             }
 
-            if (Utils.isNotBlank(dto.getSwitch_trend()) && dto.getTrend_of_heiken3().contains(Utils.TREND_LONG)) {
+            if (Utils.isNotBlank(dto.getSwitch_trend()) && dto.getTrend_by_ma_3().contains(Utils.TREND_LONG)) {
                 if (count > 20) {
                     msg_switch_trend_d1 += ".";
                 } else {
@@ -3970,16 +3970,22 @@ public class BinanceServiceImpl implements BinanceService {
         }
         List<BigDecimal> amplitutes = Utils.calc_amplitude_average_of_candles(list);
         BigDecimal amp_avg_h4 = amplitutes.get(1);
+        BigDecimal curr_price = list.get(0).getCurrPrice();
 
-        // Trên Ma chỉ LONG, dưới Ma chỉ SHORT
-        BigDecimal current_price = heiken_list.get(0).getCurrPrice();
-
+        BigDecimal ma3 = Utils.calcMA(list, 3, 1);
         BigDecimal ma6 = Utils.calcMA(list, 6, 1);
         BigDecimal ma9 = Utils.calcMA(list, 9, 1);
-        BigDecimal ma20 = Utils.calcMA(list, 20, 1);
 
         if ("_GBPNZD_".contains(EPIC)) {
             boolean debug = true;
+        }
+
+        String heiken3_0 = Utils.getTrendByHekenAshiList(heiken_list, 3, 0);
+        String trend_ma_3 = Utils.isUptrendByMa(heiken_list, 3, 0, 1) ? Utils.TREND_LONG : Utils.TREND_SHOT;
+
+        String trend_by_ma_3 = Utils.TREND_UNSURE + CAPITAL_TIME_XX;
+        if (Objects.equals(heiken3_0, trend_ma_3)) {
+            trend_by_ma_3 = trend_ma_3;
         }
 
         String trend_by_ma_6 = Utils.isUptrendByMa(heiken_list, 6, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHOT;
@@ -3987,8 +3993,6 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_by_ma_20 = Utils.getTrendByMaXx(heiken_list, 20);
         String trend_by_ma_50 = Utils.getTrendByMaXx(heiken_list, 50);
 
-        String trend_of_heiken3_0 = Utils.getTrendByHekenAshiList(heiken_list, 3, 0);
-        String trend_of_heiken3_1 = Utils.getTrendByHekenAshiList(heiken_list, 3, 1);
         // ----------------------------TREND------------------------
 
         // TODO: 1. initForexTrend
@@ -4039,10 +4043,10 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal body_hig_50_candle = body.get(1);
 
         String trend_by_bread_area = "";
-        if (current_price.compareTo(body_low_50_candle) <= 0) {
+        if (curr_price.compareTo(body_low_50_candle) <= 0) {
             trend_by_bread_area = "(bread_area)" + Utils.TREND_LONG;
         }
-        if (current_price.compareTo(body_hig_50_candle) >= 0) {
+        if (curr_price.compareTo(body_hig_50_candle) >= 0) {
             trend_by_bread_area = "(bread_area)" + Utils.TREND_SHOT;
         }
 
@@ -4059,11 +4063,11 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal lowest_price_of_curr_candle = heiken_list.get(0).getLow_price();
         BigDecimal highest_price_of_curr_candle = heiken_list.get(0).getHight_price();
 
-        Orders entity = new Orders(id, insertTime, trend_of_heiken3_0, current_price, tp_long, tp_shot, close_candle_1,
+        Orders entity = new Orders(id, insertTime, trend_by_ma_3, curr_price, tp_long, tp_shot, close_candle_1,
                 close_candle_2, switch_trend, trend_by_ma_9, tradable_zone, trend_by_ma_6, trend_by_ma_20,
                 trend_by_ma_50, trend_by_seq_ma, trend_by_bread_area, body_hig_50_candle, body_low_50_candle,
-                amplitude_1_part_15, amp_avg_h4, ma6, ma20, ma9, low_50candle, hig_50candle,
-                lowest_price_of_curr_candle, highest_price_of_curr_candle, trend_of_heiken3_1);
+                amplitude_1_part_15, amp_avg_h4, ma6, ma3, ma9, low_50candle, hig_50candle,
+                lowest_price_of_curr_candle, highest_price_of_curr_candle, "");
 
         ordersRepository.save(entity);
 
@@ -4117,8 +4121,8 @@ public class BinanceServiceImpl implements BinanceService {
             BigDecimal curr_price = dto_h1.getCurrent_price();
             DailyRange dailyRange = ranges.get(0);
 
-            String trend_w1 = dto_w1.getTrend_of_heiken3();
-            String trend_h1 = dto_h1.getTrend_of_heiken3();
+            String trend_w1 = dto_w1.getTrend_by_ma_3();
+            String trend_h1 = dto_h1.getTrend_by_ma_3();
 
             List<BigDecimal> amp_fr_to = Utils.get_amp_fr_to(dailyRange, curr_price);
             BigDecimal amp_fr = amp_fr_to.get(0);
@@ -4149,13 +4153,13 @@ public class BinanceServiceImpl implements BinanceService {
             amp += "   ";
 
             String st_d1 = dto_d1.getSwitch_trend().contains(trend_h1)
-                    ? "D1" + Utils.getType(dto_d1.getTrend_of_heiken3())
+                    ? "D1" + Utils.getType(dto_d1.getTrend_by_ma_3())
                     : "   ";
             String st_h4 = dto_h4.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs20)
-                    ? "H4" + Utils.getType(dto_h4.getTrend_of_heiken3())
+                    ? "H4" + Utils.getType(dto_h4.getTrend_by_ma_3())
                     : "   ";
             String st_h1 = dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs50)
-                    ? "H1" + Utils.getType(dto_h1.getTrend_of_heiken3())
+                    ? "H1" + Utils.getType(dto_h1.getTrend_by_ma_3())
                     : "  ";
             amp += "~" + st_d1 + " " + st_h4 + " " + st_h1 + "~   ";
 
@@ -4163,7 +4167,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             String trend_h4_ma369 = Utils.find_trend_by_ma3_6_9(dto_h4);
             String trend_h1_ma369 = Utils.find_trend_by_ma3_6_9(dto_h1);
-
             String trend_15_ma369 = Utils.find_trend_by_ma3_6_9(dto_15);
             String trend_03_ma369 = Utils.find_trend_by_ma3_6_9(dto_03);
 
