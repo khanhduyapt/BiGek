@@ -135,7 +135,8 @@ public class BscScanBinanceApplication {
                             alertMsgKillZone(binance_service);
                         }
 
-                        if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
+                        // if (Utils.isWeekday() && Utils.isAllowSendMsg())
+                        {
 
                             if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
                                 binance_service.saveMt5Data("AureliusIronheart.csv", Utils.MINUTES_RELOAD_CSV_DATA);
@@ -164,8 +165,6 @@ public class BscScanBinanceApplication {
                                         }
 
                                         binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_03);
-                                        // binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_10);
-                                        // binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_12);
                                         binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_15);
                                     }
                                 }
