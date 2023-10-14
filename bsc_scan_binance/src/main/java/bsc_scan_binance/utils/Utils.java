@@ -3743,7 +3743,7 @@ public class Utils {
             return "s";
         }
 
-        return "";
+        return " ";
     }
 
     public static String getTypeLongOrShort(List<BtcFutures> list) {

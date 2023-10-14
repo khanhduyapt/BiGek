@@ -2644,8 +2644,9 @@ public class BinanceServiceImpl implements BinanceService {
         ordersRepository.save(entity);
     }
 
-    private String analysis_profit(String prefix, String EPIC, String append2, DailyRange dailyRange, String trend_w1,
-            BigDecimal curr_price) {
+    private String analysis_profit(String prefix, String EPIC, String append2, DailyRange dailyRange,
+            String trend_folow,
+            BigDecimal curr_price, String trend_by_ma89_h4) {
 
         String type = "";
         BigDecimal t_profit = BigDecimal.ZERO;
@@ -2676,7 +2677,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String append = prefix.trim() + " " + append2 + profit;
 
-        outputLog(EPIC, dailyRange, curr_price, append, trend_w1, total_profit);
+        outputLog(EPIC, dailyRange, curr_price, append, trend_folow, trend_by_ma89_h4);
 
         return EPIC;
     }
@@ -2859,8 +2860,8 @@ public class BinanceServiceImpl implements BinanceService {
         Utils.logWritelnDraft("");
     }
 
-    private void outputLog(String EPIC, DailyRange dailyRange, BigDecimal curr_price, String append, String trend_w1,
-            String total_profit) {
+    private void outputLog(String EPIC, DailyRange dailyRange, BigDecimal curr_price, String append, String trend_folow,
+            String trend_by_ma89_h4) {
         // TODO: outputLog
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(curr_price, 5)), 11);
@@ -2869,15 +2870,26 @@ public class BinanceServiceImpl implements BinanceService {
 
         log += "Unit:" + Utils.appendLeft(String.valueOf(Utils.get_standard_vol_per_100usd(EPIC)), 5) + "(lot)     ";
 
-        log += Utils.getTakeProfit123ByAmp(dailyRange, curr_price, Utils.TREND_LONG);
-        log += "     ";
-        log += "w_close:" + Utils.appendSpace(dailyRange.getW_close(), 8);
-        log += "     ";
-        log += Utils.getTakeProfit123ByAmp(dailyRange, curr_price, Utils.TREND_SHOT);
+        log += Utils.appendSpace(trend_by_ma89_h4, 20);
 
-        log += total_profit;
+        if (Utils.isNotBlank(trend_folow)) {
+            Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
+
+            if (Objects.nonNull(dto_h1)) {
+                log += Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_15_PERCENT, true, trend_folow, EPIC, dto_h1, dto_h1);
+            }
+        }
 
         Utils.logWritelnDraft(log.trim());
+    }
+
+    private DailyRange get_DailyRange(String EPIC) {
+        List<DailyRange> ranges = dailyRangeRepository.findSymbolToday(EPIC);
+        if (CollectionUtils.isEmpty(ranges)) {
+            return null;
+        }
+        DailyRange dailyRange = ranges.get(0);
+        return dailyRange;
     }
 
     @Override
@@ -3805,11 +3817,8 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if ((PROFIT.compareTo(BigDecimal.valueOf(100)) > 0)) {
-                    List<DailyRange> ranges = dailyRangeRepository.findSymbolToday(trade.getSymbol());
-                    if (CollectionUtils.isEmpty(ranges)) {
-                        continue;
-                    }
-                    DailyRange dailyRange = ranges.get(0);
+                    DailyRange dailyRange = get_DailyRange(trade.getSymbol());
+
                     if (Objects.nonNull(dailyRange) && !Objects.equals(TRADE_TREND, Utils.TREND_UNSURE)) {
 
                         BigDecimal amplitude = dailyRange.getAvg_amp_week();
@@ -3983,7 +3992,7 @@ public class BinanceServiceImpl implements BinanceService {
         String heiken3_0 = Utils.getTrendByHekenAshiList(heiken_list, 3, 1);
         String trend_ma_3 = Utils.isUptrendByMa(heiken_list, 3, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
-        String trend_by_ma_3 = Utils.TREND_UNSURE + CAPITAL_TIME_XX;
+        String trend_by_ma_3 = Utils.TREND_UNSURE + "_" + CAPITAL_TIME_XX;
         if (Objects.equals(heiken3_0, trend_ma_3)) {
             trend_by_ma_3 = trend_ma_3;
         }
@@ -3991,7 +4000,32 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_by_ma_6 = Utils.isUptrendByMa(heiken_list, 6, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHOT;
         String trend_by_ma_9 = Utils.isUptrendByMa(heiken_list, 9, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHOT;
         String trend_by_ma_20 = Utils.getTrendByMaXx(heiken_list, 20);
-        String trend_by_ma_50 = Utils.getTrendByMaXx(heiken_list, 50);
+
+        String trend_by_ma_89 = "Allow :" + Utils.TREND_LONG + "_" + Utils.TREND_SHOT;
+        if (Objects.equals(Utils.CAPITAL_TIME_H4, CAPITAL_TIME_XX)) {
+            BigDecimal ma89 = Utils.calcMA(list, 89, 1);
+            BigDecimal ma34 = Utils.calcMA(list, 34, 1);
+
+            if ((curr_price.compareTo(ma34) > 0) && (curr_price.compareTo(ma89) > 0)) {
+                trend_by_ma_89 = "maOnly:" + Utils.TREND_LONG;
+
+            } else if ((curr_price.compareTo(ma34) < 0) && (curr_price.compareTo(ma89) < 0)) {
+                trend_by_ma_89 = "maOnly:" + Utils.TREND_SHOT;
+            }
+
+            DailyRange dailyRange = get_DailyRange(EPIC);
+            if (Objects.nonNull(dailyRange)) {
+                BigDecimal amp_w_x2 = dailyRange.getAvg_amp_week().multiply(BigDecimal.valueOf(2));
+
+                if (curr_price.compareTo(ma89.subtract(amp_w_x2)) < 0) {
+                    trend_by_ma_89 = "amOnly:" + Utils.TREND_LONG;
+
+                } else if (curr_price.compareTo(ma89.add(amp_w_x2)) > 0) {
+                    trend_by_ma_89 = "amOnly:" + Utils.TREND_SHOT;
+
+                }
+            }
+        }
 
         // ----------------------------TREND------------------------
 
@@ -4065,7 +4099,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         Orders entity = new Orders(id, insertTime, trend_by_ma_3, curr_price, tp_long, tp_shot, close_candle_1,
                 close_candle_2, switch_trend, trend_by_ma_9, tradable_zone, trend_by_ma_6, trend_by_ma_20,
-                trend_by_ma_50, trend_by_seq_ma, trend_by_bread_area, body_hig_50_candle, body_low_50_candle,
+                trend_by_ma_89, trend_by_seq_ma, trend_by_bread_area, body_hig_50_candle, body_low_50_candle,
                 amplitude_1_part_15, amp_avg_h4, ma6, ma3, ma9, low_50candle, hig_50candle,
                 lowest_price_of_curr_candle, highest_price_of_curr_candle, "");
 
@@ -4088,7 +4122,6 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            List<DailyRange> ranges = dailyRangeRepository.findSymbolToday(EPIC);
             Orders dto_w1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_W1).orElse(null);
             Orders dto_d1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_D1).orElse(null);
             Orders dto_h4 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H4).orElse(null);
@@ -4097,11 +4130,13 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
             Orders dto_03 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_03).orElse(dto_15);
 
-            if (CollectionUtils.isEmpty(ranges) || Objects.isNull(dto_w1) || Objects.isNull(dto_d1)
+            DailyRange dailyRange = get_DailyRange(EPIC);
+
+            if (Objects.isNull(dailyRange) || Objects.isNull(dto_w1) || Objects.isNull(dto_d1)
                     || Objects.isNull(dto_h4) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)
                     || Objects.isNull(dto_03)) {
                 String str_null = "";
-                str_null += "DailyRange:" + (CollectionUtils.isEmpty(ranges) ? "isEmpty" : "       ");
+                str_null += "DailyRange:" + (Objects.isNull(dailyRange) ? "isEmpty" : "       ");
                 str_null += " W1:" + (Objects.isNull(dto_w1) ? "null" : "    ");
                 str_null += " D1:" + (Objects.isNull(dto_d1) ? "null" : "    ");
                 str_null += " H4:" + (Objects.isNull(dto_h4) ? "null" : "    ");
@@ -4119,7 +4154,6 @@ public class BinanceServiceImpl implements BinanceService {
             String No = Utils.appendLeft(String.valueOf(count), 2, "0") + ". ";
 
             BigDecimal curr_price = dto_h1.getCurrent_price();
-            DailyRange dailyRange = ranges.get(0);
 
             String trend_w1 = dto_w1.getTrend_by_ma_3();
             String trend_h1 = dto_h1.getTrend_by_ma_3();
@@ -4160,8 +4194,8 @@ public class BinanceServiceImpl implements BinanceService {
                     : "   ";
             String st_h1 = dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma_1vs50)
                     ? "H1" + Utils.getType(dto_h1.getTrend_by_ma_3())
-                    : "  ";
-            amp += "~" + st_d1 + " " + st_h4 + " " + st_h1 + "~   ";
+                    : "   ";
+            amp += Utils.appendSpace("~" + st_d1 + " " + st_h4 + " " + st_h1, 12) + "~   ";
 
             String prefix = range + amp; // + " " + prefix_trend;
 
@@ -4170,9 +4204,12 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_15_ma369 = Utils.find_trend_by_ma3_6_9(dto_15);
             String trend_03_ma369 = Utils.find_trend_by_ma3_6_9(dto_03);
 
+            String trend_folow = "";
             boolean allow_trend_following = false;
-            if (Objects.equals(trend_h4_ma369, trend_h1_ma369)
+            if (dto_h4.getTrend_by_ma_89().contains(trend_h4_ma369)
+                    && Objects.equals(trend_h4_ma369, trend_h1_ma369)
                     && Objects.equals(trend_h4_ma369, dto_h1.getTrend_by_ma_6())) {
+                trend_folow = trend_h4_ma369;
                 allow_trend_following = true;
             }
 
@@ -4199,7 +4236,9 @@ public class BinanceServiceImpl implements BinanceService {
                 str_profit = Utils.appendSpace(str_profit, 15);
             }
 
-            analysis_profit(str_profit + prefix, EPIC, append.trim(), dailyRange, trend_w1, curr_price);
+            analysis_profit(str_profit + prefix, EPIC, append.trim(), dailyRange, trend_folow, curr_price,
+                    dto_h4.getTrend_by_ma_89());
+
             BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
 
             // -------------------------------------------------------------------------------------
