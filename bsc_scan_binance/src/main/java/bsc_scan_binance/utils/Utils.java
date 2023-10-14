@@ -5290,7 +5290,7 @@ public class Utils {
         BigDecimal entry_3 = BigDecimal.ZERO;
 
         // TODO: Utils.calc_Lot_En_SL_TP
-        BigDecimal avg_amp_h4 = dailyRange.getAmp_avg_h4();
+         BigDecimal avg_amp_h4 = dailyRange.getAmp_avg_h4();
 
         List<BigDecimal> sl_tp = Utils.get_SL_TP_by_amp(dailyRange, curr_price, find_trend);
         BigDecimal stop_loss = sl_tp.get(0);

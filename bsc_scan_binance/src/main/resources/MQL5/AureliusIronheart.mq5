@@ -14,7 +14,7 @@ int OnInit()
   {
    OnTimer();
 
-   EventSetTimer(180); //1800=30minutes; 900=15minutes; 300=5minutes; 180=3minutes; 60=1minute;
+   EventSetTimer(300); //1800=30minutes; 900=15minutes; 300=5minutes; 180=3minutes; 60=1minute;
 
    return(INIT_SUCCEEDED);
   }
@@ -67,15 +67,15 @@ void OnTimer(void)
          //-------------------------------------------------------------------------------------------------------------------------------
          //-------------------------------------------------------------------------------------------------------------------------------
          //-------------------------------------------------------------------------------------------------------------------------------
-         MqlRates rates_3[];
-         ArraySetAsSeries(rates_3,true);
-         copied=CopyRates(symbol, PERIOD_M5, 0, 77, rates_3);
+         MqlRates rates_5[];
+         ArraySetAsSeries(rates_5,true);
+         copied=CopyRates(symbol, PERIOD_M5, 0, 89, rates_5);
          if(copied>0)
            {
-            int size=fmin(copied, 77);
+            int size=fmin(copied, 89);
             for(int i=0; i<size; i++)
               {
-               FileWrite(nfile_handle, symbol, "MINUTE_03", rates_3[i].time, rates_3[i].open, rates_3[i].high, rates_3[i].low, rates_3[i].close, current_price);
+               FileWrite(nfile_handle, symbol, "MINUTE_03", rates_5[i].time, rates_5[i].open, rates_5[i].high, rates_5[i].low, rates_5[i].close, current_price);
               }
            }
          else
@@ -85,10 +85,10 @@ void OnTimer(void)
          //-------------------------------------------------------------------------------------------------------------------------------
          MqlRates rates_15[];
          ArraySetAsSeries(rates_15,true);
-         copied=CopyRates(symbol, PERIOD_M15, 0, 77, rates_15);
+         copied=CopyRates(symbol, PERIOD_M15, 0, 89, rates_15);
          if(copied>0)
            {
-            int size=fmin(copied, 77);
+            int size=fmin(copied, 89);
             for(int i=0; i<size; i++)
               {
                FileWrite(nfile_handle, symbol, "MINUTE_15", rates_15[i].time, rates_15[i].open, rates_15[i].high, rates_15[i].low, rates_15[i].close, current_price);
