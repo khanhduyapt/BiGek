@@ -3980,8 +3980,8 @@ public class BinanceServiceImpl implements BinanceService {
             boolean debug = true;
         }
 
-        String heiken3_0 = Utils.getTrendByHekenAshiList(heiken_list, 3, 0);
-        String trend_ma_3 = Utils.isUptrendByMa(heiken_list, 3, 0, 1) ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        String heiken3_0 = Utils.getTrendByHekenAshiList(heiken_list, 3, 1);
+        String trend_ma_3 = Utils.isUptrendByMa(heiken_list, 3, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
         String trend_by_ma_3 = Utils.TREND_UNSURE + CAPITAL_TIME_XX;
         if (Objects.equals(heiken3_0, trend_ma_3)) {
