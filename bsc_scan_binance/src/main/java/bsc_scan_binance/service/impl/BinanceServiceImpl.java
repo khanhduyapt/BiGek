@@ -4201,7 +4201,8 @@ public class BinanceServiceImpl implements BinanceService {
                 append += "      FW_" + Utils.getType(trend_h4_ma369).toUpperCase();
             }
 
-            List<TakeProfit> total_trade_list = takeProfitRepository.findAllBySymbolAndOpenDate(EPIC, "20231013");
+            List<TakeProfit> total_trade_list = takeProfitRepository.findAllBySymbolAndOpenDate(EPIC,
+                    Utils.getYyyyMMdd());
 
             String str_profit = "";
             {
