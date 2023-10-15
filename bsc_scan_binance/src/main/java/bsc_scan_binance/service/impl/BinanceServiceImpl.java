@@ -4242,7 +4242,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             // TREND FOLLOWING
             if (allow_trend_following) {
-
                 boolean allow_trade_now = false;
                 if (Objects.equals(trend_h4_ma369, trend_15_ma369)
                         && dto_15.getTrend_by_ma_89().contains(trend_h4_ma369)
@@ -4264,15 +4263,19 @@ public class BinanceServiceImpl implements BinanceService {
 
                         close_reverse_trade(EPIC, trend_h4_ma369);
 
+                        int total_trade = 1;
                         if (Utils.is_open_trade_time()) {
-                            dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4_ma369, dto_h1,
-                                    Utils.TEXT_TREND_FLOWING + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1, dailyRange,
-                                    1);
-
-                            String key = EPIC + Utils.CAPITAL_TIME_H1;
-                            BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
-                            BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+                            total_trade = 3;
                         }
+
+                        dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4_ma369, dto_h1,
+                                Utils.TEXT_TREND_FLOWING + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1, dailyRange,
+                                total_trade);
+
+                        String key = EPIC + Utils.CAPITAL_TIME_H1;
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
+                        BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+
                     }
                 }
                 // -----------------------------------------------------------------------------------------------
@@ -4379,10 +4382,10 @@ public class BinanceServiceImpl implements BinanceService {
             }
             if (reverse_h4_369) {
                 is_hit_sl = true;
-                reason_id += "(stoploss,reverse_h1)";
+                reason_id += "(stoploss,reverse_h4_369)";
             }
             // -------------------------------------------------------------------------------------
-            if (has_profit && reverse_15) {
+            if (has_profit && (reverse_15 || Utils.is_close_trade_time())) {
                 is_hit_sl = true;
                 reason_id += "(has_profit)";
             }
