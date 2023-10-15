@@ -4259,8 +4259,7 @@ public class BinanceServiceImpl implements BinanceService {
                     List<TakeProfit> his_list_folow_d369 = takeProfitRepository
                             .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_h4_ma369, Utils.getYyyyMMdd());
 
-                    if (CollectionUtils.isEmpty(his_list_folow_d369) || (his_list_folow_d369.size() < 3)
-                            || (isReloadAfter(Utils.MINUTES_OF_4H, EPIC + trend_h4_ma369 + Utils.getYyyyMMdd()))) {
+                    if (CollectionUtils.isEmpty(his_list_folow_d369) || (his_list_folow_d369.size() < 3)) {
 
                         if (Utils.is_working_time()) {
 
