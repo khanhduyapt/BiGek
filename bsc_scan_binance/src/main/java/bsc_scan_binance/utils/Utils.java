@@ -168,6 +168,8 @@ public class Utils {
     public static final String CHAR_LONG_UP = "Up";
     public static final String CHAR_SHORT_DN = "Dn";
 
+    public static final String CLOSED_TRADE = "CLOSED";
+
     public static final int MA_FAST = 6;
     public static final int MA_INDEX_H1_START_LONG = 50;
     public static final int MA_INDEX_H4_STOP_LONG = 10;
@@ -1993,6 +1995,15 @@ public class Utils {
         result = false;
 
         return result;
+    }
+
+    public static boolean is_working_time() {
+        int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
+        if ((5 < hh) || (hh < 23)) {
+            return true;
+        }
+
+        return false;
     }
 
     // vào lệnh từ 06h~10h: lãi thì chốt hết từ 11h trở đi.

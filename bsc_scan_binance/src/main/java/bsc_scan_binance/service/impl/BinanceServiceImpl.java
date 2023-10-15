@@ -2980,7 +2980,7 @@ public class BinanceServiceImpl implements BinanceService {
         return false;
     }
 
-    private boolean allow_close_trade_after(String TICKET, Integer MINUTES_OF_XX) {
+    private boolean allow_open_or_close_trade_after(String TICKET, Integer MINUTES_OF_XX) {
         Mt5OpenTradeEntity mt5Entity = mt5OpenTradeRepository.findById(TICKET).orElse(null);
         if (Objects.nonNull(mt5Entity)) {
 
@@ -2994,9 +2994,7 @@ public class BinanceServiceImpl implements BinanceService {
                     return true;
                 }
             }
-
         }
-
         return false;
     }
 
@@ -4256,26 +4254,29 @@ public class BinanceServiceImpl implements BinanceService {
 
                 if (allow_trend_following && allow_trade_now && is_able_h4) {
 
+                    close_reverse_trade(EPIC, trend_h4_ma369);
+
                     List<TakeProfit> his_list_folow_d369 = takeProfitRepository
                             .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_h4_ma369, Utils.getYyyyMMdd());
 
-                    if (CollectionUtils.isEmpty(his_list_folow_d369)) {
+                    if (CollectionUtils.isEmpty(his_list_folow_d369) || (his_list_folow_d369.size() < 3)
+                            || (isReloadAfter(Utils.MINUTES_OF_4H, EPIC + trend_h4_ma369 + Utils.getYyyyMMdd()))) {
 
-                        close_reverse_trade(EPIC, trend_h4_ma369);
+                        if (Utils.is_working_time()) {
 
-                        int total_trade = 1;
-                        if (Utils.is_open_trade_time()) {
-                            total_trade = 3;
+                            int total_trade = 1;
+                            if (Utils.is_open_trade_time()) {
+                                total_trade = 3;
+                            }
+
+                            dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4_ma369, dto_h1,
+                                    Utils.TEXT_TREND_FLOWING + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1, dailyRange,
+                                    total_trade);
+
+                            String key = EPIC + Utils.CAPITAL_TIME_H1;
+                            BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
+                            BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
                         }
-
-                        dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4_ma369, dto_h1,
-                                Utils.TEXT_TREND_FLOWING + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1, dailyRange,
-                                total_trade);
-
-                        String key = EPIC + Utils.CAPITAL_TIME_H1;
-                        BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
-                        BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
-
                     }
                 }
                 // -----------------------------------------------------------------------------------------------
@@ -4404,7 +4405,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            if (is_hit_sl && allow_close_trade_after(TICKET, Utils.MINUTES_OF_1H)) {
+            if (is_hit_sl && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_1H)) {
                 String reason = "Profit:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5) + "$   "
                         + Utils.appendSpace(trade.getComment(), 30) + reason_id;
 
