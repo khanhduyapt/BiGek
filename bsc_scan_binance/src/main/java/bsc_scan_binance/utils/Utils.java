@@ -75,15 +75,17 @@ public class Utils {
     // ACCOUNT.multiply(BigDecimal.valueOf(0.00025));
 
     // (100$ / 1 Tp)
-    public static final BigDecimal RISK_0_05_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
+    // public static final BigDecimal RISK_0_05_PERCENT =
+    // ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
 
     // Trend W != D (200$ / 1trade)
-    public static final BigDecimal RISK_0_10_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
+    // public static final BigDecimal RISK_0_10_PERCENT =
+    // ACCOUNT.multiply(BigDecimal.valueOf(0.001));
 
     // Trend W == D (300$ / 1trade)
     public static final BigDecimal RISK_0_15_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
 
-    public static final BigDecimal RISK_PER_TRADE = RISK_0_05_PERCENT;
+    // public static final BigDecimal RISK_PER_TRADE = RISK_0_15_PERCENT;
 
     //// Step2: Khi tài khoản tăng trưởng 2% (500$ / 1trade)
     // public static final BigDecimal RISK_0_25_PERCENT =
@@ -1993,8 +1995,11 @@ public class Utils {
         return result;
     }
 
-    public static boolean isWorkingTime() {
-        List<Integer> times = Arrays.asList(7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22);
+    public static boolean is_open_trade_time() {
+        // vào lệnh từ 06h~10h: lãi thì chốt hết từ 11h trở đi.
+        // vào lệnh từ 13h~15h: lãi thì chốt từ 16h trở đi.
+        // vào lệnh từ 18h~20h: lãi thì chốt từ 22h trở đi.
+        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 13, 14, 15, 18, 19, 20, 21);
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -5290,7 +5295,7 @@ public class Utils {
         BigDecimal entry_3 = BigDecimal.ZERO;
 
         // TODO: Utils.calc_Lot_En_SL_TP
-         BigDecimal avg_amp_h4 = dailyRange.getAmp_avg_h4();
+        BigDecimal avg_amp_h4 = dailyRange.getAmp_avg_h4();
 
         List<BigDecimal> sl_tp = Utils.get_SL_TP_by_amp(dailyRange, curr_price, find_trend);
         BigDecimal stop_loss = sl_tp.get(0);

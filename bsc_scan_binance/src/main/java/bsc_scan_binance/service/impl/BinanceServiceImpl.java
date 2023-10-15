@@ -3154,7 +3154,7 @@ public class BinanceServiceImpl implements BinanceService {
             int count = 0;
             String msg = "";
             BigDecimal total = BigDecimal.ZERO;
-            String risk_0_15 = "     Risk: 0.05% : " + Utils.RISK_PER_TRADE.intValue() + "$ per trade";
+            String risk_0_15 = "     Risk: 0.15% : " + Utils.RISK_0_15_PERCENT.intValue() + "$ per trade";
 
             List<Mt5OpenTradeEntity> mt5Openlist = mt5OpenTradeRepository
                     .findAllByCompanyOrderBySymbolAscTicketAsc(company);
@@ -3259,6 +3259,7 @@ public class BinanceServiceImpl implements BinanceService {
         return mt5_data_file_path;
     }
 
+    @SuppressWarnings("unused")
     private boolean is_opening_trade(String EPIC, String trend) {
         List<Mt5OpenTradeEntity> tradeList = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
 
@@ -3804,7 +3805,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 boolean allow_traning_stop = false;
 
-                if ((PROFIT.compareTo(Utils.RISK_PER_TRADE) > 0)) {
+                if ((PROFIT.compareTo(Utils.RISK_0_15_PERCENT) > 0)) {
                     if ((Objects.equals(TRADE_TREND, Utils.TREND_LONG)
                             && trade.getPriceOpen().compareTo(trade.getStopLoss()) > 0)) {
                         allow_traning_stop = true;
@@ -4234,10 +4235,13 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // TODO: 3 controlMt5
+            // vào lệnh từ 06h~10h: lãi thì chốt hết từ 11h trở đi.
+            // vào lệnh từ 13h~15h: lãi thì chốt từ 16h trở đi.
+            // vào lệnh từ 18h~20h: lãi thì chốt từ 22h trở đi.
             Mt5OpenTrade dto_notifiy = null;
 
             // TREND FOLLOWING
-            if (Utils.isWorkingTime() && allow_trend_following) {
+            if (allow_trend_following) {
 
                 boolean allow_trade_now = false;
                 if (Objects.equals(trend_h4_ma369, trend_15_ma369)
@@ -4260,12 +4264,15 @@ public class BinanceServiceImpl implements BinanceService {
 
                         close_reverse_trade(EPIC, trend_h4_ma369);
 
-                        dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4_ma369, dto_h1,
-                                Utils.TEXT_TREND_FLOWING + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1, dailyRange, 1);
+                        if (Utils.is_open_trade_time()) {
+                            dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4_ma369, dto_h1,
+                                    Utils.TEXT_TREND_FLOWING + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1, dailyRange,
+                                    1);
 
-                        String key = EPIC + Utils.CAPITAL_TIME_H1;
-                        BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
-                        BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+                            String key = EPIC + Utils.CAPITAL_TIME_H1;
+                            BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
+                            BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+                        }
                     }
                 }
                 // -----------------------------------------------------------------------------------------------
