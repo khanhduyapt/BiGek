@@ -2111,7 +2111,7 @@ public class Utils {
     }
 
     public static boolean isOpenTradeTime_6h_to_1h() {
-        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22);
+        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
         Integer hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -5370,8 +5370,7 @@ public class Utils {
 
     public static String create_trade_comment(String EPIC, String CAPITAL_TIME_XX, String append) {
         String comment = BscScanBinanceApplication.hostname + getTime_day24Hmm()
-                + append.trim().replace(Utils.TEXT_PASS, "")
-                + getEncryptedChartNameCapital(CAPITAL_TIME_XX);
+                + append.trim().replace(Utils.TEXT_PASS, "") + getEncryptedChartNameCapital(CAPITAL_TIME_XX);
 
         return comment.toLowerCase();
     }

@@ -3984,18 +3984,7 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal ma6 = Utils.calcMA(list, 6, 1);
         BigDecimal ma9 = Utils.calcMA(list, 9, 1);
 
-        if ("_GBPNZD_".contains(EPIC)) {
-            boolean debug = true;
-        }
-
-        String heiken3_0 = Utils.getTrendByHekenAshiList(heiken_list, 3, 1);
-        String trend_ma_3 = Utils.isUptrendByMa(heiken_list, 3, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHOT;
-
-        String trend_by_ma_3 = Utils.TREND_UNSURE + "_" + CAPITAL_TIME_XX;
-        if (Objects.equals(heiken3_0, trend_ma_3)) {
-            trend_by_ma_3 = trend_ma_3;
-        }
-
+        String trend_by_ma_3 = Utils.getTrendByHekenAshiList(heiken_list, 3, 1);
         String trend_by_ma_6 = Utils.isUptrendByMa(heiken_list, 6, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHOT;
         String trend_by_ma_9 = Utils.isUptrendByMa(heiken_list, 9, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHOT;
         String trend_by_ma_20 = Utils.getTrendByMaXx(heiken_list, 20);
@@ -4029,6 +4018,26 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
+        String trend_compared_to_center_previous_candle = "";
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4)) {
+            BigDecimal c1_open = list.get(1).getPrice_open_candle();
+            BigDecimal c1_close = list.get(1).getPrice_close_candle();
+            BigDecimal c1_mid = (c1_open.subtract(c1_close).abs()).multiply(BigDecimal.valueOf(0.5));
+            if (c1_open.compareTo(c1_close) > 0) {
+                c1_mid = c1_close.add(c1_mid);
+            } else {
+                c1_mid = c1_open.add(c1_mid);
+            }
+            if (c1_mid.compareTo(curr_price) > 0) {
+                trend_compared_to_center_previous_candle = Utils.TREND_SHOT;
+            }
+            if (c1_mid.compareTo(curr_price) < 0) {
+                trend_compared_to_center_previous_candle = Utils.TREND_LONG;
+            }
+            if ("_CHFJPY_".contains(EPIC)) {
+                boolean debug = true;
+            }
+        }
         // ----------------------------TREND------------------------
 
         // TODO: 1. initForexTrend
@@ -4111,7 +4120,7 @@ public class BinanceServiceImpl implements BinanceService {
                 close_candle_2, switch_trend, trend_by_ma_9, tradable_zone, trend_by_ma_6, trend_by_ma_20,
                 trend_by_ma_89, trend_by_seq_ma, trend_by_bread_area, body_hig_50_candle, body_low_50_candle,
                 amplitude_1_part_15, amp_avg_h4, ma6, ma3, ma9, low_50candle, hig_50candle, lowest_price_of_curr_candle,
-                highest_price_of_curr_candle, "");
+                highest_price_of_curr_candle, trend_compared_to_center_previous_candle);
 
         ordersRepository.save(entity);
 
@@ -4198,6 +4207,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (dto_h4.getTrend_by_ma_89().contains(trend_h4_ma369)
                     && dto_h1.getTrend_by_ma_89().contains(trend_h4_ma369)
+                    && Objects.equals(trend_h4_ma369, dto_h4.getTrend_compared_to_center_previous_candle())
                     && (Objects.equals(trend_h4_ma369, trend_h1_ma369)
                             || Objects.equals(trend_h4_ma369, dto_h1.getTrend_by_ma_6()))) {
                 trend_folow = trend_h4_ma369;
@@ -4209,12 +4219,12 @@ public class BinanceServiceImpl implements BinanceService {
                         : Utils.TREND_LONG;
                 if ((Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_ma_6())
                         || dto_h4.getTrend_by_ma_89().contains(trend_h1_ma369))
-
+                        && Objects.equals(trend_h1_ma369, dto_h4.getTrend_compared_to_center_previous_candle())
                         && Objects.equals(trend_h1_ma369, trend_15_ma369)
                         && dto_15.getTrend_by_ma_89().contains(trend_h1_ma369)
                         && (!dto_h1.getTrend_by_ma_89().contains(REVERSE_TRADE_TREND_H1))) {
-                    allow_trend_following = true;
-                    append = "    FW:" + Utils.appendSpace(trend_h1_ma369, 4);
+                    // allow_trend_following = true;
+                    // append = " FW:" + Utils.appendSpace(trend_h1_ma369, 4);
                 }
             }
 
@@ -4248,7 +4258,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // -------------------------------------------------------------------------------------
 
-            if ("_US30_".contains(EPIC)) {
+            if ("_XAGUSD_".contains(EPIC)) {
                 boolean debug = true;
             }
 
@@ -4261,10 +4271,10 @@ public class BinanceServiceImpl implements BinanceService {
             // TREND FOLLOWING
             if (allow_trend_following) {
                 boolean allow_trade_now = false;
-                if ((Objects.equals(trend_h4_ma369, trend_15_ma369)
-                        || Objects.equals(dto_15.getTrend_by_ma_6(), trend_h4_ma369))
-                        && dto_15.getTrend_by_ma_89().contains(trend_h4_ma369)
-                        && dto_03.getTrend_by_ma_89().contains(trend_h4_ma369)
+                if ((Objects.equals(trend_15_ma369, trend_h4_ma369)
+                        || Objects.equals(dto_15.getTrend_by_ma_6(), trend_h4_ma369)
+                        || Objects.equals(dto_15.getTrend_by_ma_3(), trend_h4_ma369)
+                        || dto_03.getSwitch_trend().contains(trend_h4_ma369))
                         && Objects.equals(trend_03_ma369, trend_h4_ma369)) {
                     allow_trade_now = true;
                 }
@@ -4306,10 +4316,10 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.isNull(dto_notifiy)) {
                     allow_trade_now = false;
                     if (Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_ma_6())
-                            && (Objects.equals(trend_h1_ma369, trend_15_ma369)
-                                    || Objects.equals(dto_15.getTrend_by_ma_6(), trend_h1_ma369))
-                            && dto_15.getTrend_by_ma_89().contains(trend_h1_ma369)
-                            && dto_03.getTrend_by_ma_89().contains(trend_h1_ma369)
+                            && (Objects.equals(trend_15_ma369, trend_h1_ma369)
+                                    || Objects.equals(dto_15.getTrend_by_ma_6(), trend_h1_ma369)
+                                    || Objects.equals(dto_15.getTrend_by_ma_3(), trend_h1_ma369)
+                                    || dto_03.getSwitch_trend().contains(trend_h1_ma369))
                             && Objects.equals(trend_03_ma369, trend_h1_ma369)) {
                         allow_trade_now = true;
                     }
@@ -4325,8 +4335,8 @@ public class BinanceServiceImpl implements BinanceService {
                         if (CollectionUtils.isEmpty(his_list_folow_d369)) {
                             int total_trade = 1;
                             dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1_ma369, dto_h1,
-                                    Utils.TEXT_TREND_FLOWING + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1,
-                                    dailyRange, total_trade);
+                                    Utils.TEXT_TREND_FLOWING + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1, dailyRange,
+                                    total_trade);
 
                             String key = EPIC + Utils.CAPITAL_TIME_H1;
                             BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
@@ -4414,7 +4424,8 @@ public class BinanceServiceImpl implements BinanceService {
             boolean reverse_h1_369 = Objects.equals(trend_h1_369, REVERSE_TRADE_TREND);
 
             boolean reverse_15 = (Objects.equals(trend_15_369, REVERSE_TRADE_TREND)
-                    || Objects.equals(dto_15.getTrend_by_ma_6(), REVERSE_TRADE_TREND))
+                    || Objects.equals(dto_15.getTrend_by_ma_6(), REVERSE_TRADE_TREND)
+                    || Objects.equals(dto_15.getTrend_by_ma_3(), REVERSE_TRADE_TREND))
                     && (Objects.equals(trend_03_369, REVERSE_TRADE_TREND)
                             || Objects.equals(dto_03.getTrend_by_ma_6(), REVERSE_TRADE_TREND));
 
