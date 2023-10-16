@@ -4380,7 +4380,7 @@ public class BinanceServiceImpl implements BinanceService {
                     BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
                 }
             }
-            if (reverse_h4_369) {
+            if (reverse_h4_369 && reverse_h1_369 && reverse_15) {
                 is_hit_sl = true;
                 reason_id += "(stoploss,reverse_h4_369)";
             }
