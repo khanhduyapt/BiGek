@@ -3200,7 +3200,7 @@ public class BinanceServiceImpl implements BinanceService {
                 result += ", Vol:" + Utils.appendLeft(Utils.removeLastZero(trade.getVolume()), 6) + "(lot)";
                 result += ", Standard:"
                         + Utils.appendLeft(Utils.removeLastZero(Utils.get_standard_vol_per_100usd(EPIC)), 6) + "(lot)";
-                result += "   Open: " + Utils.appendLeft(Utils.getStringValue(trade.getPriceOpen()), 10);
+                result += "   Open: " + Utils.appendLeft(Utils.removeLastZero(trade.getPriceOpen()), 10);
                 result += ", Profit: " + Utils.appendLeft(Utils.getStringValue(PROFIT.intValue()), 6) + "$";
                 result += Utils.appendSpace(trend_reverse, 20);
                 result += Utils.appendSpace(Utils.get_duration_trade_time(trade) + "   " + trade.getComment(), 60);
@@ -4281,7 +4281,48 @@ public class BinanceServiceImpl implements BinanceService {
                             }
 
                             dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_h4_ma369, dto_h1,
-                                    Utils.TEXT_TREND_FLOWING + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1, dailyRange,
+                                    Utils.TEXT_TREND_FLOWING + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H4, dailyRange,
+                                    total_trade);
+
+                            String key = EPIC + Utils.CAPITAL_TIME_H4;
+                            BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
+                            BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+                        }
+                    }
+                }
+
+                if (Objects.isNull(dto_notifiy) && Utils.is_open_trade_time()) {
+
+                    String REVERSE_TRADE_TREND_H1 = trend_h1_ma369.contains(Utils.TREND_LONG) ? Utils.TREND_SHOT
+                            : Utils.TREND_LONG;
+
+                    allow_trade_now = false;
+                    if (Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_ma_6())
+                            && Objects.equals(trend_h1_ma369, trend_15_ma369)
+                            && dto_15.getTrend_by_ma_89().contains(trend_h1_ma369)
+                            && dto_03.getTrend_by_ma_89().contains(trend_h1_ma369)
+                            && dto_03.getSwitch_trend().contains(trend_h1_ma369)
+                            && (!dto_h1.getTrend_by_ma_89().contains(REVERSE_TRADE_TREND_H1))
+
+                            && Objects.equals(dto_15.getTrend_by_ma_6(), trend_h1_ma369)
+                            && Objects.equals(trend_03_ma369, trend_h1_ma369)) {
+                        allow_trade_now = true;
+                    }
+
+                    is_able_h4 = Utils.is_able_to_trade_by_h4(dto_h4, dailyRange, trend_h1_ma369);
+
+                    if (allow_trend_following && allow_trade_now && is_able_h4) {
+                        close_reverse_trade(EPIC, trend_h1_ma369);
+
+                        List<TakeProfit> his_list_folow_d369 = takeProfitRepository
+                                .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_h1_ma369, Utils.getYyyyMMdd());
+
+                        if (CollectionUtils.isEmpty(his_list_folow_d369) || (his_list_folow_d369.size() < 3)) {
+
+                            int total_trade = 1;
+                            dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1_ma369, dto_h1,
+                                    Utils.TEXT_TREND_FLOWING + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1,
+                                    dailyRange,
                                     total_trade);
 
                             String key = EPIC + Utils.CAPITAL_TIME_H1;
@@ -4397,7 +4438,8 @@ public class BinanceServiceImpl implements BinanceService {
                 reason_id += "(stoploss,reverse_h4_369)";
             }
             // -------------------------------------------------------------------------------------
-            if (has_profit && (reverse_15 || Utils.is_close_trade_time())) {
+            if (has_profit && (reverse_15 || (Utils.is_close_trade_time()
+                    && Objects.equals(dto_03.getTrend_by_ma_6(), REVERSE_TRADE_TREND)))) {
                 is_hit_sl = true;
                 reason_id += "(has_profit)";
             }
