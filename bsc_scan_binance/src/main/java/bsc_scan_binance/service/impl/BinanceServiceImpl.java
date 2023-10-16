@@ -4205,7 +4205,9 @@ public class BinanceServiceImpl implements BinanceService {
             if (!allow_trend_following) {
                 String REVERSE_TRADE_TREND_H1 = trend_h1_ma369.contains(Utils.TREND_LONG) ? Utils.TREND_SHOT
                         : Utils.TREND_LONG;
-                if (Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_ma_6())
+                if ((Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_ma_6())
+                        || dto_h4.getTrend_by_ma_89().contains(trend_h1_ma369))
+
                         && Objects.equals(trend_h1_ma369, trend_15_ma369)
                         && dto_15.getTrend_by_ma_89().contains(trend_h1_ma369)
                         && (!dto_h1.getTrend_by_ma_89().contains(REVERSE_TRADE_TREND_H1))) {
