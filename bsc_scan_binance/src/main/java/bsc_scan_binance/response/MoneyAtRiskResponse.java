@@ -230,7 +230,7 @@ public class MoneyAtRiskResponse {
             contract_size = BigDecimal.valueOf(1);
             break;
         case "US500":
-            standard_lot = BigDecimal.valueOf(0.05);
+            standard_lot = BigDecimal.valueOf(0.5);
             contract_size = BigDecimal.valueOf(0.5);
             break;
         case "SP500":
