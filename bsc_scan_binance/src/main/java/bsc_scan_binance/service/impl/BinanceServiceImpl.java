@@ -2864,7 +2864,7 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO: outputLog
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(curr_price, 5)), 11);
-        log += Utils.appendSpace(append.trim(), 80);
+        log += Utils.appendSpace(append.trim(), 95);
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
 
         log += "Unit:" + Utils.appendLeft(String.valueOf(Utils.get_standard_vol_per_100usd(EPIC)), 5) + "(lot)     ";
@@ -4197,9 +4197,9 @@ public class BinanceServiceImpl implements BinanceService {
                 allow_trend_following = true;
             }
 
-            String append = "";
-            if (allow_trend_following) {
-                append += "      " + Utils.appendSpace(trend_h4_ma369, 4);
+            String append = "    FW:" + Utils.appendSpace(trend_h4_ma369, 4);
+            if (!allow_trend_following) {
+                append = Utils.appendSpace("", append.length());
             }
 
             List<TakeProfit> total_trade_list = takeProfitRepository.findAllBySymbolAndOpenDate(EPIC,
