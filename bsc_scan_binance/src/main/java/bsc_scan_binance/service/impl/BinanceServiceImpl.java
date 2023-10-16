@@ -4055,7 +4055,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_03)) {
             switch_trend += Utils.switchTrendByMa1vs10(list);
-            switch_trend += Utils.switchTrendByMa1vs10(list);
+            switch_trend += Utils.switchTrendByMa1vs2025(list);
         }
 
         // ---------------------------------------------------------------------------
@@ -4275,7 +4275,8 @@ public class BinanceServiceImpl implements BinanceService {
                                     : Utils.TREND_LONG;
 
                             if (Utils.is_open_trade_time()
-                                    && !(dto_h4.getTrend_by_ma_89().contains(REVERSE_TRADE_TREND_H4))) {
+                                    && (TOTAL_LOSS_TODAY.compareTo(BigDecimal.valueOf(500)) > 0)
+                                    && (!dto_h4.getTrend_by_ma_89().contains(REVERSE_TRADE_TREND_H4))) {
                                 total_trade = 3;
                             }
 
