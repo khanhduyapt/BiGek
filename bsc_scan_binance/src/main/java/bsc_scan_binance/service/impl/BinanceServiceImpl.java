@@ -4223,8 +4223,8 @@ public class BinanceServiceImpl implements BinanceService {
                         && Objects.equals(trend_h1_ma369, trend_15_ma369)
                         && dto_15.getTrend_by_ma_89().contains(trend_h1_ma369)
                         && (!dto_h1.getTrend_by_ma_89().contains(REVERSE_TRADE_TREND_H1))) {
-                    // allow_trend_following = true;
-                    // append = " FW:" + Utils.appendSpace(trend_h1_ma369, 4);
+                    allow_trend_following = true;
+                    append = " FW:" + Utils.appendSpace(trend_h1_ma369, 4);
                 }
             }
 
@@ -4272,9 +4272,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (allow_trend_following) {
                 boolean allow_trade_now = false;
                 if ((Objects.equals(trend_15_ma369, trend_h4_ma369)
-                        || Objects.equals(dto_15.getTrend_by_ma_6(), trend_h4_ma369)
-                        || Objects.equals(dto_15.getTrend_by_ma_3(), trend_h4_ma369)
-                        || dto_03.getSwitch_trend().contains(trend_h4_ma369))
+                        || Objects.equals(dto_15.getTrend_by_ma_6(), trend_h4_ma369))
                         && Objects.equals(trend_03_ma369, trend_h4_ma369)) {
                     allow_trade_now = true;
                 }
@@ -4448,8 +4446,8 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
             if (reverse_h4_369 && reverse_h1_369 && reverse_15) {
-                is_hit_sl = true;
-                reason_id += "(stoploss,reverse_h4_369)";
+                // is_hit_sl = true;
+                // reason_id += "(stoploss,reverse_h4_369)";
             }
             // -------------------------------------------------------------------------------------
             if (has_profit && (reverse_15 || (Utils.is_close_trade_time()
