@@ -4053,6 +4053,11 @@ public class BinanceServiceImpl implements BinanceService {
             switch_trend += Utils.switchTrendByMa1vs10(heiken_list);
         }
 
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_03)) {
+            switch_trend += Utils.switchTrendByMa1vs10(list);
+            switch_trend += Utils.switchTrendByMa1vs10(list);
+        }
+
         // ---------------------------------------------------------------------------
         if (CAPITAL_TIME_XX.contains("MINUTE_")) {
             trend_by_seq_ma += Utils.trend_by_seq_ma_1_10_20_50(heiken_list, amp_avg_h4);
@@ -4244,9 +4249,10 @@ public class BinanceServiceImpl implements BinanceService {
                 if (Objects.equals(trend_h4_ma369, trend_15_ma369)
                         && dto_15.getTrend_by_ma_89().contains(trend_h4_ma369)
                         && dto_03.getTrend_by_ma_89().contains(trend_h4_ma369)
+                        && dto_03.getSwitch_trend().contains(trend_h4_ma369)
 
-                        && Objects.equals(trend_h4_ma369, dto_15.getTrend_by_ma_6())
-                        && Objects.equals(trend_h4_ma369, trend_03_ma369)) {
+                        && Objects.equals(dto_15.getTrend_by_ma_6(), trend_h4_ma369)
+                        && Objects.equals(trend_03_ma369, trend_h4_ma369)) {
                     allow_trade_now = true;
                 }
 
@@ -4264,7 +4270,12 @@ public class BinanceServiceImpl implements BinanceService {
                         if (Utils.is_working_time()) {
 
                             int total_trade = 1;
-                            if (Utils.is_open_trade_time()) {
+
+                            String REVERSE_TRADE_TREND_H4 = trend_h4_ma369.contains(Utils.TREND_LONG) ? Utils.TREND_SHOT
+                                    : Utils.TREND_LONG;
+
+                            if (Utils.is_open_trade_time()
+                                    && !(dto_h4.getTrend_by_ma_89().contains(REVERSE_TRADE_TREND_H4))) {
                                 total_trade = 3;
                             }
 
