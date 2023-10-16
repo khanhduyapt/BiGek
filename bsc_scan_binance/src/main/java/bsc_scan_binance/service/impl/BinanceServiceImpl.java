@@ -4202,6 +4202,17 @@ public class BinanceServiceImpl implements BinanceService {
                 allow_trend_following = true;
             }
 
+            if (!allow_trend_following) {
+                String REVERSE_TRADE_TREND_H1 = trend_h1_ma369.contains(Utils.TREND_LONG) ? Utils.TREND_SHOT
+                        : Utils.TREND_LONG;
+                if (Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_ma_6())
+                        && Objects.equals(trend_h1_ma369, trend_15_ma369)
+                        && dto_15.getTrend_by_ma_89().contains(trend_h1_ma369)
+                        && (!dto_h1.getTrend_by_ma_89().contains(REVERSE_TRADE_TREND_H1))) {
+                    allow_trend_following = true;
+                }
+            }
+
             String append = "    FW:" + Utils.appendSpace(trend_h4_ma369, 4);
             if (!allow_trend_following) {
                 append = Utils.appendSpace("", append.length());
@@ -4258,7 +4269,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 boolean is_able_h4 = Utils.is_able_to_trade_by_h4(dto_h4, dailyRange, trend_h4_ma369);
 
-                if (allow_trend_following && allow_trade_now && is_able_h4) {
+                if (allow_trade_now && is_able_h4) {
 
                     close_reverse_trade(EPIC, trend_h4_ma369);
 
@@ -4292,17 +4303,14 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (Objects.isNull(dto_notifiy) && Utils.is_open_trade_time()) {
-
-                    String REVERSE_TRADE_TREND_H1 = trend_h1_ma369.contains(Utils.TREND_LONG) ? Utils.TREND_SHOT
-                            : Utils.TREND_LONG;
-
                     allow_trade_now = false;
+
                     if (Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_ma_6())
+                            && Objects.equals(trend_h1_ma369, dto_d1.getTrend_by_ma_6())
                             && Objects.equals(trend_h1_ma369, trend_15_ma369)
                             && dto_15.getTrend_by_ma_89().contains(trend_h1_ma369)
                             && dto_03.getTrend_by_ma_89().contains(trend_h1_ma369)
                             && dto_03.getSwitch_trend().contains(trend_h1_ma369)
-                            && (!dto_h1.getTrend_by_ma_89().contains(REVERSE_TRADE_TREND_H1))
 
                             && Objects.equals(dto_15.getTrend_by_ma_6(), trend_h1_ma369)
                             && Objects.equals(trend_03_ma369, trend_h1_ma369)) {
@@ -4318,12 +4326,10 @@ public class BinanceServiceImpl implements BinanceService {
                                 .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_h1_ma369, Utils.getYyyyMMdd());
 
                         if (CollectionUtils.isEmpty(his_list_folow_d369) || (his_list_folow_d369.size() < 3)) {
-
                             int total_trade = 1;
                             dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1_ma369, dto_h1,
                                     Utils.TEXT_TREND_FLOWING + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1,
-                                    dailyRange,
-                                    total_trade);
+                                    dailyRange, total_trade);
 
                             String key = EPIC + Utils.CAPITAL_TIME_H1;
                             BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
