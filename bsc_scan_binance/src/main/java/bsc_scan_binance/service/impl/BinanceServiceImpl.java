@@ -4222,8 +4222,8 @@ public class BinanceServiceImpl implements BinanceService {
                 append = Utils.appendSpace("", append.length());
             }
 
-            List<TakeProfit> total_trade_list = takeProfitRepository.findAllBySymbolAndOpenDate(EPIC,
-                    Utils.getYyyyMMdd());
+            List<TakeProfit> total_trade_list = takeProfitRepository.findAllBySymbolAndOpenDateAndStatus(EPIC,
+                    Utils.getYyyyMMdd(), "CLOSED");
 
             String str_profit = "";
             {

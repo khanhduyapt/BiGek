@@ -9,6 +9,6 @@ import bsc_scan_binance.entity.TakeProfit;
 
 @Repository
 public interface TakeProfitRepository extends JpaRepository<TakeProfit, Long> {
-    List<TakeProfit> findAllBySymbolAndOpenDate(String symbol, String openDate);
+    List<TakeProfit> findAllBySymbolAndOpenDateAndStatus(String symbol, String openDate, String status);
     List<TakeProfit> findAllBySymbolAndTradeTypeAndOpenDate(String symbol, String tradeType, String openDate);
 }
