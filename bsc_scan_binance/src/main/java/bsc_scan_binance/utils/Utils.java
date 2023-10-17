@@ -5340,7 +5340,7 @@ public class Utils {
 
         BigDecimal volume = get_standard_vol_per_100usd(EPIC);
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            BigDecimal sl_long = dto_h1.getLow_50candle();
+            BigDecimal sl_long = dto_h1.getLow_50candle().subtract(avg_amp_h4);
             BigDecimal tp_long = dto_h1.getBody_hig_50_candle();
 
             MoneyAtRiskResponse money_300usd = new MoneyAtRiskResponse(EPIC, RISK_0_15_PERCENT, curr_price, sl_long,
@@ -5352,14 +5352,14 @@ public class Utils {
         }
 
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            BigDecimal sl_shot = dto_h1.getHig_50candle();
+            BigDecimal sl_shot = dto_h1.getHig_50candle().add(avg_amp_h4);
             BigDecimal tp_shot = dto_h1.getBody_low_50_candle();
 
             MoneyAtRiskResponse money_300usd = new MoneyAtRiskResponse(EPIC, RISK_0_15_PERCENT, curr_price, sl_shot,
                     tp_shot);
 
             volume = money_300usd.calcLot();
-            stop_loss = sl_shot.add(avg_amp_h4);
+            stop_loss = sl_shot;
             take_profit = tp_shot;
         }
         stop_loss = BigDecimal.ZERO;
