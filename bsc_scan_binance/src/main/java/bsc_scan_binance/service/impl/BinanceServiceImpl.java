@@ -2711,9 +2711,8 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                // TODO: CloseTickets HOLDING
-                if (!"_GBPCHF_EURGBP_".contains("_" + EPIC.toUpperCase() + "_")
-                        || (profit.compareTo(BigDecimal.ZERO) > 0)) {
+                // TODO: CloseTickets HOLDING  || (profit.compareTo(BigDecimal.ZERO) > 0)
+                if (!"_GBPCHF_EURGBP_".contains("_" + EPIC.toUpperCase() + "_")) {
                     StringBuilder sb = new StringBuilder();
                     sb.append(TICKET);
                     sb.append('\n');
@@ -3982,9 +3981,9 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal amp_avg_h4 = amplitutes.get(1);
         BigDecimal curr_price = list.get(0).getCurrPrice();
 
-        BigDecimal ma3 = Utils.calcMA(list, 3, 1);
-        BigDecimal ma6 = Utils.calcMA(list, 6, 1);
-        BigDecimal ma9 = Utils.calcMA(list, 9, 1);
+        BigDecimal ma3 = Utils.calcMA(heiken_list, 3, 1);
+        BigDecimal ma6 = Utils.calcMA(heiken_list, 6, 1);
+        BigDecimal ma9 = Utils.calcMA(heiken_list, 9, 1);
 
         String trend_by_ma_3 = Utils.getTrendByHekenAshiList(heiken_list, 3, 1);
         String trend_by_ma_6 = Utils.isUptrendByMa(heiken_list, 6, 1, 2) ? Utils.TREND_LONG : Utils.TREND_SHOT;
@@ -3992,12 +3991,12 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_by_ma_20 = Utils.getTrendByMaXx(heiken_list, 20);
 
         String trend_by_ma_89 = "Allow :" + Utils.TREND_LONG + "_" + Utils.TREND_SHOT;
-        if (list.size() > 50) {
+        if (heiken_list.size() > 50) {
             DailyRange dailyRange = get_DailyRange(EPIC);
             if (Objects.nonNull(dailyRange)) {
 
-                BigDecimal ma34 = Utils.calcMA(list, 34, 1);
-                BigDecimal ma89 = Utils.calcMA(list, list.size(), 1);
+                BigDecimal ma34 = Utils.calcMA(heiken_list, 34, 1);
+                BigDecimal ma89 = Utils.calcMA(heiken_list, heiken_list.size(), 1);
 
                 BigDecimal amp_w_x2 = dailyRange.getAvg_amp_week().multiply(BigDecimal.valueOf(2));
                 BigDecimal hig_w = ma89.add(amp_w_x2);
@@ -4050,27 +4049,22 @@ public class BinanceServiceImpl implements BinanceService {
         String trend_by_seq_ma = "";
 
         if (CAPITAL_TIME_XX.contains("HOUR_")) {
-            switch_trend += Utils.switchTrendByMa1vs10(list);
             switch_trend += Utils.switchTrendByMa1vs10(heiken_list);
-
-            switch_trend += Utils.switchTrendByMa1vs2025(list);
             switch_trend += Utils.switchTrendByMa1vs2025(heiken_list);
 
             if (!switch_trend.contains(Utils.TEXT_SEQ)) {
-                switch_trend += Utils.switch_trend_seq_1_6_10_20(list);
                 switch_trend += Utils.switch_trend_seq_1_6_10_20(heiken_list);
             }
         } else if (CAPITAL_TIME_XX.contains("MINUTE_")) {
             switch_trend += Utils.switchTrendByMa1vs50(heiken_list);
             switch_trend += Utils.switch_trend_seq_1_10_20_50(heiken_list, amp_avg_h4);
         } else {
-            switch_trend += Utils.switchTrendByMa1vs10(list);
             switch_trend += Utils.switchTrendByMa1vs10(heiken_list);
         }
 
         if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_03)) {
-            switch_trend += Utils.switchTrendByMa1vs10(list);
-            switch_trend += Utils.switchTrendByMa1vs2025(list);
+            switch_trend += Utils.switchTrendByMa1vs10(heiken_list);
+            switch_trend += Utils.switchTrendByMa1vs2025(heiken_list);
         }
 
         // ---------------------------------------------------------------------------
@@ -4409,8 +4403,8 @@ public class BinanceServiceImpl implements BinanceService {
             // -------------------------------------------------------------------------------------
             if ((PROFIT.add(BigDecimal.valueOf(100)).compareTo(BigDecimal.ZERO) < 0)) {
                 int total_trade = 0;
-                if (Objects.equals(dto_15.getTrend_by_ma_3(), REVERSE_TRADE_TREND)
-                        && Objects.equals(trend_03_369, REVERSE_TRADE_TREND)) {
+                if (Objects.equals(dto_15.getTrend_by_ma_3(), TRADING_TREND)
+                        && Objects.equals(trend_03_369, TRADING_TREND)) {
                     total_trade = 2;
                 }
                 if (PROFIT.add(BigDecimal.valueOf(280)).compareTo(BigDecimal.ZERO) < 0) {
