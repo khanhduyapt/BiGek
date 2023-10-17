@@ -3554,24 +3554,18 @@ public class Utils {
     }
 
     public static String countCandlesMatchingCondition(List<BtcFutures> heiken_list) {
-        int count_up = 0;
-        int count_dn = 0;
-        for (int index = 1; index <= 10; index++) {
-            if (heiken_list.get(index).isUptrend()) {
-                count_up += 1;
-            }
-            if (heiken_list.get(index).isDown()) {
-                count_dn += 1;
-            }
-        }
-
         String result = "Allow  :" + Utils.TREND_LONG + "_" + Utils.TREND_SHOT;
-        if (count_up >= 7) {
+
+        if (heiken_list.get(1).isUptrend() && heiken_list.get(2).isUptrend() && heiken_list.get(3).isUptrend()
+                && heiken_list.get(4).isUptrend() && heiken_list.get(5).isUptrend() && heiken_list.get(6).isUptrend()) {
             result = "Waiting:" + Utils.TREND_SHOT;
         }
-        if (count_dn >= 7) {
+
+        if (heiken_list.get(1).isDown() && heiken_list.get(2).isDown() && heiken_list.get(3).isDown()
+                && heiken_list.get(4).isDown() && heiken_list.get(5).isDown() && heiken_list.get(6).isDown()) {
             result = "Waiting:" + Utils.TREND_LONG;
         }
+
         return Utils.appendSpace(getChartName(heiken_list.get(0).getId()) + result, 20);
     }
 

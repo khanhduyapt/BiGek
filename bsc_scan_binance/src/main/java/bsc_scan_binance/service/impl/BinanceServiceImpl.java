@@ -4317,6 +4317,7 @@ public class BinanceServiceImpl implements BinanceService {
             if (Objects.isNull(dto_notifiy)) {
                 if (Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_ma_3())
                         && dto_h1.getTradable_zone().contains(trend_h1_ma369)
+                        && dto_h4.getTradable_zone().contains(trend_h1_ma369)
                         && dto_h1.getTrend_by_ma_89().contains(trend_h1_ma369)
                         && Objects.equals(trend_h1_ma369, trend_15_ma369)
                         && Objects.equals(trend_h1_ma369, trend_03_ma369)) {
