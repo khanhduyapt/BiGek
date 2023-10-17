@@ -4439,7 +4439,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            if (is_hit_sl && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_1H)) {
+            if (is_hit_sl && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
                 String reason = "Profit:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5) + "$   "
                         + Utils.appendSpace(trade.getComment(), 30) + reason_id;
 
