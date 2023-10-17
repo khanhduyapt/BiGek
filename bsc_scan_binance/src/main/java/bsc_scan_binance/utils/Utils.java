@@ -6197,7 +6197,6 @@ public class Utils {
             return Utils.TREND_LONG;
         }
         if (Objects.equals(Utils.TREND_LONG, dto_xx.getTrend_by_ma_6())
-                && Objects.equals(dto_xx.getTrend_by_ma_6(), dto_xx.getTrend_by_ma_3())
                 && Objects.equals(dto_xx.getTrend_by_ma_6(), dto_xx.getTrend_by_ma_9())
                 && (dto_xx.getMa3().compareTo(dto_xx.getMa9()) > 0)) {
             return Utils.TREND_LONG;
@@ -6210,7 +6209,6 @@ public class Utils {
             return Utils.TREND_SHOT;
         }
         if (Objects.equals(Utils.TREND_SHOT, dto_xx.getTrend_by_ma_6())
-                && Objects.equals(dto_xx.getTrend_by_ma_6(), dto_xx.getTrend_by_ma_3())
                 && Objects.equals(dto_xx.getTrend_by_ma_6(), dto_xx.getTrend_by_ma_9())
                 && (dto_xx.getMa3().compareTo(dto_xx.getMa9()) < 0)) {
             return Utils.TREND_SHOT;
