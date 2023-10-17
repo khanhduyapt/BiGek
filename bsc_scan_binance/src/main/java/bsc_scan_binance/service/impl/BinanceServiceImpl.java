@@ -2645,7 +2645,7 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private String analysis_profit(String prefix, String EPIC, String append2, DailyRange dailyRange,
-            String trend_folow, BigDecimal curr_price, String trend_by_ma89_h4) {
+            String trend_folow, BigDecimal curr_price, String trend_by_ma89_h4, String trade_zone) {
 
         String type = "";
         BigDecimal t_profit = BigDecimal.ZERO;
@@ -2676,7 +2676,7 @@ public class BinanceServiceImpl implements BinanceService {
 
         String append = prefix.trim() + " " + append2 + profit;
 
-        outputLog(EPIC, dailyRange, curr_price, append, trend_folow, trend_by_ma89_h4);
+        outputLog(EPIC, dailyRange, curr_price, append, trend_folow, trend_by_ma89_h4, trade_zone);
 
         return EPIC;
     }
@@ -2861,7 +2861,7 @@ public class BinanceServiceImpl implements BinanceService {
     }
 
     private void outputLog(String EPIC, DailyRange dailyRange, BigDecimal curr_price, String append, String trend_folow,
-            String trend_by_ma89_h4) {
+            String trend_by_ma89_h4, String trade_zone) {
         // TODO: outputLog
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(curr_price, 5)), 11);
@@ -2871,6 +2871,7 @@ public class BinanceServiceImpl implements BinanceService {
         log += "Unit:" + Utils.appendLeft(String.valueOf(Utils.get_standard_vol_per_100usd(EPIC)), 5) + "(lot)     ";
 
         log += Utils.appendSpace(trend_by_ma89_h4, 20);
+        log += trade_zone + "    ";
 
         if (Utils.isNotBlank(trend_folow)) {
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
@@ -2880,7 +2881,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
         }
 
-        Utils.logWritelnDraft(log.trim());
+        Utils.logWritelnDraft(log);
     }
 
     private DailyRange get_DailyRange(String EPIC) {
@@ -4111,7 +4112,7 @@ public class BinanceServiceImpl implements BinanceService {
             bread = amplitude_1_part_15;
         }
 
-        String tradable_zone = Utils.getZone(heiken_list);
+        String tradable_zone = Utils.countCandlesMatchingCondition(heiken_list);
 
         BigDecimal close_candle_1 = list.get(1).getPrice_close_candle();
         BigDecimal close_candle_2 = list.get(2).getPrice_close_candle();
@@ -4250,7 +4251,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             analysis_profit(str_profit + prefix, EPIC, append, dailyRange, trend_folow, curr_price,
-                    dto_h4.getTrend_by_ma_89());
+                    dto_h4.getTrend_by_ma_89(), dto_h1.getTradable_zone() + "    " + dto_h4.getTradable_zone());
 
             BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
 
@@ -4314,43 +4315,32 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // -----------------------------------------------------------------------------------------------
             if (Objects.isNull(dto_notifiy)) {
-                if ((Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_ma_6())
-                        || dto_h4.getTrend_by_ma_89().contains(trend_h1_ma369))
-                        && Objects.equals(trend_h1_ma369, dto_h4.getTrend_compared_to_center_previous_candle())
+                if (Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_ma_3())
+                        && dto_h1.getTradable_zone().contains(trend_h1_ma369)
+                        && dto_h1.getTrend_by_ma_89().contains(trend_h1_ma369)
                         && Objects.equals(trend_h1_ma369, trend_15_ma369)
-                        && dto_15.getTrend_by_ma_89().contains(trend_h1_ma369)) {
+                        && Objects.equals(trend_h1_ma369, trend_03_ma369)) {
                     allow_trend_following = true;
                 }
                 if (!trend_d1_ma369.contains(Utils.TREND_UNSURE) && !Objects.equals(trend_h1_ma369, trend_d1_ma369)) {
                     allow_trend_following = false;
                 }
-
-                boolean allow_trade_now = false;
-                if ((Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_ma_6())
-                        || Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_ma_3()))
-
-                        && (Objects.equals(trend_15_ma369, trend_h1_ma369)
-                                || Objects.equals(dto_15.getTrend_by_ma_6(), trend_h1_ma369)
-                                || Objects.equals(dto_15.getTrend_by_ma_3(), trend_h1_ma369)
-                                || dto_03.getSwitch_trend().contains(trend_h1_ma369))
-
-                        && Objects.equals(trend_03_ma369, trend_h1_ma369)) {
-                    allow_trade_now = true;
+                if (!trend_h4_ma369.contains(Utils.TREND_UNSURE) && !Objects.equals(trend_h1_ma369, trend_h4_ma369)) {
+                    allow_trend_following = false;
                 }
 
                 boolean is_able_h4 = Utils.is_able_to_trade_by_h4(dto_h4, dailyRange, trend_h1_ma369);
 
-                if (allow_trend_following && allow_trade_now && is_able_h4) {
+                if (allow_trend_following && is_able_h4) {
+
                     close_reverse_trade(EPIC, trend_h1_ma369);
 
                     List<TakeProfit> his_list_folow_d369 = takeProfitRepository
                             .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_h1_ma369, Utils.getYyyyMMdd());
 
                     if (CollectionUtils.isEmpty(his_list_folow_d369)) {
-                        int total_trade = 1;
                         dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1_ma369, dto_h1,
-                                Utils.TEXT_TREND_FLOWING + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1, dailyRange,
-                                total_trade);
+                                Utils.TEXT_TREND_FLOWING + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1, dailyRange, 1);
 
                         String key = EPIC + Utils.CAPITAL_TIME_H1;
                         BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);

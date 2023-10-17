@@ -3553,6 +3553,28 @@ public class Utils {
         return trend;
     }
 
+    public static String countCandlesMatchingCondition(List<BtcFutures> heiken_list) {
+        int count_up = 0;
+        int count_dn = 0;
+        for (int index = 1; index <= 10; index++) {
+            if (heiken_list.get(index).isUptrend()) {
+                count_up += 1;
+            }
+            if (heiken_list.get(index).isDown()) {
+                count_dn += 1;
+            }
+        }
+
+        String result = "Allow  :" + Utils.TREND_LONG + "_" + Utils.TREND_SHOT;
+        if (count_up >= 7) {
+            result = "Waiting:" + Utils.TREND_SHOT;
+        }
+        if (count_dn >= 7) {
+            result = "Waiting:" + Utils.TREND_LONG;
+        }
+        return Utils.appendSpace(getChartName(heiken_list.get(0).getId()) + result, 20);
+    }
+
     public static String getZone(List<BtcFutures> heiken_list) {
         List<BigDecimal> buy_sel_area = Utils.getBuySellArea(heiken_list);
 
