@@ -4471,6 +4471,30 @@ public class BinanceServiceImpl implements BinanceService {
                 reason_id += "(has_profit)";
             }
             // -------------------------------------------------------------------------------------
+            if ((PROFIT.add(BigDecimal.valueOf(100)).compareTo(BigDecimal.ZERO) < 0)) {
+                int total_trade = 0;
+                if (Objects.equals(dto_15.getTrend_by_ma_3(), REVERSE_TRADE_TREND)
+                        && Objects.equals(trend_03_369, REVERSE_TRADE_TREND)) {
+                    total_trade = 2;
+                }
+                if (PROFIT.add(BigDecimal.valueOf(280)).compareTo(BigDecimal.ZERO) < 0) {
+                    total_trade = 3;
+                }
+
+                if (total_trade > 0) {
+                    DailyRange dailyRange = get_DailyRange(EPIC);
+                    if (Objects.nonNull(dailyRange)) {
+                        Mt5OpenTrade dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, TRADING_TREND, dto_h1,
+                                "_nhoi2" + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1, dailyRange, total_trade);
+                        dto_notifiy.setLots(trade.getVolume());
+
+                        String key = EPIC + Utils.CAPITAL_TIME_H1;
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
+                        BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+                    }
+                }
+            }
+            // -------------------------------------------------------------------------------------
             // TODO: 5 closeTrade_by_SL_TP
             // -------------------------------------------------------------------------------------
             if (is_hit_sl) {
