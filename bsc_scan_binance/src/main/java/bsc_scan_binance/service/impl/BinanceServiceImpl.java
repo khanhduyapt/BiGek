@@ -4255,7 +4255,7 @@ public class BinanceServiceImpl implements BinanceService {
                 List<TakeProfit> his_list_folow_d369 = takeProfitRepository
                         .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_03_ma369, Utils.getYyyyMMdd());
 
-                if (CollectionUtils.isEmpty(his_list_folow_d369) || (his_list_folow_d369.size() < 3)) {
+                if (CollectionUtils.isEmpty(his_list_folow_d369)) {
                     dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_03_ma369, dto_h1,
                             Utils.TEXT_POSSION_TRADE + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_15, dailyRange, 1);
 
