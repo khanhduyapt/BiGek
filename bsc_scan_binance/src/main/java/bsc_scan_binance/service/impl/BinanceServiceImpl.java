@@ -4227,6 +4227,10 @@ public class BinanceServiceImpl implements BinanceService {
             if (!trend_h4_ma369.contains(Utils.TREND_UNSURE) && !Objects.equals(trend_h1_ma369, trend_h4_ma369)) {
                 allow_trend_following = false;
             }
+            if (!Utils.EPICS_FOREXS_ALL.contains(EPIC) && (!Objects.equals(trend_h1_ma369, dto_d1.getTrend_by_ma_6())
+                    && !Objects.equals(trend_h1_ma369, dto_d1.getTrend_by_heiken1()))) {
+                allow_trend_following = false;
+            }
 
             boolean is_tradable_zone = dto_h1.getHeiken_zone().contains(trend_h1_ma369)
                     && dto_h4.getHeiken_zone().contains(trend_h1_ma369);
