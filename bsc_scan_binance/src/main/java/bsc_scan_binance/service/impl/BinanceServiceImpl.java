@@ -4434,8 +4434,10 @@ public class BinanceServiceImpl implements BinanceService {
             // -------------------------------------------------------------------------------------
             if ((PROFIT.add(BigDecimal.valueOf(100)).compareTo(BigDecimal.ZERO) < 0)) {
                 int total_trade = 0;
-                if (Objects.equals(dto_15.getTrend_by_heiken1(), TRADING_TREND)
-                        && Objects.equals(trend_03_369, TRADING_TREND)) {
+                if (Objects.equals(trend_03_369, TRADING_TREND)
+                        && Objects.equals(dto_h1.getTrend_by_heiken1(), TRADING_TREND)
+                        && Objects.equals(dto_15.getTrend_by_heiken1(), TRADING_TREND)
+                        && Objects.equals(dto_03.getTrend_by_heiken1(), TRADING_TREND)) {
                     total_trade = 2;
                 }
                 if (PROFIT.add(BigDecimal.valueOf(280)).compareTo(BigDecimal.ZERO) < 0) {
