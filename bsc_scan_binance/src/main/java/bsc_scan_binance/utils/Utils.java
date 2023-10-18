@@ -5336,7 +5336,9 @@ public class Utils {
         BigDecimal stop_loss = sl_tp.get(0);
         BigDecimal take_profit = sl_tp.get(1);
 
-        BigDecimal volume = get_standard_vol_per_100usd(EPIC);
+        BigDecimal standard_vol = get_standard_vol_per_100usd(EPIC);
+        BigDecimal volume = standard_vol;
+
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
             BigDecimal sl_long = dto_h1.getLow_50candle().subtract(avg_amp_h4);
             BigDecimal tp_long = dto_h1.getBody_hig_50_candle();
@@ -5362,6 +5364,9 @@ public class Utils {
         }
         stop_loss = BigDecimal.ZERO;
         take_profit = BigDecimal.ZERO;
+        if (volume.compareTo(standard_vol.multiply(BigDecimal.valueOf(3))) > 0) {
+            volume = standard_vol.multiply(BigDecimal.valueOf(3));
+        }
 
         String type = Objects.equals(find_trend, Utils.TREND_LONG) ? "_b" : "_s";
 
