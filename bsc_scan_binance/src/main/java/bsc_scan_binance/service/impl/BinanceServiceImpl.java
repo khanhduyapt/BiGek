@@ -4107,7 +4107,7 @@ public class BinanceServiceImpl implements BinanceService {
             bread = amplitude_1_part_15;
         }
 
-        String tradable_zone = Utils.countCandlesMatchingCondition(heiken_list);
+        String heiken_zone = Utils.countCandlesMatchingCondition(heiken_list);
 
         BigDecimal close_candle_1 = list.get(1).getPrice_close_candle();
         BigDecimal close_candle_2 = list.get(2).getPrice_close_candle();
@@ -4116,7 +4116,7 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal highest_price_of_curr_candle = heiken_list.get(0).getHight_price();
 
         Orders entity = new Orders(id, insertTime, trend_by_heiken1, curr_price, tp_long, tp_shot, close_candle_1,
-                close_candle_2, switch_trend, trend_by_ma_9, tradable_zone, trend_by_ma_6, trend_by_ma_20,
+                close_candle_2, switch_trend, trend_by_ma_9, heiken_zone, trend_by_ma_6, trend_by_ma_20,
                 trend_by_ma_89, trend_by_seq_ma, trend_by_bread_area, body_hig_50_candle, body_low_50_candle,
                 amplitude_1_part_15, amp_avg_h4, ma6, ma3, ma9, low_50candle, hig_50candle, lowest_price_of_curr_candle,
                 highest_price_of_curr_candle, trend_compared_to_center_previous_candle);
@@ -4231,14 +4231,14 @@ public class BinanceServiceImpl implements BinanceService {
             if (!is_able_tp_h4) {
                 append += "  EOZ:" + Utils.getType(trend_h1_ma369).toUpperCase();
             }
-            boolean is_tradable_zone = dto_h1.getTradable_zone().contains(trend_h1_ma369)
-                    && dto_h4.getTradable_zone().contains(trend_h1_ma369);
+            boolean is_tradable_zone = dto_h1.getHeiken_zone().contains(trend_h1_ma369)
+                    && dto_h4.getHeiken_zone().contains(trend_h1_ma369);
             if (!is_tradable_zone) {
                 String ashi = "  ashi41:NG";
-                if (dto_h4.getTradable_zone().contains(trend_h1_ma369)) {
+                if (dto_h4.getHeiken_zone().contains(trend_h1_ma369)) {
                     ashi = ashi.replace("4", "0");
                 }
-                if (dto_h1.getTradable_zone().contains(trend_h1_ma369)) {
+                if (dto_h1.getHeiken_zone().contains(trend_h1_ma369)) {
                     ashi = ashi.replace("1", "0");
                 }
                 append += ashi;
@@ -4296,7 +4296,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             analysis_profit(str_profit + prefix, EPIC, append, dailyRange, trend_folow, curr_price,
-                    dto_h4.getTrend_by_ma_89(), dto_h1.getTradable_zone() + "    " + dto_h4.getTradable_zone());
+                    dto_h4.getTrend_by_ma_89(), dto_h1.getHeiken_zone() + "    " + dto_h4.getHeiken_zone());
 
             BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
         }
