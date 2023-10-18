@@ -69,7 +69,7 @@ public class Orders {
     private String insertTime;
 
     @Column(name = "trend")
-    private String trend_by_ma_3;
+    private String trend_by_heiken1;
 
     @Column(name = "current_price")
     private BigDecimal current_price = BigDecimal.ZERO;

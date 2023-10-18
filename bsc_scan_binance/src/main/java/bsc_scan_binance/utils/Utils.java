@@ -3404,7 +3404,12 @@ public class Utils {
             if (index < list.size()) {
                 count += 1;
                 BtcFutures dto = list.get(index);
-                sum = sum.add(dto.getPrice_close_candle());
+
+                BigDecimal open = dto.getPrice_open_candle();
+                BigDecimal close = dto.getPrice_close_candle();
+                BigDecimal mid = (open.add(close)).multiply(BigDecimal.valueOf(0.5));
+
+                sum = sum.add(mid);
             }
         }
 
@@ -5172,22 +5177,15 @@ public class Utils {
     }
 
     public static String getTrendByHekenAshiList(List<BtcFutures> heiken_list) {
-        return getTrendByHekenAshiList(heiken_list, 2, 0);
+        return getTrendByHekenAshiList(heiken_list, 1);
     }
 
-    public static String getTrendByHekenAshiList(List<BtcFutures> heiken_list, int ma, int candle_no) {
-        if (CollectionUtils.isEmpty(heiken_list)) {
+    public static String getTrendByHekenAshiList(List<BtcFutures> heiken_list, int candle_no) {
+        if (CollectionUtils.isEmpty(heiken_list) || (heiken_list.size() < candle_no)) {
             return "";
         }
 
-        boolean isUptrend_3_01 = isUptrendByMa(heiken_list, ma, candle_no + 0, 1);
-        boolean isUptrend_3_12 = isUptrendByMa(heiken_list, ma, candle_no + 1, 2);
-
-        if ((isUptrend_3_01 == isUptrend_3_12)) {
-            return isUptrend_3_01 ? Utils.TREND_LONG : Utils.TREND_SHOT;
-        }
-
-        String result = isUptrend_3_01 ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        String result = heiken_list.get(candle_no).isUptrend() ? Utils.TREND_LONG : Utils.TREND_SHOT;
 
         return result;
     }
@@ -5226,7 +5224,7 @@ public class Utils {
 
         String header = "";
         header += Utils.appendSpace(append, 8);
-        header += chart_name + ":" + Utils.appendSpace(dto_entry.getTrend_by_ma_3(), 8);
+        header += chart_name + ":" + Utils.appendSpace(dto_entry.getTrend_by_heiken1(), 8);
         header += Utils.appendSpace(EPIC, 12) + getTypeOfEpic(EPIC);
         header += Utils.appendSpace(Utils.getCapitalLink(EPIC), 68);
 
@@ -5236,7 +5234,7 @@ public class Utils {
     public static String createLineCrypto(Orders entity, String symbol, String type) {
         String chart = entity.getId().replace("CRYPTO_" + symbol, "").replace("_", "").toUpperCase();
 
-        String tmp_msg = type + Utils.appendSpace(chart, 8) + Utils.appendSpace(entity.getTrend_by_ma_3(), 10)
+        String tmp_msg = type + Utils.appendSpace(chart, 8) + Utils.appendSpace(entity.getTrend_by_heiken1(), 10)
                 + Utils.appendSpace(symbol, 10);
 
         String price = Utils.appendSpace(Utils.removeLastZero(entity.getCurrent_price()), 10);
@@ -5262,8 +5260,8 @@ public class Utils {
             stop_loss = curr_price.subtract(amp_w);
             take_profit = amp_to.subtract(amp_waste);
 
-            if (take_profit.subtract(curr_price).abs().compareTo(amp_h4) < 0) {
-                take_profit = take_profit.add(amp_h4);
+            if (take_profit.subtract(curr_price).abs().compareTo(amp_w) < 0) {
+                take_profit = take_profit.add(amp_w);
             }
         }
 
@@ -5271,8 +5269,8 @@ public class Utils {
             stop_loss = curr_price.add(amp_w);
             take_profit = amp_fr.add(amp_waste);
 
-            if (curr_price.subtract(take_profit).abs().compareTo(amp_h4) < 0) {
-                take_profit = take_profit.subtract(amp_h4);
+            if (curr_price.subtract(take_profit).abs().compareTo(amp_w) < 0) {
+                take_profit = take_profit.subtract(amp_w);
             }
         }
 
@@ -5679,12 +5677,13 @@ public class Utils {
     public static String switch_trend_real_time_by_trend_d1(String EPIC, Orders dto_d1, Orders dto_h4, Orders dto_h1,
             Orders dto_15, Orders dto_10, Orders dto_05, Orders dto_03) {
 
-        String trend_d1 = dto_d1.getTrend_by_ma_3();
-        String trend_h4 = dto_h4.getTrend_by_ma_3();
-        String trend_h1 = dto_h1.getTrend_by_ma_3();
+        String trend_d1 = dto_d1.getTrend_by_heiken1();
+        String trend_h4 = dto_h4.getTrend_by_heiken1();
+        String trend_h1 = dto_h1.getTrend_by_heiken1();
 
-        if (!(Objects.equals(trend_d1, dto_15.getTrend_by_ma_3()) || Objects.equals(trend_d1, dto_10.getTrend_by_ma_3())
-                || Objects.equals(trend_d1, dto_05.getTrend_by_ma_3()))) {
+        if (!(Objects.equals(trend_d1, dto_15.getTrend_by_heiken1())
+                || Objects.equals(trend_d1, dto_10.getTrend_by_heiken1())
+                || Objects.equals(trend_d1, dto_05.getTrend_by_heiken1()))) {
             return "";
         }
 
@@ -5773,7 +5772,7 @@ public class Utils {
             // ------------------------------------------------------------------------------
             /*
              * if (Objects.equals(trend_d1, dto_d1.getTrend_by_ma_9()) ||
-             * Objects.equals(trend_d1, dto_d1.getTrend_by_ma_3_1())) {
+             * Objects.equals(trend_d1, dto_d1.getTrend_by_heiken1_1())) {
              *
              * if (Objects.equals(Utils.TREND_LONG, trend_h4) && Objects.equals(trend_h4,
              * trend_h1)) { temp = Utils.checkXCutUpY(dto_03.getClose_candle_1(),
@@ -5799,7 +5798,7 @@ public class Utils {
              * //
              * -----------------------------------------------------------------------------
              * - if (Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_d1,
-             * trend_h4) && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_3_1()) &&
+             * trend_h4) && Objects.equals(trend_d1, dto_h4.getTrend_by_heiken1_1()) &&
              * Objects.equals(trend_d1, dto_h4.getTrend_by_ma_9())) {
              *
              * temp = Utils.checkXCutUpY(dto_03.getClose_candle_1(),
@@ -5911,7 +5910,7 @@ public class Utils {
             // ------------------------------------------------------------------------------
             /*
              * if (Objects.equals(trend_d1, dto_d1.getTrend_by_ma_9()) ||
-             * Objects.equals(trend_d1, dto_d1.getTrend_by_ma_3_1())) {
+             * Objects.equals(trend_d1, dto_d1.getTrend_by_heiken1_1())) {
              *
              * if (Objects.equals(Utils.TREND_SHOT, trend_h4) && Objects.equals(trend_h4,
              * trend_h1)) { temp = Utils.checkXCutDnY(dto_03.getClose_candle_1(),
@@ -5939,7 +5938,7 @@ public class Utils {
              * -
              *
              * if (Objects.equals(trend_d1, trend_h1) && Objects.equals(trend_d1, trend_h4)
-             * && Objects.equals(trend_d1, dto_h4.getTrend_by_ma_3_1()) &&
+             * && Objects.equals(trend_d1, dto_h4.getTrend_by_heiken1_1()) &&
              * Objects.equals(trend_d1, dto_h4.getTrend_by_ma_9())) {
              *
              * temp = Utils.checkXCutDnY(dto_03.getClose_candle_1(),
@@ -5999,10 +5998,10 @@ public class Utils {
         boolean has_seq = false;
         boolean has_seq_h1 = false;
         boolean has_seq_minus = false;
-        String trend_h1 = dto_h1.getTrend_by_ma_3();
+        String trend_h1 = dto_h1.getTrend_by_heiken1();
 
         if (dto_h1.getSwitch_trend().contains(Utils.TEXT_SEQ)
-                && dto_15.getSwitch_trend().contains(dto_15.getTrend_by_ma_3())
+                && dto_15.getSwitch_trend().contains(dto_15.getTrend_by_heiken1())
                 && dto_h1.getSwitch_trend().contains(trend_h1)) {
             has_seq = true;
             has_seq_h1 = true;
@@ -6191,7 +6190,7 @@ public class Utils {
 
     public static String find_trend_by_ma3_6_9(Orders dto_xx) {
         if ((Objects.equals(Utils.TREND_LONG, dto_xx.getTrend_by_ma_6())
-                || Objects.equals(Utils.TREND_LONG, dto_xx.getTrend_by_ma_3()))
+                || Objects.equals(Utils.TREND_LONG, dto_xx.getTrend_by_heiken1()))
                 && (dto_xx.getMa3().compareTo(dto_xx.getMa9()) > 0)
                 && (dto_xx.getMa6().compareTo(dto_xx.getMa9()) > 0)) {
             return Utils.TREND_LONG;
@@ -6203,7 +6202,7 @@ public class Utils {
         }
         // ---------------------------------------------------------------
         if ((Objects.equals(Utils.TREND_SHOT, dto_xx.getTrend_by_ma_6())
-                || Objects.equals(Utils.TREND_SHOT, dto_xx.getTrend_by_ma_3()))
+                || Objects.equals(Utils.TREND_SHOT, dto_xx.getTrend_by_heiken1()))
                 && (dto_xx.getMa3().compareTo(dto_xx.getMa9()) < 0)
                 && (dto_xx.getMa6().compareTo(dto_xx.getMa9()) < 0)) {
             return Utils.TREND_SHOT;
@@ -6305,10 +6304,10 @@ public class Utils {
     public static boolean is_trend_trend_15m_eq(String find_trend, Orders dto_15, Orders dto_10, Orders dto_05,
             Orders dto_03) {
 
-        return Objects.equals(find_trend, dto_15.getTrend_by_ma_3())
-                && Objects.equals(find_trend, dto_10.getTrend_by_ma_3())
-                && Objects.equals(find_trend, dto_05.getTrend_by_ma_3())
-                && Objects.equals(find_trend, dto_03.getTrend_by_ma_3());
+        return Objects.equals(find_trend, dto_15.getTrend_by_heiken1())
+                && Objects.equals(find_trend, dto_10.getTrend_by_heiken1())
+                && Objects.equals(find_trend, dto_05.getTrend_by_heiken1())
+                && Objects.equals(find_trend, dto_03.getTrend_by_heiken1());
     }
 
     public static String get_seq_minus(String find_trend, Orders dto_15, Orders dto_10, Orders dto_05) {
@@ -6321,9 +6320,9 @@ public class Utils {
         seq_m1x += dto_05.getTrend_by_seq_ma();
 
         boolean allow_trade = seq_m1x.contains(Utils.TEXT_SEQ) && seq_m1x.contains(find_trend)
-                && Objects.equals(find_trend, dto_15.getTrend_by_ma_3())
-                && Objects.equals(find_trend, dto_10.getTrend_by_ma_3())
-                && Objects.equals(find_trend, dto_05.getTrend_by_ma_3());
+                && Objects.equals(find_trend, dto_15.getTrend_by_heiken1())
+                && Objects.equals(find_trend, dto_10.getTrend_by_heiken1())
+                && Objects.equals(find_trend, dto_05.getTrend_by_heiken1());
 
         if (allow_trade) {
             if ((dto_15.getSwitch_trend() + dto_15.getTrend_by_seq_ma()).contains(Utils.TEXT_SEQ)) {
@@ -6345,8 +6344,8 @@ public class Utils {
     public static String get_seq_chart(Orders dto_xx, String find_trend) {
         String result = "";
 
-        if (Objects.equals(dto_xx.getTrend_by_ma_3(), find_trend)) {
-            String type = "_" + Utils.getType(dto_xx.getTrend_by_ma_3()) + "_";
+        if (Objects.equals(dto_xx.getTrend_by_heiken1(), find_trend)) {
+            String type = "_" + Utils.getType(dto_xx.getTrend_by_heiken1()) + "_";
 
             boolean is_h4 = false;
             String chart_name = getChartName(dto_xx.getId()).toLowerCase().replace("(", "").replace(")", "").trim();
