@@ -2705,7 +2705,10 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                // TODO: CloseTickets HOLDING  || (profit.compareTo(BigDecimal.ZERO) > 0)
+                // TODO: CloseTickets HOLDING
+                if (EPIC.contains("JPY")) {
+                    continue;
+                }
                 if (!"__".contains("_" + EPIC.toUpperCase() + "_")) {
                     StringBuilder sb = new StringBuilder();
                     sb.append(TICKET);
