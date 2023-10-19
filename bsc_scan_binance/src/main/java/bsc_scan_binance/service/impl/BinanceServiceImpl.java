@@ -2664,14 +2664,14 @@ public class BinanceServiceImpl implements BinanceService {
 
         String profit = "";
         if (tradeList.size() > 0) {
-            profit = "   " + type + Utils.appendLeft(String.valueOf(t_profit.intValue()), 5) + "$";
-            profit += "/" + Utils.appendSpace(String.valueOf(tradeList.size()), 2) + "   ";
+            profit = type + Utils.appendLeft(String.valueOf(t_profit.intValue()), 5) + "$";
+            profit += "/" + Utils.appendSpace(String.valueOf(tradeList.size()), 2);
         }
 
         // TODO: outputLog
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(curr_price, 5)), 11);
-        log += Utils.appendSpace(Utils.appendSpace(prefix + " " + append_eoz, 125) + profit, 150);
+        log += Utils.appendSpace(prefix + " " + append_eoz, 138) + Utils.appendSpace(profit, 15);
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
 
         log += "Unit:" + Utils.appendLeft(String.valueOf(Utils.get_standard_vol_per_100usd(EPIC)), 5) + "(lot)     ";
@@ -4201,7 +4201,6 @@ public class BinanceServiceImpl implements BinanceService {
             String prefix = "  " + No + amp + str_369;
 
             String trend_folow = "";
-            boolean allow_trend_following = false;
             String append_eoz = "    FW:" + Utils.appendSpace(trend_h1_ma369, 4);
 
             // TODO: 3 controlMt5
@@ -4212,13 +4211,14 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean debug = true;
             }
 
-            boolean is_able_tp_h4 = Utils.is_able_to_trade_by_h4(dto_h4, dailyRange, trend_h1_ma369)
-                    && Utils.is_able_to_trade_by_h4(dto_d1, dailyRange, trend_h1_ma369);
-
+            boolean is_able_tp_h4 = Utils.is_able_to_trade_by_h4(dto_d1, dailyRange, trend_h1_ma369);
             if (!is_able_tp_h4) {
                 append_eoz += "  EOZ:" + Utils.getType(trend_h1_ma369).toUpperCase();
             }
+
+            boolean allow_trend_following = false;
             if ((Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_heiken1())
+                    || Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_ma_6())
                     || Objects.equals(trend_h1_ma369, trend_h4_ma369))
                     && dto_h1.getTrend_by_ma_89().contains(trend_h1_ma369)) {
                 allow_trend_following = true;
@@ -4230,50 +4230,9 @@ public class BinanceServiceImpl implements BinanceService {
             if (!trend_h4_ma369.contains(Utils.TREND_UNSURE) && !Objects.equals(trend_h1_ma369, trend_h4_ma369)) {
                 allow_trend_following = false;
             }
-            if (!Utils.EPICS_FOREXS_ALL.contains(EPIC) && (!Objects.equals(trend_h1_ma369, dto_d1.getTrend_by_ma_6())
-                    && !Objects.equals(trend_h1_ma369, dto_d1.getTrend_by_heiken1()))) {
-                allow_trend_following = false;
-            }
-
-            boolean is_tradable_zone = dto_h1.getHeiken_zone().contains(trend_h1_ma369)
-                    && dto_h4.getHeiken_zone().contains(trend_h1_ma369);
-            if (!is_tradable_zone) {
-                String ashi = "  ashi41:NG";
-                if (dto_h4.getHeiken_zone().contains(trend_h1_ma369)) {
-                    ashi = ashi.replace("4", "0");
-                }
-                if (dto_h1.getHeiken_zone().contains(trend_h1_ma369)) {
-                    ashi = ashi.replace("1", "0");
-                }
-                append_eoz += ashi;
-            }
-
-            Mt5OpenTrade dto_notifiy = null;
-
-            // POSSION_TRADE
-            boolean allow_catching_daily_pos = Utils.EPICS_FOREXS_ALL.contains(EPIC)
-                    && dto_15.getTrend_by_ma_89().contains(trend_15_ma369)
-                    && dto_d1.getTrend_by_bread_area().contains(trend_15_ma369)
-                    && Objects.equals(dto_h1.getTrend_by_heiken1(), trend_15_ma369)
-                    && Objects.equals(dto_15.getTrend_by_heiken1(), trend_15_ma369)
-                    && Objects.equals(trend_15_ma369, trend_05_ma369);
-            if (allow_catching_daily_pos) {
-                close_reverse_trade(EPIC, trend_15_ma369);
-
-                List<TakeProfit> his_list_folow_d369 = takeProfitRepository
-                        .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_15_ma369, Utils.getYyyyMMdd());
-
-                if (CollectionUtils.isEmpty(his_list_folow_d369) || (his_list_folow_d369.size() < 3)) {
-                    dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_15_ma369, dto_h1,
-                            Utils.TEXT_POSSION_TRADE + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_15, dailyRange, 1);
-
-                    String key = EPIC + Utils.CAPITAL_TIME_15;
-                    BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
-                    BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
-                }
-            }
 
             // TREND_FLOWING
+            Mt5OpenTrade dto_notifiy = null;
             if (Objects.isNull(dto_notifiy) && allow_trend_following && is_able_tp_h4) {
                 boolean allow_trade_now = Objects.equals(trend_h1_ma369, trend_15_ma369)
                         && Objects.equals(trend_h1_ma369, trend_05_ma369);
@@ -4302,6 +4261,18 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // -----------------------------------------------------------------------------------------------
+            boolean is_tradable_zone = dto_h1.getHeiken_zone().contains(trend_h1_ma369)
+                    && dto_h4.getHeiken_zone().contains(trend_h1_ma369);
+            if (!is_tradable_zone) {
+                String ashi = "  ashi41:NG";
+                if (dto_h4.getHeiken_zone().contains(trend_h1_ma369)) {
+                    ashi = ashi.replace("4", "0");
+                }
+                if (dto_h1.getHeiken_zone().contains(trend_h1_ma369)) {
+                    ashi = ashi.replace("1", "0");
+                }
+                append_eoz += ashi;
+            }
             if (!allow_trend_following) {
                 append_eoz = Utils.appendSpace("", append_eoz.length());
             }
