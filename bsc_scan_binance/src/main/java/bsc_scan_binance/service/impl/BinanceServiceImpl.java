@@ -4080,7 +4080,13 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal tp_long = hig_50candle.subtract(amplitude_1_part_15);
         BigDecimal tp_shot = low_50candle.add(amplitude_1_part_15);
 
-        List<BigDecimal> body = Utils.getBodyCandle(heiken_list);
+        size = heiken_list.size();
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_03)) {
+            if (size > 20) {
+                size = 20;
+            }
+        }
+        List<BigDecimal> body = Utils.getBodyCandle(heiken_list.subList(0, size));
         BigDecimal body_low_50_candle = body.get(0);
         BigDecimal body_hig_50_candle = body.get(1);
 
@@ -4106,9 +4112,9 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal highest_price_of_curr_candle = heiken_list.get(0).getHight_price();
 
         Orders entity = new Orders(id, insertTime, trend_by_heiken1, curr_price, tp_long, tp_shot, close_candle_1,
-                close_candle_2, switch_trend, trend_by_ma_9, heiken_zone, trend_by_ma_6, trend_by_ma_20,
-                trend_by_ma_89, trend_by_seq_ma, trend_by_bread_area, body_hig_50_candle, body_low_50_candle,
-                amplitude_1_part_15, amp_avg_h4, ma6, ma3, ma9, low_50candle, hig_50candle, lowest_price_of_curr_candle,
+                close_candle_2, switch_trend, trend_by_ma_9, heiken_zone, trend_by_ma_6, trend_by_ma_20, trend_by_ma_89,
+                trend_by_seq_ma, trend_by_bread_area, body_hig_50_candle, body_low_50_candle, amplitude_1_part_15,
+                amp_avg_h4, ma6, ma3, ma9, low_50candle, hig_50candle, lowest_price_of_curr_candle,
                 highest_price_of_curr_candle, trend_compared_to_center_previous_candle);
 
         ordersRepository.save(entity);
@@ -4219,10 +4225,12 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean allow_trend_following = false;
-            if ((Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_heiken1())
-                    || Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_ma_6())
-                    || Objects.equals(trend_h1_ma369, trend_h4_ma369))
-                    && dto_h1.getTrend_by_ma_89().contains(trend_h1_ma369)) {
+            if (dto_h1.getTrend_by_ma_89().contains(trend_h1_ma369)
+                    && (Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_ma_6())
+                            || Objects.equals(trend_h1_ma369, trend_h4_ma369)
+
+                            || Objects.equals(trend_h1_ma369, trend_d1_ma369)
+                            || Objects.equals(trend_h1_ma369, dto_d1.getTrend_by_ma_6()))) {
                 allow_trend_following = true;
                 trend_folow = trend_h1_ma369;
             }
@@ -4232,24 +4240,29 @@ public class BinanceServiceImpl implements BinanceService {
             if (!trend_h4_ma369.contains(Utils.TREND_UNSURE) && !Objects.equals(trend_h1_ma369, trend_h4_ma369)) {
                 allow_trend_following = false;
             }
-            if (!Utils.EPICS_FOREXS_ALL.contains(EPIC) && !Objects.equals(trend_h1_ma369, dto_d1.getTrend_by_ma_6())) {
+            if (Utils.EPICS_INDEXS_CFD.contains(EPIC) && !Objects.equals(trend_h1_ma369, dto_d1.getTrend_by_ma_6())) {
                 allow_trend_following = false;
             }
+
             // TREND_FLOWING
             Mt5OpenTrade dto_notifiy = null;
             if (Objects.isNull(dto_notifiy) && allow_trend_following && is_able_tp_h4) {
-                boolean allow_trade_now = Objects.equals(trend_h1_ma369, trend_15_ma369)
-                        && Objects.equals(trend_h1_ma369, trend_05_ma369);
 
-                boolean has_switch_trend = false;
-                has_switch_trend |= dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma69)
-                        && dto_h1.getSwitch_trend().contains(trend_h1_ma369);
-                has_switch_trend |= dto_15.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma69)
-                        && dto_15.getSwitch_trend().contains(trend_h1_ma369);
-                has_switch_trend |= dto_05.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma69)
-                        && dto_05.getSwitch_trend().contains(trend_h1_ma369);
+                boolean allow_trade_now = Objects.equals(trend_h1_ma369, trend_15_ma369);
 
-                if (allow_trade_now && has_switch_trend) {
+                boolean is_best_prirce = false;
+                if (Objects.equals(Utils.TREND_LONG, trend_h1_ma369)) {
+                    if (curr_price.compareTo(dto_05.getBody_low_50_candle()) < 0) {
+                        is_best_prirce = true;
+                    }
+                }
+                if (Objects.equals(Utils.TREND_SHOT, trend_h1_ma369)) {
+                    if (curr_price.compareTo(dto_05.getBody_hig_50_candle()) > 0) {
+                        is_best_prirce = true;
+                    }
+                }
+
+                if (allow_trade_now && is_best_prirce) {
                     close_reverse_trade(EPIC, trend_h1_ma369);
 
                     List<TakeProfit> his_list_folow_d369 = takeProfitRepository
@@ -4257,7 +4270,9 @@ public class BinanceServiceImpl implements BinanceService {
 
                     if (CollectionUtils.isEmpty(his_list_folow_d369) || (his_list_folow_d369.size() < 3)) {
                         int trade_count = 1;
-                        if (dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma69)) {
+
+                        if (dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma69)
+                                && Objects.equals(trend_h1_ma369, trend_d1_ma369)) {
                             trade_count = 3;
                         }
 
@@ -4405,7 +4420,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String reason = "stoploss:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5)
                             + "$(OPEN_POSITIONS)" + OPEN_POSITIONS + "$";
 
-                    //BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
+                    // BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
                 }
             }
             if (reverse_h4_369 && reverse_h1_369 && reverse_15_369 && reverse_05_369) {
@@ -4421,8 +4436,7 @@ public class BinanceServiceImpl implements BinanceService {
                         reason_id += "(has_profit)";
                     }
                 } else {
-                    if ((reverse_15_369 && reverse_05_369)
-                            || (Utils.is_close_trade_time() && reverse_05_369)
+                    if ((reverse_15_369 && reverse_05_369) || (Utils.is_close_trade_time() && reverse_05_369)
                             || Utils.is_close_jpy_trade_at_3am(EPIC)) {
                         is_hit_sl = true;
                         reason_id += "(has_profit)";
