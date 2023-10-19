@@ -2671,7 +2671,7 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO: outputLog
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(curr_price, 5)), 11);
-        log += Utils.appendSpace(prefix + " " + append_eoz, 138) + Utils.appendSpace(profit, 15);
+        log += Utils.appendSpace((prefix + " " + append_eoz).trim(), 138) + Utils.appendSpace(profit, 15);
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
 
         log += "Unit:" + Utils.appendLeft(String.valueOf(Utils.get_standard_vol_per_100usd(EPIC)), 5) + "(lot)     ";
