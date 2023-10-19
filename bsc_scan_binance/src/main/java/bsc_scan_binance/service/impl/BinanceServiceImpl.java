@@ -4415,17 +4415,21 @@ public class BinanceServiceImpl implements BinanceService {
             if ((OPEN_POSITIONS.add(BigDecimal.valueOf(900)).compareTo(BigDecimal.ZERO) < 0)
                     || (TOTAL_LOSS_TODAY.add(BigDecimal.valueOf(900)).compareTo(BigDecimal.ZERO) < 0)) {
                 if (reverse_h1_369 && reverse_15_369 && reverse_05_369) {
-                    is_hit_sl = true;
-                    reason_id += "(STOPLOSS:ACCOUNT_PROTECTION)";
-                    String reason = "stoploss:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5)
-                            + "$(OPEN_POSITIONS)" + OPEN_POSITIONS + "$";
+                    if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_2H)) {
+                        is_hit_sl = true;
+                        reason_id += "(STOPLOSS:ACCOUNT_PROTECTION)";
+                        String reason = "stoploss:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5)
+                                + "$(OPEN_POSITIONS)" + OPEN_POSITIONS + "$";
 
-                    // BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
+                        BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
+                    }
                 }
             }
             if (reverse_h4_369 && reverse_h1_369 && reverse_15_369 && reverse_05_369) {
-                is_hit_sl = true;
-                reason_id += "(STOPLOSS:ACCOUNT_PROTECTION)";
+                if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_2H)) {
+                    is_hit_sl = true;
+                    reason_id += "(STOPLOSS:ACCOUNT_PROTECTION)";
+                }
             }
 
             // -------------------------------------------------------------------------------------
