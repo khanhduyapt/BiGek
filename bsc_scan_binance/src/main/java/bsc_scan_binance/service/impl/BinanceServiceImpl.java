@@ -4237,7 +4237,15 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean allow_trade_now = Objects.equals(trend_h1_ma369, trend_15_ma369)
                         && Objects.equals(trend_h1_ma369, trend_05_ma369);
 
-                if (allow_trade_now) {
+                boolean has_switch_trend = false;
+                has_switch_trend |= dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma69)
+                        && dto_h1.getSwitch_trend().contains(trend_h1_ma369);
+                has_switch_trend |= dto_15.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma69)
+                        && dto_15.getSwitch_trend().contains(trend_h1_ma369);
+                has_switch_trend |= dto_05.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_Ma69)
+                        && dto_05.getSwitch_trend().contains(trend_h1_ma369);
+
+                if (allow_trade_now && has_switch_trend) {
                     close_reverse_trade(EPIC, trend_h1_ma369);
 
                     List<TakeProfit> his_list_folow_d369 = takeProfitRepository
@@ -4410,8 +4418,8 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 } else {
                     if ((reverse_15_369 && reverse_05_369)
-                            || Utils.is_close_jpy_trade_today(EPIC)
-                            || (Utils.is_close_trade_time() && reverse_05_369)) {
+                            || (Utils.is_close_trade_time() && reverse_05_369)
+                            || Utils.is_close_jpy_trade_at_3am(EPIC)) {
                         is_hit_sl = true;
                         reason_id += "(has_profit)";
                     }
@@ -4420,7 +4428,7 @@ public class BinanceServiceImpl implements BinanceService {
             // -------------------------------------------------------------------------------------
             if ((PROFIT.add(BigDecimal.valueOf(100)).compareTo(BigDecimal.ZERO) < 0)) {
                 int total_trade = 0;
-                if (Objects.equals(trend_03_369, TRADING_TREND)
+                if (Objects.equals(trend_15_369, TRADING_TREND)
                         && Objects.equals(dto_h1.getTrend_by_heiken1(), TRADING_TREND)
                         && Objects.equals(dto_15.getTrend_by_heiken1(), TRADING_TREND)
                         && Objects.equals(dto_03.getTrend_by_heiken1(), TRADING_TREND)) {
@@ -4434,7 +4442,8 @@ public class BinanceServiceImpl implements BinanceService {
                     DailyRange dailyRange = get_DailyRange(EPIC);
                     if (Objects.nonNull(dailyRange)) {
                         Mt5OpenTrade dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, TRADING_TREND, dto_h1,
-                                "_nhoi2" + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1, dailyRange, total_trade);
+                                "_nhoi" + total_trade + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1, dailyRange,
+                                total_trade);
                         dto_notifiy.setLots(trade.getVolume());
 
                         String key = EPIC + Utils.CAPITAL_TIME_H1;
