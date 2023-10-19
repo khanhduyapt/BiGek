@@ -4468,7 +4468,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean pass_time_hoding = allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)
-                    || (has_profit && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_2H));
+                    || (has_profit && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H));
 
             if (is_hit_sl && pass_time_hoding) {
                 String reason = "Profit:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5) + "$   "
