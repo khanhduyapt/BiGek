@@ -4082,11 +4082,11 @@ public class BinanceServiceImpl implements BinanceService {
 
         size = heiken_list.size();
         if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_03)) {
-            if (size > 20) {
-                size = 20;
+            if (size > 33) {
+                size = 33;
             }
         }
-        List<BigDecimal> body = Utils.getBodyCandle(heiken_list.subList(0, size));
+        List<BigDecimal> body = Utils.getBodyCandle(heiken_list.subList(3, size));
         BigDecimal body_low_50_candle = body.get(0);
         BigDecimal body_hig_50_candle = body.get(1);
 
