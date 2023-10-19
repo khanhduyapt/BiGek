@@ -4429,6 +4429,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_2H)) {
                     is_hit_sl = true;
                     reason_id += "(STOPLOSS:ACCOUNT_PROTECTION)";
+                    BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason_id);
                 }
             }
 
