@@ -141,6 +141,7 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_Ma_3_2_1 = "Ma3.2.1";
     public static final String TEXT_SWITCH_TREND_Ma_1vs3456 = "(Ma1.3456)";
 
+    public static final String TEXT_SWITCH_TREND_Ma69 = "(Ma6.9)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs10 = "(Ma1.10)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs20 = "(Ma1.20)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs50 = "(Ma1.50)";
@@ -1921,10 +1922,15 @@ public class Utils {
         return false;
     }
 
-    public static boolean isCloseTradeToday() {
+    public static boolean is_close_jpy_trade_today(String EPIC) {
+        if (!EPIC.contains("JPY")) {
+            return false;
+        }
+
+        List<Integer> times = Arrays.asList(2, 3, 4, 5);
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
 
-        if ((hh > 22) || (hh < 4)) {
+        if (times.contains(hh)) {
             return true;
         }
 
@@ -3793,6 +3799,18 @@ public class Utils {
         return " ";
     }
 
+    public static String getType(String prefix, String trend) {
+        if (trend.contains(Utils.TREND_LONG)) {
+            return prefix + "b";
+        }
+
+        if (trend.contains(Utils.TREND_SHOT)) {
+            return prefix + "s";
+        }
+
+        return Utils.appendSpace("", prefix.length() + 1);
+    }
+
     public static String getTypeLongOrShort(List<BtcFutures> list) {
         String result = "0:Sideway";
 
@@ -4444,6 +4462,18 @@ public class Utils {
         return result;
     }
 
+    public static String switchTrendByMa6vs9(List<BtcFutures> heiken_list) {
+        String trend = switchTrendBy_MaX_vs_MaY(heiken_list, 6, 9);
+        if (trend.contains(Utils.TREND_LONG) || trend.contains(Utils.TREND_SHOT)) {
+            String chart_name = getChartName(heiken_list).trim();
+            String switch_trend = chart_name + TEXT_SWITCH_TREND_Ma69 + ":" + Utils.appendSpace(trend, 4);
+
+            return switch_trend;
+        }
+
+        return "";
+    }
+
     public static String switchTrendByMa1vs10(List<BtcFutures> heiken_list) {
         String sw_1 = switchTrendByMa1(heiken_list, 1, 10, 12, TEXT_SWITCH_TREND_Ma_1vs10);
         String sw_0 = switchTrendByMa1(heiken_list, 0, 10, 12, TEXT_SWITCH_TREND_Ma_1vs10);
@@ -4545,11 +4575,11 @@ public class Utils {
     public static String switchTrendBy_MaX_vs_MaY(List<BtcFutures> heiken_list, int ma_x, int ma_y) {
         String trend = "_";
 
-        BigDecimal ma1_0 = calcMA(heiken_list, ma_x, 1);
-        BigDecimal ma1_2 = calcMA(heiken_list, ma_x, 3);
+        BigDecimal ma1_0 = calcMA(heiken_list, ma_x, 0);
+        BigDecimal ma1_2 = calcMA(heiken_list, ma_x, 2);
 
-        BigDecimal maX_0 = calcMA(heiken_list, ma_y, 1);
-        BigDecimal maX_2 = calcMA(heiken_list, ma_y, 3);
+        BigDecimal maX_0 = calcMA(heiken_list, ma_y, 0);
+        BigDecimal maX_2 = calcMA(heiken_list, ma_y, 2);
 
         String cutUp = Utils.checkXCutUpY(ma1_0, ma1_2, maX_0, maX_2);
         String cutDw = Utils.checkXCutDnY(ma1_0, ma1_2, maX_0, maX_2);
@@ -6194,25 +6224,27 @@ public class Utils {
     }
 
     public static String find_trend_by_ma3_6_9(Orders dto_xx) {
-        if ((Objects.equals(Utils.TREND_LONG, dto_xx.getTrend_by_ma_6())
-                || Objects.equals(Utils.TREND_LONG, dto_xx.getTrend_by_heiken1()))
+        if (Objects.equals(Utils.TREND_LONG, dto_xx.getTrend_by_ma_6())
+                && Objects.equals(Utils.TREND_LONG, dto_xx.getTrend_by_heiken1())
                 && (dto_xx.getMa3().compareTo(dto_xx.getMa9()) > 0)
                 && (dto_xx.getMa6().compareTo(dto_xx.getMa9()) > 0)) {
             return Utils.TREND_LONG;
         }
         if (Objects.equals(Utils.TREND_LONG, dto_xx.getTrend_by_ma_6())
+                && Objects.equals(Utils.TREND_LONG, dto_xx.getTrend_by_heiken1())
                 && Objects.equals(dto_xx.getTrend_by_ma_6(), dto_xx.getTrend_by_ma_9())
                 && (dto_xx.getMa3().compareTo(dto_xx.getMa9()) > 0)) {
             return Utils.TREND_LONG;
         }
         // ---------------------------------------------------------------
-        if ((Objects.equals(Utils.TREND_SHOT, dto_xx.getTrend_by_ma_6())
-                || Objects.equals(Utils.TREND_SHOT, dto_xx.getTrend_by_heiken1()))
+        if (Objects.equals(Utils.TREND_SHOT, dto_xx.getTrend_by_ma_6())
+                && Objects.equals(Utils.TREND_SHOT, dto_xx.getTrend_by_heiken1())
                 && (dto_xx.getMa3().compareTo(dto_xx.getMa9()) < 0)
                 && (dto_xx.getMa6().compareTo(dto_xx.getMa9()) < 0)) {
             return Utils.TREND_SHOT;
         }
         if (Objects.equals(Utils.TREND_SHOT, dto_xx.getTrend_by_ma_6())
+                && Objects.equals(Utils.TREND_SHOT, dto_xx.getTrend_by_heiken1())
                 && Objects.equals(dto_xx.getTrend_by_ma_6(), dto_xx.getTrend_by_ma_9())
                 && (dto_xx.getMa3().compareTo(dto_xx.getMa9()) < 0)) {
             return Utils.TREND_SHOT;
