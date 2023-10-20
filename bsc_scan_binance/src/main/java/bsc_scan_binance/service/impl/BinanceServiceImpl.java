@@ -4242,9 +4242,9 @@ public class BinanceServiceImpl implements BinanceService {
             Mt5OpenTrade dto_notifiy = null;
             if (Objects.isNull(dto_notifiy) && allow_trend_following && is_able_tp_h4) {
 
-                boolean allow_trade_now = Objects.equals(trend_h1_ma369, trend_15_ma369)
+                boolean allow_trade_now = (Objects.equals(trend_h1_ma369, trend_15_ma369)
                         || Objects.equals(trend_h1_ma369, dto_15.getTrend_by_ma_6())
-                        || Objects.equals(trend_h1_ma369, trend_05_ma369);
+                        || Objects.equals(trend_h1_ma369, trend_05_ma369));
 
                 boolean is_best_prirce = Utils.is_best_prirce(dto_05, trend_h1_ma369, curr_price)
                         || Utils.is_best_prirce(dto_15, trend_h1_ma369, curr_price);

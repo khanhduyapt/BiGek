@@ -5394,6 +5394,7 @@ public class Utils {
         }
         stop_loss = BigDecimal.ZERO;
         take_profit = BigDecimal.ZERO;
+
         if (volume.compareTo(standard_vol.multiply(BigDecimal.valueOf(3))) > 0) {
             volume = standard_vol.multiply(BigDecimal.valueOf(3));
         }
