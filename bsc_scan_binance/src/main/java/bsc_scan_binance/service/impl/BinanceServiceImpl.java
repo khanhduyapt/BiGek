@@ -4215,7 +4215,7 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean debug = true;
             }
 
-            boolean is_able_tp_h4 = Utils.is_able_to_trade_by_h4(dto_d1, dailyRange, trend_d1_ma6);
+            boolean is_able_tp_h4 = Utils.is_able_to_trade_by_h4(dto_h4, dailyRange, trend_d1_ma6);
             if (!is_able_tp_h4) {
                 append_eoz += "  EOZ:" + Utils.getType(trend_d1_ma6).toUpperCase();
             }
@@ -4414,8 +4414,9 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
             }
-            if (Objects.equals(dto_d1.getTrend_by_ma_6(), REVERSE_TRADE_TREND) && reverse_h4_369 && reverse_h1_369
-                    && reverse_15_369 && reverse_05_369) {
+            if (Objects.equals(dto_d1.getTrend_by_ma_6(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_d1.getTrend_by_heiken1(), REVERSE_TRADE_TREND)
+                    && reverse_h4_369 && reverse_h1_369 && reverse_15_369 && reverse_05_369) {
                 if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_2H)) {
                     is_hit_sl = true;
                     reason_id += "(H4_STOPLOSS:ACCOUNT_PROTECTION)";
@@ -4423,6 +4424,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
             if (Objects.equals(dto_d1.getTrend_by_ma_6(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_d1.getTrend_by_heiken1(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_by_ma_6(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_by_ma_6(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_by_ma_6(), REVERSE_TRADE_TREND)) {
@@ -4456,16 +4458,21 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 if (total_trade > 0) {
-                    DailyRange dailyRange = get_DailyRange(EPIC);
-                    if (Objects.nonNull(dailyRange)) {
-                        Mt5OpenTrade dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, TRADING_TREND, dto_h1,
-                                "_nhoi" + total_trade + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1, dailyRange,
-                                total_trade);
-                        dto_notifiy.setLots(trade.getVolume());
+                    List<TakeProfit> his_list_folow_d369 = takeProfitRepository
+                            .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, TRADING_TREND, Utils.getYyyyMMdd());
 
-                        String key = EPIC + Utils.CAPITAL_TIME_H1;
-                        BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
-                        BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+                    if (his_list_folow_d369.size() < 3) {
+                        DailyRange dailyRange = get_DailyRange(EPIC);
+                        if (Objects.nonNull(dailyRange)) {
+                            Mt5OpenTrade dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, TRADING_TREND, dto_h1,
+                                    "_nhoi" + total_trade + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1, dailyRange,
+                                    total_trade);
+                            dto_notifiy.setLots(trade.getVolume());
+
+                            String key = EPIC + Utils.CAPITAL_TIME_H1;
+                            BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
+                            BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+                        }
                     }
                 }
             }

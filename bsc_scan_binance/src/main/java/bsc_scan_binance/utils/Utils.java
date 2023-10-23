@@ -5617,16 +5617,16 @@ public class Utils {
 
         if (Objects.equals(TREND_LONG, find_trend)) {
             BigDecimal next_price = ma6.add(amplitude);
-
-            if ((next_price.compareTo(dto_d1.getHig_50candle()) < 0) || (next_price.compareTo(upper) < 0)) {
+            //|| (next_price.compareTo(upper) < 0)
+            if ((next_price.compareTo(dto_d1.getHig_50candle()) < 0)) {
                 return true;
             }
         }
 
         if (Objects.equals(TREND_SHOT, find_trend)) {
             BigDecimal next_price = ma6.subtract(amplitude);
-
-            if ((next_price.compareTo(dto_d1.getLow_50candle()) > 0) || (next_price.compareTo(lower) > 0)) {
+            // || (next_price.compareTo(lower) > 0)
+            if ((next_price.compareTo(dto_d1.getLow_50candle()) > 0)) {
                 return true;
             }
         }
