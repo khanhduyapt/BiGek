@@ -3764,7 +3764,7 @@ public class Utils {
             size = 15;
         }
 
-        boolean is_uptrend = isUptrendByMa(heiken_list, 1, 0, 1);
+        boolean is_uptrend = isUptrendByMa(heiken_list, 1);
 
         BigDecimal total_high = BigDecimal.ZERO;
         BigDecimal max_high = BigDecimal.ZERO;
@@ -3799,12 +3799,12 @@ public class Utils {
         return " ";
     }
 
-    public static String getType(String prefix, String trend) {
-        if (trend.contains(Utils.TREND_LONG)) {
+    public static String getType(String prefix, String trend, String find_trend) {
+        if (trend.contains(Utils.TREND_LONG) && Objects.equals(Utils.TREND_LONG, find_trend)) {
             return prefix + "b";
         }
 
-        if (trend.contains(Utils.TREND_SHOT)) {
+        if (trend.contains(Utils.TREND_SHOT) && Objects.equals(Utils.TREND_SHOT, find_trend)) {
             return prefix + "s";
         }
 
@@ -4322,7 +4322,7 @@ public class Utils {
         }
 
         String heiken_1 = getTrendByHekenAshiList(heiken_list);
-        boolean ma6_1_2_up = isUptrendByMa(heiken_list, 6, 1, 2);
+        boolean ma6_1_2_up = isUptrendByMa(heiken_list, 6);
         if (ma6_1_2_up && Objects.equals(heiken_1, TREND_SHOT)) {
             return "";
         }
@@ -4806,7 +4806,19 @@ public class Utils {
         return false;
     }
 
-    public static boolean isUptrendByMa(List<BtcFutures> list, int maIndex, int str, int end) {
+    public static boolean isUptrendByMa(List<BtcFutures> list, int maIndex) {
+        int str = 0;
+        int end = 1;
+        BigDecimal ma_c = calcMA(list, maIndex, str);
+        BigDecimal ma_p = calcMA(list, maIndex, end);
+        if (ma_c.compareTo(ma_p) > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean isUptrendByMa(List<BtcFutures> list, int maIndex, int str, int end) {
         BigDecimal ma_c = calcMA(list, maIndex, str);
         BigDecimal ma_p = calcMA(list, maIndex, end);
         if (ma_c.compareTo(ma_p) > 0) {
@@ -5140,7 +5152,7 @@ public class Utils {
         boolean ma3_1_uptrend = true;
         boolean ma3_2_uptrend = true;
 
-        ma3_1_uptrend = isUptrendByMa(heiken_list, 3, 0, 1);
+        ma3_1_uptrend = isUptrendByMa(heiken_list, 3);
         ma3_2_uptrend = isUptrendByMa(heiken_list, 3, 1, 2);
 
         if (ma3_1_uptrend != ma3_2_uptrend) {
@@ -5195,11 +5207,11 @@ public class Utils {
     }
 
     public static String getTrendByLineChart(List<BtcFutures> list) {
-        return isUptrendByMa(list, 1, 0, 1) ? TREND_LONG : TREND_SHOT;
+        return isUptrendByMa(list, 1) ? TREND_LONG : TREND_SHOT;
     }
 
     public static String getTrend_C1_ByLineChart(List<BtcFutures> list) {
-        return isUptrendByMa(list, 1, 1, 2) ? TREND_LONG : TREND_SHOT;
+        return isUptrendByMa(list, 1) ? TREND_LONG : TREND_SHOT;
     }
 
     public static String getTrendByMaXx(List<BtcFutures> heiken_list, int maIndex) {
@@ -5207,7 +5219,7 @@ public class Utils {
     }
 
     public static String getTrendByHekenAshiList(List<BtcFutures> heiken_list) {
-        return getTrendByHekenAshiList(heiken_list, 1);
+        return getTrendByHekenAshiList(heiken_list, 0);
     }
 
     public static String getTrendByHekenAshiList(List<BtcFutures> heiken_list, int candle_no) {
