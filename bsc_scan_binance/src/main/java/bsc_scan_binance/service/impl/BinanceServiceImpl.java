@@ -2722,9 +2722,8 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
-                // TODO: CloseTickets HOLDING _USDJPY_CHFJPY_
-                if (!"_USDJPY_CHFJPY_".contains("_" + EPIC.toUpperCase() + "_")
-                        || (profit.compareTo(BigDecimal.ZERO) > 0)) {
+                // TODO: CloseTickets HOLDING _USDJPY_CHFJPY_ || (profit.compareTo(BigDecimal.ZERO) > 0)
+                if (!"_USDJPY_CHFJPY_".contains("_" + EPIC.toUpperCase() + "_")) {
 
                     StringBuilder sb = new StringBuilder();
                     sb.append(TICKET);
@@ -4223,18 +4222,23 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean allow_trend_following = false;
-            if (dto_h1.getTrend_by_ma_89().contains(trend_h1_ma369)
-                    && ((Objects.equals(trend_h1_ma369, trend_h4_ma369)
-                            && Objects.equals(trend_h1_ma369, dto_d1.getTrend_by_heiken1()))
-                            || Objects.equals(trend_h1_ma369, trend_d1_ma369)
-                            || Objects.equals(trend_h1_ma369, trend_d1_ma6))) {
+
+            boolean h4_d1_allow = Objects.equals(trend_h1_ma369, trend_h4_ma369)
+                    && Objects.equals(trend_h1_ma369, trend_d1_ma6);
+            boolean d1_h4_allow = Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_ma_6())
+                    && Objects.equals(trend_h1_ma369, trend_d1_ma6);
+            boolean d1_h1_allow = Objects.equals(dto_h1.getTrend_by_ma_6(), trend_d1_ma6)
+                    && Objects.equals(dto_h4.getTrend_by_ma_6(), trend_d1_ma6);
+
+            if (dto_h1.getTrend_by_ma_89().contains(trend_d1_ma6)
+                    && (h4_d1_allow || d1_h4_allow || d1_h1_allow)) {
                 allow_trend_following = true;
-                trend_folow = trend_h1_ma369;
+                trend_folow = trend_d1_ma6;
             }
-            if (!trend_d1_ma369.contains(Utils.TREND_UNSURE) && !Objects.equals(trend_h1_ma369, trend_d1_ma369)) {
+            if (!trend_d1_ma369.contains(Utils.TREND_UNSURE) && !Objects.equals(trend_d1_ma6, trend_d1_ma369)) {
                 allow_trend_following = false;
             }
-            if (Utils.EPICS_INDEXS_CFD.contains(EPIC) && !Objects.equals(trend_h1_ma369, trend_d1_ma6)) {
+            if (Utils.EPICS_INDEXS_CFD.contains(EPIC) && !Objects.equals(trend_d1_ma6, trend_d1_ma6)) {
                 allow_trend_following = false;
             }
 
@@ -4242,23 +4246,23 @@ public class BinanceServiceImpl implements BinanceService {
             Mt5OpenTrade dto_notifiy = null;
             if (Objects.isNull(dto_notifiy) && allow_trend_following && is_able_tp_h4) {
 
-                boolean allow_trade_now = (Objects.equals(trend_h1_ma369, trend_15_ma369)
-                        || Objects.equals(trend_h1_ma369, dto_15.getTrend_by_ma_6())
-                        || Objects.equals(trend_h1_ma369, trend_05_ma369));
+                boolean allow_trade_now = (Objects.equals(trend_d1_ma6, trend_15_ma369)
+                        || Objects.equals(trend_d1_ma6, dto_15.getTrend_by_ma_6())
+                        || Objects.equals(trend_d1_ma6, trend_05_ma369));
 
-                boolean is_best_prirce = Utils.is_best_prirce(dto_05, trend_h1_ma369, curr_price)
-                        || Utils.is_best_prirce(dto_15, trend_h1_ma369, curr_price);
+                boolean is_best_prirce = Utils.is_best_prirce(dto_05, trend_d1_ma6, curr_price)
+                        || Utils.is_best_prirce(dto_15, trend_d1_ma6, curr_price);
 
                 if (allow_trade_now && is_best_prirce) {
-                    close_reverse_trade(EPIC, trend_h1_ma369);
+                    close_reverse_trade(EPIC, trend_d1_ma6);
 
                     List<TakeProfit> his_list_folow_d369 = takeProfitRepository
-                            .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_h1_ma369, Utils.getYyyyMMdd());
+                            .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_d1_ma6, Utils.getYyyyMMdd());
 
                     if (CollectionUtils.isEmpty(his_list_folow_d369) || (his_list_folow_d369.size() < 3)) {
                         int trade_count = 1;
 
-                        dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1_ma369, dto_h1,
+                        dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1_ma6, dto_h1,
                                 Utils.TEXT_TREND_FLOWING + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1, dailyRange,
                                 trade_count);
 
