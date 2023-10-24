@@ -2728,7 +2728,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
                 close_now = false;
                 // TODO: CloseTickets HOLDING _USDJPY_CHFJPY_ || (profit.compareTo(BigDecimal.ZERO) > 0)
-                if (!"_USDJPY_CHFJPY_EURJPY_".contains("_" + EPIC.toUpperCase() + "_")
+                if (!"__CHFJPY__".contains("_" + EPIC.toUpperCase() + "_")
                         || (profit.compareTo(BigDecimal.ZERO) > 0) || close_now) {
 
                     StringBuilder sb = new StringBuilder();
@@ -4421,7 +4421,7 @@ public class BinanceServiceImpl implements BinanceService {
             if ((OPEN_POSITIONS.add(BigDecimal.valueOf(1000)).compareTo(BigDecimal.ZERO) < 0)
                     || (TOTAL_LOSS_TODAY.add(BigDecimal.valueOf(1000)).compareTo(BigDecimal.ZERO) < 0)) {
                 if (reverse_h1_369 && reverse_15_369 && reverse_05_369) {
-                    if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_2H)) {
+                    if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
                         is_hit_sl = true;
                         reason_id += "(H1_STOPLOSS:ACCOUNT_PROTECTION)";
                         String reason = "stoploss:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5)
@@ -4432,7 +4432,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
             if (reverse_h4_369 && reverse_h1_369 && reverse_15_369 && reverse_05_369) {
-                if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_2H)) {
+                if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
                     is_hit_sl = true;
                     reason_id += "(H4_STOPLOSS:ACCOUNT_PROTECTION)";
                     BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason_id);
@@ -4442,8 +4442,9 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_d1.getTrend_by_heiken1(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_by_ma_6(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_by_ma_6(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_15.getTrend_by_ma_6(), REVERSE_TRADE_TREND)) {
-                if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_2H)) {
+                    && Objects.equals(dto_15.getTrend_by_ma_6(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_03.getTrend_by_ma_6(), REVERSE_TRADE_TREND)) {
+                if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
                     is_hit_sl = true;
                     reason_id += "(D1_STOPLOSS:ACCOUNT_PROTECTION)";
                     BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason_id);
@@ -4507,7 +4508,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean pass_time_hoding = allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)
-                    || (has_profit_10 && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_2H));
+                    || (has_profit_10 && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H));
 
             if (is_hit_sl && pass_time_hoding) {
                 String reason = "Profit:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5) + "$   "
