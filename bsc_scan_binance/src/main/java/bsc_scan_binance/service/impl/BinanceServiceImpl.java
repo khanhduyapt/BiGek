@@ -4458,7 +4458,7 @@ public class BinanceServiceImpl implements BinanceService {
                 if (PROFIT.add(BigDecimal.valueOf(280)).compareTo(BigDecimal.ZERO) < 0) {
                     total_trade = 3;
                 }
-
+                total_trade = 0;
                 if (total_trade > 0) {
                     List<TakeProfit> his_list_folow_d369 = takeProfitRepository
                             .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, TRADING_TREND, Utils.getYyyyMMdd());
