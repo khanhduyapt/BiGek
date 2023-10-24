@@ -4203,6 +4203,9 @@ public class BinanceServiceImpl implements BinanceService {
             if (find_trend.contains(Utils.TREND_UNSURE)) {
                 find_trend = trend_h4_ma369;
                 pin_bar = " PinBar ";
+            } else if (Objects.equals(trend_h4_ma369, dto_d1.getTrend_by_bread_area())) {
+                find_trend = trend_h4_ma369;
+                pin_bar = " BreadD ";
             }
 
             String str_369 = pin_bar + Utils.getType(" D1:", find_trend, find_trend).toUpperCase() + " ";
@@ -4422,17 +4425,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
             }
-            if (Objects.equals(dto_d1.getTrend_by_ma_6(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_d1.getTrend_by_heiken1(), REVERSE_TRADE_TREND)
-                    && reverse_h4_369 && reverse_h1_369 && reverse_15_369 && reverse_05_369) {
-                if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_2H)) {
-                    is_hit_sl = true;
-                    reason_id += "(H4_STOPLOSS:ACCOUNT_PROTECTION)";
-                    BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason_id);
-                }
-            }
-            if (dto_d1.getTrend_by_heiken1().contains(Utils.TREND_UNSURE)
-                    && reverse_h4_369 && reverse_h1_369 && reverse_15_369 && reverse_05_369) {
+            if (reverse_h4_369 && reverse_h1_369 && reverse_15_369 && reverse_05_369) {
                 if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_2H)) {
                     is_hit_sl = true;
                     reason_id += "(H4_STOPLOSS:ACCOUNT_PROTECTION)";

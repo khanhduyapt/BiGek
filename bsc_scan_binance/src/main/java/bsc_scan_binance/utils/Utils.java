@@ -5602,7 +5602,7 @@ public class Utils {
             return false;
         }
 
-        BigDecimal amplitude = dailyRange.getAmp_avg_h4();
+        BigDecimal amplitude = dailyRange.getAmp_avg_h4().multiply(BigDecimal.valueOf(2));
 
         if (Objects.equals(TREND_LONG, find_trend)) {
             BigDecimal next_price = dto_h4.getCurrent_price().add(amplitude);
