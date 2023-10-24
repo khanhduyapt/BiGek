@@ -4072,10 +4072,7 @@ public class BinanceServiceImpl implements BinanceService {
         String id = EPIC + "_" + CAPITAL_TIME_XX;
         String insertTime = LocalDateTime.now().toString();
 
-        int size = heiken_list.size();
-        if (size > 50)
-            size = 50;
-        List<BigDecimal> lohi = Utils.getLowHighCandle(heiken_list.subList(0, size));
+        List<BigDecimal> lohi = Utils.getLowHighCandle(heiken_list);
         BigDecimal low_50candle = lohi.get(0);
         BigDecimal hig_50candle = lohi.get(1);
 
@@ -4084,7 +4081,7 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal tp_long = hig_50candle.subtract(amplitude_1_part_15);
         BigDecimal tp_shot = low_50candle.add(amplitude_1_part_15);
 
-        size = heiken_list.size();
+        int size = heiken_list.size();
         if (size > 33) {
             size = 33;
         }
@@ -4216,11 +4213,6 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean debug = true;
             }
 
-            boolean is_able_tp_h4 = Utils.is_able_to_trade_by_h4(dto_d1, dailyRange, trend_d1_ma6);
-            if (!is_able_tp_h4) {
-                append_eoz += "  EOZ:" + Utils.getType(trend_d1_ma6).toUpperCase();
-            }
-
             boolean allow_trend_following = false;
             String trend_heiken_d1 = dto_d1.getTrend_by_heiken1();
 
@@ -4241,6 +4233,11 @@ public class BinanceServiceImpl implements BinanceService {
             if (Utils.EPICS_INDEXS_CFD.contains(EPIC)
                     && !Objects.equals(dto_w1.getTrend_by_heiken1(), trend_heiken_d1)) {
                 allow_trend_following = false;
+            }
+
+            boolean is_able_tp_h4 = Utils.is_able_to_trade_by_h4(dto_h4, dailyRange, trend_heiken_d1);
+            if (!is_able_tp_h4) {
+                append_eoz += "  EOZ:" + Utils.getType(trend_heiken_d1).toUpperCase();
             }
 
             // TREND_FLOWING

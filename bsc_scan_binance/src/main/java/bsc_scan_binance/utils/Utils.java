@@ -5290,6 +5290,7 @@ public class Utils {
         BigDecimal stop_loss = BigDecimal.ZERO;
         BigDecimal take_profit = BigDecimal.ZERO;
         BigDecimal amp_w = dailyRange.getAvg_amp_week();
+        BigDecimal amp_w_05 = amp_w.multiply(BigDecimal.valueOf(0.5));
         BigDecimal amp_h4 = dailyRange.getAmp_avg_h4();
 
         List<BigDecimal> amp_fr_to_tp = Utils.get_amp_fr_to(dailyRange, curr_price);
@@ -5598,35 +5599,23 @@ public class Utils {
         return false;
     }
 
-    public static boolean is_able_to_trade_by_h4(Orders dto_d1, DailyRange dailyRange, String find_trend) {
+    public static boolean is_able_to_trade_by_h4(Orders dto_h4, DailyRange dailyRange, String find_trend) {
         if (Utils.isBlank(find_trend)) {
             return false;
         }
 
-        BigDecimal amplitude = dailyRange.getAmp_avg_h4().multiply(BigDecimal.valueOf(2));
-        BigDecimal ma6 = dto_d1.getMa6();
-
-        BigDecimal bb_high = dailyRange.getUpper_h4().subtract(dailyRange.getLower_h4());
-        if (bb_high.compareTo(amplitude) < 0) {
-            return false;
-        }
-
-        List<BigDecimal> fr_to = get_amp_fr_to(dailyRange, ma6);
-        BigDecimal lower = fr_to.get(0);
-        BigDecimal upper = fr_to.get(1);
+        BigDecimal amplitude = dailyRange.getAmp_avg_h4();
 
         if (Objects.equals(TREND_LONG, find_trend)) {
-            BigDecimal next_price = ma6.add(amplitude);
-            //|| (next_price.compareTo(upper) < 0)
-            if ((next_price.compareTo(dto_d1.getHig_50candle()) < 0)) {
+            BigDecimal next_price = dto_h4.getCurrent_price().add(amplitude);
+            if ((next_price.compareTo(dto_h4.getHig_50candle()) < 0)) {
                 return true;
             }
         }
 
         if (Objects.equals(TREND_SHOT, find_trend)) {
-            BigDecimal next_price = ma6.subtract(amplitude);
-            // || (next_price.compareTo(lower) > 0)
-            if ((next_price.compareTo(dto_d1.getLow_50candle()) > 0)) {
+            BigDecimal next_price = dto_h4.getCurrent_price().subtract(amplitude);
+            if ((next_price.compareTo(dto_h4.getLow_50candle()) > 0)) {
                 return true;
             }
         }
