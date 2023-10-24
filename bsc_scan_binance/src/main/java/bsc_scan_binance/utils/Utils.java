@@ -6253,7 +6253,7 @@ public class Utils {
         return Utils.TREND_UNSURE + dto_xx.getId();
     }
 
-    public static boolean is_best_prirce(Orders dto_05, String find_trend, BigDecimal curr_price) {
+    public static boolean is_best_price(Orders dto_05, String find_trend, BigDecimal curr_price) {
         boolean is_best_prirce = false;
         if (Objects.equals(Utils.TREND_LONG, find_trend)) {
             if (curr_price.compareTo(dto_05.getBody_low_30_candle()) < 0) {

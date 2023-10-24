@@ -2722,9 +2722,14 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
+                boolean close_now = false;
+                if (OPEN_POSITIONS.add(BigDecimal.valueOf(2000)).compareTo(BigDecimal.ZERO) < 0) {
+                    close_now = true;
+                }
+                close_now = false;
                 // TODO: CloseTickets HOLDING _USDJPY_CHFJPY_ || (profit.compareTo(BigDecimal.ZERO) > 0)
                 if (!"_USDJPY_CHFJPY_EURJPY_".contains("_" + EPIC.toUpperCase() + "_")
-                        || (profit.compareTo(BigDecimal.ZERO) > 0)) {
+                        || (profit.compareTo(BigDecimal.ZERO) > 0) || close_now) {
 
                     StringBuilder sb = new StringBuilder();
                     sb.append(TICKET);
@@ -4082,8 +4087,8 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal tp_shot = low_50candle.add(amplitude_1_part_15);
 
         int size = heiken_list.size();
-        if (size > 33) {
-            size = 33;
+        if (size > 23) {
+            size = 23;
         }
         List<BigDecimal> body = Utils.getBodyCandle(heiken_list.subList(3, size));
         BigDecimal body_low_30_candle = body.get(0);
@@ -4259,18 +4264,17 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean allow_trade_now = Objects.equals(find_trend, trend_15_ma369)
                         && Objects.equals(find_trend, trend_05_ma369);
 
-                boolean is_best_price = Utils.is_best_prirce(dto_05, find_trend, curr_price)
-                        || Utils.is_best_prirce(dto_15, find_trend, curr_price);
+                boolean is_best_price_05 = Utils.is_best_price(dto_05, find_trend, curr_price);
+                boolean is_best_price_15 = Utils.is_best_price(dto_15, find_trend, curr_price);
 
-                if (allow_trade_now || is_best_price) {
+                if (allow_trade_now && is_best_price_05) {
                     close_reverse_trade(EPIC, find_trend);
 
                     List<TakeProfit> his_list_folow_d369 = takeProfitRepository
                             .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, find_trend,
                                     Utils.getYyyyMMdd());
 
-                    if (CollectionUtils.isEmpty(his_list_folow_d369)
-                            || (is_best_price && (his_list_folow_d369.size() < 3))) {
+                    if (CollectionUtils.isEmpty(his_list_folow_d369) || (is_best_price_15)) {
 
                         int trade_count = 1;
 
