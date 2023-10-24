@@ -4110,6 +4110,10 @@ public class BinanceServiceImpl implements BinanceService {
         BigDecimal lowest_price_of_curr_candle = heiken_list.get(0).getLow_price();
         BigDecimal highest_price_of_curr_candle = heiken_list.get(0).getHight_price();
 
+        if (Utils.isPinBar(heiken_list.get(0))) {
+            trend_by_heiken1 = Utils.TREND_UNSURE + "_" + CAPITAL_TIME_XX;
+        }
+
         Orders entity = new Orders(id, insertTime, trend_by_heiken1, curr_price, tp_long, tp_shot, close_candle_1,
                 close_candle_2, switch_trend, trend_by_ma_9, heiken_zone, trend_by_ma_6, trend_by_ma_20, trend_by_ma_89,
                 trend_by_seq_ma, trend_by_bread_area, body_hig_30_candle, body_low_30_candle, amplitude_1_part_15,
@@ -4212,55 +4216,59 @@ public class BinanceServiceImpl implements BinanceService {
             if ("_USDCAD_".contains(EPIC)) {
                 boolean debug = true;
             }
-
+            String pin_bar = "        ";
             boolean allow_trend_following = false;
-            String trend_heiken_d1 = dto_d1.getTrend_by_heiken1();
+            String find_trend = dto_d1.getTrend_by_heiken1();
+            if (find_trend.contains(Utils.TREND_UNSURE)) {
+                find_trend = trend_h4_ma369;
+                pin_bar = " PinBar ";
+            }
 
             boolean h4_d1_allow = Objects.equals(trend_h1_ma369, trend_h4_ma369)
-                    && Objects.equals(trend_h1_ma369, trend_heiken_d1);
+                    && Objects.equals(trend_h1_ma369, find_trend);
 
             boolean d1_h4_allow = Objects.equals(trend_h1_ma369, dto_h4.getTrend_by_ma_6())
-                    && Objects.equals(trend_h1_ma369, trend_heiken_d1);
+                    && Objects.equals(trend_h1_ma369, find_trend);
 
-            if (dto_h1.getTrend_by_ma_89().contains(trend_heiken_d1) && (h4_d1_allow || d1_h4_allow)) {
+            if (dto_h1.getTrend_by_ma_89().contains(find_trend) && (h4_d1_allow || d1_h4_allow)) {
                 allow_trend_following = true;
-                trend_folow = trend_heiken_d1;
+                trend_folow = find_trend;
             }
             if (!trend_d1_ma369.contains(Utils.TREND_UNSURE)
-                    && !Objects.equals(trend_heiken_d1, trend_d1_ma369)) {
+                    && !Objects.equals(find_trend, trend_d1_ma369)) {
                 allow_trend_following = false;
             }
             if (Utils.EPICS_INDEXS_CFD.contains(EPIC)
-                    && !Objects.equals(dto_w1.getTrend_by_heiken1(), trend_heiken_d1)) {
+                    && !Objects.equals(dto_w1.getTrend_by_heiken1(), find_trend)) {
                 allow_trend_following = false;
             }
 
-            boolean is_able_tp_h4 = Utils.is_able_to_trade_by_h4(dto_h4, dailyRange, trend_heiken_d1);
+            boolean is_able_tp_h4 = Utils.is_able_to_trade_by_h4(dto_h4, dailyRange, find_trend);
             if (!is_able_tp_h4) {
-                append_eoz += "  EOZ:" + Utils.getType(trend_heiken_d1).toUpperCase();
+                append_eoz += "  EOZ:" + Utils.getType(find_trend).toUpperCase();
             }
 
             // TREND_FLOWING
             Mt5OpenTrade dto_notifiy = null;
             if (Objects.isNull(dto_notifiy) && allow_trend_following && is_able_tp_h4) {
 
-                boolean allow_trade_now = Objects.equals(trend_heiken_d1, trend_15_ma369)
-                        && Objects.equals(trend_heiken_d1, trend_05_ma369);
+                boolean allow_trade_now = Objects.equals(find_trend, trend_15_ma369)
+                        && Objects.equals(find_trend, trend_05_ma369);
 
-                boolean is_best_prirce = Utils.is_best_prirce(dto_05, trend_heiken_d1, curr_price)
-                        || Utils.is_best_prirce(dto_15, trend_heiken_d1, curr_price);
+                boolean is_best_prirce = Utils.is_best_prirce(dto_05, find_trend, curr_price)
+                        || Utils.is_best_prirce(dto_15, find_trend, curr_price);
 
                 if (allow_trade_now || is_best_prirce) {
-                    close_reverse_trade(EPIC, trend_heiken_d1);
+                    close_reverse_trade(EPIC, find_trend);
 
                     List<TakeProfit> his_list_folow_d369 = takeProfitRepository
-                            .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_heiken_d1,
+                            .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, find_trend,
                                     Utils.getYyyyMMdd());
 
                     if (CollectionUtils.isEmpty(his_list_folow_d369) || (his_list_folow_d369.size() < 3)) {
                         int trade_count = 1;
 
-                        dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_heiken_d1, dto_h1,
+                        dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, find_trend, dto_h1,
                                 Utils.TEXT_TREND_FLOWING + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_H1, dailyRange,
                                 trade_count);
 
@@ -4308,7 +4316,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             analysis_profit(str_profit + prefix, EPIC, append_eoz, dailyRange, trend_folow, curr_price,
-                    dto_h4.getTrend_by_ma_89(), dto_h1.getHeiken_zone() + "    " + dto_h4.getHeiken_zone());
+                    dto_h4.getTrend_by_ma_89(), dto_h1.getHeiken_zone() + "    " + dto_h4.getHeiken_zone() + pin_bar);
 
             BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
         }
@@ -4415,6 +4423,14 @@ public class BinanceServiceImpl implements BinanceService {
             }
             if (Objects.equals(dto_d1.getTrend_by_ma_6(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_d1.getTrend_by_heiken1(), REVERSE_TRADE_TREND)
+                    && reverse_h4_369 && reverse_h1_369 && reverse_15_369 && reverse_05_369) {
+                if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_2H)) {
+                    is_hit_sl = true;
+                    reason_id += "(H4_STOPLOSS:ACCOUNT_PROTECTION)";
+                    BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason_id);
+                }
+            }
+            if (dto_d1.getTrend_by_heiken1().contains(Utils.TREND_UNSURE)
                     && reverse_h4_369 && reverse_h1_369 && reverse_15_369 && reverse_05_369) {
                 if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_2H)) {
                     is_hit_sl = true;

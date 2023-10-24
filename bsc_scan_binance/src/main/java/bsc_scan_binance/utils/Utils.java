@@ -2991,20 +2991,18 @@ public class Utils {
     }
 
     public static Boolean isPinBar(BtcFutures dto) {
-        if (dto.isUptrend()) {
-            BigDecimal range_candle = getPercent(dto.getPrice_close_candle(), dto.getPrice_open_candle());
-            BigDecimal range_beard = getPercent(dto.getPrice_open_candle(), dto.getLow_price());
 
-            if (range_beard.compareTo(range_candle.multiply(BigDecimal.valueOf(3))) > 0) {
-                return true;
-            }
-        } else {
-            BigDecimal range_candle = getPercent(dto.getPrice_open_candle(), dto.getPrice_close_candle());
-            BigDecimal range_beard = getPercent(dto.getPrice_close_candle(), dto.getLow_price());
+        BigDecimal body_hig = dto.getPrice_close_candle().subtract(dto.getPrice_open_candle()).abs()
+                .multiply(BigDecimal.valueOf(1.5));
 
-            if (range_beard.compareTo(range_candle.multiply(BigDecimal.valueOf(3))) > 0) {
-                return true;
-            }
+        BigDecimal up_bread = dto.getHight_price().subtract(dto.getPrice_close_candle().max(dto.getPrice_open_candle()))
+                .abs();
+
+        BigDecimal dn_bread = dto.getLow_price().subtract(dto.getPrice_close_candle().min(dto.getPrice_open_candle()))
+                .abs();
+
+        if ((up_bread.compareTo(body_hig) > 0) && (dn_bread.compareTo(body_hig) > 0)) {
+            return true;
         }
 
         return false;
