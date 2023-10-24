@@ -4197,17 +4197,25 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_15_ma369 = Utils.find_trend_by_ma3_6_9(dto_15);
             String trend_05_ma369 = Utils.find_trend_by_ma3_6_9(dto_05);
 
-            String str_369 = "   " + Utils.getType(" D6:", trend_d1_ma6, trend_d1_ma6).toUpperCase() + " ";
+            String pin_bar = "        ";
+            boolean allow_trend_following = false;
+            String find_trend = dto_d1.getTrend_by_heiken1();
+            if (find_trend.contains(Utils.TREND_UNSURE)) {
+                find_trend = trend_h4_ma369;
+                pin_bar = " PinBar ";
+            }
+
+            String str_369 = pin_bar + Utils.getType(" D1:", find_trend, find_trend).toUpperCase() + " ";
             str_369 += "(Seq)";
-            str_369 += Utils.getType(" H4:", trend_h4_ma369, trend_d1_ma6);
-            str_369 += Utils.getType(" H1:", trend_h1_ma369, trend_d1_ma6);
-            str_369 += Utils.getType(" 15:", trend_15_ma369, trend_d1_ma6);
-            str_369 += Utils.getType(" 05:", trend_05_ma369, trend_d1_ma6);
+            str_369 += Utils.getType(" H4:", trend_h4_ma369, find_trend);
+            str_369 += Utils.getType(" H1:", trend_h1_ma369, find_trend);
+            str_369 += Utils.getType(" 15:", trend_15_ma369, find_trend);
+            str_369 += Utils.getType(" 05:", trend_05_ma369, find_trend);
 
             String prefix = "  " + No + amp + str_369;
 
             String trend_folow = "";
-            String append_eoz = "    FW:" + Utils.appendSpace(trend_d1_ma6, 4);
+            String append_eoz = "";
 
             // TODO: 3 controlMt5
             // vào lệnh từ 06h~10h: lãi thì chốt hết từ 11h trở đi.
@@ -4215,13 +4223,6 @@ public class BinanceServiceImpl implements BinanceService {
             // vào lệnh từ 18h~20h: lãi thì chốt từ 22h trở đi.
             if ("_USDCAD_".contains(EPIC)) {
                 boolean debug = true;
-            }
-            String pin_bar = "        ";
-            boolean allow_trend_following = false;
-            String find_trend = dto_d1.getTrend_by_heiken1();
-            if (find_trend.contains(Utils.TREND_UNSURE)) {
-                find_trend = trend_h4_ma369;
-                pin_bar = " PinBar ";
             }
 
             boolean h4_d1_allow = Objects.equals(trend_h1_ma369, trend_h4_ma369)
