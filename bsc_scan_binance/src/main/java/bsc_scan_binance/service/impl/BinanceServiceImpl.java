@@ -4213,6 +4213,10 @@ public class BinanceServiceImpl implements BinanceService {
                 pin_bar = " BreadD ";
             }
 
+            if (!Objects.equals(find_trend, dto_d1.getTrend_by_ma_6())) {
+                find_trend = Utils.TREND_UNSURE;
+            }
+
             String str_369 = pin_bar + Utils.getType(" D1:", find_trend, find_trend).toUpperCase() + " ";
             str_369 += "(Seq)";
             str_369 += Utils.getType(" H4:", trend_h4_ma369, find_trend);
@@ -4417,49 +4421,49 @@ public class BinanceServiceImpl implements BinanceService {
 
             String reason_id = "";
             // -------------------------------------------------------------------------------------
-            // Bảo vệ tài khoản tránh thua sạch tiền tích góp trong 53 ngày: -$6,133.97
-            if ((OPEN_POSITIONS.add(BigDecimal.valueOf(1000)).compareTo(BigDecimal.ZERO) < 0)
-                    || (TOTAL_LOSS_TODAY.add(BigDecimal.valueOf(1000)).compareTo(BigDecimal.ZERO) < 0)) {
-                if (reverse_h1_369 && reverse_15_369 && reverse_05_369) {
-                    if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
-                        is_hit_sl = true;
-                        reason_id += "(H1_STOPLOSS:ACCOUNT_PROTECTION)";
-                        String reason = "stoploss:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5)
-                                + "$(OPEN_POSITIONS)" + OPEN_POSITIONS + "$";
-
-                        BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
-                    }
-                }
-            }
-            if (reverse_h4_369 && reverse_h1_369 && reverse_15_369 && reverse_05_369) {
-                if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
-                    is_hit_sl = true;
-                    reason_id += "(H4_STOPLOSS:ACCOUNT_PROTECTION)";
-                    BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason_id);
-                }
-            }
-            if (Objects.equals(dto_d1.getTrend_by_ma_6(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_d1.getTrend_by_heiken1(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h4.getTrend_by_ma_6(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_h1.getTrend_by_ma_6(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_15.getTrend_by_ma_6(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_03.getTrend_by_ma_6(), REVERSE_TRADE_TREND)) {
-                if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
-                    is_hit_sl = true;
-                    reason_id += "(D1_STOPLOSS:ACCOUNT_PROTECTION)";
-                    BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason_id);
-                }
-            }
+            //            // Bảo vệ tài khoản tránh thua sạch tiền tích góp trong 53 ngày: -$6,133.97
+            //            if ((OPEN_POSITIONS.add(BigDecimal.valueOf(1000)).compareTo(BigDecimal.ZERO) < 0)
+            //                    || (TOTAL_LOSS_TODAY.add(BigDecimal.valueOf(1000)).compareTo(BigDecimal.ZERO) < 0)) {
+            //                if (reverse_h1_369 && reverse_15_369 && reverse_05_369) {
+            //                    if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
+            //                        is_hit_sl = true;
+            //                        reason_id += "(H1_STOPLOSS:ACCOUNT_PROTECTION)";
+            //                        String reason = "stoploss:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5)
+            //                                + "$(OPEN_POSITIONS)" + OPEN_POSITIONS + "$";
+            //
+            //                        BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
+            //                    }
+            //                }
+            //            }
+            //            if (reverse_h4_369 && reverse_h1_369 && reverse_15_369 && reverse_05_369) {
+            //                if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
+            //                    is_hit_sl = true;
+            //                    reason_id += "(H4_STOPLOSS:ACCOUNT_PROTECTION)";
+            //                    BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason_id);
+            //                }
+            //            }
+            //            if (Objects.equals(dto_d1.getTrend_by_ma_6(), REVERSE_TRADE_TREND)
+            //                    && Objects.equals(dto_d1.getTrend_by_heiken1(), REVERSE_TRADE_TREND)
+            //                    && Objects.equals(dto_h4.getTrend_by_ma_6(), REVERSE_TRADE_TREND)
+            //                    && Objects.equals(dto_h1.getTrend_by_ma_6(), REVERSE_TRADE_TREND)
+            //                    && Objects.equals(dto_15.getTrend_by_ma_6(), REVERSE_TRADE_TREND)
+            //                    && Objects.equals(dto_03.getTrend_by_ma_6(), REVERSE_TRADE_TREND)) {
+            //                if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
+            //                    is_hit_sl = true;
+            //                    reason_id += "(D1_STOPLOSS:ACCOUNT_PROTECTION)";
+            //                    BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason_id);
+            //                }
+            //            }
             // -------------------------------------------------------------------------------------
-            if (has_profit_10) {
-                if ((has_profit_30 && reverse_05_369)
-                        || (reverse_15_369 && reverse_05_369)
-                        || (Utils.is_close_trade_time() && reverse_05_369)
-                        || Utils.is_close_jpy_trade_at_3am(EPIC)) {
-                    is_hit_sl = true;
-                    reason_id += "(has_profit)";
-                }
-            }
+//            if (has_profit_10) {
+//                if ((has_profit_30 && reverse_05_369)
+//                        || (reverse_15_369 && reverse_05_369)
+//                        || (Utils.is_close_trade_time() && reverse_05_369)
+//                        || Utils.is_close_jpy_trade_at_3am(EPIC)) {
+//                    is_hit_sl = true;
+//                    reason_id += "(has_profit)";
+//                }
+//            }
             // -------------------------------------------------------------------------------------
             if ((PROFIT.add(BigDecimal.valueOf(100)).compareTo(BigDecimal.ZERO) < 0)) {
                 int total_trade = 0;
