@@ -5371,7 +5371,7 @@ public class Utils {
         BigDecimal entry_3 = BigDecimal.ZERO;
 
         // TODO: Utils.calc_Lot_En_SL_TP
-        BigDecimal avg_amp_h4 = dailyRange.getAmp_avg_h4();
+        BigDecimal avg_amp_w = dailyRange.getAvg_amp_week();
 
         List<BigDecimal> sl_tp = Utils.get_SL_TP_by_amp(dailyRange, curr_price, find_trend);
         BigDecimal stop_loss = sl_tp.get(0);
@@ -5381,31 +5381,18 @@ public class Utils {
         BigDecimal volume = standard_vol;
 
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            BigDecimal sl_long = dto_h1.getLow_50candle().subtract(avg_amp_h4);
-            BigDecimal tp_long = dto_h1.getHig_50candle();
-
-            MoneyAtRiskResponse money_300usd = new MoneyAtRiskResponse(EPIC, RISK_0_15_PERCENT, curr_price, sl_long,
-                    tp_long);
-            volume = money_300usd.calcLot();
-
-            stop_loss = sl_long.subtract(avg_amp_h4);
-            take_profit = tp_long;
+            stop_loss = curr_price.subtract(avg_amp_w);
+            take_profit = curr_price.add(avg_amp_w);
         }
-
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            BigDecimal sl_shot = dto_h1.getHig_50candle().add(avg_amp_h4);
-            BigDecimal tp_shot = dto_h1.getLow_50candle();
-
-            MoneyAtRiskResponse money_300usd = new MoneyAtRiskResponse(EPIC, RISK_0_15_PERCENT, curr_price, sl_shot,
-                    tp_shot);
-
-            volume = money_300usd.calcLot();
-            stop_loss = sl_shot;
-            take_profit = tp_shot;
+            stop_loss = curr_price.add(avg_amp_w);
+            take_profit = curr_price.subtract(avg_amp_w);
         }
-        stop_loss = BigDecimal.ZERO;
-        take_profit = BigDecimal.ZERO;
 
+        MoneyAtRiskResponse money_300usd = new MoneyAtRiskResponse(EPIC, RISK_0_15_PERCENT, curr_price,
+                stop_loss, take_profit);
+
+        volume = money_300usd.calcLot();
         if (volume.compareTo(standard_vol.multiply(BigDecimal.valueOf(3))) > 0) {
             volume = standard_vol.multiply(BigDecimal.valueOf(3));
         }

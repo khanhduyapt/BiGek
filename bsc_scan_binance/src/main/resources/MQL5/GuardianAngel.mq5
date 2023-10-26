@@ -130,7 +130,7 @@ double get_total_loss()
 //+------------------------------------------------------------------+
 bool isDailyLimit()
   {
-   double DAILY_LOSS_LIMIT = 2000;
+   double DAILY_LOSS_LIMIT = 2500;
    double total_loss = get_total_loss();
    Comment("----------------------------------------------------------------------------------------------",
            "Today Loss:" + format_double_to_string(total_loss, 5) + "-----------------------------------------------");
@@ -147,7 +147,7 @@ bool isDailyLimit()
          ulong positionTicket = PositionGetTicket(i);
          double profit = PositionGetDouble(POSITION_PROFIT);
          string _symbol = PositionGetString(POSITION_SYMBOL);
-         if(profit > 10)
+         if(profit > 50)
            {
             Alert("Close Position: " + (string)positionTicket + " : " + _symbol + " Profit: " + (string) profit);
             m_trade.PositionClose(positionTicket);
@@ -455,7 +455,7 @@ void OnTimer()
       // Alert("n_trailing_sl_file_handle Error " + (string) GetLastError());
      }
 //------------------------------------------------------------
-   double Loss_In_Money = -200;     // loss in money $
+   double Loss_In_Money = -300;     // loss in money $
    double Profit_In_Money = 1000;    // profit in money $
 
    for(int i=PositionsTotal()-1; i>=0; i--) // returns the number of current positions
