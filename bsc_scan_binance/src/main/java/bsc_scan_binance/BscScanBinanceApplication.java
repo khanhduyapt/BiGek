@@ -259,6 +259,10 @@ public class BscScanBinanceApplication {
         if (result > 0)
             Utils.logWritelnDraft("...");
 
+        result = binance_service.controlMt5(Utils.EPICS_MAIN_FX);
+        if (result > 0)
+            Utils.logWritelnDraft("...");
+
         result = binance_service.controlMt5(Utils.EPICS_FOREXS_JPY);
         if (result > 0)
             Utils.logWritelnDraft("...");

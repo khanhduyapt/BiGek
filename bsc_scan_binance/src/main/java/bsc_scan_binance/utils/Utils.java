@@ -302,9 +302,8 @@ public class Utils {
     public static final List<String> EPICS_SCAP_15M_FX = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD",
             "USDCAD", "NZDUSD", "XAUUSD", "USOIL", "US30");
 
-    public static final List<String> EPICS_MAIN_FX = Arrays.asList("USDCAD", "EURJPY", "EURUSD", "EURCHF", "USDCHF",
-            "GBPUSD", "AUDCAD", "NZDUSD", "GBPCHF", "AUDUSD", "GBPJPY", "USDJPY", "CHFJPY", "EURCAD", "AUDJPY",
-            "EURAUD", "AUDNZD", "XAUUSD", "XAGUSD", "USOIL");
+    public static final List<String> EPICS_MAIN_FX = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "USDCHF", "EURGBP",
+            "EURAUD", "AUDJPY", "USDCAD", "AUDUSD", "XAUUSD", "XAGUSD", "USOIL");
 
     public static final List<String> EPICS_FOREXS_ALL = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
             "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD",
@@ -3113,34 +3112,23 @@ public class Utils {
         return false;
     }
 
-    public static boolean isAboveMALine(List<BtcFutures> list, int length) {
-        if (CollectionUtils.isEmpty(list) || (list.size() < 1)) {
-            // Utils.logWritelnDraft("(isAboveMALine)list Empty");
-            return false;
-        }
-
-        if (list.size() < length) {
-            // Utils.logWritelnDraft(
-            // "(isAboveMALine) " + list.get(0).getId() + " list.size()<" + length + ")" +
-            // list.size());
-            return false;
+    public static String trend_by_above_below_ma(List<BtcFutures> list, int length) {
+        if (CollectionUtils.isEmpty(list) || (list.size() < 1) || (list.size() < length)) {
+            return "";
         }
 
         // Giá đóng cửa của cây nến trước đó.
-        int candle_no = 1;
-        String id = list.get(0).getId();
-        if (id.contains("MINUTE_") || id.contains("m_")) {
-            candle_no = 1;
+        BigDecimal ma = calcMA(list, length, 1);
+        BigDecimal price = list.get(0).getPrice_close_candle();
+
+        if (price.compareTo(ma) > 0) {
+            return TREND_LONG;
+        }
+        if (price.compareTo(ma) < 0) {
+            return TREND_SHOT;
         }
 
-        BigDecimal ma = calcMA(list, length, candle_no);
-        BigDecimal price = list.get(candle_no).getPrice_close_candle();
-
-        if ((price.compareTo(ma) > 0)) {
-            return true;
-        }
-
-        return false;
+        return "";
     }
 
     public static int getSlowIndex(List<BtcFutures> list) {
@@ -4202,12 +4190,7 @@ public class Utils {
                 return sw_1;
             }
 
-            boolean is_above_ma50 = Utils.isAboveMALine(heiken_list, 50);
-            if (is_above_ma50) {
-                find_trend = Utils.TREND_SHOT;
-            } else {
-                find_trend = Utils.TREND_LONG;
-            }
+            find_trend = Utils.trend_by_above_below_ma(heiken_list, 50);
         }
 
         return find_trend;
@@ -4865,20 +4848,6 @@ public class Utils {
         return msg;
     }
 
-    //    public static String createLineForex_Body(BigDecimal risk, Orders dto_entry, Orders dto_sl, String find_trend,
-    //            boolean onlyWait) {
-    //        String log = "";
-    //        //if (Objects.nonNull(dto_entry) && Objects.nonNull(dto_sl)) {
-    //        //    String EPIC = getEpicFromId(dto_entry.getId());
-    //        //
-    //        //    String buffer = Utils.appendSpace("", 14);
-    //        //    buffer += Utils.calc_BUF_LO_HI_BUF_Forex(risk, onlyWait, find_trend, EPIC, dto_entry, dto_sl);
-    //        //    log = buffer;
-    //        //}
-    //
-    //        return log;
-    //    }
-
     private static List<BtcFutures> calcHeikenLine(List<BtcFutures> list) {
         List<BtcFutures> heiken_list = new ArrayList<BtcFutures>();
         if (list.size() < 2) {
@@ -5083,10 +5052,6 @@ public class Utils {
         return isUptrendByMa(list, 1) ? TREND_LONG : TREND_SHOT;
     }
 
-    public static String getTrendByMaXx(List<BtcFutures> heiken_list, int maIndex) {
-        return isAboveMALine(heiken_list, maIndex) ? Utils.TREND_LONG : Utils.TREND_SHOT;
-    }
-
     public static String getTrendByHekenAshiList(List<BtcFutures> heiken_list, List<BtcFutures> list) {
         String heiken_0 = getTrendByHekenAshiList(heiken_list, 0);
         String heiken_1 = getTrendByHekenAshiList(heiken_list, 1);
@@ -5257,34 +5222,23 @@ public class Utils {
         return comment.toLowerCase();
     }
 
-    public static String calc_BUF_LO_HI_BUF_Forex(BigDecimal risk, boolean onlyWait, String trend, String EPIC,
-            Orders dto_entry, DailyRange dailyRange) {
+    public static String calc_BUF_LO_HI_BUF_Forex(BigDecimal risk, boolean onlyWait, String find_switch_trend,
+            String EPIC, BigDecimal curr_price, DailyRange dailyRange) {
         String result = "";
 
-        BigDecimal curr_price = dto_entry.getCurrent_price();
         BigDecimal amp_w = dailyRange.getAvg_amp_week();
+        BigDecimal low = curr_price.subtract(amp_w);
+        BigDecimal hig = curr_price.add(amp_w);
 
-        BigDecimal sl_long = curr_price.subtract(amp_w);
-        BigDecimal sl_shot = curr_price.add(amp_w);
+        String str_long = calc_BUF_Long_Forex(onlyWait, risk, EPIC, curr_price, curr_price, low, hig, "", "");
+        String str_shot = calc_BUF_Shot_Forex(onlyWait, risk, EPIC, curr_price, curr_price, hig, low, "", "");
 
-        BigDecimal tp_long = Utils.getBigDecimal(dto_entry.getTp_long());
-        BigDecimal tp_shot = Utils.getBigDecimal(dto_entry.getTp_shot());
-
-        String str_long = calc_BUF_Long_Forex(onlyWait, risk, EPIC, dto_entry.getCurrent_price(), curr_price, sl_long,
-                tp_long, getChartNameCapital(dto_entry.getId()).trim(), getChartNameCapital(dto_entry.getId()).trim());
-
-        String str_shot = calc_BUF_Shot_Forex(onlyWait, risk, EPIC, dto_entry.getCurrent_price(), curr_price, sl_shot,
-                tp_shot, getChartNameCapital(dto_entry.getId()).trim(), getChartNameCapital(dto_entry.getId()).trim());
-
-        if (Objects.equals(trend, Utils.TREND_LONG)) {
+        if (Objects.equals(find_switch_trend, Utils.TREND_LONG)) {
             result += str_long;
-        } else if (Objects.equals(trend, Utils.TREND_SHOT)) {
+        } else if (Objects.equals(find_switch_trend, Utils.TREND_SHOT)) {
             result += str_shot;
         } else {
-            //result += str_long;
-            //result = appendSpace(result, 65) + "     ";
-            //result += str_shot;
-            //result = Utils.appendSpace(result, 135);
+            result += Utils.appendSpace("", 20);
         }
 
         return result;
@@ -6056,18 +6010,30 @@ public class Utils {
         if (Objects.equals(Utils.TREND_LONG, dto_xx.getTrend_by_ma_6())
                 && Objects.equals(Utils.TREND_LONG, dto_xx.getTrend_by_ma_9())
                 && (dto_xx.getMa3().compareTo(dto_xx.getMa9()) > 0)
-                && (dto_xx.getMa6().compareTo(dto_xx.getMa9()) > 0)) {
+                && (dto_xx.getMa3().compareTo(dto_xx.getMa6()) > 0)) {
+            return Utils.TREND_LONG;
+        }
+        if (Objects.equals(Utils.TREND_LONG, dto_xx.getTrend_by_ma_6())
+                && Objects.equals(Utils.TREND_LONG, dto_xx.getTrend_by_ma_9())
+                && Objects.equals(Utils.TREND_LONG, dto_xx.getTrend_by_ma_20())
+                && Objects.equals(Utils.TREND_LONG, dto_xx.getTrend_by_heiken())) {
             return Utils.TREND_LONG;
         }
         // ---------------------------------------------------------------
         if (Objects.equals(Utils.TREND_SHOT, dto_xx.getTrend_by_ma_6())
                 && Objects.equals(Utils.TREND_SHOT, dto_xx.getTrend_by_ma_9())
                 && (dto_xx.getMa3().compareTo(dto_xx.getMa9()) < 0)
-                && (dto_xx.getMa6().compareTo(dto_xx.getMa9()) < 0)) {
+                && (dto_xx.getMa3().compareTo(dto_xx.getMa6()) < 0)) {
+            return Utils.TREND_SHOT;
+        }
+        if (Objects.equals(Utils.TREND_SHOT, dto_xx.getTrend_by_ma_6())
+                && Objects.equals(Utils.TREND_SHOT, dto_xx.getTrend_by_ma_9())
+                && Objects.equals(Utils.TREND_SHOT, dto_xx.getTrend_by_ma_20())
+                && Objects.equals(Utils.TREND_SHOT, dto_xx.getTrend_by_heiken())) {
             return Utils.TREND_SHOT;
         }
         // ---------------------------------------------------------------
-        return Utils.TREND_UNSURE + dto_xx.getId();
+        return Utils.TREND_UNSURE + "_" + dto_xx.getId();
     }
 
     public static boolean is_best_price(Orders dto_05, String find_trend, BigDecimal curr_price) {
@@ -6246,8 +6212,7 @@ public class Utils {
         // cur_price, sl_long, tp_long);
 
         String temp = "";
-        temp += chartSL + "(Buy ) SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 10);
-
+        // temp += chartSL + "(Buy ) SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 10);
         // temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) +
         // "(lot)";
         // temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
@@ -6256,7 +6221,7 @@ public class Utils {
         temp += Utils.appendLeft(getStringValue(money_x1_now.calcLot()), 8) + "(lot)";
         temp += "/" + appendLeft(removeLastZero(risk_x1).replace(".0", ""), 4) + "$";
         // temp += " E" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 10);
-        String result = Utils.appendSpace(temp, 28);
+        String result = Utils.appendSpace(temp, 20);
         return result;
     }
 
@@ -6270,8 +6235,7 @@ public class Utils {
         // cur_price, sl_shot, tp_shot);
 
         String temp = "";
-        temp += chartSL + "(Sell) SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10);
-
+        // temp += chartSL + "(Sell) SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10);
         // temp += Utils.appendLeft(getStringValue(money_x5_now.calcLot()), 8) +
         // "(lot)";
         // temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
@@ -6280,7 +6244,7 @@ public class Utils {
         temp += "/" + appendLeft(removeLastZero(risk_x1).replace(".0", ""), 4) + "$";
         // temp += " E" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 10);
 
-        String result = Utils.appendSpace(temp, 28);
+        String result = Utils.appendSpace(temp, 20);
         return result;
     }
 }
