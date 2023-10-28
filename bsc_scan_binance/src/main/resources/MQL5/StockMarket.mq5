@@ -154,7 +154,7 @@ void OnTimer(void)
      }
    else
      {
-      Print("(Data2Csv) Failed to get history data.");
+      //Print("(Data2Csv) Failed to get history data.");
      }
 
 

@@ -108,7 +108,7 @@ void OnTimer(void)
      }
    else
      {
-      Print("(AureliusIronheart) Failed to get history data.");
+      //Print("(AureliusIronheart) Failed to get history data.");
      }
 
 

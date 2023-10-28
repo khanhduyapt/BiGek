@@ -90,7 +90,7 @@ void OnTimer()
      }
    else
      {
-      Print("(Data2Csv) Failed to get history data.");
+      //Print("(Data2Csv) Failed to get history data.");
      }
   }
 //+------------------------------------------------------------------+
@@ -236,7 +236,7 @@ void get_history_today()
      }
    else
      {
-      Print("(HistoryToday) Failed to get history data.");
+      //Print("(HistoryToday) Failed to get history data.");
      }
   }
 //+------------------------------------------------------------------+
