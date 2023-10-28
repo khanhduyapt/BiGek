@@ -62,7 +62,7 @@ public class MoneyAtRiskResponse {
         return money;
     }
 
-    public BigDecimal calcLot() {
+    private BigDecimal calcVolume() {
         if ((entry.subtract(stop_loss)).abs().compareTo(BigDecimal.ZERO) <= 0) {
             return BigDecimal.ZERO;
         }
@@ -118,6 +118,16 @@ public class MoneyAtRiskResponse {
         }
 
         return getStandard_vol(volume);
+    }
+
+    public BigDecimal calcLot() {
+        BigDecimal volume = calcVolume();
+
+        if ((volume.compareTo(BigDecimal.valueOf(0.385)) > 0) && (volume.compareTo(BigDecimal.valueOf(0.415)) < 0)) {
+            volume = BigDecimal.valueOf(0.45);
+        }
+
+        return volume;
     }
 
     private BigDecimal getStandard_vol(BigDecimal volume) {

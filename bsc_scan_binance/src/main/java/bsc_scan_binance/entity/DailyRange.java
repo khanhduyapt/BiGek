@@ -55,27 +55,26 @@ public class DailyRange {
     private BigDecimal w_close = BigDecimal.ZERO;
     @Column(name = "avg_amp_week")
     private BigDecimal avg_amp_week = BigDecimal.ZERO;
-
     @Column(name = "upper_03")
-    private BigDecimal upper_03 = BigDecimal.ZERO;
+    private BigDecimal curr_price = BigDecimal.ZERO;
+
     @Column(name = "lower_03")
-    private BigDecimal lower_03 = BigDecimal.ZERO;
+    private BigDecimal lot_size_per_500usd = BigDecimal.ZERO;
 
     @Column(name = "upper_15")
-    private BigDecimal upper_15 = BigDecimal.ZERO;
+    private BigDecimal amp_fr = BigDecimal.ZERO;
     @Column(name = "lower_15")
-    private BigDecimal lower_15 = BigDecimal.ZERO;
+    private BigDecimal amp_to = BigDecimal.ZERO;
 
     @Column(name = "upper_h1")
-    private BigDecimal upper_h1 = BigDecimal.ZERO;
+    private BigDecimal todo_2 = BigDecimal.ZERO;
     @Column(name = "lower_h1")
-    private BigDecimal lower_h1 = BigDecimal.ZERO;
+    private BigDecimal todo_3 = BigDecimal.ZERO;
 
     @Column(name = "upper_h4")
     private BigDecimal upper_h4 = BigDecimal.ZERO;
     @Column(name = "lower_h4")
     private BigDecimal lower_h4 = BigDecimal.ZERO;
-
     @Column(name = "upper_d1")
     private BigDecimal upper_d1 = BigDecimal.ZERO;
     @Column(name = "lower_d1")

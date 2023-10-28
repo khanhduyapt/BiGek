@@ -135,7 +135,8 @@ public class BscScanBinanceApplication {
                             alertMsgKillZone(binance_service);
                         }
 
-                        if (Utils.isWeekday() && Utils.isAllowSendMsg()) {
+                        //if (Utils.isWeekday() && Utils.isAllowSendMsg())
+                        {
 
                             if (isReloadAfter(Utils.MINUTES_RELOAD_CSV_DATA, "MT5_DATA")) {
                                 binance_service.saveMt5Data("AureliusIronheart.csv", Utils.MINUTES_RELOAD_CSV_DATA);
@@ -264,24 +265,15 @@ public class BscScanBinanceApplication {
             Utils.logWritelnDraft("...");
 
         result = binance_service.controlMt5(Utils.EPICS_FOREXS_JPY);
-        if (result > 0)
-            Utils.logWritelnDraft("...");
-
-        result = binance_service.controlMt5(Utils.EPICS_FOREXS_GBP);
-        if (result > 0)
-            Utils.logWritelnDraft("...");
-
-        result = binance_service.controlMt5(Utils.EPICS_FOREXS_NZD);
-        if (result > 0)
-            Utils.logWritelnDraft("...");
+        Utils.logWritelnDraft("...");
 
         result = binance_service.controlMt5(Utils.EPICS_FOREXS_EUR);
-        if (result > 0)
-            Utils.logWritelnDraft("...");
+        result = binance_service.controlMt5(Utils.EPICS_FOREXS_GBP);
+        Utils.logWritelnDraft("...");
 
         result = binance_service.controlMt5(Utils.EPICS_FOREXS_AUD);
-        if (result > 0)
-            Utils.logWritelnDraft("...");
+        result = binance_service.controlMt5(Utils.EPICS_FOREXS_NZD);
+        Utils.logWritelnDraft("...");
 
         result = binance_service.controlMt5(Utils.EPICS_FOREXS_ALL);
         if (result > 0)

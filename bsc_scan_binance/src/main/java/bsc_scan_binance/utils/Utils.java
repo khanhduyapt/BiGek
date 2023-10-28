@@ -150,6 +150,9 @@ public class Utils {
     public static final String TEXT_POSSION_TRADE = "_pos";
     public static final String TEXT_TREND_FLOWING = "_xuh";
 
+    public static final String TEXT_PIVOT_FR = "pv_fr";
+    public static final String TEXT_PIVOT_TO = "pv_to";
+
     public static final String TEXT_SEQ = "SEQ";
     public static final String TEXT_SWITCH_TREND_SEQ_6_10_20 = "(" + TEXT_SEQ + ".6.10.20)";
     public static final String TEXT_SWITCH_TREND_SEQ_1_10_20_50 = "(" + TEXT_SEQ + ".1.10.20.50)";
@@ -3120,6 +3123,9 @@ public class Utils {
         // Giá đóng cửa của cây nến trước đó.
         BigDecimal ma = calcMA(list, length, 1);
         BigDecimal price = list.get(0).getPrice_close_candle();
+        if (length > 30) {
+            price = calcMA(list, 9, 0);
+        }
 
         if (price.compareTo(ma) > 0) {
             return TREND_LONG;
@@ -4370,11 +4376,9 @@ public class Utils {
     public static String switchTrendByMa10(List<BtcFutures> list) {
         BtcFutures candle = list.get(1);
 
-        BigDecimal low_candle = candle.getPrice_open_candle()
-                .min(candle.getPrice_close_candle());
+        BigDecimal low_candle = candle.getPrice_open_candle().min(candle.getPrice_close_candle());
 
-        BigDecimal hig_candle = candle.getPrice_open_candle()
-                .max(candle.getPrice_close_candle());
+        BigDecimal hig_candle = candle.getPrice_open_candle().max(candle.getPrice_close_candle());
 
         for (int candle_no = 6; candle_no <= 10; candle_no++) {
             BigDecimal ma = Utils.calcMA(list, candle_no, 1);
@@ -5076,6 +5080,10 @@ public class Utils {
 
     public static String getTypeOfEpic(String EPIC) {
         String type = "";
+
+        if (Utils.EPICS_MAIN_FX.contains(EPIC)) {
+            type = "mFx";
+        }
         if (Utils.EPICS_INDEXS_CFD.contains(EPIC)) {
             type = "iDx";
         }
@@ -5133,11 +5141,6 @@ public class Utils {
         BigDecimal take_profit = BigDecimal.ZERO;
         BigDecimal amp_w = dailyRange.getAvg_amp_week();
 
-        //BigDecimal amp_w_05 = amp_w.multiply(BigDecimal.valueOf(0.5));
-        //List<BigDecimal> amp_fr_to_tp = Utils.get_amp_fr_to(dailyRange, curr_price);
-        //BigDecimal amp_fr = amp_fr_to_tp.get(0);
-        //BigDecimal amp_to = amp_fr_to_tp.get(1);
-
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
             stop_loss = curr_price.subtract(amp_w);
             take_profit = curr_price.add(amp_w);
@@ -5155,24 +5158,57 @@ public class Utils {
         return list;
     }
 
-    public static List<BigDecimal> get_amp_fr_to(DailyRange dailyRange, BigDecimal curr_price) {
+    public static List<BigDecimal> get_amp_fr_to(BigDecimal init_price, BigDecimal amp_w, BigDecimal curr_price) {
         List<BigDecimal> list = new ArrayList<BigDecimal>();
+
+        BigDecimal high = init_price.subtract(curr_price).abs();
+        int count = high.divide(amp_w, 10, RoundingMode.CEILING).intValue() + 5;
+        boolean is_count_up = init_price.compareTo(curr_price) < 0;
 
         BigDecimal amp_fr = BigDecimal.ZERO;
         BigDecimal amp_to = BigDecimal.ZERO;
-        for (int idx = -5; idx < 6; idx++) {
-            amp_fr = dailyRange.getW_close().add(dailyRange.getAvg_amp_week().multiply(BigDecimal.valueOf(idx)));
-            amp_to = dailyRange.getW_close().add(dailyRange.getAvg_amp_week().multiply(BigDecimal.valueOf(idx + 1)));
+
+        for (int idx = 0; idx < count; idx++) {
+            if (is_count_up) {
+                amp_fr = init_price.add(amp_w.multiply(BigDecimal.valueOf(idx)));
+                amp_to = init_price.add(amp_w.multiply(BigDecimal.valueOf(idx + 1)));
+            } else {
+                amp_fr = init_price.subtract(amp_w.multiply(BigDecimal.valueOf(idx + 1)));
+                amp_to = init_price.subtract(amp_w.multiply(BigDecimal.valueOf(idx)));
+            }
 
             if ((amp_fr.compareTo(curr_price) <= 0) && (curr_price.compareTo(amp_to) <= 0)) {
 
                 break;
             }
         }
+
         list.add(amp_fr);
         list.add(amp_to);
 
         return list;
+    }
+
+    public static String contact_with_pivot(DailyRange dailyRange) {
+        if (Objects.isNull(dailyRange)) {
+            return "";
+        }
+
+        BigDecimal wast = dailyRange.getAvg_amp_week().multiply(BigDecimal.valueOf(0.1));
+
+        if ((dailyRange.getAmp_fr().subtract(wast).compareTo(dailyRange.getCurr_price()) < 0)
+                && (dailyRange.getCurr_price().compareTo(dailyRange.getAmp_fr().add(wast)) < 0)) {
+
+            return TEXT_PIVOT_FR;
+        }
+
+        if ((dailyRange.getAmp_to().subtract(wast).compareTo(dailyRange.getCurr_price()) < 0)
+                && (dailyRange.getCurr_price().compareTo(dailyRange.getAmp_to().add(wast)) < 0)) {
+
+            return TEXT_PIVOT_TO;
+        }
+
+        return "";
     }
 
     public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String find_trend, Orders dto_h1, String append,
@@ -5191,8 +5227,8 @@ public class Utils {
         BigDecimal stop_loss = sl_tp.get(0);
         BigDecimal take_profit = sl_tp.get(1);
 
-        MoneyAtRiskResponse money_300usd = new MoneyAtRiskResponse(EPIC, RISK_0_25_PERCENT, curr_price,
-                stop_loss, take_profit);
+        MoneyAtRiskResponse money_300usd = new MoneyAtRiskResponse(EPIC, RISK_0_25_PERCENT, curr_price, stop_loss,
+                take_profit);
 
         BigDecimal volume = money_300usd.calcLot();
 
@@ -5348,56 +5384,23 @@ public class Utils {
         return false;
     }
 
-    public static boolean is_able_to_trade_by_bb(DailyRange dailyRange, String find_trend, BigDecimal curr_price) {
-        BigDecimal lower = dailyRange.getLower_h1().min(dailyRange.getLower_h4());
-        BigDecimal upper = dailyRange.getUpper_h1().max(dailyRange.getUpper_h4());
-        BigDecimal amplitude = dailyRange.getAmp_avg_h4();
-
-        if (Objects.equals(TREND_LONG, find_trend)) {
-            BigDecimal next_price = curr_price.add(amplitude);
-
-            if (next_price.compareTo(upper) < 0) {
-                return true;
-            }
-        }
-
-        if (Objects.equals(TREND_SHOT, find_trend)) {
-            BigDecimal next_price = curr_price.subtract(amplitude);
-
-            if (next_price.compareTo(lower) > 0) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public static boolean is_able_to_trade_by_h4(Orders dto_h4, DailyRange dailyRange, String find_trend) {
         if (Utils.isBlank(find_trend) || find_trend.contains(TREND_UNSURE)) {
             return false;
         }
 
-        BigDecimal curr_price = dto_h4.getCurrent_price();
-        BigDecimal amplitude = dailyRange.getAmp_avg_h4().multiply(BigDecimal.valueOf(2));
-
-        List<BigDecimal> sl_tp = Utils.get_SL_TP_by_amp(dailyRange, curr_price, find_trend);
+        List<BigDecimal> sl_tp = Utils.get_SL_TP_by_amp(dailyRange, dto_h4.getCurrent_price(), find_trend);
         BigDecimal tp_price = sl_tp.get(1);
 
         if (Objects.equals(TREND_LONG, find_trend) && Objects.equals(TREND_LONG, dto_h4.getTrend_by_ma_9())) {
-            BigDecimal next_price = curr_price.add(amplitude);
-            if ((next_price.compareTo(dto_h4.getHig_50candle()) < 0)) {
-                if ((tp_price.compareTo(dto_h4.getHig_50candle()) < 0)) {
-                    return true;
-                }
+            if ((tp_price.compareTo(dto_h4.getHig_50candle()) < 0)) {
+                return true;
             }
         }
 
         if (Objects.equals(TREND_SHOT, find_trend) && Objects.equals(TREND_SHOT, dto_h4.getTrend_by_ma_9())) {
-            BigDecimal next_price = curr_price.subtract(amplitude);
-            if ((next_price.compareTo(dto_h4.getLow_50candle()) > 0)) {
-                if ((tp_price.compareTo(dto_h4.getLow_50candle()) > 0)) {
-                    return true;
-                }
+            if ((tp_price.compareTo(dto_h4.getLow_50candle()) > 0)) {
+                return true;
             }
         }
 
@@ -5907,58 +5910,6 @@ public class Utils {
         return result;
     }
 
-    public static boolean is_able_take_profit_bolliger_min(String find_trend, DailyRange dailyRange,
-            BigDecimal curr_price) {
-        if (Utils.isBlank(find_trend)) {
-            return false;
-        }
-        boolean tp_condition = false;
-        BigDecimal h41_upper = dailyRange.getUpper_h4().min(dailyRange.getUpper_h1());
-        BigDecimal h41_lower = dailyRange.getLower_h4().max(dailyRange.getLower_h1());
-
-        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            BigDecimal tp_price = curr_price.add(dailyRange.getAmp_avg_h4());
-
-            if (tp_price.compareTo(h41_upper) < 0) {
-                tp_condition = true;
-            }
-        }
-
-        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            BigDecimal tp_price = curr_price.subtract(dailyRange.getAmp_avg_h4());
-
-            if (tp_price.compareTo(h41_lower) > 0) {
-                tp_condition = true;
-            }
-        }
-
-        return tp_condition;
-    }
-
-    public static boolean is_price_touches_BB_max(String find_trend, DailyRange dailyRange, BigDecimal curr_price) {
-        if (Utils.isBlank(find_trend)) {
-            return false;
-        }
-        boolean is_price_touches_BB = false;
-
-        BigDecimal h41_upper = dailyRange.getUpper_h4().max(dailyRange.getUpper_h1());
-        BigDecimal h41_lower = dailyRange.getLower_h4().min(dailyRange.getLower_h1());
-
-        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            if (curr_price.compareTo(h41_lower) < 0) {
-                is_price_touches_BB = true;
-            }
-        }
-
-        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            if (curr_price.compareTo(h41_upper) > 0) {
-                is_price_touches_BB = true;
-            }
-        }
-
-        return is_price_touches_BB;
-    }
-
     public static String trend_possion_when_price_touches_BB_D1(DailyRange dailyRange, BigDecimal curr_price) {
         String trend = "";
 
@@ -5974,36 +5925,6 @@ public class Utils {
         }
 
         return trend;
-    }
-
-    public static String find_trend_by_amp(DailyRange dailyRange, Orders dto_h1, Orders dto_03) {
-        BigDecimal cur_price = dto_03.getCurrent_price();
-        BigDecimal max_upper = dailyRange.getUpper_d1().max(dailyRange.getUpper_h4()).max(dailyRange.getUpper_h1());
-        BigDecimal min_lower = dailyRange.getLower_d1().min(dailyRange.getLower_h4()).min(dailyRange.getLower_h1());
-        if (cur_price.compareTo(max_upper) > 0) {
-            return Utils.TREND_SHOT;
-        }
-        if (cur_price.compareTo(min_lower) < 0) {
-            return Utils.TREND_LONG;
-        }
-
-        BigDecimal h41_upper = dailyRange.getUpper_h4().min(dailyRange.getUpper_h1());
-        BigDecimal h41_lower = dailyRange.getLower_h4().max(dailyRange.getLower_h1());
-        if ((cur_price.compareTo(h41_upper) > 0) && Objects.equals(dto_03.getTrend_by_ma_6(), Utils.TREND_SHOT)
-                && Objects.equals(dto_h1.getTrend_by_ma_6(), Utils.TREND_SHOT)
-                && Objects.equals(dto_h1.getTrend_by_ma_9(), Utils.TREND_SHOT)
-                && is_able_take_profit_bolliger_min(dto_h1.getTrend_by_ma_6(), dailyRange, cur_price)) {
-            return Utils.TREND_SHOT;
-        }
-
-        if ((cur_price.compareTo(h41_lower) < 0) && Objects.equals(dto_03.getTrend_by_ma_6(), Utils.TREND_LONG)
-                && Objects.equals(dto_h1.getTrend_by_ma_6(), Utils.TREND_LONG)
-                && Objects.equals(dto_h1.getTrend_by_ma_9(), Utils.TREND_LONG)
-                && is_able_take_profit_bolliger_min(dto_h1.getTrend_by_ma_6(), dailyRange, cur_price)) {
-            return Utils.TREND_LONG;
-        }
-
-        return "";
     }
 
     public static String find_trend_by_ma3_6_9(Orders dto_xx) {
@@ -6051,55 +5972,196 @@ public class Utils {
         return is_best_prirce;
     }
 
-    public static String find_trend_by_bb(DailyRange dailyRange, Orders dto_xx) {
-        BigDecimal lower = dailyRange.getLower_d1();
-        BigDecimal upper = dailyRange.getUpper_d1();
-        String dto_id = dto_xx.getId();
-        BigDecimal curr_price = dto_xx.getCurrent_price();
+    public static List<BigDecimal> get_price_ampw_lotsize(String EPIC) {
+        BigDecimal i_top_price = BigDecimal.ZERO;
+        BigDecimal amp_w = BigDecimal.ZERO;
+        BigDecimal lot_size_per_500usd = BigDecimal.ZERO;
 
-        if (dto_id.contains(CAPITAL_TIME_03) || dto_id.contains(PREFIX_03m)) {
-            lower = dailyRange.getLower_03();
-            upper = dailyRange.getUpper_03();
+        if (Objects.equals(EPIC, "BTCUSD")) {
+            i_top_price = BigDecimal.valueOf(36285);
+            amp_w = BigDecimal.valueOf(1060.00);
+            lot_size_per_500usd = BigDecimal.valueOf(0.45);
         }
-        if (dto_id.contains(CAPITAL_TIME_15) || dto_id.contains(PREFIX_15m)) {
-            lower = dailyRange.getLower_15();
-            upper = dailyRange.getUpper_15();
+        if (Objects.equals(EPIC, "DX")) {
+            i_top_price = BigDecimal.valueOf(106.8);
+            amp_w = BigDecimal.valueOf(0.69500);
+            lot_size_per_500usd = BigDecimal.valueOf(7.00);
         }
-        if (dto_id.contains(CAPITAL_TIME_H1) || dto_id.contains(PREFIX_H01)) {
-            lower = dailyRange.getLower_h1();
-            upper = dailyRange.getUpper_h1();
+        if (Objects.equals(EPIC, "USOIL")) {
+            i_top_price = BigDecimal.valueOf(99.85);
+            amp_w = BigDecimal.valueOf(2.50000);
+            lot_size_per_500usd = BigDecimal.valueOf(1.75);
         }
-        if (dto_id.contains(CAPITAL_TIME_H4) || dto_id.contains(PREFIX_H04)) {
-            lower = dailyRange.getLower_h4();
-            upper = dailyRange.getUpper_h4();
+        if (Objects.equals(EPIC, "XAGUSD")) {
+            i_top_price = BigDecimal.valueOf(28.380);
+            amp_w = BigDecimal.valueOf(0.63500);
+            lot_size_per_500usd = BigDecimal.valueOf(0.15);
         }
-        if (dto_id.contains(CAPITAL_TIME_D1) || dto_id.contains(PREFIX_D01) || dto_id.contains("_1d")) {
-            lower = dailyRange.getLower_d1();
-            upper = dailyRange.getUpper_d1();
-        }
-        if (dto_id.contains(CAPITAL_TIME_W1) || dto_id.contains(PREFIX_W01)) {
-            List<BigDecimal> amp_fr_to = Utils.get_amp_fr_to(dailyRange, curr_price);
-            lower = amp_fr_to.get(0);
-            upper = amp_fr_to.get(1);
-        }
-
-        if (dto_xx.getLowest_price_of_curr_candle().compareTo(lower) <= 0) {
-            return Utils.TREND_LONG;
-        }
-        if (dto_xx.getHighest_price_of_curr_candle().compareTo(upper) >= 0) {
-            return Utils.TREND_SHOT;
+        if (Objects.equals(EPIC, "XAUUSD")) {
+            i_top_price = BigDecimal.valueOf(2088);
+            amp_w = BigDecimal.valueOf(22.9500);
+            lot_size_per_500usd = BigDecimal.valueOf(0.20);
         }
 
-        return Utils.TREND_UNSURE + dto_id;
-    }
+        if (Objects.equals(EPIC, "US100")) {
+            i_top_price = BigDecimal.valueOf(15920);
+            amp_w = BigDecimal.valueOf(271.500);
+            lot_size_per_500usd = BigDecimal.valueOf(1.75);
+        }
+        if (Objects.equals(EPIC, "US30")) {
+            i_top_price = BigDecimal.valueOf(35700);
+            amp_w = BigDecimal.valueOf(388.350);
+            lot_size_per_500usd = BigDecimal.valueOf(1.00);
+        }
 
-    public static List<BigDecimal> getLowHigBB(DailyRange dailyRange) {
-        BigDecimal lower = dailyRange.getLower_15().min(dailyRange.getLower_h1());
-        BigDecimal upper = dailyRange.getUpper_15().max(dailyRange.getUpper_h1());
+        if (Objects.equals(EPIC, "AUDJPY")) {
+            i_top_price = BigDecimal.valueOf(98.6500);
+            amp_w = BigDecimal.valueOf(1.07795);
+            lot_size_per_500usd = BigDecimal.valueOf(0.65);
+        }
+        if (Objects.equals(EPIC, "AUDUSD")) {
+            i_top_price = BigDecimal.valueOf(0.72000);
+            amp_w = BigDecimal.valueOf(0.00765);
+            lot_size_per_500usd = BigDecimal.valueOf(0.65);
+        }
+        if (Objects.equals(EPIC, "EURAUD")) {
+            i_top_price = BigDecimal.valueOf(1.73000);
+            amp_w = BigDecimal.valueOf(0.01375);
+            lot_size_per_500usd = BigDecimal.valueOf(0.50);
+        }
+        if (Objects.equals(EPIC, "EURGBP")) {
+            i_top_price = BigDecimal.valueOf(0.90265);
+            amp_w = BigDecimal.valueOf(0.00455);
+            lot_size_per_500usd = BigDecimal.valueOf(0.90);
+        }
+        if (Objects.equals(EPIC, "EURUSD")) {
+            i_top_price = BigDecimal.valueOf(1.12500);
+            amp_w = BigDecimal.valueOf(0.00790);
+            lot_size_per_500usd = BigDecimal.valueOf(0.60);
+        }
+        if (Objects.equals(EPIC, "GBPUSD")) {
+            i_top_price = BigDecimal.valueOf(1.31365);
+            amp_w = BigDecimal.valueOf(0.01085);
+            lot_size_per_500usd = BigDecimal.valueOf(0.45);
+        }
+        if (Objects.equals(EPIC, "USDCAD")) {
+            i_top_price = BigDecimal.valueOf(1.40775);
+            amp_w = BigDecimal.valueOf(0.00795);
+            lot_size_per_500usd = BigDecimal.valueOf(0.85);
+        }
+        if (Objects.equals(EPIC, "USDCHF")) {
+            i_top_price = BigDecimal.valueOf(0.94235);
+            amp_w = BigDecimal.valueOf(0.00715);
+            lot_size_per_500usd = BigDecimal.valueOf(0.60);
+        }
+        if (Objects.equals(EPIC, "USDJPY")) {
+            i_top_price = BigDecimal.valueOf(154.395);
+            amp_w = BigDecimal.valueOf(1.29500);
+            lot_size_per_500usd = BigDecimal.valueOf(0.50);
+        }
+
+        if (Objects.equals(EPIC, "CADCHF")) {
+            i_top_price = BigDecimal.valueOf(0.70200);
+            amp_w = BigDecimal.valueOf(0.00500);
+            lot_size_per_500usd = BigDecimal.valueOf(0.90);
+        }
+        if (Objects.equals(EPIC, "CADJPY")) {
+            i_top_price = BigDecimal.valueOf(112.000);
+            amp_w = BigDecimal.valueOf(1.00000);
+            lot_size_per_500usd = BigDecimal.valueOf(0.65);
+        }
+        if (Objects.equals(EPIC, "CHFJPY")) {
+            i_top_price = BigDecimal.valueOf(169.320);
+            amp_w = BigDecimal.valueOf(1.41000);
+            lot_size_per_500usd = BigDecimal.valueOf(0.45);
+        }
+        if (Objects.equals(EPIC, "EURJPY")) {
+            i_top_price = BigDecimal.valueOf(162.065);
+            amp_w = BigDecimal.valueOf(1.39000);
+            lot_size_per_500usd = BigDecimal.valueOf(0.45);
+        }
+        if (Objects.equals(EPIC, "GBPJPY")) {
+            i_top_price = BigDecimal.valueOf(188.115);
+            amp_w = BigDecimal.valueOf(1.61500);
+            lot_size_per_500usd = BigDecimal.valueOf(0.45);
+        }
+        if (Objects.equals(EPIC, "NZDJPY")) {
+            i_top_price = BigDecimal.valueOf(90.7000);
+            amp_w = BigDecimal.valueOf(0.90000);
+            lot_size_per_500usd = BigDecimal.valueOf(0.70);
+        }
+
+        if (Objects.equals(EPIC, "EURCAD")) {
+            i_top_price = BigDecimal.valueOf(1.51938);
+            amp_w = BigDecimal.valueOf(0.00945);
+            lot_size_per_500usd = BigDecimal.valueOf(0.70);
+        }
+        if (Objects.equals(EPIC, "EURCHF")) {
+            i_top_price = BigDecimal.valueOf(1.01016);
+            amp_w = BigDecimal.valueOf(0.00455);
+            lot_size_per_500usd = BigDecimal.valueOf(1.00);
+        }
+        if (Objects.equals(EPIC, "EURNZD")) {
+            i_top_price = BigDecimal.valueOf(1.89388);
+            amp_w = BigDecimal.valueOf(0.01585);
+            lot_size_per_500usd = BigDecimal.valueOf(0.50);
+        }
+        if (Objects.equals(EPIC, "GBPAUD")) {
+            i_top_price = BigDecimal.valueOf(2.02830);
+            amp_w = BigDecimal.valueOf(0.01605);
+            lot_size_per_500usd = BigDecimal.valueOf(0.45);
+        }
+        if (Objects.equals(EPIC, "GBPCAD")) {
+            i_top_price = BigDecimal.valueOf(1.75620);
+            amp_w = BigDecimal.valueOf(0.01210);
+            lot_size_per_500usd = BigDecimal.valueOf(0.55);
+        }
+        if (Objects.equals(EPIC, "GBPCHF")) {
+            i_top_price = BigDecimal.valueOf(1.16955);
+            amp_w = BigDecimal.valueOf(0.00685);
+            lot_size_per_500usd = BigDecimal.valueOf(0.65);
+        }
+        if (Objects.equals(EPIC, "GBPNZD")) {
+            i_top_price = BigDecimal.valueOf(2.18685);
+            amp_w = BigDecimal.valueOf(0.01705);
+            lot_size_per_500usd = BigDecimal.valueOf(0.45);
+        }
+
+        if (Objects.equals(EPIC, "AUDCAD")) {
+            i_top_price = BigDecimal.valueOf(0.94763);
+            amp_w = BigDecimal.valueOf(0.00735);
+            lot_size_per_500usd = BigDecimal.valueOf(0.90);
+        }
+        if (Objects.equals(EPIC, "AUDCHF")) {
+            i_top_price = BigDecimal.valueOf(0.65518);
+            amp_w = BigDecimal.valueOf(0.00545);
+            lot_size_per_500usd = BigDecimal.valueOf(0.85);
+        }
+        if (Objects.equals(EPIC, "AUDNZD")) {
+            i_top_price = BigDecimal.valueOf(1.11568);
+            amp_w = BigDecimal.valueOf(0.00595);
+            lot_size_per_500usd = BigDecimal.valueOf(1.25);
+        }
+        if (Objects.equals(EPIC, "NZDCAD")) {
+            i_top_price = BigDecimal.valueOf(0.87860);
+            amp_w = BigDecimal.valueOf(0.00725);
+            lot_size_per_500usd = BigDecimal.valueOf(0.90);
+        }
+        if (Objects.equals(EPIC, "NZDCHF")) {
+            i_top_price = BigDecimal.valueOf(0.58565);
+            amp_w = BigDecimal.valueOf(0.00515);
+            lot_size_per_500usd = BigDecimal.valueOf(0.90);
+        }
+        if (Objects.equals(EPIC, "NZDUSD")) {
+            i_top_price = BigDecimal.valueOf(0.65315);
+            amp_w = BigDecimal.valueOf(0.00670);
+            lot_size_per_500usd = BigDecimal.valueOf(0.70);
+        }
 
         List<BigDecimal> result = new ArrayList<BigDecimal>();
-        result.add(lower);
-        result.add(upper);
+        result.add(i_top_price);
+        result.add(amp_w);
+        result.add(lot_size_per_500usd);
 
         return result;
     }
@@ -6212,14 +6274,15 @@ public class Utils {
         // cur_price, sl_long, tp_long);
 
         String temp = "";
-        // temp += chartSL + "(Buy ) SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 10);
+        // temp += chartSL + "(Buy ) SL" +
+        // Utils.appendLeft(removeLastZero(formatPrice(sl_long, 5)), 10);
         // temp += Utils.appendLeft(removeLastZero(money_x5_now.calcLot()), 8) +
         // "(lot)";
         // temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
         // // 500$
 
         temp += Utils.appendLeft(getStringValue(money_x1_now.calcLot()), 8) + "(lot)";
-        temp += "/" + appendLeft(removeLastZero(risk_x1).replace(".0", ""), 4) + "$";
+        temp += "/" + appendLeft(removeLastZero(risk_x1).replace(".0", ""), 3) + "$";
         // temp += " E" + Utils.appendLeft(removeLastZero(formatPrice(en_long, 5)), 10);
         String result = Utils.appendSpace(temp, 20);
         return result;
@@ -6235,13 +6298,14 @@ public class Utils {
         // cur_price, sl_shot, tp_shot);
 
         String temp = "";
-        // temp += chartSL + "(Sell) SL" + Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10);
+        // temp += chartSL + "(Sell) SL" +
+        // Utils.appendLeft(removeLastZero(formatPrice(sl_shot, 5)), 10);
         // temp += Utils.appendLeft(getStringValue(money_x5_now.calcLot()), 8) +
         // "(lot)";
         // temp += "/" + appendLeft(removeLastZero(risk_x5).replace(".0", ""), 4) + "$";
 
         temp += Utils.appendLeft(getStringValue(money_x1_now.calcLot()), 8) + "(lot)";
-        temp += "/" + appendLeft(removeLastZero(risk_x1).replace(".0", ""), 4) + "$";
+        temp += "/" + appendLeft(removeLastZero(risk_x1).replace(".0", ""), 3) + "$";
         // temp += " E" + Utils.appendLeft(removeLastZero(formatPrice(en_shot, 5)), 10);
 
         String result = Utils.appendSpace(temp, 20);
