@@ -143,12 +143,12 @@ public class Utils {
 
     public static final String TEXT_SWITCH_TREND_Ma69 = "(Ma6.9)";
     public static final String TEXT_SWITCH_TREND_Ma10 = "(Ma10)";
+    public static final String TEXT_SWITCH_TREND_Ma89 = "(Ma89)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs20 = "(Ma1.20)";
     public static final String TEXT_SWITCH_TREND_Ma_1vs50 = "(Ma1.50)";
     public static final String TEXT_SWITCH_TREND_Ma_10vs20 = "(Ma10.20)";
 
-    public static final String TEXT_POSSION_TRADE = "_pos";
-    public static final String TEXT_TREND_FLOWING = "_xuh";
+    public static final String TEXT_TREND_FLOWING = "_xh";
 
     public static final String TEXT_PIVOT_FR = "pv_fr";
     public static final String TEXT_PIVOT_TO = "pv_to";
@@ -4380,8 +4380,8 @@ public class Utils {
 
         BigDecimal hig_candle = candle.getPrice_open_candle().max(candle.getPrice_close_candle());
 
-        for (int candle_no = 6; candle_no <= 10; candle_no++) {
-            BigDecimal ma = Utils.calcMA(list, candle_no, 1);
+        for (int ma_no = 6; ma_no <= 10; ma_no++) {
+            BigDecimal ma = Utils.calcMA(list, ma_no, 1);
 
             if ((low_candle.compareTo(ma) < 0) && (ma.compareTo(hig_candle) < 0)) {
                 String trend_0 = candle.isUptrend() ? TREND_LONG : TREND_SHOT;
@@ -4390,6 +4390,28 @@ public class Utils {
 
                 return switch_trend;
             }
+        }
+
+        return "";
+    }
+
+    public static String switchTrendByMaXX(List<BtcFutures> list, int ma_xx) {
+        BtcFutures candle = list.get(1);
+
+        BigDecimal low_candle = candle.getLow_price();
+        BigDecimal hig_candle = candle.getHight_price();
+
+        BigDecimal ma = Utils.calcMA(list, ma_xx, 1);
+
+        if ((low_candle.compareTo(ma) < 0) && (ma.compareTo(hig_candle) < 0)) {
+            String trend = candle.isUptrend() ? TREND_LONG : TREND_SHOT;
+            String chart_name = getChartName(candle.getId()).trim();
+
+            String switch_trend = chart_name +
+                    TEXT_SWITCH_TREND_Ma10.replace("10", String.valueOf(ma_xx)) + ":"
+                    + Utils.appendSpace(trend, 4);
+
+            return switch_trend;
         }
 
         return "";
@@ -6030,7 +6052,7 @@ public class Utils {
             lot_size_per_500usd = BigDecimal.valueOf(0.50);
         }
         if (Objects.equals(EPIC, "EURGBP")) {
-            i_top_price = BigDecimal.valueOf(0.90265);
+            i_top_price = BigDecimal.valueOf(0.88585);
             amp_w = BigDecimal.valueOf(0.00455);
             lot_size_per_500usd = BigDecimal.valueOf(0.90);
         }
