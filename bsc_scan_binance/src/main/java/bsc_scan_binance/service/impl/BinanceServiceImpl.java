@@ -4192,7 +4192,7 @@ public class BinanceServiceImpl implements BinanceService {
             String prefix = "  " + No + amp + pivot + sw_89;
 
             // TODO: 3 controlMt5
-            if ("_EURAUD_".contains(EPIC)) {
+            if ("_USDJPY_".contains(EPIC)) {
                 boolean debug = true;
             }
 
@@ -4226,8 +4226,10 @@ public class BinanceServiceImpl implements BinanceService {
             Mt5OpenTrade dto_notifiy = null;
             if ((trend_allow_trade || sw_ma89) && is_able_tp_d1 && is_able_tp_h4) {
 
-                boolean allow_trade_now = Objects.equals(find_switch_trend, trend_15_ma369)
-                        && Objects.equals(find_switch_trend, trend_05_ma369);
+                boolean allow_trade_now = (Objects.equals(find_switch_trend, trend_15_ma369)
+                        && Objects.equals(find_switch_trend, dto_05.getTrend_by_heiken()))
+                        || (Objects.equals(find_switch_trend, dto_15.getTrend_by_heiken())
+                                && Objects.equals(find_switch_trend, trend_05_ma369));
                 boolean is_best_price_05 = Utils.is_best_price(dto_05, find_switch_trend, curr_price);
                 boolean is_best_price_15 = Utils.is_best_price(dto_15, find_switch_trend, curr_price);
 
