@@ -3973,13 +3973,21 @@ public class BinanceServiceImpl implements BinanceService {
 
         if (CAPITAL_TIME_XX.contains("MINUTE_")) {
             switch_trend += Utils.switch_trend_seq_1_10_20_50(heiken_list, amp_avg_h4);
-        } else {
+        }
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)
+                || Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_W1)) {
             switch_trend += Utils.switchTrendByMa10(list);
+            switch_trend += Utils.switchTrendByHeiken3_2_1(heiken_list);
+        }
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_W1)) {
+            switch_trend += Utils.switchTrendByHeiken3_2_1(heiken_list);
         }
         if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4)) {
             switch_trend += Utils.switchTrendByHeiken3_2_1(heiken_list);
         }
-
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1)) {
+            switch_trend += Utils.switchTrendByMaXX(heiken_list, 50);
+        }
         if (list.size() > 55) {
             switch_trend += Utils.switchTrendByMaXX(heiken_list, 89);
         }
@@ -4204,7 +4212,6 @@ public class BinanceServiceImpl implements BinanceService {
             boolean has_switch_trend = dto_d1.getSwitch_trend().contains(find_switch_trend);
             has_switch_trend |= dto_h4.getSwitch_trend().contains(find_switch_trend);
             has_switch_trend |= dto_h1.getSwitch_trend().contains(find_switch_trend);
-            has_switch_trend |= dto_15.getSwitch_trend().contains(find_switch_trend);
 
             boolean trend_allow_trade = has_switch_trend
                     && Objects.equals(trend_h1_ma369, trend_h4_ma369)
@@ -4224,7 +4231,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             // TREND_FLOWING
             Mt5OpenTrade dto_notifiy = null;
-            if ((trend_allow_trade || sw_ma89) && is_able_tp_d1 && is_able_tp_h4) {
+            if ((trend_allow_trade || sw_ma89) && is_able_tp_d1 && is_able_tp_h4
+                    && dto_d1.getHeiken_zone().contains(find_switch_trend)) {
 
                 boolean allow_trade_now = (Objects.equals(find_switch_trend, trend_15_ma369)
                         && Objects.equals(find_switch_trend, dto_05.getTrend_by_heiken()))
@@ -4428,7 +4436,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // -------------------------------------------------------------------------------------
-            if (has_profit_10 && Objects.equals(dto_d1.getTrend_by_ma_9(), REVERSE_TRADE_TREND)) {
+            if (has_profit_10 && Objects.equals(dto_h4.getTrend_by_ma_9(), REVERSE_TRADE_TREND)) {
                 if ((reverse_15_369 && reverse_05_369) || (Utils.is_close_trade_time() && reverse_05_369)
                         || Utils.is_close_jpy_trade_at_3am(EPIC)) {
                     is_hit_sl = true;
