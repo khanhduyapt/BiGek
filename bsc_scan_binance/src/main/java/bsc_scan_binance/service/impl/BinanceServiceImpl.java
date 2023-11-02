@@ -4035,7 +4035,7 @@ public class BinanceServiceImpl implements BinanceService {
         } else {
             find_trend_by_d1_ma9 = trend_by_ma_9;
         }
-        String heiken_candles = Utils.count_heiken_candles(heiken_list, find_trend_by_d1_ma9);
+        String count_heiken_candles = Utils.count_heiken_candles(heiken_list, find_trend_by_d1_ma9);
 
         BigDecimal close_candle_1 = list.get(1).getPrice_close_candle();
         BigDecimal close_candle_2 = list.get(2).getPrice_close_candle();
@@ -4048,7 +4048,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
 
         Orders entity = new Orders(id, insertTime, trend_by_heiken, curr_price, tp_long, tp_shot, close_candle_1,
-                close_candle_2, switch_trend, trend_by_ma_9, heiken_candles, trend_by_ma_6, trend_by_ma_20,
+                close_candle_2, switch_trend, trend_by_ma_9, count_heiken_candles, trend_by_ma_6, trend_by_ma_20,
                 trend_by_ma_34and89, trend_by_seq_ma, trend_by_bread_area, body_hig_30_candle, body_low_30_candle,
                 amplitude_1_part_15, amp_avg_h4, ma6, ma3, ma9, low_50candle, hig_50candle, lowest_price_of_curr_candle,
                 highest_price_of_curr_candle, "");
@@ -4109,9 +4109,10 @@ public class BinanceServiceImpl implements BinanceService {
             amp += "(avg_w):" + Utils.appendSpace(dailyRange.getAvg_amp_week(), 10);
 
             String muc = "  ";
-            if (dto_d1.getHeiken_candles().contains(type_d9) && dto_d1.getHeiken_candles().contains(Utils.TEXT_MUC)
-                    && dto_h4.getHeiken_candles().contains(type_d9)
-                    && dto_h4.getHeiken_candles().contains(Utils.TEXT_MUC)) {
+            if (dto_d1.getCount_heiken_candles().contains(type_d9)
+                    && dto_d1.getCount_heiken_candles().contains(Utils.TEXT_MUC)
+                    && dto_h4.getCount_heiken_candles().contains(type_d9)
+                    && dto_h4.getCount_heiken_candles().contains(Utils.TEXT_MUC)) {
                 muc = Utils.TEXT_MUC;
             }
 
@@ -4129,7 +4130,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
             amp += d9;
 
-            amp += "   " + dto_d1.getHeiken_candles() + dto_h4.getHeiken_candles() + dto_h1.getHeiken_candles();
+            amp += "   " + dto_d1.getCount_heiken_candles() + dto_h4.getCount_heiken_candles()
+                    + dto_h1.getCount_heiken_candles();
 
             String TIME_FRAME = "";
 
@@ -4212,9 +4214,9 @@ public class BinanceServiceImpl implements BinanceService {
             // TREND_FLOWING
             Mt5OpenTrade dto_notifiy = null;
             if (is_eq_d_h4_h1 && minus_allow_trade) {
-                if (dto_d1.getHeiken_candles().contains(Utils.TEXT_MUC)
-                        && !dto_h4.getHeiken_candles().contains(Utils.TEXT_STOP_TRADE)
-                        && dto_h1.getHeiken_candles().contains(Utils.TEXT_MUC)) {
+                if (dto_d1.getCount_heiken_candles().contains(Utils.TEXT_MUC)
+                        && !dto_h4.getCount_heiken_candles().contains(Utils.TEXT_STOP_TRADE)
+                        && dto_h1.getCount_heiken_candles().contains(Utils.TEXT_MUC)) {
 
                     close_reverse_trade(EPIC, trend_d1_ma9);
 
@@ -4399,18 +4401,47 @@ public class BinanceServiceImpl implements BinanceService {
 
             // -------------------------------------------------------------------------------------
             if (is_auto_trade) {
-                if (has_profit_100
-                        && ((reverse_15_369 && reverse_05_369) || (Utils.is_close_trade_time() && reverse_05_369)
-                                || (Utils.is_close_jpy_trade_at_3am(EPIC) && reverse_05_369))) {
-                    is_hit_sl = true;
-                    reason_id += "(has_profit)";
-                }
                 if (reverse_h4_369) {
                     is_hit_sl = true;
                     reason_id += "(has_profit)";
                 }
+
+                if (has_profit_100) {
+                    String trade_type = Utils.getType(TRADE_TREND);
+
+                    String count_heiken = dto_h4.getCount_heiken_candles();
+                    String TIME_FRAME = Utils.getDeEncryptedChartNameCapital(trade.getComment());
+
+                    if (Objects.equals(Utils.CAPITAL_TIME_H1, TIME_FRAME)) {
+                        count_heiken = dto_h1.getCount_heiken_candles();
+                    }
+                    if (Objects.equals(Utils.CAPITAL_TIME_H4, TIME_FRAME)) {
+                        count_heiken = dto_h4.getCount_heiken_candles();
+                    }
+                    if (Objects.equals(Utils.CAPITAL_TIME_D1, TIME_FRAME)) {
+                        count_heiken = dto_d1.getCount_heiken_candles();
+                    }
+
+                    if (count_heiken.contains(trade_type)) {
+                        if (count_heiken.contains("c1:6")
+                                || count_heiken.contains("c1:7")
+                                || count_heiken.contains("c1:8")
+                                || count_heiken.contains("c1:9")
+                                || count_heiken.contains("c1:9")
+                                || count_heiken.contains(Utils.TEXT_STOP_TRADE)) {
+                            is_hit_sl = true;
+                            reason_id += "(has_profit:" + count_heiken + ")";
+                        }
+                    }
+                }
             }
 
+            if (has_profit_100
+                    && ((reverse_15_369 && reverse_05_369) || (Utils.is_close_trade_time() && reverse_05_369)
+                            || (Utils.is_close_jpy_trade_at_3am(EPIC) && reverse_05_369))) {
+                is_hit_sl = true;
+                reason_id += "(has_profit)";
+            }
             if (has_profit_100 && reverse_h4_369) {
                 is_hit_sl = true;
                 reason_id += "(reverse_h4_369,has_profit_100)";
