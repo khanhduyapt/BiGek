@@ -129,6 +129,8 @@ public class Utils {
     // public static final String TEXT_SWITCH_TREND_LONG_BELOW_Ma = "(B.H4H2)";
     // public static final String TEXT_SWITCH_TREND_SHOT_ABOVE_Ma = "(S.H4H2)";
 
+    public static final String TEXT_MUC = " ●";
+    public static final String TEXT_STOP_TRADE = " ×";
     public static final String TEXT_WAIT = "Wait";
     public static final String TEXT_LIMIT = "_limit";
     public static final String TEXT_EXPERT_ADVISORING = "EA ";
@@ -313,18 +315,20 @@ public class Utils {
             "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD",
             "USDCHF", "USDJPY", "CADCHF");
 
-    public static final List<String> EPICS_FOREXS_JPY = Arrays.asList("AUDJPY", "CADJPY", "CHFJPY", "EURJPY", "GBPJPY",
-            "NZDJPY", "USDJPY", "USDCAD", "USDCHF", "CADCHF");
+    public static final List<String> EPICS_FOREXS_AUDx = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD",
+            "AUDUSD");
 
-    public static final List<String> EPICS_FOREXS_GBP = Arrays.asList("GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD",
-            "GBPUSD");
+    public static final List<String> EPICS_FOREXS_CADx = Arrays.asList("CADCHF", "CADJPY", "CHFJPY");
 
-    public static final List<String> EPICS_FOREXS_EUR = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY",
+    public static final List<String> EPICS_FOREXS_EURx = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY",
             "EURNZD", "EURUSD");
 
-    public static final List<String> EPICS_FOREXS_NZD = Arrays.asList("NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD");
+    public static final List<String> EPICS_FOREXS_GBPx = Arrays.asList("GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD",
+            "GBPUSD");
 
-    public static final List<String> EPICS_FOREXS_AUD = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD");
+    public static final List<String> EPICS_FOREXS_NZDx = Arrays.asList("NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD");
+
+    public static final List<String> EPICS_FOREXS_USDx = Arrays.asList("USDCAD", "USDCHF", "USDJPY");
 
     // "16:30 - 23:00"
     // "AIRF", "LVMH", "PFE", "RACE", "VOWG_p", "BABA", "T", "V", "ZM"
@@ -3010,26 +3014,6 @@ public class Utils {
         return false;
     }
 
-    public static Boolean isHammer(BtcFutures dto) {
-        if (dto.isUptrend()) {
-            BigDecimal range_candle = getPercent(dto.getPrice_close_candle(), dto.getPrice_open_candle());
-            BigDecimal range_beard = getPercent(dto.getHight_price(), dto.getPrice_close_candle());
-
-            if (range_beard.compareTo(range_candle.multiply(BigDecimal.valueOf(1))) > 0) {
-                return true;
-            }
-        } else {
-            BigDecimal range_candle = getPercent(dto.getPrice_open_candle(), dto.getPrice_close_candle());
-            BigDecimal range_beard = getPercent(dto.getHight_price(), dto.getPrice_open_candle());
-
-            if (range_beard.compareTo(range_candle.multiply(BigDecimal.valueOf(1))) > 0) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public static Boolean isPumpingCandle(List<BtcFutures> list_15m) {
         if (CollectionUtils.isEmpty(list_15m)) {
             return false;
@@ -3556,20 +3540,59 @@ public class Utils {
         return trend;
     }
 
-    public static String countCandlesMatchingCondition(List<BtcFutures> heiken_list) {
-        String result = "Allow  :" + Utils.TREND_LONG + "_" + Utils.TREND_SHOT;
+    public static String count_heiken_candles(List<BtcFutures> heiken_list, String find_trend_by_d1_ma9) {
+        int count_c1 = 0;
 
-        if (heiken_list.get(1).isUptrend() && heiken_list.get(2).isUptrend() && heiken_list.get(3).isUptrend()
-                && heiken_list.get(4).isUptrend() && heiken_list.get(5).isUptrend() && heiken_list.get(6).isUptrend()) {
-            result = "Waiting:" + Utils.TREND_SHOT;
+        boolean is_pinbar_c0 = isPinBar(heiken_list.get(0));
+        boolean is_uptrend_c0 = heiken_list.get(0).isUptrend();
+
+        boolean is_uptrend_d1_ma9 = Objects.equals(find_trend_by_d1_ma9, Utils.TREND_LONG) ? true : false;
+
+        for (int index = 1; index < heiken_list.size(); index++) {
+            if (Objects.equals(is_uptrend_d1_ma9, heiken_list.get(index).isUptrend())) {
+                count_c1 += 1;
+            } else {
+                break;
+            }
         }
 
-        if (heiken_list.get(1).isDown() && heiken_list.get(2).isDown() && heiken_list.get(3).isDown()
-                && heiken_list.get(4).isDown() && heiken_list.get(5).isDown() && heiken_list.get(6).isDown()) {
-            result = "Waiting:" + Utils.TREND_LONG;
+        String result = "c1:" + Utils.appendSpace(String.valueOf(count_c1), 2);
+        result += is_uptrend_d1_ma9 ? "B" : "S";
+
+        if (is_pinbar_c0) {
+            result += "  c0:" + "~";
+        } else {
+            result += "  c0:" + (is_uptrend_c0 ? "B" : "S");
         }
 
-        return Utils.appendSpace(getChartName(heiken_list.get(0).getId()) + result, 20);
+        if (!Objects.equals(is_uptrend_d1_ma9, is_uptrend_c0)) {
+            result += " " + (is_uptrend_c0 ? "↑" : "↓");
+        } else {
+            count_c1 += 1;
+        }
+
+        result = getChartName(heiken_list.get(0).getId()) + result;
+
+        int size = 10;
+        int count_10 = 0;
+        if (size > heiken_list.size()) {
+            size = heiken_list.size();
+        }
+        for (int index = 1; index < size; index++) {
+            if (Objects.equals(is_uptrend_d1_ma9, heiken_list.get(index).isUptrend())) {
+                count_10 += 1;
+            }
+        }
+
+        if (count_10 > 7) {
+            result = TEXT_STOP_TRADE + result;
+        } else if ((is_pinbar_c0 || Objects.equals(is_uptrend_d1_ma9, is_uptrend_c0)) && (count_c1 <= 3)) {
+            result = TEXT_MUC + result;
+        } else {
+            result = "  " + result;
+        }
+
+        return Utils.appendSpace(result, 25);
     }
 
     public static String getZone(List<BtcFutures> heiken_list) {
