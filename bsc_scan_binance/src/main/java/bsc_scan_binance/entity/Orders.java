@@ -93,7 +93,7 @@ public class Orders {
     private String trend_by_ma_9;
 
     @Column(name = "tradable_zone")
-    private String heiken_zone;
+    private String count_heiken_candles;
 
     @Column(name = "trend_by_ma_06")
     private String trend_by_ma_6;
