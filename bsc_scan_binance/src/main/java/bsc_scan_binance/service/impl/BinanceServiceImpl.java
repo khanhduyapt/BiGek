@@ -4196,15 +4196,17 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_15_ma369 = Utils.find_trend_by_ma3_6_9(dto_15);
             String trend_05_ma369 = Utils.find_trend_by_ma3_6_9(dto_05);
 
-            boolean minus_allow_trade = (Objects.equals(trend_d1_ma9, trend_15_ma369)
+            boolean minus_allow_trade = (dto_15.getCount_heiken_candles().contains(Utils.TEXT_MUC)
+                    && Objects.equals(trend_d1_ma9, trend_15_ma369)
                     && Objects.equals(trend_d1_ma9, dto_05.getTrend_by_heiken()))
-                    || (Objects.equals(trend_d1_ma9, dto_15.getTrend_by_heiken())
+                    || (dto_15.getCount_heiken_candles().contains(Utils.TEXT_MUC)
+                            && Objects.equals(trend_d1_ma9, dto_15.getTrend_by_heiken())
                             && Objects.equals(trend_d1_ma9, trend_05_ma369))
+
                     || Utils.is_best_price(dto_05, trend_d1_ma9, curr_price)
                     || Utils.is_best_price(dto_15, trend_d1_ma9, curr_price);
 
-            minus_allow_trade &= Objects.equals(trend_d1_ma9, dto_05.getTrend_by_heiken())
-                    && Objects.equals(trend_d1_ma9, trend_05_ma369);
+            minus_allow_trade &= Objects.equals(trend_d1_ma9, dto_05.getTrend_by_heiken());
 
             if (Utils.EPICS_INDEXS_CFD.contains(EPIC)
                     && !Objects.equals(dto_w1.getTrend_by_heiken(), trend_d1_ma9)) {
@@ -4223,7 +4225,7 @@ public class BinanceServiceImpl implements BinanceService {
                     List<TakeProfit> his_list_folow_d369 = takeProfitRepository
                             .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_d1_ma9, Utils.getYyyyMMdd());
 
-                    if (CollectionUtils.isEmpty(his_list_folow_d369) || (his_list_folow_d369.size() <= 3)) {
+                    if (CollectionUtils.isEmpty(his_list_folow_d369) || (his_list_folow_d369.size() <= 1)) {
 
                         dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1_ma9, dto_h1, Utils.TEXT_PASS, true,
                                 Utils.CAPITAL_TIME_H1, dailyRange, 1);
