@@ -3566,7 +3566,7 @@ public class Utils {
         }
 
         if (!Objects.equals(is_uptrend_d1_ma9, is_uptrend_c0)) {
-            result += " " + (is_uptrend_c0 ? "↑" : "↓");
+            result += (is_uptrend_c0 ? "↑" : "↓");
         } else {
             count_c1 += 1;
         }
@@ -6307,6 +6307,9 @@ public class Utils {
         }
 
         return Utils.appendSpace(result, 8);
+    }
+
+    public static void get_trend_by_macd(List<BtcFutures> list) {
     }
 
     public static String calc_BUF_Long_Forex(boolean onlyWait, BigDecimal risk_x1, String EPIC, BigDecimal cur_price,

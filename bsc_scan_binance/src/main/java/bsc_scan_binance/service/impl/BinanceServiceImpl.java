@@ -3943,6 +3943,11 @@ public class BinanceServiceImpl implements BinanceService {
         if (CollectionUtils.isEmpty(heiken_list)) {
             return "";
         }
+
+        if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_D1)) {
+            Utils.get_trend_by_macd(list);
+        }
+
         List<BigDecimal> amplitutes = Utils.calc_amplitude_average_of_candles(list);
         BigDecimal amp_avg_h4 = amplitutes.get(1);
         BigDecimal curr_price = list.get(0).getCurrPrice();
@@ -4196,11 +4201,9 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_15_ma369 = Utils.find_trend_by_ma3_6_9(dto_15);
             String trend_05_ma369 = Utils.find_trend_by_ma3_6_9(dto_05);
 
-            boolean minus_allow_trade = (dto_15.getCount_heiken_candles().contains(Utils.TEXT_MUC)
-                    && Objects.equals(trend_d1_ma9, trend_15_ma369)
+            boolean minus_allow_trade = (Objects.equals(trend_d1_ma9, trend_15_ma369)
                     && Objects.equals(trend_d1_ma9, dto_05.getTrend_by_heiken()))
-                    || (dto_15.getCount_heiken_candles().contains(Utils.TEXT_MUC)
-                            && Objects.equals(trend_d1_ma9, dto_15.getTrend_by_heiken())
+                    || (Objects.equals(trend_d1_ma9, dto_15.getTrend_by_heiken())
                             && Objects.equals(trend_d1_ma9, trend_05_ma369))
 
                     || Utils.is_best_price(dto_05, trend_d1_ma9, curr_price)
@@ -4213,11 +4216,14 @@ public class BinanceServiceImpl implements BinanceService {
                 minus_allow_trade = false;
             }
 
+            // TODO: macd_alow_trade
+            boolean macd_alow_trade = false;
+
             // TREND_FLOWING
             Mt5OpenTrade dto_notifiy = null;
-            if (is_eq_d_h4_h1 && minus_allow_trade) {
+            if (macd_alow_trade && is_eq_d_h4_h1 && minus_allow_trade) {
                 if (dto_d1.getCount_heiken_candles().contains(Utils.TEXT_MUC)
-                        && !dto_h4.getCount_heiken_candles().contains(Utils.TEXT_STOP_TRADE)
+                        && dto_h4.getCount_heiken_candles().contains(Utils.TEXT_MUC)
                         && dto_h1.getCount_heiken_candles().contains(Utils.TEXT_MUC)) {
 
                     close_reverse_trade(EPIC, trend_d1_ma9);
