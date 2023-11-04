@@ -3543,13 +3543,13 @@ public class Utils {
         return trend;
     }
 
-    public static String count_heiken_candles(List<BtcFutures> heiken_list, String find_trend_by_d1_ma9) {
+    public static String count_heiken_candles(List<BtcFutures> heiken_list, String find_trend_by_d1) {
         int count_c1 = 0;
 
         boolean is_pinbar_c0 = isPinBar(heiken_list.get(0));
         boolean is_uptrend_c0 = heiken_list.get(0).isUptrend();
 
-        boolean is_uptrend_d1_ma9 = Objects.equals(find_trend_by_d1_ma9, Utils.TREND_LONG) ? true : false;
+        boolean is_uptrend_d1_ma9 = Objects.equals(find_trend_by_d1, Utils.TREND_LONG) ? true : false;
 
         for (int index = 1; index < heiken_list.size(); index++) {
             if (Objects.equals(is_uptrend_d1_ma9, heiken_list.get(index).isUptrend())) {
@@ -3589,7 +3589,7 @@ public class Utils {
 
         if (count_10 > 7) {
             result = TEXT_STOP_TRADE + result;
-        } else if ((is_pinbar_c0 || Objects.equals(is_uptrend_d1_ma9, is_uptrend_c0)) && (count_c1 <= 3)) {
+        } else if (count_c1 <= 3) {
             result = TEXT_MUC + result;
         } else {
             result = "  " + result;

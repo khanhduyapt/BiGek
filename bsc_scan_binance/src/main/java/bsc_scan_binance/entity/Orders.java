@@ -144,6 +144,6 @@ public class Orders {
     private BigDecimal highest_price_of_curr_candle = BigDecimal.ZERO;
 
     @Column(name = "trend_of_heiken3_1")
-    private String count_heiken_candles_by_macd_zero;
+    private String count_heiken_candles_by_macd;
 
 }

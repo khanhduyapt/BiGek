@@ -4046,8 +4046,8 @@ public class BinanceServiceImpl implements BinanceService {
             find_trend_by_d1_ma9 = trend_by_ma_9;
         }
         String count_heiken_candles_by_d1_ma9 = Utils.count_heiken_candles(heiken_list, find_trend_by_d1_ma9);
-        String count_heiken_candles_by_macd_zero = Utils.count_heiken_candles(heiken_list,
-                mt5_macd.getTrend_macd_vs_zero());
+        String count_heiken_candles_by_macd = Utils.count_heiken_candles(heiken_list,
+                mt5_macd.getTrend_macd_vs_signal());
 
         BigDecimal close_candle_1 = list.get(1).getPrice_close_candle();
         BigDecimal close_candle_2 = list.get(2).getPrice_close_candle();
@@ -4064,7 +4064,7 @@ public class BinanceServiceImpl implements BinanceService {
                 trend_by_ma_20, trend_by_ma_34and89, trend_by_seq_ma, trend_by_bread_area, body_hig_30_candle,
                 body_low_30_candle,
                 amplitude_1_part_15, amp_avg_h4, ma6, ma3, ma9, low_50candle, hig_50candle, lowest_price_of_curr_candle,
-                highest_price_of_curr_candle, count_heiken_candles_by_macd_zero);
+                highest_price_of_curr_candle, count_heiken_candles_by_macd);
 
         ordersRepository.save(entity);
 
@@ -4170,15 +4170,8 @@ public class BinanceServiceImpl implements BinanceService {
             amp += "   " + dto_d1.getCount_heiken_candles_by_d1_ma9() + dto_h4.getCount_heiken_candles_by_d1_ma9()
                     + dto_h1.getCount_heiken_candles_by_d1_ma9();
 
-            String TIME_FRAME = "  ";
-            if (is_trend_d1_stable && dto_d1.getSwitch_trend().contains(dto_d1.getTrend_by_ma_9())) {
-                TIME_FRAME = "D1";
-            } else if (is_trend_d1_stable && dto_h4.getSwitch_trend().contains(dto_d1.getTrend_by_ma_9())) {
-                TIME_FRAME = "H4";
-            }
-
-            boolean d1_allow_muc = dto_d1.getCount_heiken_candles_by_d1_ma9().contains(Utils.TEXT_MUC)
-                    || dto_d1.getCount_heiken_candles_by_macd_zero().contains(Utils.TEXT_MUC);
+            boolean d1_allow_muc = dto_d1.getCount_heiken_candles_by_d1_ma9().contains(Utils.TEXT_MUC);
+            boolean is_d1_macde_allow_muc = dto_d1.getCount_heiken_candles_by_macd().contains(Utils.TEXT_MUC);
 
             boolean is_eq_d_h4_h1 = is_able_tp_d1
                     && Objects.equals(trend_d1_ma9, dto_h4.getTrend_by_ma_9())
@@ -4189,15 +4182,15 @@ public class BinanceServiceImpl implements BinanceService {
             // D1 trend_macd_vs_signal=BUY && trend_macd_vs_zero = BUY
             // H4 trend_macd_vs_signal=BUY && (pre_macd_trend = BUY or trend_macd_vs_zero = BUY) && cur_macd_trend=BUY
             // H1 trend_macd_vs_signal=BUY && pre_macd_trend = BUY && cur_macd_trend = BUY
-            boolean macd_alow_trade = Objects.equals(trend_d1_ma9, macd_d1.getTrend_macd_vs_signal())
-                    && Objects.equals(trend_d1_ma9, macd_h4.getTrend_macd_vs_signal())
-                    && Objects.equals(trend_d1_ma9, macd_h1.getTrend_macd_vs_signal());
+
+            String trend_d1_by_macd_vs_signal = macd_d1.getTrend_macd_vs_signal();
+
+            boolean macd_alow_trade = Objects.equals(trend_d1_by_macd_vs_signal, macd_h4.getTrend_macd_vs_signal())
+                    && Objects.equals(trend_d1_by_macd_vs_signal, macd_h1.getTrend_macd_vs_signal());
 
             amp += is_eq_d_h4_h1 ? "EqDH" : "    ";
             amp += "   ";
-            amp += macd_alow_trade ? "MACD" : "    ";
-            amp += "   ";
-            amp += "~" + TIME_FRAME + "~";
+            amp += macd_alow_trade ? (is_d1_macde_allow_muc ? Utils.TEXT_MUC : "  ") + "MACD" : "      ";
 
             amp += Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_25_PERCENT, true, dto_d1.getTrend_by_ma_9(), EPIC,
                     curr_price, dailyRange);
@@ -4220,7 +4213,15 @@ public class BinanceServiceImpl implements BinanceService {
             }
             pivot = Utils.appendSpace(pivot, 15);
 
-            String prefix = "  " + No + amp + pivot;
+            String TIME_FRAME = "  ";
+            if (is_trend_d1_stable && dto_d1.getSwitch_trend().contains(dto_d1.getTrend_by_ma_9())) {
+                TIME_FRAME = "D1";
+            } else if (is_trend_d1_stable && dto_h4.getSwitch_trend().contains(dto_d1.getTrend_by_ma_9())) {
+                TIME_FRAME = "H4";
+            }
+            TIME_FRAME = "~" + TIME_FRAME + "~";
+
+            String prefix = TIME_FRAME + "     " + No + amp + pivot;
 
             // TODO: 3 controlMt5
             if ("_USDJPY_".contains(EPIC)) {
@@ -4229,7 +4230,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean minus_allow_trade = Objects.equals(trend_d1_ma9, dto_05.getTrend_by_heiken())
                     && Objects.equals(trend_d1_ma9, macd_h1.getTrend_macd_vs_signal())
-                    && Objects.equals(trend_d1_ma9, macd_h1.getCur_macd_trend())
 
                     && Objects.equals(trend_d1_ma9, macd_15.getTrend_macd_vs_zero())
                     && Objects.equals(trend_d1_ma9, macd_15.getTrend_macd_vs_signal())
@@ -4273,15 +4273,17 @@ public class BinanceServiceImpl implements BinanceService {
             // 15 trend_macd_vs_zero  =BUY && trend_macd_vs_signal=BUY && pre_macd_trend = BUY && cur_macd_trend = BUY
             // 05 trend_macd_vs_zero  =BUY && trend_macd_vs_signal=BUY && pre_macd_trend = BUY && cur_macd_trend = BUY
             macd_alow_trade = macd_alow_trade
-                    && Objects.equals(trend_d1_ma9, macd_15.getTrend_macd_vs_zero())
-                    && Objects.equals(trend_d1_ma9, macd_15.getTrend_macd_vs_signal())
-                    && Objects.equals(trend_d1_ma9, macd_15.getCur_macd_trend())
+                    && Objects.equals(trend_d1_by_macd_vs_signal, macd_15.getTrend_macd_vs_zero())
+                    && Objects.equals(trend_d1_by_macd_vs_signal, macd_15.getTrend_macd_vs_signal())
+                    && Objects.equals(trend_d1_by_macd_vs_signal, macd_15.getCur_macd_trend())
 
-                    && Objects.equals(trend_d1_ma9, macd_05.getTrend_macd_vs_zero())
-                    && Objects.equals(trend_d1_ma9, macd_05.getTrend_macd_vs_signal())
-                    && Objects.equals(trend_d1_ma9, macd_05.getCur_macd_trend());
+                    && Objects.equals(trend_d1_by_macd_vs_signal, macd_05.getTrend_macd_vs_zero())
+                    && Objects.equals(trend_d1_by_macd_vs_signal, macd_05.getTrend_macd_vs_signal())
+                    && Objects.equals(trend_d1_by_macd_vs_signal, macd_05.getCur_macd_trend());
 
-            if (is_able_tp_d1 && macd_alow_trade && d1_allow_muc) {
+            boolean is_able_tp_macd_d1 = Utils.is_able_to_trade_by_h4(dto_d1, dailyRange, trend_d1_by_macd_vs_signal);
+
+            if (is_able_tp_macd_d1 && macd_alow_trade && is_d1_macde_allow_muc) {
                 close_reverse_trade(EPIC, trend_d1_ma9);
 
                 List<TakeProfit> his_list_folow_d369 = takeProfitRepository
@@ -4370,7 +4372,6 @@ public class BinanceServiceImpl implements BinanceService {
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
             Orders dto_03 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_03).orElse(null);
 
-            BigDecimal curr_price = dto_d1.getCurrent_price();
             DailyRange dailyRange = get_DailyRange(EPIC);
 
             if (Objects.isNull(dailyRange) || Objects.isNull(dto_d1) || Objects.isNull(dto_h4) || Objects.isNull(dto_h1)
@@ -4419,7 +4420,6 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean has_profit_100 = PROFIT.compareTo(BigDecimal.valueOf(100)) > 0;
-            boolean has_profit_300 = PROFIT.compareTo(BigDecimal.valueOf(300)) > 0;
             boolean has_profit_500 = PROFIT.compareTo(BigDecimal.valueOf(500)) > 0;
             boolean has_profit_1000 = PROFIT.compareTo(BigDecimal.valueOf(1000)) > 0;
 
@@ -4427,8 +4427,6 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1_369 = Utils.find_trend_by_ma3_6_9(dto_h1);
             String trend_15_369 = Utils.find_trend_by_ma3_6_9(dto_15);
             String trend_03_369 = Utils.find_trend_by_ma3_6_9(dto_03);
-
-            boolean is_auto_trade = Utils.isNotBlank(trade.getComment());
 
             boolean reverse_d1 = Objects.equals(dto_d1.getTrend_by_ma_9(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_d1.getTrend_by_heiken(), REVERSE_TRADE_TREND);
@@ -4454,6 +4452,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean reverse_macd_d1 = reverse_macd_h4 && reverse_macd_h1
                     && Objects.equals(macd_d1.getTrend_macd_vs_zero(), REVERSE_TRADE_TREND);
 
+            boolean is_auto_trade_by_macd = trade.getComment().contains(Utils.TEXT_MACD_FLOWING);
             // -------------------------------------------------------------------------------------
             String reason_id = "";
             boolean is_hit_sl = false;
@@ -4518,6 +4517,11 @@ public class BinanceServiceImpl implements BinanceService {
                 reason_id += "(reverse_macd_h1,has_profit_1000)";
             }
 
+            if (has_profit_100 && reverse_macd_h1 && is_auto_trade_by_macd) {
+                is_hit_sl = true;
+                reason_id += "(reverse_macd_d1,auto_trade_by_macd,has_profit_100)";
+            }
+
             // -------------------------------------------------------------------------------------
 
             if (PROFIT.add(BigDecimal.valueOf(480)).compareTo(BigDecimal.ZERO) < 0) {
@@ -4557,7 +4561,8 @@ public class BinanceServiceImpl implements BinanceService {
 
             // -------------------------------------------------------------------------------------
 
-            boolean pass_time_hoding = allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_1D);
+            boolean pass_time_hoding = allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H);
+
             if (is_hit_sl && pass_time_hoding) {
                 String reason = "Profit:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5) + "$   "
                         + Utils.appendSpace(trade.getComment(), 30) + reason_id;
