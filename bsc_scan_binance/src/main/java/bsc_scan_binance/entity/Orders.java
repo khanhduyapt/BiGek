@@ -93,7 +93,7 @@ public class Orders {
     private String trend_by_ma_9;
 
     @Column(name = "tradable_zone")
-    private String count_heiken_candles;
+    private String count_heiken_candles_by_d1_ma9;
 
     @Column(name = "trend_by_ma_06")
     private String trend_by_ma_6;
@@ -144,6 +144,6 @@ public class Orders {
     private BigDecimal highest_price_of_curr_candle = BigDecimal.ZERO;
 
     @Column(name = "trend_of_heiken3_1")
-    private String todo;
+    private String count_heiken_candles_by_macd_zero;
 
 }

@@ -52,6 +52,8 @@ import org.springframework.web.servlet.LocaleResolver;
 import bsc_scan_binance.BscScanBinanceApplication;
 import bsc_scan_binance.entity.BtcFutures;
 import bsc_scan_binance.entity.DailyRange;
+import bsc_scan_binance.entity.Mt5Macd;
+import bsc_scan_binance.entity.Mt5MacdKey;
 import bsc_scan_binance.entity.Mt5OpenTrade;
 import bsc_scan_binance.entity.Mt5OpenTradeEntity;
 import bsc_scan_binance.entity.Orders;
@@ -151,6 +153,7 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_Ma_10vs20 = "(Ma10.20)";
 
     public static final String TEXT_TREND_FLOWING = "_xh";
+    public static final String TEXT_MACD_FLOWING = "_md";
 
     public static final String TEXT_PIVOT_FR = "pv_fr";
     public static final String TEXT_PIVOT_TO = "pv_to";
@@ -4787,6 +4790,12 @@ public class Utils {
 
     public static String getEpicFromId(String id) {
         String EPIC = id;
+        String[] parts = EPIC.split("_");
+        if (parts.length > 0) {
+            EPIC = parts[0];
+        }
+        EPIC = EPIC.replace("_00", "");
+
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_W1, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_D1, "");
         EPIC = EPIC.replace("_" + Utils.CAPITAL_TIME_H4, "");
@@ -4823,7 +4832,6 @@ public class Utils {
         EPIC = EPIC.replace("_01d", "");
         EPIC = EPIC.replace("CRYPTO_", "");
 
-        EPIC = EPIC.replace("_00", "");
         EPIC = EPIC.replace("_", "");
 
         return EPIC.toUpperCase();
@@ -5267,7 +5275,6 @@ public class Utils {
         BigDecimal entry_2 = BigDecimal.ZERO;
         BigDecimal entry_3 = BigDecimal.ZERO;
 
-        // TODO: Utils.calc_Lot_En_SL_TP
         List<BigDecimal> sl_tp = Utils.get_SL_TP_by_amp(dailyRange, curr_price, find_trend);
         BigDecimal stop_loss = sl_tp.get(0);
         BigDecimal take_profit = sl_tp.get(1);
@@ -6359,4 +6366,113 @@ public class Utils {
         String result = Utils.appendSpace(temp, 20);
         return result;
     }
+
+    public static Mt5Macd MACDCalculator(List<BtcFutures> list, String EPIC, String time_frame) {
+        ArrayList<Double> prices = new ArrayList<Double>();
+
+        for (int i = list.size() - 1; i >= 0; i--) {
+            BtcFutures dto = list.get(i);
+
+            prices.add(dto.getPrice_close_candle().doubleValue());
+        }
+
+        int shortTermPeriod = 3; // EMA short term period
+        int longTermPeriod = 6; // EMA long term period
+        int signalPeriod = 9; // Signal period
+
+        double[] macds = calculateMACD(prices, shortTermPeriod, longTermPeriod);
+        double[] signals = calculateMACDSignal(macds, signalPeriod);
+
+        double macd = macds[macds.length - 1];
+        double signal = signals[signals.length - 1];
+
+        String pre_macd_trend = "";
+        if (macds[macds.length - 3] < macds[macds.length - 2])
+            pre_macd_trend = "BUY";
+        else
+            pre_macd_trend = "SELL";
+
+        String cur_macd_trend = "";
+        if (macds[macds.length - 2] < macds[macds.length - 1])
+            cur_macd_trend = "BUY";
+        else
+            cur_macd_trend = "SELL";
+
+        String trend_macd_vs_signal = "";
+        if (macd > signal)
+            trend_macd_vs_signal = "BUY";
+        else
+            trend_macd_vs_signal = "SELL";
+
+        String trend_macd_vs_zero = "";
+        if (macd > 0)
+            trend_macd_vs_zero = "BUY";
+        else
+            trend_macd_vs_zero = "SELL";
+
+        //System.out.println(EPIC + "  " + getChartName(time_frame)
+        //        + "  macd=" + Utils.formatPrice(BigDecimal.valueOf(macd), 5)
+        //        + "  signal=" + Utils.formatPrice(BigDecimal.valueOf(signal), 5)
+        //        + " " + pre_macd_trend
+        //        + " " + cur_macd_trend
+        //        + " " + trend_macd_vs_signal
+        //        + " " + trend_macd_vs_zero); // Lấy giá trị EMA mới nhất
+
+        Mt5MacdKey id = new Mt5MacdKey(EPIC, time_frame);
+
+        Mt5Macd mt5_macd = new Mt5Macd(id, Utils.formatPrice(BigDecimal.valueOf(macd), 5),
+                Utils.formatPrice(BigDecimal.valueOf(signal), 5), pre_macd_trend, cur_macd_trend, trend_macd_vs_signal,
+                trend_macd_vs_zero);
+
+        return mt5_macd;
+    }
+
+    private static double[] calculateMACD(ArrayList<Double> prices, int shortTermPeriod, int longTermPeriod) {
+        double[] emaShort = calculateEMA(prices, shortTermPeriod);
+        double[] emaLong = calculateEMA(prices, longTermPeriod);
+
+        double[] macd = new double[prices.size()];
+        for (int i = 0; i < prices.size(); i++) {
+            macd[i] = emaShort[i] - emaLong[i];
+        }
+
+        return macd;
+    }
+
+    private static double[] calculateMACDSignal(double[] macd, int signalPeriod) {
+        double[] signalLine = calculateSMA(macd, signalPeriod);
+        return signalLine;
+    }
+
+    private static double[] calculateEMA(ArrayList<Double> prices, int period) {
+        double[] ema = new double[prices.size()];
+
+        double smoothingFactor = 2.0 / (period + 1);
+
+        // Tính EMA ban đầu bằng giá trị đầu tiên
+        ema[0] = prices.get(0);
+
+        for (int i = 1; i < prices.size(); i++) {
+            double currentPrice = prices.get(i);
+            double previousEMA = ema[i - 1];
+            ema[i] = (currentPrice - previousEMA) * smoothingFactor + previousEMA;
+        }
+
+        return ema;
+    }
+
+    private static double[] calculateSMA(double[] prices, int period) {
+        double[] sma = new double[prices.length];
+
+        for (int i = period - 1; i < prices.length; i++) {
+            double sum = 0;
+            for (int j = i; j > i - period; j--) {
+                sum += prices[j];
+            }
+            sma[i] = sum / period;
+        }
+
+        return sma;
+    }
+
 }
