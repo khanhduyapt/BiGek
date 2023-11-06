@@ -4420,6 +4420,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 continue;
             }
+            BigDecimal curr_price = dto_h4.getCurrent_price();
 
             String TRADE_TREND = Objects.equals(trade.getType().toUpperCase(), Utils.TREND_LONG) ? Utils.TREND_LONG
                     : Objects.equals(trade.getType().toUpperCase(), Utils.TREND_SHOT) ? Utils.TREND_SHOT
@@ -4435,9 +4436,6 @@ public class BinanceServiceImpl implements BinanceService {
             String trend_h1_369 = Utils.find_trend_by_ma3_6_9(dto_h1);
             String trend_15_369 = Utils.find_trend_by_ma3_6_9(dto_15);
             String trend_03_369 = Utils.find_trend_by_ma3_6_9(dto_03);
-
-            boolean reverse_d1 = Objects.equals(dto_d1.getTrend_by_ma_9(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_d1.getTrend_by_heiken(), REVERSE_TRADE_TREND);
 
             boolean reverse_h4_369 = Objects.equals(trend_h4_369, REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_by_heiken(), REVERSE_TRADE_TREND);
@@ -4458,9 +4456,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_hit_sl = false;
             // -------------------------------------------------------------------------------------
             // Bảo vệ tài khoản tránh thua sạch tiền tích góp trong 53 ngày: -$6,133.97
-            if (reverse_d1 && (OPEN_POSITIONS.add(BigDecimal.valueOf(2000)).compareTo(BigDecimal.ZERO) < 0)
-                    || (TOTAL_LOSS_TODAY.add(BigDecimal.valueOf(2000)).compareTo(BigDecimal.ZERO) < 0)) {
-
+            if (OPEN_POSITIONS.add(BigDecimal.valueOf(1000)).compareTo(BigDecimal.ZERO) < 0) {
                 if (reverse_h1_369 && reverse_15_369 && reverse_05_369) {
                     if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_1D)) {
                         is_hit_sl = true;
@@ -4472,28 +4468,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
 
-                if (reverse_h4_369 && reverse_h1_369 && reverse_15_369 && reverse_05_369) {
-                    if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_1D)) {
-                        is_hit_sl = true;
-                        reason_id += "(H4_STOPLOSS:ACCOUNT_PROTECTION)";
-                        BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason_id);
-                    }
-                }
-
-                if (Objects.equals(dto_d1.getTrend_by_heiken(), REVERSE_TRADE_TREND)
-                        && Objects.equals(dto_h4.getTrend_by_ma_9(), REVERSE_TRADE_TREND)
-                        && Objects.equals(dto_h1.getTrend_by_ma_9(), REVERSE_TRADE_TREND)
-                        && Objects.equals(dto_15.getTrend_by_ma_9(), REVERSE_TRADE_TREND)
-                        && Objects.equals(dto_03.getTrend_by_ma_9(), REVERSE_TRADE_TREND)) {
-
-                    if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_1D)) {
-                        is_hit_sl = true;
-                        reason_id += "(D1_STOPLOSS:ACCOUNT_PROTECTION)";
-                        BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason_id);
-                    }
-                }
-
-                if (reverse_macd_h1) {
+                if (reverse_macd_h1 || reverse_h4_369) {
                     if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_1D)) {
                         is_hit_sl = true;
                         reason_id += "(REVERSE_MACD_H1:ACCOUNT_PROTECTION)";
@@ -4505,12 +4480,32 @@ public class BinanceServiceImpl implements BinanceService {
             // TODO: 5 closeTrade_by_SL_TP
             boolean is_close_trade_by_macd = Objects.equals(REVERSE_TRADE_TREND, macd_d1.getTrend_macd_vs_zero())
                     && Objects.equals(REVERSE_TRADE_TREND, macd_h4.getTrend_macd_vs_zero())
+                    && Objects.equals(REVERSE_TRADE_TREND, macd_h4.getTrend_macd_vs_signal())
                     && Objects.equals(REVERSE_TRADE_TREND, macd_h1.getTrend_macd_vs_zero())
+                    && Objects.equals(REVERSE_TRADE_TREND, macd_h1.getTrend_macd_vs_signal())
                     && Objects.equals(REVERSE_TRADE_TREND, macd_15.getTrend_macd_vs_zero());
 
             if (is_close_trade_by_macd) {
                 is_hit_sl = true;
                 reason_id += "(is_close_trade_by_macd)";
+            }
+
+            if (Objects.equals(REVERSE_TRADE_TREND, macd_d1.getTrend_macd_vs_signal())) {
+                if (Objects.equals(REVERSE_TRADE_TREND, Utils.TREND_LONG)) {
+                    if ((curr_price.compareTo(dto_h4.getBody_hig_30_candle()) > 0)
+                            || (curr_price.compareTo(dto_h1.getBody_hig_30_candle()) > 0)) {
+                        is_hit_sl = true;
+                        reason_id += "(close_trade_by_best_price)";
+                    }
+                }
+
+                if (Objects.equals(REVERSE_TRADE_TREND, Utils.TREND_SHOT)) {
+                    if ((curr_price.compareTo(dto_h4.getBody_low_30_candle()) < 0)
+                            || (curr_price.compareTo(dto_h1.getBody_low_30_candle()) < 0)) {
+                        is_hit_sl = true;
+                        reason_id += "(close_trade_by_best_price)";
+                    }
+                }
             }
 
             if (is_hit_sl) {
