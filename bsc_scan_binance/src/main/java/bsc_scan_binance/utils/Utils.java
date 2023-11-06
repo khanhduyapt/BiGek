@@ -6386,11 +6386,12 @@ public class Utils {
         double macd = macds[macds.length - 1];
         double signal = signals[signals.length - 1];
 
-        String pre_macd_trend = "";
-        if (macds[macds.length - 3] < macds[macds.length - 2])
-            pre_macd_trend = "BUY";
+        double pre_macd = macds[macds.length - 2];
+        String pre_macd_vs_zero = "";
+        if (pre_macd > 0)
+            pre_macd_vs_zero = "BUY";
         else
-            pre_macd_trend = "SELL";
+            pre_macd_vs_zero = "SELL";
 
         String cur_macd_trend = "";
         if (macds[macds.length - 2] < macds[macds.length - 1])
@@ -6421,7 +6422,8 @@ public class Utils {
         Mt5MacdKey id = new Mt5MacdKey(EPIC, time_frame);
 
         Mt5Macd mt5_macd = new Mt5Macd(id, Utils.formatPrice(BigDecimal.valueOf(macd), 5),
-                Utils.formatPrice(BigDecimal.valueOf(signal), 5), pre_macd_trend, cur_macd_trend, trend_macd_vs_signal,
+                Utils.formatPrice(BigDecimal.valueOf(signal), 5), pre_macd_vs_zero, cur_macd_trend,
+                trend_macd_vs_signal,
                 trend_macd_vs_zero);
 
         return mt5_macd;

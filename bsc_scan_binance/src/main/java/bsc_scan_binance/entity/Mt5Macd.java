@@ -44,7 +44,7 @@ public class Mt5Macd {
     private BigDecimal signal = BigDecimal.ZERO;
 
     @Column(name = "pre_macd_trend")
-    private String pre_macd_trend = "";
+    private String pre_macd_vs_zero = "";
 
     @Column(name = "cur_macd_trend")
     private String cur_macd_trend = "";

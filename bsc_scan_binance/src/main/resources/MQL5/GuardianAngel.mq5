@@ -147,22 +147,22 @@ bool isDailyLimit()
          ulong positionTicket = PositionGetTicket(i);
          double profit = PositionGetDouble(POSITION_PROFIT);
          string _symbol = PositionGetString(POSITION_SYMBOL);
-         if(profit > 50)
+         if(profit > 200)
            {
             Alert("Close Position: " + (string)positionTicket + " : " + _symbol + " Profit: " + (string) profit);
             m_trade.PositionClose(positionTicket);
            }
         }
 
+
+      for(int i = OrdersTotal() - 1; i >= 0; i--)
         {
-         for(int i = OrdersTotal() - 1; i >= 0; i--)
-           {
-            ulong orderTicket = OrderGetTicket(i);
-            string order_symbol = OrderGetString(ORDER_SYMBOL);
-            Alert(" Close Order: " + (string)orderTicket + " : " + order_symbol);
-            m_trade.OrderDelete(orderTicket);
-           }
+         ulong orderTicket = OrderGetTicket(i);
+         string order_symbol = OrderGetString(ORDER_SYMBOL);
+         Alert(" Close Order: " + (string)orderTicket + " : " + order_symbol);
+         m_trade.OrderDelete(orderTicket);
         }
+
      }
 
 
@@ -455,7 +455,7 @@ void OnTimer()
       // Alert("n_trailing_sl_file_handle Error " + (string) GetLastError());
      }
 //------------------------------------------------------------
-   double Loss_In_Money = -300;     // loss in money $
+   double Loss_In_Money = -500;     // loss in money $
    double Profit_In_Money = 1000;    // profit in money $
 
    for(int i=PositionsTotal()-1; i>=0; i--) // returns the number of current positions
