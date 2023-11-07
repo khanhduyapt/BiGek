@@ -152,8 +152,8 @@ public class Utils {
     public static final String TEXT_SWITCH_TREND_Ma_1vs50 = "(Ma1.50)";
     public static final String TEXT_SWITCH_TREND_Ma_10vs20 = "(Ma10.20)";
 
-    public static final String TEXT_TREND_FLOWING = "_xh";
-    public static final String TEXT_MACD_FLOWING = "_md";
+    public static final String TEXT_XUHU_FLOWING = "_xuhu";
+    public static final String TEXT_MACD_FLOWING = "_madi";
 
     public static final String TEXT_PIVOT_FR = "pv_fr";
     public static final String TEXT_PIVOT_TO = "pv_to";
@@ -2199,12 +2199,22 @@ public class Utils {
 
     }
 
+    public static LocalDateTime convertStrToTime(String server_time) {
+        String pattern = "yyyy.MM.dd HH:mm:ss";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        LocalDateTime pre_time = LocalDateTime.parse(server_time, formatter);
+
+        return pre_time;
+    }
+
     public static String get_duration_trade_time(Mt5OpenTradeEntity trade) {
         String time = "";
-        String insert_time = Utils.getStringValue(trade.getOpenTime());
-        if (Utils.isNotBlank(insert_time)) {
-            LocalDateTime pre_time = LocalDateTime.parse(insert_time);
-            Duration duration = Duration.between(pre_time, LocalDateTime.now());
+
+        if (Utils.isNotBlank(trade.getOpenTime())) {
+            LocalDateTime open_time = Utils.convertStrToTime(trade.getOpenTime());
+            LocalDateTime currServerTime = Utils.convertStrToTime(trade.getCurrServerTime());
+
+            Duration duration = Duration.between(open_time, currServerTime);
             long elapsedMinutes = duration.toMinutes();
 
             int days = Integer.valueOf(String.valueOf(elapsedMinutes)) / 1440;
@@ -3545,37 +3555,21 @@ public class Utils {
     }
 
     public static String count_heiken_candles(List<BtcFutures> heiken_list, String find_trend_by_d1) {
-        int count_c1 = 0;
+        int count = 0;
 
-        boolean is_pinbar_c0 = isPinBar(heiken_list.get(0));
         boolean is_uptrend_c0 = heiken_list.get(0).isUptrend();
 
-        boolean is_uptrend_d1_ma9 = Objects.equals(find_trend_by_d1, Utils.TREND_LONG) ? true : false;
-
-        for (int index = 1; index < heiken_list.size(); index++) {
-            if (Objects.equals(is_uptrend_d1_ma9, heiken_list.get(index).isUptrend())) {
-                count_c1 += 1;
+        for (int index = 0; index < heiken_list.size(); index++) {
+            if (Objects.equals(is_uptrend_c0, heiken_list.get(index).isUptrend())) {
+                count += 1;
             } else {
                 break;
             }
         }
 
-        String result = "c1:" + Utils.appendSpace(String.valueOf(count_c1), 2);
-        result += is_uptrend_d1_ma9 ? "B" : "S";
-
-        if (is_pinbar_c0) {
-            result += "  c0:" + "~";
-        } else {
-            result += "  c0:" + (is_uptrend_c0 ? "B" : "S");
-        }
-
-        if (!Objects.equals(is_uptrend_d1_ma9, is_uptrend_c0)) {
-            result += (is_uptrend_c0 ? "↑" : "↓");
-        } else {
-            count_c1 += 1;
-        }
-
-        result = getChartName(heiken_list.get(0).getId()) + result;
+        String result = getChartName(heiken_list.get(0).getId());
+        result += is_uptrend_c0 ? "B" : "S";
+        result += Utils.appendLeft(String.valueOf(count), 3);
 
         int size = 10;
         int count_10 = 0;
@@ -3583,20 +3577,20 @@ public class Utils {
             size = heiken_list.size();
         }
         for (int index = 1; index < size; index++) {
-            if (Objects.equals(is_uptrend_d1_ma9, heiken_list.get(index).isUptrend())) {
+            if (Objects.equals(is_uptrend_c0, heiken_list.get(index).isUptrend())) {
                 count_10 += 1;
             }
         }
 
         if (count_10 > 7) {
             result = TEXT_STOP_TRADE + result;
-        } else if (count_c1 <= 3) {
+        } else if (count <= 3) {
             result = TEXT_MUC + result;
         } else {
             result = "  " + result;
         }
 
-        return Utils.appendSpace(result, 25);
+        return Utils.appendSpace(result, 15);
     }
 
     public static String getZone(List<BtcFutures> heiken_list) {
@@ -5277,7 +5271,9 @@ public class Utils {
 
         String type = Objects.equals(find_trend, Utils.TREND_LONG) ? "_b" : "_s";
 
+        take_profit = BigDecimal.ZERO;
         Mt5OpenTrade dto = new Mt5OpenTrade();
+
         dto.setEpic(EPIC);
         dto.setOrder_type(find_trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
         dto.setCur_price(curr_price);
@@ -5291,6 +5287,7 @@ public class Utils {
         dto.setTake_profit2(take_profit);
         dto.setTake_profit3(take_profit);
         dto.setTotal_trade(total_trade);
+
         return dto;
     }
 
@@ -5351,161 +5348,29 @@ public class Utils {
         return type;
     }
 
-    public static boolean is_price_still_be_trade(Orders dto_xx, BigDecimal amplitude_avg_of_h4, String find_trend) {
+    public static boolean is_price_still_be_trade(Orders dto_xx, BigDecimal amplitude_week, String find_trend) {
         BigDecimal current_price = dto_xx.getCurrent_price();
 
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            BigDecimal tp_price = current_price.add(amplitude_avg_of_h4);
-
-            BigDecimal predic_close_price = dto_xx.getLowest_price_of_curr_candle();
-            predic_close_price = predic_close_price.add(dto_xx.getAmplitude_avg_of_candles());
+            BigDecimal tp_price = current_price.add(amplitude_week);
 
             // Còn biên độ trung bình để đạt TP.
-            if (tp_price.compareTo(predic_close_price) < 0) {
+            if (tp_price.compareTo(dto_xx.getBody_hig_50_candle()) < 0) {
                 return true;
             }
 
         }
 
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            BigDecimal tp_price = current_price.subtract(amplitude_avg_of_h4);
-
-            BigDecimal predic_close_price = dto_xx.getHighest_price_of_curr_candle();
-            predic_close_price = predic_close_price.subtract(dto_xx.getAmplitude_avg_of_candles());
+            BigDecimal tp_price = current_price.subtract(amplitude_week);
 
             // Còn biên độ trung bình để đạt TP.
-            if (tp_price.compareTo(predic_close_price) > 0) {
+            if (tp_price.compareTo(dto_xx.getBody_low_50_candle()) > 0) {
                 return true;
             }
         }
 
         return false;
-    }
-
-    public static boolean is_daily_range_can_still_be_trade(Orders dto_w1, Orders dto_d1, Orders dto_h4,
-            String find_trend) {
-        if (Utils.isBlank(find_trend)) {
-            return false;
-        }
-
-        if (!is_price_still_be_trade(dto_w1, dto_h4.getAmplitude_avg_of_candles(), find_trend)) {
-            return false;
-        }
-
-        if (!is_price_still_be_trade(dto_d1, dto_h4.getAmplitude_avg_of_candles(), find_trend)) {
-            return false;
-        }
-
-        if (Utils.isNotBlank(possible_take_profit(dto_d1, dto_h4, find_trend))) {
-            return true;
-        }
-
-        BigDecimal current_price = dto_h4.getCurrent_price();
-        BigDecimal amplitude_avg_d1 = dto_d1.getAmplitude_avg_of_candles();
-
-        BigDecimal tp_h4 = calc_tp_by_amplitude_of_candle(current_price, dto_h4.getAmplitude_avg_of_candles(),
-                find_trend);
-
-        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            BigDecimal target_price = dto_d1.getLowest_price_of_curr_candle().add(amplitude_avg_d1);
-
-            if ((tp_h4.compareTo(target_price) < 0)
-                    && (tp_h4.compareTo(dto_h4.getHig_50candle().subtract(dto_h4.getAmplitude_1_part_15())) < 0)) {
-                return true;
-            }
-        }
-
-        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            BigDecimal target_price = dto_d1.getHighest_price_of_curr_candle().subtract(amplitude_avg_d1);
-
-            if ((tp_h4.compareTo(target_price) > 0)
-                    && (tp_h4.compareTo(dto_h4.getLow_50candle().add(dto_h4.getAmplitude_1_part_15())) > 0)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static boolean is_able_to_trade_by_h4(Orders dto_h4, DailyRange dailyRange, String find_trend) {
-        if (Utils.isBlank(find_trend) || find_trend.contains(TREND_UNSURE)) {
-            return false;
-        }
-
-        List<BigDecimal> sl_tp = Utils.get_SL_TP_by_amp(dailyRange, dto_h4.getCurrent_price(), find_trend);
-        BigDecimal tp_price = sl_tp.get(1);
-
-        if (Objects.equals(TREND_LONG, find_trend) && Objects.equals(TREND_LONG, dto_h4.getTrend_by_ma_9())) {
-            if ((tp_price.compareTo(dto_h4.getHig_50candle()) < 0)) {
-                return true;
-            }
-        }
-
-        if (Objects.equals(TREND_SHOT, find_trend) && Objects.equals(TREND_SHOT, dto_h4.getTrend_by_ma_9())) {
-            if ((tp_price.compareTo(dto_h4.getLow_50candle()) > 0)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static String possible_take_profit(Orders dto_d1, Orders dto_h4, String find_trend) {
-        String type = getType(find_trend).toUpperCase();
-
-        BigDecimal amplitude = dto_h4.getAmplitude_avg_of_candles().add(dto_h4.getAmplitude_1_part_15());
-
-        if (Objects.equals(TREND_LONG, find_trend)) {
-            // Hết biên độ để đạt TP(H4)
-            BigDecimal next_price = dto_d1.getCurrent_price().add(amplitude);
-            {
-                if (next_price.compareTo(dto_d1.getHig_50candle()) > 0) {
-                    return type + "_d1";
-                }
-
-                if (next_price.compareTo(dto_h4.getHig_50candle()) > 0) {
-                    return type + "_h4";
-                }
-            }
-
-            BigDecimal maxValue = dto_d1.getHig_50candle();
-            maxValue = maxValue.subtract(amplitude);
-
-            BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_d1.getCurrent_price(),
-                    dto_h4.getAmplitude_avg_of_candles(), find_trend);
-            if (maxValue.compareTo(tp) > 0) {
-                return ""; // Đủ biên độ để dạt TP
-            } else {
-                return type + "_ha";
-            }
-        }
-
-        if (Objects.equals(TREND_SHOT, find_trend)) {
-            // Hết biên độ để đạt TP(H4)
-            BigDecimal next_price = dto_d1.getCurrent_price().subtract(amplitude);
-            {
-                if (next_price.compareTo(dto_d1.getLow_50candle()) < 0) {
-                    return type + "_d1";
-                }
-
-                if (next_price.compareTo(dto_h4.getLow_50candle()) < 0) {
-                    return type + "_h4";
-                }
-            }
-
-            BigDecimal minValue = dto_d1.getLow_50candle();
-            minValue = minValue.add(amplitude);
-
-            BigDecimal tp = calc_tp_by_amplitude_of_candle(dto_d1.getCurrent_price(),
-                    dto_h4.getAmplitude_avg_of_candles(), find_trend);
-            if (minValue.compareTo(tp) < 0) {
-                return ""; // Đủ biên độ để dạt TP
-            } else {
-                return type + "_ha";
-            }
-        }
-
-        return type;
     }
 
     public static String get_cutting_real_time(String find_trend, Orders dto_03, BigDecimal dto_d1_ma_xx,
@@ -5848,7 +5713,6 @@ public class Utils {
 
             Utils.logWritelnDraft(Utils.appendSpace(EPIC, 10) + Utils.appendSpace(trend_d1, 10)
                     + Utils.appendSpace(get_standard_vol_per_100usd(EPIC), 10) + Utils.appendSpace(append, 10)
-                    + Utils.appendSpace("eoz_" + Utils.possible_take_profit(dto_d1, dto_h4, trend_d1), 20)
                     + Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + cutting);
 
             return append;
@@ -6003,12 +5867,12 @@ public class Utils {
     public static boolean is_best_price(Orders dto_05, String find_trend, BigDecimal curr_price) {
         boolean is_best_prirce = false;
         if (Objects.equals(Utils.TREND_LONG, find_trend)) {
-            if (curr_price.compareTo(dto_05.getBody_low_30_candle()) < 0) {
+            if (curr_price.compareTo(dto_05.getBody_low_50_candle()) < 0) {
                 is_best_prirce = true;
             }
         }
         if (Objects.equals(Utils.TREND_SHOT, find_trend)) {
-            if (curr_price.compareTo(dto_05.getBody_hig_30_candle()) > 0) {
+            if (curr_price.compareTo(dto_05.getBody_hig_50_candle()) > 0) {
                 is_best_prirce = true;
             }
         }
@@ -6402,20 +6266,31 @@ public class Utils {
         else
             trend_macd_vs_zero = "SELL";
 
-        //System.out.println(EPIC + "  " + getChartName(time_frame)
-        //        + "  macd=" + Utils.formatPrice(BigDecimal.valueOf(macd), 5)
-        //        + "  signal=" + Utils.formatPrice(BigDecimal.valueOf(signal), 5)
-        //        + " " + pre_macd_trend
-        //        + " " + cur_macd_trend
-        //        + " " + trend_macd_vs_signal
-        //        + " " + trend_macd_vs_zero); // Lấy giá trị EMA mới nhất
+        int count_macd_candles = 0;
+        for (int index = macds.length - 1; index > 0; index--) {
+            double temp_macd = macds[index];
+
+            if (macd > 0) {
+                if (temp_macd > 0) {
+                    count_macd_candles += 1;
+                } else {
+                    break;
+                }
+            }
+            if (macd < 0) {
+                if (temp_macd < 0) {
+                    count_macd_candles += 1;
+                } else {
+                    break;
+                }
+            }
+        }
 
         Mt5MacdKey id = new Mt5MacdKey(EPIC, time_frame);
 
         Mt5Macd mt5_macd = new Mt5Macd(id, Utils.formatPrice(BigDecimal.valueOf(macd), 5),
                 Utils.formatPrice(BigDecimal.valueOf(signal), 5), pre_macd_vs_zero, cur_macd_trend,
-                trend_macd_vs_signal,
-                trend_macd_vs_zero);
+                trend_macd_vs_signal, trend_macd_vs_zero, count_macd_candles);
 
         return mt5_macd;
     }

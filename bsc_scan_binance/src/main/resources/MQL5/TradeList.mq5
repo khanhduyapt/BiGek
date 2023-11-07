@@ -60,7 +60,7 @@ void OnTimer()
 
    if(nfile_handle != INVALID_HANDLE)
      {
-      FileWrite(nfile_handle, "Symbol", "Ticket", "TypeDescription", "PriceOpen",  "StopLoss", "TakeProfit",  "Profit",  "Comment", "Volume", "CurrPrice");
+      FileWrite(nfile_handle, "Symbol", "Ticket", "TypeDescription", "PriceOpen",  "StopLoss", "TakeProfit",  "Profit",  "Comment", "Volume", "CurrPrice", "OpenTime", "CurrServerTime");
 
       int count_buys = 0;
       int count_sells = 0;
@@ -74,7 +74,9 @@ void OnTimer()
                count_sells++;
            }
 
-         FileWrite(nfile_handle, m_position.Symbol(), m_position.Ticket(), m_position.TypeDescription(), m_position.PriceOpen(),  m_position.StopLoss(), m_position.TakeProfit(),  m_position.Profit(), " " + m_position.Comment(), m_position.Volume(), m_position.PriceCurrent());
+         FileWrite(nfile_handle, m_position.Symbol(), m_position.Ticket(), m_position.TypeDescription(), m_position.PriceOpen(), m_position.StopLoss(), m_position.TakeProfit()
+                   , m_position.Profit(), " " + m_position.Comment(), m_position.Volume(), m_position.PriceCurrent()
+                   , m_position.Time(), TimeCurrent());
         }
 
 

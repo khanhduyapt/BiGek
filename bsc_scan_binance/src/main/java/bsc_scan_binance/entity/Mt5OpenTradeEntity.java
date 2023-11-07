@@ -76,6 +76,11 @@ public class Mt5OpenTradeEntity {
     @Column(name = "open_time")
     private String openTime;
 
+    @Column(name = "curr_server_time")
+    private String currServerTime;
+
     @Column(name = "company")
     private String company;
+
+
 }

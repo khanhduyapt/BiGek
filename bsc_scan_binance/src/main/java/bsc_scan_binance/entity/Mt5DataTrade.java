@@ -31,4 +31,8 @@ public class Mt5DataTrade {
     private BigDecimal volume = BigDecimal.ZERO;
 
     private BigDecimal currPrice = BigDecimal.ZERO;
+
+    private String openTime;
+
+    private String currServerTime;
 }

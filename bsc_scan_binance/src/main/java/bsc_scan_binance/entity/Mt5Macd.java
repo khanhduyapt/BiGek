@@ -17,19 +17,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "mt5_macd")
 
+//DROP TABLE IF EXISTS public.mt5_macd;
 //CREATE TABLE IF NOT EXISTS public.mt5_macd
 //(
 //    symbol character varying(255) COLLATE pg_catalog."default" NOT NULL,
-//    time_frame character varying(255) COLLATE pg_catalog."default",
-//
+//    time_frame character varying(255) COLLATE pg_catalog."default" NOT NULL,
 //    macd numeric(30,5) DEFAULT 0,
 //    signal numeric(30,5) DEFAULT 0,
-//
 //    pre_macd_trend character varying(255) COLLATE pg_catalog."default",
 //    cur_macd_trend character varying(255) COLLATE pg_catalog."default",
 //    trend_macd_vs_signal character varying(255) COLLATE pg_catalog."default",
 //    trend_macd_vs_zero character varying(255) COLLATE pg_catalog."default",
-//
+//    count_macd_candles numeric(3) DEFAULT 0,
 //    CONSTRAINT mt5_macd_id PRIMARY KEY (symbol, time_frame)
 //)
 
@@ -55,4 +54,6 @@ public class Mt5Macd {
     @Column(name = "trend_macd_vs_zero")
     private String trend_macd_vs_zero = "";
 
+    @Column(name = "count_macd_candles")
+    private int count_macd_candles = 0;
 }
