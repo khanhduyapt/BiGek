@@ -3559,6 +3559,11 @@ public class Utils {
         int count = 0;
 
         boolean is_uptrend_c0 = heiken_list.get(0).isUptrend();
+        boolean is_uptrend_d1_ma9 = find_trend_by_d1.contains(Utils.TREND_LONG) ? true : false;
+
+        if (is_uptrend_c0 != is_uptrend_d1_ma9) {
+            return Utils.appendSpace("", 15);
+        }
 
         for (int index = 0; index < heiken_list.size(); index++) {
             if (Objects.equals(is_uptrend_c0, heiken_list.get(index).isUptrend())) {
@@ -4429,8 +4434,7 @@ public class Utils {
             String trend = candle.isUptrend() ? TREND_LONG : TREND_SHOT;
             String chart_name = getChartName(candle.getId()).trim();
 
-            String switch_trend = chart_name +
-                    TEXT_SWITCH_TREND_Ma10.replace("10", String.valueOf(ma_xx)) + ":"
+            String switch_trend = chart_name + TEXT_SWITCH_TREND_Ma10.replace("10", String.valueOf(ma_xx)) + ":"
                     + Utils.appendSpace(trend, 4);
 
             return switch_trend;

@@ -2724,8 +2724,7 @@ public class BinanceServiceImpl implements BinanceService {
 
                 // TODO: CloseTickets
                 if (!"_EURJPY_GBPJPY_".contains("_" + EPIC.toUpperCase() + "_")
-                        || (profit.compareTo(BigDecimal.ZERO) > 0)
-                        || close_now) {
+                        || (profit.compareTo(BigDecimal.ZERO) > 0) || close_now) {
 
                     StringBuilder sb = new StringBuilder();
                     sb.append(TICKET);
@@ -3185,7 +3184,7 @@ public class BinanceServiceImpl implements BinanceService {
                 // --------------------------------------------------------------------------
                 String result = "";
                 result += Utils.appendLeft("TradeNo." + Utils.appendLeft(String.valueOf(count), 3, "0"), 15) + "   ";
-                //result += Utils.appendSpace(trade.getCompany(), 10);
+                // result += Utils.appendSpace(trade.getCompany(), 10);
                 result += Utils.appendSpace(TRADE_TREND, 10) + "   ";
                 result += Utils.getTypeOfEpic(EPIC) + "   ";
                 result += Utils.appendSpace(EPIC, 10);
@@ -4044,7 +4043,6 @@ public class BinanceServiceImpl implements BinanceService {
             find_trend_by_d1_ma9 = trend_by_ma_9;
         }
         String count_heiken_candles_by_d1_ma9 = Utils.count_heiken_candles(heiken_list, find_trend_by_d1_ma9);
-        String count_heiken_candles_by_macd = Utils.count_heiken_candles(heiken_list, mt5_macd.getTrend_macd_vs_zero());
 
         BigDecimal close_candle_1 = list.get(1).getPrice_close_candle();
         BigDecimal close_candle_2 = list.get(2).getPrice_close_candle();
@@ -4060,7 +4058,7 @@ public class BinanceServiceImpl implements BinanceService {
                 close_candle_2, switch_trend, trend_by_ma_9, count_heiken_candles_by_d1_ma9, trend_by_ma_6,
                 trend_by_ma_20, trend_by_ma_34and89, trend_by_seq_ma, trend_by_bread_area, body_hig_30_candle,
                 body_low_30_candle, amplitude_1_part_15, amp_avg_h4, ma6, ma3, ma9, low_50candle, hig_50candle,
-                lowest_price_of_curr_candle, highest_price_of_curr_candle, count_heiken_candles_by_macd);
+                lowest_price_of_curr_candle, highest_price_of_curr_candle, "");
 
         ordersRepository.save(entity);
 
@@ -4186,11 +4184,11 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean macd_d1_allow_muc = false;
             if (Objects.equals(macd_w1.getTrend_macd_vs_zero(), macd_d1.getTrend_macd_vs_zero())) {
-                if (macd_d1.getCount_macd_candles() <= 3) {
+                if (macd_d1.getCount_macd_candles() <= 6) {
                     macd_d1_allow_muc = true;
                 }
             } else {
-                if (macd_d1.getCount_macd_candles() < 3) {
+                if (macd_d1.getCount_macd_candles() <= 3) {
                     macd_d1_allow_muc = true;
                 }
             }
@@ -4233,8 +4231,11 @@ public class BinanceServiceImpl implements BinanceService {
             String prefix = TIME_FRAME + "     " + No + amp + pivot;
 
             Mt5OpenTrade dto_notifiy = null;
-            boolean is_switch_macd_h4 = !Objects.equals(macd_h4.getPre_macd_vs_zero(), macd_h4.getTrend_macd_vs_zero());
-            boolean is_switch_macd_h1 = !Objects.equals(macd_h1.getPre_macd_vs_zero(), macd_h1.getTrend_macd_vs_zero());
+            boolean is_switch_macd_h4 = !Objects.equals(macd_h4.getPre_macd_vs_zero(), macd_h4.getTrend_macd_vs_zero())
+                    && Objects.equals(macd_h4.getTrend_macd_vs_signal(), macd_h4.getTrend_macd_vs_zero());
+
+            boolean is_switch_macd_h1 = !Objects.equals(macd_h1.getPre_macd_vs_zero(), macd_h1.getTrend_macd_vs_zero())
+                    && Objects.equals(macd_h1.getTrend_macd_vs_signal(), macd_h1.getTrend_macd_vs_zero());
 
             boolean macd_alow_trade = Objects.equals(trend_macd_d1_vs_0, macd_h4.getTrend_macd_vs_zero())
                     && Objects.equals(trend_macd_d1_vs_0, macd_h1.getTrend_macd_vs_zero())
@@ -4262,7 +4263,7 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
             }
 
-            if (is_switch_macd_h4) {
+            if (Objects.isNull(dto_notifiy) && is_switch_macd_h4) {
                 String reverse_trend_macd_d1_vs_0 = trend_macd_d1_vs_0.contains(Utils.TREND_LONG) ? Utils.TREND_SHOT
                         : Utils.TREND_LONG;
 
@@ -4285,6 +4286,18 @@ public class BinanceServiceImpl implements BinanceService {
                     String key = EPIC + Utils.CAPITAL_TIME_H4;
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
                     BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+                }
+            }
+
+            if (Objects.isNull(dto_notifiy) && dto_d1.getCount_heiken_candles_by_d1_ma9().contains(Utils.TEXT_MUC)
+                    && (is_switch_macd_h4 || is_switch_macd_h1)) {
+
+                String trend_d1_ma_9 = dto_d1.getTrend_by_ma_9();
+                boolean is_able_tp_reverse_dmac = Utils.is_price_still_be_trade(dto_d1, dailyRange.getAvg_amp_week(),
+                        trend_d1_ma_9);
+
+                if (is_able_tp_reverse_dmac) {
+                    System.out.println(EPIC + dto_d1.getCount_heiken_candles_by_d1_ma9());
                 }
             }
             // -----------------------------------------------------------------------------------------------
@@ -4381,8 +4394,8 @@ public class BinanceServiceImpl implements BinanceService {
             Mt5Macd macd_15 = mt5MacdRepository.findById(new Mt5MacdKey(EPIC, Utils.CAPITAL_TIME_15)).orElse(null);
             Mt5Macd macd_05 = mt5MacdRepository.findById(new Mt5MacdKey(EPIC, Utils.CAPITAL_TIME_03)).orElse(null);
 
-            if (Objects.isNull(macd_d1) || Objects.isNull(macd_h4) || Objects.isNull(macd_h1)
-                    || Objects.isNull(macd_15) || Objects.isNull(macd_05)) {
+            if (Objects.isNull(macd_d1) || Objects.isNull(macd_h4) || Objects.isNull(macd_h1) || Objects.isNull(macd_15)
+                    || Objects.isNull(macd_05)) {
                 String str_null = "";
                 str_null += " D1:" + (Objects.isNull(macd_d1) ? "null" : "    ");
                 str_null += " H4:" + (Objects.isNull(macd_h4) ? "null" : "    ");
@@ -4449,13 +4462,15 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // TODO: 5 closeTrade_by_SL_TP
+            boolean has_profit_100 = PROFIT.compareTo(BigDecimal.valueOf(100)) > 0;
+
             boolean is_close_trade_by_macd = Objects.equals(REVERSE_TRADE_TREND, macd_d1.getTrend_macd_vs_zero())
                     && Objects.equals(REVERSE_TRADE_TREND, macd_h4.getTrend_macd_vs_zero())
                     && Objects.equals(REVERSE_TRADE_TREND, macd_h1.getTrend_macd_vs_zero())
                     && Objects.equals(REVERSE_TRADE_TREND, macd_15.getTrend_macd_vs_zero())
                     && Objects.equals(REVERSE_TRADE_TREND, macd_05.getTrend_macd_vs_zero());
 
-            if (is_close_trade_by_macd) {
+            if (has_profit_100 && is_close_trade_by_macd) {
                 is_hit_sl = true;
                 reason_id += "(is_close_trade_by_macd)";
             }

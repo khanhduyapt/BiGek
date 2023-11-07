@@ -21,21 +21,22 @@ import lombok.NoArgsConstructor;
 //
 //CREATE TABLE IF NOT EXISTS public.mt5_open_trade
 //(
-//ticket_id character varying(255) COLLATE pg_catalog."default" NOT NULL,
-//timeframe character varying(255) COLLATE pg_catalog."default",
-//symbol character varying(255) COLLATE pg_catalog."default",
-//commentss character varying(255) COLLATE pg_catalog."default",
-//typedescription character varying(255) COLLATE pg_catalog."default",
-//volume numeric(30,5) DEFAULT 0,
-//priceopen numeric(30,5) DEFAULT 0,
-//currprice numeric(30,5) DEFAULT 0,
-//stoplosscalc numeric(30,5) DEFAULT 0,
-//stoplossm30 numeric(30,5) DEFAULT 0,
-//takeprofit numeric(30,5) DEFAULT 0,
-//profit numeric(30,5) DEFAULT 0,
-//open_time character varying(255) COLLATE pg_catalog."default",
-//company character varying(255) COLLATE pg_catalog."default",
-//CONSTRAINT mt5_open_trade_id PRIMARY KEY (ticket_id)
+//    ticket_id character varying(255) COLLATE pg_catalog."default" NOT NULL,
+//    timeframe character varying(255) COLLATE pg_catalog."default",
+//    symbol character varying(255) COLLATE pg_catalog."default",
+//    commentss character varying(255) COLLATE pg_catalog."default",
+//    typedescription character varying(255) COLLATE pg_catalog."default",
+//    volume numeric(30,5) DEFAULT 0,
+//    priceopen numeric(30,5) DEFAULT 0,
+//    currprice numeric(30,5) DEFAULT 0,
+//    stoplosscalc numeric(30,5) DEFAULT 0,
+//    stoplossm30 numeric(30,5) DEFAULT 0,
+//    takeprofit numeric(30,5) DEFAULT 0,
+//    profit numeric(30,5) DEFAULT 0,
+//    open_time character varying(255) COLLATE pg_catalog."default",
+//    curr_server_time character varying(255) COLLATE pg_catalog."default",
+//    company character varying(255) COLLATE pg_catalog."default",
+//    CONSTRAINT mt5_open_trade_id PRIMARY KEY (ticket_id)
 //)
 
 public class Mt5OpenTradeEntity {
@@ -81,6 +82,5 @@ public class Mt5OpenTradeEntity {
 
     @Column(name = "company")
     private String company;
-
 
 }
