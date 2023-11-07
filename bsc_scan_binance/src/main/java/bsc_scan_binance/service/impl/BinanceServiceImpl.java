@@ -4184,11 +4184,11 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean macd_d1_allow_muc = false;
             if (Objects.equals(macd_w1.getTrend_macd_vs_zero(), macd_d1.getTrend_macd_vs_zero())) {
-                if (macd_d1.getCount_macd_candles() <= 6) {
+                if (macd_d1.getCount_macd_candles() <= 3) {
                     macd_d1_allow_muc = true;
                 }
             } else {
-                if (macd_d1.getCount_macd_candles() <= 3) {
+                if (macd_d1.getCount_macd_candles() <= 2) {
                     macd_d1_allow_muc = true;
                 }
             }
@@ -4231,11 +4231,9 @@ public class BinanceServiceImpl implements BinanceService {
             String prefix = TIME_FRAME + "     " + No + amp + pivot;
 
             Mt5OpenTrade dto_notifiy = null;
-            boolean is_switch_macd_h4 = !Objects.equals(macd_h4.getPre_macd_vs_zero(), macd_h4.getTrend_macd_vs_zero())
-                    && Objects.equals(macd_h4.getTrend_macd_vs_signal(), macd_h4.getTrend_macd_vs_zero());
 
-            boolean is_switch_macd_h1 = !Objects.equals(macd_h1.getPre_macd_vs_zero(), macd_h1.getTrend_macd_vs_zero())
-                    && Objects.equals(macd_h1.getTrend_macd_vs_signal(), macd_h1.getTrend_macd_vs_zero());
+            boolean is_switch_macd_h4 = !Objects.equals(macd_h4.getPre_macd_vs_zero(), macd_h4.getTrend_macd_vs_zero());
+            boolean is_switch_macd_h1 = !Objects.equals(macd_h1.getPre_macd_vs_zero(), macd_h1.getTrend_macd_vs_zero());
 
             boolean macd_alow_trade = Objects.equals(trend_macd_d1_vs_0, macd_h4.getTrend_macd_vs_zero())
                     && Objects.equals(trend_macd_d1_vs_0, macd_h1.getTrend_macd_vs_zero())
@@ -4254,13 +4252,20 @@ public class BinanceServiceImpl implements BinanceService {
                     CAPITAL_TIME = Utils.CAPITAL_TIME_H4;
                 }
 
-                dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_macd_d1_vs_0, dto_h1,
-                        "nemd_" + macd_d1.getCount_macd_candles() + Utils.TEXT_MACD_FLOWING + Utils.TEXT_PASS, true,
-                        CAPITAL_TIME, dailyRange, 1);
+                List<TakeProfit> his_list_folow_d369 = takeProfitRepository.findAllBySymbolAndTradeTypeAndOpenDate(EPIC,
+                        trend_macd_d1_vs_0, Utils.getYyyyMMdd());
 
-                String key = EPIC + CAPITAL_TIME;
-                BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
-                BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+                if (CollectionUtils.isEmpty(his_list_folow_d369)) {
+
+                    dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_macd_d1_vs_0, dto_h1,
+                            "nemd_" + macd_d1.getCount_macd_candles() + Utils.TEXT_MACD_FLOWING + Utils.TEXT_PASS, true,
+                            CAPITAL_TIME, dailyRange, 1);
+
+                    String key = EPIC + CAPITAL_TIME;
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
+                    BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+                }
+
             }
 
             if (Objects.isNull(dto_notifiy) && is_switch_macd_h4) {
@@ -4277,15 +4282,22 @@ public class BinanceServiceImpl implements BinanceService {
                         reverse_trend_macd_d1_vs_0);
 
                 if (macd_alow_trade_reverse && is_able_tp_reverse_dmac) {
-                    close_reverse_trade(EPIC, reverse_trend_macd_d1_vs_0);
 
-                    dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, reverse_trend_macd_d1_vs_0, dto_h1,
-                            "nemh_" + macd_h4.getCount_macd_candles() + Utils.TEXT_REV_MACD_FLOWING + Utils.TEXT_PASS,
-                            true, Utils.CAPITAL_TIME_H4, dailyRange, 1);
+                    List<TakeProfit> his_list_folow_d369 = takeProfitRepository.findAllBySymbolAndTradeTypeAndOpenDate(
+                            EPIC, reverse_trend_macd_d1_vs_0, Utils.getYyyyMMdd());
 
-                    String key = EPIC + Utils.CAPITAL_TIME_H4;
-                    BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
-                    BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+                    if (CollectionUtils.isEmpty(his_list_folow_d369)) {
+                        close_reverse_trade(EPIC, reverse_trend_macd_d1_vs_0);
+
+                        dto_notifiy = Utils.calc_Lot_En_SL_TP(
+                                EPIC, reverse_trend_macd_d1_vs_0, dto_h1, "nemh_" + macd_h4.getCount_macd_candles()
+                                        + Utils.TEXT_REV_MACD_FLOWING + Utils.TEXT_PASS,
+                                true, Utils.CAPITAL_TIME_H4, dailyRange, 1);
+
+                        String key = EPIC + Utils.CAPITAL_TIME_H4;
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
+                        BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+                    }
                 }
             }
 
@@ -4297,7 +4309,21 @@ public class BinanceServiceImpl implements BinanceService {
                         trend_d1_ma_9);
 
                 if (is_able_tp_reverse_dmac) {
-                    System.out.println(EPIC + dto_d1.getCount_heiken_candles_by_d1_ma9());
+                    List<TakeProfit> his_list_folow_d369 = takeProfitRepository
+                            .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_d1_ma_9, Utils.getYyyyMMdd());
+
+                    if (CollectionUtils.isEmpty(his_list_folow_d369)) {
+
+                        close_reverse_trade(EPIC, trend_d1_ma_9);
+
+                        dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1_ma_9, dto_h1,
+                                Utils.TEXT_XUHU_FLOWING + Utils.TEXT_PASS, true, Utils.CAPITAL_TIME_D1, dailyRange, 1);
+
+                        String key = EPIC + Utils.CAPITAL_TIME_D1;
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
+                        BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+                    }
+
                 }
             }
             // -----------------------------------------------------------------------------------------------
