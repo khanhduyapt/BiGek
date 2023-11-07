@@ -4232,7 +4232,6 @@ public class BinanceServiceImpl implements BinanceService {
 
             String prefix = TIME_FRAME + "     " + No + amp + pivot;
 
-            // TREND_FLOWING
             Mt5OpenTrade dto_notifiy = null;
             boolean is_switch_macd_h4 = !Objects.equals(macd_h4.getPre_macd_vs_zero(), macd_h4.getTrend_macd_vs_zero());
             boolean is_switch_macd_h1 = !Objects.equals(macd_h1.getPre_macd_vs_zero(), macd_h1.getTrend_macd_vs_zero());
@@ -4242,6 +4241,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(trend_macd_d1_vs_0, macd_15.getTrend_macd_vs_zero())
                     && Objects.equals(trend_macd_d1_vs_0, macd_05.getTrend_macd_vs_zero());
 
+            // TREND_FLOWING
             if (is_able_tp_dmac && macd_alow_trade && macd_d1_allow_muc && (is_switch_macd_h4 || is_switch_macd_h1)) {
 
                 close_reverse_trade(EPIC, trend_macd_d1_vs_0);
@@ -4254,12 +4254,38 @@ public class BinanceServiceImpl implements BinanceService {
                 }
 
                 dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_macd_d1_vs_0, dto_h1,
-                        "nem_" + macd_d1.getCount_macd_candles() + Utils.TEXT_MACD_FLOWING + Utils.TEXT_PASS, true,
+                        "nemd_" + macd_d1.getCount_macd_candles() + Utils.TEXT_MACD_FLOWING + Utils.TEXT_PASS, true,
                         CAPITAL_TIME, dailyRange, 1);
 
                 String key = EPIC + CAPITAL_TIME;
                 BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
                 BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+            }
+
+            if (is_switch_macd_h4) {
+                String reverse_trend_macd_d1_vs_0 = trend_macd_d1_vs_0.contains(Utils.TREND_LONG) ? Utils.TREND_SHOT
+                        : Utils.TREND_LONG;
+
+                boolean macd_alow_trade_reverse = (macd_d1.getCount_macd_candles() > 6)
+                        && Objects.equals(reverse_trend_macd_d1_vs_0, macd_h4.getTrend_macd_vs_zero())
+                        && Objects.equals(reverse_trend_macd_d1_vs_0, macd_h1.getTrend_macd_vs_zero())
+                        && Objects.equals(reverse_trend_macd_d1_vs_0, macd_15.getTrend_macd_vs_zero())
+                        && Objects.equals(reverse_trend_macd_d1_vs_0, macd_05.getTrend_macd_vs_zero());
+
+                boolean is_able_tp_reverse_dmac = Utils.is_price_still_be_trade(dto_d1, dailyRange.getAvg_amp_week(),
+                        reverse_trend_macd_d1_vs_0);
+
+                if (macd_alow_trade_reverse && is_able_tp_reverse_dmac) {
+                    close_reverse_trade(EPIC, reverse_trend_macd_d1_vs_0);
+
+                    dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, reverse_trend_macd_d1_vs_0, dto_h1,
+                            "nemh_" + macd_h4.getCount_macd_candles() + Utils.TEXT_REV_MACD_FLOWING + Utils.TEXT_PASS,
+                            true, Utils.CAPITAL_TIME_H4, dailyRange, 1);
+
+                    String key = EPIC + Utils.CAPITAL_TIME_H4;
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
+                    BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+                }
             }
             // -----------------------------------------------------------------------------------------------
 

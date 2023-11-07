@@ -154,6 +154,7 @@ public class Utils {
 
     public static final String TEXT_XUHU_FLOWING = "_xuhu";
     public static final String TEXT_MACD_FLOWING = "_madi";
+    public static final String TEXT_REV_MACD_FLOWING = "_rvmd";
 
     public static final String TEXT_PIVOT_FR = "pv_fr";
     public static final String TEXT_PIVOT_TO = "pv_to";
