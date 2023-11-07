@@ -4173,7 +4173,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
             amp += " " + d9 + "   ";
 
-            amp += dto_d1.getCount_heiken_candles_by_d1_ma9().replace("(D1)", "(Dhei)");
+            amp += Utils.appendSpace(dto_d1.getCount_heiken_candles_by_d1_ma9().replace("(D1)", "(Dhei)").trim(), 15);
+
             boolean is_able_tp_dhei = Utils.is_price_still_be_trade(dto_d1, dailyRange.getAvg_amp_week(),
                     dto_d1.getTrend_by_heiken());
             if (!is_able_tp_dhei) {
@@ -4193,7 +4194,6 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            amp += "   ";
             amp += Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_0_25_PERCENT, true, dto_d1.getTrend_by_ma_9(), EPIC,
                     curr_price, dailyRange);
 
@@ -4245,13 +4245,6 @@ public class BinanceServiceImpl implements BinanceService {
 
                 close_reverse_trade(EPIC, trend_macd_d1_vs_0);
 
-                String CAPITAL_TIME = Utils.CAPITAL_TIME_H1;
-                if (macd_d1_allow_muc) {
-                    CAPITAL_TIME = Utils.CAPITAL_TIME_D1;
-                } else if (is_switch_macd_h4) {
-                    CAPITAL_TIME = Utils.CAPITAL_TIME_H4;
-                }
-
                 List<TakeProfit> his_list_folow_d369 = takeProfitRepository.findAllBySymbolAndTradeTypeAndOpenDate(EPIC,
                         trend_macd_d1_vs_0, Utils.getYyyyMMdd());
 
@@ -4259,13 +4252,12 @@ public class BinanceServiceImpl implements BinanceService {
 
                     dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_macd_d1_vs_0, dto_h1,
                             "nemd_" + macd_d1.getCount_macd_candles() + Utils.TEXT_MACD_FLOWING + Utils.TEXT_PASS, true,
-                            CAPITAL_TIME, dailyRange, 1);
+                            Utils.CAPITAL_TIME_D1, dailyRange, 1);
 
-                    String key = EPIC + CAPITAL_TIME;
+                    String key = EPIC + Utils.CAPITAL_TIME_D1;
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
                     BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
                 }
-
             }
 
             if (Objects.isNull(dto_notifiy) && is_switch_macd_h4) {
@@ -4273,6 +4265,9 @@ public class BinanceServiceImpl implements BinanceService {
                         : Utils.TREND_LONG;
 
                 boolean macd_alow_trade_reverse = (macd_d1.getCount_macd_candles() > 6)
+                        && Objects.equals(reverse_trend_macd_d1_vs_0, macd_d1.getCur_macd_trend())
+                        && Objects.equals(reverse_trend_macd_d1_vs_0, macd_d1.getTrend_macd_vs_signal())
+
                         && Objects.equals(reverse_trend_macd_d1_vs_0, macd_h4.getTrend_macd_vs_zero())
                         && Objects.equals(reverse_trend_macd_d1_vs_0, macd_h1.getTrend_macd_vs_zero())
                         && Objects.equals(reverse_trend_macd_d1_vs_0, macd_15.getTrend_macd_vs_zero())
