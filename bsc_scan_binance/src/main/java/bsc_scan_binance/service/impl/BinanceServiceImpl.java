@@ -4239,81 +4239,49 @@ public class BinanceServiceImpl implements BinanceService {
 
             Mt5OpenTrade dto_notifiy = null;
 
-            boolean is_switch_macd_h4 = !Objects.equals(macd_h4.getPre_macd_vs_zero(), macd_h4.getTrend_macd_vs_zero());
-            boolean is_switch_macd_h1 = !Objects.equals(macd_h1.getPre_macd_vs_zero(), macd_h1.getTrend_macd_vs_zero());
-            String obj_switch_trend = "";
-            if (is_switch_macd_h4) {
-                obj_switch_trend = "_dc" + Utils.ENCRYPTED_H4;
-            } else if (is_switch_macd_h1) {
-                obj_switch_trend = "_dc" + Utils.ENCRYPTED_H1;
-            }
+            String trend_macd_h1 = macd_h1.getTrend_macd_vs_zero();
+            boolean is_switch_macd_h1 = !Objects.equals(macd_h1.getPre_macd_vs_zero(), trend_macd_h1);
+            boolean price_allow_trade = (Objects.equals(Utils.TREND_LONG, trend_macd_h1)
+                    && curr_price.compareTo(macd_h1.getClose_price_of_n1_candle()) < 0)
 
-            boolean macd_alow_trade = Objects.equals(trend_d1_macd, macd_h4.getCur_macd_trend())
-                    && Objects.equals(trend_d1_macd, macd_h4.getTrend_macd_vs_zero())
+                    || (Objects.equals(Utils.TREND_SHOT, trend_macd_h1)
+                            && curr_price.compareTo(macd_h1.getClose_price_of_n1_candle()) > 0);
 
-                    && Objects.equals(trend_d1_macd, macd_h1.getCur_macd_trend())
-                    && Objects.equals(trend_d1_macd, macd_h1.getTrend_macd_vs_zero())
+            if (is_switch_macd_h1 && price_allow_trade) {
 
-                    && Objects.equals(trend_d1_macd, macd_15.getCur_macd_trend())
-                    && Objects.equals(trend_d1_macd, macd_15.getTrend_macd_vs_zero())
+                boolean macd_allow_trade = dto_h1.getTrend_by_ma_34and89().contains(trend_macd_h1)
+                        && (Objects.equals(trend_macd_h1, macd_h4.getTrend_macd_vs_zero())
+                                || Objects.equals(trend_macd_h1, macd_h4.getTrend_macd_vs_signal())
+                                || Objects.equals(trend_macd_h1, macd_h4.getCur_macd_trend()))
+                        && Objects.equals(trend_macd_h1, macd_h1.getCur_macd_trend())
+                        && Objects.equals(trend_macd_h1, macd_h1.getTrend_macd_vs_zero())
+                        && Objects.equals(trend_macd_h1, macd_15.getTrend_macd_vs_zero())
+                        && Objects.equals(trend_macd_h1, macd_05.getTrend_macd_vs_zero());
 
-                    && Objects.equals(trend_d1_macd, macd_05.getCur_macd_trend())
-                    && Objects.equals(trend_d1_macd, macd_05.getTrend_macd_vs_zero());
+                boolean is_able_tp = Utils.is_price_still_be_trade(dto_d1, dailyRange.getAvg_amp_week(), trend_macd_h1);
 
-            // TREND_FLOWING
-            if (is_able_tp_d1_macd && macd_alow_trade && macd_d1_allow_muc
-                    && (is_switch_macd_h4 || is_switch_macd_h1)) {
+                if (macd_allow_trade && is_able_tp) {
 
-                close_reverse_trade(EPIC, trend_d1_macd);
+                    close_reverse_trade(EPIC, trend_macd_h1);
 
-                List<TakeProfit> his_list_folow_d369 = takeProfitRepository.findAllBySymbolAndTradeTypeAndOpenDate(EPIC,
-                        trend_d1_macd, Utils.getYyyyMMdd());
+                    List<TakeProfit> his_list_folow_d369 = takeProfitRepository
+                            .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_macd_h1, Utils.getYyyyMMdd());
 
-                if (CollectionUtils.isEmpty(his_list_folow_d369)) {
+                    if (CollectionUtils.isEmpty(his_list_folow_d369)) {
 
-                    String note = Utils.TEXT_MACD_FLOWING + "nemd_" + macd_d1.getCount_macd_candles() + obj_switch_trend
-                            + Utils.TEXT_PASS;
+                        String note = "_cand" + macd_h1.getCount_macd_candles() + Utils.CAPITAL_TIME_H1
+                                + Utils.TEXT_NOTICE_ONLY;
 
-                    dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1_macd, dto_h1, note, true, "", dailyRange, 1);
+                        dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_macd_h1, dto_h1, note, true, "", dailyRange,
+                                1);
 
-                    String key = EPIC + Utils.CAPITAL_TIME_D1;
-                    BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
-                    BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+                        String key = EPIC + Utils.CAPITAL_TIME_H1;
+                        BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
+                        BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
+                    }
                 }
             }
 
-            boolean macd_allow_trade = Objects.equals(trend_d1_ma_9, macd_h4.getCur_macd_trend())
-                    && Objects.equals(trend_d1_ma_9, macd_h4.getTrend_macd_vs_zero())
-
-                    && Objects.equals(trend_d1_ma_9, macd_h1.getCur_macd_trend())
-                    && Objects.equals(trend_d1_ma_9, macd_h1.getTrend_macd_vs_zero())
-
-                    && Objects.equals(trend_d1_ma_9, macd_15.getCur_macd_trend())
-                    && Objects.equals(trend_d1_ma_9, macd_15.getTrend_macd_vs_zero())
-
-                    && Objects.equals(trend_d1_ma_9, macd_05.getCur_macd_trend())
-                    && Objects.equals(trend_d1_ma_9, macd_05.getTrend_macd_vs_zero());
-
-            if (Objects.isNull(dto_notifiy) && macd_allow_trade && is_able_tp_d1_ma9
-                    && dto_d1.getCount_heiken_candles_by_d1_ma9().contains(Utils.TEXT_MUC)
-                    && (is_switch_macd_h4 || is_switch_macd_h1)) {
-
-                List<TakeProfit> his_list_folow_d369 = takeProfitRepository
-                        .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_d1_ma_9, Utils.getYyyyMMdd());
-
-                if (CollectionUtils.isEmpty(his_list_folow_d369)) {
-
-                    close_reverse_trade(EPIC, trend_d1_ma_9);
-
-                    String note = Utils.TEXT_XUHU_FLOWING + obj_switch_trend + Utils.TEXT_PASS;
-
-                    dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1_ma_9, dto_h1, note, true, "", dailyRange, 1);
-
-                    String key = EPIC + Utils.CAPITAL_TIME_D1;
-                    BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
-                    BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
-                }
-            }
             // -----------------------------------------------------------------------------------------------
 
             List<TakeProfit> total_trade_list = takeProfitRepository.findAllBySymbolAndOpenDateAndStatus(EPIC,

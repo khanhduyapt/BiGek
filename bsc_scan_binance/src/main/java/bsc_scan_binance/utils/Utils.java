@@ -6271,6 +6271,8 @@ public class Utils {
         else
             trend_macd_vs_zero = "SELL";
 
+        double close_price_of_n1_candle = 0;
+        int count_pre_wave = 0;
         int count_macd_candles = 0;
         for (int index = macds.length - 1; index > 0; index--) {
             double temp_macd = macds[index];
@@ -6278,15 +6280,52 @@ public class Utils {
             if (macd > 0) {
                 if (temp_macd > 0) {
                     count_macd_candles += 1;
+
+                    close_price_of_n1_candle = prices.get(index);
                 } else {
-                    break;
+                    for (int temp = index; temp > 0; temp--) {
+                        double temp2_macd = macds[temp];
+                        if (temp2_macd < 0) {
+                            count_pre_wave += 1;
+                        } else {
+                            break;
+                        }
+
+                        if (count_pre_wave > 3) {
+                            break;
+                        }
+                    }
+                    if (count_pre_wave == 1) {
+                        count_macd_candles += 1;
+                    } else {
+                        break;
+                    }
                 }
             }
             if (macd < 0) {
                 if (temp_macd < 0) {
                     count_macd_candles += 1;
+
+                    close_price_of_n1_candle = prices.get(index);
                 } else {
-                    break;
+                    for (int temp = index; temp > 0; temp--) {
+                        double temp2_macd = macds[temp];
+                        if (temp2_macd > 0) {
+                            count_pre_wave += 1;
+                        } else {
+                            break;
+                        }
+
+                        if (count_pre_wave > 3) {
+                            break;
+                        }
+                    }
+
+                    if (count_pre_wave == 1) {
+                        count_macd_candles += 1;
+                    } else {
+                        break;
+                    }
                 }
             }
         }
@@ -6295,7 +6334,8 @@ public class Utils {
 
         Mt5Macd mt5_macd = new Mt5Macd(id, Utils.formatPrice(BigDecimal.valueOf(macd), 5),
                 Utils.formatPrice(BigDecimal.valueOf(signal), 5), pre_macd_vs_zero, cur_macd_trend,
-                trend_macd_vs_signal, trend_macd_vs_zero, count_macd_candles);
+                trend_macd_vs_signal, trend_macd_vs_zero, count_macd_candles,
+                BigDecimal.valueOf(close_price_of_n1_candle));
 
         return mt5_macd;
     }

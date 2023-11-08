@@ -28,7 +28,8 @@ import lombok.NoArgsConstructor;
 //    cur_macd_trend character varying(255) COLLATE pg_catalog."default",
 //    trend_macd_vs_signal character varying(255) COLLATE pg_catalog."default",
 //    trend_macd_vs_zero character varying(255) COLLATE pg_catalog."default",
-//    count_macd_candles numeric(3) DEFAULT 0,
+//    count_macd_candles numeric(3,0) DEFAULT 0,
+//    close_price_of_n1_candle numeric(30,5) DEFAULT 0,
 //    CONSTRAINT mt5_macd_id PRIMARY KEY (symbol, time_frame)
 //)
 
@@ -56,4 +57,7 @@ public class Mt5Macd {
 
     @Column(name = "count_macd_candles")
     private int count_macd_candles = 0;
+
+    @Column(name = "close_price_of_n1_candle")
+    private BigDecimal close_price_of_n1_candle = BigDecimal.ZERO;
 }
