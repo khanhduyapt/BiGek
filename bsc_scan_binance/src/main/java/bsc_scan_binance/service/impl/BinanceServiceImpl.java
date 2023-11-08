@@ -4248,9 +4248,16 @@ public class BinanceServiceImpl implements BinanceService {
                 obj_switch_trend = "_dc" + Utils.ENCRYPTED_H1;
             }
 
-            boolean macd_alow_trade = Objects.equals(trend_d1_macd, macd_h4.getTrend_macd_vs_zero())
+            boolean macd_alow_trade = Objects.equals(trend_d1_macd, macd_h4.getCur_macd_trend())
+                    && Objects.equals(trend_d1_macd, macd_h4.getTrend_macd_vs_zero())
+
+                    && Objects.equals(trend_d1_macd, macd_h1.getCur_macd_trend())
                     && Objects.equals(trend_d1_macd, macd_h1.getTrend_macd_vs_zero())
+
+                    && Objects.equals(trend_d1_macd, macd_15.getCur_macd_trend())
                     && Objects.equals(trend_d1_macd, macd_15.getTrend_macd_vs_zero())
+
+                    && Objects.equals(trend_d1_macd, macd_05.getCur_macd_trend())
                     && Objects.equals(trend_d1_macd, macd_05.getTrend_macd_vs_zero());
 
             // TREND_FLOWING
@@ -4275,8 +4282,16 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            boolean macd_allow_trade = Objects.equals(trend_d1_ma_9, macd_h1.getTrend_macd_vs_zero())
+            boolean macd_allow_trade = Objects.equals(trend_d1_ma_9, macd_h4.getCur_macd_trend())
+                    && Objects.equals(trend_d1_ma_9, macd_h4.getTrend_macd_vs_zero())
+
+                    && Objects.equals(trend_d1_ma_9, macd_h1.getCur_macd_trend())
+                    && Objects.equals(trend_d1_ma_9, macd_h1.getTrend_macd_vs_zero())
+
+                    && Objects.equals(trend_d1_ma_9, macd_15.getCur_macd_trend())
                     && Objects.equals(trend_d1_ma_9, macd_15.getTrend_macd_vs_zero())
+
+                    && Objects.equals(trend_d1_ma_9, macd_05.getCur_macd_trend())
                     && Objects.equals(trend_d1_ma_9, macd_05.getTrend_macd_vs_zero());
 
             if (Objects.isNull(dto_notifiy) && macd_allow_trade && is_able_tp_d1_ma9
