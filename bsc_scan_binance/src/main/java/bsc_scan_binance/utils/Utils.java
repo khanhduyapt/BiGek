@@ -240,7 +240,7 @@ public class Utils {
     public static final Integer MINUTES_OF_6D = 8640;
     public static final Integer MINUTES_OF_3D = 4320;
     public static final Integer MINUTES_OF_1D = 1440;
-    public static final Integer MINUTES_OF_8H = 480;
+    public static final Integer MINUTES_OF_6H = 360;
     public static final Integer MINUTES_OF_4H = 240;
     public static final Integer MINUTES_OF_2H = 120;
     public static final Integer MINUTES_OF_1H = 60;
@@ -4835,6 +4835,27 @@ public class Utils {
         EPIC = EPIC.replace("_", "");
 
         return EPIC.toUpperCase();
+    }
+
+    public static int get_hoding_time(String comment) {
+        int hoding_time = Utils.MINUTES_OF_1D;
+
+        int candle_no = 1;
+        boolean is_h1_trading = comment.contains(Utils.ENCRYPTED_H1);
+        if (is_h1_trading) {
+            int startIndex = comment.indexOf("_c") + 2;
+            int endIndex = comment.indexOf("_mgi");
+            if (startIndex != -1 && endIndex != -1) {
+                String numberString = comment.substring(startIndex, endIndex);
+                candle_no = Utils.getIntValue(numberString);
+            }
+
+            if (candle_no > 0) {
+                hoding_time = Utils.MINUTES_OF_6H + Utils.MINUTES_OF_1H - (candle_no * Utils.MINUTES_OF_1H);
+            }
+        }
+
+        return hoding_time;
     }
 
     public static int capitalTimeToWaitingMimutes(String CAPITAL_TIME_XX) {
