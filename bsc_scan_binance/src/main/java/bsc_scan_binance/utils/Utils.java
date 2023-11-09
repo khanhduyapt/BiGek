@@ -160,7 +160,7 @@ public class Utils {
     public static final String TEXT_PIVOT_TO = "pv_to";
 
     public static final String TEXT_SEQ = "SEQ";
-    public static final String TEXT_SWITCH_TREND_SEQ_6_10_20 = "(" + TEXT_SEQ + ".6.10.20)";
+    public static final String TEXT_SWITCH_TREND_SEQ_10_20_50 = "(" + TEXT_SEQ + "102050)";
     public static final String TEXT_SWITCH_TREND_SEQ_1_10_20_50 = "(" + TEXT_SEQ + ".1.10.20.50)";
 
     public static final String TEXT_SWITCH_TREND_50 = "(~50~)";
@@ -4251,71 +4251,30 @@ public class Utils {
         return inside_lohi;
     }
 
-    public static String switch_trend_seq_1_6_10_20(List<BtcFutures> heiken_list) {
+    public static String trend_seq_10_20_50(List<BtcFutures> heiken_list) {
         String result = "";
         if (heiken_list.size() < 20) {
             return result;
         }
 
-        BigDecimal ma03_1 = calcMA(heiken_list, 3, 1);
-        BigDecimal ma06_1 = calcMA(heiken_list, 6, 1);
-        BigDecimal ma09_1 = calcMA(heiken_list, 9, 1);
-        boolean allow_next = false;
-        if ((ma03_1.compareTo(ma06_1) >= 0) && (ma06_1.compareTo(ma09_1) >= 0)) {
-            allow_next = true;
-        }
-        if ((ma03_1.compareTo(ma06_1) <= 0) && (ma06_1.compareTo(ma09_1) <= 0)) {
-            allow_next = true;
-        }
-        if (!allow_next) {
-            return "";
+        BigDecimal ma03_0 = calcMA(heiken_list, 3, 0);
+        BigDecimal ma09_0 = calcMA(heiken_list, 9, 0);
+        BigDecimal ma20_0 = calcMA(heiken_list, 20, 0);
+        BigDecimal ma50_0 = calcMA(heiken_list, 50, 0);
+
+        if ((ma03_0.compareTo(ma09_0) >= 0) && (ma03_0.compareTo(ma20_0) >= 0) && (ma03_0.compareTo(ma50_0) >= 0)
+                && ((ma09_0.compareTo(ma50_0) >= 0) || (ma20_0.compareTo(ma50_0) >= 0))) {
+            result = Utils.TREND_LONG;
         }
 
-        String switch_trend = switchTrendByMa1(heiken_list, 1, 10, heiken_list.size(), "(Ma1vs20to50)");
-        if (Utils.isNotBlank(switch_trend)) {
-            List<BtcFutures> sub_list = heiken_list.subList(0, 2);
-
-            List<BigDecimal> lohi = getLowHighCandle(sub_list);
-            BigDecimal low = lohi.get(0);
-            BigDecimal hig = lohi.get(1);
-            BigDecimal amp_candle = calcMaxCandleHigh(sub_list);
-
-            low = low.subtract(amp_candle);
-            hig = hig.add(amp_candle);
-
-            BigDecimal ma01_0 = calcMA(heiken_list, 01, 1);
-
-            BigDecimal ma10_0 = calcMA(heiken_list, 10, 1);
-            BigDecimal ma10_1 = calcMA(heiken_list, 10, 2);
-
-            BigDecimal ma20_0 = calcMA(heiken_list, 20, 1);
-            BigDecimal ma20_1 = calcMA(heiken_list, 20, 2);
-
-            boolean inside_lohi = true;
-            inside_lohi &= (ma10_0.compareTo(low) >= 0) && (ma10_1.compareTo(low) >= 0) && (ma20_0.compareTo(low) >= 0)
-                    && (ma20_1.compareTo(low) >= 0);
-
-            inside_lohi &= (hig.compareTo(ma10_0) >= 0) && (hig.compareTo(ma10_1) >= 0) && (hig.compareTo(ma20_0) >= 0)
-                    && (hig.compareTo(ma20_1) >= 0);
-
-            if (inside_lohi && switch_trend.contains(Utils.TREND_LONG)) {
-                if ((ma01_0.compareTo(ma10_0) >= 0) && (ma01_0.compareTo(ma10_1) >= 0)
-                        && (ma01_0.compareTo(ma20_0) >= 0) && (ma01_0.compareTo(ma20_1) >= 0)) {
-                    result = Utils.TREND_LONG;
-                }
-            }
-
-            if (inside_lohi && switch_trend.contains(Utils.TREND_SHOT) && inside_lohi) {
-                if ((ma01_0.compareTo(ma10_0) <= 0) && (ma01_0.compareTo(ma10_1) <= 0)
-                        && (ma01_0.compareTo(ma20_0) <= 0) && (ma01_0.compareTo(ma20_1) <= 0)) {
-                    result = Utils.TREND_SHOT;
-                }
-            }
+        if ((ma03_0.compareTo(ma09_0) <= 0) && (ma03_0.compareTo(ma20_0) <= 0) && (ma03_0.compareTo(ma50_0) <= 0)
+                && ((ma09_0.compareTo(ma50_0) <= 0) || (ma20_0.compareTo(ma50_0) <= 0))) {
+            result = Utils.TREND_SHOT;
         }
 
         if (isNotBlank(result)) {
             String chart_name = getChartName(heiken_list).trim();
-            result = chart_name + TEXT_SWITCH_TREND_SEQ_6_10_20 + ":" + Utils.appendSpace(result, 4);
+            result = chart_name + TEXT_SWITCH_TREND_SEQ_10_20_50 + ":" + Utils.appendSpace(result, 4);
         }
 
         return result;
@@ -4328,54 +4287,29 @@ public class Utils {
             return result;
         }
 
-        BigDecimal ma03_1 = calcMA(heiken_list, 3, 1);
-        BigDecimal ma06_1 = calcMA(heiken_list, 6, 1);
-        BigDecimal ma09_1 = calcMA(heiken_list, 9, 1);
-        String trend = Utils.TREND_UNSURE;
-        boolean allow_next = false;
-        if ((ma03_1.compareTo(ma06_1) >= 0) && (ma06_1.compareTo(ma09_1) >= 0)) {
-            allow_next = true;
-            trend = Utils.TREND_LONG;
-        }
-        if ((ma03_1.compareTo(ma06_1) <= 0) && (ma06_1.compareTo(ma09_1) <= 0)) {
-            allow_next = true;
-            trend = Utils.TREND_SHOT;
-        }
-        if (!allow_next) {
-            return "";
-        }
-
-        String switch_trend = "";
-        switch_trend += " 1vs10:" + switchTrendByMaXX(heiken_list, 1, 10);
-        switch_trend += " 1vs20:" + switchTrendByMaXX(heiken_list, 1, 20);
-        switch_trend += " 1vs50:" + switchTrendByMaXX(heiken_list, 1, 50);
-        if (!switch_trend.contains(trend)) {
-            return "";
-        }
-
-        BigDecimal amp = amplitude_avg_of_candles.multiply(BigDecimal.valueOf(2));
+        BigDecimal amp = amplitude_avg_of_candles;
         List<BtcFutures> sub_list = heiken_list.subList(0, 1);
         List<BigDecimal> lohi = getLowHighCandle(sub_list);
         BigDecimal low = lohi.get(0).subtract(amp);
         BigDecimal hig = lohi.get(1).add(amp);
 
-        BigDecimal ma01_0 = calcMA(heiken_list, 01, 0);
-        BigDecimal ma10_0 = calcMA(heiken_list, 10, 0);
+        BigDecimal ma03_0 = calcMA(heiken_list, 3, 0);
+        BigDecimal ma09_0 = calcMA(heiken_list, 9, 0);
         BigDecimal ma20_0 = calcMA(heiken_list, 20, 0);
         BigDecimal ma50_0 = calcMA(heiken_list, 50, 0);
 
-        boolean inside_lohi = true;
-        inside_lohi &= (ma10_0.compareTo(low) >= 0) && (ma20_0.compareTo(low) >= 0) && (ma50_0.compareTo(low) >= 0);
-        inside_lohi &= (hig.compareTo(ma10_0) >= 0) && (hig.compareTo(ma20_0) >= 0) && (hig.compareTo(ma50_0) >= 0);
+        boolean inside_lohi = (low.compareTo(ma50_0) <= 0) && (ma50_0.compareTo(hig) <= 0);
 
         if (inside_lohi) {
-            if ((ma01_0.compareTo(ma10_0) >= 0) && (ma01_0.compareTo(ma20_0) >= 0) && (ma01_0.compareTo(ma50_0) >= 0)) {
+            if ((ma03_0.compareTo(ma09_0) >= 0) && (ma03_0.compareTo(ma20_0) >= 0) && (ma03_0.compareTo(ma50_0) >= 0)
+                    && ((ma09_0.compareTo(ma50_0) >= 0) || (ma20_0.compareTo(ma50_0) >= 0))) {
                 result = Utils.TREND_LONG;
             }
         }
 
         if (inside_lohi) {
-            if ((ma01_0.compareTo(ma10_0) <= 0) && (ma01_0.compareTo(ma20_0) <= 0) && (ma01_0.compareTo(ma50_0) <= 0)) {
+            if ((ma03_0.compareTo(ma09_0) <= 0) && (ma03_0.compareTo(ma20_0) <= 0) && (ma03_0.compareTo(ma50_0) <= 0)
+                    && ((ma09_0.compareTo(ma50_0) <= 0) || (ma20_0.compareTo(ma50_0) <= 0))) {
                 result = Utils.TREND_SHOT;
             }
         }
