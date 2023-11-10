@@ -2027,7 +2027,7 @@ public class Utils {
     // vào lệnh từ 13h~15h: lãi thì chốt từ 16h trở đi.
     // vào lệnh từ 18h~20h: lãi thì chốt từ 22h trở đi.
     public static boolean is_open_trade_time() {
-        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 13, 14, 15, 18, 19, 20, 21);
+        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21);
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -2037,7 +2037,7 @@ public class Utils {
     }
 
     public static boolean is_close_trade_time() {
-        List<Integer> times = Arrays.asList(11, 12, 16, 17, 23, 24, 0, 1, 2, 3);
+        List<Integer> times = Arrays.asList(11, 12, 16, 17, 22, 23, 24, 0, 1, 2, 3);
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -3401,12 +3401,9 @@ public class Utils {
             if (index < list.size()) {
                 count += 1;
                 BtcFutures dto = list.get(index);
-
-                BigDecimal open = dto.getPrice_open_candle();
                 BigDecimal close = dto.getPrice_close_candle();
-                BigDecimal mid = (open.add(close)).multiply(BigDecimal.valueOf(0.5));
 
-                sum = sum.add(mid);
+                sum = sum.add(close);
             }
         }
 
@@ -3435,7 +3432,11 @@ public class Utils {
         return sum;
     }
 
-    // if (Utils.rangeOfLowHeigh(list_5m).compareTo(BigDecimal.valueOf(0.5)) > 0) {
+    public static String get_reverse_trade_trend(String TRADE_TREND) {
+        String REVERSE_TRADE_TREND = TRADE_TREND.contains(Utils.TREND_LONG) ? Utils.TREND_SHOT : Utils.TREND_LONG;
+
+        return REVERSE_TRADE_TREND;
+    }
 
     public static BigDecimal rangeOfLowHeigh(List<BtcFutures> list) {
         List<BigDecimal> LowHeight = getLowHighCandle(list);
@@ -3555,48 +3556,43 @@ public class Utils {
         return trend;
     }
 
-    public static String count_heiken_candles(List<BtcFutures> heiken_list, String find_trend_by_d1) {
-        int count = 0;
+    public static double count_heiken_candles(List<BtcFutures> heiken_list, String find_trend, int start_candle_no) {
+        double count = 0;
+        boolean is_uptrend_fin = find_trend.contains(Utils.TREND_LONG) ? true : false;
 
-        boolean is_uptrend_c0 = heiken_list.get(0).isUptrend();
-        boolean is_uptrend_d1_ma9 = find_trend_by_d1.contains(Utils.TREND_LONG) ? true : false;
-
-        if (is_uptrend_c0 != is_uptrend_d1_ma9) {
-            return Utils.appendSpace("", 15);
-        }
-
-        for (int index = 0; index < heiken_list.size(); index++) {
-            if (Objects.equals(is_uptrend_c0, heiken_list.get(index).isUptrend())) {
+        for (int index = start_candle_no; index < heiken_list.size(); index++) {
+            if (is_uptrend_fin == heiken_list.get(index).isUptrend()) {
                 count += 1;
             } else {
                 break;
             }
         }
 
-        String result = getChartName(heiken_list.get(0).getId());
-        result += is_uptrend_c0 ? "B" : "S";
-        result += Utils.appendLeft(String.valueOf(count), 3);
+        return count;
+    }
 
-        int size = 10;
-        int count_10 = 0;
-        if (size > heiken_list.size()) {
-            size = heiken_list.size();
+    public static double count_position_of_candle1_vs_ma10(List<BtcFutures> list, String find_trend) {
+        double count = 0;
+
+        int size = 20;
+        if (size > list.size()) {
+            size = list.size();
         }
+
+        boolean is_uptrend_ma9_1 = find_trend.contains(Utils.TREND_LONG) ? true : false;
+
         for (int index = 1; index < size; index++) {
-            if (Objects.equals(is_uptrend_c0, heiken_list.get(index).isUptrend())) {
-                count_10 += 1;
+            BigDecimal ma9_i = Utils.calcMA(list, 9, index);
+            boolean is_uptrend_ma9_i = (list.get(index).getPrice_close_candle().compareTo(ma9_i) >= 0) ? true : false;
+
+            if (is_uptrend_ma9_1 == is_uptrend_ma9_i) {
+                count += 1;
+            } else {
+                break;
             }
         }
 
-        if (count_10 > 7) {
-            result = TEXT_STOP_TRADE + result;
-        } else if (count <= 3) {
-            result = TEXT_MUC + result;
-        } else {
-            result = "  " + result;
-        }
-
-        return Utils.appendSpace(result, 15);
+        return count;
     }
 
     public static String getZone(List<BtcFutures> heiken_list) {
