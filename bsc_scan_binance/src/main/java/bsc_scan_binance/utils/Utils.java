@@ -5066,7 +5066,7 @@ public class Utils {
         return getChartName(heiken_list.get(0).getId()) + "_Heiken_" + TREND_UNSURE;
     }
 
-    private static String getTrendByHekenAshiList(List<BtcFutures> heiken_list, int candle_no) {
+    public static String getTrendByHekenAshiList(List<BtcFutures> heiken_list, int candle_no) {
         if (CollectionUtils.isEmpty(heiken_list) || (heiken_list.size() < candle_no)) {
             return "";
         }
