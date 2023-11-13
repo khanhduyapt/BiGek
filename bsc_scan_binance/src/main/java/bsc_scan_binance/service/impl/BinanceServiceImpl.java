@@ -3991,6 +3991,7 @@ public class BinanceServiceImpl implements BinanceService {
         }
         if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H4)) {
             switch_trend += Utils.switchTrendByHeiken3_2_1(heiken_list);
+            switch_trend += Utils.switch_trend_seq_1_10_20_50(heiken_list, amplitude_avg_of_candles);
         }
         if (Objects.equals(CAPITAL_TIME_XX, Utils.CAPITAL_TIME_H1)) {
             switch_trend += Utils.switchTrendByMaXX(heiken_list, 50);
@@ -4188,68 +4189,108 @@ public class BinanceServiceImpl implements BinanceService {
             pivot = Utils.appendSpace(pivot, 15);
 
             String TIME_FRAME = "  ";
-            if (dto_d1.getSwitch_trend().contains(dto_d1.getTrend_by_ma_9())) {
-                TIME_FRAME = "Dma9:" + Utils.getType(dto_d1.getTrend_by_ma_9());
-            } else if (!Objects.equals(macd_d1.getPre_macd_vs_zero(), macd_d1.getTrend_macd_vs_zero())) {
-                TIME_FRAME = "Dmac:" + Utils.getType(macd_d1.getTrend_macd_vs_zero());
-            } else if (dto_h4.getSwitch_trend().contains(dto_d1.getTrend_by_ma_9())) {
-                TIME_FRAME = "H4ma9:" + Utils.getType(dto_d1.getTrend_by_ma_9());
-            } else if (Objects.equals(dto_d1.getTrend_by_ma_9(), macd_h4.getTrend_macd_vs_zero())
-                    && !Objects.equals(macd_h4.getPre_macd_vs_zero(), macd_h4.getTrend_macd_vs_zero())) {
-                TIME_FRAME = "H4mac:" + Utils.getType(dto_d1.getTrend_by_ma_9());
+            boolean d1_allow_trade = false;
+            String trend_d1_c1_ma9 = dto_d1.getTrend_candle1_vs_ma10();
+
+            if ((dto_d1.getCount_position_of_candle1_vs_ma10() <= 2)
+                    && Objects.equals(trend_d1_c1_ma9, dto_d1.getTrend_by_ma_9())) {
+                d1_allow_trade = true;
+
+                TIME_FRAME = "D:" + Utils.getType(trend_d1_c1_ma9) + ":"
+                        + Utils.appendLeft(dto_d1.getCount_position_of_candle1_vs_ma10().intValue(), 3);
             }
-            TIME_FRAME = "~" + Utils.appendSpace(TIME_FRAME, 10, " ") + "~";
+
+            String count_d = "";
+            boolean trend_d_ok = false;
+            if (Objects.equals(trend_d1_c1_ma9, dto_d1.getTrend_by_ma_9())) {
+                trend_d_ok = true;
+
+                if ((dto_d1.getCount_position_of_candle1_vs_ma10() <= 2)) {
+                    count_d += Utils.TEXT_MUC;
+                } else {
+                    count_d += "  ";
+                }
+
+                count_d += "D:" + Utils.getType(trend_d1_c1_ma9) + ":"
+                        + Utils.appendLeft(dto_d1.getCount_position_of_candle1_vs_ma10().intValue() + 1, 3);
+            }
+
+            TIME_FRAME = Utils.appendSpace(count_d, 15) + "~" + Utils.appendSpace(TIME_FRAME.trim(), 10) + "~";
 
             //----------------------------------------------------------------------------
-
             String trade_h1 = "  ";
-            trade_h1 += " (H1mac)" + Utils.appendSpace(macd_h1.getTrend_macd_vs_zero(), 4);
-            trade_h1 += Utils.appendLeft(macd_h1.getCount_macd_candles(), 3) + "  ";
 
-            trade_h1 += " (H1hei)" + Utils.appendSpace(dto_h1.getTrend_heiken_candle1(), 4);
-            trade_h1 += Utils.appendLeft(dto_h1.getCount_position_of_heiken_candle1().intValue(), 3) + "  ";
-
-            trade_h1 += " (H1ma9)" + Utils.appendSpace(dto_h1.getTrend_candle1_vs_ma10(), 4);
-            trade_h1 += Utils.appendLeft(dto_h1.getCount_position_of_candle1_vs_ma10().intValue(), 3) + "  ";
-
-            if (Utils.isNotBlank(dto_h1.getTrend_by_ma_10_20_50())) {
-                trade_h1 += dto_h1.getTrend_by_ma_10_20_50().replace(Utils.TEXT_SWITCH_TREND_SEQ_10_20_50, "");
+            String H1mac = "";
+            if (trend_d_ok && (macd_h1.getCount_macd_candles() <= 2)
+                    && Objects.equals(trend_d1_c1_ma9, dto_h1.getTrend_by_ma_9())
+                    && Objects.equals(trend_d1_c1_ma9, macd_h1.getTrend_macd_vs_zero())
+                    && Objects.equals(trend_d1_c1_ma9, dto_h1.getTrend_by_heiken())) {
+                H1mac += Utils.TEXT_MUC;
+            } else {
+                H1mac += "  ";
             }
-            trade_h1 = Utils.appendSpace(trade_h1.replace("SELL", "S").replace("BUY ", "B"), 30);
-            trade_h1 += Utils.appendSpace(macd_h1.getClose_price_of_n1_candle(), 10);
+            H1mac += " (H1mac)" + Utils.appendSpace(macd_h1.getTrend_macd_vs_zero(), 4);
+            H1mac += Utils.appendLeft(macd_h1.getCount_macd_candles(), 3) + "  ";
+            trade_h1 += H1mac;
+
+            String H1hei = "";
+            if (trend_d_ok && (dto_h1.getCount_position_of_heiken_candle1() <= 2)
+                    && Objects.equals(trend_d1_c1_ma9, dto_h1.getTrend_by_ma_9())
+                    && Objects.equals(trend_d1_c1_ma9, dto_h1.getTrend_by_heiken())) {
+                H1hei += Utils.TEXT_MUC;
+            } else {
+                H1hei += "  ";
+            }
+            H1hei += "(H1hei)" + Utils.appendSpace(dto_h1.getTrend_heiken_candle1(), 4);
+            H1hei += Utils.appendLeft(dto_h1.getCount_position_of_heiken_candle1().intValue(), 3) + "  ";
+            trade_h1 += H1hei;
+
+            String H1ma9 = "";
+            if (trend_d_ok && (dto_h1.getCount_position_of_candle1_vs_ma10() <= 2)
+                    && Objects.equals(trend_d1_c1_ma9, dto_h1.getTrend_by_ma_9())
+                    && Objects.equals(trend_d1_c1_ma9, dto_h1.getTrend_by_heiken())) {
+                H1ma9 += Utils.TEXT_MUC;
+            } else {
+                H1ma9 += "  ";
+            }
+            H1ma9 += "(H1ma9)" + Utils.appendSpace(dto_h1.getTrend_candle1_vs_ma10(), 4);
+            H1ma9 += Utils.appendLeft(dto_h1.getCount_position_of_candle1_vs_ma10().intValue(), 3) + "  ";
+            trade_h1 += H1ma9;
+
+            trade_h1 += Utils.appendSpace(dto_h1.getTrend_by_ma_10_20_50(), 20);
+
+            trade_h1 = Utils.appendSpace(trade_h1.replace("SELL", "S").replace("BUY ", "B"), 100);
 
             //----------------------------------------------------------------------------
 
-            String prefix = TIME_FRAME + "     " + trade_h1 + No + amp + pivot;
+            String prefix = TIME_FRAME + trade_h1 + No + amp + pivot;
 
             Mt5OpenTrade dto_notifiy = null;
 
-            String trend_h1_ma9 = dto_h1.getTrend_candle1_vs_ma10();
+            boolean is_able_tp_d1_ma9 = Utils.is_price_still_be_trade(dto_d1,
+                    dailyRange.getAvg_amp_week(), trend_d1_c1_ma9);
 
-            boolean d1_allow_trade = Objects.equals(trend_h1_ma9, dto_d1.getTrend_by_heiken())
-                    && Objects.equals(trend_h1_ma9, dto_d1.getTrend_by_ma_9());
+            boolean h1_allow_trade = Objects.equals(trend_d1_c1_ma9, dto_h1.getTrend_by_ma_9())
+                    && Objects.equals(trend_d1_c1_ma9, dto_h1.getTrend_heiken_candle1())
+                    && (dto_h1.getCount_position_of_candle1_vs_ma10() <= 3);
 
-            boolean is_able_tp_h1_ma9 = Utils.is_price_still_be_trade(dto_d1, dailyRange.getAvg_amp_week(),
-                    trend_h1_ma9);
+            h1_allow_trade |= Objects.equals(trend_d1_c1_ma9, dto_h1.getTrend_heiken_candle1())
+                    && Objects.equals(trend_d1_c1_ma9, dto_h1.getTrend_by_heiken())
+                    && (dto_h1.getCount_position_of_heiken_candle1() <= 3);
 
-            boolean macd_allow_trade = (dto_h1.getCount_position_of_candle1_vs_ma10() < 3)
+            if (d1_allow_trade && h1_allow_trade && is_able_tp_d1_ma9) {
 
-                    && Objects.equals(trend_h1_ma9, dto_h1.getTrend_heiken_candle1())
-                    && Objects.equals(trend_h1_ma9, macd_05.getCur_macd_trend())
-                    && Objects.equals(Utils.get_reverse_trade_trend(trend_h1_ma9), macd_05.getTrend_macd_vs_zero());
-
-            if (d1_allow_trade && is_able_tp_h1_ma9 && macd_allow_trade && Utils.is_open_trade_time() && false) {
-                // close_reverse_trade(EPIC, trend_h1_ma9);
+                close_reverse_trade(EPIC, trend_d1_c1_ma9);
 
                 List<TakeProfit> his_list_folow_d369 = takeProfitRepository
-                        .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_h1_ma9, Utils.getYyyyMMdd());
+                        .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_d1_c1_ma9, Utils.getYyyyMMdd());
 
-                if (CollectionUtils.isEmpty(his_list_folow_d369) || (his_list_folow_d369.size() <= 0)) {
+                if (CollectionUtils.isEmpty(his_list_folow_d369) || (his_list_folow_d369.size() <= 3)) {
 
-                    String note = "_c" + dto_h1.getCount_position_of_candle1_vs_ma10().intValue() + Utils.ENCRYPTED_H1
-                            + Utils.TEXT_PASS;
+                    String note = "_c" + dto_d1.getCount_position_of_candle1_vs_ma10().intValue()
+                            + Utils.ENCRYPTED_D1 + Utils.TEXT_PASS;
 
-                    dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_h1_ma9, dto_h1, note, true, "", dailyRange, 1);
+                    dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1_c1_ma9, dto_h1, note, true, "", dailyRange, 1);
 
                     String key = EPIC + Utils.CAPITAL_TIME_H1;
                     BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
@@ -4411,7 +4452,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_hit_sl = false;
             // -------------------------------------------------------------------------------------
             // Bảo vệ tài khoản tránh thua sạch tiền tích góp trong 53 ngày: -$6,133.97
-            if (OPEN_POSITIONS.add(BigDecimal.valueOf(1000)).compareTo(BigDecimal.ZERO) < 0) {
+            if (OPEN_POSITIONS.add(BigDecimal.valueOf(2000)).compareTo(BigDecimal.ZERO) < 0) {
                 if (reverse_h4_369 && reverse_h1_369 && reverse_15_369 && reverse_05_369) {
                     if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_1H)) {
                         is_hit_sl = true;
@@ -4429,8 +4470,8 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // TODO: 5 closeTrade_by_SL_TP
-            boolean has_profit = PROFIT.compareTo(BigDecimal.valueOf(10)) > 0;
-            boolean has_profit_300 = PROFIT.compareTo(BigDecimal.valueOf(300)) > 0;
+            boolean has_profit = PROFIT.compareTo(BigDecimal.valueOf(300)) > 0;
+            boolean has_profit_300 = PROFIT.compareTo(BigDecimal.valueOf(500)) > 0;
 
             boolean is_close_trade_by_macd = Objects.equals(REVERSE_TRADE_TREND, macd_d1.getTrend_macd_vs_zero())
                     && Objects.equals(REVERSE_TRADE_TREND, macd_h4.getTrend_macd_vs_zero())

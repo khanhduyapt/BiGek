@@ -4283,11 +4283,9 @@ public class Utils {
             return result;
         }
 
-        BigDecimal amp = amplitude_avg_of_candles;
-        List<BtcFutures> sub_list = heiken_list.subList(0, 1);
-        List<BigDecimal> lohi = getLowHighCandle(sub_list);
-        BigDecimal low = lohi.get(0).subtract(amp);
-        BigDecimal hig = lohi.get(1).add(amp);
+        BtcFutures candle_1 = heiken_list.get(1);
+        BigDecimal low = candle_1.getLow_price().subtract(amplitude_avg_of_candles);
+        BigDecimal hig = candle_1.getHight_price().add(amplitude_avg_of_candles);
 
         BigDecimal ma03_0 = calcMA(heiken_list, 3, 0);
         BigDecimal ma09_0 = calcMA(heiken_list, 9, 0);
