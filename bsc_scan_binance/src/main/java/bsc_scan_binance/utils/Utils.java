@@ -161,7 +161,6 @@ public class Utils {
 
     public static final String TEXT_SEQ = "SEQ";
     public static final String TEXT_SWITCH_TREND_SEQ_10_20_50 = "(" + TEXT_SEQ + "102050)";
-    public static final String TEXT_SWITCH_TREND_SEQ_1_10_20_50 = "(" + TEXT_SEQ + ".1.10.20.50)";
 
     public static final String TEXT_SWITCH_TREND_50 = "(~50~)";
     public static final String TEXT_SWITCH_TREND_HEIKEN = "(Heiken)";
@@ -4247,45 +4246,21 @@ public class Utils {
         return inside_lohi;
     }
 
-    public static String trend_seq_10_20_50(List<BtcFutures> heiken_list) {
+    public static String switch_trend_seq_10_20_50(List<BtcFutures> heiken_list,
+            BigDecimal amplitude_avg_of_candles, boolean check_inside_lohi) {
         String result = "";
         if (heiken_list.size() < 20) {
             return result;
         }
 
-        BigDecimal ma03_0 = calcMA(heiken_list, 3, 0);
-        BigDecimal ma09_0 = calcMA(heiken_list, 9, 0);
-        BigDecimal ma20_0 = calcMA(heiken_list, 20, 0);
-        BigDecimal ma50_0 = calcMA(heiken_list, 50, 0);
-
-        if ((ma03_0.compareTo(ma09_0) >= 0) && (ma03_0.compareTo(ma20_0) >= 0) && (ma03_0.compareTo(ma50_0) >= 0)
-                && ((ma09_0.compareTo(ma50_0) >= 0) || (ma20_0.compareTo(ma50_0) >= 0))) {
-            result = Utils.TREND_LONG;
+        String id = heiken_list.get(0).getId();
+        if (id.contains(PREFIX_H01) && id.contains("GBPNZD")) {
+            boolean debug = true;
         }
 
-        if ((ma03_0.compareTo(ma09_0) <= 0) && (ma03_0.compareTo(ma20_0) <= 0) && (ma03_0.compareTo(ma50_0) <= 0)
-                && ((ma09_0.compareTo(ma50_0) <= 0) || (ma20_0.compareTo(ma50_0) <= 0))) {
-            result = Utils.TREND_SHOT;
-        }
-
-        if (isNotBlank(result)) {
-            String chart_name = getChartName(heiken_list).trim();
-            result = chart_name + TEXT_SWITCH_TREND_SEQ_10_20_50 + ":" + Utils.appendSpace(result, 4);
-        }
-
-        return result;
-    }
-
-    public static String switch_trend_seq_1_10_20_50(List<BtcFutures> heiken_list,
-            BigDecimal amplitude_avg_of_candles) {
-        String result = "";
-        if (heiken_list.size() < 20) {
-            return result;
-        }
-
-        BtcFutures candle_1 = heiken_list.get(1);
-        BigDecimal low = candle_1.getLow_price().subtract(amplitude_avg_of_candles);
-        BigDecimal hig = candle_1.getHight_price().add(amplitude_avg_of_candles);
+        BtcFutures candle = heiken_list.get(0);
+        BigDecimal low = candle.getLow_price().subtract(amplitude_avg_of_candles);
+        BigDecimal hig = candle.getHight_price().add(amplitude_avg_of_candles);
 
         BigDecimal ma03_0 = calcMA(heiken_list, 3, 0);
         BigDecimal ma09_0 = calcMA(heiken_list, 9, 0);
@@ -4293,6 +4268,9 @@ public class Utils {
         BigDecimal ma50_0 = calcMA(heiken_list, 50, 0);
 
         boolean inside_lohi = (low.compareTo(ma50_0) <= 0) && (ma50_0.compareTo(hig) <= 0);
+        if (!check_inside_lohi) {
+            inside_lohi = true;
+        }
 
         if (inside_lohi) {
             if ((ma03_0.compareTo(ma09_0) >= 0) && (ma03_0.compareTo(ma20_0) >= 0) && (ma03_0.compareTo(ma50_0) >= 0)
@@ -4310,7 +4288,7 @@ public class Utils {
 
         if (isNotBlank(result)) {
             String chart_name = getChartName(heiken_list).trim();
-            result = chart_name + TEXT_SWITCH_TREND_SEQ_1_10_20_50 + ":" + Utils.appendSpace(result, 4);
+            result = chart_name + TEXT_SWITCH_TREND_SEQ_10_20_50 + ":" + Utils.appendSpace(result, 4);
         }
 
         return result;
@@ -6240,7 +6218,7 @@ public class Utils {
                             break;
                         }
 
-                        if (count_pre_wave > 3) {
+                        if (count_pre_wave > 1) {
                             break;
                         }
                     }
@@ -6265,7 +6243,7 @@ public class Utils {
                             break;
                         }
 
-                        if (count_pre_wave > 3) {
+                        if (count_pre_wave > 1) {
                             break;
                         }
                     }
