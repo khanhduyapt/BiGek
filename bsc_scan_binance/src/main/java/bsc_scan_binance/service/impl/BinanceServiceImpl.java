@@ -4272,33 +4272,32 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean h1_allow_trade_by_ma = dto_h1.getSwitch_trend().contains(trend_d1_macd)
                     && Objects.equals(trend_d1_macd, dto_h1.getTrend_by_heiken())
-                    && Objects.equals(trend_d1_macd, dto_h4.getTrend_by_heiken())
-                    && Objects.equals(trend_d1_macd, macd_h1.getTrend_macd_vs_zero())
-                    && Objects.equals(trend_d1_macd, macd_15.getTrend_macd_vs_zero())
-                    && Objects.equals(trend_d1_macd, macd_05.getTrend_macd_vs_zero());
+                    && Objects.equals(trend_d1_macd, dto_h4.getTrend_by_heiken());
 
             boolean h1_allow_trade_by_mc = (macd_h1.getCount_macd_candles() <= 5)
                     && Objects.equals(trend_d1_macd, dto_h4.getTrend_by_heiken())
-                    && Objects.equals(trend_d1_macd, dto_h1.getTrend_by_heiken())
-                    && Objects.equals(trend_d1_macd, macd_h1.getTrend_macd_vs_zero())
-                    && Objects.equals(trend_d1_macd, macd_15.getTrend_macd_vs_zero())
-                    && Objects.equals(trend_d1_macd, macd_05.getTrend_macd_vs_zero());
+                    && Objects.equals(trend_d1_macd, dto_h1.getTrend_by_heiken());
 
-            boolean h1_allow_trade_by_he = (macd_h1.getCount_macd_candles() <= 3)
-                    && (dto_h1.getCount_position_of_heiken_candle1() <= 3)
+            boolean h1_allow_trade_by_he = (dto_h1.getCount_position_of_heiken_candle1() <= 5)
+                    && (dto_h4.getCount_position_of_heiken_candle1() <= 1)
+
                     && Objects.equals(trend_d1_macd, dto_h4.getTrend_by_heiken())
+                    && Objects.equals(trend_d1_macd, dto_h4.getTrend_heiken_candle1())
+
                     && Objects.equals(trend_d1_macd, dto_h1.getTrend_by_heiken())
-                    && Objects.equals(trend_d1_macd, macd_h1.getTrend_macd_vs_zero())
+                    && Objects.equals(trend_d1_macd, dto_h1.getTrend_heiken_candle1());
+
+            boolean macd_allow_trade = Objects.equals(trend_d1_macd, macd_h1.getTrend_macd_vs_zero())
                     && Objects.equals(trend_d1_macd, macd_15.getTrend_macd_vs_zero())
                     && Objects.equals(trend_d1_macd, macd_05.getTrend_macd_vs_zero());
 
-            if (macd_wd_allow_trade && (h1_allow_trade_by_ma || h1_allow_trade_by_mc || h1_allow_trade_by_he)
-                    && is_able_tp_d1_macd) {
+            if (macd_wd_allow_trade && macd_allow_trade && is_able_tp_d1_macd
+                    && (h1_allow_trade_by_ma || h1_allow_trade_by_mc || h1_allow_trade_by_he)) {
 
                 List<TakeProfit> his_list_folow_d369 = takeProfitRepository
                         .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_d1_macd, Utils.getYyyyMMdd());
 
-                if (CollectionUtils.isEmpty(his_list_folow_d369)) {
+                if (CollectionUtils.isEmpty(his_list_folow_d369) || (his_list_folow_d369.size() < 3)) {
                     close_reverse_trade(EPIC, trend_d1_macd);
 
                     String note = Utils.ENCRYPTED_D1 + "_d" + macd_d1.getCount_macd_candles();
@@ -4309,7 +4308,11 @@ public class BinanceServiceImpl implements BinanceService {
                     } else if (h1_allow_trade_by_he) {
                         note += "he";
                     }
-                    note += Utils.TEXT_PASS;
+                    if (Utils.is_open_trade_time()) {
+                        note += Utils.TEXT_PASS;
+                    } else {
+                        note += Utils.TEXT_NOTICE_ONLY;
+                    }
 
                     dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1_macd, dto_h1, note, true, "", dailyRange, 1);
 
