@@ -4415,15 +4415,18 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean reverse_h1_369 = Objects.equals(trend_h1_369, REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_by_ma_9(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h1.getTrend_by_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_heiken_candle1(), REVERSE_TRADE_TREND);
 
             boolean reverse_15_369 = Objects.equals(trend_15_369, REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_by_ma_9(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_15.getTrend_by_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_heiken_candle1(), REVERSE_TRADE_TREND);
 
             boolean reverse_05_369 = Objects.equals(dto_03.getTrend_by_ma_9(), REVERSE_TRADE_TREND)
-                    && (Objects.equals(trend_03_369, REVERSE_TRADE_TREND)
-                            || Objects.equals(dto_03.getTrend_heiken_candle1(), REVERSE_TRADE_TREND));
+                    && Objects.equals(trend_03_369, REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_03.getTrend_by_heiken(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_03.getTrend_heiken_candle1(), REVERSE_TRADE_TREND);
             // -------------------------------------------------------------------------------------
             boolean reverse_macd_05 = Objects.equals(macd_05.getTrend_macd_vs_zero(), REVERSE_TRADE_TREND);
 
@@ -4438,7 +4441,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_hit_sl = false;
             // -------------------------------------------------------------------------------------
             // Bảo vệ tài khoản tránh thua sạch tiền tích góp trong 53 ngày: -$6,133.97
-            if (OPEN_POSITIONS.add(BigDecimal.valueOf(2000)).compareTo(BigDecimal.ZERO) < 0) {
+            if (PROFIT.compareTo(BigDecimal.ZERO) < 0) {
                 if (reverse_h4_369 && reverse_h1_369 && reverse_15_369 && reverse_05_369) {
                     if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_1H)) {
                         is_hit_sl = true;
