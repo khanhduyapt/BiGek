@@ -4112,11 +4112,6 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
-            // TODO: 3 controlMt5
-            if ("_XAUUSD_".contains(EPIC)) {
-                boolean debug = true;
-            }
-
             count += 1;
             String No = Utils.appendLeft(String.valueOf(count), 2, "0") + ". ";
 
@@ -4147,7 +4142,7 @@ public class BinanceServiceImpl implements BinanceService {
             String wd = "";
             boolean wd_allow_trade_by_macd = false;
             if (Objects.equals(macd_d1.getTrend_macd_vs_zero(), macd_w1.getTrend_macd_vs_zero())) {
-                if (is_able_tp_d1_macd && (macd_d1.getCount_macd_candles() <= 5)) {
+                if (is_able_tp_d1_macd) {
                     wd += Utils.TEXT_MUC;
                     wd_allow_trade_by_macd = true;
                 } else {
@@ -4222,9 +4217,12 @@ public class BinanceServiceImpl implements BinanceService {
 
             trade_h1 = Utils.appendSpace(trade_h1.replace("SELL", "S").replace("BUY ", "B"), 80);
 
-            //----------------------------------------------------------------------------
-
             String prefix = TIME_FRAME + trade_h1 + No + amp + pivot;
+            //----------------------------------------------------------------------------
+            // TODO: 3 controlMt5
+            if ("_NZDUSD_".contains(EPIC)) {
+                boolean debug = true;
+            }
 
             Mt5OpenTrade dto_notifiy = null;
 
@@ -4240,12 +4238,19 @@ public class BinanceServiceImpl implements BinanceService {
                     && (macd_h4.getCount_macd_candles() <= 2)
                     && Objects.equals(trend_d1_macd, macd_h4.getTrend_macd_vs_zero());
 
-            boolean m15_allow_trade_by_macd = Objects.equals(trend_d1_macd, macd_h1.getTrend_macd_vs_zero())
+            boolean d1_allow_trade_by_macd = (1 <= macd_d1.getCount_macd_candles())
+                    && (macd_d1.getCount_macd_candles() == 2)
+                    && Objects.equals(trend_d1_macd, dto_h4.getTrend_by_heiken())
+                    && Objects.equals(trend_d1_macd, macd_h4.getTrend_macd_vs_zero());
+
+            boolean m15_allow_trade_by_macd = Objects.equals(trend_d1_macd, dto_h1.getTrend_by_heiken())
+                    && Objects.equals(trend_d1_macd, macd_h1.getTrend_macd_vs_zero())
                     && Objects.equals(trend_d1_macd, macd_15.getTrend_macd_vs_zero())
                     && Objects.equals(trend_d1_macd, macd_05.getTrend_macd_vs_zero());
 
-            if (wd_allow_trade_by_macd && (h4_allow_trade_by_macd || h1_allow_trade_by_macd || h1_allow_trade_by_ma)
-                    && m15_allow_trade_by_macd) {
+            if (wd_allow_trade_by_macd && m15_allow_trade_by_macd
+                    && (d1_allow_trade_by_macd || h4_allow_trade_by_macd || h1_allow_trade_by_macd
+                            || h1_allow_trade_by_ma)) {
 
                 List<TakeProfit> his_list_folow_d369 = takeProfitRepository
                         .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_d1_macd, Utils.getYyyyMMdd());
@@ -4254,9 +4259,11 @@ public class BinanceServiceImpl implements BinanceService {
 
                     close_reverse_trade(EPIC, trend_d1_macd);
 
-                    String note = Utils.ENCRYPTED_D1 + "_d" + macd_d1.getCount_macd_candles();
+                    String note = "_d" + macd_d1.getCount_macd_candles();
 
-                    if (h4_allow_trade_by_macd) {
+                    if (d1_allow_trade_by_macd) {
+                        note += "mc" + Utils.ENCRYPTED_D1;
+                    } else if (h4_allow_trade_by_macd) {
                         note += "mc" + Utils.ENCRYPTED_H4;
                     } else if (h1_allow_trade_by_macd) {
                         note += "mc" + Utils.ENCRYPTED_H1;

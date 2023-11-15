@@ -5200,7 +5200,10 @@ public class Utils {
                 take_profit);
 
         BigDecimal volume = money_300usd.calcLot();
-
+        BigDecimal standard_vol = Utils.get_standard_vol_per_100usd(EPIC);
+        if (volume.compareTo(standard_vol) < 0) {
+            volume = standard_vol;
+        }
         String type = Objects.equals(find_trend, Utils.TREND_LONG) ? "_b" : "_s";
 
         //take_profit = BigDecimal.ZERO;
