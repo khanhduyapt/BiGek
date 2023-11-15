@@ -160,7 +160,7 @@ public class Utils {
     public static final String TEXT_PIVOT_TO = "pv_to";
 
     public static final String TEXT_SEQ = "SEQ";
-    public static final String TEXT_SWITCH_TREND_SEQ_10_20_50 = "(" + TEXT_SEQ + "102050)";
+    public static final String TEXT_SWITCH_TREND_SEQ_10_20_50 = "(" + TEXT_SEQ + ")";
 
     public static final String TEXT_SWITCH_TREND_50 = "(~50~)";
     public static final String TEXT_SWITCH_TREND_HEIKEN = "(Heiken)";
@@ -5203,7 +5203,7 @@ public class Utils {
 
         String type = Objects.equals(find_trend, Utils.TREND_LONG) ? "_b" : "_s";
 
-        take_profit = BigDecimal.ZERO;
+        //take_profit = BigDecimal.ZERO;
         Mt5OpenTrade dto = new Mt5OpenTrade();
 
         dto.setEpic(EPIC);
