@@ -4228,9 +4228,10 @@ public class BinanceServiceImpl implements BinanceService {
 
             Mt5OpenTrade dto_notifiy = null;
 
-            boolean h1_allow_trade_by_ma = dto_h1.getSwitch_trend().contains(trend_d1_macd)
+            boolean h1_allow_trade_by_ma = (dto_15.getSwitch_trend() + dto_h1.getSwitch_trend()).contains(trend_d1_macd)
                     && Objects.equals(trend_d1_macd, dto_h1.getTrend_by_heiken())
-                    && Objects.equals(trend_d1_macd, dto_h4.getTrend_by_heiken());
+                    && Objects.equals(trend_d1_macd, dto_h4.getTrend_by_heiken())
+                    && Objects.equals(trend_d1_macd, dto_h4.getTrend_heiken_candle1());
 
             boolean h1_allow_trade_by_macd = (2 <= macd_h1.getCount_macd_candles())
                     && (macd_h1.getCount_macd_candles() <= 7);
