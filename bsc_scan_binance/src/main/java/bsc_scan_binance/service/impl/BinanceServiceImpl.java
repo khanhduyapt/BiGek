@@ -4252,34 +4252,37 @@ public class BinanceServiceImpl implements BinanceService {
                     && (d1_allow_trade_by_macd || h4_allow_trade_by_macd || h1_allow_trade_by_macd
                             || h1_allow_trade_by_ma)) {
 
-                List<TakeProfit> his_list_folow_d369 = takeProfitRepository
-                        .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_d1_macd, Utils.getYyyyMMdd());
-
                 close_reverse_trade(EPIC, trend_d1_macd);
 
-                String note = "_d" + macd_d1.getCount_macd_candles();
+                if (!is_opening_trade(EPIC, trend_d1_macd)) {
 
-                if (d1_allow_trade_by_macd) {
-                    note += "mc" + Utils.ENCRYPTED_D1;
-                } else if (h4_allow_trade_by_macd) {
-                    note += "mc" + Utils.ENCRYPTED_H4;
-                } else if (h1_allow_trade_by_macd) {
-                    note += "mc" + Utils.ENCRYPTED_H1;
-                } else if (h1_allow_trade_by_ma) {
-                    note += "ma" + Utils.ENCRYPTED_H1;
+                    List<TakeProfit> his_list_folow_d369 = takeProfitRepository
+                            .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_d1_macd, Utils.getYyyyMMdd());
+
+                    String note = "_d" + macd_d1.getCount_macd_candles();
+
+                    if (d1_allow_trade_by_macd) {
+                        note += "mc" + Utils.ENCRYPTED_D1;
+                    } else if (h4_allow_trade_by_macd) {
+                        note += "mc" + Utils.ENCRYPTED_H4;
+                    } else if (h1_allow_trade_by_macd) {
+                        note += "mc" + Utils.ENCRYPTED_H1;
+                    } else if (h1_allow_trade_by_ma) {
+                        note += "ma" + Utils.ENCRYPTED_H1;
+                    }
+
+                    if (CollectionUtils.isEmpty(his_list_folow_d369) && Utils.is_open_trade_time()) {
+                        note += Utils.TEXT_PASS;
+                    } else {
+                        note += Utils.TEXT_NOTICE_ONLY;
+                    }
+
+                    dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1_macd, dto_h1, note, true, "", dailyRange, 1);
+
+                    String key = EPIC + Utils.ENCRYPTED_D1;
+                    BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
+                    BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
                 }
-
-                if (CollectionUtils.isEmpty(his_list_folow_d369) && Utils.is_open_trade_time()) {
-                    note += Utils.TEXT_PASS;
-                } else {
-                    note += Utils.TEXT_NOTICE_ONLY;
-                }
-
-                dto_notifiy = Utils.calc_Lot_En_SL_TP(EPIC, trend_d1_macd, dto_h1, note, true, "", dailyRange, 1);
-
-                String key = EPIC + Utils.ENCRYPTED_D1;
-                BscScanBinanceApplication.mt5_open_trade_List.add(dto_notifiy);
-                BscScanBinanceApplication.dic_comment.put(key, dto_notifiy.getComment());
             }
 
             // -----------------------------------------------------------------------------------------------
