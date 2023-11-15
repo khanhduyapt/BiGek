@@ -4235,11 +4235,16 @@ public class BinanceServiceImpl implements BinanceService {
             boolean h1_allow_trade_by_macd = (2 <= macd_h1.getCount_macd_candles())
                     && (macd_h1.getCount_macd_candles() <= 7);
 
+            boolean h4_allow_trade_by_macd = (1 <= macd_h4.getCount_macd_candles())
+                    && (macd_h4.getCount_macd_candles() <= 2)
+                    && Objects.equals(trend_d1_macd, macd_h4.getTrend_macd_vs_zero());
+
             boolean m15_allow_trade_by_macd = Objects.equals(trend_d1_macd, macd_h1.getTrend_macd_vs_zero())
                     && Objects.equals(trend_d1_macd, macd_15.getTrend_macd_vs_zero())
                     && Objects.equals(trend_d1_macd, macd_05.getTrend_macd_vs_zero());
 
-            if (wd_allow_trade_by_macd && (h1_allow_trade_by_macd || h1_allow_trade_by_ma) && m15_allow_trade_by_macd) {
+            if (wd_allow_trade_by_macd && (h4_allow_trade_by_macd || h1_allow_trade_by_macd || h1_allow_trade_by_ma)
+                    && m15_allow_trade_by_macd) {
 
                 List<TakeProfit> his_list_folow_d369 = takeProfitRepository
                         .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trend_d1_macd, Utils.getYyyyMMdd());
@@ -4250,10 +4255,12 @@ public class BinanceServiceImpl implements BinanceService {
 
                     String note = Utils.ENCRYPTED_D1 + "_d" + macd_d1.getCount_macd_candles();
 
-                    if (h1_allow_trade_by_macd) {
-                        note += "mc";
+                    if (h4_allow_trade_by_macd) {
+                        note += "mc" + Utils.ENCRYPTED_H4;
+                    } else if (h1_allow_trade_by_macd) {
+                        note += "mc" + Utils.ENCRYPTED_H1;
                     } else if (h1_allow_trade_by_ma) {
-                        note += "ma";
+                        note += "ma" + Utils.ENCRYPTED_H1;
                     }
 
                     if (Utils.is_open_trade_time()) {
