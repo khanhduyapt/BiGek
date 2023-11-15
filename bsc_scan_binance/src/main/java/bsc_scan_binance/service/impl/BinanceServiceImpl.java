@@ -4142,7 +4142,7 @@ public class BinanceServiceImpl implements BinanceService {
             String wd = "";
             boolean wd_allow_trade_by_macd = false;
             if (Objects.equals(macd_d1.getTrend_macd_vs_zero(), macd_w1.getTrend_macd_vs_zero())) {
-                if (is_able_tp_d1_macd) {
+                if (is_able_tp_d1_macd && (macd_d1.getCount_macd_candles() <= 5)) {
                     wd += Utils.TEXT_MUC;
                     wd_allow_trade_by_macd = true;
                 } else {
