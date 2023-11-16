@@ -2370,10 +2370,13 @@ public class Utils {
         }
 
         String date = Utils.convertDateToString("dd", Calendar.getInstance().getTime());
-        String HHm0 = Utils.convertDateToString("HHmm", Calendar.getInstance().getTime());
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.HOUR, 6);
+        String HHm0 = Utils.convertDateToString("HHmm", calendar.getTime());
         HHm0 = HHm0.subSequence(0, 3) + "0";
 
-        return date + name + "_" + HHm0;
+        return date + name + "_e" + HHm0;
     }
 
     public static String getYyyyMmDd_HHmmss() {
