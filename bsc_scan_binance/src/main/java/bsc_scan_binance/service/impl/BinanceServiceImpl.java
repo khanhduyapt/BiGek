@@ -2952,7 +2952,7 @@ public class BinanceServiceImpl implements BinanceService {
                     Duration duration = Duration.between(pre_time, LocalDateTime.now());
                     long elapsedMinutes = duration.toMinutes();
 
-                    if (elapsedMinutes > Utils.MINUTES_OF_5H) {
+                    if (elapsedMinutes > Utils.MINUTES_OF_1D) {
                         count += 1;
                     }
                 }
@@ -4541,7 +4541,8 @@ public class BinanceServiceImpl implements BinanceService {
             if (trade.getComment().contains(Utils.ENCRYPTED_H1)) {
                 boolean reverse_h1_c1c2 = (dto_h1.getCount_position_of_heiken_candle1() >= 2)
                         && Objects.equals(dto_h1.getTrend_by_heiken(), REVERSE_TRADE_TREND)
-                        && Objects.equals(dto_h1.getTrend_heiken_candle1(), REVERSE_TRADE_TREND);
+                        && Objects.equals(dto_h1.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
+                        && Objects.equals(dto_h4.getTrend_by_heiken(), REVERSE_TRADE_TREND);
 
                 if (reverse_h1_c1c2) {
                     is_hit_sl = true;
