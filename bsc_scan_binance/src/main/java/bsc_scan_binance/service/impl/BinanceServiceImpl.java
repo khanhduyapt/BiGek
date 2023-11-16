@@ -4527,11 +4527,13 @@ public class BinanceServiceImpl implements BinanceService {
             // -------------------------------------------------------------------------------------------
             // ra : H1(candle_7) hoặc 2 nến heiken đóng đảo chiều
             if (has_profit_h1) {
-                if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)
-                        && Objects.equals(macd_h1.getTrend_macd_vs_signal(), REVERSE_TRADE_TREND)) {
+                boolean trend_weakening = Objects.equals(macd_h1.getTrend_macd_vs_signal(), REVERSE_TRADE_TREND);
+
+                if (trend_weakening && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
                     is_hit_sl = true;
                     reason_id += "(end_7candles_h1, has_profit)";
                 }
+
                 if (pass_time_hoding) {
                     is_hit_sl = true;
                     reason_id += "(end_7candles_h1, has_profit)";
