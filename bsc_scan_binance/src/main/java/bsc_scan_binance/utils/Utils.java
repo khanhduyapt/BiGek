@@ -85,7 +85,7 @@ public class Utils {
     // ACCOUNT.multiply(BigDecimal.valueOf(0.001));
 
     // Trend W == D (500$ / 1trade)
-    public static final BigDecimal RISK_0_25_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
+    public static final BigDecimal RISK_0_25_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
 
     // public static final BigDecimal RISK_PER_TRADE = RISK_0_15_PERCENT;
 
@@ -2026,7 +2026,7 @@ public class Utils {
     // vào lệnh từ 13h~15h: lãi thì chốt từ 16h trở đi.
     // vào lệnh từ 18h~20h: lãi thì chốt từ 22h trở đi.
     public static boolean is_open_trade_time() {
-        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19); //, 20, 21
+        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21);
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -2370,7 +2370,10 @@ public class Utils {
         }
 
         String date = Utils.convertDateToString("dd", Calendar.getInstance().getTime());
-        return date + name + "." + Utils.convertDateToString("HH.mm", Calendar.getInstance().getTime());
+        String HHm0 = Utils.convertDateToString("HHmm", Calendar.getInstance().getTime());
+        HHm0 = HHm0.subSequence(0, 3) + "0";
+
+        return date + name + "_" + HHm0;
     }
 
     public static String getYyyyMmDd_HHmmss() {
@@ -5196,13 +5199,21 @@ public class Utils {
         BigDecimal stop_loss = sl_tp.get(0);
         BigDecimal take_profit = sl_tp.get(1);
 
-        MoneyAtRiskResponse money_300usd = new MoneyAtRiskResponse(EPIC, RISK_0_25_PERCENT, curr_price, stop_loss,
+        BigDecimal sl_calc = BigDecimal.ZERO;
+        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
+            sl_calc = dto_h1.getSl_long();
+        }
+        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
+            sl_calc = dto_h1.getSl_shot();
+        }
+
+        MoneyAtRiskResponse calc_vol = new MoneyAtRiskResponse(EPIC, RISK_0_25_PERCENT, curr_price, sl_calc,
                 take_profit);
 
-        BigDecimal volume = money_300usd.calcLot();
+        BigDecimal volume = calc_vol.calcLot();
         BigDecimal standard_vol = Utils.get_standard_vol_per_100usd(EPIC);
         if (volume.compareTo(standard_vol) < 0) {
-            volume = standard_vol;
+            //volume = standard_vol;
         }
         String type = Objects.equals(find_trend, Utils.TREND_LONG) ? "_b" : "_s";
 

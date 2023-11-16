@@ -75,10 +75,10 @@ public class Orders {
     private BigDecimal current_price = BigDecimal.ZERO;
 
     @Column(name = "str_body_price")
-    private BigDecimal tp_long = BigDecimal.ZERO;
+    private BigDecimal sl_long = BigDecimal.ZERO;
 
     @Column(name = "end_body_price")
-    private BigDecimal tp_shot = BigDecimal.ZERO;
+    private BigDecimal sl_shot = BigDecimal.ZERO;
 
     @Column(name = "low_price")
     private BigDecimal close_candle_1 = BigDecimal.ZERO;
