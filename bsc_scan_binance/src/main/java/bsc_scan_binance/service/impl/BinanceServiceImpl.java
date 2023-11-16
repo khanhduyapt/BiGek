@@ -4260,12 +4260,15 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean is_able_tp_h4 = Utils.is_price_still_be_trade(dto_d1, dailyRange.getAvg_amp_week(), h4_heiken_c1);
 
-            boolean h4_allow_trade = (macd_h4.getCount_macd_candles() <= 2)
+            boolean h4_allow_trade = ((macd_h4.getCount_macd_candles() <= 2)
+                    || (dto_h4.getCount_position_of_heiken_candle1() == 1))
+
                     && Objects.equals(h4_heiken_c1, macd_h4.getTrend_macd_vs_zero())
                     && Objects.equals(h4_heiken_c1, macd_h4.getTrend_macd_vs_signal())
 
                     && Objects.equals(h4_heiken_c1, dto_h4.getTrend_by_ma_9())
                     && Objects.equals(h4_heiken_c1, dto_h4.getTrend_by_heiken())
+
                     && Objects.equals(h4_heiken_c1, dto_h1.getTrend_by_heiken())
                     && Objects.equals(h4_heiken_c1, dto_15.getTrend_by_heiken())
                     && Objects.equals(h4_heiken_c1, dto_05.getTrend_by_heiken());
