@@ -4269,7 +4269,7 @@ public class BinanceServiceImpl implements BinanceService {
             // -----------------------------------------------------------------------------------------------
 
             // TODO: 3 controlMt5
-            if ("_EURJPY_".contains(EPIC)) {
+            if ("_GBPUSD_".contains(EPIC)) {
                 boolean debug = true;
             }
 
@@ -4285,7 +4285,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(trading_trend, dto_h1.getTrend_heiken_candle1());
 
             boolean h4_allow_trade_by_macd = (Objects.equals(trading_trend, dto_h4.getTrend_by_heiken())
-                    || Objects.equals(trading_trend, dto_h4.getTrend_heiken_candle1()))
+                    && Objects.equals(trading_trend, dto_h4.getTrend_heiken_candle1()))
                     && (Objects.equals(trading_trend, macd_h4.getTrend_macd_vs_zero())
                             || Objects.equals(trading_trend, macd_h4.getTrend_macd_vs_signal())
                             || Objects.equals(trading_trend, dto_h4.getTrend_by_ma_9())
