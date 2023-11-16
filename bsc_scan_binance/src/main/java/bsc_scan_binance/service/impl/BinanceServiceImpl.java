@@ -4532,7 +4532,7 @@ public class BinanceServiceImpl implements BinanceService {
                     is_hit_sl = true;
                     reason_id += "(end_7candles_h1, has_profit)";
                 }
-                if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_5H)) {
+                if (pass_time_hoding) {
                     is_hit_sl = true;
                     reason_id += "(end_7candles_h1, has_profit)";
                 }
