@@ -4282,7 +4282,13 @@ public class BinanceServiceImpl implements BinanceService {
                     List<TakeProfit> his_list_folow_d369 = takeProfitRepository
                             .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, h4_heiken_c1, Utils.getYyyyMMdd());
 
-                    String note = "_c" + macd_h4.getCount_macd_candles() + Utils.ENCRYPTED_H4;
+                    int c_count = 0;
+                    if (macd_h4.getCount_macd_candles() <= 2) {
+                        c_count = macd_h4.getCount_macd_candles();
+                    } else {
+                        c_count = dto_h4.getCount_position_of_heiken_candle1().intValue();
+                    }
+                    String note = "_c" + c_count + Utils.ENCRYPTED_H4;
 
                     if (CollectionUtils.isEmpty(his_list_folow_d369)) { // && Utils.is_open_trade_time()
                         note += Utils.TEXT_PASS;
