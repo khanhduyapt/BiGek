@@ -4282,7 +4282,9 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean h1_allow_trade_by_ma = (dto_h1.getCount_position_of_heiken_candle1() <= 2)
                     && Objects.equals(trading_trend, dto_h1.getTrend_by_heiken())
-                    && Objects.equals(trading_trend, dto_h1.getTrend_heiken_candle1());
+                    && Objects.equals(trading_trend, dto_h1.getTrend_heiken_candle1())
+                    && Objects.equals(trading_trend, dto_d1.getTrend_by_heiken())
+                    && Objects.equals(trading_trend, dto_d1.getTrend_by_ma_9());
 
             boolean h4_allow_trade_by_macd = (Objects.equals(trading_trend, dto_h4.getTrend_by_heiken())
                     && Objects.equals(trading_trend, dto_h4.getTrend_heiken_candle1()))
@@ -4302,7 +4304,7 @@ public class BinanceServiceImpl implements BinanceService {
                     || Objects.equals(trading_trend, macd_05.getTrend_macd_vs_zero());
 
             if (is_able_tp_h1 && h1_allow_trade_by_ma && h4_allow_trade_by_macd && h1_allow_trade_by_macd
-                    && m15_allow_trade_by_macd && m05_allow_trade_by_macd) {
+                    && m15_allow_trade_by_macd && m05_allow_trade_by_macd && false) {
 
                 close_reverse_trade(EPIC, trading_trend);
 
@@ -4544,7 +4546,7 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean reverse_h1_c1c2 = (dto_h1.getCount_position_of_heiken_candle1() >= 2)
                         && Objects.equals(dto_h1.getTrend_by_heiken(), REVERSE_TRADE_TREND)
                         && Objects.equals(dto_h1.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
-                        && Objects.equals(dto_h4.getTrend_by_heiken(), REVERSE_TRADE_TREND);
+                        && Objects.equals(dto_d1.getTrend_by_heiken(), REVERSE_TRADE_TREND);
 
                 if (reverse_h1_c1c2) {
                     is_hit_sl = true;
