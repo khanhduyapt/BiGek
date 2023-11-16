@@ -72,7 +72,8 @@ public class DailyRange {
     private BigDecimal todo_3 = BigDecimal.ZERO;
 
     @Column(name = "upper_h4")
-    private BigDecimal upper_h4 = BigDecimal.ZERO;
+    private BigDecimal h4_ma10 = BigDecimal.ZERO;
+    
     @Column(name = "lower_h4")
     private BigDecimal lower_h4 = BigDecimal.ZERO;
     @Column(name = "upper_d1")

@@ -85,7 +85,7 @@ public class Utils {
     // ACCOUNT.multiply(BigDecimal.valueOf(0.001));
 
     // Trend W == D (500$ / 1trade)
-    public static final BigDecimal RISK_0_25_PERCENT = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
+    public static final BigDecimal RISK = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
 
     // public static final BigDecimal RISK_PER_TRADE = RISK_0_15_PERCENT;
 
@@ -2036,7 +2036,7 @@ public class Utils {
     }
 
     public static boolean is_close_trade_time() {
-        List<Integer> times = Arrays.asList(11, 12, 16, 17, 22, 23, 24, 0, 1, 2, 3);
+        List<Integer> times = Arrays.asList(1, 2, 3);
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -4252,8 +4252,8 @@ public class Utils {
         return inside_lohi;
     }
 
-    public static String switch_trend_seq_10_20_50(List<BtcFutures> heiken_list,
-            BigDecimal amplitude_avg_of_candles, boolean check_inside_lohi) {
+    public static String switch_trend_seq_10_20_50(List<BtcFutures> heiken_list, BigDecimal amplitude_avg_of_candles,
+            boolean check_inside_lohi) {
         String result = "";
         if (heiken_list.size() < 20) {
             return result;
@@ -5121,12 +5121,12 @@ public class Utils {
 
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
             stop_loss = curr_price.subtract(amp_w);
-            take_profit = curr_price.add(amp_w);
+            take_profit = curr_price.add(amp_w).add(amp_w);
         }
 
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
             stop_loss = curr_price.add(amp_w);
-            take_profit = curr_price.subtract(amp_w);
+            take_profit = curr_price.subtract(amp_w).subtract(amp_w);
         }
 
         List<BigDecimal> list = new ArrayList<BigDecimal>();
@@ -5189,13 +5189,13 @@ public class Utils {
         return "";
     }
 
-    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String find_trend, Orders dto_h1, String append,
+    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String find_trend, Orders dto_h4, String append,
             boolean isTradeNow, String CAPITAL_TIME_XX, DailyRange dailyRange, int total_trade) {
 
         if (Utils.isBlank(find_trend)) {
             return null;
         }
-        BigDecimal curr_price = dto_h1.getCurrent_price();
+        BigDecimal curr_price = dto_h4.getCurrent_price();
         BigDecimal entry_1 = BigDecimal.ZERO;
         BigDecimal entry_2 = BigDecimal.ZERO;
         BigDecimal entry_3 = BigDecimal.ZERO;
@@ -5206,23 +5206,18 @@ public class Utils {
 
         BigDecimal sl_calc = BigDecimal.ZERO;
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            sl_calc = dto_h1.getSl_long();
+            sl_calc = dto_h4.getSl_long();
         }
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            sl_calc = dto_h1.getSl_shot();
+            sl_calc = dto_h4.getSl_shot();
         }
 
-        MoneyAtRiskResponse calc_vol = new MoneyAtRiskResponse(EPIC, RISK_0_25_PERCENT, curr_price, sl_calc,
-                take_profit);
+        MoneyAtRiskResponse calc_vol = new MoneyAtRiskResponse(EPIC, RISK, curr_price, sl_calc, take_profit);
 
         BigDecimal volume = calc_vol.calcLot();
-        BigDecimal standard_vol = Utils.get_standard_vol_per_100usd(EPIC);
-        if (volume.compareTo(standard_vol) < 0) {
-            //volume = standard_vol;
-        }
         String type = Objects.equals(find_trend, Utils.TREND_LONG) ? "_b" : "_s";
 
-        //take_profit = BigDecimal.ZERO;
+        // take_profit = BigDecimal.ZERO;
         Mt5OpenTrade dto = new Mt5OpenTrade();
 
         dto.setEpic(EPIC);
@@ -5253,9 +5248,9 @@ public class Utils {
             String EPIC, BigDecimal curr_price, DailyRange dailyRange) {
         String result = "";
 
-        BigDecimal amp_w = dailyRange.getAvg_amp_week();
-        BigDecimal low = curr_price.subtract(amp_w);
-        BigDecimal hig = curr_price.add(amp_w);
+        BigDecimal amp_w = dailyRange.getAmp_avg_h4();
+        BigDecimal low = dailyRange.getH4_ma10().subtract(amp_w);
+        BigDecimal hig = dailyRange.getH4_ma10().add(amp_w);
 
         String str_long = calc_BUF_Long_Forex(onlyWait, risk, EPIC, curr_price, curr_price, low, hig, "", "");
         String str_shot = calc_BUF_Shot_Forex(onlyWait, risk, EPIC, curr_price, curr_price, hig, low, "", "");
