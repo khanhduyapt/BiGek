@@ -2952,7 +2952,7 @@ public class BinanceServiceImpl implements BinanceService {
                     Duration duration = Duration.between(pre_time, LocalDateTime.now());
                     long elapsedMinutes = duration.toMinutes();
 
-                    if (elapsedMinutes > Utils.MINUTES_OF_6H) {
+                    if (elapsedMinutes > Utils.MINUTES_OF_5H) {
                         count += 1;
                     }
                 }
@@ -4280,7 +4280,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean is_able_tp_h1 = Utils.is_price_still_be_trade(dto_d1, dailyRange.getAvg_amp_week(), trading_trend);
 
-            boolean h1_allow_trade_by_ma = (dto_h1.getCount_position_of_heiken_candle1() == 2)
+            boolean h1_allow_trade_by_ma = (dto_h1.getCount_position_of_heiken_candle1() <= 2)
                     && Objects.equals(trading_trend, dto_h1.getTrend_by_heiken())
                     && Objects.equals(trading_trend, dto_h1.getTrend_heiken_candle1());
 
@@ -4288,9 +4288,11 @@ public class BinanceServiceImpl implements BinanceService {
                     || Objects.equals(trading_trend, dto_h4.getTrend_heiken_candle1()))
                     && (Objects.equals(trading_trend, macd_h4.getTrend_macd_vs_zero())
                             || Objects.equals(trading_trend, macd_h4.getTrend_macd_vs_signal())
-                            || Objects.equals(trading_trend, dto_h4.getTrend_by_ma_9()));
+                            || Objects.equals(trading_trend, dto_h4.getTrend_by_ma_9())
+                            || Objects.equals(trading_trend, dto_h4.getTrend_by_ma_6()));
 
             boolean h1_allow_trade_by_macd = Objects.equals(trading_trend, macd_h1.getTrend_macd_vs_signal())
+                    || Objects.equals(trading_trend, dto_h1.getTrend_by_ma_6())
                     || Objects.equals(trading_trend, dto_h1.getTrend_by_ma_9());
 
             boolean m15_allow_trade_by_macd = Objects.equals(trading_trend, macd_15.getTrend_macd_vs_signal())
@@ -4309,7 +4311,7 @@ public class BinanceServiceImpl implements BinanceService {
                     List<TakeProfit> his_list_folow_d369 = takeProfitRepository
                             .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, trading_trend, Utils.getYyyyMMdd());
 
-                    String note = Utils.ENCRYPTED_H1 + "_" + (dto_h1.getCount_position_of_heiken_candle1() + 1);
+                    String note = "_c" + (dto_h1.getCount_position_of_heiken_candle1() + 1) + Utils.ENCRYPTED_H1;
 
                     if (CollectionUtils.isEmpty(his_list_folow_d369) && Utils.is_open_trade_time()) {
                         note += Utils.TEXT_PASS;
@@ -4525,7 +4527,12 @@ public class BinanceServiceImpl implements BinanceService {
             // -------------------------------------------------------------------------------------------
             // ra : H1(candle_7) hoặc 2 nến heiken đóng đảo chiều
             if (has_profit_h1) {
-                if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
+                if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)
+                        && Objects.equals(macd_h1.getTrend_macd_vs_signal(), REVERSE_TRADE_TREND)) {
+                    is_hit_sl = true;
+                    reason_id += "(end_7candles_h1, has_profit)";
+                }
+                if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_5H)) {
                     is_hit_sl = true;
                     reason_id += "(end_7candles_h1, has_profit)";
                 }

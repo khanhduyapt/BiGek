@@ -239,7 +239,7 @@ public class Utils {
     public static final Integer MINUTES_OF_6D = 8640;
     public static final Integer MINUTES_OF_3D = 4320;
     public static final Integer MINUTES_OF_1D = 1440;
-    public static final Integer MINUTES_OF_6H = 360;
+    public static final Integer MINUTES_OF_5H = 300;
     public static final Integer MINUTES_OF_4H = 240;
     public static final Integer MINUTES_OF_2H = 120;
     public static final Integer MINUTES_OF_1H = 60;
@@ -4752,15 +4752,17 @@ public class Utils {
         int candle_no = 1;
         boolean is_h1_trading = comment.contains(Utils.ENCRYPTED_H1);
         if (is_h1_trading) {
+            hoding_time = Utils.MINUTES_OF_5H;
+
             int startIndex = comment.indexOf("_c") + 2;
-            int endIndex = comment.indexOf("_mgi");
+            int endIndex = comment.indexOf(Utils.ENCRYPTED_H1);
             if (startIndex != -1 && endIndex != -1) {
                 String numberString = comment.substring(startIndex, endIndex);
                 candle_no = Utils.getIntValue(numberString);
             }
 
             if (candle_no > 0) {
-                hoding_time = Utils.MINUTES_OF_6H + Utils.MINUTES_OF_1H - (candle_no * Utils.MINUTES_OF_1H);
+                hoding_time = Utils.MINUTES_OF_5H + Utils.MINUTES_OF_1H - (candle_no * Utils.MINUTES_OF_1H);
             }
         }
 
