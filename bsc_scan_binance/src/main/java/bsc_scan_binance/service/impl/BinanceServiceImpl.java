@@ -4188,7 +4188,11 @@ public class BinanceServiceImpl implements BinanceService {
             TIME_FRAME = wd + "~" + Utils.appendSpace(TIME_FRAME.trim(), 8) + "~";
 
             // ----------------------------------------------------------------------------
-            String trade_h4 = "  D6:" + Utils.appendSpace(dto_d1.getTrend_by_ma_6(), 8);
+            String trade_h4 = "  D6:" + Utils.appendSpace(macd_d1.getCur_macd_trend(), 5)
+                    + (dto_d1.getCount_position_of_candle1_vs_ma10().intValue() <= 2 ? Utils.TEXT_MUC : "  ")
+                    + "c" + Utils.appendLeft(dto_d1.getCount_position_of_candle1_vs_ma10().intValue(), 3)
+                    + ":" + dto_d1.getTrend_by_ma_9()
+                    + "  ";
 
             String H4mac = "";
             if (macd_h4.getCount_cur_macd_wave() <= 2) {
@@ -4268,11 +4272,14 @@ public class BinanceServiceImpl implements BinanceService {
                             && Objects.equals(h4_heiken_c1, macd_h1.getTrend_macd_vs_zero())
                             && Objects.equals(h4_heiken_c1, macd_h1.getTrend_macd_vs_signal())))
 
+                    && (Objects.equals(h4_heiken_c1, dto_d1.getTrend_by_ma_6())
+                            || Objects.equals(h4_heiken_c1, dto_d1.getTrend_by_ma_9())
+                            || Objects.equals(h4_heiken_c1, dto_d1.getTrend_by_heiken())
+                            || Objects.equals(h4_heiken_c1, macd_d1.getCur_macd_trend())
+                            || Objects.equals(h4_heiken_c1, macd_d1.getTrend_macd_vs_zero()))
+
                     && Objects.equals(h4_heiken_c1, macd_h4.getTrend_macd_vs_zero())
                     && Objects.equals(h4_heiken_c1, macd_h4.getTrend_macd_vs_signal())
-
-                    && Objects.equals(h4_heiken_c1, dto_d1.getTrend_by_ma_6())
-
                     && Objects.equals(h4_heiken_c1, dto_h4.getTrend_by_ma_9())
                     && Objects.equals(h4_heiken_c1, dto_h4.getTrend_by_heiken())
 
