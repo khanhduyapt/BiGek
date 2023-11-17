@@ -1953,14 +1953,14 @@ public class Utils {
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
 
         // đêm thứ 4 phí qua đêm sẽ được X3 để bù cho 2 ngày cuối tuần.
-        if ((day == DayOfWeek.WEDNESDAY) && (hh > 22)) {
-            // return true;
+        if ((day == DayOfWeek.WEDNESDAY) && (hh >= 16)) {
+            return true;
         }
-        if ((day == DayOfWeek.THURSDAY) && (hh < 3)) {
-            // return true;
+        if ((day == DayOfWeek.THURSDAY) && (hh <= 3)) {
+            return true;
         }
 
-        if ((day == DayOfWeek.FRIDAY) && (hh >= 22)) {
+        if ((day == DayOfWeek.FRIDAY) && (hh >= 16)) {
             return true;
         }
         if (day == DayOfWeek.SATURDAY) {

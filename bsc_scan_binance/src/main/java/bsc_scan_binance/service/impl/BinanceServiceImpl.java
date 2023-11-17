@@ -4452,8 +4452,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
             // -------------------------------------------------------------------------------------------
             // TODO: 5 closeTrade_by_SL_TP
-            boolean has_profit_h4 = (PROFIT.compareTo(BigDecimal.valueOf(10)) > 0)
-                    && trade.getComment().contains(Utils.ENCRYPTED_H4);
+            boolean has_profit_h4 = (PROFIT.compareTo(BigDecimal.valueOf(10)) > 0);
 
             // ra : H4 nến heiken đóng đảo chiều, hoặc c1 là doji
             boolean reverse_macd_h1 = Objects.equals(dto_h1.getTrend_by_heiken(), REVERSE_TRADE_TREND)
@@ -4488,6 +4487,11 @@ public class BinanceServiceImpl implements BinanceService {
                     is_hit_sl = true;
                     reason_id += "(macd_vs_zero_reverse, has_profit)";
                 }
+            }
+
+            if (has_profit_h4 && reverse_macd_h1 && Utils.isCloseTradeWeekEnd()) {
+                is_hit_sl = true;
+                reason_id += "(WeekEnd, has_profit)";
             }
             // -------------------------------------------------------------------------------------------
             if (is_hit_sl) {
