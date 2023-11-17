@@ -4252,10 +4252,9 @@ public class Utils {
         return inside_lohi;
     }
 
-    public static String switch_trend_seq_10_20_50(List<BtcFutures> heiken_list, BigDecimal amplitude_avg_of_candles,
-            boolean check_inside_lohi) {
+    public static String switch_trend_seq_10_20_50(List<BtcFutures> heiken_list, BigDecimal amp_avg, Mt5Macd macd) {
         String result = "";
-        if (heiken_list.size() < 20) {
+        if (heiken_list.size() < 50) {
             return result;
         }
 
@@ -4264,37 +4263,64 @@ public class Utils {
             boolean debug = true;
         }
 
-        BtcFutures candle = heiken_list.get(0);
-        BigDecimal low = candle.getLow_price().subtract(amplitude_avg_of_candles);
-        BigDecimal hig = candle.getHight_price().add(amplitude_avg_of_candles);
+        // Cây nến hoàn hảo:
+        // cond 1) C1 heiken cùng chiều;
+        // cond 2) Ma10 || Ma20 || Ma50 phi cùng chiều;
+        // cond 3) (LowC1 - Avg)&HigC1 chứa Ma50; (HigC1 + Avg)&LowC1 chứa Ma50;
+        // cond 4) (trình tự ma10 -> ma20 -> ma50)
+        // cond 5) macd_vs_zero cùng chiều
+        // cond 6) macd_vs_signal cùng chiều
 
-        BigDecimal ma03_0 = calcMA(heiken_list, 3, 0);
-        BigDecimal ma09_0 = calcMA(heiken_list, 9, 0);
-        BigDecimal ma20_0 = calcMA(heiken_list, 20, 0);
-        BigDecimal ma50_0 = calcMA(heiken_list, 50, 0);
-
-        boolean inside_lohi = (low.compareTo(ma50_0) <= 0) && (ma50_0.compareTo(hig) <= 0);
-        if (!check_inside_lohi) {
-            inside_lohi = true;
+        int candle_index = 0;
+        if (id.contains(PREFIX_03m) || id.contains(PREFIX_10m) || id.contains(PREFIX_15m) || id.contains(PREFIX_30m)) {
+            candle_index = 1;
         }
 
-        if (inside_lohi) {
-            if ((ma03_0.compareTo(ma09_0) >= 0) && (ma03_0.compareTo(ma20_0) >= 0) && (ma03_0.compareTo(ma50_0) >= 0)
-                    && ((ma09_0.compareTo(ma50_0) >= 0) || (ma20_0.compareTo(ma50_0) >= 0))) {
-                result = Utils.TREND_LONG;
-            }
-        }
+        BigDecimal ma03 = calcMA(heiken_list, 3, candle_index);
+        BigDecimal ma10 = calcMA(heiken_list, 10, candle_index);
+        BigDecimal ma20 = calcMA(heiken_list, 20, candle_index);
+        BigDecimal ma50 = calcMA(heiken_list, 50, candle_index);
 
-        if (inside_lohi) {
-            if ((ma03_0.compareTo(ma09_0) <= 0) && (ma03_0.compareTo(ma20_0) <= 0) && (ma03_0.compareTo(ma50_0) <= 0)
-                    && ((ma09_0.compareTo(ma50_0) <= 0) || (ma20_0.compareTo(ma50_0) <= 0))) {
-                result = Utils.TREND_SHOT;
-            }
-        }
+        boolean heiken_cx_uptrend = heiken_list.get(candle_index).isUptrend();
+        boolean is_uptrend_ma10 = Utils.isUptrendByMa(heiken_list, 10, candle_index, candle_index + 1);
+        boolean is_uptrend_ma20 = Utils.isUptrendByMa(heiken_list, 20, candle_index, candle_index + 1);
+        boolean is_uptrend_ma50 = Utils.isUptrendByMa(heiken_list, 50, candle_index, candle_index + 1);
 
-        if (isNotBlank(result)) {
+        String cond_1_trend_heiken = heiken_cx_uptrend ? Utils.TREND_LONG : Utils.TREND_SHOT;
+        // --------------------------------------------------------------------------------------
+        String cond_2_trend_102050 = "cond2_" + Utils.TREND_UNSURE;
+        if ((heiken_cx_uptrend == is_uptrend_ma10) || (heiken_cx_uptrend == is_uptrend_ma20)
+                || (heiken_cx_uptrend == is_uptrend_ma50)) {
+            cond_2_trend_102050 = cond_1_trend_heiken;
+        }
+        // --------------------------------------------------------------------------------------
+        BigDecimal low = ma03;
+        BigDecimal hig = ma03;
+        BtcFutures candle = heiken_list.get(candle_index);
+        if (heiken_cx_uptrend) {
+            low = candle.getLow_price().subtract(amp_avg);
+            hig = candle.getHight_price();
+        } else {
+            low = candle.getLow_price();
+            hig = candle.getHight_price().add(amp_avg);
+        }
+        boolean cond_3_inside_lohi = (low.compareTo(ma50) <= 0) && (ma50.compareTo(hig) <= 0);
+        // --------------------------------------------------------------------------------------
+        String cond4_trend_3_10_20_50 = "cond4_" + Utils.TREND_UNSURE;
+        if ((ma03.compareTo(ma10) >= 0) && (ma03.compareTo(ma20) >= 0) && (ma03.compareTo(ma50) >= 0)) {
+            cond4_trend_3_10_20_50 = Utils.TREND_LONG;
+        }
+        if ((ma03.compareTo(ma10) <= 0) && (ma03.compareTo(ma20) <= 0) && (ma03.compareTo(ma50) <= 0)) {
+            cond4_trend_3_10_20_50 = Utils.TREND_SHOT;
+        }
+        // --------------------------------------------------------------------------------------
+        if (Objects.equals(cond_1_trend_heiken, cond_2_trend_102050) && cond_3_inside_lohi
+                && Objects.equals(cond_1_trend_heiken, cond4_trend_3_10_20_50)
+                && Objects.equals(cond_1_trend_heiken, macd.getTrend_macd_vs_zero())
+                && Objects.equals(cond_1_trend_heiken, macd.getTrend_macd_vs_signal())) {
+
             String chart_name = getChartName(heiken_list).trim();
-            result = chart_name + TEXT_SWITCH_TREND_SEQ_10_20_50 + ":" + Utils.appendSpace(result, 4);
+            result = chart_name + TEXT_SWITCH_TREND_SEQ_10_20_50 + ":" + Utils.appendSpace(cond_1_trend_heiken, 4);
         }
 
         return result;
@@ -5248,9 +5274,9 @@ public class Utils {
             String EPIC, BigDecimal curr_price, DailyRange dailyRange) {
         String result = "";
 
-        BigDecimal amp_w = dailyRange.getAmp_avg_h4();
-        BigDecimal low = dailyRange.getH4_ma10().subtract(amp_w);
-        BigDecimal hig = dailyRange.getH4_ma10().add(amp_w);
+        BigDecimal amp = dailyRange.getAmp_avg_h4();
+        BigDecimal low = curr_price.subtract(amp);
+        BigDecimal hig = curr_price.add(amp);
 
         String str_long = calc_BUF_Long_Forex(onlyWait, risk, EPIC, curr_price, curr_price, low, hig, "", "");
         String str_shot = calc_BUF_Shot_Forex(onlyWait, risk, EPIC, curr_price, curr_price, hig, low, "", "");
@@ -6253,9 +6279,8 @@ public class Utils {
         Mt5MacdKey id = new Mt5MacdKey(EPIC, time_frame);
 
         Mt5Macd mt5_macd = new Mt5Macd(id, Utils.formatPrice(BigDecimal.valueOf(macd), 5),
-                Double.valueOf(count_pre_macd_wave), pre_macd_vs_zero, cur_macd_trend,
-                trend_macd_vs_signal, trend_macd_vs_zero, count_cur_macd_wave,
-                BigDecimal.valueOf(close_price_of_n1_candle));
+                Double.valueOf(count_pre_macd_wave), pre_macd_vs_zero, cur_macd_trend, trend_macd_vs_signal,
+                trend_macd_vs_zero, count_cur_macd_wave, BigDecimal.valueOf(close_price_of_n1_candle));
 
         return mt5_macd;
     }
@@ -6309,3 +6334,71 @@ public class Utils {
     }
 
 }
+
+//// vào: H4 nến heiken đầu tiên đóng nến theo ma9;
+// String h4_heiken = dto_h4.getTrend_by_heiken();
+// boolean is_able_tp_h4 = Utils.is_price_still_be_trade(dto_d1,
+//// dailyRange.getAvg_amp_week(), h4_heiken);
+// boolean h4_allow_trade = ((macd_h4.getCount_cur_macd_wave() <= 2)
+// || (dto_h4.getCount_position_of_heiken_candle1() <= 2)
+// || (dto_h4.getCount_position_of_candle1_vs_ma10() <= 1)
+// || ((macd_h4.getCount_cur_macd_wave() <= 5) &&
+//// (macd_h1.getCount_cur_macd_wave() <= 2)
+// && Objects.equals(h4_heiken, macd_h1.getTrend_macd_vs_zero())
+// && Objects.equals(h4_heiken, macd_h1.getTrend_macd_vs_signal())))
+//
+// && (Objects.equals(h4_heiken, dto_d1.getTrend_by_ma_6())
+// || Objects.equals(h4_heiken, dto_d1.getTrend_by_ma_9())
+// || Objects.equals(h4_heiken, dto_d1.getTrend_by_heiken())
+// || Objects.equals(h4_heiken, macd_d1.getCur_macd_trend())
+// || Objects.equals(h4_heiken, macd_d1.getTrend_macd_vs_zero()))
+//
+// && Objects.equals(h4_heiken, macd_h4.getTrend_macd_vs_zero())
+// && Objects.equals(h4_heiken, macd_h4.getTrend_macd_vs_signal())
+// && Objects.equals(h4_heiken, dto_h4.getTrend_by_ma_9())
+// && Objects.equals(h4_heiken, dto_h4.getTrend_by_heiken())
+//
+// && Objects.equals(h4_heiken, dto_h1.getTrend_by_heiken())
+// && Objects.equals(h4_heiken, dto_15.getTrend_by_heiken())
+// && Objects.equals(h4_heiken, dto_05.getTrend_by_heiken());
+//
+// if (is_able_tp_h4 && h4_allow_trade) {
+//
+// close_reverse_trade(EPIC, h4_heiken);
+//
+// if (!is_opening_trade(EPIC, h4_heiken)) {
+//
+// List<TakeProfit> his_list_folow_d369 = takeProfitRepository
+// .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, h4_heiken,
+//// Utils.getYyyyMMdd());
+//
+// int c_count = 0;
+// String type = "";
+// if (macd_h4.getCount_cur_macd_wave() <= 2) {
+// type = "mc";
+// c_count = macd_h4.getCount_cur_macd_wave();
+// } else if (dto_h4.getCount_position_of_candle1_vs_ma10() <= 1) {
+// type = "ma";
+// c_count = dto_h4.getCount_position_of_candle1_vs_ma10().intValue();
+// } else {
+// type = "he";
+// c_count = dto_h4.getCount_position_of_heiken_candle1().intValue();
+// }
+//
+// String note = "_c" + c_count + Utils.ENCRYPTED_H4 + type;
+//
+// if (CollectionUtils.isEmpty(his_list_folow_d369) &&
+//// Utils.is_open_trade_time()) {
+// note += Utils.TEXT_PASS;
+// } else {
+// note += Utils.TEXT_NOTICE_ONLY;
+// }
+//
+// trade = Utils.calc_Lot_En_SL_TP(EPIC, h4_heiken, dto_h4, note, true, "",
+//// dailyRange, 1);
+//
+// String key = EPIC + Utils.ENCRYPTED_H4;
+// BscScanBinanceApplication.mt5_open_trade_List.add(trade);
+// BscScanBinanceApplication.dic_comment.put(key, trade.getComment());
+// }
+// }
