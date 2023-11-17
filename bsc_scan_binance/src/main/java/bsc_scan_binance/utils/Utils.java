@@ -6190,83 +6190,62 @@ public class Utils {
         double pre_macd = macds[macds.length - 2];
         String pre_macd_vs_zero = "";
         if (pre_macd > 0)
-            pre_macd_vs_zero = "BUY";
+            pre_macd_vs_zero = Utils.TREND_LONG;
         else
-            pre_macd_vs_zero = "SELL";
+            pre_macd_vs_zero = Utils.TREND_SHOT;
 
         String cur_macd_trend = "";
         if (macds[macds.length - 2] < macds[macds.length - 1])
-            cur_macd_trend = "BUY";
+            cur_macd_trend = Utils.TREND_LONG;
         else
-            cur_macd_trend = "SELL";
+            cur_macd_trend = Utils.TREND_SHOT;
 
         String trend_macd_vs_signal = "";
         if (macd > signal)
-            trend_macd_vs_signal = "BUY";
+            trend_macd_vs_signal = Utils.TREND_LONG;
         else
-            trend_macd_vs_signal = "SELL";
+            trend_macd_vs_signal = Utils.TREND_SHOT;
 
         String trend_macd_vs_zero = "";
         if (macd > 0)
-            trend_macd_vs_zero = "BUY";
+            trend_macd_vs_zero = Utils.TREND_LONG;
         else
-            trend_macd_vs_zero = "SELL";
+            trend_macd_vs_zero = Utils.TREND_SHOT;
 
         double close_price_of_n1_candle = 0;
-        int count_pre_wave = 0;
-        int count_macd_candles = 0;
+
+        int step = 0;
+        int count_cur_macd_wave = 0;
+        int count_pre_macd_wave = 0;
+
         for (int index = macds.length - 1; index > 0; index--) {
             double temp_macd = macds[index];
 
             if (macd > 0) {
-                if (temp_macd > 0) {
-                    count_macd_candles += 1;
+                if ((temp_macd > 0) && (step < 2)) {
+                    step = 1;
 
+                    count_cur_macd_wave += 1;
                     close_price_of_n1_candle = prices.get(index);
-                } else {
-                    for (int temp = index; temp > 0; temp--) {
-                        double temp2_macd = macds[temp];
-                        if (temp2_macd < 0) {
-                            count_pre_wave += 1;
-                        } else {
-                            break;
-                        }
+                } else if (temp_macd < 0) {
+                    step = 2;
 
-                        if (count_pre_wave > 1) {
-                            break;
-                        }
-                    }
-                    if (count_pre_wave == 1) {
-                        count_macd_candles += 1;
-                    } else {
-                        break;
-                    }
+                    count_pre_macd_wave += 1;
+                } else {
+                    break;
                 }
-            }
-            if (macd < 0) {
-                if (temp_macd < 0) {
-                    count_macd_candles += 1;
+            } else if (macd < 0) {
+                if ((temp_macd < 0) && (step < 2)) {
+                    step = 1;
 
+                    count_cur_macd_wave += 1;
                     close_price_of_n1_candle = prices.get(index);
+                } else if (temp_macd > 0) {
+                    step = 2;
+
+                    count_pre_macd_wave += 1;
                 } else {
-                    for (int temp = index; temp > 0; temp--) {
-                        double temp2_macd = macds[temp];
-                        if (temp2_macd > 0) {
-                            count_pre_wave += 1;
-                        } else {
-                            break;
-                        }
-
-                        if (count_pre_wave > 1) {
-                            break;
-                        }
-                    }
-
-                    if (count_pre_wave == 1) {
-                        count_macd_candles += 1;
-                    } else {
-                        break;
-                    }
+                    break;
                 }
             }
         }
@@ -6274,8 +6253,8 @@ public class Utils {
         Mt5MacdKey id = new Mt5MacdKey(EPIC, time_frame);
 
         Mt5Macd mt5_macd = new Mt5Macd(id, Utils.formatPrice(BigDecimal.valueOf(macd), 5),
-                Utils.formatPrice(BigDecimal.valueOf(signal), 5), pre_macd_vs_zero, cur_macd_trend,
-                trend_macd_vs_signal, trend_macd_vs_zero, count_macd_candles,
+                Double.valueOf(count_pre_macd_wave), pre_macd_vs_zero, cur_macd_trend,
+                trend_macd_vs_signal, trend_macd_vs_zero, count_cur_macd_wave,
                 BigDecimal.valueOf(close_price_of_n1_candle));
 
         return mt5_macd;
