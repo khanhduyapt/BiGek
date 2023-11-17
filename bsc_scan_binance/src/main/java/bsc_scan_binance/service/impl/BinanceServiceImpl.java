@@ -4261,40 +4261,41 @@ public class BinanceServiceImpl implements BinanceService {
             Mt5OpenTrade trade = null;
 
             // vào: H4 nến heiken đầu tiên đóng nến theo ma9;
-            String h4_heiken_c1 = dto_h4.getTrend_by_heiken();
+            String h4_heiken = dto_h4.getTrend_by_heiken();
 
-            boolean is_able_tp_h4 = Utils.is_price_still_be_trade(dto_d1, dailyRange.getAvg_amp_week(), h4_heiken_c1);
+            boolean is_able_tp_h4 = Utils.is_price_still_be_trade(dto_d1, dailyRange.getAvg_amp_week(), h4_heiken);
 
             boolean h4_allow_trade = ((macd_h4.getCount_cur_macd_wave() <= 2)
                     || (dto_h4.getCount_position_of_heiken_candle1() <= 2)
                     || (dto_h4.getCount_position_of_candle1_vs_ma10() <= 1)
-                    || ((macd_h1.getCount_cur_macd_wave() <= 2)
-                            && Objects.equals(h4_heiken_c1, macd_h1.getTrend_macd_vs_zero())
-                            && Objects.equals(h4_heiken_c1, macd_h1.getTrend_macd_vs_signal())))
+                    || ((macd_h4.getCount_cur_macd_wave() <= 5)
+                            && (macd_h1.getCount_cur_macd_wave() <= 2)
+                            && Objects.equals(h4_heiken, macd_h1.getTrend_macd_vs_zero())
+                            && Objects.equals(h4_heiken, macd_h1.getTrend_macd_vs_signal())))
 
-                    && (Objects.equals(h4_heiken_c1, dto_d1.getTrend_by_ma_6())
-                            || Objects.equals(h4_heiken_c1, dto_d1.getTrend_by_ma_9())
-                            || Objects.equals(h4_heiken_c1, dto_d1.getTrend_by_heiken())
-                            || Objects.equals(h4_heiken_c1, macd_d1.getCur_macd_trend())
-                            || Objects.equals(h4_heiken_c1, macd_d1.getTrend_macd_vs_zero()))
+                    && (Objects.equals(h4_heiken, dto_d1.getTrend_by_ma_6())
+                            || Objects.equals(h4_heiken, dto_d1.getTrend_by_ma_9())
+                            || Objects.equals(h4_heiken, dto_d1.getTrend_by_heiken())
+                            || Objects.equals(h4_heiken, macd_d1.getCur_macd_trend())
+                            || Objects.equals(h4_heiken, macd_d1.getTrend_macd_vs_zero()))
 
-                    && Objects.equals(h4_heiken_c1, macd_h4.getTrend_macd_vs_zero())
-                    && Objects.equals(h4_heiken_c1, macd_h4.getTrend_macd_vs_signal())
-                    && Objects.equals(h4_heiken_c1, dto_h4.getTrend_by_ma_9())
-                    && Objects.equals(h4_heiken_c1, dto_h4.getTrend_by_heiken())
+                    && Objects.equals(h4_heiken, macd_h4.getTrend_macd_vs_zero())
+                    && Objects.equals(h4_heiken, macd_h4.getTrend_macd_vs_signal())
+                    && Objects.equals(h4_heiken, dto_h4.getTrend_by_ma_9())
+                    && Objects.equals(h4_heiken, dto_h4.getTrend_by_heiken())
 
-                    && Objects.equals(h4_heiken_c1, dto_h1.getTrend_by_heiken())
-                    && Objects.equals(h4_heiken_c1, dto_15.getTrend_by_heiken())
-                    && Objects.equals(h4_heiken_c1, dto_05.getTrend_by_heiken());
+                    && Objects.equals(h4_heiken, dto_h1.getTrend_by_heiken())
+                    && Objects.equals(h4_heiken, dto_15.getTrend_by_heiken())
+                    && Objects.equals(h4_heiken, dto_05.getTrend_by_heiken());
 
             if (is_able_tp_h4 && h4_allow_trade) {
 
-                close_reverse_trade(EPIC, h4_heiken_c1);
+                close_reverse_trade(EPIC, h4_heiken);
 
-                if (!is_opening_trade(EPIC, h4_heiken_c1)) {
+                if (!is_opening_trade(EPIC, h4_heiken)) {
 
                     List<TakeProfit> his_list_folow_d369 = takeProfitRepository
-                            .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, h4_heiken_c1, Utils.getYyyyMMdd());
+                            .findAllBySymbolAndTradeTypeAndOpenDate(EPIC, h4_heiken, Utils.getYyyyMMdd());
 
                     int c_count = 0;
                     String type = "";
@@ -4317,7 +4318,7 @@ public class BinanceServiceImpl implements BinanceService {
                         note += Utils.TEXT_NOTICE_ONLY;
                     }
 
-                    trade = Utils.calc_Lot_En_SL_TP(EPIC, h4_heiken_c1, dto_h4, note, true, "", dailyRange, 1);
+                    trade = Utils.calc_Lot_En_SL_TP(EPIC, h4_heiken, dto_h4, note, true, "", dailyRange, 1);
 
                     String key = EPIC + Utils.ENCRYPTED_H4;
                     BscScanBinanceApplication.mt5_open_trade_List.add(trade);
