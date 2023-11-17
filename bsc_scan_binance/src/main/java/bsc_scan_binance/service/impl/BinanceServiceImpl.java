@@ -4001,7 +4001,7 @@ public class BinanceServiceImpl implements BinanceService {
         double count_position_of_heiken_candle1 = Utils.count_heiken_candles(heiken_list, trend_heiken_candle1, 1);
         double count_position_of_candle1_vs_ma10 = Utils.count_position_of_candle1_vs_ma10(list, trend_candle1_vs_ma10);
 
-        String trend_by_ma_6 = Utils.trend_by_above_below_ma(heiken_list, 6);
+        String trend_by_ma_6 = Utils.isUptrendByMa(heiken_list, 6, 0, 1) ? Utils.TREND_LONG : Utils.TREND_SHOT;
         String trend_by_ma_9 = Utils.trend_by_above_below_ma(heiken_list, 9);
         String trend_by_ma_20 = Utils.trend_by_above_below_ma(heiken_list, 20);
         String trend_by_seq_10_20_50 = Utils.switch_trend_seq_10_20_50(heiken_list, amplitude_avg_of_candles, false);
@@ -4188,7 +4188,7 @@ public class BinanceServiceImpl implements BinanceService {
             TIME_FRAME = wd + "~" + Utils.appendSpace(TIME_FRAME.trim(), 8) + "~";
 
             // ----------------------------------------------------------------------------
-            String trade_h4 = "  ";
+            String trade_h4 = "  D6:" + Utils.appendSpace(dto_d1.getTrend_by_ma_6(), 8);
 
             String H4mac = "";
             if (macd_h4.getCount_cur_macd_wave() <= 2) {
@@ -4263,10 +4263,15 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean h4_allow_trade = ((macd_h4.getCount_cur_macd_wave() <= 2)
                     || (dto_h4.getCount_position_of_heiken_candle1() <= 2)
-                    || (dto_h4.getCount_position_of_candle1_vs_ma10() <= 1))
+                    || (dto_h4.getCount_position_of_candle1_vs_ma10() <= 1)
+                    || ((macd_h1.getCount_cur_macd_wave() <= 2)
+                            && Objects.equals(h4_heiken_c1, macd_h1.getTrend_macd_vs_zero())
+                            && Objects.equals(h4_heiken_c1, macd_h1.getTrend_macd_vs_signal())))
 
                     && Objects.equals(h4_heiken_c1, macd_h4.getTrend_macd_vs_zero())
                     && Objects.equals(h4_heiken_c1, macd_h4.getTrend_macd_vs_signal())
+
+                    && Objects.equals(h4_heiken_c1, dto_d1.getTrend_by_ma_6())
 
                     && Objects.equals(h4_heiken_c1, dto_h4.getTrend_by_ma_9())
                     && Objects.equals(h4_heiken_c1, dto_h4.getTrend_by_heiken())
