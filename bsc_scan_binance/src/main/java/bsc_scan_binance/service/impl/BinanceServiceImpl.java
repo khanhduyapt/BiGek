@@ -4191,7 +4191,7 @@ public class BinanceServiceImpl implements BinanceService {
             // -----------------------------------------------------------------------------------------------
 
             // TODO: 3 controlMt5
-            if ("_EURCAD_".contains(EPIC)) {
+            if ("_AUDJPY_".contains(EPIC)) {
                 boolean debug = true;
             }
 
@@ -4199,7 +4199,7 @@ public class BinanceServiceImpl implements BinanceService {
             // cond 1) C1 heiken cùng chiều;
             // cond 2) Ma10 || Ma20 || Ma50 phi cùng chiều;
             // cond 3) (LowC1 - Avg)&HigC1 chứa Ma50; (HigC1 + Avg)&LowC1 chứa Ma50;
-            // cond 4) (trình tự ma10 -> ma20 -> ma50)
+            // cond 4) (trình tự ma3 ma10 ma20 ma50)
             // cond 5) macd_vs_zero cùng chiều với nó & cùng chiều H1
             // cond 6) macd_vs_signal cùng chiều với nó & cùng chiều H1
 
