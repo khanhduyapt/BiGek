@@ -4461,6 +4461,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(macd_h1.getTrend_macd_vs_zero(), REVERSE_TRADE_TREND);
 
             boolean reverse_h4_c0c1 = reverse_macd_h1
+                    && Objects.equals(dto_d1.getTrend_by_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h4.getTrend_by_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(macd_h4.getTrend_macd_vs_zero(), REVERSE_TRADE_TREND);
 
@@ -4471,14 +4472,14 @@ public class BinanceServiceImpl implements BinanceService {
 
             if (has_profit_h4) {
                 if (reverse_macd_h1 && Objects.equals(dto_h4.getTrend_heiken_candle1(), Utils.TREND_UNSURE)
-                        && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_6H)) {
+                        && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
                     is_hit_sl = true;
                     reason_id += "(h4_c1_doji, has_profit)";
 
                 }
 
                 if (reverse_macd_h1 && Objects.equals(dto_h4.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
-                        && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_6H)) {
+                        && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
                     is_hit_sl = true;
                     reason_id += "(h4_c1_doji, has_profit)";
                 }
