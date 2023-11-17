@@ -4228,11 +4228,13 @@ public class BinanceServiceImpl implements BinanceService {
                 BigDecimal t_profit = BigDecimal.ZERO;
                 if (total_trade_list.size() > 0) {
                     str_profit += "T:" + Utils.appendLeft(Utils.getStringValue(total_trade_list.size()), 2);
-
+                    String tradeType = "";
                     for (TakeProfit dto : total_trade_list) {
+                        tradeType = dto.getTradeType();
                         t_profit = t_profit.add(dto.getProfit());
                     }
-                    str_profit += "/P:" + Utils.appendLeft(Utils.getStringValue(t_profit.intValue()), 3) + "$";
+                    str_profit += "/" + Utils.getType(tradeType) + ":"
+                            + Utils.appendLeft(Utils.getStringValue(t_profit.intValue()), 3) + "$";
                 } else {
                     str_profit = ".";
                 }
@@ -4448,39 +4450,43 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
             }
-
+            // -------------------------------------------------------------------------------------------
             // TODO: 5 closeTrade_by_SL_TP
             boolean has_profit_h4 = (PROFIT.compareTo(BigDecimal.valueOf(10)) > 0)
                     && trade.getComment().contains(Utils.ENCRYPTED_H4);
 
-            // -------------------------------------------------------------------------------------------
             // ra : H4 nến heiken đóng đảo chiều, hoặc c1 là doji
-            if (trade.getComment().contains(Utils.ENCRYPTED_H4)) {
-                boolean reverse_h4_c0c1 = Objects.equals(dto_h4.getTrend_by_heiken(), REVERSE_TRADE_TREND)
-                        && Objects.equals(dto_h4.getTrend_heiken_candle1(), REVERSE_TRADE_TREND);
+            boolean reverse_macd_h1 = Objects.equals(dto_h1.getTrend_by_heiken(), REVERSE_TRADE_TREND)
+                    && Objects.equals(macd_05.getTrend_macd_vs_zero(), REVERSE_TRADE_TREND)
+                    && Objects.equals(macd_15.getTrend_macd_vs_zero(), REVERSE_TRADE_TREND)
+                    && Objects.equals(macd_h1.getTrend_macd_vs_zero(), REVERSE_TRADE_TREND);
 
-                if (reverse_h4_c0c1 && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_6H)) {
+            boolean reverse_h4_c0c1 = reverse_macd_h1
+                    && Objects.equals(dto_h4.getTrend_by_heiken(), REVERSE_TRADE_TREND)
+                    && Objects.equals(macd_h4.getTrend_macd_vs_zero(), REVERSE_TRADE_TREND);
+
+            if (reverse_h4_c0c1 && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_6H)) {
+                is_hit_sl = true;
+                reason_id += "(reverse_h4_c0c1)";
+            }
+
+            if (has_profit_h4) {
+                if (reverse_macd_h1 && Objects.equals(dto_h4.getTrend_heiken_candle1(), Utils.TREND_UNSURE)
+                        && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_6H)) {
                     is_hit_sl = true;
-                    reason_id += "(reverse_h4_c0c1)";
+                    reason_id += "(h4_c1_doji, has_profit)";
 
                 }
-                if (has_profit_h4) {
-                    if (Objects.equals(dto_h4.getTrend_heiken_candle1(), Utils.TREND_UNSURE)
-                            && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_6H)) {
-                        is_hit_sl = true;
-                        reason_id += "(h4_c1_doji, has_profit)";
 
-                    }
-                    if (Objects.equals(dto_h4.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
-                            && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_6H)) {
-                        is_hit_sl = true;
-                        reason_id += "(h4_c1_doji, has_profit)";
-                    }
+                if (reverse_macd_h1 && Objects.equals(dto_h4.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
+                        && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_6H)) {
+                    is_hit_sl = true;
+                    reason_id += "(h4_c1_doji, has_profit)";
+                }
 
-                    if (Objects.equals(macd_h4.getTrend_macd_vs_zero(), REVERSE_TRADE_TREND)) {
-                        is_hit_sl = true;
-                        reason_id += "(macd_vs_zero_reverse, has_profit)";
-                    }
+                if (reverse_macd_h1 && Objects.equals(macd_h4.getTrend_macd_vs_zero(), REVERSE_TRADE_TREND)) {
+                    is_hit_sl = true;
+                    reason_id += "(macd_vs_zero_reverse, has_profit)";
                 }
             }
             // -------------------------------------------------------------------------------------------
@@ -4494,9 +4500,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
             }
-
             // -------------------------------------------------------------------------------------
-
             if (is_hit_sl) {
                 String reason = "Profit:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5) + "$   "
                         + Utils.appendSpace(trade.getComment(), 30) + reason_id;
