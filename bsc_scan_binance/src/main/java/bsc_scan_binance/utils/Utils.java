@@ -142,9 +142,6 @@ public class Utils {
     public static final String NOCATION_BELOW_MA50 = "BelowMa50";
     public static final String NOCATION_CUTTING_MA50 = "CuttingMa50";
 
-    public static final String TEXT_SWITCH_TREND_Ma_3_2_1 = "Ma3.2.1";
-    public static final String TEXT_SWITCH_TREND_Ma_1vs3456 = "(Ma1.3456)";
-
     public static final String TEXT_SWITCH_TREND_Ma69 = "(Ma6.9)";
     public static final String TEXT_SWITCH_TREND_Ma10 = "(Ma10)";
     public static final String TEXT_SWITCH_TREND_Ma89 = "(Ma89)";
@@ -4282,16 +4279,15 @@ public class Utils {
         BigDecimal ma50 = calcMA(heiken_list, 50, candle_index);
 
         boolean heiken_cx_uptrend = heiken_list.get(candle_index).isUptrend();
+
         boolean is_uptrend_ma10 = Utils.isUptrendByMa(heiken_list, 10, candle_index, candle_index + 1);
         boolean is_uptrend_ma20 = Utils.isUptrendByMa(heiken_list, 20, candle_index, candle_index + 1);
-        boolean is_uptrend_ma50 = Utils.isUptrendByMa(heiken_list, 50, candle_index, candle_index + 1);
 
         String cond_1_trend_heiken = heiken_cx_uptrend ? Utils.TREND_LONG : Utils.TREND_SHOT;
         // --------------------------------------------------------------------------------------
-        String cond_2_trend_102050 = "cond2_" + Utils.TREND_UNSURE;
-        if ((heiken_cx_uptrend == is_uptrend_ma10) || (heiken_cx_uptrend == is_uptrend_ma20)
-                || (heiken_cx_uptrend == is_uptrend_ma50)) {
-            cond_2_trend_102050 = cond_1_trend_heiken;
+        String cond_2_trend_1020 = "cond2_" + Utils.TREND_UNSURE;
+        if ((heiken_cx_uptrend == is_uptrend_ma10) && (heiken_cx_uptrend == is_uptrend_ma20)) {
+            cond_2_trend_1020 = cond_1_trend_heiken;
         }
         // --------------------------------------------------------------------------------------
         BigDecimal low = ma03;
@@ -4314,7 +4310,7 @@ public class Utils {
             cond4_trend_3_10_20_50 = Utils.TREND_SHOT;
         }
         // --------------------------------------------------------------------------------------
-        if (Objects.equals(cond_1_trend_heiken, cond_2_trend_102050) && cond_3_inside_lohi
+        if (Objects.equals(cond_1_trend_heiken, cond_2_trend_1020) && cond_3_inside_lohi
                 && Objects.equals(cond_1_trend_heiken, cond4_trend_3_10_20_50)
                 && Objects.equals(cond_1_trend_heiken, macd.getTrend_macd_vs_zero())
                 && Objects.equals(cond_1_trend_heiken, macd.getTrend_macd_vs_signal())) {
@@ -5034,19 +5030,16 @@ public class Utils {
         return false;
     }
 
-    public static String switchTrendByHeiken3_2_1(List<BtcFutures> heiken_list) {
+    public static String switchTrendByHeiken(List<BtcFutures> heiken_list) {
         String switch_trend = "";
 
-        boolean ma3_1_uptrend = true;
-        boolean ma3_2_uptrend = true;
+        boolean heiken_1_uptrend = heiken_list.get(1).isUptrend();
+        boolean heiken_2_uptrend = heiken_list.get(2).isUptrend();
 
-        ma3_1_uptrend = isUptrendByMa(heiken_list, 3);
-        ma3_2_uptrend = isUptrendByMa(heiken_list, 3, 1, 2);
-
-        if (ma3_1_uptrend != ma3_2_uptrend) {
-            String chart_name = getChartName(heiken_list).replace(")", "").trim() + " ";
-            String trend = ma3_1_uptrend ? TREND_LONG : TREND_SHOT;
-            switch_trend = chart_name + TEXT_SWITCH_TREND_Ma_3_2_1 + ":" + Utils.appendSpace(trend, 4) + ")";
+        if (heiken_1_uptrend != heiken_2_uptrend) {
+            String chart_name = getChartName(heiken_list.get(0).getId());
+            String trend = heiken_1_uptrend ? TREND_LONG : TREND_SHOT;
+            switch_trend = chart_name + TEXT_SWITCH_TREND_HEIKEN + ":" + Utils.appendSpace(trend, 4);
         }
 
         return switch_trend;
@@ -5274,7 +5267,7 @@ public class Utils {
             String EPIC, BigDecimal curr_price, DailyRange dailyRange) {
         String result = "";
 
-        BigDecimal amp = dailyRange.getAmp_avg_h4();
+        BigDecimal amp = dailyRange.getAvg_amp_week();
         BigDecimal low = curr_price.subtract(amp);
         BigDecimal hig = curr_price.add(amp);
 
