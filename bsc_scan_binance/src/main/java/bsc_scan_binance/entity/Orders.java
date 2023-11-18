@@ -102,10 +102,10 @@ public class Orders {
     private String trend_by_ma_20;
 
     @Column(name = "trend_by_ma_50")
-    private String trend_by_ma_10_20_50;
+    private String trend_by_vector_20_50;
 
     @Column(name = "trend_by_seq_ma")
-    private String trend_by_seq_ma;
+    private String trend_by_seq_ma_369;
 
     @Column(name = "trend_by_bread_area")
     private String trend_by_bread_area;
@@ -123,13 +123,13 @@ public class Orders {
     private BigDecimal amplitude_avg_of_candles = BigDecimal.ZERO;
 
     @Column(name = "ma050")
-    private BigDecimal ma6 = BigDecimal.ZERO;
+    private BigDecimal tp_long = BigDecimal.ZERO;
 
     @Column(name = "ma020")
-    private BigDecimal ma3 = BigDecimal.ZERO;
+    private BigDecimal tp_shot = BigDecimal.ZERO;
 
     @Column(name = "ma010")
-    private BigDecimal ma9 = BigDecimal.ZERO;
+    private BigDecimal avg_bread = BigDecimal.ZERO;
 
     @Column(name = "low_50candle")
     private BigDecimal low_50candle = BigDecimal.ZERO;
