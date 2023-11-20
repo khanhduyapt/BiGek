@@ -85,7 +85,7 @@ public class Utils {
     // ACCOUNT.multiply(BigDecimal.valueOf(0.001));
 
     // Trend W == D (500$ / 1trade)
-    public static final BigDecimal RISK = ACCOUNT.multiply(BigDecimal.valueOf(0.0005));
+    public static final BigDecimal RISK = ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
 
     // public static final BigDecimal RISK_PER_TRADE = RISK_0_15_PERCENT;
 

@@ -3979,9 +3979,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         int candle_index = 0;
         String tfid = heiken_list.get(0).getId();
-        if (tfid.contains(Utils.PREFIX_03m) || tfid.contains(Utils.PREFIX_10m)
-                || tfid.contains(Utils.PREFIX_15m) || tfid.contains(Utils.PREFIX_30m)
-                || tfid.contains(Utils.PREFIX_H01)) {
+        if (tfid.contains(Utils.PREFIX_03m) || tfid.contains(Utils.PREFIX_10m) || tfid.contains(Utils.PREFIX_15m)
+                || tfid.contains(Utils.PREFIX_30m) || tfid.contains(Utils.PREFIX_H01)) {
             candle_index = 1;
         }
 
@@ -4010,8 +4009,8 @@ public class BinanceServiceImpl implements BinanceService {
                 ma9);
 
         String trend_by_vector_20_50 = "";
-        boolean is_uptrend_ma20 = Utils.isUptrendByMa(heiken_list, 20, 1, 2);
-        boolean is_uptrend_ma50 = Utils.isUptrendByMa(heiken_list, 50, 1, 2);
+        boolean is_uptrend_ma20 = Utils.isUptrendByMa(heiken_list, 20, 0, 1);
+        boolean is_uptrend_ma50 = Utils.isUptrendByMa(heiken_list, 50, 0, 1);
         boolean is_uptrend_ma20_vs_50 = (ma20.compareTo(ma50) > 0) ? true : false;
         if ((is_uptrend_ma20_vs_50 == is_uptrend_ma20) && (is_uptrend_ma20_vs_50 == is_uptrend_ma50)) {
             trend_by_vector_20_50 = is_uptrend_ma20 ? Utils.TREND_LONG : Utils.TREND_SHOT;
