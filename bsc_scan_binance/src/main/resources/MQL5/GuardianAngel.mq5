@@ -439,8 +439,8 @@ void OnTimer()
       // Alert("n_trailing_sl_file_handle Error " + (string) GetLastError());
      }
 //------------------------------------------------------------
-   double Loss_In_Money = -100;     // loss in money $
-   double Profit_In_Money = 300;    // profit in money $
+   double Loss_In_Money = -300;     // loss in money $
+   double Profit_In_Money = 1000;    // profit in money $
 
    for(int i=PositionsTotal()-1; i>=0; i--) // returns the number of current positions
      {

@@ -5264,10 +5264,15 @@ public class Utils {
     }
 
     public static String calc_BUF_LO_HI_BUF_Forex(BigDecimal risk, boolean onlyWait, String find_switch_trend,
-            String EPIC, BigDecimal curr_price, DailyRange dailyRange) {
+            String EPIC, BigDecimal curr_price, DailyRange dailyRange, Orders dto_h4) {
         String result = "";
 
-        BigDecimal amp = dailyRange.getAmp_avg_h4();
+        BigDecimal amp = dailyRange.getAvg_amp_week();
+        BigDecimal high = dto_h4.getTp_long().subtract(dto_h4.getSl_long()).multiply(BigDecimal.valueOf(0.5));
+        if (high.compareTo(amp) > 0) {
+            amp = high;
+        }
+
         BigDecimal low = curr_price.subtract(amp);
         BigDecimal hig = curr_price.add(amp);
 
@@ -5313,24 +5318,27 @@ public class Utils {
         return type;
     }
 
-    public static boolean is_price_still_be_trade(Orders dto_xx, BigDecimal amplitude_week, String find_trend) {
-        BigDecimal current_price = dto_xx.getCurrent_price();
+    public static boolean is_able_take_profit(Orders dto_w1, BigDecimal amplitude_week, Orders dto_h4) {
+        String find_trend = dto_h4.getTrend_by_vector_20_50();
+
+        if (Utils.isBlank(find_trend)) {
+            return false;
+        }
 
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            BigDecimal tp_price = current_price.add(amplitude_week);
+            BigDecimal tp_price = dto_h4.getTp_long();
 
-            // Còn biên độ trung bình để đạt TP.
-            if (tp_price.compareTo(dto_xx.getBody_hig_50_candle()) < 0) {
+            if (tp_price.compareTo(dto_w1.getBody_hig_50_candle()) < 0) {
                 return true;
             }
 
         }
 
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            BigDecimal tp_price = current_price.subtract(amplitude_week);
+            BigDecimal tp_price = dto_h4.getTp_shot();
 
             // Còn biên độ trung bình để đạt TP.
-            if (tp_price.compareTo(dto_xx.getBody_low_50_candle()) > 0) {
+            if (tp_price.compareTo(dto_w1.getBody_low_50_candle()) > 0) {
                 return true;
             }
         }
