@@ -6122,7 +6122,7 @@ public class Utils {
         int count_cur_ema9_wave = 0;
         int count_pre_ema9_wave = 0;
 
-        for (int index = macds.length - 1; index > 0; index--) {
+        for (int index = signals.length - 1; index > 0; index--) {
             double temp_ema9_of_macd = signals[index];
 
             if (signal >= 0) {
@@ -6154,10 +6154,29 @@ public class Utils {
             }
         }
 
+        int count_cur_macd_vs_zero = 0;
+        for (int index = macds.length - 1; index > 0; index--) {
+            double temp_macd_i = macds[index];
+
+            if (macd >= 0) {
+                if (temp_macd_i > 0) {
+                    count_cur_macd_vs_zero += 1;
+                } else {
+                    break;
+                }
+            } else {
+                if (temp_macd_i < 0) {
+                    count_cur_macd_vs_zero += 1;
+                } else {
+                    break;
+                }
+            }
+        }
+
         Mt5MacdKey id = new Mt5MacdKey(EPIC, time_frame);
 
         Mt5Macd mt5_macd = new Mt5Macd(id, Double.valueOf(count_pre_ema9_wave),
-                Utils.formatPrice(BigDecimal.valueOf(signal), 5),
+                Double.valueOf(count_cur_macd_vs_zero),
                 pre_macd_vs_zero, cur_macd_trend, trend_signal_vs_zero,
                 trend_macd_vs_zero, count_cur_ema9_wave, BigDecimal.valueOf(close_price_of_n1_candle));
 

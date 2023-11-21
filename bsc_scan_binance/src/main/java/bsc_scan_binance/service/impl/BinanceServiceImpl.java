@@ -4160,19 +4160,52 @@ public class BinanceServiceImpl implements BinanceService {
                     dto_h1);
 
             // ----------------------------------------------------------------------------
-            String sw_seq = "   " + Utils.appendSpace(trend_h1_ma50_100, 6);
+            boolean signal_allow_muc = Objects.equals(trend_h1_ma50_100, dto_h1.getTrend_by_heiken())
+                    && Objects.equals(trend_h1_ma50_100, trend_h1_macd_signal)
+                    && (macd_h1.getCount_cur_ema9_wave() <= 5);
+
+            signal_allow_muc |= Objects.equals(trend_h1_ma50_100, dto_h1.getTrend_by_heiken())
+                    && Objects.equals(trend_h1_ma50_100, trend_h1_macd_signal)
+                    && (dto_h1.getCount_position_of_candle1_vs_ma20().intValue() <= 3)
+                    && (macd_h1.getCount_cur_ema9_wave() <= 7);
+
+            signal_allow_muc |= Objects.equals(trend_h1_ma50_100, dto_h1.getTrend_by_heiken())
+                    && Objects.equals(trend_h1_ma50_100, trend_h1_macd_signal)
+                    && Objects.equals(trend_h1_ma50_100, macd_h1.getTrend_macd_vs_zero())
+                    && (macd_h1.getCount_cur_macd_vs_zero().intValue() <= 3)
+                    && (macd_h1.getCount_cur_ema9_wave() <= 7);
+
+            // ----------------------------------------------------------------------------
+            String sw_seq = " ";
+            sw_seq += signal_allow_muc ? Utils.TEXT_MUC : "  ";
+            sw_seq += Utils.appendSpace(trend_h1_ma50_100, 6);
 
             String muc_by_macd = "";
             if ((macd_h1.getCount_cur_ema9_wave() <= 5)
                     && Objects.equals(trend_h1_ma50_100, trend_h1_macd_signal)
                     && Objects.equals(trend_h1_ma50_100, dto_h1.getTrend_by_ma_20())
-                    && Objects.equals(trend_h1_ma50_100, dto_h1.getTrend_heiken_candle1())) {
+                    && Objects.equals(trend_h1_ma50_100, dto_h1.getTrend_by_heiken())) {
                 muc_by_macd += Utils.TEXT_MUC;
             } else {
                 muc_by_macd += "  ";
             }
-            muc_by_macd += "(macd)" + Utils.appendLeft(macd_h1.getCount_cur_ema9_wave(), 3);
+            muc_by_macd += "(wave)" + Utils.appendLeft(macd_h1.getCount_cur_ema9_wave(), 3);
             sw_seq += Utils.appendSpace(muc_by_macd, 15);
+
+            // ----------------------------------------------------------------------------
+
+            String muc_by_zero = "";
+            if ((macd_h1.getCount_cur_macd_vs_zero() <= 3)
+                    && Objects.equals(trend_h1_ma50_100, trend_h1_macd_signal)
+                    && Objects.equals(trend_h1_ma50_100, macd_h1.getTrend_macd_vs_zero())
+                    && Objects.equals(trend_h1_ma50_100, dto_h1.getTrend_by_ma_20())
+                    && Objects.equals(trend_h1_ma50_100, dto_h1.getTrend_by_heiken())) {
+                muc_by_zero += Utils.TEXT_MUC;
+            } else {
+                muc_by_zero += "  ";
+            }
+            muc_by_zero += "(mc)" + Utils.appendLeft(macd_h1.getCount_cur_macd_vs_zero().intValue(), 3);
+            sw_seq += Utils.appendSpace(muc_by_zero, 10);
 
             // ----------------------------------------------------------------------------
 
@@ -4180,7 +4213,7 @@ public class BinanceServiceImpl implements BinanceService {
             if ((dto_h1.getCount_position_of_candle1_vs_ma20().intValue() <= 3)
                     && Objects.equals(trend_h1_ma50_100, trend_h1_macd_signal)
                     && Objects.equals(trend_h1_ma50_100, dto_h1.getTrend_by_ma_20())
-                    && Objects.equals(trend_h1_ma50_100, dto_h1.getTrend_heiken_candle1())) {
+                    && Objects.equals(trend_h1_ma50_100, dto_h1.getTrend_by_heiken())) {
                 muc_by_ma += Utils.TEXT_MUC;
             } else {
                 muc_by_ma += "  ";
@@ -4190,7 +4223,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             // ----------------------------------------------------------------------------
 
-            String sw_seq_15 = "";
+            String sw_seq_15 = "   ";
             if (Objects.equals(trend_h1_ma50_100, dto_15.getTrend_by_vector_20_50())
                     && Objects.equals(trend_h1_ma50_100, dto_15.getSuper_trend_by_ma50_100())) {
                 sw_seq_15 = "eqM15";
@@ -4257,17 +4290,14 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean debug = true;
             }
 
+            boolean m15_allow_trade = Objects.equals(trend_h1_ma50_100, macd_15.getTrend_signal_vs_zero())
+                    || Objects.equals(trend_h1_ma50_100, dto_15.getTrend_by_ma_20());
+
             boolean m05_allow_trade = (!Objects.equals(trend_h1_ma50_100, macd_05.getTrend_signal_vs_zero())
                     && Objects.equals(trend_h1_ma50_100, dto_05.getSuper_trend_by_ma50_100()));
             m05_allow_trade |= Objects.equals(trend_h1_ma50_100, macd_05.getTrend_signal_vs_zero());
 
-            boolean allow_muc = (dto_h1.getCount_position_of_candle1_vs_ma20().intValue() <= 3)
-                    || (macd_h1.getCount_cur_ema9_wave() <= 5);
-
-            boolean m15_allow_trade = Objects.equals(trend_h1_ma50_100, macd_15.getTrend_signal_vs_zero())
-                    || Objects.equals(trend_h1_ma50_100, dto_15.getTrend_by_ma_20());
-
-            boolean allow_trade = allow_muc && m05_allow_trade && m15_allow_trade
+            boolean allow_trade = signal_allow_muc && m15_allow_trade && m05_allow_trade
                     && Objects.equals(trend_h1_ma50_100, dto_05.getTrend_by_heiken())
                     && Objects.equals(trend_h1_ma50_100, dto_15.getTrend_by_heiken())
                     && Objects.equals(trend_h1_ma50_100, dto_h1.getTrend_by_heiken())
