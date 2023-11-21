@@ -93,7 +93,7 @@ public class Orders {
     private String trend_by_ma_9;
 
     @Column(name = "tradable_zone")
-    private String trend_candle1_vs_ma10;
+    private String trend_candle1_vs_ma20;
 
     @Column(name = "trend_by_ma_06")
     private String trend_by_ma_6;
@@ -108,7 +108,7 @@ public class Orders {
     private String trend_by_seq_ma_369;
 
     @Column(name = "trend_by_bread_area")
-    private String trend_by_bread_area;
+    private String super_trend_by_ma50_100;
 
     @Column(name = "short_zone")
     private BigDecimal body_hig_50_candle = BigDecimal.ZERO;
@@ -138,7 +138,7 @@ public class Orders {
     private BigDecimal hig_50candle = BigDecimal.ZERO;
 
     @Column(name = "lowest_price_of_curr_candle")
-    private Double count_position_of_candle1_vs_ma10 = Double.valueOf(0);
+    private Double count_position_of_candle1_vs_ma20 = Double.valueOf(0);
 
     @Column(name = "highest_price_of_curr_candle")
     private Double count_position_of_heiken_candle1 = Double.valueOf(0);

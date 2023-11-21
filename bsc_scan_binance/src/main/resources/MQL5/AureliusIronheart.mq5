@@ -100,6 +100,21 @@ void OnTimer(void)
            }
 
          //-------------------------------------------------------------------------------------------------------------------------------
+         MqlRates rates_h1[];
+         ArraySetAsSeries(rates_h1,true);
+         copied=CopyRates(symbol, PERIOD_H1, 0, 100, rates_h1);
+         if(copied>0)
+           {
+            int size=fmin(copied, 100);
+            for(int i=0; i<size; i++)
+              {
+               FileWrite(nfile_handle, symbol, "HOUR_01", rates_h1[i].time, rates_h1[i].open, rates_h1[i].high, rates_h1[i].low, rates_h1[i].close, current_price);
+              }
+           }
+         else
+           {
+            FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_H1");
+           }
          //--------------------------------------------------------------------------------------------------------------------
          //--------------------------------------------------------------------------------------------------------------------
         } //for

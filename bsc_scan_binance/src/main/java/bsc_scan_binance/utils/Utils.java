@@ -200,15 +200,15 @@ public class Utils {
     public static final String CRYPTO_TIME_MO = "1M";
 
     public static final String CAPITAL_TIME_03 = "MINUTE_03";
+    public static final String CAPITAL_TIME_15 = "MINUTE_15";
+    public static final String CAPITAL_TIME_H1 = "HOUR_01";
+
     private static final String CAPITAL_TIME_10 = "MINUTE_10";
     private static final String CAPITAL_TIME_12 = "MINUTE_12";
-    public static final String CAPITAL_TIME_15 = "MINUTE_15";
-
-    public static final String CAPITAL_TIME_H1 = "HOUR_01";
-    public static final String CAPITAL_TIME_H4 = "HOUR_04";
-    public static final String CAPITAL_TIME_D1 = "DAY";
-    public static final String CAPITAL_TIME_W1 = "WEEK";
-    public static final String CAPITAL_TIME_MO = "MONTH";
+    private static final String CAPITAL_TIME_H4 = "HOUR_04";
+    private static final String CAPITAL_TIME_D1 = "DAY";
+    private static final String CAPITAL_TIME_W1 = "WEEK";
+    private static final String CAPITAL_TIME_MO = "MONTH";
 
     public static final String PREFIX_03m = "_m03";
     // public static final String PREFIX_05m = "_m05";
@@ -3575,21 +3575,22 @@ public class Utils {
         return count;
     }
 
-    public static double count_position_of_candle1_vs_ma10(List<BtcFutures> list, String find_trend) {
+    public static double count_position_of_candle1_vs_ma20(List<BtcFutures> list, String find_trend) {
         double count = 0;
 
-        int size = 20;
+        int size = 30;
         if (size > list.size()) {
             size = list.size();
         }
 
-        boolean is_uptrend_ma9_1 = find_trend.contains(Utils.TREND_LONG) ? true : false;
+        boolean is_uptrend = find_trend.contains(Utils.TREND_LONG) ? true : false;
 
         for (int index = 1; index < size; index++) {
-            BigDecimal ma9_i = Utils.calcMA(list, 9, index);
-            boolean is_uptrend_ma9_i = (list.get(index).getPrice_close_candle().compareTo(ma9_i) >= 0) ? true : false;
+            BigDecimal ma_i = Utils.calcMA(list, 20, index);
 
-            if (is_uptrend_ma9_1 == is_uptrend_ma9_i) {
+            boolean is_uptrend_ma_i = (list.get(index).getPrice_close_candle().compareTo(ma_i) >= 0) ? true : false;
+
+            if (is_uptrend == is_uptrend_ma_i) {
                 count += 1;
             } else {
                 break;
@@ -4309,8 +4310,7 @@ public class Utils {
         // --------------------------------------------------------------------------------------
         if (Objects.equals(cond_1_trend_heiken, cond_2_trend_102050) && cond_3_inside_lohi
                 && Objects.equals(cond_1_trend_heiken, cond4_trend_3_10_20_50)
-                && Objects.equals(cond_1_trend_heiken, macd.getTrend_macd_vs_zero())
-                && Objects.equals(cond_1_trend_heiken, macd.getTrend_macd_vs_signal())) {
+                && Objects.equals(cond_1_trend_heiken, macd.getTrend_signal_vs_zero())) {
 
             String chart_name = getChartName(heiken_list).trim();
             result = chart_name + TEXT_SEQ + ":" + Utils.appendSpace(cond_1_trend_heiken, 4);
@@ -5208,13 +5208,13 @@ public class Utils {
         return "";
     }
 
-    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String find_trend, Orders dto_h4, String append,
+    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String find_trend, Orders dto_h1, String append,
             boolean isTradeNow, String CAPITAL_TIME_XX, DailyRange dailyRange, int total_trade) {
 
         if (Utils.isBlank(find_trend)) {
             return null;
         }
-        BigDecimal curr_price = dto_h4.getCurrent_price();
+        BigDecimal curr_price = dto_h1.getCurrent_price();
         BigDecimal entry_1 = BigDecimal.ZERO;
         BigDecimal entry_2 = BigDecimal.ZERO;
         BigDecimal entry_3 = BigDecimal.ZERO;
@@ -5225,10 +5225,10 @@ public class Utils {
 
         BigDecimal sl_calc = BigDecimal.ZERO;
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            sl_calc = dto_h4.getSl_long();
+            sl_calc = dto_h1.getSl_long();
         }
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            sl_calc = dto_h4.getSl_shot();
+            sl_calc = dto_h1.getSl_shot();
         }
 
         MoneyAtRiskResponse calc_vol = new MoneyAtRiskResponse(EPIC, RISK, curr_price, sl_calc, take_profit);
@@ -6104,11 +6104,11 @@ public class Utils {
         else
             cur_macd_trend = Utils.TREND_SHOT;
 
-        String trend_macd_vs_signal = "";
-        if (macd > signal)
-            trend_macd_vs_signal = Utils.TREND_LONG;
+        String trend_signal_vs_zero = "";
+        if (signal > 0)
+            trend_signal_vs_zero = Utils.TREND_LONG;
         else
-            trend_macd_vs_signal = Utils.TREND_SHOT;
+            trend_signal_vs_zero = Utils.TREND_SHOT;
 
         String trend_macd_vs_zero = "";
         if (macd > 0)
@@ -6119,35 +6119,35 @@ public class Utils {
         double close_price_of_n1_candle = 0;
 
         int step = 0;
-        int count_cur_macd_wave = 0;
-        int count_pre_macd_wave = 0;
+        int count_cur_ema9_wave = 0;
+        int count_pre_ema9_wave = 0;
 
         for (int index = macds.length - 1; index > 0; index--) {
-            double temp_macd = macds[index];
+            double temp_ema9_of_macd = signals[index];
 
-            if (macd > 0) {
-                if ((temp_macd > 0) && (step < 2)) {
+            if (signal >= 0) {
+                if ((temp_ema9_of_macd > 0) && (step < 2)) {
                     step = 1;
 
-                    count_cur_macd_wave += 1;
+                    count_cur_ema9_wave += 1;
                     close_price_of_n1_candle = prices.get(index);
-                } else if (temp_macd < 0) {
+                } else if (temp_ema9_of_macd < 0) {
                     step = 2;
 
-                    count_pre_macd_wave += 1;
+                    count_pre_ema9_wave += 1;
                 } else {
                     break;
                 }
-            } else if (macd < 0) {
-                if ((temp_macd < 0) && (step < 2)) {
+            } else if (signal < 0) {
+                if ((temp_ema9_of_macd < 0) && (step < 2)) {
                     step = 1;
 
-                    count_cur_macd_wave += 1;
+                    count_cur_ema9_wave += 1;
                     close_price_of_n1_candle = prices.get(index);
-                } else if (temp_macd > 0) {
+                } else if (temp_ema9_of_macd > 0) {
                     step = 2;
 
-                    count_pre_macd_wave += 1;
+                    count_pre_ema9_wave += 1;
                 } else {
                     break;
                 }
@@ -6156,9 +6156,10 @@ public class Utils {
 
         Mt5MacdKey id = new Mt5MacdKey(EPIC, time_frame);
 
-        Mt5Macd mt5_macd = new Mt5Macd(id, Utils.formatPrice(BigDecimal.valueOf(macd), 5),
-                Double.valueOf(count_pre_macd_wave), pre_macd_vs_zero, cur_macd_trend, trend_macd_vs_signal,
-                trend_macd_vs_zero, count_cur_macd_wave, BigDecimal.valueOf(close_price_of_n1_candle));
+        Mt5Macd mt5_macd = new Mt5Macd(id, Double.valueOf(count_pre_ema9_wave),
+                Utils.formatPrice(BigDecimal.valueOf(signal), 5),
+                pre_macd_vs_zero, cur_macd_trend, trend_signal_vs_zero,
+                trend_macd_vs_zero, count_cur_ema9_wave, BigDecimal.valueOf(close_price_of_n1_candle));
 
         return mt5_macd;
     }

@@ -150,20 +150,20 @@ public class BscScanBinanceApplication {
                                 for (String EPIC : CAPITAL_LIST) {
                                     if (Utils.EPICS_STOCKS.contains(EPIC)) {
                                         if (isReloadAfter(Utils.MINUTES_OF_30, "MT5_DATA_STOCKS_" + EPIC)) {
-                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_W1);
-                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_D1);
-                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H4);
+                                            //binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_W1);
+                                            //binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_D1);
+                                            //binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H4);
                                             binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
                                             binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_15);
                                         }
                                     } else {
                                         if (isReloadAfter(Utils.MINUTES_OF_15, "MT5_DATA_FOREX_" + EPIC)) {
-                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_W1);
-                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_D1);
-                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H4);
-                                            binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
+                                            //binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_W1);
+                                            //binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_D1);
+                                            //binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H4);
                                         }
 
+                                        binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_H1);
                                         binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_15);
                                         binance_service.initForexTrend(EPIC, Utils.CAPITAL_TIME_03);
                                     }

@@ -38,10 +38,10 @@ public class Mt5Macd {
     private Mt5MacdKey id;
 
     @Column(name = "macd")
-    private BigDecimal macd = BigDecimal.ZERO;
+    private double count_pre_ema9_wave = 0.0;
 
     @Column(name = "signal")
-    private Double count_pre_macd_wave = 0.0;
+    private BigDecimal signal = BigDecimal.ZERO;
 
     @Column(name = "pre_macd_trend")
     private String pre_macd_vs_zero = "";
@@ -50,13 +50,13 @@ public class Mt5Macd {
     private String cur_macd_trend = "";
 
     @Column(name = "trend_macd_vs_signal")
-    private String trend_macd_vs_signal = "";
+    private String trend_signal_vs_zero = "";
 
     @Column(name = "trend_macd_vs_zero")
     private String trend_macd_vs_zero = "";
 
     @Column(name = "count_macd_candles")
-    private int count_cur_macd_wave = 0;
+    private int count_cur_ema9_wave = 0;
 
     @Column(name = "close_price_of_n1_candle")
     private BigDecimal close_price_of_n1_candle = BigDecimal.ZERO;
