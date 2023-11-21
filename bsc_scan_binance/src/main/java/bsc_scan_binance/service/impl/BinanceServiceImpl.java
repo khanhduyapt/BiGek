@@ -4497,6 +4497,10 @@ public class BinanceServiceImpl implements BinanceService {
                 is_hit_sl = true;
                 reason_id += "(WeekEnd, has_profit_10usd)";
             }
+            if (has_profit_10usd && macd_05_reverse && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_1D)) {
+                is_hit_sl = true;
+                reason_id += "(end_of_trading_time, has_profit)";
+            }
             // -------------------------------------------------------------------------------------
             if (is_hit_sl) {
                 String reason = "Profit:" + Utils.appendLeft(String.valueOf(PROFIT.intValue()), 5) + "$   "
