@@ -4284,20 +4284,15 @@ public class BinanceServiceImpl implements BinanceService {
             BscScanBinanceApplication.EPICS_OUTPUTED_LOG += "_" + EPIC + "_";
 
             // -----------------------------------------------------------------------------------------------
-
             // TODO: 3 controlMt5
             if ("_EURAUD_".contains(EPIC)) {
                 boolean debug = true;
             }
 
-            boolean m15_allow_trade = Objects.equals(trend_h1_ma50_100, macd_15.getTrend_signal_vs_zero())
-                    || Objects.equals(trend_h1_ma50_100, dto_15.getTrend_by_ma_20());
+            boolean m05_allow_trade = !Objects.equals(trend_h1_ma50_100, macd_05.getTrend_signal_vs_zero())
+                    && Objects.equals(trend_h1_ma50_100, dto_05.getTrend_by_heiken());
 
-            boolean m05_allow_trade = (!Objects.equals(trend_h1_ma50_100, macd_05.getTrend_signal_vs_zero())
-                    && Objects.equals(trend_h1_ma50_100, dto_05.getSuper_trend_by_ma50_100()));
-            m05_allow_trade |= Objects.equals(trend_h1_ma50_100, macd_05.getTrend_signal_vs_zero());
-
-            boolean allow_trade = signal_allow_muc && m15_allow_trade && m05_allow_trade
+            boolean allow_trade = signal_allow_muc && m05_allow_trade
                     && Objects.equals(trend_h1_ma50_100, dto_05.getTrend_by_heiken())
                     && Objects.equals(trend_h1_ma50_100, dto_15.getTrend_by_heiken())
                     && Objects.equals(trend_h1_ma50_100, dto_h1.getTrend_by_heiken())
