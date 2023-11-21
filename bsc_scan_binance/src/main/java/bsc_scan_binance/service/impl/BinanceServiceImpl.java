@@ -4226,7 +4226,7 @@ public class BinanceServiceImpl implements BinanceService {
             String sw_seq_15 = "   ";
             if (Objects.equals(trend_h1_ma50_100, dto_15.getTrend_by_vector_20_50())
                     && Objects.equals(trend_h1_ma50_100, dto_15.getSuper_trend_by_ma50_100())) {
-                sw_seq_15 = "eqM15";
+                sw_seq_15 += "eqM15";
             }
             sw_seq += Utils.appendSpace(sw_seq_15, 10);
 
