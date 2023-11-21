@@ -4454,7 +4454,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
             // -------------------------------------------------------------------------------------------
-            // TODO: 5 closeTrade_by_SL_TP
+            // TODO: 5 closeTrade_by_SL_TP : Signal đảo chiều thì đóng tất
             boolean reverse_macd_h1 = Objects.equals(dto_h1.getTrend_by_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(macd_05.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND)
                     && Objects.equals(macd_15.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND)
@@ -4476,7 +4476,7 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
             // -------------------------------------------------------------------------------------
-            // Thoát lệnh:
+            // Thoát 2/3 lệnh khi có lãi và thỏa mãn điều kiện dưới; lệnh còn lại dời SL về hòa:
             // Option 1) Giữ lệnh 2h, nếu 2 cây nến heiken đóng cửa đảo chiều.
             // Optonn 2) Giữ lệnh 2h, macd đảo chiều.
             // Optonn 3) Giữ lệnh 2h, đóng nến ma10 đảo chiều.
