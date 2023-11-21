@@ -2683,7 +2683,7 @@ public class BinanceServiceImpl implements BinanceService {
         // TODO: outputLog
         String log = Utils.getTypeOfEpic(EPIC) + Utils.appendSpace(EPIC, 8);
         log += Utils.appendSpace(Utils.removeLastZero(Utils.formatPrice(curr_price, 5)), 11);
-        log += Utils.appendSpace((prefix + " " + append_eoz).trim(), 150) + Utils.appendSpace(profit, 15);
+        log += Utils.appendSpace((prefix + " " + append_eoz).trim(), 160) + Utils.appendSpace(profit, 15);
         log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
         log += trade_zone;
 
@@ -4272,11 +4272,7 @@ public class BinanceServiceImpl implements BinanceService {
                 str_profit = Utils.appendSpace(str_profit, 15);
             }
 
-            String seq = "";
-            seq += Utils.appendSpace(dto_h1.getSwitch_trend(), 11);
-            seq += Utils.appendSpace(dto_15.getSwitch_trend(), 11);
-            seq += Utils.appendSpace(dto_05.getSwitch_trend(), 11);
-            seq += dailyRange.getAmp_fr() + " -> " + dailyRange.getAmp_to();
+            String seq = dailyRange.getAmp_fr() + " -> " + dailyRange.getAmp_to();
             seq = seq.replace(Utils.TREND_LONG, "B").replace(Utils.TREND_SHOT, "S");
 
             analysis_profit(str_profit + prefix, EPIC, "", dailyRange, trend_h1_ma50_100, curr_price, seq);
@@ -4434,7 +4430,7 @@ public class BinanceServiceImpl implements BinanceService {
             // Bảo vệ tài khoản tránh thua sạch tiền tích góp trong 53 ngày: -$6,133.97
             if (PROFIT.compareTo(BigDecimal.ZERO) < 0) {
                 if (reverse_h1_369 && reverse_15_369 && reverse_05_369) {
-                    if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
+                    if (allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_6H)) {
                         is_hit_sl = true;
 
                         reason_id += "(H1_STOPLOSS:ACCOUNT_PROTECTION)";
