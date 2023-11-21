@@ -4482,38 +4482,18 @@ public class BinanceServiceImpl implements BinanceService {
             // Optonn 3) Giữ lệnh 2h, đóng nến ma10 đảo chiều.
 
             boolean has_profit_10usd = (PROFIT.compareTo(BigDecimal.valueOf(10)) > 0);
-
-            boolean pass_holding_2h = trade.getComment().contains(Utils.ENCRYPTED_15)
-                    && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_2H);
-
-            if (has_profit_10usd && pass_holding_2h) {
+            boolean pass_holding_2h = allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_2H);
+            boolean macd_h1_reverse = Objects.equals(macd_h1.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND);
+            boolean macd_05_reverse = Objects.equals(macd_05.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND);
+            if (has_profit_10usd && pass_holding_2h && macd_h1_reverse) {
                 is_hit_sl = true;
-                reason_id += "(End2H, has_profit)";
-            }
-
-            if (pass_holding_2h) {
-                boolean reverse_m15_by_heiken = (dto_15.getCount_position_of_heiken_candle1() >= 2)
-                        && Objects.equals(dto_15.getTrend_by_heiken(), REVERSE_TRADE_TREND)
-                        && Objects.equals(dto_15.getTrend_heiken_candle1(), REVERSE_TRADE_TREND);
-
-                boolean reverse_m15_by_macd = Objects.equals(macd_05.getTrend_macd_vs_zero(), REVERSE_TRADE_TREND)
-                        && Objects.equals(macd_15.getTrend_macd_vs_zero(), REVERSE_TRADE_TREND);
-
-                if (reverse_m15_by_heiken) {
-                    is_hit_sl = true;
-                    reason_id += "(reverse_m15_by_heiken)";
-                }
-
-                if (reverse_m15_by_macd) {
-                    is_hit_sl = true;
-                    reason_id += "(reverse_m15_by_macd)";
-                }
+                reason_id += "(macd_h1_reverse, has_profit)";
             }
             if ((PROFIT.compareTo(Utils.RISK) > 0)) {
                 is_hit_sl = true;
                 reason_id += "(RR=1:1, has_profit)";
             }
-            if (has_profit_10usd && (Utils.isCloseTradeWeekEnd() || Utils.is_close_trade_time())) {
+            if (has_profit_10usd && macd_05_reverse && (Utils.isCloseTradeWeekEnd() || Utils.is_close_trade_time())) {
                 is_hit_sl = true;
                 reason_id += "(WeekEnd, has_profit_10usd)";
             }
