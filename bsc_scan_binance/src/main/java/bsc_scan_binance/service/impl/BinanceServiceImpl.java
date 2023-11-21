@@ -4030,8 +4030,8 @@ public class BinanceServiceImpl implements BinanceService {
 
         List<BigDecimal> lohi_20candles = Utils.getLowHighCandle(heiken_list.subList(0, size_20));
         BigDecimal amp_20candles = lohi_20candles.get(1).subtract(lohi_20candles.get(0)).abs();
-        BigDecimal sl_long = lohi_20candles.get(0);
-        BigDecimal sl_shot = lohi_20candles.get(1);
+        BigDecimal sl_long = lohi_20candles.get(0).subtract(avg_bread);
+        BigDecimal sl_shot = lohi_20candles.get(1).add(avg_bread);
 
         BigDecimal tp_long = lohi_20candles.get(1).add(amp_20candles).subtract(avg_bread);
         BigDecimal tp_shot = lohi_20candles.get(0).subtract(amp_20candles).add(avg_bread);
