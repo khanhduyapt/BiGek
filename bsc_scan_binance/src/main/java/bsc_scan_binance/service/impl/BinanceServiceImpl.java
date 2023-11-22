@@ -2790,8 +2790,8 @@ public class BinanceServiceImpl implements BinanceService {
                 log += Utils.appendSpace(Utils.getCapitalLink(EPIC), 62) + " ";
                 Utils.logWritelnDraft(log);
 
-                if (Utils.isNewsAt_19_20_21h()) {
-                    // continue;
+                if (!Utils.is_open_trade_time()) {
+                    continue;
                 }
                 if (Utils.isWeekend()) {
                     continue;
@@ -4497,6 +4497,11 @@ public class BinanceServiceImpl implements BinanceService {
                 if (ma_15_reverse_macd) {
                     is_hit_sl = true;
                     reason_id += "(ma_15_reverse_macd)";
+                }
+
+                // mất cơ hội chứ không chịu mất tiền.
+                if (Utils.is_close_trade_time()) {
+                    list_tiket_traning_stop.add(TICKET);
                 }
             }
 

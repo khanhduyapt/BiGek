@@ -2027,7 +2027,7 @@ public class Utils {
     // vào lệnh từ 13h~15h: lãi thì chốt từ 16h trở đi.
     // vào lệnh từ 18h~20h: lãi thì chốt từ 22h trở đi.
     public static boolean is_open_trade_time() {
-        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21);
+        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23);
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
