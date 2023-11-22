@@ -85,7 +85,8 @@ public class Utils {
     // ACCOUNT.multiply(BigDecimal.valueOf(0.001));
 
     // Trend W == D (500$ / 1trade)
-    public static final BigDecimal RISK = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
+    public static final BigDecimal RISK_50_USD = ACCOUNT.multiply(BigDecimal.valueOf(0.00025));
+    public static final BigDecimal RISK_200_USD = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
 
     // public static final BigDecimal RISK_PER_TRADE = RISK_0_15_PERCENT;
 
@@ -5209,8 +5210,9 @@ public class Utils {
         return "";
     }
 
-    public static Mt5OpenTrade calc_Lot_En_SL_TP(String EPIC, String find_trend, Orders dto_h1, String append,
-            boolean isTradeNow, String CAPITAL_TIME_XX, DailyRange dailyRange, int total_trade) {
+    public static Mt5OpenTrade calc_Lot_En_SL_TP(BigDecimal risk_per_trade, String EPIC, String find_trend,
+            Orders dto_h1, String append, boolean isTradeNow, String CAPITAL_TIME_XX, DailyRange dailyRange,
+            int total_trade) {
 
         if (Utils.isBlank(find_trend)) {
             return null;
@@ -5232,12 +5234,11 @@ public class Utils {
             sl_calc = dto_h1.getSl_shot();
         }
 
-        MoneyAtRiskResponse calc_vol = new MoneyAtRiskResponse(EPIC, RISK, curr_price, sl_calc, take_profit);
+        MoneyAtRiskResponse calc_vol = new MoneyAtRiskResponse(EPIC, risk_per_trade, curr_price, sl_calc, take_profit);
 
         BigDecimal volume = calc_vol.calcLot();
         String type = Objects.equals(find_trend, Utils.TREND_LONG) ? "_b" : "_s";
 
-        // take_profit = BigDecimal.ZERO;
         Mt5OpenTrade dto = new Mt5OpenTrade();
 
         dto.setEpic(EPIC);
@@ -5396,28 +5397,32 @@ public class Utils {
         if (Objects.equals(Utils.TREND_LONG, trend_d1)) {
             String temp = "";
 
-            //if (Objects.equals(trend_d1, trend_h1)) {
-            //    temp = Utils.checkXCutUpY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(), dto_d1.getMa9(),
-            //            dto_d1.getMa9());
-            //    if (Utils.isNotBlank(temp)) {
-            //        cutting += " 03vsD1Ma10:" + Utils.appendSpace(temp, 5);
-            //    }
+            // if (Objects.equals(trend_d1, trend_h1)) {
+            // temp = Utils.checkXCutUpY(dto_03.getClose_candle_1(),
+            // dto_03.getClose_candle_2(), dto_d1.getMa9(),
+            // dto_d1.getMa9());
+            // if (Utils.isNotBlank(temp)) {
+            // cutting += " 03vsD1Ma10:" + Utils.appendSpace(temp, 5);
+            // }
             //
-            //    temp = Utils.checkXCutUpY(dto_05.getClose_candle_1(), dto_05.getClose_candle_2(), dto_d1.getMa9(),
-            //            dto_d1.getMa9());
-            //    if (Utils.isNotBlank(temp))
-            //        cutting += " 05vsD1Ma10:" + Utils.appendSpace(temp, 5);
+            // temp = Utils.checkXCutUpY(dto_05.getClose_candle_1(),
+            // dto_05.getClose_candle_2(), dto_d1.getMa9(),
+            // dto_d1.getMa9());
+            // if (Utils.isNotBlank(temp))
+            // cutting += " 05vsD1Ma10:" + Utils.appendSpace(temp, 5);
             //
-            //    temp = Utils.checkXCutUpY(dto_10.getClose_candle_1(), dto_10.getClose_candle_2(), dto_d1.getMa9(),
-            //            dto_d1.getMa9());
-            //    if (Utils.isNotBlank(temp))
-            //        cutting += " 10vsD1Ma10:" + Utils.appendSpace(temp, 5);
+            // temp = Utils.checkXCutUpY(dto_10.getClose_candle_1(),
+            // dto_10.getClose_candle_2(), dto_d1.getMa9(),
+            // dto_d1.getMa9());
+            // if (Utils.isNotBlank(temp))
+            // cutting += " 10vsD1Ma10:" + Utils.appendSpace(temp, 5);
             //
-            //    temp = Utils.checkXCutUpY(dto_15.getClose_candle_1(), dto_15.getClose_candle_2(), dto_d1.getMa9(),
-            //            dto_d1.getMa9());
-            //    if (Utils.isNotBlank(temp))
-            //        cutting += " 15vsD1Ma10:" + Utils.appendSpace(temp, 5);
-            //}
+            // temp = Utils.checkXCutUpY(dto_15.getClose_candle_1(),
+            // dto_15.getClose_candle_2(), dto_d1.getMa9(),
+            // dto_d1.getMa9());
+            // if (Utils.isNotBlank(temp))
+            // cutting += " 15vsD1Ma10:" + Utils.appendSpace(temp, 5);
+            // }
 
             // ------------------------------------------------------------------------------
             if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
@@ -5536,27 +5541,31 @@ public class Utils {
         if (Objects.equals(Utils.TREND_SHOT, trend_d1)) {
             String temp = "";
 
-            //if (Objects.equals(trend_d1, trend_h1)) {
-            //    temp = Utils.checkXCutDnY(dto_03.getClose_candle_1(), dto_03.getClose_candle_2(), dto_d1.getMa9(),
-            //            dto_d1.getMa9());
-            //    if (Utils.isNotBlank(temp))
-            //        cutting += " 03vsD1Ma10:" + Utils.appendSpace(temp, 5);
+            // if (Objects.equals(trend_d1, trend_h1)) {
+            // temp = Utils.checkXCutDnY(dto_03.getClose_candle_1(),
+            // dto_03.getClose_candle_2(), dto_d1.getMa9(),
+            // dto_d1.getMa9());
+            // if (Utils.isNotBlank(temp))
+            // cutting += " 03vsD1Ma10:" + Utils.appendSpace(temp, 5);
             //
-            //    temp = Utils.checkXCutDnY(dto_05.getClose_candle_1(), dto_05.getClose_candle_2(), dto_d1.getMa9(),
-            //            dto_d1.getMa9());
-            //    if (Utils.isNotBlank(temp))
-            //        cutting += " 05vsD1Ma10:" + Utils.appendSpace(temp, 5);
+            // temp = Utils.checkXCutDnY(dto_05.getClose_candle_1(),
+            // dto_05.getClose_candle_2(), dto_d1.getMa9(),
+            // dto_d1.getMa9());
+            // if (Utils.isNotBlank(temp))
+            // cutting += " 05vsD1Ma10:" + Utils.appendSpace(temp, 5);
             //
-            //    temp = Utils.checkXCutDnY(dto_10.getClose_candle_1(), dto_10.getClose_candle_2(), dto_d1.getMa9(),
-            //            dto_d1.getMa9());
-            //    if (Utils.isNotBlank(temp))
-            //        cutting += " 10vsD1Ma10:" + Utils.appendSpace(temp, 5);
+            // temp = Utils.checkXCutDnY(dto_10.getClose_candle_1(),
+            // dto_10.getClose_candle_2(), dto_d1.getMa9(),
+            // dto_d1.getMa9());
+            // if (Utils.isNotBlank(temp))
+            // cutting += " 10vsD1Ma10:" + Utils.appendSpace(temp, 5);
             //
-            //    temp = Utils.checkXCutDnY(dto_15.getClose_candle_1(), dto_15.getClose_candle_2(), dto_d1.getMa9(),
-            //            dto_d1.getMa9());
-            //    if (Utils.isNotBlank(temp))
-            //        cutting += " 15vsD1Ma10:" + Utils.appendSpace(temp, 5);
-            //}
+            // temp = Utils.checkXCutDnY(dto_15.getClose_candle_1(),
+            // dto_15.getClose_candle_2(), dto_d1.getMa9(),
+            // dto_d1.getMa9());
+            // if (Utils.isNotBlank(temp))
+            // cutting += " 15vsD1Ma10:" + Utils.appendSpace(temp, 5);
+            // }
 
             // ------------------------------------------------------------------------------
             if (Objects.equals(trend_d1, trend_h4) && Objects.equals(trend_d1, trend_h1)) {
@@ -5742,28 +5751,22 @@ public class Utils {
         return trend;
     }
 
-    public static String trend_by_ma3_6_9(String trend_by_heiken, String trend_ma_6, String trend_ma_9,
-            BigDecimal ma_3, BigDecimal ma_6, BigDecimal ma_9) {
-        if (Objects.equals(Utils.TREND_LONG, trend_ma_6)
-                && Objects.equals(Utils.TREND_LONG, trend_ma_9)
-                && (ma_3.compareTo(ma_9) > 0)
-                && (ma_3.compareTo(ma_6) > 0)) {
+    public static String trend_by_ma3_6_9(String trend_by_heiken, String trend_ma_6, String trend_ma_9, BigDecimal ma_3,
+            BigDecimal ma_6, BigDecimal ma_9) {
+        if (Objects.equals(Utils.TREND_LONG, trend_ma_6) && Objects.equals(Utils.TREND_LONG, trend_ma_9)
+                && (ma_3.compareTo(ma_9) > 0) && (ma_3.compareTo(ma_6) > 0)) {
             return Utils.TREND_LONG;
         }
-        if (Objects.equals(Utils.TREND_LONG, trend_ma_6)
-                && Objects.equals(Utils.TREND_LONG, trend_ma_9)
+        if (Objects.equals(Utils.TREND_LONG, trend_ma_6) && Objects.equals(Utils.TREND_LONG, trend_ma_9)
                 && Objects.equals(Utils.TREND_LONG, trend_by_heiken)) {
             return Utils.TREND_LONG;
         }
         // ---------------------------------------------------------------
-        if (Objects.equals(Utils.TREND_SHOT, trend_ma_6)
-                && Objects.equals(Utils.TREND_SHOT, trend_ma_9)
-                && (ma_3.compareTo(ma_9) < 0)
-                && (ma_3.compareTo(ma_6) < 0)) {
+        if (Objects.equals(Utils.TREND_SHOT, trend_ma_6) && Objects.equals(Utils.TREND_SHOT, trend_ma_9)
+                && (ma_3.compareTo(ma_9) < 0) && (ma_3.compareTo(ma_6) < 0)) {
             return Utils.TREND_SHOT;
         }
-        if (Objects.equals(Utils.TREND_SHOT, trend_ma_6)
-                && Objects.equals(Utils.TREND_SHOT, trend_ma_9)
+        if (Objects.equals(Utils.TREND_SHOT, trend_ma_6) && Objects.equals(Utils.TREND_SHOT, trend_ma_9)
                 && Objects.equals(Utils.TREND_SHOT, trend_by_heiken)) {
             return Utils.TREND_SHOT;
         }
@@ -6022,6 +6025,15 @@ public class Utils {
         return Utils.appendSpace(result, 8);
     }
 
+    public static BigDecimal risk_per_trade(String comment) {
+        BigDecimal risk_per_trade = Utils.RISK_200_USD;
+        if (comment.contains(Utils.ENCRYPTED_15)) {
+            risk_per_trade = Utils.RISK_50_USD;
+        }
+
+        return risk_per_trade;
+    }
+
     public static void get_trend_by_macd(List<BtcFutures> list) {
     }
 
@@ -6176,10 +6188,9 @@ public class Utils {
 
         Mt5MacdKey id = new Mt5MacdKey(EPIC, time_frame);
 
-        Mt5Macd mt5_macd = new Mt5Macd(id, Double.valueOf(count_pre_ema9_wave),
-                Double.valueOf(count_cur_macd_vs_zero),
-                pre_macd_vs_zero, cur_macd_trend, trend_signal_vs_zero,
-                trend_macd_vs_zero, count_cur_ema9_wave, BigDecimal.valueOf(close_price_of_n1_candle));
+        Mt5Macd mt5_macd = new Mt5Macd(id, Double.valueOf(count_pre_ema9_wave), Double.valueOf(count_cur_macd_vs_zero),
+                pre_macd_vs_zero, cur_macd_trend, trend_signal_vs_zero, trend_macd_vs_zero, count_cur_ema9_wave,
+                BigDecimal.valueOf(close_price_of_n1_candle));
 
         return mt5_macd;
     }
