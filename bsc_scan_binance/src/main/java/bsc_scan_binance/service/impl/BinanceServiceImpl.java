@@ -4026,23 +4026,31 @@ public class BinanceServiceImpl implements BinanceService {
         if (size_20 > 21) {
             size_20 = 21;
         }
-        BigDecimal avg_bread = Utils.calcAvgBread(heiken_list);
 
         List<BigDecimal> lohi_20candles = Utils.getLowHighCandle(heiken_list.subList(0, size_20));
         BigDecimal amp_20candles = lohi_20candles.get(1).subtract(lohi_20candles.get(0)).abs();
-        BigDecimal sl_long = lohi_20candles.get(0).subtract(avg_bread);
-        BigDecimal sl_shot = lohi_20candles.get(1).add(avg_bread);
+        BigDecimal sl_long = lohi_20candles.get(0).subtract(amplitude_avg_of_candles);
+        BigDecimal sl_shot = lohi_20candles.get(1).add(amplitude_avg_of_candles);
 
+        BigDecimal avg_bread = Utils.calcAvgBread(heiken_list);
         BigDecimal tp_long = lohi_20candles.get(1).add(amp_20candles).subtract(avg_bread);
         BigDecimal tp_shot = lohi_20candles.get(0).subtract(amp_20candles).add(avg_bread);
 
+        BigDecimal close_candle_1 = list.get(1).getPrice_close_candle();
+        BigDecimal close_candle_2 = list.get(2).getPrice_close_candle();
+        BigDecimal min_close = close_candle_1.min(close_candle_2);
+        BigDecimal max_close = close_candle_1.max(close_candle_2);
         // ----------------------------TREND------------------------
         // TODO: 1. initForexTrend
         String switch_trend = "";
 
         switch_trend = Utils.switch_trend_seq_10_20_50(heiken_list, amplitude_avg_of_candles, mt5_macd, ma3, ma9,
                 ma20, ma50, trend_by_vector_20_50);
-
+        if ((min_close.compareTo(ma99) <= 0) && (ma99.compareTo(max_close) <= 0)) {
+            String chart_name = Utils.getChartName(CAPITAL_TIME_XX);
+            switch_trend += chart_name + Utils.TEXT_SWITCH_TREND_BY_MA_99 + ":"
+                    + Utils.appendSpace(trend_heiken_candle1, 4);
+        }
         // -----------------------------DATABASE---------------------------
         String id = EPIC + "_" + CAPITAL_TIME_XX;
         String insertTime = LocalDateTime.now().toString();
@@ -4064,9 +4072,6 @@ public class BinanceServiceImpl implements BinanceService {
         if (bread.compareTo(amplitude_1_part_15) < 0) {
             bread = amplitude_1_part_15;
         }
-
-        BigDecimal close_candle_1 = list.get(1).getPrice_close_candle();
-        BigDecimal close_candle_2 = list.get(2).getPrice_close_candle();
 
         if (Utils.isPinBar(heiken_list.get(1))) {
             trend_heiken_candle1 = Utils.TREND_UNSURE;
@@ -4138,23 +4143,24 @@ public class BinanceServiceImpl implements BinanceService {
 
             boolean is_not_open = !is_opening_trade(EPIC, "");
             if (is_not_open && Utils.isBlank(dto_h1.getTrend_by_vector_20_50())) {
-                continue;
+                //continue;
             }
 
             String trend_h1_ma50_100 = dto_h1.getSuper_trend_by_ma50_100();
             String trend_h1_macd_signal = macd_h1.getTrend_signal_vs_zero();
             if (is_not_open && !Objects.equals(trend_h1_macd_signal, trend_h1_ma50_100)) {
-                continue;
+                //continue;
             }
 
             count += 1;
             String No = Utils.appendLeft(String.valueOf(count), 2, "0") + ". ";
 
             BigDecimal curr_price = dto_h1.getCurrent_price();
-
+            boolean is_able_tp = Utils.is_able_take_profit(dto_h1, dailyRange.getAvg_amp_week(), dto_h1);
+            String eoz = is_able_tp ? "   " : "EOZ";
             // ---------------------------------------------------------------------------------------------
             String amp = " ";
-            amp += "(avg_w):" + Utils.appendSpace(dailyRange.getAvg_amp_week(), 10);
+            amp += "(avg_w):" + Utils.appendSpace(dailyRange.getAvg_amp_week(), 10) + eoz;
 
             amp += Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK, true, trend_h1_ma50_100, EPIC, curr_price, dailyRange,
                     dto_h1);
@@ -4274,6 +4280,17 @@ public class BinanceServiceImpl implements BinanceService {
 
             String seq = dailyRange.getAmp_fr() + " -> " + dailyRange.getAmp_to();
             seq = seq.replace(Utils.TREND_LONG, "B").replace(Utils.TREND_SHOT, "S");
+            seq = Utils.appendSpace(seq, 30);
+
+            if (dto_h1.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_BY_MA_99)) {
+                seq += dto_h1.getSwitch_trend();
+            }
+            if (dto_15.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_BY_MA_99)) {
+                seq += dto_15.getSwitch_trend();
+            }
+            if (dto_05.getSwitch_trend().contains(Utils.TEXT_SWITCH_TREND_BY_MA_99)) {
+                seq += dto_05.getSwitch_trend();
+            }
 
             analysis_profit(str_profit + prefix, EPIC, "", dailyRange, trend_h1_ma50_100, curr_price, seq);
 
@@ -4286,9 +4303,14 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             boolean m05_allow_trade = !Objects.equals(trend_h1_ma50_100, macd_05.getTrend_signal_vs_zero())
-                    && Objects.equals(trend_h1_ma50_100, dto_05.getTrend_by_heiken());
+                    && Objects.equals(trend_h1_ma50_100, dto_05.getTrend_by_heiken())
+                    && Objects.equals(trend_h1_ma50_100, dto_05.getSuper_trend_by_ma50_100());
 
-            boolean allow_trade = signal_allow_muc && m05_allow_trade
+            boolean m15_allow_trade = !Objects.equals(trend_h1_ma50_100, macd_15.getTrend_signal_vs_zero())
+                    && Objects.equals(trend_h1_ma50_100, dto_15.getTrend_by_heiken())
+                    && Objects.equals(trend_h1_ma50_100, dto_15.getSuper_trend_by_ma50_100());
+
+            boolean allow_trade = signal_allow_muc && m05_allow_trade && m15_allow_trade
                     && Objects.equals(trend_h1_ma50_100, dto_05.getTrend_by_heiken())
                     && Objects.equals(trend_h1_ma50_100, dto_15.getTrend_by_heiken())
                     && Objects.equals(trend_h1_ma50_100, dto_h1.getTrend_by_heiken())
@@ -4312,7 +4334,7 @@ public class BinanceServiceImpl implements BinanceService {
                     String note = "_c" + c_count + Utils.ENCRYPTED_H1;
 
                     if (CollectionUtils.isEmpty(his_list_folow_d369) && Utils.is_open_trade_time()) {
-                        note += Utils.TEXT_PASS;
+                        note += Utils.TEXT_NOTICE_ONLY;
                     } else {
                         note += Utils.TEXT_NOTICE_ONLY;
                     }

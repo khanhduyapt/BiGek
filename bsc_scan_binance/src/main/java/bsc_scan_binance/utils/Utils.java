@@ -85,7 +85,7 @@ public class Utils {
     // ACCOUNT.multiply(BigDecimal.valueOf(0.001));
 
     // Trend W == D (500$ / 1trade)
-    public static final BigDecimal RISK = ACCOUNT.multiply(BigDecimal.valueOf(0.0015));
+    public static final BigDecimal RISK = ACCOUNT.multiply(BigDecimal.valueOf(0.001));
 
     // public static final BigDecimal RISK_PER_TRADE = RISK_0_15_PERCENT;
 
@@ -161,7 +161,8 @@ public class Utils {
 
     public static final String TEXT_SEQ = "SEQ";
 
-    public static final String TEXT_SWITCH_TREND_50 = "(~50~)";
+    public static final String TEXT_SWITCH_TREND_BY_MA_99 = "(ma99)";
+    public static final String TEXT_SWITCH_TREND_BY_HEIKEN_20_50_99 = "(SEQ99)";
     public static final String TEXT_SWITCH_TREND_HEIKEN = "(Heiken)";
 
     public static final String TEXT_TREND_HEKEN_ = "Heken_";
