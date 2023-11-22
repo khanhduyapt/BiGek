@@ -4292,11 +4292,11 @@ public class BinanceServiceImpl implements BinanceService {
             String trading_trend = dto_15.getTrend_heiken_candle1();
 
             boolean signal_allow_trade = Objects.equals(trading_trend, macd_h1.getTrend_signal_vs_zero())
-                    && (macd_h1.getCount_cur_ema9_wave() <= 2);
+                    && (macd_h1.getCount_cur_ema9_wave() <= 3);
 
             boolean macd_allow_trade = Objects.equals(trading_trend, macd_h1.getTrend_signal_vs_zero())
                     && Objects.equals(trading_trend, macd_h1.getTrend_macd_vs_zero())
-                    && (macd_h1.getCount_cur_macd_vs_zero() <= 2);
+                    && (macd_h1.getCount_cur_macd_vs_zero() <= 3);
 
             if (signal_allow_trade || macd_allow_trade) {
                 int count_mc = (signal_allow_trade ? macd_h1.getCount_cur_ema9_wave().intValue()
