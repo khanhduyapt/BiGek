@@ -4357,6 +4357,7 @@ public class BinanceServiceImpl implements BinanceService {
             BigDecimal PROFIT = Utils.getBigDecimal(trade.getProfit());
             BigDecimal RISK_PER_TRADE = Utils.risk_per_trade(trade.getComment());
             BigDecimal RISK_1_2R = RISK_PER_TRADE.multiply(BigDecimal.valueOf(0.5));
+            BigDecimal RISK_1_3R = RISK_PER_TRADE.multiply(BigDecimal.valueOf(0.3));
 
             if (Objects.equals(EPIC, "DX.F")) {
                 EPIC = "DX";
@@ -4418,16 +4419,30 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_03.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_heiken_candle1(), REVERSE_TRADE_TREND);
 
-            boolean is_auto_trade = Utils.isNotBlank(trade.getComment());
             boolean has_profit_1_2R = (PROFIT.compareTo(RISK_1_2R) > 0);
+            boolean has_profit_1_3R = (PROFIT.compareTo(RISK_1_3R) > 0);
+
             boolean is_auto_trade_m15 = trade.getComment().contains(Utils.ENCRYPTED_15);
-            boolean pass_holding_4h = allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H);
+            boolean pass_holding_1h = allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_1H);
             // -------------------------------------------------------------------------------------
             String reason_id = "";
             boolean is_hit_sl = false;
             // -------------------------------------------------------------------------------------
+
+            boolean stop_lost_by_trend = Objects.equals(macd_h1.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND)
+                    && Objects.equals(macd_15.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND)
+                    && Objects.equals(macd_05.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h1.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_15.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_03.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_h1.getTrend_by_heiken(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_15.getTrend_by_heiken(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_03.getTrend_by_heiken(), REVERSE_TRADE_TREND);
+
+            boolean stop_lost_by_money = reverse_05_369 && PROFIT.add(RISK_PER_TRADE).compareTo(BigDecimal.ZERO) < 0;
+
             // Bảo vệ tài khoản tránh thua sạch tiền tích góp trong 53 ngày: -$6,133.97
-            if (reverse_05_369 && PROFIT.add(RISK_PER_TRADE).compareTo(BigDecimal.ZERO) < 0) {
+            if (stop_lost_by_money || stop_lost_by_trend) {
                 is_hit_sl = true;
                 reason_id += "(STOPLOSS:ACCOUNT_PROTECTION)";
 
@@ -4439,10 +4454,14 @@ public class BinanceServiceImpl implements BinanceService {
                 BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
             }
             // -------------------------------------------------------------------------------------------
+            // -------------------------------------------------------------------------------------------
+            // -------------------------------------------------------------------------------------------
+            // O.5R -> traning_stop
             if (has_profit_1_2R) {
                 list_tiket_traning_stop.add(TICKET);
             }
 
+            // 1R -> đóng 2/3 lệnh
             if ((PROFIT.compareTo(RISK_PER_TRADE) > 0)) {
                 List<Mt5OpenTradeEntity> tradeList = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
                 if (tradeList.size() > 1) {
@@ -4456,25 +4475,19 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
 
-            if ((PROFIT.compareTo(RISK_PER_TRADE.multiply(BigDecimal.valueOf(3))) > 0)) {
-                is_hit_sl = true;
-                reason_id += "(RR=1:3, close_trade)";
+            // 2R -> đóng 1/3 lệnh còn lại
+            if ((PROFIT.compareTo(RISK_PER_TRADE.multiply(BigDecimal.valueOf(2))) > 0)) {
+                reason_id += "(RR=1:2, close_trade)";
+                BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason_id);
             }
             // -------------------------------------------------------------------------------------------
-            if (has_profit_1_2R) {
-                // TODO: 5 closeTrade_by_SL_TP : Signal đảo chiều thì đóng tất
-                boolean reverse_macd_h1 = Objects.equals(macd_h1.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND);
-                if (is_auto_trade && reverse_macd_h1 && pass_holding_4h) {
-                    is_hit_sl = true;
-                    reason_id += "(has_profit, reverse_macd_h1)";
-                }
-            }
-            // -------------------------------------------------------------------------------------
-            // Thoát 2/3 lệnh khi có lãi và thỏa mãn điều kiện dưới; lệnh còn lại dời SL
+            // -------------------------------------------------------------------------------------------
+            // -------------------------------------------------------------------------------------------
+            // TODO: 5 closeTrade_by_SL_has_profit
             // Option 1) Giữ lệnh 2h, nếu 2 cây nến heiken đóng cửa đảo chiều.
             // Optonn 2) Giữ lệnh 2h, macd đảo chiều.
-            // Optonn 3) Giữ lệnh 2h, đóng nến ma10 đảo chiều.
-            if (has_profit_1_2R && is_auto_trade_m15) {
+            // Optonn 3) Giữ lệnh 2h, đóng nến ma20 đảo chiều.
+            if (has_profit_1_3R && is_auto_trade_m15 && pass_holding_1h) {
                 boolean ma_15_reverse_heiken = Objects.equals(dto_15.getTrend_by_heiken(), REVERSE_TRADE_TREND)
                         && Objects.equals(dto_15.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
                         && Objects.equals(dto_15.getTrend_by_ma_9(), REVERSE_TRADE_TREND)
