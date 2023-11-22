@@ -2754,7 +2754,7 @@ public class BinanceServiceImpl implements BinanceService {
             Hashtable<String, String> msg_dict = new Hashtable<String, String>();
 
             for (Mt5OpenTrade dto : BscScanBinanceApplication.mt5_open_trade_List) {
-                if (Objects.isNull(dto)) {
+               if (Objects.isNull(dto)) {
                     continue;
                 }
                 String EPIC = dto.getEpic();
