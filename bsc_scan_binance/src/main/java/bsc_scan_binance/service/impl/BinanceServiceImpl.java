@@ -4157,7 +4157,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             BigDecimal curr_price = dto_h1.getCurrent_price();
             boolean is_able_tp = Utils.is_able_take_profit(dto_h1, dailyRange.getAvg_amp_week(), dto_h1);
-            String eoz = is_able_tp ? "   " : "EOZ";
+            String eoz = is_able_tp ? "     " : "EOZ:" + Utils.getType(dto_h1.getTrend_by_heiken());
             // ---------------------------------------------------------------------------------------------
             String amp = " ";
             amp += "(avg_w):" + Utils.appendSpace(dailyRange.getAvg_amp_week(), 10) + eoz;
@@ -4445,6 +4445,9 @@ public class BinanceServiceImpl implements BinanceService {
                     && Objects.equals(dto_03.getTrend_by_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_03.getTrend_heiken_candle1(), REVERSE_TRADE_TREND);
 
+            boolean has_profit_10usd = (PROFIT.compareTo(BigDecimal.valueOf(10)) > 0);
+            boolean is_auto_trade = Utils.isNotBlank(trade.getComment());
+
             // -------------------------------------------------------------------------------------
             String reason_id = "";
             boolean is_hit_sl = false;
@@ -4467,15 +4470,18 @@ public class BinanceServiceImpl implements BinanceService {
                 }
             }
             // -------------------------------------------------------------------------------------------
-            // TODO: 5 closeTrade_by_SL_TP : Signal đảo chiều thì đóng tất
-            boolean reverse_macd_h1 = Objects.equals(dto_h1.getTrend_by_heiken(), REVERSE_TRADE_TREND)
-                    && Objects.equals(macd_05.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND)
-                    && Objects.equals(macd_15.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND)
-                    && Objects.equals(macd_h1.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND);
-
-            if (reverse_macd_h1 && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H)) {
+            if ((PROFIT.compareTo(Utils.RISK) > 0)) {
                 is_hit_sl = true;
-                reason_id += "(reverse_macd_h1)";
+                reason_id += "(RR=1:1, has_profit)";
+            }
+            // -------------------------------------------------------------------------------------------
+            boolean pass_holding_4h = allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H);
+
+            // TODO: 5 closeTrade_by_SL_TP : Signal đảo chiều thì đóng tất
+            boolean reverse_macd_h1 = Objects.equals(macd_h1.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND);
+            if (is_auto_trade && has_profit_10usd && reverse_macd_h1 && pass_holding_4h) {
+                is_hit_sl = true;
+                reason_id += "(has_profit, reverse_macd_h1)";
             }
             // -------------------------------------------------------------------------------------------
             if (is_hit_sl) {
@@ -4493,26 +4499,23 @@ public class BinanceServiceImpl implements BinanceService {
             // Option 1) Giữ lệnh 2h, nếu 2 cây nến heiken đóng cửa đảo chiều.
             // Optonn 2) Giữ lệnh 2h, macd đảo chiều.
             // Optonn 3) Giữ lệnh 2h, đóng nến ma10 đảo chiều.
+            if (is_auto_trade && has_profit_10usd && pass_holding_4h) {
+                boolean macd_h1_reverse = Objects.equals(macd_h1.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND);
+                boolean macd_05_reverse = Objects.equals(macd_05.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND);
+                if (macd_h1_reverse) {
+                    is_hit_sl = true;
+                    reason_id += "(macd_h1_reverse, has_profit)";
+                }
 
-            boolean has_profit_10usd = (PROFIT.compareTo(BigDecimal.valueOf(10)) > 0);
-            boolean pass_holding_2h = allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_2H);
-            boolean macd_h1_reverse = Objects.equals(macd_h1.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND);
-            boolean macd_05_reverse = Objects.equals(macd_05.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND);
-            if (has_profit_10usd && pass_holding_2h && macd_h1_reverse) {
-                is_hit_sl = true;
-                reason_id += "(macd_h1_reverse, has_profit)";
-            }
-            if ((PROFIT.compareTo(Utils.RISK) > 0)) {
-                is_hit_sl = true;
-                reason_id += "(RR=1:1, has_profit)";
-            }
-            if (has_profit_10usd && macd_05_reverse && (Utils.isCloseTradeWeekEnd() || Utils.is_close_trade_time())) {
-                is_hit_sl = true;
-                reason_id += "(WeekEnd, has_profit_10usd)";
-            }
-            if (has_profit_10usd && macd_05_reverse && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_1D)) {
-                is_hit_sl = true;
-                reason_id += "(end_of_trading_time, has_profit)";
+                if (macd_05_reverse && (Utils.isCloseTradeWeekEnd() || Utils.is_close_trade_time())) {
+                    is_hit_sl = true;
+                    reason_id += "(WeekEnd, has_profit_10usd)";
+                }
+
+                if (macd_05_reverse && allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_1D)) {
+                    is_hit_sl = true;
+                    reason_id += "(end_of_trading_time, has_profit)";
+                }
             }
             // -------------------------------------------------------------------------------------
             if (is_hit_sl) {

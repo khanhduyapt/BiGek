@@ -5320,7 +5320,7 @@ public class Utils {
     }
 
     public static boolean is_able_take_profit(Orders dto_w1, BigDecimal amplitude_week, Orders dto_h4) {
-        String find_trend = dto_h4.getTrend_by_vector_20_50();
+        String find_trend = dto_h4.getTrend_by_heiken();
 
         if (Utils.isBlank(find_trend)) {
             return false;
