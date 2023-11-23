@@ -20,7 +20,7 @@ int OnInit()
   {
    OnTimer();
 
-   EventSetTimer(120); //1800=30minutes; 900=15minutes; 300=5minutes; 180=3minutes; 60=1minute;
+   EventSetTimer(60); //1800=30minutes; 900=15minutes; 300=5minutes; 180=3minutes; 60=1minute;
 
    return(INIT_SUCCEEDED);
   }
