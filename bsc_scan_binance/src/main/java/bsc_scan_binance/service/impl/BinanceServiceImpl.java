@@ -4459,17 +4459,10 @@ public class BinanceServiceImpl implements BinanceService {
             // O.5R -> traning_stop
             if (has_profit_1_2R) {
                 list_tiket_traning_stop.add(TICKET);
-
-                if (tradeList.size() > 2) {
-                    String reason = "has_profit_1_2R:" + Utils.appendLeft(PROFIT.intValue(), 5) + "$";
-                    msg += "(Closed:" + TRADE_TREND + ")" + EPIC + "." + reason;
-                    BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
-                }
             }
 
             // 1R -> đóng 2/3 lệnh
             if (PROFIT.compareTo(RISK_PER_TRADE) > 0) {
-
                 if (tradeList.size() > 1) {
                     for (Mt5OpenTradeEntity entity : tradeList) {
                         if (!Objects.equals(entity.getTicket(), TICKET)) {
@@ -4540,6 +4533,16 @@ public class BinanceServiceImpl implements BinanceService {
                         is_hit_sl = true;
                         reason_id += "(reverse_05, close_trade_tim)";
                     }
+                }
+            }
+
+            if (list_tiket_traning_stop.contains(TICKET)
+                    || (trade.getPriceOpen().compareTo(trade.getStopLoss()) == 0)) {
+                if (tradeList.size() > 2) {
+                    Mt5OpenTradeEntity close_trade = tradeList.get(2);
+                    String reason = "has_profit_1_2R:" + Utils.appendLeft(close_trade.getProfit().intValue(), 5) + "$";
+                    msg += "(Closed:" + TRADE_TREND + ")" + EPIC + "." + reason;
+                    BscScanBinanceApplication.mt5_close_ticket_dict.put(close_trade.getTicket(), reason);
                 }
             }
 
