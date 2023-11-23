@@ -2754,7 +2754,7 @@ public class BinanceServiceImpl implements BinanceService {
             Hashtable<String, String> msg_dict = new Hashtable<String, String>();
 
             for (Mt5OpenTrade dto : BscScanBinanceApplication.mt5_open_trade_List) {
-               if (Objects.isNull(dto)) {
+                if (Objects.isNull(dto)) {
                     continue;
                 }
                 String EPIC = dto.getEpic();
@@ -4356,16 +4356,16 @@ public class BinanceServiceImpl implements BinanceService {
 
             Orders dto_h1 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_H1).orElse(null);
             Orders dto_15 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_15).orElse(null);
-            Orders dto_03 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_03).orElse(null);
+            Orders dto_05 = ordersRepository.findById(EPIC + "_" + Utils.CAPITAL_TIME_03).orElse(null);
 
             DailyRange dailyRange = get_DailyRange(EPIC);
 
             if (Objects.isNull(dailyRange) || Objects.isNull(dto_h1) || Objects.isNull(dto_15)
-                    || Objects.isNull(dto_03)) {
+                    || Objects.isNull(dto_05)) {
                 String str_null = "";
                 str_null += " h1:" + (Objects.isNull(dto_h1) ? "null" : "    ");
                 str_null += " 15:" + (Objects.isNull(dto_15) ? "null" : "    ");
-                str_null += " 03:" + (Objects.isNull(dto_03) ? "null" : "    ");
+                str_null += " 03:" + (Objects.isNull(dto_05) ? "null" : "    ");
 
                 Utils.logWritelnDraft(String.format("[closetrade_by_sl_tp_take_profit] dto (%s): %s.",
                         Utils.appendSpace(EPIC, 10), str_null));
@@ -4399,10 +4399,9 @@ public class BinanceServiceImpl implements BinanceService {
                 boolean debug = true;
             }
 
-            boolean reverse_05_369 = Objects.equals(macd_05.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_03.getTrend_by_heiken(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_03.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_15.getTrend_heiken_candle1(), REVERSE_TRADE_TREND);
+            boolean reverse_05 = Objects.equals(dto_05.getTrend_by_heiken(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_05.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_15.getTrend_by_heiken(), REVERSE_TRADE_TREND);
 
             boolean has_profit_1_2R = (PROFIT.compareTo(RISK_1_2R) > 0);
             boolean has_profit_1_3R = (PROFIT.compareTo(RISK_1_3R) > 0);
@@ -4413,21 +4412,27 @@ public class BinanceServiceImpl implements BinanceService {
             String reason_id = "";
             boolean is_hit_sl = false;
             // -------------------------------------------------------------------------------------
-
             boolean stop_lost_by_trend = Objects.equals(macd_h1.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND)
                     && Objects.equals(macd_15.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND)
                     && Objects.equals(macd_05.getTrend_signal_vs_zero(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_03.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_05.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_h1.getTrend_by_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_by_heiken(), REVERSE_TRADE_TREND)
-                    && Objects.equals(dto_03.getTrend_by_heiken(), REVERSE_TRADE_TREND);
+                    && Objects.equals(dto_05.getTrend_by_heiken(), REVERSE_TRADE_TREND);
 
-            boolean stop_lost_by_money = reverse_05_369 && PROFIT.add(RISK_PER_TRADE).compareTo(BigDecimal.ZERO) < 0;
+            boolean stop_lost_by_money = reverse_05 && PROFIT.add(RISK_PER_TRADE).compareTo(BigDecimal.ZERO) < 0;
+
+            boolean stop_loss_by_entry_cond = is_auto_trade_m15
+                    && (PROFIT.compareTo(BigDecimal.ZERO) > 0)
+                    && Objects.equals(dto_15.getTrend_by_ma_20(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_15.getTrend_by_heiken(), REVERSE_TRADE_TREND)
+                    && Objects.equals(dto_15.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
+                    && (dto_15.getCount_position_of_candle1_vs_ma20().intValue() > 2);
 
             // Bảo vệ tài khoản tránh thua sạch tiền tích góp trong 53 ngày: -$6,133.97
-            if (stop_lost_by_money || stop_lost_by_trend) {
+            if (stop_lost_by_money || stop_lost_by_trend || stop_loss_by_entry_cond) {
                 is_hit_sl = true;
                 reason_id += "(STOPLOSS:ACCOUNT_PROTECTION)";
 
@@ -4447,7 +4452,7 @@ public class BinanceServiceImpl implements BinanceService {
             }
 
             // 1R -> đóng 2/3 lệnh
-            if ((PROFIT.compareTo(RISK_PER_TRADE) > 0)) {
+            if (PROFIT.compareTo(RISK_PER_TRADE) > 0) {
                 List<Mt5OpenTradeEntity> tradeList = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
                 if (tradeList.size() > 1) {
                     for (Mt5OpenTradeEntity entity : tradeList) {
@@ -4499,9 +4504,14 @@ public class BinanceServiceImpl implements BinanceService {
                     reason_id += "(ma_15_reverse_macd)";
                 }
 
-                // mất cơ hội chứ không chịu mất tiền.
+                // Mất cơ hội chứ không chịu mất tiền.
                 if (Utils.is_close_trade_time()) {
                     list_tiket_traning_stop.add(TICKET);
+
+                    if (reverse_05) {
+                        is_hit_sl = true;
+                        reason_id += "(reverse_05, close_trade_tim)";
+                    }
                 }
             }
 
