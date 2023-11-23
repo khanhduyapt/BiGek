@@ -4389,6 +4389,8 @@ public class BinanceServiceImpl implements BinanceService {
                 continue;
             }
 
+            List<Mt5OpenTradeEntity> tradeList = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
+
             String TRADE_TREND = Objects.equals(trade.getType().toUpperCase(), Utils.TREND_LONG) ? Utils.TREND_LONG
                     : Objects.equals(trade.getType().toUpperCase(), Utils.TREND_SHOT) ? Utils.TREND_SHOT
                             : Utils.TREND_UNSURE;
@@ -4407,7 +4409,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean has_profit_1_3R = (PROFIT.compareTo(RISK_1_3R) > 0);
 
             boolean is_auto_trade_m15 = trade.getComment().contains(Utils.ENCRYPTED_15);
-            boolean pass_holding_4h = allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H);
+            boolean pass_holding_2h = allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_2H);
             // -------------------------------------------------------------------------------------
             String reason_id = "";
             boolean is_hit_sl = false;
@@ -4425,7 +4427,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean stop_lost_by_money = reverse_05 && PROFIT.add(RISK_PER_TRADE).compareTo(BigDecimal.ZERO) < 0;
 
             boolean stop_loss_by_entry_cond = is_auto_trade_m15
-                    && ((PROFIT.compareTo(BigDecimal.ZERO) > 0) || pass_holding_4h)
+                    && ((PROFIT.compareTo(BigDecimal.ZERO) > 0) || pass_holding_2h)
                     && Objects.equals(dto_15.getTrend_by_ma_20(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_by_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
@@ -4457,19 +4459,31 @@ public class BinanceServiceImpl implements BinanceService {
             // O.5R -> traning_stop
             if (has_profit_1_2R) {
                 list_tiket_traning_stop.add(TICKET);
+
+                if (tradeList.size() > 2) {
+                    String reason = "has_profit_1_2R:" + Utils.appendLeft(PROFIT.intValue(), 5) + "$";
+                    msg += "(Closed:" + TRADE_TREND + ")" + EPIC + "." + reason;
+                    BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
+                }
             }
 
             // 1R -> đóng 2/3 lệnh
             if (PROFIT.compareTo(RISK_PER_TRADE) > 0) {
-                List<Mt5OpenTradeEntity> tradeList = mt5OpenTradeRepository.findAllBySymbolOrderByCompanyAsc(EPIC);
+
                 if (tradeList.size() > 1) {
                     for (Mt5OpenTradeEntity entity : tradeList) {
                         if (!Objects.equals(entity.getTicket(), TICKET)) {
-                            String reason = "close_trade_rr11:" + Utils.appendLeft(PROFIT.intValue(), 5) + "$";
+                            String reason = "close_trade_rr11:" + Utils.appendLeft(entity.getProfit().intValue(), 5)
+                                    + "$";
                             msg += "(Closed:" + TRADE_TREND + ")" + EPIC + "." + reason;
                             BscScanBinanceApplication.mt5_close_ticket_dict.put(entity.getTicket(), reason);
                         }
                     }
+                }
+
+                if (reverse_05) {
+                    is_hit_sl = true;
+                    reason_id += "(reverse_05, 1R)";
                 }
             }
 
@@ -4485,7 +4499,13 @@ public class BinanceServiceImpl implements BinanceService {
             // Option 1) Giữ lệnh 2h, nếu 2 cây nến heiken đóng cửa đảo chiều.
             // Optonn 2) Giữ lệnh 2h, macd đảo chiều.
             // Optonn 3) Giữ lệnh 2h, đóng nến ma20 đảo chiều.
-            if (has_profit_1_3R && is_auto_trade_m15 && pass_holding_4h) {
+            if (has_profit_1_3R && is_auto_trade_m15 && pass_holding_2h) {
+                boolean h1_reverse_heiken = Objects.equals(dto_h1.getTrend_by_heiken(), REVERSE_TRADE_TREND);
+                if (h1_reverse_heiken) {
+                    is_hit_sl = true;
+                    reason_id += "(h1_reverse_heiken)";
+                }
+
                 boolean ma_15_reverse_heiken = Objects.equals(dto_15.getTrend_by_heiken(), REVERSE_TRADE_TREND)
                         && Objects.equals(dto_15.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
                         && Objects.equals(dto_15.getTrend_by_ma_9(), REVERSE_TRADE_TREND)

@@ -2038,7 +2038,7 @@ public class Utils {
     }
 
     public static boolean is_close_trade_time() {
-        List<Integer> times = Arrays.asList(16, 1, 2, 3);
+        List<Integer> times = Arrays.asList(11, 16, 1, 2, 3);
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
