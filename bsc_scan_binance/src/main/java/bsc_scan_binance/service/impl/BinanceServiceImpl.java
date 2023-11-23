@@ -4021,13 +4021,13 @@ public class BinanceServiceImpl implements BinanceService {
                 if ((ma9.compareTo(ma20) >= 0) && (ma20.compareTo(ma50) >= 0)) {
                     trend_by_seq_10_20_50 = Utils.TREND_LONG;
                 } else if ((ma9.compareTo(ma50) >= 0) || (ma20.compareTo(ma50) >= 0)) {
-                    trend_by_seq_10_20_50 = Utils.TREND_LONG;
+                    //trend_by_seq_10_20_50 = Utils.TREND_LONG;
                 }
             } else {
                 if ((ma9.compareTo(ma20) <= 0) && (ma20.compareTo(ma50) <= 0)) {
                     trend_by_seq_10_20_50 = Utils.TREND_SHOT;
                 } else if ((ma9.compareTo(ma50) <= 0) || (ma20.compareTo(ma50) <= 0)) {
-                    trend_by_seq_10_20_50 = Utils.TREND_SHOT;
+                    //trend_by_seq_10_20_50 = Utils.TREND_SHOT;
                 }
             }
         }
