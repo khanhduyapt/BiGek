@@ -4158,7 +4158,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean is_able_tp = Utils.is_able_take_profit(dto_h1, dailyRange.getAvg_amp_week(), dto_h1);
             String eoz = is_able_tp ? "     " : "EOZ:" + Utils.getType(dto_h1.getTrend_by_heiken());
             // ---------------------------------------------------------------------------------------------
-            String amp = " ";
+            String amp = eoz + " ";
             amp += "(avg_w):" + Utils.appendSpace(dailyRange.getAvg_amp_week(), 10);
 
             amp += Utils.calc_BUF_LO_HI_BUF_Forex(Utils.RISK_200_USD, true, trend_h1_heiken, EPIC, curr_price,
@@ -4266,51 +4266,54 @@ public class BinanceServiceImpl implements BinanceService {
 
             String trading_trend = dto_15.getTrend_heiken_candle1();
 
-            boolean signal_allow_trade = Objects.equals(trading_trend, macd_h1.getTrend_signal_vs_zero())
-                    && (macd_h1.getCount_cur_ema9_wave() <= 5);
+            if (is_able_tp) {
 
-            boolean macd_allow_trade = Objects.equals(trading_trend, macd_h1.getTrend_signal_vs_zero())
-                    && Objects.equals(trading_trend, macd_h1.getTrend_macd_vs_zero())
-                    && (macd_h1.getCount_cur_macd_vs_zero() <= 2);
-            macd_allow_trade = false;
+                boolean signal_allow_trade = Objects.equals(trading_trend, macd_h1.getTrend_signal_vs_zero())
+                        && (macd_h1.getCount_cur_ema9_wave() <= 5);
 
-            boolean zero_allow_trade = Objects.equals(trading_trend, macd_h1.getTrend_signal_vs_zero())
-                    && Objects.equals(trading_trend, macd_h1.getTrend_macd_vs_zero())
-                    && (dto_h1.getCount_position_of_candle1_vs_ma20() <= 2) && false;
-            zero_allow_trade = false;
+                boolean macd_allow_trade = Objects.equals(trading_trend, macd_h1.getTrend_signal_vs_zero())
+                        && Objects.equals(trading_trend, macd_h1.getTrend_macd_vs_zero())
+                        && (macd_h1.getCount_cur_macd_vs_zero() <= 2);
+                macd_allow_trade = false;
 
-            if (signal_allow_trade || macd_allow_trade || zero_allow_trade) {
-                boolean m15_allow_trade = Objects.equals(trading_trend, dto_h1.getTrend_by_heiken())
-                        && Objects.equals(trading_trend, macd_15.getTrend_signal_vs_zero())
-                        && Objects.equals(trading_trend, dto_15.getTrend_by_heiken())
-                        && Objects.equals(trading_trend, dto_15.getTrend_heiken_candle1());
+                boolean zero_allow_trade = Objects.equals(trading_trend, macd_h1.getTrend_signal_vs_zero())
+                        && Objects.equals(trading_trend, macd_h1.getTrend_macd_vs_zero())
+                        && (dto_h1.getCount_position_of_candle1_vs_ma20() <= 2) && false;
+                zero_allow_trade = false;
 
-                if (m15_allow_trade) {
-                    String comments = "";
-                    if (dto_15.getSwitch_trend().contains(Utils.TEXT_SEQ)) {
-                        comments += "_sq" + Utils.ENCRYPTED_15;
-                    } else if (Objects.equals(trading_trend, dto_15.getTrend_by_seq_10_20_50())) {
-                        comments += "_mc" + Utils.ENCRYPTED_15;
-                    }
+                if (signal_allow_trade || macd_allow_trade || zero_allow_trade) {
+                    boolean m15_allow_trade = Objects.equals(trading_trend, dto_h1.getTrend_by_heiken())
+                            && Objects.equals(trading_trend, macd_15.getTrend_signal_vs_zero())
+                            && Objects.equals(trading_trend, dto_15.getTrend_by_heiken())
+                            && Objects.equals(trading_trend, dto_15.getTrend_heiken_candle1());
 
-                    if (Utils.isNotBlank(comments)) {
-                        close_reverse_trade(EPIC, trading_trend);
-
-                        comments += Utils.TEXT_PASS;
-                        if (signal_allow_trade) {
-                            comments += "_sgn" + macd_h1.getCount_cur_ema9_wave().intValue();
-                        } else if (macd_allow_trade) {
-                            comments += "_mac" + macd_h1.getCount_cur_macd_vs_zero().intValue();
-                        } else if (zero_allow_trade) {
-                            comments += "_mhm" + dto_h1.getCount_position_of_candle1_vs_ma20().intValue();
+                    if (m15_allow_trade) {
+                        String comments = "";
+                        if (dto_15.getSwitch_trend().contains(Utils.TEXT_SEQ)) {
+                            comments += "_sq" + Utils.ENCRYPTED_15;
+                        } else if (Objects.equals(trading_trend, dto_15.getTrend_by_seq_10_20_50())) {
+                            comments += "_mc" + Utils.ENCRYPTED_15;
                         }
 
-                        Mt5OpenTrade trade = Utils.calc_Lot_En_SL_TP(Utils.RISK_50_USD, EPIC, trading_trend, dto_15,
-                                comments, true, "", dailyRange, 3);
+                        if (Utils.isNotBlank(comments)) {
+                            close_reverse_trade(EPIC, trading_trend);
 
-                        String key = EPIC + Utils.ENCRYPTED_15;
-                        BscScanBinanceApplication.mt5_open_trade_List.add(trade);
-                        BscScanBinanceApplication.dic_comment.put(key, trade.getComment());
+                            comments += Utils.TEXT_PASS;
+                            if (signal_allow_trade) {
+                                comments += "_sgn" + macd_h1.getCount_cur_ema9_wave().intValue();
+                            } else if (macd_allow_trade) {
+                                comments += "_mac" + macd_h1.getCount_cur_macd_vs_zero().intValue();
+                            } else if (zero_allow_trade) {
+                                comments += "_mhm" + dto_h1.getCount_position_of_candle1_vs_ma20().intValue();
+                            }
+
+                            Mt5OpenTrade trade = Utils.calc_Lot_En_SL_TP(Utils.RISK_50_USD, EPIC, trading_trend, dto_15,
+                                    comments, true, "", dailyRange, 3);
+
+                            String key = EPIC + Utils.ENCRYPTED_15;
+                            BscScanBinanceApplication.mt5_open_trade_List.add(trade);
+                            BscScanBinanceApplication.dic_comment.put(key, trade.getComment());
+                        }
                     }
                 }
             }
