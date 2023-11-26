@@ -2028,7 +2028,7 @@ public class Utils {
     // vào lệnh từ 18h~20h: lãi thì chốt từ 22h trở đi.
     public static boolean is_open_trade_time() {
         List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-        //, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2
+        // , 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -5189,28 +5189,6 @@ public class Utils {
         return list;
     }
 
-    public static String contact_with_pivot(DailyRange dailyRange) {
-        if (Objects.isNull(dailyRange)) {
-            return "";
-        }
-
-        BigDecimal wast = dailyRange.getAvg_amp_week().multiply(BigDecimal.valueOf(0.1));
-
-        if ((dailyRange.getAmp_fr().subtract(wast).compareTo(dailyRange.getCurr_price()) < 0)
-                && (dailyRange.getCurr_price().compareTo(dailyRange.getAmp_fr().add(wast)) < 0)) {
-
-            return TEXT_PIVOT_FR;
-        }
-
-        if ((dailyRange.getAmp_to().subtract(wast).compareTo(dailyRange.getCurr_price()) < 0)
-                && (dailyRange.getCurr_price().compareTo(dailyRange.getAmp_to().add(wast)) < 0)) {
-
-            return TEXT_PIVOT_TO;
-        }
-
-        return "";
-    }
-
     public static Mt5OpenTrade calc_Lot_En_SL_TP(BigDecimal risk_per_trade, String EPIC, String find_trend,
             Orders dto_h1, String append, boolean isTradeNow, String CAPITAL_TIME_XX, DailyRange dailyRange,
             int total_trade) {
@@ -5735,23 +5713,6 @@ public class Utils {
         return result;
     }
 
-    public static String trend_possion_when_price_touches_BB_D1(DailyRange dailyRange, BigDecimal curr_price) {
-        String trend = "";
-
-        BigDecimal h41_upper = dailyRange.getUpper_d1();
-        BigDecimal h41_lower = dailyRange.getLower_d1();
-
-        if (curr_price.compareTo(h41_lower) < 0) {
-            trend = Utils.TREND_LONG;
-        }
-
-        if (curr_price.compareTo(h41_upper) > 0) {
-            trend = Utils.TREND_SHOT;
-        }
-
-        return trend;
-    }
-
     public static String trend_by_ma3_6_9(String trend_by_heiken, String trend_ma_6, String trend_ma_9, BigDecimal ma_3,
             BigDecimal ma_6, BigDecimal ma_9) {
         if (Objects.equals(Utils.TREND_LONG, trend_ma_6) && Objects.equals(Utils.TREND_LONG, trend_ma_9)
@@ -6087,12 +6048,9 @@ public class Utils {
     }
 
     public static Mt5Macd MACDCalculator(List<BtcFutures> list, String EPIC, String time_frame) {
-        ArrayList<Double> prices = new ArrayList<Double>();
-
-        for (int i = list.size() - 1; i >= 0; i--) {
-            BtcFutures dto = list.get(i);
-
-            prices.add(dto.getPrice_close_candle().doubleValue());
+        double[] prices = new double[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            prices[i] = list.get(i).getPrice_close_candle().doubleValue();
         }
 
         int shortTermPeriod = 3; // EMA short term period
@@ -6144,7 +6102,7 @@ public class Utils {
                     step = 1;
 
                     count_cur_ema9_wave += 1;
-                    close_price_of_n1_candle = prices.get(index);
+                    close_price_of_n1_candle = prices[index];
                 } else if (temp_ema9_of_macd < 0) {
                     step = 2;
 
@@ -6157,7 +6115,7 @@ public class Utils {
                     step = 1;
 
                     count_cur_ema9_wave += 1;
-                    close_price_of_n1_candle = prices.get(index);
+                    close_price_of_n1_candle = prices[index];
                 } else if (temp_ema9_of_macd > 0) {
                     step = 2;
 
@@ -6196,12 +6154,12 @@ public class Utils {
         return mt5_macd;
     }
 
-    private static double[] calculateMACD(ArrayList<Double> prices, int shortTermPeriod, int longTermPeriod) {
+    private static double[] calculateMACD(double[] prices, int shortTermPeriod, int longTermPeriod) {
         double[] emaShort = calculateEMA(prices, shortTermPeriod);
         double[] emaLong = calculateEMA(prices, longTermPeriod);
 
-        double[] macd = new double[prices.size()];
-        for (int i = 0; i < prices.size(); i++) {
+        double[] macd = new double[prices.length];
+        for (int i = 0; i < prices.length; i++) {
             macd[i] = emaShort[i] - emaLong[i];
         }
 
@@ -6213,16 +6171,13 @@ public class Utils {
         return signalLine;
     }
 
-    private static double[] calculateEMA(ArrayList<Double> prices, int period) {
-        double[] ema = new double[prices.size()];
+    private static double[] calculateEMA(double[] prices, int period) {
+        double[] ema = calculateSMA(prices, period);
 
         double smoothingFactor = 2.0 / (period + 1);
 
-        // Tính EMA ban đầu bằng giá trị đầu tiên
-        ema[0] = prices.get(0);
-
-        for (int i = 1; i < prices.size(); i++) {
-            double currentPrice = prices.get(i);
+        for (int i = 1; i < prices.length; i++) {
+            double currentPrice = prices[i];
             double previousEMA = ema[i - 1];
             ema[i] = (currentPrice - previousEMA) * smoothingFactor + previousEMA;
         }
@@ -6244,6 +6199,36 @@ public class Utils {
         return sma;
     }
 
+    public static boolean isBuyNowByMA20_50_2R(String macdH4, String macdH1, String macdMinus, double curPrice,
+            double ma20, double ma50, double loH1_20_1, double miH1_20_0) {
+
+        if (TREND_LONG.equals(macdH4) && TREND_LONG.equals(macdH1) && TREND_LONG.equals(macdMinus)) {
+            if ((curPrice < loH1_20_1) && (loH1_20_1 < ma50) && (ma50 < ma20) && (ma20 < miH1_20_0)) {
+                return true;
+            }
+
+            if ((curPrice < miH1_20_0) && (loH1_20_1 < ma50) && (ma50 < ma20) && (ma20 < miH1_20_0)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isSellNowByMA20_50_2R(String macdH4, String macdH1, String macdMinus, double curPrice,
+            double ma20, double ma50, double hiH1_20_1, double miH1_20_0) {
+        if (TREND_SHOT.equals(macdH4) && TREND_SHOT.equals(macdH1) && TREND_SHOT.equals(macdMinus)) {
+            if ((curPrice > hiH1_20_1) && (hiH1_20_1 > ma50) && (ma50 > ma20) && (ma20 > miH1_20_0)) {
+                return true;
+            }
+
+            if ((curPrice > ma20) && (hiH1_20_1 > ma50) && (ma50 > ma20) && (ma20 > miH1_20_0)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
 
 //// vào: H4 nến heiken đầu tiên đóng nến theo ma9;

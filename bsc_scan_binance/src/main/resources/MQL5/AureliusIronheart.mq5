@@ -69,10 +69,10 @@ void OnTimer(void)
          //-------------------------------------------------------------------------------------------------------------------------------
          MqlRates rates_5[];
          ArraySetAsSeries(rates_5,true);
-         copied=CopyRates(symbol, PERIOD_M5, 0, 89, rates_5);
+         copied=CopyRates(symbol, PERIOD_M5, 0, 55, rates_5);
          if(copied>0)
            {
-            int size=fmin(copied, 89);
+            int size=fmin(copied, 55);
             for(int i=0; i<size; i++)
               {
                FileWrite(nfile_handle, symbol, "MINUTE_03", rates_5[i].time, rates_5[i].open, rates_5[i].high, rates_5[i].low, rates_5[i].close, current_price);
@@ -85,10 +85,10 @@ void OnTimer(void)
          //-------------------------------------------------------------------------------------------------------------------------------
          MqlRates rates_15[];
          ArraySetAsSeries(rates_15,true);
-         copied=CopyRates(symbol, PERIOD_M15, 0, 89, rates_15);
+         copied=CopyRates(symbol, PERIOD_M15, 0, 55, rates_15);
          if(copied>0)
            {
-            int size=fmin(copied, 89);
+            int size=fmin(copied, 55);
             for(int i=0; i<size; i++)
               {
                FileWrite(nfile_handle, symbol, "MINUTE_15", rates_15[i].time, rates_15[i].open, rates_15[i].high, rates_15[i].low, rates_15[i].close, current_price);
@@ -97,23 +97,6 @@ void OnTimer(void)
          else
            {
             FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_M15");
-           }
-
-         //-------------------------------------------------------------------------------------------------------------------------------
-         MqlRates rates_h1[];
-         ArraySetAsSeries(rates_h1,true);
-         copied=CopyRates(symbol, PERIOD_H1, 0, 100, rates_h1);
-         if(copied>0)
-           {
-            int size=fmin(copied, 100);
-            for(int i=0; i<size; i++)
-              {
-               FileWrite(nfile_handle, symbol, "HOUR_01", rates_h1[i].time, rates_h1[i].open, rates_h1[i].high, rates_h1[i].low, rates_h1[i].close, current_price);
-              }
-           }
-         else
-           {
-            FileWrite(nfile_handle, "NOT_FOUND", symbol, "PERIOD_H1");
            }
          //--------------------------------------------------------------------------------------------------------------------
          //--------------------------------------------------------------------------------------------------------------------

@@ -108,7 +108,7 @@ public class Orders {
     private String trend_by_seq_ma_369;
 
     @Column(name = "trend_by_bread_area")
-    private String super_trend_by_ma50_100;
+    private String todo;
 
     @Column(name = "short_zone")
     private BigDecimal body_hig_50_candle = BigDecimal.ZERO;
@@ -129,7 +129,7 @@ public class Orders {
     private BigDecimal tp_shot = BigDecimal.ZERO;
 
     @Column(name = "ma010")
-    private BigDecimal todo2 = BigDecimal.ZERO;
+    private BigDecimal ma20 = BigDecimal.ZERO;
 
     @Column(name = "low_50candle")
     private BigDecimal low_50candle = BigDecimal.ZERO;

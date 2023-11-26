@@ -59,27 +59,25 @@ public class DailyRange {
     private BigDecimal curr_price = BigDecimal.ZERO;
 
     @Column(name = "lower_03")
-    private BigDecimal lot_size_per_500usd = BigDecimal.ZERO;
-
+    private BigDecimal hi_h1_20_1 = BigDecimal.ZERO;
     @Column(name = "upper_15")
-    private BigDecimal amp_fr = BigDecimal.ZERO;
+    private BigDecimal mi_h1_20_0 = BigDecimal.ZERO;
     @Column(name = "lower_15")
-    private BigDecimal amp_to = BigDecimal.ZERO;
-
+    private BigDecimal lo_h1_20_1 = BigDecimal.ZERO;
     @Column(name = "upper_h1")
-    private BigDecimal todo_2 = BigDecimal.ZERO;
-    @Column(name = "lower_h1")
-    private BigDecimal todo_3 = BigDecimal.ZERO;
+    private BigDecimal amp_h1 = BigDecimal.ZERO;
 
+    @Column(name = "lower_h1")
+    private BigDecimal signal_macd_h4 = BigDecimal.ZERO;
     @Column(name = "upper_h4")
-    private BigDecimal h4_ma10 = BigDecimal.ZERO;
-    
+    private BigDecimal signal_macd_h1 = BigDecimal.ZERO;
     @Column(name = "lower_h4")
-    private BigDecimal lower_h4 = BigDecimal.ZERO;
+    private BigDecimal signal_macd_15 = BigDecimal.ZERO;
+
     @Column(name = "upper_d1")
-    private BigDecimal upper_d1 = BigDecimal.ZERO;
+    private BigDecimal todo1 = BigDecimal.ZERO;
     @Column(name = "lower_d1")
-    private BigDecimal lower_d1 = BigDecimal.ZERO;
+    private BigDecimal todo2 = BigDecimal.ZERO;
 
     @Column(name = "d_close")
     private BigDecimal d_close = BigDecimal.ZERO;
