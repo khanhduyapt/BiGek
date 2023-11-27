@@ -45,11 +45,11 @@ void OnTimer(void)
                              "BTCUSD",
                              //"ETHUSD", "DOGEUSD", "DASHUSD", "ADAUSD", "DOTUSD", "LTCUSD", "XRPUSD",
 
-                             "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
-                             "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
-                             "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD",
-                             "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD",
-                             "USDCAD", "USDCHF", "USDJPY", "CADJPY", "CHFJPY", "CADCHF"
+                             "AUDCAD", "AUDJPY", "AUDNZD", "AUDUSD",
+                             "EURAUD", "EURCAD", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
+                             "GBPAUD", "GBPCAD", "GBPJPY", "GBPNZD", "GBPUSD",
+                             "NZDCAD", "NZDJPY", "NZDUSD",
+                             "USDCAD", "USDJPY", "CADJPY"
                             };
 
       int copied;

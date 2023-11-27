@@ -227,10 +227,9 @@ public class Utils {
     public static final String PREFIX_MO1 = "_d30";
 
     public static final String ENCRYPTED_03 = "_03p";
-    // public static final String ENCRYPTED_05 = "_05p";
     public static final String ENCRYPTED_10 = "_10p";
     public static final String ENCRYPTED_12 = "_12p";
-    public static final String ENCRYPTED_15 = "_15p";
+    public static final String ENCRYPTED_15 = "_mnp";
 
     public static final String ENCRYPTED_H1 = "_mgi";
     public static final String ENCRYPTED_H4 = "_bng";
@@ -308,32 +307,33 @@ public class Utils {
 
     // "AUS200", "EU50", "FRA40", "GER40", "SPN35", "UK100",
     public static final List<String> EPICS_INDEXS_CFD = Arrays.asList("US100", "US30", "BTCUSD");
+    // "USDCHF", "AUDCHF", "CHFJPY", "EURCHF", "GBPCHF", "NZDCHF", "USDCHF", ,
+    // "CADCHF" "AUDCHF", "CADCHF", , "CHFJPY", "EURCHF" , "GBPCHF" , "NZDCHF" ,
+    // "USDCHF"
 
-    public static final List<String> EPICS_SCAP_15M_FX = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD",
-            "USDCAD", "NZDUSD", "XAUUSD", "USOIL", "US30");
+    public static final List<String> EPICS_SCAP_15M_FX = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "AUDUSD", "USDCAD",
+            "NZDUSD", "XAUUSD", "USOIL", "US30");
 
-    public static final List<String> EPICS_MAIN_FX = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "USDCHF", "EURGBP",
-            "EURAUD", "AUDJPY", "USDCAD", "AUDUSD", "XAUUSD", "XAGUSD", "USOIL");
+    public static final List<String> EPICS_MAIN_FX = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "EURGBP", "EURAUD",
+            "AUDJPY", "USDCAD", "AUDUSD", "XAUUSD", "XAGUSD", "USOIL");
 
-    public static final List<String> EPICS_FOREXS_ALL = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
-            "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD",
-            "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD", "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD",
-            "USDCHF", "USDJPY", "CADCHF");
+    public static final List<String> EPICS_FOREXS_ALL = Arrays.asList("AUDCAD", "AUDJPY", "AUDNZD", "AUDUSD", "CADJPY",
+            "EURAUD", "EURCAD", "EURGBP", "EURJPY", "EURNZD", "EURUSD", "GBPAUD", "GBPCAD", "GBPJPY", "GBPNZD",
+            "GBPUSD", "NZDCAD", "NZDJPY", "NZDUSD", "USDCAD", "USDJPY");
 
-    public static final List<String> EPICS_FOREXS_AUDx = Arrays.asList("AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD",
-            "AUDUSD");
+    public static final List<String> EPICS_FOREXS_AUDx = Arrays.asList("AUDCAD", "AUDJPY", "AUDNZD", "AUDUSD");
 
-    public static final List<String> EPICS_FOREXS_CADx = Arrays.asList("CADCHF", "CADJPY", "CHFJPY");
+    public static final List<String> EPICS_FOREXS_CADx = Arrays.asList("CADJPY");
 
-    public static final List<String> EPICS_FOREXS_EURx = Arrays.asList("EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY",
-            "EURNZD", "EURUSD");
+    public static final List<String> EPICS_FOREXS_EURx = Arrays.asList("EURAUD", "EURCAD", "EURGBP", "EURJPY", "EURNZD",
+            "EURUSD");
 
-    public static final List<String> EPICS_FOREXS_GBPx = Arrays.asList("GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD",
+    public static final List<String> EPICS_FOREXS_GBPx = Arrays.asList("GBPAUD", "GBPCAD", "GBPJPY", "GBPNZD",
             "GBPUSD");
 
-    public static final List<String> EPICS_FOREXS_NZDx = Arrays.asList("NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD");
+    public static final List<String> EPICS_FOREXS_NZDx = Arrays.asList("NZDCAD", "NZDJPY", "NZDUSD");
 
-    public static final List<String> EPICS_FOREXS_USDx = Arrays.asList("USDCAD", "USDCHF", "USDJPY");
+    public static final List<String> EPICS_FOREXS_USDx = Arrays.asList("USDCAD", "USDJPY");
 
     // "16:30 - 23:00"
     // "AIRF", "LVMH", "PFE", "RACE", "VOWG_p", "BABA", "T", "V", "ZM"
@@ -2027,8 +2027,8 @@ public class Utils {
     // vào lệnh từ 13h~15h: lãi thì chốt từ 16h trở đi.
     // vào lệnh từ 18h~20h: lãi thì chốt từ 22h trở đi.
     public static boolean is_open_trade_time() {
-        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-        // , 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2
+        List<Integer> times = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
+        // , 23, 0, 1, 2
         int hh = Utils.getIntValue(Utils.convertDateToString("HH", Calendar.getInstance().getTime()));
         if (times.contains(hh)) {
             return true;
@@ -5136,6 +5136,28 @@ public class Utils {
         return tmp_msg + url;
     }
 
+    public static List<BigDecimal> get_SL_TP_H1(DailyRange dailyRange, String find_trend) {
+        BigDecimal stop_loss = BigDecimal.ZERO;
+        BigDecimal take_profit = BigDecimal.ZERO;
+        BigDecimal amp_h1 = dailyRange.getAmp_h1();
+
+        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
+            stop_loss = dailyRange.getLo_h1_20_1().subtract(amp_h1);
+            take_profit = dailyRange.getHi_h1_20_1().add(amp_h1);
+        }
+
+        if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
+            stop_loss = dailyRange.getHi_h1_20_1().add(amp_h1);
+            take_profit = dailyRange.getLo_h1_20_1().subtract(amp_h1);
+        }
+
+        List<BigDecimal> list = new ArrayList<BigDecimal>();
+        list.add(stop_loss);
+        list.add(take_profit);
+
+        return list;
+    }
+
     public static List<BigDecimal> get_SL_TP_by_amp(DailyRange dailyRange, BigDecimal curr_price, String find_trend) {
         BigDecimal stop_loss = BigDecimal.ZERO;
         BigDecimal take_profit = BigDecimal.ZERO;
@@ -5190,27 +5212,31 @@ public class Utils {
     }
 
     public static Mt5OpenTrade calc_Lot_En_SL_TP(BigDecimal risk_per_trade, String EPIC, String find_trend,
-            Orders dto_h1, String append, boolean isTradeNow, String CAPITAL_TIME_XX, DailyRange dailyRange,
+            Orders dto_05, String append, boolean isTradeNow, String CAPITAL_TIME_XX, DailyRange dailyRange,
             int total_trade) {
 
         if (Utils.isBlank(find_trend)) {
             return null;
         }
-        BigDecimal curr_price = dto_h1.getCurrent_price();
-        BigDecimal entry_1 = BigDecimal.ZERO;
-        BigDecimal entry_2 = BigDecimal.ZERO;
-        BigDecimal entry_3 = BigDecimal.ZERO;
 
-        List<BigDecimal> sl_tp = Utils.get_SL_TP_by_amp(dailyRange, curr_price, find_trend);
-        BigDecimal stop_loss = sl_tp.get(0);
-        BigDecimal take_profit = sl_tp.get(1);
+        BigDecimal curr_price = dto_05.getCurrent_price();
+        BigDecimal take_profit = BigDecimal.ZERO;
+        BigDecimal entry_2 = BigDecimal.ZERO;
+        BigDecimal amp_h1 = dailyRange.getAmp_h1();
 
         BigDecimal sl_calc = BigDecimal.ZERO;
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            sl_calc = dto_h1.getSl_long();
+            entry_2 = curr_price.subtract(amp_h1);
+            take_profit = dailyRange.getHi_h1_20_1();
+
+            sl_calc = dailyRange.getLo_h1_20_1().subtract(amp_h1).subtract(amp_h1); // Lo_h1_20_3
         }
+
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            sl_calc = dto_h1.getSl_shot();
+            entry_2 = curr_price.add(amp_h1);
+            take_profit = dailyRange.getLo_h1_20_1();
+
+            sl_calc = dailyRange.getHi_h1_20_1().add(amp_h1).add(amp_h1); // Hi_h1_20_3
         }
 
         MoneyAtRiskResponse calc_vol = new MoneyAtRiskResponse(EPIC, risk_per_trade, curr_price, sl_calc, take_profit);
@@ -5219,20 +5245,19 @@ public class Utils {
         String type = Objects.equals(find_trend, Utils.TREND_LONG) ? "_b" : "_s";
 
         Mt5OpenTrade dto = new Mt5OpenTrade();
-        stop_loss = BigDecimal.ZERO;
 
         dto.setEpic(EPIC);
         dto.setOrder_type(find_trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
         dto.setCur_price(curr_price);
         dto.setLots(volume);
-        dto.setEntry1(entry_1);
-        dto.setStop_loss(stop_loss);
+        dto.setEntry1(BigDecimal.ZERO);
+        dto.setStop_loss(BigDecimal.ZERO);
         dto.setTake_profit1(take_profit);
         dto.setComment(create_trade_comment(EPIC, CAPITAL_TIME_XX, type + append));
         dto.setEntry2(entry_2);
-        dto.setEntry3(entry_3);
+        dto.setEntry3(BigDecimal.ZERO);
         dto.setTake_profit2(take_profit);
-        dto.setTake_profit3(take_profit);
+        dto.setTake_profit3(BigDecimal.ZERO);
         dto.setTotal_trade(total_trade);
 
         return dto;

@@ -132,8 +132,7 @@ bool isDailyLimit()
   {
    double DAILY_LOSS_LIMIT = 2500;
    double total_loss = get_total_loss();
-   Comment("----------------------------------------------------------------------------------------------",
-           "Today Loss:" + format_double_to_string(total_loss, 5) + "-----------------------------------------------");
+
 
 // Return result
    bool result = total_loss > DAILY_LOSS_LIMIT;
@@ -321,7 +320,7 @@ void openTrade(string line)
 
       stop_loss        = NormalizeDouble(stop_loss, digits);
 
-      entry1           = NormalizeDouble(entry1,digits);
+      entry1           = NormalizeDouble(entry1, digits);
       take_prifit_1    = NormalizeDouble(take_prifit_1, digits);
 
       entry_2          = NormalizeDouble(entry_2, digits);
@@ -340,11 +339,15 @@ void openTrade(string line)
 
          if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_BUY, volume, entry1, stop_loss, take_prifit_1, comment))
             Alert("Duydk: BUY: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
+
+         if((entry_2 > 0) && (take_prifit_2 > 0))
+            m_trade.BuyLimit(volume, entry_2, trade_symbol, 0.0, take_prifit_2, 0, 0, "BUY_2");
         }
 
       if(type == "buy_limit")
         {
-
+         if((entry_2 > 0) && (take_prifit_2 > 0))
+            m_trade.BuyLimit(volume, entry_2, trade_symbol, 0.0, take_prifit_2, 0, 0, comment);
         }
 
       if(type == "sell")
@@ -352,11 +355,15 @@ void openTrade(string line)
          Alert(TimeCurrent(), "  SELL: ", trade_symbol, " vol:", volume);
          if(!m_trade.PositionOpen(trade_symbol, ORDER_TYPE_SELL, volume, entry1, stop_loss, take_prifit_1, comment))
             Alert("Duydk: SELL: ", trade_symbol, " ERROR:", m_trade.ResultRetcodeDescription());
+
+         if((entry_2 > 0) && (take_prifit_2 > 0))
+            m_trade.SellLimit(volume, entry_2, trade_symbol, 0.0, take_prifit_2, 0, 0, "SELL_2");
         }
 
       if(type== "sell_limit")
         {
-
+         if((entry_2 > 0) && (take_prifit_2 > 0))
+            m_trade.SellLimit(volume, entry_2, trade_symbol, 0.0, take_prifit_2, 0, 0, comment);
         }
 
      }

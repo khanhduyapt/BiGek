@@ -82,9 +82,9 @@ public class DailyRange {
     @Column(name = "d_close")
     private BigDecimal d_close = BigDecimal.ZERO;
     @Column(name = "d_today_low")
-    private BigDecimal d_today_low = BigDecimal.ZERO;
+    private BigDecimal today_low = BigDecimal.ZERO;
     @Column(name = "d_today_hig")
-    private BigDecimal d_today_hig = BigDecimal.ZERO;
+    private BigDecimal today_hig = BigDecimal.ZERO;
 
     @Column(name = "amp_min_d1")
     private BigDecimal amp_min_d1 = BigDecimal.ZERO;

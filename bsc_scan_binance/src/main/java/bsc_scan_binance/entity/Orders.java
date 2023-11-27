@@ -102,13 +102,13 @@ public class Orders {
     private String trend_by_ma_20;
 
     @Column(name = "trend_by_ma_50")
-    private String trend_by_seq_10_20_50;
+    private String trend_by_seq_20_50;
 
     @Column(name = "trend_by_seq_ma")
     private String trend_by_seq_ma_369;
 
     @Column(name = "trend_by_bread_area")
-    private String todo;
+    private String trend_by_seq_10_20_50;
 
     @Column(name = "short_zone")
     private BigDecimal body_hig_50_candle = BigDecimal.ZERO;
