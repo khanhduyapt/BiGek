@@ -4227,10 +4227,10 @@ public class BinanceServiceImpl implements BinanceService {
             // ------------------------------------------------
             if (Utils.isNotBlank(trading_trend) && Objects.equals(trading_trend, dto_h1.getTrend_by_heiken())) {
 
-                if (Utils.isNotBlank(comments)) {
+                if (Utils.isNotBlank(comments) && !is_opening_trade(EPIC, "")) {
                     close_reverse_trade(EPIC, trading_trend);
 
-                    comments += Utils.ENCRYPTED_15 + Utils.TEXT_NOTICE_ONLY;
+                    comments += Utils.ENCRYPTED_15 + Utils.TEXT_PASS;
 
                     Mt5OpenTrade trade = Utils.calc_Lot_En_SL_TP(Utils.RISK_50_USD, EPIC, trading_trend, dto_05,
                             comments, false, "", dailyRange, 1);
@@ -4336,6 +4336,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean has_profit_1_2R = (PROFIT.compareTo(RISK_1_2R) > 0);
             boolean has_profit_1_3R = (PROFIT.compareTo(RISK_1_3R) > 0);
 
+            boolean is_manual_trade = Utils.isBlank(trade.getComment());
             boolean is_auto_trade_m15 = trade.getComment().contains(Utils.ENCRYPTED_15);
             boolean pass_holding_4h = allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H);
             // -------------------------------------------------------------------------------------
@@ -4362,7 +4363,7 @@ public class BinanceServiceImpl implements BinanceService {
                     && (dto_15.getCount_position_of_candle1_vs_ma20().intValue() > 2);
 
             // Bảo vệ tài khoản tránh thua sạch tiền tích góp trong 53 ngày: -$6,133.97
-            if (stop_lost_by_money) { // || stop_lost_by_trend || stop_loss_by_entry_cond
+            if (stop_lost_by_money) {
                 is_hit_sl = true;
                 reason_id += "(STOPLOSS:ACCOUNT_PROTECTION)";
                 if (stop_lost_by_trend) {
@@ -4380,6 +4381,9 @@ public class BinanceServiceImpl implements BinanceService {
                 msg += "(Closed:" + TRADE_TREND + ")" + EPIC + "." + reason + reason_id;
 
                 BscScanBinanceApplication.mt5_close_ticket_dict.put(TICKET, reason);
+            }
+            if (is_manual_trade) {
+                continue;
             }
             // -------------------------------------------------------------------------------------------
             // -------------------------------------------------------------------------------------------

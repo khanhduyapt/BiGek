@@ -5142,12 +5142,12 @@ public class Utils {
         BigDecimal amp_h1 = dailyRange.getAmp_h1();
 
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            stop_loss = dailyRange.getLo_h1_20_1().subtract(amp_h1);
+            stop_loss = dailyRange.getMi_h1_20_0().subtract(amp_h1.multiply(BigDecimal.valueOf(5)));
             take_profit = dailyRange.getHi_h1_20_1().add(amp_h1);
         }
 
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            stop_loss = dailyRange.getHi_h1_20_1().add(amp_h1);
+            stop_loss = dailyRange.getMi_h1_20_0().add(amp_h1.multiply(BigDecimal.valueOf(5)));
             take_profit = dailyRange.getLo_h1_20_1().subtract(amp_h1);
         }
 
@@ -5226,14 +5226,20 @@ public class Utils {
 
         BigDecimal sl_calc = BigDecimal.ZERO;
         if (Objects.equals(find_trend, Utils.TREND_LONG)) {
-            entry_2 = curr_price.subtract(amp_h1);
+            entry_2 = dailyRange.getLo_h1_20_1();
+            if (entry_2.compareTo(curr_price) > 0) {
+                entry_2 = curr_price.subtract(amp_h1);
+            }
             take_profit = dailyRange.getHi_h1_20_1();
 
             sl_calc = dailyRange.getLo_h1_20_1().subtract(amp_h1).subtract(amp_h1); // Lo_h1_20_3
         }
 
         if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
-            entry_2 = curr_price.add(amp_h1);
+            entry_2 = dailyRange.getHi_h1_20_1();
+            if (entry_2.compareTo(curr_price) < 0) {
+                entry_2 = curr_price.add(amp_h1);
+            }
             take_profit = dailyRange.getLo_h1_20_1();
 
             sl_calc = dailyRange.getHi_h1_20_1().add(amp_h1).add(amp_h1); // Hi_h1_20_3
