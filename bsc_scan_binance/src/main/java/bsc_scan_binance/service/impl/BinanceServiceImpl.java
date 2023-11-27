@@ -4257,7 +4257,7 @@ public class BinanceServiceImpl implements BinanceService {
                     }
                 }
             }
-
+            allow_trade = false;
             if (allow_trade) {
 
                 boolean m15_allow_trade = Objects.equals(trading_trend, dto_h1.getTrend_by_heiken())
@@ -4385,7 +4385,7 @@ public class BinanceServiceImpl implements BinanceService {
             boolean has_profit_1_3R = (PROFIT.compareTo(RISK_1_3R) > 0);
 
             boolean is_auto_trade_m15 = trade.getComment().contains(Utils.ENCRYPTED_15);
-            boolean pass_holding_2h = allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_2H);
+            boolean pass_holding_4h = allow_open_or_close_trade_after(TICKET, Utils.MINUTES_OF_4H);
             // -------------------------------------------------------------------------------------
             String reason_id = "";
             boolean is_hit_sl = false;
@@ -4403,14 +4403,14 @@ public class BinanceServiceImpl implements BinanceService {
             boolean stop_lost_by_money = reverse_05 && PROFIT.add(RISK_PER_TRADE).compareTo(BigDecimal.ZERO) < 0;
 
             boolean stop_loss_by_entry_cond = is_auto_trade_m15
-                    && ((PROFIT.compareTo(BigDecimal.ZERO) > 0) || pass_holding_2h)
+                    && ((PROFIT.compareTo(BigDecimal.ZERO) > 0) || pass_holding_4h)
                     && Objects.equals(dto_15.getTrend_by_ma_20(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_by_heiken(), REVERSE_TRADE_TREND)
                     && Objects.equals(dto_15.getTrend_heiken_candle1(), REVERSE_TRADE_TREND)
                     && (dto_15.getCount_position_of_candle1_vs_ma20().intValue() > 2);
 
             // Bảo vệ tài khoản tránh thua sạch tiền tích góp trong 53 ngày: -$6,133.97
-            if (stop_lost_by_money || stop_lost_by_trend || stop_loss_by_entry_cond) {
+            if (stop_lost_by_money) { //|| stop_lost_by_trend || stop_loss_by_entry_cond
                 is_hit_sl = true;
                 reason_id += "(STOPLOSS:ACCOUNT_PROTECTION)";
                 if (stop_lost_by_trend) {
@@ -4468,7 +4468,7 @@ public class BinanceServiceImpl implements BinanceService {
             // Option 1) Giữ lệnh 2h, nếu 2 cây nến heiken đóng cửa đảo chiều.
             // Optonn 2) Giữ lệnh 2h, macd đảo chiều.
             // Optonn 3) Giữ lệnh 2h, đóng nến ma20 đảo chiều.
-            if (has_profit_1_3R && is_auto_trade_m15 && pass_holding_2h) {
+            if (has_profit_1_3R && is_auto_trade_m15 && pass_holding_4h) {
                 boolean h1_reverse_heiken = Objects.equals(dto_h1.getTrend_by_heiken(), REVERSE_TRADE_TREND);
                 if (h1_reverse_heiken) {
                     is_hit_sl = true;

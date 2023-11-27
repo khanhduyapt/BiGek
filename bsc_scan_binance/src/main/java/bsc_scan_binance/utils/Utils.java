@@ -5219,6 +5219,7 @@ public class Utils {
         String type = Objects.equals(find_trend, Utils.TREND_LONG) ? "_b" : "_s";
 
         Mt5OpenTrade dto = new Mt5OpenTrade();
+        stop_loss = BigDecimal.ZERO;
 
         dto.setEpic(EPIC);
         dto.setOrder_type(find_trend.toLowerCase() + (isTradeNow ? "" : TEXT_LIMIT));
