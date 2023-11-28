@@ -74,9 +74,19 @@ void OnTimer()
                count_sells++;
            }
 
-         FileWrite(nfile_handle, m_position.Symbol(), m_position.Ticket(), m_position.TypeDescription(), m_position.PriceOpen(), m_position.StopLoss(), m_position.TakeProfit()
-                   , m_position.Profit(), " " + m_position.Comment(), m_position.Volume(), m_position.PriceCurrent()
-                   , m_position.Time(), TimeCurrent());
+         FileWrite(nfile_handle
+                   , m_position.Symbol()
+                   , m_position.Ticket()
+                   , m_position.TypeDescription()
+                   , m_position.PriceOpen()
+                   , m_position.StopLoss()
+                   , m_position.TakeProfit()
+                   , m_position.Profit()
+                   , " " + m_position.Comment()
+                   , m_position.Volume()
+                   , m_position.PriceCurrent()
+                   , m_position.Time()
+                   , TimeCurrent());
         }
 
 
@@ -84,7 +94,19 @@ void OnTimer()
         {
          if(m_order.SelectByIndex(i))
            {
-            FileWrite(nfile_handle, m_order.Symbol(), m_order.Ticket(), m_order.TypeDescription(), m_order.PriceOpen(), m_order.StopLoss(), m_order.TakeProfit(), "0.0", " " + m_order.Comment(), m_order.VolumeCurrent(), m_order.PriceCurrent());
+            FileWrite(nfile_handle
+                      , m_order.Symbol()
+                      , m_order.Ticket()
+                      , m_order.TypeDescription()
+                      , m_order.PriceOpen()
+                      , m_order.StopLoss()
+                      , m_order.TakeProfit()
+                      , 0.0
+                      , " " + m_order.Comment()
+                      , m_order.VolumeCurrent()
+                      , m_order.PriceCurrent()
+                      , TimeCurrent()
+                      , TimeCurrent());
            }
         }
       //--------------------------------------------------------------------------------------------------------------------
