@@ -204,10 +204,10 @@ public class Utils {
     public static final String CAPITAL_TIME_03 = "MINUTE_03";
     public static final String CAPITAL_TIME_15 = "MINUTE_15";
     public static final String CAPITAL_TIME_H1 = "HOUR_01";
+    public static final String CAPITAL_TIME_H4 = "HOUR_04";
 
     private static final String CAPITAL_TIME_10 = "MINUTE_10";
     private static final String CAPITAL_TIME_12 = "MINUTE_12";
-    private static final String CAPITAL_TIME_H4 = "HOUR_04";
     private static final String CAPITAL_TIME_D1 = "DAY";
     private static final String CAPITAL_TIME_W1 = "WEEK";
     private static final String CAPITAL_TIME_MO = "MONTH";
@@ -5212,12 +5212,13 @@ public class Utils {
     }
 
     public static Mt5OpenTrade calc_Lot_En_SL_TP(BigDecimal risk_per_trade, String EPIC, String find_trend,
-            Orders dto_05, String append, boolean isTradeNow, String CAPITAL_TIME_XX, DailyRange dailyRange,
-            int total_trade) {
+            Orders dto_05, String append, DailyRange dailyRange, int total_trade) {
 
         if (Utils.isBlank(find_trend)) {
             return null;
         }
+
+        boolean isTradeNow = true;
 
         BigDecimal curr_price = dto_05.getCurrent_price();
         BigDecimal take_profit = BigDecimal.ZERO;
@@ -5259,7 +5260,7 @@ public class Utils {
         dto.setEntry1(BigDecimal.ZERO);
         dto.setStop_loss(BigDecimal.ZERO);
         dto.setTake_profit1(take_profit);
-        dto.setComment(create_trade_comment(EPIC, CAPITAL_TIME_XX, type + append));
+        dto.setComment(create_trade_comment(EPIC, type + append));
         dto.setEntry2(entry_2);
         dto.setEntry3(BigDecimal.ZERO);
         dto.setTake_profit2(take_profit);
@@ -5269,36 +5270,34 @@ public class Utils {
         return dto;
     }
 
-    public static String create_trade_comment(String EPIC, String CAPITAL_TIME_XX, String append) {
+    public static String create_trade_comment(String EPIC, String append) {
         String comment = BscScanBinanceApplication.hostname + getTime_day24Hmm()
-                + append.trim().replace(Utils.TEXT_PASS, "") + getEncryptedChartNameCapital(CAPITAL_TIME_XX);
+                + append.trim().replace(Utils.TEXT_PASS, "");
 
         return comment.toLowerCase();
     }
 
-    public static String calc_BUF_LO_HI_BUF_Forex(BigDecimal risk, boolean onlyWait, String find_switch_trend,
-            String EPIC, BigDecimal curr_price, DailyRange dailyRange, Orders dto_h4) {
+    public static String calc_BUF_LO_HI_BUF_Forex(BigDecimal risk, String find_trend, DailyRange dailyRange) {
         String result = "";
 
+        String EPIC = dailyRange.getId().getSymbol();
+        BigDecimal curr_price = dailyRange.getCurr_price();
         BigDecimal amp = dailyRange.getAvg_amp_week();
-        BigDecimal high = dto_h4.getTp_long().subtract(dto_h4.getSl_long()).multiply(BigDecimal.valueOf(0.5));
-        if (high.compareTo(amp) > 0) {
-            amp = high;
-        }
-
         BigDecimal low = curr_price.subtract(amp);
         BigDecimal hig = curr_price.add(amp);
 
-        String str_long = calc_BUF_Long_Forex(onlyWait, risk, EPIC, curr_price, curr_price, low, hig, "", "");
-        String str_shot = calc_BUF_Shot_Forex(onlyWait, risk, EPIC, curr_price, curr_price, hig, low, "", "");
+        String str_long = calc_BUF_Long_Forex(true, risk, EPIC, curr_price, curr_price, low, hig, "", "");
+        String str_shot = calc_BUF_Shot_Forex(true, risk, EPIC, curr_price, curr_price, hig, low, "", "");
 
-        if (Objects.equals(find_switch_trend, Utils.TREND_LONG)) {
-            result += str_long;
-        } else if (Objects.equals(find_switch_trend, Utils.TREND_SHOT)) {
-            result += str_shot;
-        } else {
-            result += Utils.appendSpace("", 20);
+        if (Objects.equals(find_trend, Utils.TREND_LONG)) {
+            result += str_long.trim();
+            result += "/avg_w: " + Utils.appendSpace(dailyRange.getAvg_amp_week(), 10);
+        } else if (Objects.equals(find_trend, Utils.TREND_SHOT)) {
+            result += str_shot.trim();
+            result += "/avg_w: " + Utils.appendSpace(dailyRange.getAvg_amp_week(), 10);
         }
+
+        result = Utils.appendSpace(result, 30);
 
         return result;
     }
@@ -6123,35 +6122,35 @@ public class Utils {
         double close_price_of_n1_candle = 0;
 
         int step = 0;
-        int count_cur_ema9_wave = 0;
-        int count_pre_ema9_wave = 0;
+        int count_cur_signal_wave = 0;
+        int count_pre_signal_wave = 0;
 
         for (int index = signals.length - 1; index > 0; index--) {
-            double temp_ema9_of_macd = signals[index];
+            double temp_signal = signals[index];
 
             if (signal >= 0) {
-                if ((temp_ema9_of_macd > 0) && (step < 2)) {
+                if ((temp_signal > 0) && (step < 2)) {
                     step = 1;
 
-                    count_cur_ema9_wave += 1;
+                    count_cur_signal_wave += 1;
                     close_price_of_n1_candle = prices[index];
-                } else if (temp_ema9_of_macd < 0) {
+                } else if (temp_signal < 0) {
                     step = 2;
 
-                    count_pre_ema9_wave += 1;
+                    count_pre_signal_wave += 1;
                 } else {
                     break;
                 }
             } else if (signal < 0) {
-                if ((temp_ema9_of_macd < 0) && (step < 2)) {
+                if ((temp_signal < 0) && (step < 2)) {
                     step = 1;
 
-                    count_cur_ema9_wave += 1;
+                    count_cur_signal_wave += 1;
                     close_price_of_n1_candle = prices[index];
-                } else if (temp_ema9_of_macd > 0) {
+                } else if (temp_signal > 0) {
                     step = 2;
 
-                    count_pre_ema9_wave += 1;
+                    count_pre_signal_wave += 1;
                 } else {
                     break;
                 }
@@ -6179,8 +6178,9 @@ public class Utils {
 
         Mt5MacdKey id = new Mt5MacdKey(EPIC, time_frame);
 
-        Mt5Macd mt5_macd = new Mt5Macd(id, Double.valueOf(count_pre_ema9_wave), Double.valueOf(count_cur_macd_vs_zero),
-                pre_macd_vs_zero, cur_macd_trend, trend_signal_vs_zero, trend_macd_vs_zero, count_cur_ema9_wave,
+        Mt5Macd mt5_macd = new Mt5Macd(id, Double.valueOf(count_pre_signal_wave),
+                Double.valueOf(count_cur_macd_vs_zero),
+                pre_macd_vs_zero, cur_macd_trend, trend_signal_vs_zero, trend_macd_vs_zero, count_cur_signal_wave,
                 BigDecimal.valueOf(close_price_of_n1_candle));
 
         return mt5_macd;
@@ -6204,14 +6204,15 @@ public class Utils {
     }
 
     private static double[] calculateEMA(double[] prices, int period) {
-        double[] ema = calculateSMA(prices, period);
-
         double smoothingFactor = 2.0 / (period + 1);
+        double[] ema = new double[prices.length];
 
-        for (int i = 1; i < prices.length; i++) {
+        ema[prices.length - 1] = prices[prices.length - 1];
+
+        for (int i = prices.length - 2; i >= 0; i--) {
             double currentPrice = prices[i];
-            double previousEMA = ema[i - 1];
-            ema[i] = (currentPrice - previousEMA) * smoothingFactor + previousEMA;
+            double previousEMA = ema[i + 1];
+            ema[i] = (currentPrice * smoothingFactor) + previousEMA * (1 - smoothingFactor);
         }
 
         return ema;
