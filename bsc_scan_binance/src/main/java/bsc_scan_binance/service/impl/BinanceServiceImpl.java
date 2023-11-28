@@ -2721,6 +2721,11 @@ public class BinanceServiceImpl implements BinanceService {
                     continue;
                 }
 
+                // Hoding
+                if ("_US100_US30_".contains(EPIC.toUpperCase())) {
+                    continue;
+                }
+
                 // TODO: CloseTickets
                 StringBuilder sb = new StringBuilder();
                 sb.append(TICKET);
