@@ -56,77 +56,12 @@ void OnTimer()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void get_trade_opening()
-  {
-   FileDelete("Trade.csv");
-   int nfile_handle = FileOpen("Trade.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
-
-   if(nfile_handle != INVALID_HANDLE)
-     {
-      FileWrite(nfile_handle, "Symbol", "Ticket", "TypeDescription", "PriceOpen",  "StopLoss", "TakeProfit",  "Profit",  "Comment", "Volume", "CurrPrice", "OpenTime", "CurrServerTime");
-
-      int count_buys = 0;
-      int count_sells = 0;
-      for(int i=PositionsTotal()-1; i>=0; i--)
-        {
-         if(m_position.SelectByIndex(i))
-           {
-            if(m_position.PositionType()==POSITION_TYPE_BUY)
-               count_buys++;
-            if(m_position.PositionType()==POSITION_TYPE_SELL)
-               count_sells++;
-           }
-
-         FileWrite(nfile_handle
-                   , m_position.Symbol()
-                   , m_position.Ticket()
-                   , m_position.TypeDescription()
-                   , m_position.PriceOpen()
-                   , m_position.StopLoss()
-                   , m_position.TakeProfit()
-                   , m_position.Profit()
-                   , " " + m_position.Comment()
-                   , m_position.Volume()
-                   , m_position.PriceCurrent()
-                   , m_position.Time()
-                   , TimeCurrent());
-        }
-
-
-      for(int i = OrdersTotal() - 1; i >= 0; i--)
-        {
-         if(m_order.SelectByIndex(i))
-           {
-            FileWrite(nfile_handle
-                      , m_order.Symbol()
-                      , m_order.Ticket()
-                      , m_order.TypeDescription()
-                      , m_order.PriceOpen()
-                      , m_order.StopLoss()
-                      , m_order.TakeProfit()
-                      , 0.0
-                      , " " + m_order.Comment()
-                      , m_order.VolumeCurrent()
-                      , m_order.PriceCurrent()
-                      , TimeCurrent()
-                      , TimeCurrent());
-           }
-        }
-      //--------------------------------------------------------------------------------------------------------------------
-      FileClose(nfile_handle);
-     }
-   else
-     {
-      //Print("(Data2Csv) Failed to get history data.");
-     }
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
 void get_history_today()
   {
-   FileDelete("HistoryToday.csv");
-   int nfile_history = FileOpen("HistoryToday.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
+   string yyyymmdd = TimeToString(TimeCurrent(), TIME_DATE);
+   string filename = "History_" + yyyymmdd + ".txt";
+   FileDelete(filename);
+   int nfile_history = FileOpen(filename, FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
 
    if(nfile_history != INVALID_HANDLE)
      {
@@ -252,9 +187,9 @@ void get_history_today()
       double current_equity   = AccountInfoDouble(ACCOUNT_EQUITY);
       double loss = current_equity - starting_balance;
 
-      FileWrite(nfile_history, "TOTAL_PROFIT:" + (string)format_double(PL, 5));
-      FileWrite(nfile_history, "OPEN_POSITIONS:" + (string)format_double(OpenPositionsProfit(), 5));
-      FileWrite(nfile_history, "TOTAL_LOSS_TODAY:" + (string)format_double(loss, 5));
+      FileWrite(nfile_history, "CLOSED  : " + (string)format_double(PL, 5));
+      FileWrite(nfile_history, "OPENING : " + (string)format_double(OpenPositionsProfit(), 5));
+      FileWrite(nfile_history, "TOTAL   : " + (string)format_double(loss, 5));
       //--------------------------------------------------------------------------------------------------------------------
 
       FileClose(nfile_history);
@@ -264,6 +199,78 @@ void get_history_today()
       //Print("(HistoryToday) Failed to get history data.");
      }
   }
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void get_trade_opening()
+  {
+   FileDelete("Trade.csv");
+   int nfile_handle = FileOpen("Trade.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
+
+   if(nfile_handle != INVALID_HANDLE)
+     {
+      FileWrite(nfile_handle, "Symbol", "Ticket", "TypeDescription", "PriceOpen",  "StopLoss", "TakeProfit",  "Profit",  "Comment", "Volume", "CurrPrice", "OpenTime", "CurrServerTime");
+
+      int count_buys = 0;
+      int count_sells = 0;
+      for(int i=PositionsTotal()-1; i>=0; i--)
+        {
+         if(m_position.SelectByIndex(i))
+           {
+            if(m_position.PositionType()==POSITION_TYPE_BUY)
+               count_buys++;
+            if(m_position.PositionType()==POSITION_TYPE_SELL)
+               count_sells++;
+           }
+
+         FileWrite(nfile_handle
+                   , m_position.Symbol()
+                   , m_position.Ticket()
+                   , m_position.TypeDescription()
+                   , m_position.PriceOpen()
+                   , m_position.StopLoss()
+                   , m_position.TakeProfit()
+                   , m_position.Profit()
+                   , " " + m_position.Comment()
+                   , m_position.Volume()
+                   , m_position.PriceCurrent()
+                   , m_position.Time()
+                   , TimeCurrent());
+        }
+
+
+      for(int i = OrdersTotal() - 1; i >= 0; i--)
+        {
+         if(m_order.SelectByIndex(i))
+           {
+            FileWrite(nfile_handle
+                      , m_order.Symbol()
+                      , m_order.Ticket()
+                      , m_order.TypeDescription()
+                      , m_order.PriceOpen()
+                      , m_order.StopLoss()
+                      , m_order.TakeProfit()
+                      , 0.0
+                      , " " + m_order.Comment()
+                      , m_order.VolumeCurrent()
+                      , m_order.PriceCurrent()
+                      , TimeCurrent()
+                      , TimeCurrent());
+           }
+        }
+      //--------------------------------------------------------------------------------------------------------------------
+      FileClose(nfile_handle);
+     }
+   else
+     {
+      //Print("(Data2Csv) Failed to get history data.");
+     }
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
