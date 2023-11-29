@@ -49,14 +49,17 @@ int OnCalculate(const int rates_total,
 //+------------------------------------------------------------------+
 void OnTimer()
   {
-//------------------------------------------------------------------+
-
    get_history_today();
+  }
+//+------------------------------------------------------------------+
 
-//------------------------------------------------------------------+
-
-   FileDelete("Data//Trade.csv");
-   int nfile_handle = FileOpen("Data//Trade.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void get_trade_opening()
+  {
+   FileDelete("Trade.csv");
+   int nfile_handle = FileOpen("Trade.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
 
    if(nfile_handle != INVALID_HANDLE)
      {
@@ -118,14 +121,12 @@ void OnTimer()
      }
   }
 //+------------------------------------------------------------------+
-
-//+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 void get_history_today()
   {
-   FileDelete("Data//HistoryToday.csv");
-   int nfile_history = FileOpen("Data//HistoryToday.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
+   FileDelete("HistoryToday.csv");
+   int nfile_history = FileOpen("HistoryToday.csv", FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
 
    if(nfile_history != INVALID_HANDLE)
      {
