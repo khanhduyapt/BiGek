@@ -307,9 +307,7 @@ public class Utils {
 
     // "AUS200", "EU50", "FRA40", "GER40", "SPN35", "UK100",
     public static final List<String> EPICS_INDEXS_CFD = Arrays.asList("US100", "US30", "BTCUSD");
-    // "USDCHF", "AUDCHF", "CHFJPY", "EURCHF", "GBPCHF", "NZDCHF", "USDCHF", ,
-    // "CADCHF" "AUDCHF", "CADCHF", , "CHFJPY", "EURCHF" , "GBPCHF" , "NZDCHF" ,
-    // "USDCHF"
+    // , "USDCHF", "AUDCHF", "CHFJPY", "EURCHF", "GBPCHF", "NZDCHF", "CADCHF"
 
     public static final List<String> EPICS_SCAP_15M_FX = Arrays.asList("EURUSD", "USDJPY", "GBPUSD", "AUDUSD", "USDCAD",
             "NZDUSD", "XAUUSD", "USOIL", "US30");
