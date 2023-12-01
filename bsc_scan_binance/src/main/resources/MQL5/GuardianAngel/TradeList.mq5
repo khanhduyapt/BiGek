@@ -58,7 +58,7 @@ void OnTimer()
 //+------------------------------------------------------------------+
 void get_history_today()
   {
-   string yyyymmdd = TimeToString(TimeGMT(), TIME_DATE);
+   string yyyymmdd = TimeToString(TimeCurrent(), TIME_DATE);
    string filename = "History_GuardianAngel_" + yyyymmdd + ".txt";
    FileDelete(filename);
    int nfile_history = FileOpen(filename, FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
@@ -68,7 +68,7 @@ void get_history_today()
       FileWrite(nfile_history, AppendSpaces("deal_time", 10), AppendSpaces("symbol"), AppendSpaces("profit"), AppendSpaces("type"), AppendSpaces("ticket"), AppendSpaces("volume"), AppendSpaces("price"), AppendSpaces("status"), AppendSpaces("comment"));
 
       MqlDateTime date_time;
-      TimeToStruct(TimeGMT(), date_time);
+      TimeToStruct(TimeCurrent(), date_time);
       int current_day = date_time.day, current_month = date_time.mon, current_year = date_time.year;
       int row_count = 0;
       // --------------------------------------------------------------------
@@ -96,7 +96,7 @@ void get_history_today()
             string comment = AppendSpaces((string)row_count) + "   https://www.tradingview.com/chart/r46Q5U5a/?symbol=" + symbol;
 
             MqlDateTime struct_open_time;
-            TimeToStruct(TimeGMT(), struct_open_time);
+            TimeToStruct(TimeCurrent(), struct_open_time);
 
             FileWrite(nfile_history
                       , AppendSpaces(date_time_to_string(struct_open_time))
@@ -118,7 +118,7 @@ void get_history_today()
 
       // --------------------------------------------------------------------
       double current_balance = AccountInfoDouble(ACCOUNT_BALANCE);
-      HistorySelect(0, TimeGMT()); // today closed trades PL
+      HistorySelect(0, TimeCurrent()); // today closed trades PL
       int orders = HistoryDealsTotal();
 
       double PL = 0.0;
@@ -236,7 +236,7 @@ void get_trade_opening()
                    , m_position.Volume()
                    , m_position.PriceCurrent()
                    , m_position.Time()
-                   , TimeGMT());
+                   , TimeCurrent());
         }
 
 
@@ -255,8 +255,8 @@ void get_trade_opening()
                       , " " + m_order.Comment()
                       , m_order.VolumeCurrent()
                       , m_order.PriceCurrent()
-                      , TimeGMT()
-                      , TimeGMT());
+                      , TimeCurrent()
+                      , TimeCurrent());
            }
         }
       //--------------------------------------------------------------------------------------------------------------------
