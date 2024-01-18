@@ -88,8 +88,9 @@ void get_history_today()
       for(int index = 0; index < total_fx_size; index++)
         {
          string symbol = toLower(arr_symbol[index]);
-         int count_trade = 0;
 
+         string line = "";
+         int count_trade = 0;
          for(int i=PositionsTotal()-1; i>=0; i--) // returns the number of current positions
            {
             // selects the position by index for further access to its properties
@@ -117,34 +118,43 @@ void get_history_today()
                   MqlDateTime struct_open_time;
                   TimeToStruct(TimeCurrent(), struct_open_time);
 
-                  FileWrite(nfile_history
-                            , AppendSpaces(count_trade) //date_time_to_string(struct_open_time)
-                            , AppendSpaces(symbol)
-                            , AppendSpaces(format_double_to_string(profit, 2))
-                            , AppendSpaces(type)
-                            , AppendSpaces((string)ticket)
-                            , AppendSpaces(format_double_to_string(volume, digits))
-                            , AppendSpaces(format_double_to_string(price, digits))
-                            , AppendSpaces(status)
-                            , AppendSpaces((string)comment));
+                  line +=  AppendSpaces((string)count_trade); //date_time_to_string(struct_open_time)
+                  line +=  AppendSpaces(symbol);
+                  line +=  AppendSpaces(format_double_to_string(profit, 2));
+                  line +=  AppendSpaces(type);
+                  line +=  AppendSpaces((string)ticket);
+                  line +=  AppendSpaces(format_double_to_string(volume, digits));
+                  line +=  AppendSpaces(format_double_to_string(price, digits));
+                  line +=  AppendSpaces(status);
+                  line +=  AppendSpaces((string)comment);
+                  line +=  "\n";
                  }
               }
            }
 
-         if(count_trade > 1)
-            FileWrite(nfile_history, "");
+         //if(count_trade > 1)
+         //   FileWrite(nfile_history, "");
+
+         if(line != "")
+            FileWrite(nfile_history, line);
+
+         //if(count_trade > 1)
+         //   FileWrite(nfile_history, "");
 
         }
       // --------------------------------------------------------------------
-      FileWrite(nfile_history, "");
+      FileWrite(nfile_history,
+                "----------------------------------------------------------------------------"
+                + "----------------------------------------------------------------------------"
+                + "\n");
 
       // --------------------------------------------------------------------
       double current_balance = AccountInfoDouble(ACCOUNT_BALANCE);
       HistorySelect(0, TimeCurrent()); // today closed trades PL
-      int orders = HistoryDealsTotal();
 
       double PL = 0.0;
-      for(int i = orders - 1; i >= 0; i--)
+      int close_count = 0;
+      for(int i = HistoryDealsTotal() - 1; i >= 0; i--)
         {
          ulong ticket=HistoryDealGetTicket(i);
          if(ticket==0)
@@ -180,21 +190,21 @@ void get_history_today()
                   type = "SELL";
 
                string status = AppendSpaces("CLOSED");
-               row_count += 1;
-               string comment = AppendSpaces((string)row_count) + "   https://www.tradingview.com/chart/r46Q5U5a/?symbol=" + symbol;
+               close_count += 1;
+               string comment = AppendSpaces("") + "   https://www.tradingview.com/chart/r46Q5U5a/?symbol=" + symbol;
 
+               string line = "";
+               line +=  AppendSpaces((string)close_count);
+               line +=  AppendSpaces(symbol);
+               line +=  AppendSpaces(format_double_to_string(profit, 2));
+               line +=  AppendSpaces(type);
+               line +=  AppendSpaces((string)ticket);
+               line +=  AppendSpaces(format_double_to_string(volume, digits));
+               line +=  AppendSpaces(format_double_to_string(price, digits));
+               line +=  AppendSpaces(status);
+               line +=  AppendSpaces((string)comment);
 
-               FileWrite(nfile_history
-                         , AppendSpaces(date_time_to_string(deal_time))
-                         , AppendSpaces(symbol)
-                         , AppendSpaces(format_double_to_string(profit, 2))
-                         , AppendSpaces((string)type)
-                         , AppendSpaces((string)ticket)
-                         , AppendSpaces((string)volume)
-                         , AppendSpaces(format_double_to_string(price, digits))
-                         , AppendSpaces(status)
-                         , AppendSpaces((string)comment));
-
+               FileWrite(nfile_history,line);
               }
             else
                break;
