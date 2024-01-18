@@ -13,6 +13,18 @@
 CPositionInfo  m_position;
 COrderInfo     m_order;
 
+string arr_symbol[] =
+  {
+   "XAUUSD", "XAGUSD", "USOIL.cash", "BTCUSD",
+   "US100.cash", "US30.cash", "US500.cash", "GER40.cash", "UK100.cash", "FRA40.cash", "AUS200.cash",
+   "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
+   "CADCHF", "CADJPY", "CHFJPY",
+   "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
+   "GBPAUD", "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "GBPUSD",
+   "NZDCAD", "NZDCHF", "NZDJPY", "NZDUSD",
+   "USDCAD", "USDCHF", "USDJPY"
+  };
+
 //+------------------------------------------------------------------+
 //| TradeList
 //+------------------------------------------------------------------+
@@ -58,8 +70,7 @@ void OnTimer()
 //+------------------------------------------------------------------+
 void get_history_today()
   {
-   string yyyymmdd = TimeToString(TimeCurrent(), TIME_DATE);
-   string filename = "History_GuardianAngel_" + yyyymmdd + ".txt";
+   string filename = "History.log";
    FileDelete(filename);
    int nfile_history = FileOpen(filename, FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, '\t', CP_UTF8);
 
@@ -72,47 +83,58 @@ void get_history_today()
       int current_day = date_time.day, current_month = date_time.mon, current_year = date_time.year;
       int row_count = 0;
       // --------------------------------------------------------------------
-
-      for(int i=PositionsTotal()-1; i>=0; i--) // returns the number of current positions
+      string pre_symbol = "";
+      int total_fx_size = ArraySize(arr_symbol);
+      for(int index = 0; index < total_fx_size; index++)
         {
-         // selects the position by index for further access to its properties
-         if(m_position.SelectByIndex(i))
+         string symbol = toLower(arr_symbol[index]);
+         int count_trade = 0;
+
+         for(int i=PositionsTotal()-1; i>=0; i--) // returns the number of current positions
            {
+            // selects the position by index for further access to its properties
+            if(m_position.SelectByIndex(i))
+              {
+               if(symbol == toLower(m_position.Symbol()))
+                 {
+                  count_trade += 1;
+                  datetime deal_time   = m_position.Time();
+                  ulong ticket         = m_position.Ticket();
+                  string symbol        = m_position.Symbol();
+                  double profit        = m_position.Commission() + m_position.Swap() + m_position.Profit();
+                  string type          = m_position.TypeDescription();
+                  double volume        = m_position.Volume();
+                  double price         = m_position.PriceOpen();
+                  int    digits        = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);
 
-            datetime deal_time   = m_position.Time();
-            ulong ticket         = m_position.Ticket();
-            string symbol        = m_position.Symbol();
-            double profit        = m_position.Commission() + m_position.Swap() + m_position.Profit();
-            string type          = m_position.TypeDescription();
-            double volume        = m_position.Volume();
-            double price         = m_position.PriceOpen();
-            int    digits        = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);
+                  StringToUpper(type);
+                  StringReplace(symbol, ".cash", "");
 
-            StringToUpper(type);
-            StringReplace(symbol, ".cash", "");
+                  string status = AppendSpaces("OPENING");
+                  row_count += 1;
+                  string comment = AppendSpaces((string)row_count) + "   https://www.tradingview.com/chart/r46Q5U5a/?symbol=" + symbol;
 
-            string status = AppendSpaces("OPENING");
-            row_count += 1;
-            string comment = AppendSpaces((string)row_count) + "   https://www.tradingview.com/chart/r46Q5U5a/?symbol=" + symbol;
+                  MqlDateTime struct_open_time;
+                  TimeToStruct(TimeCurrent(), struct_open_time);
 
-            MqlDateTime struct_open_time;
-            TimeToStruct(TimeCurrent(), struct_open_time);
-
-            FileWrite(nfile_history
-                      , AppendSpaces(date_time_to_string(struct_open_time))
-                      , AppendSpaces(symbol)
-                      , AppendSpaces(format_double_to_string(profit, 2))
-                      , AppendSpaces(type)
-                      , AppendSpaces((string)ticket)
-                      , AppendSpaces(format_double_to_string(volume, digits))
-                      , AppendSpaces(format_double_to_string(price, digits))
-                      , AppendSpaces(status)
-                      , AppendSpaces((string)comment));
-
-
+                  FileWrite(nfile_history
+                            , AppendSpaces(count_trade) //date_time_to_string(struct_open_time)
+                            , AppendSpaces(symbol)
+                            , AppendSpaces(format_double_to_string(profit, 2))
+                            , AppendSpaces(type)
+                            , AppendSpaces((string)ticket)
+                            , AppendSpaces(format_double_to_string(volume, digits))
+                            , AppendSpaces(format_double_to_string(price, digits))
+                            , AppendSpaces(status)
+                            , AppendSpaces((string)comment));
+                 }
+              }
            }
-        }
 
+         if(count_trade > 1)
+            FileWrite(nfile_history, "");
+
+        }
       // --------------------------------------------------------------------
       FileWrite(nfile_history, "");
 
@@ -146,7 +168,7 @@ void get_history_today()
                string symbol  = HistoryDealGetString(ticket,   DEAL_SYMBOL);
                double volume  = HistoryDealGetDouble(ticket,   DEAL_VOLUME);
                double price   = HistoryDealGetDouble(ticket,   DEAL_PRICE);
-               int deal_type  = HistoryDealGetInteger(ticket,  DEAL_TYPE);
+               long deal_type  = HistoryDealGetInteger(ticket,  DEAL_TYPE);
                int digits     = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);
 
                StringReplace(symbol, ".cash", "");
@@ -186,8 +208,17 @@ void get_history_today()
       double starting_balance = current_balance - PL;
       double current_equity   = AccountInfoDouble(ACCOUNT_EQUITY);
       double loss = current_equity - starting_balance;
+      double swap = 0.0;
+      for(int i = PositionsTotal() - 1; i >= 0; i--)
+        {
+         if(m_position.SelectByIndex(i))
+           {
+            swap += m_position.Swap();
+           }
+        } //for
 
       FileWrite(nfile_history, "CLOSED  : " + (string)format_double(PL, 5));
+      FileWrite(nfile_history, "SWAP    : " + (string)format_double(swap, 5));
       FileWrite(nfile_history, "OPENING : " + (string)format_double(OpenPositionsProfit(), 5));
       FileWrite(nfile_history, "TOTAL   : " + (string)format_double(loss, 5));
       //--------------------------------------------------------------------------------------------------------------------
@@ -360,4 +391,10 @@ string format_double_to_string(double number, int digits = 5)
 
    return numberString;
   }
+//+------------------------------------------------------------------+
+string toLower(string text)
+  {
+   StringToLower(text);
+   return text;
+  };
 //+------------------------------------------------------------------+
