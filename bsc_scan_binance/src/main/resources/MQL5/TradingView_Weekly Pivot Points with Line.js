@@ -61,21 +61,217 @@ buy_condition_323 = k_323 > d_323
 sell_condition_323 = k_323 <= d_323
 
 // Tính phần trăm cắt lỗ
-stopLossPercentage = (averageAmplitude / currentPrice) * 100
 
-str_msg = ""
-str_msg += " " + str.tostring(averageAmplitude, "#.#####") + " (" + str.tostring(stopLossPercentage, "#.##") + "%) \n" 
+
+macd_fast = 12
+macd_slow = 26
+macd_fast_ma = ta.ema(close, macd_fast)
+macd_slow_ma = ta.ema(close, macd_slow)
+macd = macd_fast_ma - macd_slow_ma
+signal = ta.ema(macd, 9)
+
+buy_condition_macd = macd > signal
+sel_condition_macd = macd < signal
+
+
+length = input.int(20, minval=1)
+src = input(close, title="Source")
+mult = input.float(2.0, minval=0.001, maxval=50, title="StdDev")
+basis = ta.sma(src, length)
+amp_bb = ta.stdev(src, length)
+dev = mult * amp_bb
+upper = basis + dev
+lower = basis - dev
+
+stopLossPivotPercentage = (averageAmplitude / currentPrice) * 100
+stopLossBBPercentage = (amp_bb / currentPrice) * 100
+
+[HH200,LL200]=request.security(syminfo.tickerid, timeframe.period,[ta.highest(high,200),ta.lowest(low,200)])
+count_hig = math.round((HH200 - currentPrice)/amp_bb) + 1
+count_low = math.round((currentPrice - LL200)/amp_bb) + 1
+
+
+str_msg = "( " + timeframe.period + " ) \n"
+str_msg += " Amp_Pv: " + str.tostring(averageAmplitude, "#.#####") + " (" + str.tostring(stopLossPivotPercentage, "#.##") + "%) \n" 
+str_msg += " Amp_BB: " + str.tostring(amp_bb, "#.#####") + " (" + str.tostring(stopLossBBPercentage, "#.##") + "%) \n" 
+str_msg += (buy_condition_macd ? "macd: BUY" : "")  + (sel_condition_macd ? "macd: SELL" : "") + "\n"
 str_msg += (buy_condition_963 ? "963: BUY" : "")  + (sell_condition_963 ? "963: SELL" : "") + " (k, d): (" + str.tostring(k_963, "##") + ", " + str.tostring(d_963, "##") + ") \n"
 str_msg += (buy_condition_323 ? "323: BUY" : "")  + (sell_condition_323 ? "323: SELL" : "") + " (k, d): (" + str.tostring(k_323, "##") + ", " + str.tostring(d_323, "##") + ") \n"
+str_msg += "HH"+str.tostring(count_hig)+": " + str.tostring(HH200, "#.#####") + "  LL"+str.tostring(count_low)+": " + str.tostring(LL200, "#.#####") + "\n"
+
 
 var label label_pivot = na
 label.delete(label_pivot)
-label_pivot := label.new(bar_index+10,currentPrice, color=color.white)
+label_pivot := label.new(bar_index+15,currentPrice, color=#131722, textcolor = color.white)
 label.set_text(label_pivot, str_msg)
+
+
+
+var line bb_basis_line = na
+line.delete(id=bb_basis_line)
+bb_basis_line := line.new(x1=bar_index[200], y1=basis, x2=bar_index[0]+1, y2=basis, width=1, color=color.gray, style=line.style_dashed)
+
+
+
+var line bb_lower_line_1 = na
+line.delete(id=bb_lower_line_1)
+bb_lower_line_1 := line.new(x1=bar_index[200], y1=basis-amp_bb*1, x2=bar_index[0]+1, y2=basis-amp_bb*1, width=1, color=color.red, style=line.style_dotted)
+
+var line bb_lower_line_2 = na
+line.delete(id=bb_lower_line_2)
+bb_lower_line_2 := line.new(x1=bar_index[200], y1=basis-amp_bb*2, x2=bar_index[0]+1, y2=basis-amp_bb*2, width=1, color=color.red, style=line.style_dashed)
+
+var line bb_lower_line_3 = na
+line.delete(id=bb_lower_line_3)
+bb_lower_line_3 := line.new(x1=bar_index[200], y1=basis-amp_bb*3, x2=bar_index[0]+1, y2=basis-amp_bb*3, width=1, color=color.red, style=line.style_dotted)
+
+var line bb_lower_line_4 = na
+line.delete(id=bb_lower_line_4)
+if(count_low >= 4)
+    bb_lower_line_4 := line.new(x1=bar_index[200], y1=basis-amp_bb*4, x2=bar_index[0]+1, y2=basis-amp_bb*4, width=1, color=color.red, style=line.style_dotted)
+
+var line bb_lower_line_5 = na
+line.delete(id=bb_lower_line_5)
+if(count_low >= 5)
+    bb_lower_line_5 := line.new(x1=bar_index[200], y1=basis-amp_bb*5, x2=bar_index[0]+1, y2=basis-amp_bb*5, width=1, color=color.red, style=line.style_dotted)
+
+var line bb_lower_line_6 = na
+line.delete(id=bb_lower_line_6)
+if(count_low >= 6)
+    bb_lower_line_6 := line.new(x1=bar_index[200], y1=basis-amp_bb*6, x2=bar_index[0]+1, y2=basis-amp_bb*6, width=1, color=color.red, style=line.style_dotted)
+
+var line bb_lower_line_7 = na
+line.delete(id=bb_lower_line_7)
+if(count_low >= 7)
+    bb_lower_line_7 := line.new(x1=bar_index[200], y1=basis-amp_bb*7, x2=bar_index[0]+1, y2=basis-amp_bb*7, width=1, color=color.red, style=line.style_dotted)
+
+var line bb_lower_line_8 = na
+line.delete(id=bb_lower_line_8)
+if(count_low >= 8)
+    bb_lower_line_8 := line.new(x1=bar_index[200], y1=basis-amp_bb*8, x2=bar_index[0]+1, y2=basis-amp_bb*8, width=1, color=color.red, style=line.style_dotted)
+
+var line bb_lower_line_9 = na
+line.delete(id=bb_lower_line_9)
+if(count_low >= 9)
+    bb_lower_line_9 := line.new(x1=bar_index[200], y1=basis-amp_bb*9, x2=bar_index[0]+1, y2=basis-amp_bb*9, width=1, color=color.red, style=line.style_dotted)
+
+
+var line bb_lower_line_10 = na
+line.delete(id=bb_lower_line_10)
+if(count_low >= 10)
+    bb_lower_line_10 := line.new(x1=bar_index[200], y1=basis-amp_bb*10, x2=bar_index[0]+1, y2=basis-amp_bb*10, width=1, color=color.red, style=line.style_dotted)
+
+var line bb_lower_line_11 = na
+line.delete(id=bb_lower_line_11)
+if(count_low >= 11)
+    bb_lower_line_11 := line.new(x1=bar_index[200], y1=basis-amp_bb*11, x2=bar_index[0]+1, y2=basis-amp_bb*11, width=1, color=color.red, style=line.style_dotted)
+
+var line bb_lower_line_12 = na
+line.delete(id=bb_lower_line_12)
+if(count_low >= 12)
+    bb_lower_line_12 := line.new(x1=bar_index[200], y1=basis-amp_bb*12, x2=bar_index[0]+1, y2=basis-amp_bb*12, width=1, color=color.red, style=line.style_dotted)
+
+var line bb_lower_line_13 = na
+line.delete(id=bb_lower_line_13)
+if(count_low >= 13)
+    bb_lower_line_13 := line.new(x1=bar_index[200], y1=basis-amp_bb*13, x2=bar_index[0]+1, y2=basis-amp_bb*13, width=1, color=color.red, style=line.style_dotted)
+
+var line bb_lower_line_14 = na
+line.delete(id=bb_lower_line_14)
+if(count_low >= 14)
+    bb_lower_line_14 := line.new(x1=bar_index[200], y1=basis-amp_bb*14, x2=bar_index[0]+1, y2=basis-amp_bb*14, width=1, color=color.red, style=line.style_dotted)
+
+var line bb_lower_line_15 = na
+line.delete(id=bb_lower_line_15)
+if(count_low >= 15)
+    bb_lower_line_15 := line.new(x1=bar_index[200], y1=basis-amp_bb*15, x2=bar_index[0]+1, y2=basis-amp_bb*15, width=1, color=color.red, style=line.style_dotted)
+
+
+
+var line bb_upper_line_1 = na
+line.delete(id=bb_upper_line_1)
+bb_upper_line_1 := line.new(x1=bar_index[200], y1=basis+amp_bb*1, x2=bar_index[0]+1, y2=basis+amp_bb*1, width=1, color=color.blue, style=line.style_dotted)
+
+var line bb_upper_line_2 = na
+line.delete(id=bb_upper_line_2)
+bb_upper_line_2 := line.new(x1=bar_index[200], y1=basis+amp_bb*2, x2=bar_index[0]+1, y2=basis+amp_bb*2, width=1, color=color.blue, style=line.style_dashed)
+
+var line bb_upper_line_3 = na
+line.delete(id=bb_upper_line_3)
+bb_upper_line_3 := line.new(x1=bar_index[200], y1=basis+amp_bb*3, x2=bar_index[0]+1, y2=basis+amp_bb*3, width=1, color=color.blue, style=line.style_dotted)
+
+var line bb_upper_line_4 = na
+line.delete(id=bb_upper_line_4)
+if(count_hig >= 4)
+    bb_upper_line_4 := line.new(x1=bar_index[200], y1=basis+amp_bb*4, x2=bar_index[0]+1, y2=basis+amp_bb*4, width=1, color=color.blue, style=line.style_dotted)
+
+var line bb_upper_line_5 = na
+line.delete(id=bb_upper_line_5)
+if(count_hig >= 5)
+    bb_upper_line_5 := line.new(x1=bar_index[200], y1=basis+amp_bb*5, x2=bar_index[0]+1, y2=basis+amp_bb*5, width=1, color=color.blue, style=line.style_dotted)
+
+var line bb_upper_line_6 = na
+line.delete(id=bb_upper_line_6)
+if(count_hig >= 6)
+    bb_upper_line_6 := line.new(x1=bar_index[200], y1=basis+amp_bb*6, x2=bar_index[0]+1, y2=basis+amp_bb*6, width=1, color=color.blue, style=line.style_dotted)
+
+var line bb_upper_line_7 = na
+line.delete(id=bb_upper_line_7)
+if(count_hig >= 7)
+    bb_upper_line_7 := line.new(x1=bar_index[200], y1=basis+amp_bb*7, x2=bar_index[0]+1, y2=basis+amp_bb*7, width=1, color=color.blue, style=line.style_dotted)
+
+var line bb_upper_line_8 = na
+line.delete(id=bb_upper_line_8)
+if(count_hig >= 8)
+    bb_upper_line_8 := line.new(x1=bar_index[200], y1=basis+amp_bb*8, x2=bar_index[0]+1, y2=basis+amp_bb*8, width=1, color=color.blue, style=line.style_dotted)
+
+var line bb_upper_line_9 = na
+line.delete(id=bb_upper_line_9)
+if(count_hig >= 9)
+    bb_upper_line_9 := line.new(x1=bar_index[200], y1=basis+amp_bb*9, x2=bar_index[0]+1, y2=basis+amp_bb*9, width=1, color=color.blue, style=line.style_dotted)
+
+var line bb_upper_line_10 = na
+line.delete(id=bb_upper_line_10)
+if(count_hig >= 10)
+    bb_upper_line_10 := line.new(x1=bar_index[200], y1=basis+amp_bb*10, x2=bar_index[0]+1, y2=basis+amp_bb*10, width=1, color=color.blue, style=line.style_dotted)
+
+var line bb_upper_line_11 = na
+line.delete(id=bb_upper_line_11)
+if(count_hig >= 11)
+    bb_upper_line_11 := line.new(x1=bar_index[200], y1=basis+amp_bb*11, x2=bar_index[0]+1, y2=basis+amp_bb*11, width=1, color=color.blue, style=line.style_dotted)
+
+var line bb_upper_line_12 = na
+line.delete(id=bb_upper_line_12)
+if(count_hig >= 12)
+    bb_upper_line_12 := line.new(x1=bar_index[200], y1=basis+amp_bb*12, x2=bar_index[0]+1, y2=basis+amp_bb*12, width=1, color=color.blue, style=line.style_dotted)
+
+var line bb_upper_line_13 = na
+line.delete(id=bb_upper_line_13)
+if(count_hig >= 13)
+    bb_upper_line_13 := line.new(x1=bar_index[200], y1=basis+amp_bb*13, x2=bar_index[0]+1, y2=basis+amp_bb*13, width=1, color=color.blue, style=line.style_dotted)
+
+var line bb_upper_line_14 = na
+line.delete(id=bb_upper_line_14)
+if(count_hig >= 14)
+    bb_upper_line_14 := line.new(x1=bar_index[200], y1=basis+amp_bb*14, x2=bar_index[0]+1, y2=basis+amp_bb*14, width=1, color=color.blue, style=line.style_dotted)
+
+var line bb_upper_line_15 = na
+line.delete(id=bb_upper_line_15)
+if(count_hig >= 15)
+    bb_upper_line_15 := line.new(x1=bar_index[200], y1=basis+amp_bb*15, x2=bar_index[0]+1, y2=basis+amp_bb*15, width=1, color=color.blue, style=line.style_dotted)
+
+
+
+
+
+
+
+
+
+
 
 // chart_height = 1000
 // plot(chart_height, color=color.new(color.black, 0), linewidth=0)
-
 
 
 // highPrice = request.security(syminfo.tickerid, "D", high)
