@@ -15,8 +15,8 @@ COrderInfo     m_order;
 
 string arr_symbol[] =
   {
-   "XAUUSD", "XAGUSD", "USOIL", "BTCUSD",
-   "USTEC", "US30", "US500", "DE30", "UK100", "FR40", "AUS200",
+   "XAUUSD", "XAGUSD", "USOIL.cash", "BTCUSD",
+   "US100.cash", "US30.cash", "US500.cash", "GER40.cash", "UK100.cash", "FRA40.cash", "AUS200.cash",
    "AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD",
    "CADCHF", "CADJPY", "CHFJPY",
    "EURAUD", "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURNZD", "EURUSD",
