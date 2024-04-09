@@ -1,10 +1,9 @@
 <chart>
-id=133568696999611451
-comment=(XAU)(01.20 23:01)       [XAUUSD]   ([XAUUSD] M15) XAUUSDc    Macd(H4): BUY    Vol: 5 lot    Funds: 10000$ / Risk: 100$ / 1%        Avg(H4): 8    Avg(D1): 20    Avg(W1): 50    Market Open    Find: SELL    balance:1785.75    profit:-606.3200000000001
+id=133571189988769066
+comment=(XAU)(04.09 17:44)       [XAUUSD]   ([XAUUSD] H4) XAUUSDc    Macd_Zero(H4): BUY    Macd_Sign(H4): BUY    Vol: 0.01 lot    Funds: 2000$ / Risk: 18$ / 0.89%        Avg(H4): 5    Avg(D1): 20    Avg(W1): 50    Market Open
 symbol=XAUUSDc
-period=15
-leftpos=830
-offline=1
+period=240
+leftpos=2045
 digits=3
 scale=8
 graph=1
@@ -21,10 +20,10 @@ days=0
 descriptions=0
 shift_size=20
 fixed_pos=32
-window_left=224
-window_top=224
-window_right=2187
-window_bottom=747
+window_left=128
+window_top=128
+window_right=1724
+window_bottom=643
 window_type=3
 background_color=16777215
 foreground_color=0
@@ -34,7 +33,7 @@ bullcandle_color=16777215
 bearcandle_color=0
 chartline_color=0
 volumes_color=32768
-grid_color=12632256
+grid_color=4294967295
 askline_color=17919
 stops_color=17919
 
@@ -43,6 +42,21 @@ height=129
 fixed_height=0
 <indicator>
 name=main
+<object>
+type=0
+object_name=dkd20240407
+period_flags=0
+create_time=1712659438
+color=255
+style=4
+weight=1
+background=1
+filling=0
+selectable=0
+hidden=1
+zorder=0
+time_0=1712448000
+</object>
 </indicator>
 </window>
 
@@ -64,29 +78,12 @@ signal_weight=2
 period_flags=0
 show_data=1
 </indicator>
-<indicator>
-name=Stochastic Oscillator
-kperiod=3
-dperiod=2
-slowing=3
-method=0
-apply=0
-color=11186720
-style=0
-weight=1
-color2=255
-style2=2
-weight2=1
-min=0.00000000
-max=100.00000000
-levels_color=0
-levels_style=0
-levels_weight=1
-level_0=20.00000000
-level_1=80.00000000
-period_flags=0
-show_data=1
-</indicator>
 </window>
+
+<expert>
+name=XAUUSD
+flags=279
+window_num=0
+</expert>
 </chart>
 
