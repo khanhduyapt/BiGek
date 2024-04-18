@@ -29,3 +29,11 @@ C:\Users\DellE5270\AppData\Roaming\MetaQuotes\Terminal\279DE0AE13CF614039E1C3C0F
 C:\Users\DellE5270\AppData\Roaming\MetaQuotes\Terminal\5C26F8515847D453D9060878036A0127\MQL4\Experts
 C:\Users\DellE5270\AppData\Roaming\MetaQuotes\Terminal\5C26F8515847D453D9060878036A0127\MQL4\Experts\XAUUSD-Cent17.mq4
 
+
+C:\Users\DellE5270\AppData\Roaming\MetaQuotes\Terminal\17E770CAC62207598C5EB953D842732B\MQL4\Experts
+C:\Users\DellE5270\AppData\Roaming\MetaQuotes\Terminal\17E770CAC62207598C5EB953D842732B\MQL4\Experts\XAUUSD-Cent18.mq4
+
+
+C:\Users\DellE5270\AppData\Roaming\MetaQuotes\Terminal\00708A7B51D817A497B2C6FE888D0A08\MQL4\Experts
+C:\Users\DellE5270\AppData\Roaming\MetaQuotes\Terminal\00708A7B51D817A497B2C6FE888D0A08\MQL4\Experts\XAUUSD-Cent19.mq4
+	
