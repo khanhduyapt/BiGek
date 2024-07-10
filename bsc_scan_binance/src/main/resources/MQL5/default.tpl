@@ -1,9 +1,9 @@
 <chart>
 id=133596333974692419
-comment=(2024.07.05 09:15)        Profit(today): 0$ (0%)/0L    (Mac.Zero.H4): BUY    (Mac.Sign.H1): SELL    (HeikenH4): BUY (c1)    Funds: 444.7    Risk: 4.4 (1%)    1%: 0.01 lot    MinProfit: 0.4    SL_Est: -250 (-56.2% gt 30% ->STOP_TRADE)
+comment=(2024.07.10 14:19)        Profit(today): 0$ (0%)/0L    (Mac.Zero.H4): BUY    (Mac.Sign.H1): BUY    (HeikenH1): BUY (c15)    Funds: 2253.3    Risk: 22.5 (1%)    1%: 0.02 lot    MinProfit: 2.2    SL_Est: -260 (-11.5%)
 symbol=XAUUSDc
-period=240
-leftpos=1756
+period=60
+leftpos=1845
 digits=3
 scale=8
 graph=2
@@ -42,6 +42,25 @@ height=180
 fixed_height=0
 <indicator>
 name=main
+<object>
+type=2
+object_name=cur_price
+period_flags=0
+create_time=1720595995
+color=0
+style=2
+weight=1
+background=1
+filling=0
+selectable=0
+hidden=1
+zorder=0
+time_0=1706195996
+value_0=2372.483000
+time_1=1720595996
+value_1=2372.483000
+ray=1
+</object>
 </indicator>
 <indicator>
 name=Moving Average
