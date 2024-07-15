@@ -6,3 +6,4 @@ bsc_scan_btc_futures/Btc_Long_Short.txt
 *.txt
 bsc_scan_binance/BtcResistanceZone.txt
 bsc_scan_binance/BtcResistanceZone.txt
+bsc_scan_binance/src/main/resources/.DS_Store
