@@ -1,9 +1,9 @@
 <chart>
 id=133596333974692419
-comment=(2024.07.10 14:19)        Profit(today): 0$ (0%)/0L    (Mac.Zero.H4): BUY    (Mac.Sign.H1): BUY    (HeikenH1): BUY (c15)    Funds: 2253.3    Risk: 22.5 (1%)    1%: 0.02 lot    MinProfit: 2.2    SL_Est: -260 (-11.5%)
-symbol=XAUUSDc
-period=60
-leftpos=1845
+comment=
+symbol=XAUUSD
+period=1440
+leftpos=5606
 digits=3
 scale=8
 graph=2
@@ -22,7 +22,7 @@ shift_size=20
 fixed_pos=32
 window_left=128
 window_top=128
-window_right=2700
+window_right=2070
 window_bottom=876
 window_type=3
 background_color=16777215
@@ -38,7 +38,7 @@ askline_color=17919
 stops_color=17919
 
 <window>
-height=180
+height=203
 fixed_height=0
 <indicator>
 name=main
@@ -46,7 +46,7 @@ name=main
 type=2
 object_name=cur_price
 period_flags=0
-create_time=1720595995
+create_time=1721230068
 color=0
 style=2
 weight=1
@@ -55,10 +55,10 @@ filling=0
 selectable=0
 hidden=1
 zorder=0
-time_0=1706195996
-value_0=2372.483000
-time_1=1720595996
-value_1=2372.483000
+time_0=1706830069
+value_0=2464.728000
+time_1=1721230069
+value_1=2464.728000
 ray=1
 </object>
 </indicator>
@@ -137,7 +137,7 @@ show_data=1
 </window>
 
 <window>
-height=46
+height=37
 fixed_height=0
 <indicator>
 name=Custom Indicator
@@ -238,7 +238,7 @@ show_data=1
 </window>
 
 <window>
-height=50
+height=36
 fixed_height=0
 <indicator>
 name=Custom Indicator
@@ -262,17 +262,6 @@ draw_1=0
 color_1=0
 style_1=0
 weight_1=3
-levels_color=255
-levels_style=2
-levels_weight=1
-level_0=-10.00000000
-level_1=10.00000000
-level_2=-5.00000000
-level_3=5.00000000
-level_4=-15.00000000
-level_5=15.00000000
-level_6=-20.00000000
-level_7=20.00000000
 period_flags=0
 show_data=1
 </indicator>
