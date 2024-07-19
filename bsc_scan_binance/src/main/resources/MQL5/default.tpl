@@ -1,9 +1,9 @@
 <chart>
-id=133596333974692421
-comment=(2024.07.19 16:22)        Profit(today): 80.46$ (0.73%)/7L    (Mac.Zero.H4): BUY    (Mac.Sign.H1): SELL    (Heiken D1): SELL (01)    (Ma10 D1): BUY (16)    Init_Equity: 500    Risk1%: 109.8$    VND: 81.01~83.17 tr    Amp(W1): 60$
+id=133596333974692422
+comment=(2024.07.19 18:52)        Profit(today): 80.46$ (0.73%)/7L    (Mac.Zero.H4): BUY    (Mac.Sign.H1): SELL    (Heiken D1): SELL (01)    (Ma10 D1): BUY (16)    Init_Equity: 500    Risk1%: 109.8$    VND: 80.82~82.97 tr    Amp(W1): 60$
 symbol=XAUUSD
 period=1440
-leftpos=5571
+leftpos=5547
 digits=3
 scale=8
 graph=2
@@ -46,7 +46,7 @@ name=main
 type=2
 object_name=cur_price
 period_flags=0
-create_time=1721380936
+create_time=1721389932
 color=0
 style=2
 weight=1
@@ -55,10 +55,10 @@ filling=0
 selectable=0
 hidden=1
 zorder=0
-time_0=1706980936
-value_0=2417.664000
-time_1=1721380936
-value_1=2417.664000
+time_0=1706989933
+value_0=2411.524000
+time_1=1721389933
+value_1=2411.524000
 ray=1
 </object>
 </indicator>
