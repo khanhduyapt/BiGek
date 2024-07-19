@@ -1,9 +1,9 @@
 <chart>
 id=133596333974692421
-comment=(2024.07.19 15:13)        Profit(today): 80.46$ (0.73%)/7L    (Mac.Zero.H4): BUY    (Mac.Sign.H1): SELL    (Heiken D1): SELL (01)    (Ma10 D1): BUY (16)    Init_Equity: 10987.2    Risk1%: 109.8$    VND: 81.07~83.23 tr    Amp(W1): 60$
+comment=(2024.07.19 16:22)        Profit(today): 80.46$ (0.73%)/7L    (Mac.Zero.H4): BUY    (Mac.Sign.H1): SELL    (Heiken D1): SELL (01)    (Ma10 D1): BUY (16)    Init_Equity: 500    Risk1%: 109.8$    VND: 81.01~83.17 tr    Amp(W1): 60$
 symbol=XAUUSD
 period=1440
-leftpos=5572
+leftpos=5571
 digits=3
 scale=8
 graph=2
@@ -46,7 +46,7 @@ name=main
 type=2
 object_name=cur_price
 period_flags=0
-create_time=1721376792
+create_time=1721380936
 color=0
 style=2
 weight=1
@@ -55,10 +55,10 @@ filling=0
 selectable=0
 hidden=1
 zorder=0
-time_0=1706976792
-value_0=2419.936500
-time_1=1721376792
-value_1=2419.936500
+time_0=1706980936
+value_0=2417.664000
+time_1=1721380936
+value_1=2417.664000
 ray=1
 </object>
 </indicator>
@@ -238,7 +238,7 @@ show_data=1
 </window>
 
 <window>
-height=47
+height=37
 fixed_height=0
 <indicator>
 name=Custom Indicator
@@ -268,7 +268,7 @@ show_data=1
 </window>
 
 <window>
-height=23
+height=33
 fixed_height=0
 <indicator>
 name=Relative Strength Index
