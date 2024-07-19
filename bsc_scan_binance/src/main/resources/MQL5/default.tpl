@@ -1,9 +1,9 @@
 <chart>
 id=133596333974692422
-comment=(2024.07.19 18:52)        Profit(today): 80.46$ (0.73%)/7L    (Mac.Zero.H4): BUY    (Mac.Sign.H1): SELL    (Heiken D1): SELL (01)    (Ma10 D1): BUY (16)    Init_Equity: 500    Risk1%: 109.8$    VND: 80.82~82.97 tr    Amp(W1): 60$
+comment=(2024.07.19 19:49)        Profit(today): 80.46$ (0.73%)/7L    (Mac.Zero.H4): BUY    (Mac.Sign.H1): SELL    (Heiken D1): SELL (01)    (Ma10 D1): BUY (16)    Init_Equity: 10987.2    Risk1%: 109.8$    VND: 80.50~82.64 tr    Amp(W1): 60$
 symbol=XAUUSD
 period=1440
-leftpos=5547
+leftpos=5613
 digits=3
 scale=8
 graph=2
@@ -38,7 +38,7 @@ askline_color=17919
 stops_color=17919
 
 <window>
-height=216
+height=206
 fixed_height=0
 <indicator>
 name=main
@@ -46,7 +46,7 @@ name=main
 type=2
 object_name=cur_price
 period_flags=0
-create_time=1721389932
+create_time=1721393431
 color=0
 style=2
 weight=1
@@ -55,10 +55,10 @@ filling=0
 selectable=0
 hidden=1
 zorder=0
-time_0=1706989933
-value_0=2411.524000
-time_1=1721389933
-value_1=2411.524000
+time_0=1706993432
+value_0=2402.195500
+time_1=1721393432
+value_1=2402.195500
 ray=1
 </object>
 </indicator>
@@ -137,7 +137,7 @@ show_data=1
 </window>
 
 <window>
-height=40
+height=41
 fixed_height=0
 <indicator>
 name=Custom Indicator
@@ -238,7 +238,7 @@ show_data=1
 </window>
 
 <window>
-height=37
+height=34
 fixed_height=0
 <indicator>
 name=Custom Indicator
@@ -268,7 +268,7 @@ show_data=1
 </window>
 
 <window>
-height=33
+height=45
 fixed_height=0
 <indicator>
 name=Relative Strength Index
