@@ -1,10 +1,10 @@
 <chart>
 id=133596333974692424
-comment=(2024.07.22 18:14)        Profit(today): 0$ (0%)/3L    (Mac.Zero.H4): BUY    (Mac.Sign.H1): SELL    (Heiken D1): BUY (03)    (Ma10 D1): BUY (16)    Init_Equity: 500    Risk1%: 39.2$
-symbol=AUDNZDc
+comment=(2024.07.23 14:39)        Profit(today): 0$ (0%)/0L    (Mac.Zero.H4): SELL    (Mac.Sign.H1): BUY    (Heiken D1): SELL (04)    (Ma10 D1): SELL (03)    Init_Equity: 500    Risk1%: 39.2$    VND: 80.25~82.39 tr    Amp(D1): 25$    Amp(W1): 60$
+symbol=XAUUSDc
 period=1440
-leftpos=1864
-digits=5
+leftpos=1906
+digits=3
 scale=8
 graph=2
 fore=0
@@ -42,6 +42,25 @@ height=225
 fixed_height=0
 <indicator>
 name=main
+<object>
+type=2
+object_name=cur_price
+period_flags=0
+create_time=1721720376
+color=0
+style=2
+weight=1
+background=1
+filling=0
+selectable=0
+hidden=1
+zorder=0
+time_0=1707320376
+value_0=2394.773000
+time_1=1721720376
+value_1=2394.773000
+ray=1
+</object>
 </indicator>
 <indicator>
 name=Moving Average
@@ -219,7 +238,7 @@ show_data=1
 </window>
 
 <window>
-height=32
+height=25
 fixed_height=0
 <indicator>
 name=Custom Indicator
@@ -249,7 +268,7 @@ show_data=1
 </window>
 
 <window>
-height=33
+height=40
 fixed_height=0
 <indicator>
 name=Relative Strength Index
