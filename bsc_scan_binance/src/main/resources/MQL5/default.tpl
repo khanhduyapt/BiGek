@@ -1,10 +1,10 @@
 <chart>
-id=133596333974692424
-comment=(2024.07.23 14:39)        Profit(today): 0$ (0%)/0L    (Mac.Zero.H4): SELL    (Mac.Sign.H1): BUY    (Heiken D1): SELL (04)    (Ma10 D1): SELL (03)    Init_Equity: 500    Risk1%: 39.2$    VND: 80.25~82.39 tr    Amp(D1): 25$    Amp(W1): 60$
-symbol=XAUUSDc
+id=133596333974692425
+comment=(2024.07.24 21:20)        Profit(today): 261.72$ (6.11%)/15L    (Mac.Zero.H4): SELL    (Mac.Sign.H1): SELL    (Heiken D1): SELL (01)    (Ma10 D1): SELL (16)    Init_Equity: 500    Risk1%: 42.8$    Amp(D1): 0.00715$    Amp(W1): 0.0170$    TP_D_6_7__13_14_
+symbol=USDCHFc
 period=1440
-leftpos=1906
-digits=3
+leftpos=1894
+digits=5
 scale=8
 graph=2
 fore=0
@@ -46,7 +46,7 @@ name=main
 type=2
 object_name=cur_price
 period_flags=0
-create_time=1721720376
+create_time=1721830867
 color=0
 style=2
 weight=1
@@ -55,10 +55,10 @@ filling=0
 selectable=0
 hidden=1
 zorder=0
-time_0=1707320376
-value_0=2394.773000
-time_1=1721720376
-value_1=2394.773000
+time_0=1707430867
+value_0=0.883795
+time_1=1721830867
+value_1=0.883795
 ray=1
 </object>
 </indicator>
@@ -83,7 +83,7 @@ apply=0
 color=16711680
 style=0
 weight=2
-period_flags=0
+period_flags=127
 show_data=1
 </indicator>
 <indicator>
@@ -95,7 +95,7 @@ apply=0
 color=6908265
 style=0
 weight=3
-period_flags=0
+period_flags=127
 show_data=1
 </indicator>
 <indicator>
@@ -131,6 +131,18 @@ draw_3=2
 color_3=8421376
 style_3=0
 weight_3=3
+period_flags=0
+show_data=1
+</indicator>
+<indicator>
+name=Moving Average
+period=5
+shift=0
+method=0
+apply=0
+color=9109504
+style=0
+weight=2
 period_flags=0
 show_data=1
 </indicator>
@@ -249,7 +261,7 @@ window_num=3
 <inputs>
 InpFastEMA=18
 InpSlowEMA=36
-InpSignalSMA=12
+InpSignalSMA=9
 </inputs>
 </expert>
 shift_0=0
@@ -272,9 +284,9 @@ height=40
 fixed_height=0
 <indicator>
 name=Relative Strength Index
-period=14
+period=21
 apply=0
-color=16777215
+color=4294967295
 style=0
 weight=1
 min=0.00000000
