@@ -1,10 +1,10 @@
 <chart>
 id=133596333974692425
-comment=(2024.07.24 21:20)        Profit(today): 261.72$ (6.11%)/15L    (Mac.Zero.H4): SELL    (Mac.Sign.H1): SELL    (Heiken D1): SELL (01)    (Ma10 D1): SELL (16)    Init_Equity: 500    Risk1%: 42.8$    Amp(D1): 0.00715$    Amp(W1): 0.0170$    TP_D_6_7__13_14_
-symbol=USDCHFc
+comment=(2024.07.25 10:45)        Profit(today): 14.53$ (0.32%)/4L    (Mac.Zero.H4): SELL    (Mac.Sign.H1): SELL    (Heiken D1): SELL (01)    (Ma10 D1): SELL (05)    Init_Equity: 500    Risk1%: 44.1$    VND: 79.58~81.70 tr    Amp(W1): 60$    Amp(D1): 25$    Amp(H
+symbol=XAUUSDc
 period=1440
 leftpos=1894
-digits=5
+digits=3
 scale=8
 graph=2
 fore=0
@@ -46,7 +46,7 @@ name=main
 type=2
 object_name=cur_price
 period_flags=0
-create_time=1721830867
+create_time=1721879181
 color=0
 style=2
 weight=1
@@ -55,10 +55,10 @@ filling=0
 selectable=0
 hidden=1
 zorder=0
-time_0=1707430867
-value_0=0.883795
-time_1=1721830867
-value_1=0.883795
+time_0=1707479181
+value_0=2374.758000
+time_1=1721879181
+value_1=2374.758000
 ray=1
 </object>
 </indicator>
@@ -140,7 +140,7 @@ period=5
 shift=0
 method=0
 apply=0
-color=9109504
+color=7346457
 style=0
 weight=2
 period_flags=0
