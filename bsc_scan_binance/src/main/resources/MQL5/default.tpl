@@ -1,10 +1,10 @@
 <chart>
 id=133596333974692426
-comment=Mt4_X100 (2024.07.26 09:02)        Profit(today): 0$ (0 tr) (0%)/0L    PL: 0$ (0%) (0 tr)    (Mac.Zero.H4): SELL    (Mac.Sign.H1): BUY    (Heiken D1): SELL (02)    (Ma10 D1): SELL (06)    Init_Equity: 500    Risk1%: 114.8$    VND: 79.51~81.63 tr    Amp(W1
-symbol=XAUUSD
-period=1440
-leftpos=5601
-digits=3
+comment=Mt4_X100 (2024.08.09 08:44)        Profit(today): 0$ (0 tr) (0%)/0L    PL: -90$ (-0.7%) (-2.31 tr)    (Mac.Zero.H4): SELL    (Mac.Sign.H1): BUY    (Heiken W1): SELL (01)    (Ma10 W1): BUY (06)    Init_Equity: 500    Risk1%: 120.9$    Amp(W1): 0.03533$    
+symbol=GBPNZD
+period=10080
+leftpos=892
+digits=5
 scale=8
 graph=2
 fore=0
@@ -38,7 +38,7 @@ askline_color=17919
 stops_color=17919
 
 <window>
-height=225
+height=205
 fixed_height=0
 <indicator>
 name=main
@@ -46,8 +46,8 @@ name=main
 type=2
 object_name=cur_price
 period_flags=0
-create_time=1721959372
-color=0
+create_time=1723167866
+color=16711680
 style=2
 weight=1
 background=1
@@ -55,10 +55,10 @@ filling=0
 selectable=0
 hidden=1
 zorder=0
-time_0=1707559372
-value_0=2372.589500
-time_1=1721959372
-value_1=2372.589500
+time_0=1512092666
+value_0=2.118740
+time_1=1723772666
+value_1=2.118740
 ray=1
 </object>
 </indicator>
@@ -146,10 +146,22 @@ weight=2
 period_flags=0
 show_data=1
 </indicator>
+<indicator>
+name=Moving Average
+period=3
+shift=0
+method=0
+apply=0
+color=0
+style=0
+weight=1
+period_flags=128
+show_data=1
+</indicator>
 </window>
 
 <window>
-height=25
+height=45
 fixed_height=0
 <indicator>
 name=Custom Indicator
